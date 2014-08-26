@@ -6,3 +6,6 @@ node_modules/
 
 # Bower 前端模块
 bower_components/
+
+# Grunt 前端开发工具
+Gruntfile.js
