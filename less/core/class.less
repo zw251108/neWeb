@@ -1,0 +1,59 @@
+@charset "utf-8";
+
+@import-once "../lib/color.less";
+
+//---------- Class 公用 class 样式 ----------
+
+//----- Clearfix 清楚浮动 -----
+.clearfix{
+	&:before,
+	&:after{
+		content: "";
+		display: table;
+	}
+	&:after{
+		clear: both;
+	}
+}
+
+//----- 页面隐藏元素 -----
+.hidden{
+	display:none;
+}
+
+//----- 浮动 -----
+.left{
+	float: left;
+}
+.right{
+	float: right;
+}
+
+//----- 文字对齐方向 -----
+.textLeft{
+	text-align:left;
+}
+.textRight{
+	text-align:right;
+}
+.textCenter{
+	text-align:center;
+}
+
+//----- 垂直居中 -----
+//  父级 position 为 relative、absolute、fixed
+//  必须定义高度
+.middle{
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+
+	margin: auto;
+}
+
+//----- 溢出隐藏 -----
+.overHidden{
+	overflow: hidden;
+}

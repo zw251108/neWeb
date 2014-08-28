@@ -1,0 +1,224 @@
+@charset "utf-8";
+
+@import-once "../lib/color.less";
+
+//---------- Reset 重置 ----------
+// 重置各个标签的默认样式，使各个标签在各个浏览器中的默认样式统一
+
+body{
+	margin:0;
+	padding:0;
+
+	font-size: @default-font-size;
+	line-height: @default-line-height;
+	font-family: Consolas, \5b8b\4f53; // 宋体
+	color: @font-color;
+}
+
+address,
+caption,
+cite,
+code,
+dfn,
+strong,
+th,
+var,
+em,
+i,
+b{
+	font-style:normal;
+	font-weight:400;
+}
+
+//----- 重置超链接元素——未访问的链接，已访问的链接，鼠标移动到链接上，选定的链接 -----
+a,
+a:visited{
+	outline:none;
+	text-decoration:none;
+	color: @a-link;
+}
+
+.link,  // 特殊链接
+.link:visited, // 特殊链接
+a:hover,
+a:focus,
+a:active{
+	text-decoration:underline;
+	color: @a-hover;
+}
+
+//----- 去掉文本框 文本域的重置大小 设置文字大小 -----
+textarea,
+input{
+	resize:none;
+	//    font-size:100%;
+}
+
+//----- 使可交互标签表现为可点击 -----
+//a[href],
+label[for],
+input[type="submit"], //input:submit,
+input[type="image"], //input:image,
+input[type="reset"], //input:reset,
+select,
+button,
+.pointer{// 可操作
+	cursor:pointer;
+}
+
+//----- 按钮的不同状态 -----
+//input:focus{}
+//input:hover{}
+input[disabled]{
+	cursor: not-allowed;
+}
+
+//----- 统一各个浏览器 select 的样式 -----
+select{
+	height:22px;
+	padding:2px 0;
+	font-size:100%;
+	line-height:18px;
+}
+
+//----- 去掉列表样式 -----
+ul{
+	margin:0;
+	padding:0;
+	list-style:none;
+}
+
+//----- 重置图片元素 -----
+img{
+	-ms-interpolation-mode: bicubic; // IE 下图片缩放不失真
+	border:0;
+}
+
+//----- 重置表格元素 -----
+table{
+	border-collapse:collapse;
+	border-spacing:0;
+}
+
+//----- 引用 -----
+blockquote,
+q{
+	quotes:none;
+}
+blockquote:before,
+blockquote:after,
+q:before,
+q:after{
+	//    content:"";
+	content:none;
+}
+
+//----- 标题 -----
+h1,
+h2,
+h3,
+h4,
+h5,
+h6{
+	margin:0 auto;
+	//    line-height:40px;
+}
+h1{
+	font-size: @h1-size;
+}
+h2{
+	font-size: @h2-size;
+}
+h3{
+	font-size: @h3-size;
+}
+
+hr{
+	border: none;
+	border-top: 1px solid @border-color;
+	margin: 0;
+}
+
+/*
+caption,
+th{
+    text-align:left;
+}
+*/
+
+/*
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-size: 100%;
+	vertical-align: baseline;
+	background: transparent;
+}
+
+
+
+html, body,
+div, span,
+applet, object, iframe,
+h1, h2, h3, h4, h5, h6,
+p, blockquote, pre,
+a, abbr, acronym, address,
+big, cite, code, del, dfn, em,
+img, ins, kbd,
+q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center,
+dl, dt, dd,
+ol, ul, li,
+fieldset, form, label, legend, caption,
+table, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas,
+details, embed, figure, figcaption,
+footer, header,
+hgroup, menu, nav, output, ruby, section, summary, time, mark,
+audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+  outline: none;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+html { height: 101%; }
+body { font-size: 62.5%; line-height: 1; font-family: Arial, Tahoma, sans-serif; }
+
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section { display: block; }
+ol, ul { list-style: none; }
+
+blockquote, q { quotes: none; }
+blockquote:before, blockquote:after, q:before, q:after { content: ''; content: none; }
+strong { font-weight: bold; }
+
+table { border-collapse: collapse; border-spacing: 0; }
+img { border: 0; max-width: 100%; }
+
+p { font-size: 1.2em; line-height: 1.0em; color: #333; }
+*/
+
+//----- 自定义文本选择 -----
+::selection{
+	background:@selection;
+}
+::-moz-selection{
+	background:@selection;
+}
+::-webkit-selection{
+	background:@selection;
+}
