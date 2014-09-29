@@ -24,9 +24,13 @@ exports.init = function( segment ){
 
 /**
  *
- * @param {array} words 单词数组
- * @return {array}
+ * @param {Array} words 单词数组
+ * @return {Array}
  * */
 exports.split = function( words ){
+	var ret = [];
 
+	// todo
+
+	return ret;
 };
