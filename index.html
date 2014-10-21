@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<!--[if lt IE 9]><meta http-equiv="content-type" content="text/html; charset=utf-8" /><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>个人小站（开发测试中...）</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="author" content="周文博" />
+<meta name="description" content="小小的前端工程师，自说自话，自娱自乐的小网站" />
+<meta name="keywords" content="web,前端,html,html5,css,css3,javascript" />
+<link rel="shortcut icon" type="image/x-icon" href="image/favicon.ico" />
+<link rel="stylesheet" href="style/style.css"/>
+</head>
+<body class="Container index">
+<a href="blog/">
+	<section class="module module-metro big module-blog">
+		<h2 class="module_title">博客 blog</h2>
+		<span class="module_info"></span>
+	</section>
+</a>
+<a href="profile/">
+	<section class="module module-metro tiny module-user">
+		<h2 class="module_title">我 me</h2>
+	</section>
+</a>
+<section class="module module-metro tiny module-watch">
+	<h2 class="module_title">时间 time</h2>
+	<div class="watch_wrap hidden" id="watch">
+		<span class="watch_hourHand" id="hourHand"></span>
+		<span class="watch_minuteHand" id="minuteHand"></span>
+		<span class="watch_secondHand" id="secondHand"></span>
+		<span class="watch_mark watch_mark-1"></span>
+		<span class="watch_mark watch_mark-2"></span>
+		<span class="watch_mark watch_mark-3"></span>
+		<span class="watch_mark watch_mark-4"></span>
+		<span class="watch_mark watch_mark-5"></span>
+		<span class="watch_mark watch_mark-6"></span>
+		<span class="watch_mark watch_mark-7"></span>
+		<span class="watch_mark watch_mark-8"></span>
+		<span class="watch_mark watch_mark-9"></span>
+		<span class="watch_mark watch_mark-10"></span>
+		<span class="watch_mark watch_mark-11"></span>
+		<span class="watch_mark watch_mark-12"></span>
+	</div>
+</section>
+
+<a href="document/">
+	<section id="document" class="module module-metro small module-document">
+		<h2 class="module_title">
+			前端文档 document
+		</h2>
+	</section>
+</a>
+
+<!--<form method="post" action="/upload" enctype="multipart/form-data">-->
+	<!--<input name="hide" value="hidden" type="hidden"/>-->
+	<!--<input type="file" name="upfile" multiple/>-->
+	<!--<input type="submit" value="upload">-->
+<!--</form>-->
+
+<style>
+@keyframes fullScreen{
+	from{
+
+	}
+	to{
+		opacity: 0;
+	}
+}
+@-ms-keyframes fullScreen{
+	from{
+
+	}
+	to{
+		opacity: 0;
+	}
+}
+@-moz-keyframes fullScreen{
+	from{
+
+	}
+	to{
+		opacity: 0;
+	}
+}
+@-webkit-keyframes fullScreen{
+	from{
+
+	}
+	to{
+		opacity: 0;
+	}
+}
+.main .module{
+	-webkit-animation: fullScreen 1s;
+	-moz-animation: fullScreen 1s;
+	-ms-animation: fullScreen 1s;
+	-o-animation: fullScreen 1s;
+	animation: fullScreen 1s;
+}
+@keyframes main{
+	0% {}
+	50%{
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		width: auto;
+		height: auto;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+@-ms-keyframes main{
+	0% {}
+	50%{
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		width: auto;
+		height: auto;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+@-moz-keyframes main{
+	0% {}
+	50%{
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		width: auto;
+		height: auto;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+@-webkit-keyframes main{
+	0% {}
+	50%{
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		width: auto;
+		height: auto;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+.fullScreen{
+	-webkit-animation: main 2s;
+	-moz-animation: main 2s;
+	-ms-animation: main 2s;
+	-o-animation: main 2s;
+	animation: main 2s;
+}
+</style>
+
+<script data-main="script/index" src="script/lib/require/require.min.js"></script>
+</body>
+</html>

@@ -9,3 +9,16 @@ bower_components/
 
 # Grunt 前端开发工具
 Gruntfile.js
+
+# idea 项目文件
+.idea
+*.iml
+
+# 图片文件夹
+image/
+
+# 文件上传文件夹
+upload/
+
+
+cmd.md
