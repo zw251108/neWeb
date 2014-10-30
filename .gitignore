@@ -8,7 +8,7 @@ node_modules/
 bower_components/
 
 # Grunt 前端开发工具
-Gruntfile.js
+# Gruntfile.js
 
 # idea 项目文件
 .idea

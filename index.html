@@ -11,10 +11,12 @@
 <meta name="keywords" content="web,前端,html,html5,css,css3,javascript" />
 <link rel="shortcut icon" type="image/x-icon" href="image/favicon.ico" />
 <link rel="stylesheet" href="style/style.css"/>
+<link rel="stylesheet" href="script/plugin/syntaxhighlighter/style/shCoreDefault.css"/>
+<link rel="stylesheet" href="style/test.css"/>
 </head>
 <body class="Container index">
 <a href="blog/">
-	<section class="module module-metro big module-blog">
+	<section id="blog" class="module module-metro big module-blog">
 		<h2 class="module_title">博客 blog</h2>
 		<span class="module_info"></span>
 	</section>
@@ -24,7 +26,7 @@
 		<h2 class="module_title">我 me</h2>
 	</section>
 </a>
-<section class="module module-metro tiny module-watch">
+<section id="time" class="module module-metro tiny module-time">
 	<h2 class="module_title">时间 time</h2>
 	<div class="watch_wrap hidden" id="watch">
 		<span class="watch_hourHand" id="hourHand"></span>
@@ -47,9 +49,7 @@
 
 <a href="document/">
 	<section id="document" class="module module-metro small module-document">
-		<h2 class="module_title">
-			前端文档 document
-		</h2>
+		<h2 class="module_title">前端文档 document</h2>
 	</section>
 </a>
 
@@ -59,115 +59,14 @@
 	<!--<input type="submit" value="upload">-->
 <!--</form>-->
 
-<style>
-@keyframes fullScreen{
-	from{
-
-	}
-	to{
-		opacity: 0;
-	}
-}
-@-ms-keyframes fullScreen{
-	from{
-
-	}
-	to{
-		opacity: 0;
-	}
-}
-@-moz-keyframes fullScreen{
-	from{
-
-	}
-	to{
-		opacity: 0;
-	}
-}
-@-webkit-keyframes fullScreen{
-	from{
-
-	}
-	to{
-		opacity: 0;
-	}
-}
-.main .module{
-	-webkit-animation: fullScreen 1s;
-	-moz-animation: fullScreen 1s;
-	-ms-animation: fullScreen 1s;
-	-o-animation: fullScreen 1s;
-	animation: fullScreen 1s;
-}
-@keyframes main{
-	0% {}
-	50%{
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		width: auto;
-		height: auto;
-	}
-	100% {
-		opacity: 1;
-	}
-}
-@-ms-keyframes main{
-	0% {}
-	50%{
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		width: auto;
-		height: auto;
-	}
-	100% {
-		opacity: 1;
-	}
-}
-@-moz-keyframes main{
-	0% {}
-	50%{
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		width: auto;
-		height: auto;
-	}
-	100% {
-		opacity: 1;
-	}
-}
-@-webkit-keyframes main{
-	0% {}
-	50%{
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		width: auto;
-		height: auto;
-	}
-	100% {
-		opacity: 1;
-	}
-}
-.fullScreen{
-	-webkit-animation: main 2s;
-	-moz-animation: main 2s;
-	-ms-animation: main 2s;
-	-o-animation: main 2s;
-	animation: main 2s;
-}
-</style>
-
+<!--<script src="socket.io/socket.io.js"></script>-->
+<!--<script>-->
+<!--var socket = io('http://localhost:9001');-->
+<!--socket.on('news', function (data) {-->
+	<!--console.log(data);-->
+	<!--socket.emit('my other event', { my: 'data' });-->
+<!--});-->
+<!--</script>-->
 <script data-main="script/index" src="script/lib/require/require.min.js"></script>
 </body>
 </html>
