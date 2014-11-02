@@ -1,0 +1,157 @@
+@import "lib/color";
+@import "lib/grid";
+
+@module-bg: #888;
+
+/**
+ *---------- Module 模块 汇总 ----------
+ *
+ *  模块根据特定的商业逻辑呈现不同的样式
+ *  当我们建立一个模块时，里面使用的用户界面组件通常是不同的
+ *  举例来说，一个页面的侧边栏可能会包含列表及按钮
+ *  列表及按钮的基本样式已经定义在组件样式中的，如大小、边框、颜色等，并且不允许更改
+ *  而其他的样式需要从侧边栏样式中继承而来，如定位等，这些样式是在模块样式中定义的
+ *  这种样式分离的原则鼓励我们对样式预先进行仔细的规划，以及样式表的共享与重用性
+ *
+ *  模块为 .module
+ *  .module-xxx 为模块类型或为针对业务对模块的扩展
+ *      模块类型 目前有 6 种类型
+ *      .module-metro   动态磁砖
+ *      .module-main    页面主模块 为页面主要内容 一般一个页面只有一个 main 模块
+ *      .module-popup   页面弹窗
+ *  .module_xxx 为模块所包含的的子模块
+ *
+ *  example:
+	<!-- 这是一个动态磁砖 -->
+    <section class="module module-large module-metro module-blog">
+        <h2 class="module_title">博客 blog</h2>
+        <span class="module_info"><!-- 相关信息 --></span>
+    </section>
+
+	<!-- 这是一个页面主内容模块 -->
+    <section class="module module-large module-main module-blog">
+        <h2 class="module_title">博客 blog<h2>
+        <div class="module_content">
+            <!-- 详细内容 -->
+        </div>
+    </section>
+ * */
+
+// 模块样式
+/*section*/.module{
+	float:left;
+	position: relative;
+	margin: @grid-space;
+
+	background-color: @module-bg;
+	background-repeat: no-repeat;
+}
+
+//----- 模块标题 建议标签 h2 -----
+/*h2*/.module_title{
+	text-transform: capitalize;
+}
+
+//----- 模块内容 -----
+/*div*/.module_content{
+	overflow:hidden;
+}
+//----- 模块信息 -----
+/*span*/.module_info{
+    position: absolute;
+
+    top: 0;
+    right: 10px;
+
+//    height: @module-info-height;
+
+    //    padding-right: @module-info-padding-right;
+
+    font-size: 18px;
+    line-height: 40px;
+    text-align: right;
+}
+
+//----- 功能模块样式 -----    todo
+// 以下顺序同时为 metro.png 中图标的顺序
+//@import "module/user";        // 用户中心
+//
+//@import "module/palette";     // 调色板
+//
+//@import "module/document";    // 文档
+//
+//@import "module/editor";      // 编码
+//
+//@import "module/time";       // 时钟
+//
+//@import "module/blog";        // 博客
+//
+//@import "module/calendar";    // 日历
+//
+//@import "module/profile";   // 个人资料
+//
+//@import "module/weather";     // 天气
+//
+//@import "module/favorite";    // 收藏夹
+//
+//@import "module/rss";         // 订阅
+//
+////@import "module/timeLine";    // 时间轴
+//
+//@import "module/advert";      // 广告区
+//
+//@import "module/popup";       // 弹窗
+//
+////@import "module/header";      // 页头
+////
+////@import "module/footer";      // 页脚
+
+//----- Main 主内容模块 ------
+.module-main{
+	overflow: hidden;
+	background-image: none;
+
+	> .module_title,
+	> .module_info{
+		display: none;
+	}
+
+	> .module_content{
+
+		margin: 40px 10px 10px;
+
+		padding: 10px 10px 0 10px;
+
+		background-color: @font-color;
+	}
+}
+
+//----- Metro 动态磁砖 -----
+.module-metro{
+	height: 150px;
+
+	background-position: center 20px;
+
+	&:hover{
+		background-color: @a-hover;
+		color: @font-color;
+	}
+
+	> .module_title{
+		position: absolute;
+		bottom: 0;
+		left: 10px;
+		right: 0;
+		width: auto;
+
+		background: none;
+
+		line-height: 30px;
+
+		font-size: 20px;
+	}
+
+	> .module_content{
+		display:none;
+	}
+}

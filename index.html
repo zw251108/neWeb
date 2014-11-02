@@ -14,44 +14,61 @@
 <link rel="stylesheet" href="script/plugin/syntaxhighlighter/style/shCoreDefault.css"/>
 <link rel="stylesheet" href="style/test.css"/>
 </head>
-<body class="Container index">
-<a href="blog/">
-	<section id="blog" class="module module-metro big module-blog">
-		<h2 class="module_title">博客 blog</h2>
-		<span class="module_info"></span>
-	</section>
-</a>
-<a href="profile/">
-	<section class="module module-metro tiny module-user">
-		<h2 class="module_title">我 me</h2>
-	</section>
-</a>
-<section id="time" class="module module-metro tiny module-time">
-	<h2 class="module_title">时间 time</h2>
-	<div class="watch_wrap hidden" id="watch">
-		<span class="watch_hourHand" id="hourHand"></span>
-		<span class="watch_minuteHand" id="minuteHand"></span>
-		<span class="watch_secondHand" id="secondHand"></span>
-		<span class="watch_mark watch_mark-1"></span>
-		<span class="watch_mark watch_mark-2"></span>
-		<span class="watch_mark watch_mark-3"></span>
-		<span class="watch_mark watch_mark-4"></span>
-		<span class="watch_mark watch_mark-5"></span>
-		<span class="watch_mark watch_mark-6"></span>
-		<span class="watch_mark watch_mark-7"></span>
-		<span class="watch_mark watch_mark-8"></span>
-		<span class="watch_mark watch_mark-9"></span>
-		<span class="watch_mark watch_mark-10"></span>
-		<span class="watch_mark watch_mark-11"></span>
-		<span class="watch_mark watch_mark-12"></span>
-	</div>
-</section>
+<body>
+<header class="Header" id="header">
+	<div class="large header_container">
+		<a class="icon logo"></a>
+		<h1 id="pageTitle">自说自话、自娱自乐的小站</h1>
 
-<a href="document/">
-	<section id="document" class="module module-metro small module-document">
-		<h2 class="module_title">前端文档 document</h2>
+		<ul class="toolbar">
+			<li><a class="icon icon-user"></a></li>
+			<li><a class="icon"></a></li>
+			<li><a class="icon icon-menu"></a></li>
+		</ul>
+	</div>
+</header>
+
+<div class="Container">
+	<a href="blog/">
+		<section id="blog" class="module module-metro big module-blog">
+			<h2 class="module_title">博客 blog</h2>
+			<span class="module_info"></span>
+		</section>
+	</a>
+
+	<a href="profile/">
+		<section class="module module-metro tiny module-user">
+			<h2 class="module_title">我 me</h2>
+		</section>
+	</a>
+
+	<section id="time" class="module module-metro tiny module-time">
+		<h2 class="module_title">时间 time</h2>
+		<div class="watch_wrap hidden" id="watch">
+			<span class="watch_hourHand" id="hourHand"></span>
+			<span class="watch_minuteHand" id="minuteHand"></span>
+			<span class="watch_secondHand" id="secondHand"></span>
+			<span class="watch_mark watch_mark-1"></span>
+			<span class="watch_mark watch_mark-2"></span>
+			<span class="watch_mark watch_mark-3"></span>
+			<span class="watch_mark watch_mark-4"></span>
+			<span class="watch_mark watch_mark-5"></span>
+			<span class="watch_mark watch_mark-6"></span>
+			<span class="watch_mark watch_mark-7"></span>
+			<span class="watch_mark watch_mark-8"></span>
+			<span class="watch_mark watch_mark-9"></span>
+			<span class="watch_mark watch_mark-10"></span>
+			<span class="watch_mark watch_mark-11"></span>
+			<span class="watch_mark watch_mark-12"></span>
+		</div>
 	</section>
-</a>
+
+	<a href="document/">
+		<section id="document" class="module module-metro small module-document">
+			<h2 class="module_title">前端文档 document</h2>
+		</section>
+	</a>
+</div>
 
 <!--<form method="post" action="/upload" enctype="multipart/form-data">-->
 	<!--<input name="hide" value="hidden" type="hidden"/>-->

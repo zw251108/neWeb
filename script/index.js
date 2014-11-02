@@ -1,7 +1,7 @@
 /**
  * 首页
  * 全局设置
- */
+ * */
 require.config({
 	packages: [{
 		name: 'plugin/syntaxhighlighter'
@@ -16,6 +16,10 @@ require.config({
 	}
 });
 
+/***** 公用基础模块 ******/
+/**
+ * 全局模块
+ * */
 define('global', ['jquery'], function($){
 	// 兼容 console
 	if( !('console' in window) || !('log' in console) || (typeof console.log !== 'function') ){
@@ -60,24 +64,37 @@ define('global', ['jquery'], function($){
 		e.preventDefault();
 
 		g.$body.addClass('main');
+		setTimeout(function(){
+			g.$body.addClass('show');
+		}, 1000);
 	});
 
 	window.GLOBAL = g;// 释放到全局
 
 	return g;
 });
-
+/**
+ * web socket 模块
+ *  目前基于 socket.io
+ * */
 define('socket', ['../socket.io/socket.io'], function(io){
 	return io('http://localhost:9001');
 });
-
 /**
- * 侧边栏
+ * 本地存储 模块
  * */
-define('sideBar', ['jquery'], function($){
-	var $sideBar = $('#sideBar');
+define('storage', [], function(){
 
-	return $sideBar;
+});
+/**
+ * 页头 Header
+ * */
+define('header', ['jquery'], function($){
+	var $header = $('#header')
+		, $pageTilte = $header.find('#pageTitle')
+		;
+
+	return $header;
 });
 
 define('time', ['jquery', 'global'], function($, g){
@@ -143,64 +160,58 @@ define('time', ['jquery', 'global'], function($, g){
 /**
  * Document 文档模块
  * */
+// 兼容 CommonJS 加载模式
 define('shCore', ['plugin/syntaxhighlighter', 'plugin/syntaxhighlighter/shCore'], function(){
 	return {
 		SyntaxHighlighter: SyntaxHighlighter
 	}
 });
-require(['jquery', 'socket', 'global',
-	'shCore',
+define('document', ['jquery', 'global', 'socket', 'shCore', 'template',
 	'plugin/syntaxhighlighter/shBrushCss',
 	'plugin/syntaxhighlighter/shBrushJScript',
-	'plugin/syntaxhighlighter/shBrushXml',
-	'template'], function($, socket, g, s){
-	var $document = $('#document')
+	'plugin/syntaxhighlighter/shBrushXml'], function($, g, socket, highlight){
+	var $document = g.$document || $('#document')
 		, $curr = null
 		, $temp = $([])
 		, dlTmpl = $.template({
-			template: 'dt.icon.icon-arrow-r{%title%}+dd{%content%}'
-		})
+		template: 'dt.icon.icon-arrow-r{%title%}+dd{%content%}'
+	})
 		, sectionTmpl = $.template({
-			template: 'section.document_section.section>h3.section_title{%section_title%}>span.icon-CSS.icon-minus^dl{%dl%}'
-			, filter: {
-				dl: function(d){
-					return dlTmpl(d.dl).join('');
-				}
+		template: 'section.document_section.section>h3.section_title{%section_title%}>span.icon-CSS.icon-minus^dl{%dl%}'
+		, filter: {
+			dl: function(d){
+				return dlTmpl(d.dl).join('');
 			}
-		})
+		}
+	})
 		;
 
-	s = s.SyntaxHighlighter;
+	highlight = highlight.SyntaxHighlighter;
 
+	// 绑定 socket 回调 事件
 	socket.on('getDocData', function(data){
 
 		setTimeout(function(){
-			$document.unwrap().append( '<div class="module_content">'+
-				sectionTmpl(data).join('')
-				+'</div>' ).toggleClass('module-metro').removeClass('tiny small normal big').height();
+			$document.data('getData', true).unwrap().append( '<ul class="toolbar">' +
+				'<li><a class="module_close icon icon-close"></a></li>' +
+				'</ul>' +
+				'<div class="module_content">' +
+				sectionTmpl(data).join('') +
+				'</div>' ).toggleClass('module-metro').removeClass('tiny small normal big').height();
 
-			s.highlight();
+			highlight.highlight();
 
 			$document.addClass('large module-main');
 		}, 1000);
 	});
 
 	$document.on({
-		click: function(e){
-			if( !$document.hasClass('module-metro') ) return;
-
-			if( !$document.find('.module_content').length ){
-				socket.emit('getData', {
-					topic: 'document'
-					, receive: 'getDocData'
-				});
-			}
-			else{
-				setTimeout(function(){
-					$document.addClass('large module-main');
-				}, 1000);
-			}
-		}
+//		getDocData: function(){
+//			socket.emit('getData', {
+//				topic: 'document'
+//				, receive: 'getDocData'
+//			});
+//		}
 	}).on('click', '.section_title', function(){
 
 		$temp.add(this)
@@ -208,43 +219,79 @@ require(['jquery', 'socket', 'global',
 			.next('dl').slideToggle();
 	}).on('click', 'dt', function(){
 
-		if( $curr ){
-			$curr.toggleClass('icon-arrow-r icon-arrow-d');
+			if( $curr ){
+				$curr.toggleClass('icon-arrow-r icon-arrow-d');
 
-			if( $curr.is(this) ){
-				$curr.next().slideToggle();
-				$curr = null;
-				return;
+				if( $curr.is(this) ){
+					$curr.next().slideToggle();
+					$curr = null;
+					return;
+				}
 			}
-		}
 
-		$curr && $curr.next().hide();
-		$curr = $temp.add(this);
+			$curr && $curr.next().hide();
+			$curr = $temp.add(this);
 
-		g.$body.animate({
-			scrollTop: this.offsetTop -80
-		}, function(){
-			$curr.toggleClass('icon-arrow-r icon-arrow-d').next().slideToggle();
+			g.$body.animate({
+				scrollTop: this.offsetTop -80
+			}, function(){
+				$curr.toggleClass('icon-arrow-r icon-arrow-d').next().slideToggle();
+			});
 		});
+
+	return $document;
+});
+// 加载 Document 模块
+require(['jquery', 'global', 'socket'], function($, g, socket){
+	var $document = $('#document')
+		;
+
+	g.$document = $document;
+
+	$document.on('click', function(e){
+
+		// 已处于展开状态
+		if( !$document.hasClass('module-metro') ) return;
+
+		/**
+		 * todo 加入 本地存储
+		 * */
+
+		if( $document.data('getData') ){  // 已获取基础数据
+			// todo 展开
+		}
+		else{   // 未获取基础数据
+			require(['document'], function(){
+				socket.emit('getData', {
+					topic: 'document'
+					, receive: 'getDocData'
+				});
+			});
+		}
 	});
 });
 
 /**
  * Blog 模块
  * */
-require(['jquery', 'socket', 'template'], function($, socket){
-	var $blog = $('#blog')
+define('blog', ['jquery', 'global', 'socket', 'template'], function($, g, socket){
+	var $blog = g.$blog || $('#blog')
 		, articleTmpl = $.template({
 			template:'article#blogArt%Id%.article>a[href=blog/detail/?id=%Id%]>h3.article_title{%title%}' +
 				'^hr+span.article_date{%datetime%}+div.tagsArea{%tags%}'
 		})
 		;
 
+
 	socket.on('getBlogData', function(data){
 		console.log(data);
 
 		setTimeout(function(){
-			$blog.unwrap().append( '<div class="module_content blog-list" id="blogList">'+
+			$blog.data('getData', true).unwrap().append( '<ul class="toolbar">' +
+				'<li><a class="module_close icon icon-close"></a></li>' +
+				'<li><a class="module_close icon icon-write"></a></li>' +
+				'</ul>' +
+				'<div class="module_content blog-list" id="blogList">'+
 				articleTmpl(data).join('') +
 				'</div>').toggleClass('module-metro').removeClass('tiny small normal big').height();
 			$blog.addClass('large module-main');
@@ -256,18 +303,7 @@ require(['jquery', 'socket', 'template'], function($, socket){
 			.insertAfter( $blog.find('#blogArt'+ data.id).find('a').data('deploy', true) ).slideDown();
 	});
 
-	$blog.on({
-		click: function(e){
-			if( !$blog.find('.module_content').length ){
-				socket.emit('getData', {
-					topic: 'blog'
-					, receive: 'getBlogData'
-				});
-			}
-			else{
-			}
-		}
-	}).on('click', 'article > a', function(e){// 获得详细内容
+	$blog.on('click', 'article > a', function(e){// 获得详细内容
 		var $self = $(this)
 			, isDeploy = $self.data('deploy')
 			;
@@ -284,5 +320,36 @@ require(['jquery', 'socket', 'template'], function($, socket){
 		}
 
 		e.preventDefault();
+		e.stopImmediatePropagation();
+	});
+});
+// 加载 Blog 模块
+require(['jquery', 'global', 'socket', 'template'], function($, g, socket){
+	var $blog = $('#blog')
+		;
+
+	g.$blog = $blog;
+
+
+	$blog.on('click', function(){
+
+		// 已处于展开状态
+		if( !$blog.hasClass('module-metro') ) return;
+
+		/**
+		 * todo 加入 本地存储
+		 * */
+
+		if( $blog.data('getData') ){  // 已获取基础数据
+			// todo 展开
+		}
+		else{   // 未获取基础数据
+			require(['blog'], function(){
+				socket.emit('getData', {
+					topic: 'blog'
+					, receive: 'getBlogData'
+				});
+			});
+		}
 	});
 });

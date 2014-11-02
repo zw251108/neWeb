@@ -299,9 +299,10 @@ module.exports = function(grunt){
 		}
 		, less: {
 			destiny: {
-//				options: {
+				options: {
 //					paths: ["assets/css"]
-//				},
+//					cleancss: true
+				},
 				files: {
 					'style/style.css': 'less/style.less'
 				}

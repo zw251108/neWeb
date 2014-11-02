@@ -1,0 +1,23 @@
+@import "../lib/grid.less";
+
+/**
+ * 针对宽度为 480px 至 640px 以下的设备
+ *  .Container 宽度 480
+ *  共 12 列
+ *  .large    12
+ *  .big      12
+ *  .normal   12(默认)
+ *  .small    12
+ *  .tiny     4(默认)
+ * */
+@media screen and (min-width:480px) and (max-width:639px){
+	.Container{
+		width: @grid-unit*12;
+	}
+
+	.large,
+	.big,
+	.small{
+		.grid-x(12);
+	}
+}

@@ -1,0 +1,142 @@
+@charset "utf-8";
+
+@import "../lib/color.less";
+@import "../lib/function.less";
+@import "../lib/grid.less";
+
+//---------- Watch 时钟 ----------
+.module-time{
+	.module_title{
+		word-break: break-all;
+	}
+}
+.watch_wrap{
+	position: relative;
+
+	top: @module-metro-bg-top; //-(@module-metro-title-height + @module-info-height + 70px);//-120px;
+
+	height: 80px;
+	width: 80px;
+
+	border: 5px solid #fff;
+	border-radius: 80px;
+	margin: 0 auto;
+}
+
+.watch_hourHand,
+.watch_minuteHand,
+.watch_secondHand{
+	position: absolute;
+
+	width: 0;
+	height: 0;
+	border-style: solid;
+	border-color: transparent transparent @font-color;
+
+	.transformOrigin(center 40px);
+}
+
+.watch_hourHand{
+	left: 35px;
+	top: 0;
+	border-width: 15px 5px;
+}
+.watch_hourHand:after{
+	display: block;
+	height: 10px;
+	width: 10px;
+	margin: 15px 0 0 -5px;
+
+	background: @font-color;
+	content: '';
+}
+
+.watch_minuteHand{
+	left: 37px;
+	border-width: 12px 3px;
+}
+.watch_minuteHand:after{
+	display: block;
+	height: 20px;
+	width: 6px;
+	margin: 12px 0 0 -3px;
+
+	background: @font-color;
+	content: '';
+}
+
+.watch_secondHand{
+	left: 38px;
+	border-width: 6px 2px;
+}
+.watch_secondHand:after{
+	display: block;
+	height: 30px;
+	width: 4px;
+	margin: 6px 0 0 -2px;
+
+	background: @font-color;
+	content: '';
+}
+
+.watch_mark{
+	position: absolute;
+
+	left: 38px;
+	top: 0;
+	height: 5px;
+	width: 4px;
+	background: @font-color;
+
+	.transformOrigin(center 40px);
+}
+.watch_mark-1{
+}
+.watch_mark-2{
+	.transformRotate(30deg);
+}
+.watch_mark-3{
+	.transformRotate(60deg);
+}
+.watch_mark-4{
+	.transformRotate(90deg);
+}
+.watch_mark-5{
+	.transformRotate(120deg);
+}
+.watch_mark-6{
+	.transformRotate(150deg);
+}
+.watch_mark-7{
+	.transformRotate(180deg);
+}
+.watch_mark-8{
+	.transformRotate(210deg);
+}
+.watch_mark-9{
+	.transformRotate(240deg);
+}
+.watch_mark-10{
+	.transformRotate(270deg);
+}
+.watch_mark-11{
+	.transformRotate(300deg);
+}
+.watch_mark-12{
+	.transformRotate(330deg);
+}
+
+.watch_wrap-info{
+	left: 0;
+	top: -90px;
+
+	height: auto;
+	width: auto;
+
+	border: 0 none;
+
+	font-size: 24px;
+	font-weight: bolder;
+	line-height: 40px;
+	text-align: center;
+}

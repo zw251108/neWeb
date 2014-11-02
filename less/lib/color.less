@@ -1,4 +1,3 @@
-@charset "utf-8";
 //---------- 库文件-颜色库 ----------
 
 // 颜色变量以 c- 为前缀
@@ -274,135 +273,11 @@
 // 表单项获得焦点时提示颜色
 @c32: #F1C40F;// Sun flower
 
-//----- 颜色调用 -----
-@outline-color: @c115;  // outline 边框颜色
-@font-color:    @c141;  // 文字颜色
-@border-color:  @c2;    // 边框颜色
-//@background:    @c115;  // 模块背景颜色
-@background:    @c1;  // 模块背景颜色
-@box-shadow:    @c1;    // 阴影
-
-@info:      @c115;  // 默认信息颜色
-@success:   @c92;   // 成功提示颜色
-@error:     @c51;   // 错误提示颜色
 
 @a-link:    @c141;  // 默认链接颜色
 @a-hover:   @c35;   // 移上链接颜色、特殊链接颜色
 
+@font-color:    @c141;  // 文字颜色
+@border-color:  @c2;    // 边框颜色
+
 @selection: @c23;   // 文本选择颜色
-
-//----- module 模块 -----
-@module-metro-bg:   @c1;    // 动态磁砖模块背景颜色
-@module-main-bg:    @c115;  // 主模块背景颜色
-@module-content-bg: @c141;  // 主模块内容背景颜色
-
-//----- popup 弹窗颜色 -----
-@popup-border-success:  @c92;   // 弹窗 成功信息边框颜色
-@popup-bg-success:      @c92;   // 弹窗 成功背景颜色
-@popup-border-error:    @c51;   // 弹窗 错误信息边框颜色
-@popup-bg-error:        @c51;   // 弹窗 错误背景颜色
-
-//----- editor 编辑器 -----
-@editor_detail_title-bg:    @c29;   // 编码详细标题背景颜色
-@editor_codeArea-textColor: @c23;   // 编码区文字颜色
-@editor_codeArea-border:    @c29;   // 编码区边框颜色
-@editor_codeArea-bg:        @c141;  // 编码结果显示背景颜色
-
-//----- document 文档 -----
-@document_section-bg:   @c29;   // 文档章背景颜色
-@document_dl-bg:        @c141;  // 文档章内容背景
-@document_dt-bg:        @c35;   // 文档节背景颜色
-@document_dd-color:     @c23;   // 文档节字体颜色
-
-//----- palette 调色板 -----
-@palette_section-gray:      @c155;// 调色板-灰色系
-@palette_section-red:       #f00;   // 调色板-红色系
-@palette_section-yellow:    #ff0;   // 调色板-黄色系
-@palette_section-green:     #0f0;   // 调色板-绿色系
-@palette_section-cyan:      #0ff;   // 调色板-青色系
-@palette_section-blue:      #00f;   // 调色板-蓝色系
-@palette_section-magenta:   #f0f;   // 调色板-紫色系
-
-//----- profile 个人资料 -----
-@profile_section-bg:    @c29;   //
-
-//----- favorite 收藏夹 -----
-@favor-li-bg:   @c29;   // 收藏夹背景颜色
-
-//----- icon 图标颜色 -----
-@icon-bg:       @c141;  // 图标背景颜色
-@icon:          @c29;   // 图标颜色
-
-//----- userCard 用户名片 -----
-@userCard-color:        @c23;   // 用户名片字体颜色
-@userCard-bg:           @c141;  // 用户名片背景颜色
-@userCard-min-border:   @c141;  // 用户名片最小化边框颜色 @c2;
-@userCard-max-border:   @c23;   // 用户名片最大化边框颜色
-
-//----- article 文章 -----
-@article-bg:            @c29;   // 文章背景颜色
-@article-content-bg:    @c141;  // 文字内容背景颜色
-@article-content:       @c23;   // 文字内容字体颜色
-@article-date-bg:       @c23;   // 文章发布时间标签背景颜色
-@article-line:          @c2;    // 文章分隔线颜色
-
-//----- track 路径记录/引导 -----
-@track:          @c2;    // 分步操作背景颜色
-@track-on:       @c35;   // 分步操作 当前操作背景颜色
-
-//----- countdown 倒计时 -----
-@countdown-bg:          @c115;  // 倒计时背景颜色
-@countdown-quarter-bg:  @c35;   // 倒计时运行时背景颜色
-@countdown-num-color:   @c141;  // 倒计时数字的颜色
-
-//----- filter 过滤器 -----
-@filter-bg:             @c141;  // 过滤器组件背景颜色
-//@filter-tag-area-bg:    @c29;   // 过滤器标签区域背景颜色
-@filter-checked-bg:     @c29;   // 过滤器当前所选择的标签
-@filter-all-bg:         @c29;   // 过滤器全部标签背景颜色
-@filter-all-border:     @c2;    // 过滤器全部标签顶部边框颜色
-@filter-tag-bg:         @c23;   // 过滤器标签背景颜色
-@filter-tag-checked-bg: @c35;   // 过滤器选择标签背景颜色
-
-//----- page 页码 -----
-@page-bg:           @c29;   // 页码背景颜色
-@page-current-bg:   @c35;   // 当前页码背景颜色
-
-//----- tag 标签 -----
-@tags-bg:           @c23;   // 标签背景颜色
-@tags-checked-bg:   @c35;   // 选中标签背景颜色
-@tags-checked-c:    @c2;    // 选中标签文字颜色
-@popup-tagsArea-bg:      @c141;  // 弹窗中的标签区域背景颜色
-@article-tagsArea-bg:    @c29;   // 文章中的标签区域背景颜色
-
-//----- tips 提示信息 -----
-@tips-color:            @c141;  // 提示信息文字颜色
-@tips-border:           @c2;    // 提示信息默认边框颜色
-@tips-bg:               @c141;  // 提示信息内容背景颜色
-@tips-focus:     @c115; // 焦点提示信息边框颜色
-@tips-error:     @c51;  // 错误提示信息边框颜色
-@tips-success:   @c92;  // 正确提示信息边框颜色
-@tips-msg:       @c115; // 提示信息边框颜色
-
-//----- tab 选项卡 -----
-@tab-bg:            @c1;    // 选项卡默认背景颜色
-@tab-bg-current:    @c141;  // 选项卡被选中标题背景颜色
-@tab-border:        @c2;    // 选项卡边框颜色
-
-//----- input 表单项 -----
-@input-border:      @c2;    // 文本框边框
-@input-focus-bg:    @c115;  // 文本框获得焦点时背景颜色
-@input-wrong-bg:    @c51;   // 文本框输入错误时背景颜色
-@input-right-bg:    @c92;   // 文本框输入正确时背景颜色
-
-//----- btn 按钮 -----
-@btn-border:        @c141;    // 按钮边框颜色
-@btn-default-bg:    @c115;  // 按钮默认背景颜色
-@btn-disabled-bg:   @c1;    // 按钮禁用状态的背景颜色
-@btn-disabled-color:@c2;    // 按钮禁用状态的文字颜色
-@btn-hover-bg:      @c35;   // 鼠标悬浮按钮上的背景颜色
-@btn-submit-bg:     @c29;   // 提交按钮背景颜色
-
-//----- toolBar 工具条 -----
-@toolBar-bg:        @c141;  //@c29;   // 工具条背景颜色
-//@toolBar-border:    @c141;  // 工具条边框颜色

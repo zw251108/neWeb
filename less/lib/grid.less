@@ -1,14 +1,12 @@
-@charset "utf-8";
-
-@border-radius: 5px;    // 圆角的参数
-
-@line-height: 30px;     // 全局默认行间距
-
-@padding-lr: 5px;       // 行内元素 左右内边距
-
-@border-width:  0;    // 模块边框
-
-@outline-width: 0;    // outline 边框宽度
+//@border-radius: 5px;    // 圆角的参数
+//
+//@line-height: 30px;     // 全局默认行间距
+//
+//@padding-lr: 5px;       // 行内元素 左右内边距
+//
+//@border-width:  0;    // 模块边框
+//
+//@outline-width: 0;    // outline 边框宽度
 
 //----- Grid 栅格系统 -----
 // 外边距、内边距、边框 的宽度均为 @space 或 0
@@ -21,108 +19,109 @@
 @space: @grid-space *2; // 栅格间距 用作外边距、内边距、边框宽度
 
 .grid-x(@x){    // 栅格宽度计算
-	width: @grid-unit * @x - @space - @border-width *2;
+	width: @grid-unit * @x - @space;
+//	 - @border-width *2;
 }
 
-@header-height: @grid-unit *2 - @grid-space;    // 页头高度
-
-@footer-height: @grid-unit *2 - @grid-space;    // 页脚高度
-
-.marginSpace(){
-	margin: @space 0 0 @space;
-}
-.paddingSpace(){
-	padding: @space 0 0 @space;
-}
-
-//----- module 模块 -----
-// 模块宽度 使用 .grid-x() 函数来计算
-// 只有 动态磁砖模块 设定高度 由文字行距 + 外边距 + 内边距 + 边框宽度 及其它常量计算出来
-// 其它类型模块高度为 auto 可设置最小高度
-
-@module-metro-title-height: 30px;   // 动态磁砖模块标题高度
-@module-metro-title-left:   @space; // 动态磁砖模块左位移
-@module-metro-bg-top:       20px;   // 动态磁砖模块背景图片上位移
-@module-info-height:        30px;   // 模块信息高度
-@module-metro-bg-height:    90px;   // 动态磁砖背景图片的高度 这是一个常量，与实际的图片大小为准
-
-// 动态磁砖高度 由 模块信息高度、模块标题高度、模块背景图片高度 相加得到
-@module-metro-height: @module-info-height + @module-metro-title-height + @module-metro-bg-height;
-
-// 模块标题上外边距
-//@module-metro-title-margin-top: @module-info-height + @module-metro-bg-height;// - 10px;
-
-//@module-info-top: -(@module-metro-title-height + @module-metro-title-margin-top);   // 模块信息
-//@module-info-padding-right: @space; // 模块信息右边距
-
-@module-main-title-height: @grid-unit *2 - @space;  // main 模块的标题高度
-@module-content-margin-left: @space;    // 模块内容左外边距
-
-
-//----- toolBar 工具条 -----
-@toolbar-border-width: @space;    // 工具条上左右边框
-@toolBar-margin: @space;      // 工具条左外边距
-@toolBar-padding: @space;   // 工具条上下左内边距
-
-
-@section-title-height: @grid-unit *2 - @space;  // 章节标题高度
-
-@palette-color-width: @grid-unit *3 - @space;   // 颜色块宽度
-@palette-color-height: @grid-unit *3 - @space;  // 颜色块高度
-
-//----- article 文章 -----
-@article-border-width:  5px;
-@article-margin:    5px;
-@article-padding:   5px;
-@article-date-height:   30px;
-@article-date-margin:   10px;
-
-//----- 用户名片 -----
-@userCard-avatar-height:    60px; // 用户信息名片 头像高度
-@userCard-avatar-width:     60px; // 用户信息名片 头像宽度
-
-//----- btn 按钮 -----
-@btn-min-width: @grid-unit*2 - @space;//70px;   // 按钮最小宽度
-@btn-border-width: 2px; // 按钮边框宽度
-@btn-margin: 10px;  // 按钮间距
-
-//----- input 文本框 -----
-
-//----- track 路径记录/引导 -----
-@track-height:       40px;   // 分步操作高度
-@track-min-width:    100px;  // 分步操作最小宽度
-@track-border:       20px;   // 分步操作箭头宽度
-@track-arrow:        @track-border 0 @track-border @track-border;   // 分步操作箭头边框宽度
-@track-margin-left:  @track-border + 10px;  // 分步操作间距
-
-//----- tips 提示信息 -----
-@tips-border-width: 1px;    // 提示信息内容边框宽度
-@tips-arrow-width:  10px;   // 提示信息箭头宽度
-
-//----- tab 选项卡 -----
-@tab-head-height:       70px;   // 选项卡标题高度
-@tab-head-min-width:    100px;  // 选项卡标题最小宽度
-@tab-head-margin-right:  10px;  // 选项卡标题右外边距
-@tab-border-width:      1px;    // 选项卡边框宽度
-
-//----- tag 标签 -----
-@tag-min-height:        30px;   // 标签的最小高度 行间距
-@tag-min-width:         50px;   // 标签的最小宽度
-@tag-border-width:  10px;   // 标签边框宽度
-@tag-margin:        10px;   // 标签的外间距
-@tag-point-top:     12px;
-@tag-point-left:    -7px;
-@tag-point-width:   6px;
-
-//----- filter 过滤器 -----
-@filter-min-height:             30px;   // 过滤器最小高度
-@filter-all-tag-left:           10px;   //@space;    // 过滤器所有标签左偏移
-@filter-all-tag-height:         360px;  // 过滤器所有标签区域高度
-//@filter-all-tag-border-width:   1px;    // 过滤器所有标签区域边框宽度
-@filter-all-tag-padding:        5px;    //10px;   // 过滤器所有标签内边距
-@filter-tag-margin:             5px;    //10px;   // 过滤器所有标签外间距
-
-//----- page 页码 -----
-@page-margin:   10px;   // 页码外边距
-@page-min-width:30px;   // 页码最小宽度
-@page-const-min-width:  70px;   // 常规页码（首页、上一页、下一页、末页）最小宽度
+//@header-height: @grid-unit *2 - @grid-space;    // 页头高度
+//
+//@footer-height: @grid-unit *2 - @grid-space;    // 页脚高度
+//
+//.marginSpace(){
+//	margin: @space 0 0 @space;
+//}
+//.paddingSpace(){
+//	padding: @space 0 0 @space;
+//}
+//
+////----- module 模块 -----
+//// 模块宽度 使用 .grid-x() 函数来计算
+//// 只有 动态磁砖模块 设定高度 由文字行距 + 外边距 + 内边距 + 边框宽度 及其它常量计算出来
+//// 其它类型模块高度为 auto 可设置最小高度
+//
+//@module-metro-title-height: 30px;   // 动态磁砖模块标题高度
+//@module-metro-title-left:   @space; // 动态磁砖模块左位移
+//@module-metro-bg-top:       20px;   // 动态磁砖模块背景图片上位移
+//@module-info-height:        30px;   // 模块信息高度
+//@module-metro-bg-height:    90px;   // 动态磁砖背景图片的高度 这是一个常量，与实际的图片大小为准
+//
+//// 动态磁砖高度 由 模块信息高度、模块标题高度、模块背景图片高度 相加得到
+//@module-metro-height: @module-info-height + @module-metro-title-height + @module-metro-bg-height;
+//
+//// 模块标题上外边距
+////@module-metro-title-margin-top: @module-info-height + @module-metro-bg-height;// - 10px;
+//
+////@module-info-top: -(@module-metro-title-height + @module-metro-title-margin-top);   // 模块信息
+////@module-info-padding-right: @space; // 模块信息右边距
+//
+//@module-main-title-height: @grid-unit *2 - @space;  // main 模块的标题高度
+//@module-content-margin-left: @space;    // 模块内容左外边距
+//
+//
+////----- toolBar 工具条 -----
+//@toolbar-border-width: @space;    // 工具条上左右边框
+//@toolBar-margin: @space;      // 工具条左外边距
+//@toolBar-padding: @space;   // 工具条上下左内边距
+//
+//
+//@section-title-height: @grid-unit *2 - @space;  // 章节标题高度
+//
+//@palette-color-width: @grid-unit *3 - @space;   // 颜色块宽度
+//@palette-color-height: @grid-unit *3 - @space;  // 颜色块高度
+//
+////----- article 文章 -----
+//@article-border-width:  5px;
+//@article-margin:    5px;
+//@article-padding:   5px;
+//@article-date-height:   30px;
+//@article-date-margin:   10px;
+//
+////----- 用户名片 -----
+//@userCard-avatar-height:    60px; // 用户信息名片 头像高度
+//@userCard-avatar-width:     60px; // 用户信息名片 头像宽度
+//
+////----- btn 按钮 -----
+//@btn-min-width: @grid-unit*2 - @space;//70px;   // 按钮最小宽度
+//@btn-border-width: 2px; // 按钮边框宽度
+//@btn-margin: 10px;  // 按钮间距
+//
+////----- input 文本框 -----
+//
+////----- track 路径记录/引导 -----
+//@track-height:       40px;   // 分步操作高度
+//@track-min-width:    100px;  // 分步操作最小宽度
+//@track-border:       20px;   // 分步操作箭头宽度
+//@track-arrow:        @track-border 0 @track-border @track-border;   // 分步操作箭头边框宽度
+//@track-margin-left:  @track-border + 10px;  // 分步操作间距
+//
+////----- tips 提示信息 -----
+//@tips-border-width: 1px;    // 提示信息内容边框宽度
+//@tips-arrow-width:  10px;   // 提示信息箭头宽度
+//
+////----- tab 选项卡 -----
+//@tab-head-height:       70px;   // 选项卡标题高度
+//@tab-head-min-width:    100px;  // 选项卡标题最小宽度
+//@tab-head-margin-right:  10px;  // 选项卡标题右外边距
+//@tab-border-width:      1px;    // 选项卡边框宽度
+//
+////----- tag 标签 -----
+//@tag-min-height:        30px;   // 标签的最小高度 行间距
+//@tag-min-width:         50px;   // 标签的最小宽度
+//@tag-border-width:  10px;   // 标签边框宽度
+//@tag-margin:        10px;   // 标签的外间距
+//@tag-point-top:     12px;
+//@tag-point-left:    -7px;
+//@tag-point-width:   6px;
+//
+////----- filter 过滤器 -----
+//@filter-min-height:             30px;   // 过滤器最小高度
+//@filter-all-tag-left:           10px;   //@space;    // 过滤器所有标签左偏移
+//@filter-all-tag-height:         360px;  // 过滤器所有标签区域高度
+////@filter-all-tag-border-width:   1px;    // 过滤器所有标签区域边框宽度
+//@filter-all-tag-padding:        5px;    //10px;   // 过滤器所有标签内边距
+//@filter-tag-margin:             5px;    //10px;   // 过滤器所有标签外间距
+//
+////----- page 页码 -----
+//@page-margin:   10px;   // 页码外边距
+//@page-min-width:30px;   // 页码最小宽度
+//@page-const-min-width:  70px;   // 常规页码（首页、上一页、下一页、末页）最小宽度

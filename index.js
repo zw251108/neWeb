@@ -316,10 +316,10 @@ webApp.use( cookieParser() );
 webApp.use( logger('dev') );
 webApp.use( multer({dest: './upload/'}) );
 
-//----- 静态资源路径设置 -----
-webApp.use('/script', express.static(__dirname +'/script') );
-webApp.use('/style', express.static(__dirname +'/style') );
-webApp.use('/image', express.static(__dirname +'/image') );
+//----- 静态资源 重定向 -----
+webApp.use('/script', express.static(__dirname + '/script') );
+webApp.use('/style', express.static(__dirname + '/style') );
+webApp.use('/image', express.static(__dirname + '/image') );
 
 //webApp.use(function(req, res, next){
 //	var err = new Error('not found');
@@ -330,88 +330,88 @@ webApp.use('/image', express.static(__dirname +'/image') );
 //	res.status(err.status)
 //})
 
-/**
-* 博客模块
-*  /blog/
-*  /blog/detail/?id=:id&_=.*
-* */
-webApp.get('/blog/', function(req, res){
-	dbInterface.select('select Id,title,datetime,tagsId,tagsName from blog order by Id desc', function(rs){
-		if( req.query.type === 'json' ){
-
-			res.send( '['+ rs.map(function(i){
-				return JSON.stringify(i);
-			}).join() +']' );
-		}
-		else{
-			res.send('blog');
-		}
-		res.end();
-	}, function(){
-		res.end();
-	});
-});
-webApp.get('/blog/detail/', function(req, res){
-	var id = req.query.id || '';
-
-	if( id ){
-		dbInterface.select('select content from blog where id=?', [id], function(rs){
-			if( req.query.type === 'json' ){
-				res.send( JSON.stringify(rs[0]) );
-			}
-			else{
-				res.send('blog/detail/'+ id);
-			}
-			res.end();
-		}, function(){
-			res.send('{error: "E0004", msg:"'+ ERROR_MSG.E0004 +'"}');
-			res.end();
-		});
-	}
-	else{
-		res.send('{error: "E0001", msg:"'+ ERROR_MSG.E0001 +'}');
-		res.end();
-	}
-});
-
-/**
-* Web 前端文档
-*  /document/
-* */
-webApp.get('/document/', function(req, res){
-	dbInterface.select('select title,content,section_title from document order by section_id', function(rs){
-		var document = []
-			, tempTitle = ''
-			, tempArray
-			, i, j;
-
-		if( req.query.type === 'json' ){
-
-			for(i = 0, j = rs.length; i < j; i++){
-				if( rs[i].section_title !== tempTitle ){
-					tempTitle = rs[i].section_title;
-					tempArray = [];
-					document.push({
-						section_title: tempTitle
-						, dl: tempArray
-					});
-				}
-
-				tempArray.push( rs[i] );
-			}
-
-			res.send( JSON.stringify( document ) );
-		}
-		else{
-			res.send('document');
-		}
-
-		res.end();
-	}, function(){
-		res.end();
-	});
-});
-
+///**
+//* 博客模块
+//*  /blog/
+//*  /blog/detail/?id=:id&_=.*
+//* */
+//webApp.get('/blog/', function(req, res){
+//	dbInterface.select('select Id,title,datetime,tagsId,tagsName from blog order by Id desc', function(rs){
+//		if( req.query.type === 'json' ){
+//
+//			res.send( '['+ rs.map(function(i){
+//				return JSON.stringify(i);
+//			}).join() +']' );
+//		}
+//		else{
+//			res.send('blog');
+//		}
+//		res.end();
+//	}, function(){
+//		res.end();
+//	});
+//});
+//webApp.get('/blog/detail/', function(req, res){
+//	var id = req.query.id || '';
+//
+//	if( id ){
+//		dbInterface.select('select content from blog where id=?', [id], function(rs){
+//			if( req.query.type === 'json' ){
+//				res.send( JSON.stringify(rs[0]) );
+//			}
+//			else{
+//				res.send('blog/detail/'+ id);
+//			}
+//			res.end();
+//		}, function(){
+//			res.send('{error: "E0004", msg:"'+ ERROR_MSG.E0004 +'"}');
+//			res.end();
+//		});
+//	}
+//	else{
+//		res.send('{error: "E0001", msg:"'+ ERROR_MSG.E0001 +'}');
+//		res.end();
+//	}
+//});
+//
+///**
+//* Web 前端文档
+//*  /document/
+//* */
+//webApp.get('/document/', function(req, res){
+//	dbInterface.select('select title,content,section_title from document order by section_id', function(rs){
+//		var document = []
+//			, tempTitle = ''
+//			, tempArray
+//			, i, j;
+//
+//		if( req.query.type === 'json' ){
+//
+//			for(i = 0, j = rs.length; i < j; i++){
+//				if( rs[i].section_title !== tempTitle ){
+//					tempTitle = rs[i].section_title;
+//					tempArray = [];
+//					document.push({
+//						section_title: tempTitle
+//						, dl: tempArray
+//					});
+//				}
+//
+//				tempArray.push( rs[i] );
+//			}
+//
+//			res.send( JSON.stringify( document ) );
+//		}
+//		else{
+//			res.send('document');
+//		}
+//
+//		res.end();
+//	}, function(){
+//		res.end();
+//	});
+//});
+//
 //webApp.all('/user/:id/:op?', function(req, res, next){
 //	req.user = users[req.params.id];
 //	console.log('\n', req.user);
@@ -527,14 +527,26 @@ webServer = webApp.listen(9001);
 
 
 //----- socket 服务器 -----
-var CLIENT_INDEX = {}
-	, CLIENT_LIST = [];
+var CLIENT_LIST = {}
+	, CLIENT_INDEX_LIST = [];
+
+function guid(){
+	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c){
+		var r = Math.random()*16|0, v = c==='x'? r : (r&0x3|0x8);
+		return v.toString(16);
+	}).toUpperCase();
+}
 
 sio.listen( webServer );
 sio.on('connection', function(socket){
 
 	// todo 设置索引
-//	CLIENT_LIST.push( socket );
+	// todo 应该获取 session
+	var clientIndex = guid();
+	CLIENT_LIST[clientIndex] = socket;
+	CLIENT_INDEX_LIST.push( clientIndex );
+
+	console.log('socket: id', clientIndex, 'connect')
 
 	socket.on('getData', function(query){
 		var topic = query.topic
@@ -591,8 +603,7 @@ sio.on('connection', function(socket){
 		dbInterface.select(sql, dbCallback, dbErr);
 	});
 
-//	socket.emit('news', { hello: 'world' });
-//	socket.on('message', function (data) {
-//		console.log(data);
-//	});
+	socket.on('disconnect', function(){
+		console.log('socket: id', clientIndex, 'disconnect');
+	});
 });

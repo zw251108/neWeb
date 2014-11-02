@@ -1,0 +1,112 @@
+@charset "utf-8";
+
+@import "color.less";
+
+//----- Function 公用函数 -----
+
+//----- metro 模块背景图 sprite 函数 -----
+.metroBgImg(){
+    background-image:url("../image/default/metro.png");
+}
+.metroBgSprite(@num){
+    background-position:center @num *(-130px)+20px;
+}
+
+//.textIndent(@text-indent:2em){
+//    text-indent: @text-indent;
+//}
+
+//----- 内容块 -----
+//.container(@bdColor, @bgColor:#fff){
+//    border: solid @bdColor;
+//    border-width: 10px 0 0 10px;
+//    margin: 10px 0 0 10px;
+//    padding: 10px 0 0 10px;
+//    background-color: @bgColor;
+//}
+
+//----- CSS3 背景 线性渐变 linear-gradient -----
+//.bgLinearGradient(@lineGradient){
+//	background: linear-gradient(@lineGradient);
+//	background: -ms-linear-gradient(@lineGradient);
+//}
+
+//----- CSS3 盒模型 box-sizing -----
+.boxSizing(@boxSizing){
+	-webkit-box-sizing: @boxSizing;
+	-moz-box-sizing: @boxSizing;
+	box-sizing: @boxSizing;
+}
+
+//----- CSS3 盒子阴影 box-shadow -----
+.boxShadow(@boxShadow){
+    -webkit-box-shadow: @boxShadow;
+    -moz-box-shadow: @boxShadow;
+    -ms-box-shadow: @boxShadow;
+    -o-box-shadow: @boxShadow;
+    box-shadow: @boxShadow;
+}
+
+//----- CSS3 透明 opacity -----
+.transparent(@transparency:50){
+    -webkit-opacity: @transparency/100;
+    -moz-opacity: @transparency/100;
+//    -ms-filter: @transparency/100;
+//    -o-filter: @transparency/100;
+    opacity: @transparency/100;
+    filter: alpha(opacity=@transparency);
+}
+
+//----- CSS3 过度效果 transition -----
+.transition(@translate){
+    -webkit-transition: @translate;
+    -moz-transition: @translate;
+//    -ms-transition: @translate;
+//    -o-transition: @translate;
+    transition: @translate;
+}
+
+//----- CSS3 动画效果 animation -----
+.animation(@animation){
+	-webkit-animation: @animation;
+	-moz-animation: @animation;
+	-ms-animation: @animation;
+//	-o-animation: @animation;
+	animation: @animation;
+}
+
+//----- CSS3 变形效果：变形基础定位 -----
+.transformOrigin(@origin){
+    -webkit-transform-origin: @origin;
+    -moz-transform-origin: @origin;
+    -ms-transform-origin: @origin;
+//    -o-transform-origin: @origin;
+    transform-origin: @origin;
+}
+
+//----- CSS3 变形效果：X 轴扭曲
+.transformSkewX(@deg){
+	-webkit-transform: skewX(@deg);
+	-moz-transform: skewX(@deg);
+	-ms-transform: skewX(@deg);
+//	-o-transform: skewX(@deg);
+	transform: skewX(@deg);
+}
+
+//----- CSS3 变形效果：Y 轴扭曲
+.transformSkewY(@deg){
+	-webkit-transform: skewY(@deg);
+	-moz-transform: skewY(@deg);
+	-ms-transform: skewY(@deg);
+//	-o-transform: skewY(@deg);
+	transform: skewY(@deg);
+}
+
+//----- CSS3 旋转 -----
+.transformRotate(@deg){
+    -webkit-transform: rotate(@deg);
+    -moz-transform: rotate(@deg);
+    -ms-transform: rotate(@deg);
+//    -o-transform: rotate(@deg);
+    transform: rotate(@deg);
+}
