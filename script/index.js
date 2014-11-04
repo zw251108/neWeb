@@ -60,7 +60,7 @@ define('global', ['jquery'], function($){
 
 	var g =  window.GLOBAL || {};
 
-	g.$body = $('body').on('click', 'a', function(e){
+	g.$body = $(document.body).on('click', 'a', function(e){
 		e.preventDefault();
 
 		g.$body.addClass('main');
@@ -68,6 +68,8 @@ define('global', ['jquery'], function($){
 			g.$body.addClass('show');
 		}, 1000);
 	});
+
+	g.$overlay = $('#overlay');
 
 	window.GLOBAL = g;// 释放到全局
 
@@ -91,7 +93,7 @@ define('storage', [], function(){
  * */
 define('header', ['jquery'], function($){
 	var $header = $('#header')
-		, $pageTilte = $header.find('#pageTitle')
+		, $pageTitle = $header.find('#pageTitle')
 		;
 
 	return $header;
@@ -205,19 +207,25 @@ define('document', ['jquery', 'global', 'socket', 'shCore', 'template',
 		}, 1000);
 	});
 
-	$document.on({
-//		getDocData: function(){
-//			socket.emit('getData', {
-//				topic: 'document'
-//				, receive: 'getDocData'
-//			});
-//		}
+	$document.on('click', '.icon-close', function(e){
+
+		// todo 关闭显示
+		// todo 检查是否有需要保存的数据
+
+//		$document.toggleClass('module-main module-metro').wrap('<a href="document/"></a>');
+//		g.$body.removeClass('show');
+//		setTimeout(function(){
+//			g.$body.toggleClass('main');
+//		}, 1000);
+
+		e.preventDefault();
+		e.stopImmediatePropagation();
 	}).on('click', '.section_title', function(){
 
 		$temp.add(this)
 			.find('.icon-CSS').toggleClass('icon-plus icon-minus').end()
 			.next('dl').slideToggle();
-	}).on('click', 'dt', function(){
+}).on('click', 'dt', function(){
 
 			if( $curr ){
 				$curr.toggleClass('icon-arrow-r icon-arrow-d');
@@ -289,7 +297,7 @@ define('blog', ['jquery', 'global', 'socket', 'template'], function($, g, socket
 		setTimeout(function(){
 			$blog.data('getData', true).unwrap().append( '<ul class="toolbar">' +
 				'<li><a class="module_close icon icon-close"></a></li>' +
-				'<li><a class="module_close icon icon-write"></a></li>' +
+//				'<li><a class="module_close icon icon-write"></a></li>' +
 				'</ul>' +
 				'<div class="module_content blog-list" id="blogList">'+
 				articleTmpl(data).join('') +
@@ -303,7 +311,26 @@ define('blog', ['jquery', 'global', 'socket', 'template'], function($, g, socket
 			.insertAfter( $blog.find('#blogArt'+ data.id).find('a').data('deploy', true) ).slideDown();
 	});
 
-	$blog.on('click', 'article > a', function(e){// 获得详细内容
+	$blog.on('click', '.icon-close', function(e){
+
+		// todo 关闭显示
+		// todo 检查是否有需要保存的数据
+
+		e.preventDefault();
+		e.stopImmediatePropagation();
+	})
+//		.on('click', '.icon-write', function(e){
+//		// todo 弹窗 编辑模块
+//
+//		$('<div class="module module-popup module-blog normal"><form>' +
+//			'<textarea name="content" rows="30" cols="5"></textarea>' +
+//			'<input type="hidden" name="status" value="1"/> ' +
+//			'<input type="button" value="保存"/><input type="submit" value="发布"/></form></div>').appendTo( g.$body );
+//
+//		e.preventDefault();
+//		e.stopImmediatePropagation();
+//	})
+		.on('click', 'article > a', function(e){// 获得详细内容
 		var $self = $(this)
 			, isDeploy = $self.data('deploy')
 			;
@@ -323,6 +350,10 @@ define('blog', ['jquery', 'global', 'socket', 'template'], function($, g, socket
 		e.stopImmediatePropagation();
 	});
 });
+//define('blog/write', ['jquery', 'global', 'socket'], function($, g, socket){
+//	var $blogEdit = $('<div class="module module-popup module-blog normal" ')
+//});
+
 // 加载 Blog 模块
 require(['jquery', 'global', 'socket', 'template'], function($, g, socket){
 	var $blog = $('#blog')
@@ -330,15 +361,12 @@ require(['jquery', 'global', 'socket', 'template'], function($, g, socket){
 
 	g.$blog = $blog;
 
-
 	$blog.on('click', function(){
 
 		// 已处于展开状态
 		if( !$blog.hasClass('module-metro') ) return;
 
-		/**
-		 * todo 加入 本地存储
-		 * */
+		// todo 加入 本地存储
 
 		if( $blog.data('getData') ){  // 已获取基础数据
 			// todo 展开
@@ -353,3 +381,47 @@ require(['jquery', 'global', 'socket', 'template'], function($, g, socket){
 		}
 	});
 });
+
+/**
+ * Talk 模块
+ * */
+define('talk', ['jquery', 'global', 'socket'], function($, g, socket){
+	var $talk = g.$talk || $('#talk')
+		;
+
+	socket.on('getTalkData', function(data){
+
+	});
+
+
+});
+// 加载 Talk 模块
+require(['jquery', 'global', 'socket'], function($, g, socket){
+	var $talk = $('#talk')
+
+		;
+
+	g.$talk = $talk;
+
+	$talk.on('click', function(e){
+
+		// 已处于展开状态
+		if( !$talk.hasClass('module-metro') ) return;
+
+		// todo 加入 本地存储
+
+		if( $talk.data('getData') ){  // 已获取基础数据
+			// todo 展开
+		}
+		else{   // 未获取基础数据
+			require(['talk'], function(){
+//				socket.emit('getData', {
+//					topic: 'talk'
+//					, receive: 'getBlogData'
+//				});
+			});
+		}
+	});
+});
+
+require(['time']);
