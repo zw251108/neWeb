@@ -94,7 +94,7 @@ module.exports = function(grunt){
 					// SyntaxHighlighter
 					, 'script/plugin/syntaxhighlighter/XRegExp.js': ['bower_components/SyntaxHighlighter/scripts/XRegExp.js']
 					, 'script/plugin/syntaxhighlighter/shCore.js': ['bower_components/SyntaxHighlighter/scripts/shCore.js']
-					, 'script/plugin/syntaxhighlighter/shAutoloader.js': ['bower_components/SyntaxHighlighter/scripts/shAutoloader.js']
+//					, 'script/plugin/syntaxhighlighter/shAutoloader.js': ['bower_components/SyntaxHighlighter/scripts/shAutoloader.js']
 					, 'script/plugin/syntaxhighlighter/shBrushJScript.js': ['bower_components/SyntaxHighlighter/scripts/shBrushJScript.js']
 					, 'script/plugin/syntaxhighlighter/shBrushCss.js': ['bower_components/SyntaxHighlighter/scripts/shBrushCss.js']
 					, 'script/plugin/syntaxhighlighter/shBrushXml.js': ['bower_components/SyntaxHighlighter/scripts/shBrushXml.js']

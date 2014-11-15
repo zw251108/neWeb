@@ -1,5 +1,31 @@
 CACHE MANIFEST
 
-/script/
-/style/
-/image/
+VERSION: 0.1
+
+CACHE:
+script/lib/jquery/jquery.min.js
+script/lib/require/require.min.js
+script/ui/jquery.template.js
+
+script/plugin/syntaxhighlighter/style/shCoreDefault.css
+script/plugin/syntaxhighlighter/XRegExp.js
+script/plugin/syntaxhighlighter/shCore.js
+script/plugin/syntaxhighlighter/shBrushCss.js
+script/plugin/syntaxhighlighter/shBrushJScript.js
+script/plugin/syntaxhighlighter/shBrushXml.js
+
+socket.io/socket.io.js
+
+style/style.css
+
+image/logo.png
+image/default/icon/menu.png
+image/default/icon/user.png
+image/default/icon/close.png
+
+NETWORK:
+socket.io/
+
+script/index.js
+
+style/test.css
