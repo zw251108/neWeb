@@ -11,8 +11,17 @@ require.config({
 		template: ['jquery']
 	}
 	, paths: {
-		jquery: 'lib/jquery/jquery.min'
+		'socket.io': '../socket.io/socket.io'
+		, jquery: 'lib/jquery/jquery.min'
 		, template: 'ui/jquery.template'
+
+		// 全局模块设置
+
+		// 应用模块设置
+		, blog: 'module/blog'
+		, document: 'module/document'
+		, talk: 'module/talk'
+		, time: 'module/time'
 	}
 });
 
@@ -43,29 +52,158 @@ define('global', ['jquery'], function($){
 	}
 
 	var g =  window.GLOBAL || {}
-		, $body
+		, animationEnd = 'webkitAnimationEnd mozAnimationEnd msAnimationEnd animationEnd'
 		;
 
-	$body = $(document.body).on({
-		fadeModule: function(e, out){
-			$body[out?'addClass':'removeClass']('fadeOutModule');
-		}
-		, toggleMetro: function(e, hidden){
-			$body[hidden?'addClass':'removeClass']('hiddenMetro');
-		}
-		, fadeMain: function(e, out){
-			$body[out?'removeClass':'addClass']('fadeInMain');
-		}
-	}).on('click', '.Container > a', function(e){
-		e.preventDefault();
-
-		$body.triggerHandler('fadeModule', [true]);
-	});
-
-	g.$body = $body;
+	g.$body = $(document.body);
 	g.$overlay = $('#overlay');
 
+	g._MODULE = [];
+	g._$MODULE = {};
+	g.mod = function(moduleName, moduleValue){
+		var type = typeof moduleName
+			, rs = false
+			;
+
+		if( moduleValue && typeof type === 'string' ){
+
+			g._MODULE.push(moduleName);
+			g._$MODULE[moduleName] = moduleValue;
+
+			rs = true;
+		}
+		else if( type === 'string' ){
+			rs = moduleName in g._$MODULE ? g._$MODULE[moduleName] : null;
+		}
+		else if( type === 'number' ){
+			rs = (moduleName >= 0 && moduleName < g._MODULE.length) ? g._$MODULE[g._MODULE[moduleName]] : null;
+		}
+
+		return rs;
+	};
+	g.numMod = function(){
+		return g._MODULE.length;
+	};
+
+	g.eventType = {
+		animationEnd: animationEnd
+	};
+
 	window.GLOBAL = g;// 释放到全局
+
+	var $container = $('#container')
+		, target
+		, showMain
+		;
+	$container.on({
+//		fadeIn: function(){
+//			$container.addClass('fadeIn');
+//		}
+//		, fadeOut: function(){
+//			$container.addClass('fadeOut');
+//		}
+//		,
+		'webkitAnimationEnd mozAnimationEnd msAnimationEnd animationEnd': function(){
+			var $t = g.mod('$' + target);
+
+			$container.addClass('animate-done');
+
+			if( $container.hasClass('fadeOut') ){   // 淡出
+
+				if( $container.hasClass('main-show') ){ // 显示 main 模块
+
+					// 隐藏 metro 模块
+					$container.addClass('hideMetro');
+
+					// 切换 main 模块状态
+					$t.removeClass('module-metro ' + $t.data('width')).addClass('module-main large');
+
+					// todo
+					if( $container.hasClass('main-data') ){
+						$container.triggerHandler('showMain')
+					}
+				}
+				else{   // 显示全部 metro 模块
+					$t.removeClass('module-main large').addClass('module-metro ' + $t.data('width'));
+
+					$container.triggerHandler('showMetro');
+				}
+			}
+			else if( $container.hasClass('fadeIn') ){   // 淡入
+				$container.removeClass('fadeIn animate-done');
+			}
+		}
+		, dataReady: function(){
+			if( $container.hasClass('animate-done') ){
+				$container.triggerHandler('showMain');
+			}
+			else{
+				$container.addClass('main-data');
+			}
+		}
+		, showMain: function(){
+			$container.removeClass('animate-done main-data fadeOut').addClass('fadeIn');
+		}
+		, showMetro: function(){
+			$container.removeClass('animate-done fadeOut hideMetro').addClass('fadeIn');
+		}
+	}).on('click', 'a .module-metro', function(e){
+		e.preventDefault();
+		e.stopImmediatePropagation();
+
+		target = this.id;
+		g.mod('$' + target).unwrap();
+
+		$container.addClass('main-show fadeOut');
+	}).on('click', '.module-main .module_close', function(e){
+		e.preventDefault();
+		e.stopImmediatePropagation();
+
+		var $t = $(this).parents('.module');
+		target = $t.attr('id');
+		$t.wrap('<a href="'+ target + '/"></a>');
+
+		$container.removeClass('main-show').addClass('fadeOut');
+	});
+
+	g.$container = $container;
+//	$body.on({
+//		hideMetro: function(){
+//			var l = g.numMod();
+//
+//			while( l-- ){
+//				g.mod(l).addClass('module-fadeOut');
+//			}
+//		}
+//		, showMetro: function(){
+//			var l = g.numMod();
+//
+//			while( l-- ){
+//				g.mod(l).removeClass('hidden').addClass('module-fadeIn');
+//			}
+//		}
+//		, hideMain: function(e, $target){
+//			$target.addClass('module-fadeOut module-hide');
+//		}
+//		, showMain: function(e, $target){
+//			$target.removeClass('module-metro hidden ' + $target.data('width')).addClass('module-main large module-fadeIn');
+//		}
+//	}).on(animationEnd, '.module-fadeIn', function(){
+//		g.mod('$' + this.id).removeClass('module-fadeIn');
+//	}).on(animationEnd, '.module-fadeOut', function(){
+//		g.mod('$' + this.id).addClass('hidden').removeClass('module-fadeOut');
+//	}).on(animationEnd, '.module-main', function(){
+//		g.mod('$' + this.id).removeClass('module-fadeOut module-fadeIn');
+//	}).on(animationEnd, '.module-show', function(){
+//		$body.triggerHandler('showMain', [g.mod('$'+ this.id).removeClass('module-show')]);
+//	}).on(animationEnd, '.module-hide', function(){
+//		var t = g.mod('$' + this.id);
+//		t.removeClass('module-main large module-hide').addClass('module-metro ' + t.data('width'));
+//		$body.triggerHandler('showMetro');
+//	}).on('click', '.module-metro', function(e){
+//		e.preventDefault();
+//		$body.triggerHandler('hideMetro');
+//	});
 
 	return g;
 });
@@ -73,7 +211,7 @@ define('global', ['jquery'], function($){
  * web socket 模块
  *  目前基于 socket.io
  * */
-define('socket', ['../socket.io/socket.io'], function(io){
+define('socket', ['socket.io'], function(io){
 	var socket = io('http://localhost:9001');
 
 	socket.on('error', function(err){
@@ -93,6 +231,12 @@ define('socket', ['../socket.io/socket.io'], function(io){
 	return socket;
 });
 /**
+ * 地理定位
+ * */
+define('location', function(){
+
+});
+/**
  * 本地存储 模块
  * */
 define('storage', [], function(){
@@ -101,7 +245,7 @@ define('storage', [], function(){
 /**
  * 页头 Header
  * */
-define('header', ['jquery'], function($){
+define('header', ['jquery', 'global'], function($, g){
 	var $header = $('#header')
 		, $pageTitle = $header.find('#pageTitle')
 		;
@@ -109,166 +253,18 @@ define('header', ['jquery'], function($){
 	return $header;
 });
 
-define('time', ['jquery', 'global'], function($, g){
-	var $time = $('#time')
-		, $watch = $('#watch')
-		, $hourHand
-		, $minuteHand
-		, $secondHand
-		, setTime
-		;
-
-	$time.on({
-		init: function(){}
-
-		, watchStop: function(){}
-	});
-
-	if( !g.ie ){
-		var prefix = '',
-			temp = document.createElement('div').style;
-
-		if( '-webkit-transform' in temp ){
-			prefix = '-webkit-';
-		}
-		else if( '-moz-transform' in temp ){
-			prefix = '-moz-';
-		}
-		else if( '-ms-transform' in temp ){
-			prefix = '-ms-';
-		}
-		else if( '-o-transform' in temp ){
-			prefix = '-o-';
-		}
-
-		$hourHand = $watch.find('#hourHand');
-		$minuteHand = $watch.find('#minuteHand');
-		$secondHand = $watch.find('#secondHand');
-		setTime = function(){
-			var time = new Date(),
-				d = time.getHours(),
-				m = time.getMinutes();
-			$hourHand.get(0).style[prefix +'transform'] = 'rotate('+ ((d >11 ? d -12 : d)*30 + Math.floor( m /12 )*6) +'deg)';
-			$minuteHand.get(0).style[prefix +'transform'] = 'rotate('+ m *6 +'deg)';
-			$secondHand.get(0).style[prefix +'transform'] = 'rotate('+ time.getSeconds()*6 +'deg)';
-		};
-	}
-	else{
-		$watch.empty().addClass('watch_wrap-info');
-		setTime = function(){
-			var time = new Date();
-
-			$watch.html( time.toLocaleTimeString() );
-		};
-	}
-
-	$watch.removeClass('hidden');
-	setTime();
-	setInterval(setTime, 1000);
-
-	return $time;
-});
-
+/***** 应用模块 *****/
 /**
  * Document 文档模块
  * */
-// 兼容 CommonJS 加载模式
-define('shCore', ['plugin/syntaxhighlighter', 'plugin/syntaxhighlighter/shCore'], function(){
-	return {
-		SyntaxHighlighter: SyntaxHighlighter
-	}
-});
-define('document', ['jquery', 'global', 'socket', 'shCore', 'template',
-	'plugin/syntaxhighlighter/shBrushCss',
-	'plugin/syntaxhighlighter/shBrushJScript',
-	'plugin/syntaxhighlighter/shBrushXml'], function($, g, socket, highlight){
-	var $document = g.$document || $('#document')
-		, $curr = null
-		, $temp = $([])
-		, dlTmpl = $.template({
-		template: 'dt.icon.icon-arrow-r{%title%}+dd{%content%}'
-	})
-		, sectionTmpl = $.template({
-			template: 'section.document_section.section>h3.section_title{%section_title%}>span.icon-CSS.icon-minus^dl{%dl%}'
-			, filter: {
-				dl: function(d){
-					return dlTmpl(d.dl).join('');
-				}
-			}
-		})
-		;
-
-	highlight = highlight.SyntaxHighlighter;
-
-	// 绑定 socket 回调 事件
-	socket.on('getDocData', function(data){
-
-		setTimeout(function(){
-			g.$body.triggerHandler('toggleMetro', [true]);
-			$document.data('getData', true).append( '<ul class="toolbar">' +
-				'<li><a class="module_close icon icon-close"></a></li>' +
-				'</ul>' +
-				'<div class="module_content">' +
-				sectionTmpl(data).join('') +
-				'</div>' );
-
-			highlight.highlight();
-			$document.triggerHandler('deploy');
-
-			g.$body.triggerHandler('fadeMain');
-		}, 1000);
-	});
-
-	$document.on({
-		deploy: function(){
-			$document.unwrap().removeClass('module-metro small').addClass('large module-main').height();
-		}
-	}).on('click', '.icon-close', function(e){
-		g.$body.triggerHandler('fadeMain', [true]);
-		setTimeout(function(){
-			g.$body.triggerHandler('toggleMetro');
-			$document.toggleClass('module-main module-metro large small').wrap('<a href="document/"></a>').height();
-			g.$body.triggerHandler('fadeModule');
-		}, 1000);
-
-		e.preventDefault();
-		e.stopImmediatePropagation();
-	}).on('click', '.section_title', function(){
-		$temp.add(this)
-			.find('.icon-CSS').toggleClass('icon-plus icon-minus').end()
-			.next('dl').slideToggle();
-	}).on('click', 'dt', function(){
-		if( $curr ){
-			$curr.toggleClass('icon-arrow-r icon-arrow-d');
-
-			if( $curr.is(this) ){
-				$curr.next().slideToggle();
-				$curr = null;
-				return;
-			}
-		}
-
-		$curr && $curr.next().hide();
-		$curr = $temp.add(this);
-
-		g.$body.animate({
-			scrollTop: this.offsetTop -80
-		}, function(){
-			$curr.toggleClass('icon-arrow-r icon-arrow-d').next().slideToggle();
-		});
-	});
-
-	return $document;
-});
-// 加载 Document 模块
 require(['jquery', 'global', 'socket'], function($, g, socket){
 	var $document = $('#document')
+		, $container = g.$container
 		;
 
-	g.$document = $document;
+	g.mod('$document', $document);
 
-	$document.on('click', function(e){
-
+	$document.data('width', 'small').on('click', function(){
 		// 已处于展开状态
 		if( !$document.hasClass('module-metro') ) return;
 
@@ -278,7 +274,7 @@ require(['jquery', 'global', 'socket'], function($, g, socket){
 
 		if( $document.data('getData') ){  // 已获取基础数据
 			// 展开
-			$document.triggerHandler('deploy');
+			$container.triggerHandler('dataReady');
 		}
 		else{   // 未获取基础数据
 			require(['document'], function(){
@@ -294,80 +290,14 @@ require(['jquery', 'global', 'socket'], function($, g, socket){
 /**
  * Blog 模块
  * */
-define('blog', ['jquery', 'global', 'socket', 'template'], function($, g, socket){
-	var $blog = g.$blog || $('#blog')
-		, articleTmpl = $.template({
-			template:'article#blogArt%Id%.article>a[href=blog/detail/?id=%Id%]>h3.article_title{%title%}' +
-				'^hr+span.article_date{%datetime%}+div.tagsArea{%tags%}'
-		})
-		;
-
-
-	socket.on('getBlogData', function(data){
-
-		setTimeout(function(){
-			g.$body.triggerHandler('toggleMetro', [true]);
-			$blog.data('getData', true).append( '<ul class="toolbar">' +
-				'<li><a class="module_close icon icon-close"></a></li>' +
-				'</ul>' +
-				'<div class="module_content blog-list" id="blogList">'+
-				articleTmpl(data).join('') +
-				'</div>');
-
-			$blog.triggerHandler('deploy');
-
-			g.$body.triggerHandler('fadeMain')
-		}, 1000);
-	}).on('getArticleData', function(data){
-
-		$('<div class="article_content">'+ data.content +'</div>').hide()
-			.insertAfter( $blog.find('#blogArt'+ data.id).find('a').data('deploy', true) ).slideDown();
-	});
-
-	$blog.on({
-		deploy: function(){
-			$blog.unwrap().removeClass('module-metro big').addClass('large module-main').height();
-		}
-	}).on('click', '.icon-close', function(e){
-		// todo 检查是否有需要保存的数据
-
-		g.$body.triggerHandler('fadeMain', [true]);
-		setTimeout(function(){
-			g.$body.triggerHandler('toggleMetro');
-			$blog.toggleClass('module-main module-metro large big').wrap('<a href="blog/"></a>').height();
-			g.$body.triggerHandler('fadeModule');
-		}, 1000);
-
-		e.preventDefault();
-		e.stopImmediatePropagation();
-	}).on('click', 'article > a', function(e){// 获得详细内容
-		var $self = $(this)
-			, isDeploy = $self.data('deploy')
-			;
-
-		if( isDeploy ){// 已获取数据
-			$self.next().slideToggle();
-		}
-		else{
-			socket.emit('getData', {
-				topic: 'blog/detail'
-				, receive: 'getArticleData'
-				, id: /=(\d*)$/.exec($self.attr('href'))[1]
-			});
-		}
-
-		e.preventDefault();
-		e.stopImmediatePropagation();
-	});
-});
-// 加载 Blog 模块
 require(['jquery', 'global', 'socket', 'template'], function($, g, socket){
 	var $blog = $('#blog')
+		, $container = g.$container
 		;
 
-	g.$blog = $blog;
+	g.mod('$blog', $blog);
 
-	$blog.on('click', function(){
+	$blog.data('width', 'big').on('click', function(){
 
 		// 已处于展开状态
 		if( !$blog.hasClass('module-metro') ) return;
@@ -376,7 +306,7 @@ require(['jquery', 'global', 'socket', 'template'], function($, g, socket){
 
 		if( $blog.data('getData') ){  // 已获取基础数据
 			// 展开
-			$blog.triggerHandler('deploy');
+			$container.triggerHandler('dataReady');
 		}
 		else{   // 未获取基础数据
 			require(['blog'], function(){
@@ -392,94 +322,14 @@ require(['jquery', 'global', 'socket', 'template'], function($, g, socket){
 /**
  * Talk 模块
  * */
-define('talk', ['jquery', 'global', 'socket', 'template'], function($, g, socket){
-	var $talk = g.$talk || $('#talk')
-		, timeNodeTmpl = $.template({
-			template: 'li.timeNode>a.icon.icon-user+div.message{%content%}>span.datetime{%datetime%}'
-			, filter: {
-				content: function(data){
-					if( data.type === 'blog' ){
-						return '发布了文章 <a class="link" href="blog/detail/?id=' + data.Id +
-						 '">' + data.content +'</a>';
-					}
-					return data.content;
-				}
-			}
-        })
-		;
-
-	socket.on('getTalkData', function(data){console.log(data);
-		setTimeout(function(){
-			g.$body.triggerHandler('toggleMetro', [true]);
-
-			$('<ul class="toolbar">' +
-	            '<li><a class="module_close icon icon-close"></a></li>' +
-	            '</ul>' +
-	            '<div class="module_content"><form action="" method="post">' +
-				'<textarea name="content" rows="5" cols="30"></textarea>' +
-				'<input type="hidden" name="status" value="1"/> ' +
-				'<input type="button" value="保存"/><input type="submit" value="发布"/></form>' +
-				'<ul class="timeLine" id="timeLine">' +
-				timeNodeTmpl(data).join('') +
-				'</ul>' +
-				'</div>')
-				.appendTo( $talk );
-
-            $talk.triggerHandler('deploy');
-
-            g.$body.triggerHandler('fadeMain');
-		}, 1000);
-	});
-
-	$talk.on({
-		deploy: function(){
-			$talk.unwrap().removeClass('module-metro small').addClass('large module-main').height();
-		}
-	}).on('submit', 'form', function(e){
-        var postData = $talk.find('form').serializeArray()
-            , i = postData.length
-            , data = {}
-            ;
-
-        while( i-- ){
-            if( postData[i].name in data ){
-                data[postData[i].name] += ',' + postData[i].value;
-            }
-            else{
-                data[postData[i].name] = postData[i].value;
-            }
-        }
-
-        // todo 提交表单
-        socket.emit('message', data);
-
-		e.preventDefault();
-		e.stopImmediatePropagation();
-	}).on('click', '.icon-close', function(e){
-		// todo 检查是否有需要保存的数据
-
-		g.$body.triggerHandler('fadeMain', [true]);
-		setTimeout(function(){
-			g.$body.triggerHandler('toggleMetro');
-			$talk.toggleClass('module-main module-metro large small').wrap('<a href="talk/"></a>').height();
-			g.$body.triggerHandler('fadeModule');
-		}, 1000);
-
-		e.preventDefault();
-		e.stopImmediatePropagation();
-	});
-
-	return $talk;
-});
-// 加载 Talk 模块
 require(['jquery', 'global', 'socket'], function($, g, socket){
 	var $talk = $('#talk')
-
+		, $container = g.$container
 		;
 
-	g.$talk = $talk;
+	g.mod('$talk', $talk);
 
-	$talk.on('click', function(e){
+	$talk.data('width', 'small').on('click', function(){
 
 		// 已处于展开状态
 		if( !$talk.hasClass('module-metro') ) return;
@@ -488,7 +338,7 @@ require(['jquery', 'global', 'socket'], function($, g, socket){
 
 		if( $talk.data('getData') ){  // 已获取基础数据
 			// 展开
-            $talk.triggerHandler('deploy');
+			$container.triggerHandler('dataReady');
 		}
 		else{   // 未获取基础数据
 			require(['talk'], function(){
@@ -501,48 +351,50 @@ require(['jquery', 'global', 'socket'], function($, g, socket){
 	});
 });
 
-require(['jquery', 'global', 'socket', 'time'], function($, g, socket){
-	var $login = $('#login')
-		, $loginForm = $login.find('#loginForm')
-		;
+require(['jquery', 'global', 'socket', 'time'], function($, g, socket, $time){
+	g.mod('$time', $time);
 
-	$login.on('submit', '#loginForm', function(e){
-        var loginData = $loginForm.serializeArray()
-            , i = loginData.length
-            , data = {}
-            , temp
-            ;
-
-        while( i-- ){
-            temp = loginData[i];
-//            if( temp.name in data ){
-//                data[temp.name] += ',' + temp.value;
+//	var $login = $('#login')
+//		, $loginForm = $login.find('#loginForm')
+//		;
+//
+//	$login.on('submit', '#loginForm', function(e){
+//        var loginData = $loginForm.serializeArray()
+//            , i = loginData.length
+//            , data = {}
+//            , temp
+//            ;
+//
+//        while( i-- ){
+//            temp = loginData[i];
+////            if( temp.name in data ){
+////                data[temp.name] += ',' + temp.value;
+////            }
+////            else
+//            data[temp.name] = temp.value;
+//        }
+//
+//        data.receive = 'login';
+//
+//        socket.on('login', function(data){
+//            /**
+//             * todo
+//             *  登录成功
+//             *  保存返回的用户数据
+//             * */
+//            if( 'error' in data ){
+//                console.log('error');
 //            }
-//            else
-            data[temp.name] = temp.value;
-        }
-
-        data.receive = 'login';
-
-        socket.on('login', function(data){
-            /**
-             * todo
-             *  登录成功
-             *  保存返回的用户数据
-             * */
-            if( 'error' in data ){
-                console.log('error');
-            }
-            else{
-                console.log('success');
-                g.user = data;
-            }
-
-        });
-
-        socket.emit('login', data);
-
-		e.preventDefault();
-		e.stopImmediatePropagation();
-	});
+//            else{
+//                console.log('success');
+//                g.user = data;
+//            }
+//
+//        });
+//
+//        socket.emit('login', data);
+//
+//		e.preventDefault();
+//		e.stopImmediatePropagation();
+//	});
 });

@@ -27,5 +27,6 @@ NETWORK:
 socket.io/
 
 script/index.js
+script/module/
 
 style/test.css
