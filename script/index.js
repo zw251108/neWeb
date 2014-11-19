@@ -11,8 +11,10 @@ require.config({
 		template: ['jquery']
 	}
 	, paths: {
-		jquery: 'lib/jquery/jquery.min'
+		'socket.io': '../socket.io/socket.io'
+		, jquery: 'lib/jquery/jquery.min'
 		, template: 'ui/jquery.template'
+
 	}
 });
 
@@ -43,29 +45,85 @@ define('global', ['jquery'], function($){
 	}
 
 	var g =  window.GLOBAL || {}
-		, $body
+		, $body = $(document.body)
+		, animationEnd = 'webkitAnimationEnd mozAnimationEnd msAnimationEnd animationEnd'
 		;
-
-	$body = $(document.body).on({
-		fadeModule: function(e, out){
-			$body[out?'addClass':'removeClass']('fadeOutModule');
-		}
-		, toggleMetro: function(e, hidden){
-			$body[hidden?'addClass':'removeClass']('hiddenMetro');
-		}
-		, fadeMain: function(e, out){
-			$body[out?'removeClass':'addClass']('fadeInMain');
-		}
-	}).on('click', '.Container > a', function(e){
-		e.preventDefault();
-
-		$body.triggerHandler('fadeModule', [true]);
-	});
 
 	g.$body = $body;
 	g.$overlay = $('#overlay');
 
+	g._MODULE = [];
+	g._$MODULE = {};
+	g.mod = function(moduleName, moduleValue){
+		var type = typeof moduleName
+			, rs = false
+			;
+
+		if( moduleValue && typeof type === 'string' ){
+
+			g._MODULE.push(moduleName);
+			g._$MODULE[moduleName] = moduleValue;
+
+			rs = true;
+		}
+		else if( type === 'string' ){
+			rs = moduleName in g._$MODULE ? g._$MODULE[moduleName] : null;
+		}
+		else if( type === 'number' ){
+			rs = (moduleName >= 0 && moduleName < g._MODULE.length) ? g._$MODULE[g._MODULE[moduleName]] : null;
+		}
+
+		return rs;
+	};
+	g.numMod = function(){
+		return g._MODULE.length;
+	};
+
+	g.eventType = {
+		animationEnd: animationEnd
+	};
+
 	window.GLOBAL = g;// 释放到全局
+
+	$body.on({
+		hideMetro: function(){
+			var l = g.numMod();
+
+			while( l-- ){
+				g.mod(l).addClass('module-fadeOut');
+			}
+		}
+		, showMetro: function(){
+			var l = g.numMod();
+
+			while( l-- ){
+				g.mod(l).removeClass('hidden').addClass('module-fadeIn');
+			}
+		}
+		, hideMain: function(e, $target){
+			$target.addClass('module-fadeOut');
+			g.$body.triggerHandler('showMetro');
+		}
+		, showMain: function(e, $target){
+			$target.removeClass('hidden module-metro ' + $target.data('width')).addClass('module-main large module-fadeIn');
+		}
+	}).on(animationEnd, '.module-fadeIn', function(){
+		g.mod('$' + this.id).removeClass('module-fadeIn');
+	}).on(animationEnd, '.module-fadeOut', function(){
+		g.mod('$' + this.id).addClass('hidden').removeClass('module-fadeOut');
+	}).on(animationEnd, '.module-show', function(){
+		g.$body.triggerHandler('showMain', [g.mod( '$'+ this.id).removeClass('module-show')]);
+	}).on(animationEnd, '.module-main', function(){
+		g.mod('$' + this.id).removeClass('module-fadeOut module-fadeIn');
+	}).on('click', '.Container > a', function(e){
+		e.preventDefault();
+		$body.triggerHandler('hideMetro');
+//	}).on('click', '.module-main .module_close', function(e){
+//		e.stopImmediatePropagation();
+//
+//
+//		g.$body.triggerHandler('hideMain', [$blog]);
+	});
 
 	return g;
 });
@@ -73,7 +131,7 @@ define('global', ['jquery'], function($){
  * web socket 模块
  *  目前基于 socket.io
  * */
-define('socket', ['../socket.io/socket.io'], function(io){
+define('socket', ['socket.io'], function(io){
 	var socket = io('http://localhost:9001');
 
 	socket.on('error', function(err){
@@ -182,12 +240,12 @@ define('document', ['jquery', 'global', 'socket', 'shCore', 'template',
 	'plugin/syntaxhighlighter/shBrushCss',
 	'plugin/syntaxhighlighter/shBrushJScript',
 	'plugin/syntaxhighlighter/shBrushXml'], function($, g, socket, highlight){
-	var $document = g.$document || $('#document')
+	var $document = g.mod('$document') || $('#document')
 		, $curr = null
 		, $temp = $([])
 		, dlTmpl = $.template({
-		template: 'dt.icon.icon-arrow-r{%title%}+dd{%content%}'
-	})
+			template: 'dt.icon.icon-arrow-r{%title%}+dd{%content%}'
+		})
 		, sectionTmpl = $.template({
 			template: 'section.document_section.section>h3.section_title{%section_title%}>span.icon-CSS.icon-minus^dl{%dl%}'
 			, filter: {
@@ -202,21 +260,17 @@ define('document', ['jquery', 'global', 'socket', 'shCore', 'template',
 
 	// 绑定 socket 回调 事件
 	socket.on('getDocData', function(data){
+		$document.data('getData', true).find('.module_content').append( sectionTmpl(data).join('') );
 
-		setTimeout(function(){
-			g.$body.triggerHandler('toggleMetro', [true]);
-			$document.data('getData', true).append( '<ul class="toolbar">' +
-				'<li><a class="module_close icon icon-close"></a></li>' +
-				'</ul>' +
-				'<div class="module_content">' +
-				sectionTmpl(data).join('') +
-				'</div>' );
+		highlight.highlight();
 
-			highlight.highlight();
-			$document.triggerHandler('deploy');
-
-			g.$body.triggerHandler('fadeMain');
-		}, 1000);
+		// todo 判断是否已隐藏
+		if( $document.hasClass('module-fadeOut') ){
+			$document.addClass('module-show');
+		}
+		else{
+			g.$body.triggerHandler('showMain', [$document, 'small']);
+		}
 	});
 
 	$document.on({
@@ -224,12 +278,7 @@ define('document', ['jquery', 'global', 'socket', 'shCore', 'template',
 			$document.unwrap().removeClass('module-metro small').addClass('large module-main').height();
 		}
 	}).on('click', '.icon-close', function(e){
-		g.$body.triggerHandler('fadeMain', [true]);
-		setTimeout(function(){
-			g.$body.triggerHandler('toggleMetro');
-			$document.toggleClass('module-main module-metro large small').wrap('<a href="document/"></a>').height();
-			g.$body.triggerHandler('fadeModule');
-		}, 1000);
+		g.$body.triggerHandler('hideMain', [$document]);
 
 		e.preventDefault();
 		e.stopImmediatePropagation();
@@ -265,10 +314,10 @@ require(['jquery', 'global', 'socket'], function($, g, socket){
 	var $document = $('#document')
 		;
 
-	g.$document = $document;
+	g.mod('$document', $document);
 
-	$document.on('click', function(e){
-
+	$document.data('width', 'small').on('click', function(){
+		                                                            console.log(345)
 		// 已处于展开状态
 		if( !$document.hasClass('module-metro') ) return;
 
@@ -278,10 +327,10 @@ require(['jquery', 'global', 'socket'], function($, g, socket){
 
 		if( $document.data('getData') ){  // 已获取基础数据
 			// 展开
-			$document.triggerHandler('deploy');
+			g.$body.triggerHandler('showMain', [$document]);
 		}
 		else{   // 未获取基础数据
-			require(['document'], function(){
+			require(['document'], function(){                                      console.log(456)
 				socket.emit('getData', {
 					topic: 'document'
 					, receive: 'getDocData'
@@ -295,29 +344,24 @@ require(['jquery', 'global', 'socket'], function($, g, socket){
  * Blog 模块
  * */
 define('blog', ['jquery', 'global', 'socket', 'template'], function($, g, socket){
-	var $blog = g.$blog || $('#blog')
+	var $blog = g.mod('$blog') || $('#blog')
 		, articleTmpl = $.template({
 			template:'article#blogArt%Id%.article>a[href=blog/detail/?id=%Id%]>h3.article_title{%title%}' +
 				'^hr+span.article_date{%datetime%}+div.tagsArea{%tags%}'
 		})
 		;
 
-
 	socket.on('getBlogData', function(data){
 
-		setTimeout(function(){
-			g.$body.triggerHandler('toggleMetro', [true]);
-			$blog.data('getData', true).append( '<ul class="toolbar">' +
-				'<li><a class="module_close icon icon-close"></a></li>' +
-				'</ul>' +
-				'<div class="module_content blog-list" id="blogList">'+
-				articleTmpl(data).join('') +
-				'</div>');
+		$blog.data('getData', true).find('.module_content').append( articleTmpl(data).join('') );
 
-			$blog.triggerHandler('deploy');
-
-			g.$body.triggerHandler('fadeMain')
-		}, 1000);
+		// 判断是否已隐藏
+		if( $blog.hasClass('module-fadeOut') ){
+			$blog.addClass('module-show');
+		}
+		else{
+			g.$body.triggerHandler('showMain', [$blog, 'big']);
+		}
 	}).on('getArticleData', function(data){
 
 		$('<div class="article_content">'+ data.content +'</div>').hide()
@@ -330,13 +374,7 @@ define('blog', ['jquery', 'global', 'socket', 'template'], function($, g, socket
 		}
 	}).on('click', '.icon-close', function(e){
 		// todo 检查是否有需要保存的数据
-
-		g.$body.triggerHandler('fadeMain', [true]);
-		setTimeout(function(){
-			g.$body.triggerHandler('toggleMetro');
-			$blog.toggleClass('module-main module-metro large big').wrap('<a href="blog/"></a>').height();
-			g.$body.triggerHandler('fadeModule');
-		}, 1000);
+		g.$body.triggerHandler('hideMain', [$blog]);
 
 		e.preventDefault();
 		e.stopImmediatePropagation();
@@ -365,9 +403,9 @@ require(['jquery', 'global', 'socket', 'template'], function($, g, socket){
 	var $blog = $('#blog')
 		;
 
-	g.$blog = $blog;
+	g.mod('$blog', $blog);
 
-	$blog.on('click', function(){
+	$blog.data('width', 'big').on('click', function(){
 
 		// 已处于展开状态
 		if( !$blog.hasClass('module-metro') ) return;
@@ -376,7 +414,7 @@ require(['jquery', 'global', 'socket', 'template'], function($, g, socket){
 
 		if( $blog.data('getData') ){  // 已获取基础数据
 			// 展开
-			$blog.triggerHandler('deploy');
+			g.$body.triggerHandler('showMain', [$blog]);
 		}
 		else{   // 未获取基础数据
 			require(['blog'], function(){
@@ -393,7 +431,7 @@ require(['jquery', 'global', 'socket', 'template'], function($, g, socket){
  * Talk 模块
  * */
 define('talk', ['jquery', 'global', 'socket', 'template'], function($, g, socket){
-	var $talk = g.$talk || $('#talk')
+	var $talk = g.mod('$talk') || $('#talk')
 		, timeNodeTmpl = $.template({
 			template: 'li.timeNode>a.icon.icon-user+div.message{%content%}>span.datetime{%datetime%}'
 			, filter: {
@@ -409,26 +447,22 @@ define('talk', ['jquery', 'global', 'socket', 'template'], function($, g, socket
 		;
 
 	socket.on('getTalkData', function(data){console.log(data);
-		setTimeout(function(){
-			g.$body.triggerHandler('toggleMetro', [true]);
 
-			$('<ul class="toolbar">' +
-	            '<li><a class="module_close icon icon-close"></a></li>' +
-	            '</ul>' +
-	            '<div class="module_content"><form action="" method="post">' +
-				'<textarea name="content" rows="5" cols="30"></textarea>' +
-				'<input type="hidden" name="status" value="1"/> ' +
-				'<input type="button" value="保存"/><input type="submit" value="发布"/></form>' +
-				'<ul class="timeLine" id="timeLine">' +
-				timeNodeTmpl(data).join('') +
-				'</ul>' +
-				'</div>')
-				.appendTo( $talk );
+		$talk.data('deploy', true).find('.module_content').append( '<form action="" method="post">' +
+			'<textarea name="content" rows="5" cols="30"></textarea>' +
+			'<input type="hidden" name="status" value="1"/> ' +
+			'<input type="button" value="保存"/><input type="submit" value="发布"/></form>' +
+			'<ul class="timeLine" id="timeLine">' +
+			timeNodeTmpl(data).join('') +
+			'</ul>' );
 
-            $talk.triggerHandler('deploy');
-
-            g.$body.triggerHandler('fadeMain');
-		}, 1000);
+		// 判断是否已隐藏
+		if( $talk.hasClass('module-fadeOut') ){
+			$talk.addClass('module-show');
+		}
+		else{
+            g.$body.triggerHandler('showMain', [$talk]);
+		}
 	});
 
 	$talk.on({
@@ -457,13 +491,7 @@ define('talk', ['jquery', 'global', 'socket', 'template'], function($, g, socket
 		e.stopImmediatePropagation();
 	}).on('click', '.icon-close', function(e){
 		// todo 检查是否有需要保存的数据
-
-		g.$body.triggerHandler('fadeMain', [true]);
-		setTimeout(function(){
-			g.$body.triggerHandler('toggleMetro');
-			$talk.toggleClass('module-main module-metro large small').wrap('<a href="talk/"></a>').height();
-			g.$body.triggerHandler('fadeModule');
-		}, 1000);
+		g.$body.triggerHandler('hideMain', [$talk]);
 
 		e.preventDefault();
 		e.stopImmediatePropagation();
@@ -474,12 +502,11 @@ define('talk', ['jquery', 'global', 'socket', 'template'], function($, g, socket
 // 加载 Talk 模块
 require(['jquery', 'global', 'socket'], function($, g, socket){
 	var $talk = $('#talk')
-
 		;
 
-	g.$talk = $talk;
+	g.mod('$talk', $talk);
 
-	$talk.on('click', function(e){
+	$talk.data('width', 'small').on('click', function(){
 
 		// 已处于展开状态
 		if( !$talk.hasClass('module-metro') ) return;
@@ -488,7 +515,7 @@ require(['jquery', 'global', 'socket'], function($, g, socket){
 
 		if( $talk.data('getData') ){  // 已获取基础数据
 			// 展开
-            $talk.triggerHandler('deploy');
+			g.$body.triggerHandler('showMain', [$talk]);
 		}
 		else{   // 未获取基础数据
 			require(['talk'], function(){
@@ -501,48 +528,50 @@ require(['jquery', 'global', 'socket'], function($, g, socket){
 	});
 });
 
-require(['jquery', 'global', 'socket', 'time'], function($, g, socket){
-	var $login = $('#login')
-		, $loginForm = $login.find('#loginForm')
-		;
+require(['jquery', 'global', 'socket', 'time'], function($, g, socket, $time){
+	g.mod('$time', $time);
 
-	$login.on('submit', '#loginForm', function(e){
-        var loginData = $loginForm.serializeArray()
-            , i = loginData.length
-            , data = {}
-            , temp
-            ;
-
-        while( i-- ){
-            temp = loginData[i];
-//            if( temp.name in data ){
-//                data[temp.name] += ',' + temp.value;
+//	var $login = $('#login')
+//		, $loginForm = $login.find('#loginForm')
+//		;
+//
+//	$login.on('submit', '#loginForm', function(e){
+//        var loginData = $loginForm.serializeArray()
+//            , i = loginData.length
+//            , data = {}
+//            , temp
+//            ;
+//
+//        while( i-- ){
+//            temp = loginData[i];
+////            if( temp.name in data ){
+////                data[temp.name] += ',' + temp.value;
+////            }
+////            else
+//            data[temp.name] = temp.value;
+//        }
+//
+//        data.receive = 'login';
+//
+//        socket.on('login', function(data){
+//            /**
+//             * todo
+//             *  登录成功
+//             *  保存返回的用户数据
+//             * */
+//            if( 'error' in data ){
+//                console.log('error');
 //            }
-//            else
-            data[temp.name] = temp.value;
-        }
-
-        data.receive = 'login';
-
-        socket.on('login', function(data){
-            /**
-             * todo
-             *  登录成功
-             *  保存返回的用户数据
-             * */
-            if( 'error' in data ){
-                console.log('error');
-            }
-            else{
-                console.log('success');
-                g.user = data;
-            }
-
-        });
-
-        socket.emit('login', data);
-
-		e.preventDefault();
-		e.stopImmediatePropagation();
-	});
+//            else{
+//                console.log('success');
+//                g.user = data;
+//            }
+//
+//        });
+//
+//        socket.emit('login', data);
+//
+//		e.preventDefault();
+//		e.stopImmediatePropagation();
+//	});
 });

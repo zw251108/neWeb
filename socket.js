@@ -7,30 +7,34 @@ var sio = require('socket.io')()
 	, CLIENT_INDEX_LIST = []
 	;
 
-var dbInterface = {};
+var dbInterface = {}
+	;
 
-function guid(){
-	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c){
-		var r = Math.random()*16|0, v = c==='x'? r : (r&0x3|0x8);
-		return v.toString(16);
-	}).toUpperCase();
-}
+//function guid(){
+//	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c){
+//		var r = Math.random()*16|0, v = c==='x'? r : (r&0x3|0x8);
+//		return v.toString(16);
+//	}).toUpperCase();
+//}
 
-//sio.listen( webServer );
 sio.on('connection', function(socket){
 
 	// todo 设置索引
 	// todo 应该获取 session
-	var clientIndex = guid();
+ 	var session = socket.handshake.session
+		, clientIndex = session.id
+	    ;
 	CLIENT_LIST[clientIndex] = socket;
 	CLIENT_INDEX_LIST.push( clientIndex );
 
-	console.log('socket: id', clientIndex, 'connect')
+	console.log('socket: session id ', clientIndex, 'connect');
 
 	socket.on('login', function(user){  // 登录接口
         var username = user.username
-            , pwd = user.password;
+            , pwd = user.password
             ;
+
+		console.log('user username: ', username, 'login');
 
         dbInterface.select('select * from user where email=\'' + username +'\'', function(rs){
             var userData = rs[0]
@@ -59,6 +63,8 @@ sio.on('connection', function(socket){
 			, id = query.id
 			, uid = query.uid
 			;
+
+		console.log('get data topic:', topic);
 
 		switch( topic ){
 			case 'document':
@@ -103,19 +109,20 @@ sio.on('connection', function(socket){
 					'SELECT Id, content, \'message\' as type, datetime FROM message';
 				dbCallback = function(rs){
 					socket.emit(receive, rs);
-				}
+				};
 				break;
 			default:
 				break;
 		}
 		sql && dbInterface.select(sql, dbCallback, dbErr);
 	}).on('message', function(data){    // 即时通信接口
+		console.log('user chat');
 	}).on('disconnect', function(){ // 断开连接
-		console.log('socket: id', clientIndex, 'disconnect');
+		console.log('socket: session id ', clientIndex, 'disconnect');
 	});
 });
 
 exports.listen = function(webServer, db){
 	dbInterface = db;
-	sio.listen( webServer );
-}
+	return sio.listen( webServer );
+};
