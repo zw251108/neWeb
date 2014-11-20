@@ -1,8 +1,8 @@
 'use strict';
 
 /**
- * Web Server
- * */
+* Web Server
+* */
 var sys = require('util')
 	, fs = require('fs')
 
@@ -279,8 +279,8 @@ webApp.use('/cache.manifest', express.static(__dirname + '/cache.manifest') );
 //});
 
 /**
- * 统一上传接口
- * */
+* 统一上传接口
+* */
 webApp.post('/upload', function(req, res){
 
 	// todo 上传成功，返回信息
@@ -291,8 +291,8 @@ webApp.post('/upload', function(req, res){
 });
 
 /**
- * 访问主页	/
- * */
+* 访问主页	/
+* */
 webApp.get('/', function(req, res){
 	var session = req.session;
 	console.log(session.id)
