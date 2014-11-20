@@ -1,0 +1,252 @@
+
+/*----- 公用类 -----*/
+.hidden{
+	display:none;
+}
+
+/*----- 动画 -----*/
+@-webkit-keyframes fadeOut{
+	0% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
+}
+@-moz-keyframes fadeOut{
+	0% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
+}
+@-ms-keyframes fadeOut{
+	0% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
+}
+@keyframes fadeOut{
+	0% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
+}
+
+@-webkit-keyframes fadeIn{
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+@-moz-keyframes fadeIn{
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+@-ms-keyframes fadeIn{
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+@keyframes fadeIn{
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+/*----- 组件 -----*/
+.logo{
+	float: left;
+	width: 38px;
+	height: 40px;
+	border: solid #fff;
+	border-width: 0 1px;
+	padding: 0 !important;
+	background: url("../image/logo.png") no-repeat center;
+}
+.toolbar{
+	float: right;
+}
+.toolbar li{
+	float: right;
+}
+.toolbar .icon{
+	float: left;
+	width: 38px;
+	height: 40px;
+	border: solid #fff;
+	border-width: 0 1px;
+	padding: 0 !important;
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+.icon-close{
+	background-image: url("../image/default/icon/close.png");
+}
+.icon-user{
+	background-image: url("../image/default/icon/user.png");
+}
+.icon-menu{
+	background-image: url("../image/default/icon/menu.png");
+}
+.icon-write{
+	background-image: url("../image/default/icon/write.png");
+}
+
+.Container{
+	/** 进入硬件加速 **/
+	-webkit-transform: translateZ(0);
+	-moz-transform: translateZ(0);
+	-ms-transform: translateZ(0);
+	transform: translateZ(0);
+
+	-webkit-animation: 1s both;
+	-moz-animation: 1s both;
+	-ms-animation: 1s both;
+	animation: 1s both;
+}
+.fadeOut{
+	-webkit-animation-name: fadeOut;
+	-moz-animation-name: fadeOut;
+	-ms-animation-name: fadeOut;
+	animation-name: fadeOut;
+}
+.fadeIn{
+	-webkit-animation-name: fadeIn;
+	-moz-animation-name: fadeIn;
+	-ms-animation-name: fadeIn;
+	animation-name: fadeIn;
+}
+.hideMetro .module-metro{
+	display: none;
+}
+
+.module{
+}
+
+.module-show{}
+.module-hide{}
+
+
+/*.module-main{*/
+	/*border-bottom: 5px solid #fff;*/
+/*}*/
+
+.module-main > .toolbar{
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+.module-main .icon-close{
+	width: 29px;
+	height: 29px;
+	border-width: 0 0 1px 1px;
+}
+.module-metro .toolbar{
+	display: none;
+}
+
+.module-popup{
+	position: absolute;
+	top: 70px;
+	left: 0;
+	right: 0;
+	height: 100px;
+	margin: auto;
+
+	opacity: 1;
+}
+
+.module_content > * {
+	background: #000;
+	margin-bottom: 10px;
+}
+
+textarea{
+	border: 1px solid #efefef;
+	border-radius: 5px;
+	margin: 5px;
+}
+
+.timeLine{
+	overflow: hidden;
+	position: relative;
+	min-height: 80px;
+}
+.timeLine:before{
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 50px;
+	width: 10px;
+	background: #fff;
+}
+.timeNode{
+ 	position: relative;
+ 	margin: 5px;
+}
+.timeNode:before{
+	position: absolute;
+	height: 0;
+	width: 0;
+
+	border: 5px solid transparent;
+	border-right-color: #fff;
+
+	content: "";
+}
+.timeNode a.icon-user{
+	height: 28px;
+	width: 28px;
+	border: 1px solid #fff;
+}
+
+.message{
+	position: relative;
+	border: 1px solid #fff;
+	border-radius: 5px;
+	margin-left: 50px;
+	padding: 10px;
+}
+.message:before{
+	position: absolute;
+	top: 5px;
+	left: -20px;
+	height: 0px;
+	width: 0;
+	border: 10px solid transparent;
+	border-right-color: #fff;
+
+	content: "";
+}
+.message:after{
+	position: absolute;
+	top: 5px;
+	left: -19px;
+	height: 0px;
+	width: 0;
+	border: 10px solid transparent;
+	border-right-color: #000;
+
+	content: "";
+}
+.datetime{
+	float: right;
+}

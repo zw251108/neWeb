@@ -96,13 +96,6 @@ define('global', ['jquery'], function($){
 		, showMain
 		;
 	$container.on({
-//		fadeIn: function(){
-//			$container.addClass('fadeIn');
-//		}
-//		, fadeOut: function(){
-//			$container.addClass('fadeOut');
-//		}
-//		,
 		'webkitAnimationEnd mozAnimationEnd msAnimationEnd animationEnd': function(){
 			var $t = g.mod('$' + target);
 
@@ -151,6 +144,8 @@ define('global', ['jquery'], function($){
 		e.preventDefault();
 		e.stopImmediatePropagation();
 
+		if( $container.hasClass('fadeOut') || $container.hasClass('fadeIn') ) return;
+
 		target = this.id;
 		g.mod('$' + target).unwrap();
 
@@ -158,6 +153,8 @@ define('global', ['jquery'], function($){
 	}).on('click', '.module-main .module_close', function(e){
 		e.preventDefault();
 		e.stopImmediatePropagation();
+
+		if( $container.hasClass('fadeOut') || $container.hasClass('fadeIn') ) return;
 
 		var $t = $(this).parents('.module');
 		target = $t.attr('id');
@@ -167,43 +164,6 @@ define('global', ['jquery'], function($){
 	});
 
 	g.$container = $container;
-//	$body.on({
-//		hideMetro: function(){
-//			var l = g.numMod();
-//
-//			while( l-- ){
-//				g.mod(l).addClass('module-fadeOut');
-//			}
-//		}
-//		, showMetro: function(){
-//			var l = g.numMod();
-//
-//			while( l-- ){
-//				g.mod(l).removeClass('hidden').addClass('module-fadeIn');
-//			}
-//		}
-//		, hideMain: function(e, $target){
-//			$target.addClass('module-fadeOut module-hide');
-//		}
-//		, showMain: function(e, $target){
-//			$target.removeClass('module-metro hidden ' + $target.data('width')).addClass('module-main large module-fadeIn');
-//		}
-//	}).on(animationEnd, '.module-fadeIn', function(){
-//		g.mod('$' + this.id).removeClass('module-fadeIn');
-//	}).on(animationEnd, '.module-fadeOut', function(){
-//		g.mod('$' + this.id).addClass('hidden').removeClass('module-fadeOut');
-//	}).on(animationEnd, '.module-main', function(){
-//		g.mod('$' + this.id).removeClass('module-fadeOut module-fadeIn');
-//	}).on(animationEnd, '.module-show', function(){
-//		$body.triggerHandler('showMain', [g.mod('$'+ this.id).removeClass('module-show')]);
-//	}).on(animationEnd, '.module-hide', function(){
-//		var t = g.mod('$' + this.id);
-//		t.removeClass('module-main large module-hide').addClass('module-metro ' + t.data('width'));
-//		$body.triggerHandler('showMetro');
-//	}).on('click', '.module-metro', function(e){
-//		e.preventDefault();
-//		$body.triggerHandler('hideMetro');
-//	});
 
 	return g;
 });
