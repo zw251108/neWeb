@@ -36,11 +36,11 @@ module.exports = function(grunt){
 //					, 'script/lib/ember/ember.min.js': ['bower_components/ember/ember.js']
 //					, 'script/lib/ember/ember-data.min.js': ['bower_components/ember-data/ember-data.js']
 //					, 'script/lib/ember/ember-localstorage_adapter.js': ['bower_components/ember-localstorage-adapter/localstorage_adapter.js']
-//					/**
-//					 * 数据可视化
-//					 * */
-//					// d3
-//					, 'script/lib/d3/d3.min.js': ['bower_components/d3/d3.js']
+					/**
+					 * 数据可视化
+					 * */
+					// d3
+					, 'script/lib/d3/d3.min.js': ['bower_components/d3/d3.js']
 //					/**
 //					 * 游戏、动画相关框架
 //					 * 渲染引擎、物理引擎
