@@ -22,16 +22,50 @@ require.config({
 		// 应用模块设置
 		, blog: 'module/blog'
 		, document: 'module/document'
+		, editor: 'module/editor'
 		, talk: 'module/talk'
 		, time: 'module/time'
 	}
 });
 
+/***** 工具模块 ******/
+/**
+ * web socket 模块
+ *  目前基于 socket.io
+ * */
+define('socket', ['socket.io'], function(io){
+	var socket = io('http://localhost:9001');
+
+	socket.on('error', function(err){
+
+		if( err === 'session not found' ){
+			/**
+			 * session 失效
+			 *  todo
+			 *  断开连接
+			 *  提示用户
+			 * */
+			socket.disconnect();
+			console.log('断开连接')
+		}
+	});
+
+	return socket;
+});
+/**
+ * 地理定位
+ * */
+define('location', function(){});
+/**
+ * 本地存储 模块
+ * */
+define('storage', function(){});
+
 /***** 公用基础模块 ******/
 /**
  * 全局模块
  * */
-define('global', ['jquery'], function($){
+define('global', ['jquery', 'socket'], function($, socket){
 	// 兼容 console
 	if( !('console' in window) || !('log' in console) || (typeof console.log !== 'function') ){
 		window.console = {
@@ -142,16 +176,42 @@ define('global', ['jquery'], function($){
 		, showMetro: function(){
 			$container.removeClass('animate-done fadeOut hideMetro').addClass('fadeIn');
 		}
-	}).on('click', 'a .module-metro', function(e){
+	}).on('click', '.module', function(e){
 		e.preventDefault();
 		e.stopImmediatePropagation();
+
+		var $target;
 
 		if( $container.hasClass('fadeOut') || $container.hasClass('fadeIn') ) return;
 
 		target = this.id;
-		g.mod('$' + target).unwrap();
+		$target = g.mod('$'+ target);
 
+		if( !$target.hasClass('module-metro') ) return;
+
+
+		// todo 加入 本地存储
+
+		$target.unwrap();
 		$container.addClass('main-show fadeOut');
+
+		if( $target.data('getData') ){  // 已获取基础数据
+			// 展开
+			$container.triggerHandler('dataReady');
+		}
+		else{   // 未获取基础数据
+			require([target], function(){
+				socket.emit('getData', {
+					topic: target
+					, receive: 'get'+ target.replace(/^(.{1})/, function(s){return s.toUpperCase();}) +'Data'
+				});
+			});
+		}
+
+
+//		g.mod('$' + target).unwrap();
+
+//		$container.addClass('main-show fadeOut');
 	}).on('click', '.module-main .module_close', function(e){
 		e.preventDefault();
 		e.stopImmediatePropagation();
@@ -160,7 +220,7 @@ define('global', ['jquery'], function($){
 
 		var $t = $(this).parents('.module');
 		target = $t.attr('id');
-		$t.wrap('<a href="'+ target + '/"></a>');
+//		$t.wrap('<a href="'+ target + '/"></a>');
 
 		$container.removeClass('main-show').addClass('fadeOut');
 	});
@@ -168,41 +228,6 @@ define('global', ['jquery'], function($){
 	g.$container = $container;
 
 	return g;
-});
-/**
- * web socket 模块
- *  目前基于 socket.io
- * */
-define('socket', ['socket.io'], function(io){
-	var socket = io('http://localhost:9001');
-
-	socket.on('error', function(err){
-
-		if( err === 'session not found' ){
-			/**
-			 * session 失效
-			 *  todo
-			 *  断开连接
-			 *  提示用户
-			 * */
-			socket.disconnect();
- 			console.log('断开连接')
-		}
-	});
-
-	return socket;
-});
-/**
- * 地理定位
- * */
-define('location', function(){
-
-});
-/**
- * 本地存储 模块
- * */
-define('storage', [], function(){
-
 });
 /**
  * 页头 Header
@@ -216,104 +241,19 @@ define('header', ['jquery', 'global'], function($, g){
 });
 
 /***** 应用模块 *****/
-/**
- * Document 文档模块
- * */
-require(['jquery', 'global', 'socket'], function($, g, socket){
-	var $document = $('#document')
-		, $container = g.$container
-		;
+require(['jquery', 'global', 'socket', 'time'], function($, g, socket, $time){
 
-	g.mod('$document', $document);
-
-	$document.data('width', 'small').on('click', function(){
-		// 已处于展开状态
-		if( !$document.hasClass('module-metro') ) return;
-
-		/**
-		 * todo 加入 本地存储
-		 * */
-
-		if( $document.data('getData') ){  // 已获取基础数据
-			// 展开
-			$container.triggerHandler('dataReady');
-		}
-		else{   // 未获取基础数据
-			require(['document'], function(){
-				socket.emit('getData', {
-					topic: 'document'
-					, receive: 'getDocData'
-				});
-			});
-		}
-	});
-});
-
-/**
- * Blog 模块
- * */
-require(['jquery', 'global', 'socket', 'template'], function($, g, socket){
-	var $blog = $('#blog')
-		, $container = g.$container
+	var $container = g.$container
+		, $blog = $('#blog').data('width', 'big') // Blog 模块
+		, $document = $('#document').data('width', 'small') // Document 文档模块
+		, $editor = $('#editor').data('width', 'normal')   // Editor 编辑器
+		, $talk = $('#talk').data('width', 'small') // Talk 模块
 		;
 
 	g.mod('$blog', $blog);
-
-	$blog.data('width', 'big').on('click', function(){
-
-		// 已处于展开状态
-		if( !$blog.hasClass('module-metro') ) return;
-
-		// todo 加入 本地存储
-
-		if( $blog.data('getData') ){  // 已获取基础数据
-			// 展开
-			$container.triggerHandler('dataReady');
-		}
-		else{   // 未获取基础数据
-			require(['blog'], function(){
-				socket.emit('getData', {
-					topic: 'blog'
-					, receive: 'getBlogData'
-				});
-			});
-		}
-	});
-});
-
-/**
- * Talk 模块
- * */
-require(['jquery', 'global', 'socket'], function($, g, socket){
-	var $talk = $('#talk')
-		, $container = g.$container
-		;
-
+	g.mod('$document', $document);
+	g.mod('$editor', $editor);
 	g.mod('$talk', $talk);
-
-	$talk.data('width', 'small').on('click', function(){
-
-		// 已处于展开状态
-		if( !$talk.hasClass('module-metro') ) return;
-
-		// todo 加入 本地存储
-
-		if( $talk.data('getData') ){  // 已获取基础数据
-			// 展开
-			$container.triggerHandler('dataReady');
-		}
-		else{   // 未获取基础数据
-			require(['talk'], function(){
-				socket.emit('getData', {
-					topic: 'talk'
-					, receive: 'getTalkData'
-				});
-			});
-		}
-	});
-});
-
-require(['jquery', 'global', 'socket', 'time'], function($, g, socket, $time){
 	g.mod('$time', $time);
 
 //	var $login = $('#login')

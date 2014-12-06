@@ -32,7 +32,7 @@ define(['jquery', 'global', 'socket', 'shCore', 'template',
 	highlight = highlight.SyntaxHighlighter;
 
 	// 绑定 socket 回调 事件
-	socket.on('getDocData', function(data){
+	socket.on('getDocumentData', function(data){
 		$document.data('getData', true).find('.module_content').append( sectionTmpl(data).join('') );
 
 		highlight.highlight();

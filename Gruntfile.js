@@ -1,6 +1,14 @@
 module.exports = function(grunt){
 	grunt.initConfig({
-		uglify: {
+		concurrent: {
+			destiny: ['uglify'
+				, 'less'
+				, 'cssmin'
+//				, 'htmlmin'
+				, 'copy'
+			]
+		}
+		, uglify: {
 			destiny: {
 				files: {
 					/**
@@ -134,8 +142,9 @@ module.exports = function(grunt){
 				}
 			}
 		}
-		, min: {
+		, cssmin: {
 			destiny: {
+				options:{},
 				files: {
 //					// jQuery UI
 //					'script/lib/jQueryUI/theme/base/jquery-ui.min.css': ['bower_components/jquery-ui/themes/base/minified/jquery-ui.min.css']
@@ -321,14 +330,31 @@ module.exports = function(grunt){
 //				}
 //			}
 		}
+		, htmlmin: {                                     // Task
+			destiny: {                                      // Target
+				options: {                                 // Target options
+					removeComments: true,
+					collapseWhitespace: true
+				},
+				files: {                                   // Dictionary of files
+					'dist/index.html': 'src/index.html',     // 'destination': 'source'
+					'dist/contact.html': 'src/contact.html'
+				}
+			}
+		}
 	});
+	grunt.loadNpmTasks('grunt-concurrent');
+	grunt.loadNpmTasks('grunt-contrib-htmlmin');
+	grunt.loadNpmTasks('grunt-contrib-cssmin');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
-	grunt.loadNpmTasks('grunt-min');
 	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-contrib-less');
-	grunt.registerTask('default', ['uglify'
-		, 'min'
-		, 'copy'
+	grunt.registerTask('default', [
+		'concurrent'
+//		,'uglify'
+//		, 'copy'
+//		, 'cssmin'
+////		, 'htmlmin'
 //		, 'less'
 	]);
 };

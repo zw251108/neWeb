@@ -318,6 +318,16 @@ p { font-size: 1.2em; line-height: 1.0em; color: #333; }
     width: 1270px;
   }
 }
+/*span*/
+.code {
+  padding: 2px 4px;
+  font-size: 90%;
+  color: #c7254e;
+  background-color: #f9f2f4;
+  border-radius: 4px;
+  word-break: break-all;
+  word-wrap: break-word;
+}
 /**
  *---------- Module 模块 汇总 ----------
  *
