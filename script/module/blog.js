@@ -1,25 +1,45 @@
 /**
  * @module  blog
  */
-define(['jquery', 'global', 'socket', 'template'], function($, g, socket){
+define(['jquery', 'global', 'socket', 'tag', 'template'], function($, g, socket, tag){
 	var $blog = g.mod('$blog') || $('#blog')
+		, tagTmpl = tag.tagTmpl
 		, articleTmpl = $.template({
 			template:'article#blogArt%Id%.article>a[href=blog/detail/?id=%Id%]>h3.article_title{%title%}' +
 				'^hr+span.article_date{%datetime%}+div.tagsArea{%tags%}'
+			, filter:{
+				tags: function(d){
+					var data = []
+						, tagsId = (d.tags_id || '').split(',')
+						, tagsName = (d.tags_name || '').split(',')
+						;
+
+					$.each(tagsId, function(i, d){
+						data.push({
+							Id: d
+							, name: tagsName[i]
+						});
+					});
+
+					return tagTmpl(data).join('');
+				}
+			}
 		})
 		, $container = g.$container
+		, page = 0
+		, pageSize = 20
 		;
 
 	socket.on('getBlogData', function(data){
 
-		$blog.data('getData', true).find('.module_content').append( articleTmpl(data).join('') );
+		$blog.data('getData', true).find('.module_content').append( articleTmpl(data, page, pageSize).join('') );
 
 		// 数据已加载完成
 		$container.triggerHandler('dataReady');
 	}).on('getArticleData', function(data){
 
 			$('<div class="article_content">'+ data.content +'</div>').hide()
-				.insertAfter( $blog.find('#blogArt'+ data.id).find('a').data('deploy', true) ).slideDown();
+				.insertAfter( $blog.find('#blogArt'+ data.Id).find('a').data('deploy', true) ).slideDown();
 		});
 
 	$blog.on('click', '.icon-close', function(e){

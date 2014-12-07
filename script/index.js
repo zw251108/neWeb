@@ -28,11 +28,8 @@ require.config({
 	}
 });
 
-/***** 工具模块 ******/
-/**
- * web socket 模块
- *  目前基于 socket.io
- * */
+//---------- 工具模块 ----------
+//----- web socket 模块 目前基于 socket.io -----
 define('socket', ['socket.io'], function(io){
 	var socket = io('http://localhost:9001');
 
@@ -52,19 +49,13 @@ define('socket', ['socket.io'], function(io){
 
 	return socket;
 });
-/**
- * 地理定位
- * */
+//----- 地理定位 -----
 define('location', function(){});
-/**
- * 本地存储 模块
- * */
+//----- 本地存储 模块 -----
 define('storage', function(){});
 
-/***** 公用基础模块 ******/
-/**
- * 全局模块
- * */
+//---------- 公用基础模块 ----------
+//----- 全局模块 -----
 define('global', ['jquery', 'socket'], function($, socket){
 	// 兼容 console
 	if( !('console' in window) || !('log' in console) || (typeof console.log !== 'function') ){
@@ -189,7 +180,6 @@ define('global', ['jquery', 'socket'], function($, socket){
 
 		if( !$target.hasClass('module-metro') ) return;
 
-
 		// todo 加入 本地存储
 
 		$target.unwrap();
@@ -207,11 +197,6 @@ define('global', ['jquery', 'socket'], function($, socket){
 				});
 			});
 		}
-
-
-//		g.mod('$' + target).unwrap();
-
-//		$container.addClass('main-show fadeOut');
 	}).on('click', '.module-main .module_close', function(e){
 		e.preventDefault();
 		e.stopImmediatePropagation();
@@ -220,7 +205,6 @@ define('global', ['jquery', 'socket'], function($, socket){
 
 		var $t = $(this).parents('.module');
 		target = $t.attr('id');
-//		$t.wrap('<a href="'+ target + '/"></a>');
 
 		$container.removeClass('main-show').addClass('fadeOut');
 	});
@@ -229,9 +213,7 @@ define('global', ['jquery', 'socket'], function($, socket){
 
 	return g;
 });
-/**
- * 页头 Header
- * */
+//----- 页头 Header -----
 define('header', ['jquery', 'global'], function($, g){
 	var $header = $('#header')
 		, $pageTitle = $header.find('#pageTitle')
@@ -239,8 +221,30 @@ define('header', ['jquery', 'global'], function($, g){
 
 	return $header;
 });
+//----- 标签数据 Tag -----
+define('tag', ['jquery', 'socket', 'template'], function($, socket){
+	var Tag = {
+		tagTmpl: $.template({
+			template: 'span.tag[data-tagid=%Id%]{%name%}'
+		})
+	};
+	socket.emit('getData', {
+		topic: 'tag'
+		, receive: 'getTagData'
+	});
 
-/***** 应用模块 *****/
+	socket.on('getTagData', function(data){
+		Tag.data = data;
+	}).on('addTag', function(){
+		socket.emit('addTag', {
+			name: ''
+		});
+	})
+
+	return Tag;
+});
+
+//---------- 应用模块 ----------
 require(['jquery', 'global', 'socket', 'time'], function($, g, socket, $time){
 
 	var $container = g.$container
