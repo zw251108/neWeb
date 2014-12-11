@@ -342,6 +342,15 @@ module.exports = function(grunt){
 				}
 			}
 		}
+		, jsdoc: {
+			destiny: {
+				options: {
+					destination: 'doc'
+				},
+				src: ['script/ui/jquery.template.js']
+
+			}
+		}
 	});
 	grunt.loadNpmTasks('grunt-concurrent');
 	grunt.loadNpmTasks('grunt-contrib-htmlmin');
@@ -349,6 +358,7 @@ module.exports = function(grunt){
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-contrib-less');
+	grunt.loadNpmTasks('grunt-jsdoc');
 	grunt.registerTask('default', [
 		'concurrent'
 //		,'uglify'
