@@ -347,7 +347,7 @@ module.exports = function(grunt){
 				options: {
 					destination: 'doc'
 				},
-				src: ['script/ui/jquery.template.js']
+				src: ['script/*/*.js', 'script/*/*/*.js']
 
 			}
 		}

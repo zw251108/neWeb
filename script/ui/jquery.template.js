@@ -1,13 +1,14 @@
 /**
- * @fileOverview    HTML 模板引擎
+ * @file    HTML 模板引擎
  * @author  ZwB
  * @version 0.9
- * @function    $.template
+ * @method  $.template
  * @param   {object}   options
  * @param   {string}    options.template    模板字符串   符合 emmet 编写规则 其中 %key% 为动态插入数据
  * @param   {object}    options.filter      构造模板 HTML 代码函数
  * @return  {function}      构造模板 HTML 代码函数
- * @description 基于 Emmet 的模板引擎
+ * @require jquery
+ * @desc    基于 Emmet 的模板引擎
  * @example
     var html = $.template({
         template: 'span{%sex%}',
