@@ -4,23 +4,25 @@
 * Web Server
 * */
 var sys = require('util')
-	, fs = require('fs')
 
 	// 数据库
 	, db = require('./db.js').db
 
-	, path = require('path')
-	, url = require('url')
+	// 模块库
+	, tpl = require('./tpl.js').tpl
 
 	// Web 服务器
 	, express = require('express')
 	, webApp = express()
 	, webServer
 
+	// 监听端口
+	, WEB_APP_PORT = 9001
 	, COOKIE_SECRET = 'secret'
 	, COOKIE_KEY = 'express.sid'
 
 	// Web 服务器相关组件
+	, url = require('url')
 	, bodyParser = require('body-parser')
 	, cookie = require('cookie')
 	, cookieParser = require('cookie-parser')
@@ -29,19 +31,9 @@ var sys = require('util')
 	, session = require('express-session')
 	, sessionStore = new session.MemoryStore()
 
-	// 页面资源缓存
-	, CACHE = {}
+	// Web Socket
+	, socketServer = require('./socket.js')
 	;
-
-//----- 读取文件 -----
-fs.readFile('index.html', function(e, d){
-	if( e ){
-		console.log('\n', 'index error');
-		return ;
-	}
-	CACHE.index = d.toString();
-	console.log('index file read success');
-});
 
 //----- web 服务器设置 -----
 webApp.use( bodyParser.json() );
@@ -77,87 +69,64 @@ webApp.use('/cache.manifest', express.static(__dirname + '/cache.manifest') );
 //})
 
 ///**
-//* 博客模块
-//*  /blog/
-//*  /blog/detail/?id=:id&_=.*
+//* 统一上传接口
 //* */
-//webApp.get('/blog/', function(req, res){
-//	dbInterface.select('select Id,title,datetime,tagsId,tagsName from blog order by Id desc', function(rs){
-//		if( req.query.type === 'json' ){
+//webApp.post('/upload', function(req, res){
 //
-//			res.send( '['+ rs.map(function(i){
-//				return JSON.stringify(i);
-//			}).join() +']' );
-//		}
-//		else{
-//			res.send('blog');
-//		}
-//		res.end();
-//	}, function(){
-//		res.end();
-//	});
+//	// todo 上传成功，返回信息
+//
+//	console.log('\n', req.params);
+//	console.log('\n', req.body);
+//	console.log('\n', req.files);
 //});
-//webApp.get('/blog/detail/', function(req, res){
-//	var id = req.query.id || '';
-//
-//	if( id ){
-//		dbInterface.select('select content from blog where id=?', [id], function(rs){
-//			if( req.query.type === 'json' ){
-//				res.send( JSON.stringify(rs[0]) );
-//			}
-//			else{
-//				res.send('blog/detail/'+ id);
-//			}
-//			res.end();
-//		}, function(){
-//			res.send('{error: "E0004", msg:"'+ ERROR_MSG.E0004 +'"}');
-//			res.end();
-//		});
-//	}
-//	else{
-//		res.send('{error: "E0001", msg:"'+ ERROR_MSG.E0001 +'}');
-//		res.end();
-//	}
-//});
-//
-///**
-//* Web 前端文档
-//*  /document/
-//* */
-//webApp.get('/document/', function(req, res){
-//	dbInterface.select('select title,content,section_title from document order by section_id', function(rs){
-//		var document = []
-//			, tempTitle = ''
-//			, tempArray
-//			, i, j;
-//
-//		if( req.query.type === 'json' ){
-//
-//			for(i = 0, j = rs.length; i < j; i++){
-//				if( rs[i].section_title !== tempTitle ){
-//					tempTitle = rs[i].section_title;
-//					tempArray = [];
-//					document.push({
-//						section_title: tempTitle
-//						, dl: tempArray
-//					});
-//				}
-//
-//				tempArray.push( rs[i] );
-//			}
-//
-//			res.send( JSON.stringify( document ) );
-//		}
-//		else{
-//			res.send('document');
-//		}
-//
-//		res.end();
-//	}, function(){
-//		res.end();
-//	});
-//});
-//
+
+/**
+ * 博客模块
+ *  /blog/
+ *  /blog/detail/?id=:id&_=.*
+ * */
+webApp.get('/blog/', function(req, res){
+	db.select('blog', [], function(data){
+
+		var header = tpl('header')
+			, footer = tpl('footer')
+			, main = tpl('blog/index')
+			, article = tpl('blog/article')
+			;
+
+		res.send( tpl(['header', {
+			tpl: 'blog/index'
+			, blogList: {
+				tpl: 'blog/article'
+				, data: data
+			}
+		}, 'footer']) );
+
+		res.end();
+	}, function(){
+		res.end();
+	});
+});
+webApp.get('/blog/detail/', function(req, res){
+	var id = req.query.id || '';
+
+	if( id ){
+
+	}
+	else{
+		res.send('{error: "E0001", msg:"'+ ERROR_MSG.E0001 +'}');
+		res.end();
+	}
+});
+
+/**
+ * Web 前端文档
+ *  /document/
+ * */
+webApp.get('/document/', function(req, res){
+
+});
+
 //webApp.all('/user/:id/:op?', function(req, res, next){
 //	req.user = users[req.params.id];
 //	console.log('\n', req.user);
@@ -168,9 +137,6 @@ webApp.use('/cache.manifest', express.static(__dirname + '/cache.manifest') );
 //		next( new Error('can not find id: '+ req.params.id ) );
 //	}
 //});
-////webApp.get('/', function(req, res){
-////	res.send('hello world');
-////});
 //webApp.get(/^\/(\d+)$/, function(req, res){
 //	res.send( 'reg '+ req.params[0] );
 //});
@@ -206,10 +172,10 @@ webApp.use('/cache.manifest', express.static(__dirname + '/cache.manifest') );
 //});
 //webApp.get('*', function(req, res){
 //	res.send('<form action="/" method="post">' +
-//		'<input type="hidden" name="_method" value="put"/>' +
-//		'<input type="text" name="name"/>' +
-//		'<input type="submit" value="提交"/>' +
-//		'</form>');
+//	'<input type="hidden" name="_method" value="put"/>' +
+//	'<input type="text" name="name"/>' +
+//	'<input type="submit" value="提交"/>' +
+//	'</form>');
 //});
 //
 //webApp.put('/', function(req, res){
@@ -250,37 +216,23 @@ webApp.use('/cache.manifest', express.static(__dirname + '/cache.manifest') );
 //});
 
 /**
-* 统一上传接口
-* */
-webApp.post('/upload', function(req, res){
-
-	// todo 上传成功，返回信息
-
-	console.log('\n', req.params);
-	console.log('\n', req.body);
-	console.log('\n', req.files);
-});
-
-/**
 * 访问主页	/
 * */
 webApp.get('/', function(req, res){
-	var session = req.session;
-	console.log(session.id)
-	res.send( CACHE.index );
+	console.log('session id', req.session.id);
+
+	res.send( tpl('index.html') );
 	res.end();
 });
-//webApp.get('/reconnect', function(req, res){
-//	res.end();
-//});
 
-webServer = webApp.listen(9001);
+webServer = webApp.listen( WEB_APP_PORT );
 
+console.log('Web Server is listening...');
 
 //----- socket 服务器 -----
-var socketServer = require('./socket.js').listen(webServer);
+socketServer = require('./socket.js').listen(webServer);
 
-//---- 设置 socket.IO 与 express 共用 session -----
+//----- 设置 socket.IO 与 express 共用 session -----
 socketServer.use(function(socket, next){
 	var data = socket.handshake || socket.request
 		, cookieData = data.headers.cookie
@@ -289,7 +241,7 @@ socketServer.use(function(socket, next){
 	if( cookieData ){
 
 		data.cookie = cookie.parse( cookieData );
-		data.sessionID = cookieParser.signedCookie(data.cookie[COOKIE_KEY], COOKIE_SECRET)
+		data.sessionID = cookieParser.signedCookie(data.cookie[COOKIE_KEY], COOKIE_SECRET);
 		data.sessionStore = sessionStore;
 
 		sessionStore.get(data.sessionID, function(err, session){
@@ -307,3 +259,5 @@ socketServer.use(function(socket, next){
 		next( new Error('missing cookie headers') );
 	}
 });
+
+console.log('Socket Server is listening...');
