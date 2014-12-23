@@ -120,7 +120,6 @@ define('global', ['jquery', 'socket'], function($, socket){
 
 	var $container = $('#container')
 		, target
-		, showMain
 		;
 	$container.on({
 		'webkitAnimationEnd mozAnimationEnd msAnimationEnd animationEnd': function(){
@@ -144,7 +143,7 @@ define('global', ['jquery', 'socket'], function($, socket){
 					}
 				}
 				else{   // 显示全部 metro 模块
-					$t.removeClass('module-main large').addClass('module-metro ' + $t.data('width'));
+					$t.removeClass('module-main large').addClass('module-metro ' + $t.data('width')).wrap('<a href="/'+ $t.attr('id') +'/"></a>');
 
 					$container.triggerHandler('showMetro');
 				}
@@ -217,9 +216,25 @@ define('global', ['jquery', 'socket'], function($, socket){
 define('header', ['jquery', 'global'], function($, g){
 	var $header = $('#header')
 		, $pageTitle = $header.find('#pageTitle')
+		, $user = $header.find('#user')
 		;
 
 	return $header;
+});
+//----- 用户信息模块 user -----
+define('user', ['jquery', 'global', 'socket', 'header'], function($, g, socket, $header){
+	// 判断用户数据是否存在
+
+	$header.find('.toolbar').prepend('<li><a href="/login/"></a></li>')
+	var $user = $('#user');
+
+	if( !$user.find('img').length ){
+
+	}
+
+	$user.on('click', function(){
+		$user.after('<div class="loginBar"><form action=""></form></div>');
+	});
 });
 //----- 标签数据 Tag -----
 define('tag', ['jquery', 'socket', 'template'], function($, socket){

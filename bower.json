@@ -19,6 +19,9 @@
     "SyntaxHighlighter": "~3.0.83",
     "d3": "~3.4.13",
     "requirejs": "~2.1.15",
-    "jquery": "~2.1.1"
+    "jquery": "~2.1.1",
+    "codemirror": "~4.8.0",
+    "codemirror-emmet": "~1.1.0",
+    "impress.js": "~0.5.3"
   }
 }

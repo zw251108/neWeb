@@ -1,6 +1,6 @@
 CACHE MANIFEST
 
-VERSION: 0.1
+VERSION: 0.2
 
 CACHE:
 script/lib/jquery/jquery.min.js
@@ -15,6 +15,23 @@ script/plugin/syntaxhighlighter/shCore.js
 script/plugin/syntaxhighlighter/shBrushCss.js
 script/plugin/syntaxhighlighter/shBrushJScript.js
 script/plugin/syntaxhighlighter/shBrushXml.js
+
+script/plugin/codeMirror/lib/codemirror.css
+script/plugin/codeMirror/lib/codemirror.js
+script/plugin/codeMirror/mode/xml/xml.js
+script/plugin/codeMirror/mode/htmlmixed/htmlmixed.js
+script/plugin/codeMirror/mode/javascript/javascript.js
+script/plugin/codeMirror/mode/css/css.js
+script/plugin/codeMirror/addon/comment/comment.js
+script/plugin/codeMirror/addon/comment/continuecomment.js
+
+script/plugin/codeMirror/addon/fold/foldcode.js
+script/plugin/codeMirror/addon/fold/foldgutter.css
+script/plugin/codeMirror/addon/fold/foldgutter.js
+script/plugin/codeMirror/addon/fold/brace-fold.js
+script/plugin/codeMirror/addon/fold/xml-fold.js
+script/plugin/codeMirror/emmet/emmet.min.js
+
 
 socket.io/socket.io.js
 

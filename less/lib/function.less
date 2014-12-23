@@ -61,9 +61,16 @@
 .transition(@translate){
     -webkit-transition: @translate;
     -moz-transition: @translate;
-//    -ms-transition: @translate;
-//    -o-transition: @translate;
+    -ms-transition: @translate;
     transition: @translate;
+}
+
+//----- CSS3 变换效果 transform -----
+.transform(@transform){
+    -webkit-transition: @transform;
+    -moz-transition: @transform;
+    -ms-transition: @transform;
+    transition: @transform;
 }
 
 //----- CSS3 动画效果 animation -----
@@ -71,8 +78,13 @@
 	-webkit-animation: @animation;
 	-moz-animation: @animation;
 	-ms-animation: @animation;
-//	-o-animation: @animation;
 	animation: @animation;
+}
+.animation-name(@name){
+    -webkit-animation-name: @name;
+    -moz-animation-name: @name;
+    -ms-animation-name: @name;
+    animation-name: @name;
 }
 
 //----- CSS3 变形效果：变形基础定位 -----
@@ -80,7 +92,6 @@
     -webkit-transform-origin: @origin;
     -moz-transform-origin: @origin;
     -ms-transform-origin: @origin;
-//    -o-transform-origin: @origin;
     transform-origin: @origin;
 }
 

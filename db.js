@@ -5,14 +5,14 @@ var SQL = {
 		blog: {
 			sql: 'select Id,title,datetime,tags_id,tags_name from blog where status=1 order by Id desc'
 			, detail: {
-				sql: 'select Id,content from blog where id=?'
+				sql: 'select Id,content from blog where Id=?'
 				, handler: function(rs){
 					return rs[0];
 				}
 			}
 		}
 		, document: {
-			sql: 'select title,content,section_title from document order by section_id'
+			sql: 'select title,content,section_title from document order by section_id,`order`'
 			, handler: function(rs){
 				var document = []
 					, tempTitle = ''
@@ -38,6 +38,12 @@ var SQL = {
 		, editor: {
 			sql: 'select editor.Id,editor.name,preview,tags_id,tags_name,width,height ' +
 				'from editor,image where editor.preview=image.src order by editor.Id'
+			, code: {
+				sql: 'select Id,name,tags_id,tags_name,include_file,html,css,js from editor where Id=?'
+				, handler: function(rs){
+					return rs[0];
+				}
+			}
 		}
 		, talk: {
 			sql: 'select Id,title as content, \'blog\' as type, datetime from blog ' +

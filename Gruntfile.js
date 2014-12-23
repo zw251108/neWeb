@@ -71,22 +71,22 @@ module.exports = function(grunt){
 //					, 'script/lib/verlet/verlet.min.js': ['bower_components/verlet/js/verlet-1.0.0.min.js']
 //					// qunit
 //					, 'script/lib/qunit/qunit.js': ['bower_components/qunit/qunit/qunit.js']
-//					/**
-//					 * 单一功能插件
-//					 * */
-//					// Code Mirror
-//					, 'script/plugin/codeMirror/lib/codemirror.js': ['bower_components/codemirror/lib/codemirror.js']
-//					, 'script/plugin/codeMirror/mode/xml/xml.js': ['bower_components/codemirror/mode/xml/xml.js']
-//					, 'script/plugin/codeMirror/mode/htmlmixed/htmlmixed.js': ['bower_components/codemirror/mode/htmlmixed/htmlmixed.js']
-//					, 'script/plugin/codeMirror/mode/javascript/javascript.js': ['bower_components/codemirror/mode/javascript/javascript.js']
-//					, 'script/plugin/codeMirror/mode/css/css.js': ['bower_components/codemirror/mode/css/css.js']
-//					, 'script/plugin/codeMirror/addon/comment/comment.js': ['bower_components/codemirror/addon/comment/comment.js']
-//					, 'script/plugin/codeMirror/addon/comment/continuecomment.js': ['bower_components/codemirror/addon/comment/continuecomment.js']
-//					, 'script/plugin/codeMirror/addon/fold/foldcode.js': ['bower_components/codemirror/addon/fold/foldcode.js']
-//					, 'script/plugin/codeMirror/addon/fold/foldgutter.js': ['bower_components/codemirror/addon/fold/foldgutter.js']
-//					, 'script/plugin/codeMirror/addon/fold/brace-fold.js': ['bower_components/codemirror/addon/fold/brace-fold.js']
-//					, 'script/plugin/codeMirror/addon/fold/xml-fold.js': ['bower_components/codemirror/addon/fold/xml-fold.js']
-//					, 'script/plugin/codeMirror/emmet/emmet.min.js': ['bower_components/codemirror-emmet/dist/emmet.min.js']
+					/**
+					 * 单一功能插件
+					 * */
+					// Code Mirror
+					, 'script/plugin/codeMirror/lib/codemirror.js': ['bower_components/codemirror/lib/codemirror.js']
+					, 'script/plugin/codeMirror/mode/xml/xml.js': ['bower_components/codemirror/mode/xml/xml.js']
+					, 'script/plugin/codeMirror/mode/htmlmixed/htmlmixed.js': ['bower_components/codemirror/mode/htmlmixed/htmlmixed.js']
+					, 'script/plugin/codeMirror/mode/javascript/javascript.js': ['bower_components/codemirror/mode/javascript/javascript.js']
+					, 'script/plugin/codeMirror/mode/css/css.js': ['bower_components/codemirror/mode/css/css.js']
+					, 'script/plugin/codeMirror/addon/comment/comment.js': ['bower_components/codemirror/addon/comment/comment.js']
+					, 'script/plugin/codeMirror/addon/comment/continuecomment.js': ['bower_components/codemirror/addon/comment/continuecomment.js']
+					, 'script/plugin/codeMirror/addon/fold/foldcode.js': ['bower_components/codemirror/addon/fold/foldcode.js']
+					, 'script/plugin/codeMirror/addon/fold/foldgutter.js': ['bower_components/codemirror/addon/fold/foldgutter.js']
+					, 'script/plugin/codeMirror/addon/fold/brace-fold.js': ['bower_components/codemirror/addon/fold/brace-fold.js']
+					, 'script/plugin/codeMirror/addon/fold/xml-fold.js': ['bower_components/codemirror/addon/fold/xml-fold.js']
+					, 'script/plugin/codeMirror/emmet/emmet.min.js': ['bower_components/codemirror-emmet/dist/emmet.min.js']
 //					// pace
 //					, 'script/plugin/pace/pace.min.js': ['bower_components/pace/pace.min.js']
 //					// handlebars
@@ -139,6 +139,7 @@ module.exports = function(grunt){
 //					// harmony
 //					, 'script/plugin/harmony/harmony.js': ['bower_components/harmony/harmony.js']
 //					, 'script/plugin/harmony/dollar.js': ['bower_components/harmony/dollar.js']
+					, 'impress/impress.js': ['bower_components/impress.js/js/impress.js']
 				}
 			}
 		}
@@ -180,9 +181,10 @@ module.exports = function(grunt){
 //					, 'script/plugin/pace/themes/pace-theme-loading-bar.css': ['bower_components/pace/themes/pace-theme-loading-bar.css']
 //					, 'script/plugin/pace/themes/pace-theme-mac-osx.css': ['bower_components/pace/themes/pace-theme-mac-osx.css']
 //					, 'script/plugin/pace/themes/pace-theme-minimal.css': ['bower_components/pace/themes/pace-theme-minimal.css']
-//					// Code Mirror
-//					, 'script/plugin/codeMirror/lib/codemirror.css': ['bower_components/codemirror/lib/codemirror.css']
-//					, 'script/plugin/codeMirror/addon/fold/foldgutter.css': ['bower_components/codemirror/addon/fold/foldgutter.css']
+					// Code Mirror
+					//,
+				'script/plugin/codeMirror/lib/codemirror.css': ['bower_components/codemirror/lib/codemirror.css']
+					, 'script/plugin/codeMirror/addon/fold/foldgutter.css': ['bower_components/codemirror/addon/fold/foldgutter.css']
 //					// highlight
 //					, 'script/plugin/highlight/style/default.css': ['bower_components/highlightjs/styles/default.css']
 //					, 'script/plugin/highlight/style/arta.css': ['bower_components/highlightjs/styles/arta.css']
@@ -230,7 +232,7 @@ module.exports = function(grunt){
 //					, 'script/plugin/highlight/style/zenburn.css': ['bower_components/highlightjs/styles/zenburn.css']
 
 					// SyntaxHighlighter
-//					,
+					,
 				'script/plugin/syntaxhighlighter/style/shCoreDefault.css': ['bower_components/SyntaxHighlighter/styles/shCoreDefault.css']
 //					, 'script/plugin/syntaxhighlighter/style/shCoreDjango.css': ['bower_components/SyntaxHighlighter/styles/shCoreDjango.css']
 //					, 'script/plugin/syntaxhighlighter/style/shCoreEclipse.css': ['bower_components/SyntaxHighlighter/styles/shCoreEclipse.css']

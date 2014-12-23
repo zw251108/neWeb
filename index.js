@@ -127,6 +127,18 @@ webApp.get('/document/', function(req, res){
 
 });
 
+/**
+ * 编辑器模块
+ * editor/
+ * editor/code/
+ * */
+webApp.get('/editor/', function(req, res){
+	res.end();
+});
+webApp.get('/editor/code/', function(req, res){
+	res.end();
+});
+
 //webApp.all('/user/:id/:op?', function(req, res, next){
 //	req.user = users[req.params.id];
 //	console.log('\n', req.user);
