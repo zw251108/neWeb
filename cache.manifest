@@ -3,6 +3,12 @@ CACHE MANIFEST
 VERSION: 0.2
 
 CACHE:
+
+font/font.eot
+font/font.svg
+font/font.ttf
+font/font.woff
+
 script/lib/jquery/jquery.min.js
 script/lib/require/require.min.js
 script/ui/jquery.template.js

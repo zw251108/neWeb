@@ -328,6 +328,404 @@ p { font-size: 1.2em; line-height: 1.0em; color: #333; }
   word-break: break-all;
   word-wrap: break-word;
 }
+@font-face {
+  font-family: 'font';
+  src: url('../font/font.eot');
+  src: url('../font/font.eot#iefix') format('embedded-opentype'), url('../font/font.woff') format('woff'), url('../font/font.ttf') format('truetype'), url('../font/font.svg#font') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+.icon:before {
+  display: inline-block;
+  width: 1em;
+  font-family: "font";
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  line-height: 1em;
+  speak: none;
+  text-align: center;
+  text-decoration: inherit;
+  text-transform: none;
+}
+.icon-radio:before {
+  content: '\e818';
+}
+/* radio */
+.icon-radio-checked:before {
+  content: '\e82a';
+}
+/* radio:checked */
+.icon-checkbox:before {
+  content: '\e828';
+}
+/* checkbox */
+.icon-checkbox-checked:before {
+  content: '\e829';
+}
+/* checkbox:checked */
+.icon-up:before {
+  content: '\e821';
+}
+/* 上箭头 */
+.icon-down:before {
+  content: '\e820';
+}
+/* 下箭头 */
+.icon-left:before {
+  content: '\e810';
+}
+/* 左箭头 */
+.icon-right:before {
+  content: '\e80b';
+}
+/* 右箭头 */
+.icon-sun:before {
+  content: '\e807';
+}
+/* 太阳 */
+.icon-cloud:before {
+  content: '\e808';
+}
+/* 云 */
+.icon-rain:before {
+  content: '\e80c';
+}
+/* 下雨 */
+.icon-snow:before {
+  content: '\e82f';
+}
+/* 下雪 */
+.icon-thunder:before {
+  content: '\e830';
+}
+/* 闪电 */
+.icon-firefox:before {
+  content: '\e819';
+}
+/* 火狐 */
+.icon-chrome:before {
+  content: '\e81a';
+}
+/* 谷歌 */
+.icon-opera:before {
+  content: '\e81b';
+}
+/* Opera */
+.icon-ie:before {
+  content: '\e81c';
+}
+/* IE */
+.icon-renren:before {
+  content: '\e826';
+}
+/* 人人 */
+.icon-qq:before {
+  content: '\e817';
+}
+/* QQ */
+.icon-wechat:before {
+  content: '\e825';
+}
+/* 微信 */
+.icon-weibo:before {
+  content: '\e827';
+}
+/* 微博 */
+.icon-talk:before {
+  content: '\e809';
+}
+/* 聊天 */
+.icon-calendar:before {
+  content: '\e80a';
+}
+/* 日历 */
+.icon-document:before {
+  content: '\e815';
+}
+/* 文档 */
+.icon-editor:before {
+  content: '\e81f';
+}
+/* 编辑器 */
+.icon-bookmark:before {
+  content: '\e838';
+}
+/* 书签 */
+.icon-rss:before {
+  content: '\e822';
+}
+/* RSS */
+.icon-mail:before {
+  content: '\e836';
+}
+/* 邮箱 */
+.icon-picture:before {
+  content: '\e82d';
+}
+/* 图片 */
+.icon-user:before {
+  content: '\e80d';
+}
+/* 用户 */
+.icon-group:before {
+  content: '\e816';
+}
+/* 群组 */
+.icon-home:before {
+  content: '\e805';
+}
+/* 主页 */
+.icon-tags:before {
+  content: '\e800';
+}
+/* 标签 */
+.icon-edit:before {
+  content: '\e814';
+}
+/* 编辑 */
+.icon-filter:before {
+  content: '\e801';
+}
+/* 过滤 */
+.icon-folder:before {
+  content: '\e834';
+}
+/* 文件夹 */
+.icon-search:before {
+  content: '\e806';
+}
+/* 搜索 */
+.icon-play:before {
+  content: '\e82c';
+}
+/* 播放 */
+.icon-warming:before {
+  content: '\e823';
+}
+/* 警告 */
+.icon-ok:before {
+  content: '\e832';
+}
+/* 确定 */
+.icon-cancel:before {
+  content: '\e831';
+}
+/* 取消 */
+.icon-plus:before {
+  content: '\e80e';
+}
+/* 加号 */
+.icon-minus:before {
+  content: '\e804';
+}
+/* 减号 */
+.icon-heart:before {
+  content: '\e803';
+}
+/* 心 */
+.icon-heart-empty:before {
+  content: '\e802';
+}
+/* 心-空 */
+.icon-star:before {
+  content: '\e813';
+}
+/* 星 */
+.icon-star-half:before {
+  content: '\e81d';
+}
+/* 星-半 */
+.icon-star-empty:before {
+  content: '\e812';
+}
+/* 星-空 */
+.icon-male:before {
+  content: '\e82b';
+}
+/* 性别-男 */
+.icon-female:before {
+  content: '\e833';
+}
+/* 性别-女 */
+.icon-yen:before {
+  content: '\e837';
+}
+/* 人民币 */
+.icon-code:before {
+  content: '\e80f';
+}
+/* 代码 */
+.icon-css3:before {
+  content: '\e81e';
+}
+/* CSS3 */
+.icon-html5:before {
+  content: '\e824';
+}
+/* HTML5 */
+.icon-copyright:before {
+  content: '\e835';
+}
+/* 版权 */
+.animate {
+  -webkit-animation: 1s both;
+  -moz-animation: 1s both;
+  -ms-animation: 1s both;
+  animation: 1s both;
+}
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@-moz-keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@-ms-keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.fadeIn {
+  -webkit-animation-name: fadeIn;
+  -moz-animation-name: fadeIn;
+  -ms-animation-name: fadeIn;
+  animation-name: fadeIn;
+}
+@-webkit-keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@-moz-keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@-ms-keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+.fadeOut {
+  -webkit-animation-name: fadeOut;
+  -moz-animation-name: fadeOut;
+  -ms-animation-name: fadeOut;
+  animation-name: fadeOut;
+}
+@-webkit-keyframes slider-left-out {
+  from {
+    left: 0;
+  }
+  to {
+    left: -100%;
+  }
+}
+@-moz-keyframes slider-left-out {
+  from {
+    left: 0;
+  }
+  to {
+    left: -100%;
+  }
+}
+@-ms-keyframes slider-left-out {
+  from {
+    left: 0;
+  }
+  to {
+    left: -100%;
+  }
+}
+@keyframes slider-left-out {
+  from {
+    left: 0;
+  }
+  to {
+    left: -100%;
+  }
+}
+.slider-left-out {
+  -webkit-animation-name: slider-left-out;
+  -moz-animation-name: slider-left-out;
+  -ms-animation-name: slider-left-out;
+  animation-name: slider-left-out;
+}
+@-webkit-keyframes slider-left-in {
+  from {
+    left: 100%;
+  }
+  to {
+    left: 0;
+  }
+}
+@-moz-keyframes slider-left-in {
+  from {
+    left: 100%;
+  }
+  to {
+    left: 0;
+  }
+}
+@-ms-keyframes slider-left-in {
+  from {
+    left: 100%;
+  }
+  to {
+    left: 0;
+  }
+}
+@keyframes slider-left-in {
+  from {
+    left: 100%;
+  }
+  to {
+    left: 0;
+  }
+}
+.slider-left-in {
+  -webkit-animation-name: slider-left-in;
+  -moz-animation-name: slider-left-in;
+  -ms-animation-name: slider-left-in;
+  animation-name: slider-left-in;
+}
 /**
  *---------- Module 模块 汇总 ----------
  *
@@ -537,12 +935,13 @@ p { font-size: 1.2em; line-height: 1.0em; color: #333; }
 .module-metro > .module_title {
   position: absolute;
   bottom: 0;
-  left: 10px;
+  left: 0;
   right: 0;
   width: auto;
   background: none;
-  line-height: 30px;
   font-size: 20px;
+  line-height: 30px;
+  text-indent: 10px;
 }
 .module-metro > .module_content {
   display: none;

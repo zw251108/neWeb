@@ -97,18 +97,22 @@
 	background-position: center center;
 	background-repeat: no-repeat;
 }
-.icon-close{
-	background-image: url("../image/default/icon/close.png");
+.toolbar .icon:before{
+	margin: 10px;
+	font-size: 20px;
 }
-.icon-user{
-	background-image: url("../image/default/icon/user.png");
-}
-.icon-menu{
-	background-image: url("../image/default/icon/menu.png");
-}
-.icon-write{
-	background-image: url("../image/default/icon/write.png");
-}
+/*.icon-close{*/
+	/*background-image: url("../image/default/icon/close.png");*/
+/*}*/
+/*.icon-user{*/
+	/*background-image: url("../image/default/icon/user.png");*/
+/*}*/
+/*.icon-menu{*/
+	/*background-image: url("../image/default/icon/menu.png");*/
+/*}*/
+/*.icon-write{*/
+	/*background-image: url("../image/default/icon/write.png");*/
+/*}*/
 
 .Container{
 	/** 进入硬件加速 **/
@@ -154,10 +158,22 @@
 	top: 0;
 	right: 0;
 }
-.module-main .icon-close{
+.module_close.icon{
 	width: 29px;
 	height: 29px;
 	border-width: 0 0 1px 1px;
+}
+.module_title.icon:before{
+	position: absolute;
+	top: -90px;
+	left: 0;
+	width: 100%;
+	font-size: 90px;
+	text-align: center;
+}
+.module-main .icon:before{
+	margin: 5px;
+	font-size: 20px;
 }
 .module-metro .toolbar{
 	display: none;
@@ -212,11 +228,11 @@ textarea{
 
 	content: "";
 }
-.timeNode a.icon-user{
-	height: 28px;
-	width: 28px;
-	border: 1px solid #fff;
-}
+/*.timeNode a.icon-user{*/
+	/*height: 28px;*/
+	/*width: 28px;*/
+	/*border: 1px solid #fff;*/
+/*}*/
 
 .message{
 	position: relative;

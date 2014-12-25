@@ -1,7 +1,6 @@
 /**
  * 模板管理
- */
-
+ * */
 var fs = require('fs')
 	, path = require('path')
 	, TPL_CACHE = {}
@@ -24,13 +23,41 @@ var fs = require('fs')
 
 		return rs;
 	}
-	, filterData = function(fileObj){
-		var tpl = fileObj.tpl
+	, handlerData = function(fileObj){
+		var tpl = readTpl( fileObj.tpl )
+			, data
+			, i, j
+			, t, k
+			, temp
+			, rs = ''
 			;
 
 		if( 'data' in fileObj ){
+			data = fileObj.data;
+			temp = tpl;
 
+			if( Array.isArray( data ) ){
+				for( i = 0, j = data.length; i < j; i++ ){
+					t = data[i];
+					for( k in t ) if( t.hasOwnProperty( k ) ){
+						temp = temp.replace('%'+ k +'%', t[k]);
+					}
+					rs += temp;
+					temp = tpl;
+				}
+			}
+			else{
+				t = data;
+				for( k in t ) if( t.hasOwnProperty( k ) ){
+					temp = temp.replace('%'+ k +'%', t[k]);
+				}
+				rs += temp;
+			}
 		}
+		else{
+			rs = tpl;
+		}
+		return rs;
 	}
 	;
 
@@ -39,13 +66,11 @@ var fs = require('fs')
 exports.tpl = function(filePath){
 	var rs = ''
 		, type = typeof filePath
-		, i
-		, j
-		, t
+		, i, j, t
 		;
 
 	if( type === 'string' ){
-		rs = readTpl( filePath );
+		rs += readTpl( filePath );
 	}
 	else if( type === 'object' && Array.isArray( filePath ) ){
 
@@ -61,7 +86,6 @@ exports.tpl = function(filePath){
 			}
 		}
 	}
-
 
 	return rs;
 };

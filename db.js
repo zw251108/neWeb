@@ -1,6 +1,6 @@
 /**
  * MySQL 数据库
- */
+ * */
 var SQL = {
 		blog: {
 			sql: 'select Id,title,datetime,tags_id,tags_name from blog where status=1 order by Id desc'

@@ -55,8 +55,11 @@ webApp.use( session({
 
 //----- 静态资源 重定向 -----
 webApp.use('/script', express.static(__dirname + '/script') );
-webApp.use('/style', express.static(__dirname + '/style') );
+
+webApp.use('/font', express.static(__dirname + '/font') );
 webApp.use('/image', express.static(__dirname + '/image') );
+webApp.use('/style', express.static(__dirname + '/style') );
+
 webApp.use('/cache.manifest', express.static(__dirname + '/cache.manifest') );
 
 //webApp.use(function(req, res, next){
@@ -88,11 +91,11 @@ webApp.use('/cache.manifest', express.static(__dirname + '/cache.manifest') );
 webApp.get('/blog/', function(req, res){
 	db.select('blog', [], function(data){
 
-		var header = tpl('header')
-			, footer = tpl('footer')
-			, main = tpl('blog/index')
-			, article = tpl('blog/article')
-			;
+		//var header = tpl('header')
+		//	, footer = tpl('footer')
+		//	, main = tpl('blog/index')
+		//	, article = tpl('blog/article')
+		//	;
 
 		res.send( tpl(['header', {
 			tpl: 'blog/index'
@@ -233,7 +236,7 @@ webApp.get('/editor/code/', function(req, res){
 webApp.get('/', function(req, res){
 	console.log('session id', req.session.id);
 
-	res.send( tpl('index.html') );
+	res.send( tpl('index') );
 	res.end();
 });
 
