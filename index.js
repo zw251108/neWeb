@@ -27,10 +27,24 @@ var sys = require('util')
 	, sessionStore = new session.MemoryStore()
 
 	// 数据库
-	, db = require('./module/db.js').db
+	//, db = require('./module/db.js').db
+	, DB_SERVER_HOST = 'localhost'
+	, DB_SERVER_PORT = 3306
+	, DB_USERNAME = 'root'
+	, DB_PASSWORD = 'zw251108'
+	, DB_DATABASE = 'destiny'
+	, db = require('mysql').createConnection({
+		host: DB_SERVER_HOST
+		, port: DB_SERVER_PORT
+		, user: DB_USERNAME
+		, password: DB_PASSWORD
+		, database: DB_DATABASE
+		, dateStrings: true	// 强制日期类型(TIMESTAMP, DATETIME, DATE)以字符串返回，而不是一javascript Date对象返回. (默认: false)
+	})
 
 	// 模块库
 	, tpl = require('./module/tpl.js').tpl
+	, template = require('./module/template/template.js').template
 
 	// Web Socket
 	, socketServer = require('./module/socket.js')

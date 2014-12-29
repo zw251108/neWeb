@@ -15,7 +15,7 @@ var
 			}
 		}
 		, document: {
-			sql: 'select title,content,section_title from document order by section_id,`order`'
+			sql: 'select title,content,section_title from document where section_id=1 and Id<14 order by section_id,`order`'
 			, handler: function(rs){
 				var document = []
 					, tempTitle = ''
@@ -39,8 +39,7 @@ var
 			}
 		}
 		, editor: {
-			sql: 'select editor.Id,editor.name,preview,tags_id,tags_name,width,height ' +
-				'from editor,image where editor.preview=image.src order by editor.Id'
+			sql: 'select editor.Id,editor.name,preview,tags_id,tags_name,width,height from editor,image where editor.preview=image.src order by editor.Id'
 			, code: {
 				sql: 'select Id,name,tags_id,tags_name,include_file,html,css,js from editor where Id=?'
 				, handler: function(rs){
@@ -49,9 +48,7 @@ var
 			}
 		}
 		, talk: {
-			sql: 'select Id,title as content, \'blog\' as type, datetime from blog ' +
-				'union all ' +
-				'select Id,content, \'message\' as type,datetime from message'
+			sql: 'select Id,title as content, \'blog\' as type, datetime from blog union all select Id,content, \'message\' as type,datetime from message'
 		}
 		, tag: {
 			sql: 'select Id,name from tag'
