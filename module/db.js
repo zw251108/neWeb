@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * MySQL 数据库
  * */

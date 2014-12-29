@@ -1,0 +1,33 @@
+@import "../lib/grid.less";
+
+/**
+ * 针对宽度为 1920px 以下的设备
+ *  .Container 宽度 1280
+ *  共 32 列
+ *  .large    48
+ *  .big      32
+ *  .normal   24
+ *  .small    16
+ *  .tiny     4
+ * */
+@media screen and (min-width:1920px){
+	.Container{
+		width: @grid-unit *48;
+	}
+
+	.large{
+		.grid-x(48);
+	}
+    .big{
+	    .grid-x(32);
+    }
+    .normal{
+	    .grid-x(24);
+    }
+    .small{
+	    .grid-x(16);
+    }
+    .tiny{
+	    .grid-x(4);
+    }
+}

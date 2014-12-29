@@ -1,11 +1,11 @@
+'use strict';
+
 /**
  * Web Socket 服务器
- *
  * */
 var sio = require('socket.io')()
 	, CLIENT_LIST = {}
 	, CLIENT_INDEX_LIST = []
-
 	, db = require('./db.js').db
 	;
 

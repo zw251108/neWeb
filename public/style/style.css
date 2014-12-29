@@ -318,6 +318,24 @@ p { font-size: 1.2em; line-height: 1.0em; color: #333; }
     width: 1270px;
   }
 }
+/**
+ * 针对宽度为 1920px 以下的设备
+ *  .Container 宽度 1280
+ *  共 32 列
+ *  .large    48
+ *  .big      16(默认)
+ *  .normal   12(默认)
+ *  .small    8(默认)
+ *  .tiny     4(默认)
+ * */
+@media screen and (min-width: 1920px) {
+  .Container {
+    width: 1920px;
+  }
+  .large {
+    width: 1910px;
+  }
+}
 /*span*/
 .code {
   padding: 2px 4px;
