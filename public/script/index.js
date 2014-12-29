@@ -254,7 +254,7 @@ define('tag', ['jquery', 'socket', 'template'], function($, socket){
 		socket.emit('addTag', {
 			name: ''
 		});
-	})
+	});
 
 	return Tag;
 });

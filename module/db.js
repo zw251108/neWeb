@@ -1,7 +1,8 @@
 /**
  * MySQL 数据库
  * */
-var SQL = {
+var
+	SQL = {
 		blog: {
 			sql: 'select Id,title,datetime,tags_id,tags_name from blog where status=1 order by Id desc'
 			, detail: {
@@ -54,7 +55,8 @@ var SQL = {
 			sql: 'select Id,name from tag'
 		}
 	}
-	, mysql = require('mysql')
+	,
+	mysql = require('mysql')
 	, conn = mysql.createConnection({
 		host: 'localhost'
 		, port: 3306

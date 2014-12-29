@@ -4,12 +4,7 @@
 * Web Server
 * */
 var sys = require('util')
-
-	// 数据库
-	, db = require('./db.js').db
-
-	// 模块库
-	, tpl = require('./tpl.js').tpl
+	, fs = require('fs')
 
 	// Web 服务器
 	, express = require('express')
@@ -31,9 +26,20 @@ var sys = require('util')
 	, session = require('express-session')
 	, sessionStore = new session.MemoryStore()
 
+	// 数据库
+	, db = require('./module/db.js').db
+
+	// 模块库
+	, tpl = require('./module/tpl.js').tpl
+
 	// Web Socket
-	, socketServer = require('./socket.js')
+	, socketServer = require('./module/socket.js')
 	;
+
+//----- 重置 manifest 版本代号
+var manifest = fs.readFileSync(__dirname + '/tpl/cache.manifest').toString();
+fs.writeFileSync(__dirname + '/public/cache.manifest', new Buffer(manifest.replace('%v%', Math.floor(Math.random()*100))) );
+console.log('cache.mainfest has reset');
 
 //----- web 服务器设置 -----
 webApp.use( bodyParser.json() );
@@ -42,7 +48,7 @@ webApp.use( cookieParser() );
 webApp.use( logger('dev') );
 // 文件上传设置
 webApp.use( multer({
-	dest: './upload/'
+	dest: './public/upload/'
 }) );
 // session 设置
 webApp.use( session({
@@ -54,13 +60,13 @@ webApp.use( session({
 }) );
 
 //----- 静态资源 重定向 -----
-webApp.use('/script', express.static(__dirname + '/script') );
+webApp.use('/script', express.static(__dirname + '/public/script') );
 
-webApp.use('/font', express.static(__dirname + '/font') );
-webApp.use('/image', express.static(__dirname + '/image') );
-webApp.use('/style', express.static(__dirname + '/style') );
+webApp.use('/font', express.static(__dirname + '/public/font') );
+webApp.use('/image', express.static(__dirname + '/public/image') );
+webApp.use('/style', express.static(__dirname + '/public/style') );
 
-webApp.use('/cache.manifest', express.static(__dirname + '/cache.manifest') );
+webApp.use('/cache.manifest', express.static(__dirname + '/public/cache.manifest') );
 
 //webApp.use(function(req, res, next){
 //	var err = new Error('not found');
@@ -89,22 +95,38 @@ webApp.use('/cache.manifest', express.static(__dirname + '/cache.manifest') );
  *  /blog/detail/?id=:id&_=.*
  * */
 webApp.get('/blog/', function(req, res){
-	db.select('blog', [], function(data){
+	db.query('blog', [], function(data){
 
-		//var header = tpl('header')
-		//	, footer = tpl('footer')
-		//	, main = tpl('blog/index')
-		//	, article = tpl('blog/article')
-		//	;
+		var header = tpl('header')
+			, footer = tpl('footer')
+			, main = tpl('blog/index')
+			, article = tpl('blog/article')
+			, html = ''
+			, t, temp
+			, i, j, k
+			;
 
-		res.send( tpl(['header', {
-			tpl: 'blog/index'
-			, blogList: {
-				tpl: 'blog/article'
-				, data: data
+		//res.send( tpl(['header', {
+		//	tpl: 'blog/index'
+		//	, blogList: {
+		//		tpl: 'blog/article'
+		//		, data: data
+		//		, tags: ''
+		//	}
+		//}, 'footer']) );
+
+		for( i = 0, j = data.length; i < j; i++ ){
+			t = article;
+			temp = data[i];
+
+			for( k in temp ) if( temp.hasOwnProperty(k) ){
+				t = t.replace('%'+ k +'%', temp[k]);
 			}
-		}, 'footer']) );
+			html += t;
+		}
 
+
+		res.send(header + main.replace('%blogList%', html) + footer);
 		res.end();
 	}, function(){
 		res.end();
@@ -117,7 +139,7 @@ webApp.get('/blog/detail/', function(req, res){
 
 	}
 	else{
-		res.send('{error: "E0001", msg:"'+ ERROR_MSG.E0001 +'}');
+		//res.send('{error: "E0001", msg:"'+ ERROR_MSG.E0001 +'}');
 		res.end();
 	}
 });
@@ -245,7 +267,7 @@ webServer = webApp.listen( WEB_APP_PORT );
 console.log('Web Server is listening...');
 
 //----- socket 服务器 -----
-socketServer = require('./socket.js').listen(webServer);
+socketServer = socketServer.listen(webServer);
 
 //----- 设置 socket.IO 与 express 共用 session -----
 socketServer.use(function(socket, next){
