@@ -100,12 +100,12 @@ module.exports = function(grunt){
 //					, 'public/script/plugin/highlight/highlight.js': ['bower_components/highlightjs/highlight.pack.js']
 
 					// SyntaxHighlighter
-					, 'public/script/plugin/syntaxhighlighter/XRegExp.js': ['bower_components/SyntaxHighlighter/scripts/XRegExp.js']
-					, 'public/script/plugin/syntaxhighlighter/shCore.js': ['bower_components/SyntaxHighlighter/scripts/shCore.js']
-//					, 'public/script/plugin/syntaxhighlighter/shAutoloader.js': ['bower_components/SyntaxHighlighter/scripts/shAutoloader.js']
-					, 'public/script/plugin/syntaxhighlighter/shBrushJScript.js': ['bower_components/SyntaxHighlighter/scripts/shBrushJScript.js']
-					, 'public/script/plugin/syntaxhighlighter/shBrushCss.js': ['bower_components/SyntaxHighlighter/scripts/shBrushCss.js']
-					, 'public/script/plugin/syntaxhighlighter/shBrushXml.js': ['bower_components/SyntaxHighlighter/scripts/shBrushXml.js']
+//					, 'public/script/plugin/syntaxhighlighter/XRegExp.js': ['bower_components/SyntaxHighlighter/scripts/XRegExp.js']
+//					, 'public/script/plugin/syntaxhighlighter/shCore.js': ['bower_components/SyntaxHighlighter/scripts/shCore.js']
+////					, 'public/script/plugin/syntaxhighlighter/shAutoloader.js': ['bower_components/SyntaxHighlighter/scripts/shAutoloader.js']
+//					, 'public/script/plugin/syntaxhighlighter/shBrushJScript.js': ['bower_components/SyntaxHighlighter/scripts/shBrushJScript.js']
+//					, 'public/script/plugin/syntaxhighlighter/shBrushCss.js': ['bower_components/SyntaxHighlighter/scripts/shBrushCss.js']
+//					, 'public/script/plugin/syntaxhighlighter/shBrushXml.js': ['bower_components/SyntaxHighlighter/scripts/shBrushXml.js']
 
 //					// Stellar
 //					, 'public/script/plugin/stellar/jquery.stellar.min.js': ['bower_components/jquery.stellar/jquery.stellar.min.js']
@@ -139,7 +139,7 @@ module.exports = function(grunt){
 //					// harmony
 //					, 'public/script/plugin/harmony/harmony.js': ['bower_components/harmony/harmony.js']
 //					, 'public/script/plugin/harmony/dollar.js': ['bower_components/harmony/dollar.js']
-					, 'impress/impress.js': ['bower_components/impress.js/js/impress.js']
+//					, 'impress/impress.js': ['bower_components/impress.js/js/impress.js']
 				}
 			}
 		}
@@ -183,7 +183,7 @@ module.exports = function(grunt){
 //					, 'public/script/plugin/pace/themes/pace-theme-minimal.css': ['bower_components/pace/themes/pace-theme-minimal.css']
 					// Code Mirror
 					//,
-				'public/script/plugin/codeMirror/lib/codemirror.css': ['bower_components/codemirror/lib/codemirror.css']
+					'public/script/plugin/codeMirror/lib/codemirror.css': ['bower_components/codemirror/lib/codemirror.css']
 					, 'public/script/plugin/codeMirror/addon/fold/foldgutter.css': ['bower_components/codemirror/addon/fold/foldgutter.css']
 //					// highlight
 //					, 'public/script/plugin/highlight/style/default.css': ['bower_components/highlightjs/styles/default.css']
@@ -231,9 +231,9 @@ module.exports = function(grunt){
 //					, 'public/script/plugin/highlight/style/xcode.css': ['bower_components/highlightjs/styles/xcode.css']
 //					, 'public/script/plugin/highlight/style/zenburn.css': ['bower_components/highlightjs/styles/zenburn.css']
 
-					// SyntaxHighlighter
-					,
-				'public/script/plugin/syntaxhighlighter/style/shCoreDefault.css': ['bower_components/SyntaxHighlighter/styles/shCoreDefault.css']
+					//// SyntaxHighlighter
+					//, 'public/script/plugin/syntaxhighlighter/style/shCoreDefault.css': ['bower_components/SyntaxHighlighter/styles/shCoreDefault.css']
+
 //					, 'public/script/plugin/syntaxhighlighter/style/shCoreDjango.css': ['bower_components/SyntaxHighlighter/styles/shCoreDjango.css']
 //					, 'public/script/plugin/syntaxhighlighter/style/shCoreEclipse.css': ['bower_components/SyntaxHighlighter/styles/shCoreEclipse.css']
 //					, 'public/script/plugin/syntaxhighlighter/style/shCoreEmacs.css': ['bower_components/SyntaxHighlighter/styles/shCoreEmacs.css']
@@ -312,7 +312,7 @@ module.exports = function(grunt){
 			destiny: {
 				options: {
 //					paths: ["assets/css"]
-//					cleancss: true
+					cleancss: true
 				},
 				files: {
 					'public/style/style.css': 'public/less/style.less'

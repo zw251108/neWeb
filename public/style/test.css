@@ -256,7 +256,7 @@ textarea{
 	position: absolute;
 	top: 5px;
 	left: -19px;
-	height: 0px;
+	height: 0;
 	width: 0;
 	border: 10px solid transparent;
 	border-right-color: #000;
@@ -266,3 +266,61 @@ textarea{
 .datetime{
 	float: right;
 }
+
+dd{
+	display: none;
+}
+
+.CodeMirror{
+	height: auto;
+	border: 1px solid #ddd;
+	margin-right: 10px;
+	font-family: inherit;
+	font-size: 13px;
+	line-height: 1;
+}
+
+.CodeMirror-scroll{
+	overflow: scroll !important;
+	max-height: 200px;
+}
+
+.CodeMirror pre{
+	padding-left: 7px;
+	line-height: 1.25;
+}
+.CodeMirror-gutters{
+	padding-bottom: 0;
+}
+.CodeMirror-gutter{
+	margin-bottom: -30px;
+	padding-bottom: 0;
+}
+/*.CodeMirror{*/
+	/*overflow: hidden;*/
+	/*height: auto;*/
+	/*height: 100px;*/
+	/*margin-right: 10px;*/
+
+	/*font-family: inherit;*/
+/*}*/
+/*.CodeMirror-linenumber,*/
+/*.CodeMirror pre,*/
+/*.CodeMirror .CodeMirror-lines span{*/
+	/*font-size: 15px;*/
+	/*line-height: 1em;*/
+/*}*/
+/*.CodeMirror-lines{*/
+	/*padding: 0;*/
+/*}*/
+/*.CodeMirror-scroll{*/
+	/*overflow: auto;*/
+	/*max-height: 105px;*/
+	/*min-height: 1em;*/
+	/*overflow: visible;*/
+/*}*/
+/*.CodeMirror-gutters,*/
+/*.CodeMirror-gutter{*/
+	/*margin-bottom: 0;*/
+	/*padding-bottom: 0;*/
+/*}*/

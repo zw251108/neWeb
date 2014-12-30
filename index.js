@@ -27,20 +27,20 @@ var sys = require('util')
 	, sessionStore = new session.MemoryStore()
 
 	// 数据库
-	//, db = require('./module/db.js').db
+	, db = require('./module/db.js').db
 	, DB_SERVER_HOST = 'localhost'
 	, DB_SERVER_PORT = 3306
 	, DB_USERNAME = 'root'
 	, DB_PASSWORD = 'zw251108'
 	, DB_DATABASE = 'destiny'
-	, db = require('mysql').createConnection({
-		host: DB_SERVER_HOST
-		, port: DB_SERVER_PORT
-		, user: DB_USERNAME
-		, password: DB_PASSWORD
-		, database: DB_DATABASE
-		, dateStrings: true	// 强制日期类型(TIMESTAMP, DATETIME, DATE)以字符串返回，而不是一javascript Date对象返回. (默认: false)
-	})
+	//, db = require('mysql').createConnection({
+	//	host: DB_SERVER_HOST
+	//	, port: DB_SERVER_PORT
+	//	, user: DB_USERNAME
+	//	, password: DB_PASSWORD
+	//	, database: DB_DATABASE
+	//	, dateStrings: true	// 强制日期类型(TIMESTAMP, DATETIME, DATE)以字符串返回，而不是一javascript Date对象返回. (默认: false)
+	//})
 
 	// 模块库
 	, tpl = require('./module/tpl.js').tpl
@@ -103,6 +103,12 @@ webApp.use('/cache.manifest', express.static(__dirname + '/public/cache.manifest
 //	console.log('\n', req.files);
 //});
 
+//var Tag = {
+//	tagTmpl: $.template({
+//		template: 'span.tag[data-tagid=%Id%]{%name%}'
+//	})
+//};
+
 /**
  * 博客模块
  *  /blog/
@@ -114,33 +120,30 @@ webApp.get('/blog/', function(req, res){
 		var header = tpl('header')
 			, footer = tpl('footer')
 			, main = tpl('blog/index')
-			, article = tpl('blog/article')
-			, html = ''
-			, t, temp
-			, i, j, k
+			, articleTmpl = template({
+				template:'article#blogArt%Id%.article>a[href=blog/detail/?id=%Id%]>h3.article_title{%title%}' +
+				'^hr+span.article_date{%datetime%}+div.tagsArea{%tags%}'
+				, filter:{
+					//tags: function(d){
+					//	var data = []
+					//		, tagsId = (d.tags_id || '').split(',')
+					//		, tagsName = (d.tags_name || '').split(',')
+					//		;
+					//
+					//	$.each(tagsId, function(i, d){
+					//		data.push({
+					//			Id: d
+					//			, name: tagsName[i]
+					//		});
+					//	});
+					//
+					//	return tagTmpl(data).join('');
+					//}
+				}
+			})
 			;
 
-		//res.send( tpl(['header', {
-		//	tpl: 'blog/index'
-		//	, blogList: {
-		//		tpl: 'blog/article'
-		//		, data: data
-		//		, tags: ''
-		//	}
-		//}, 'footer']) );
-
-		for( i = 0, j = data.length; i < j; i++ ){
-			t = article;
-			temp = data[i];
-
-			for( k in temp ) if( temp.hasOwnProperty(k) ){
-				t = t.replace('%'+ k +'%', temp[k]);
-			}
-			html += t;
-		}
-
-
-		res.send(header + main.replace('%blogList%', html) + footer);
+		res.send(header.replace('%pageTitle%', '博客 Blog') + main.replace('%blogList%', articleTmpl(data).join('')) + footer);
 		res.end();
 	}, function(){
 		res.end();
@@ -153,7 +156,6 @@ webApp.get('/blog/detail/', function(req, res){
 
 	}
 	else{
-		//res.send('{error: "E0001", msg:"'+ ERROR_MSG.E0001 +'}');
 		res.end();
 	}
 });
@@ -163,7 +165,28 @@ webApp.get('/blog/detail/', function(req, res){
  *  /document/
  * */
 webApp.get('/document/', function(req, res){
+	db.query('document', [], function(data){
+		var header = tpl('header')
+			, footer = tpl('footer')
+			, main = tpl('document/index')
+			, dlTmpl = template({
+				template: 'dt.icon.icon-arrow-r{%title%}+dd{%content%}'
+			})
+			, sectionTmpl = template({
+				template: 'section.document_section.section>h3.section_title{%section_title%}>span.icon-CSS.icon-minus^dl{%dl%}'
+				, filter: {
+					dl: function(d){
+						return dlTmpl(d.dl).join('');
+					}
+				}
+			})
+			;
 
+		res.send(header.replace('%pageTitle%', '前端文档 Document') + main.replace('%documentList%', sectionTmpl(data).join('') ) + footer);
+		res.end();
+	}, function(){
+		res.end();
+	})
 });
 
 /**

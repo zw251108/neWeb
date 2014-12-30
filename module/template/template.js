@@ -134,8 +134,8 @@ var elemExpr = /(\w*)((?:#[\w%]*)?)((?:\.[\w\-%]*)*)((?:\[[\w\-%]*(?:=.*?)?(?:(?
 
 exports.template = function(options){
 	var opts = {}
-		, template = opts.template
-		, filter = opts.filter
+		, template
+		, filter
 		, front = []
 		, end = []
 		, rs
@@ -144,10 +144,12 @@ exports.template = function(options){
 		;
 
 	for( k in defaults ) if( defaults.hasOwnProperty(k) ){
-		if( !(k in options) ){
-			options[k] = defaults[k];
-		}
+		opts[k] = (k in options) ? options[k] : defaults[k];
 	}
+
+	template = opts.template;
+	filter = opts.filter;
+
 
 	while( template ){
 		rs = elemExpr.exec( template );

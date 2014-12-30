@@ -15,7 +15,7 @@ var
 			}
 		}
 		, document: {
-			sql: 'select title,content,section_title from document where section_id=1 and Id<14 order by section_id,`order`'
+			sql: 'select title,content,section_title from document order by section_id,`order`'
 			, handler: function(rs){
 				var document = []
 					, tempTitle = ''

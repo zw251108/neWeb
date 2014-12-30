@@ -44,53 +44,11 @@ define(['jquery', 'global', 'socket',
 
 	//highlight = highlight.SyntaxHighlighter;
 
+	//window.cm = cm;
+
 	// 绑定 socket 回调 事件
 	socket.on('getDocumentData', function(data){
 		$document.data('getData', true).find('.module_content').append( sectionTmpl(data).join('') );
-
-		//highlight.highlight();
-		console.dir(cm);
-		$('textarea').each(function(){
-			var mode = this.className;
-			if( mode === 'brush:html' ){
-				cm.fromTextArea(this, {
-					mode: 'text/html'
-					, lineNumbers : true
-					, foldGutter: true
-					, gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter']
-					, indentUnit: 4
-					, tabSize: 4
-					, profile: 'xhtml'
-					/* define Emmet output profile */
-				});
-			}
-			else if( mode === 'brush:css' ){
-				cm.fromTextArea(this, {
-					mode: 'text/css'
-					, lineNumbers: true
-					, foldGutter: true
-					, gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter']
-					, indentUnit: 4
-					, tabSize: 4
-				});
-			}
-			else if( mode === 'brush:js' ){
-				cm.fromTextArea(this, {
-					mode: 'javascript'
-					, lineNumbers: true
-					, matchBrackets: true
-					, foldGutter: true
-					, gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter']
-					, indentUnit: 4
-					, tabSize: 4
-					, extraKeys: {
-						Enter:'newlineAndIndentContinueComment'
-						, 'Ctrl-/': 'toggleComment'
-					}
-				});
-			}
-
-		});
 
 		// 数据已加载完成
 		$container.triggerHandler('dataReady');
@@ -120,6 +78,29 @@ define(['jquery', 'global', 'socket',
 			scrollTop: this.offsetTop -80
 		}, function(){
 			$curr.toggleClass('icon-arrow-r icon-arrow-d').next().slideToggle();
+
+			!$curr.data('codeMirror') && $curr.data('codeMirror', true).next().find('textarea').each(function(){
+				var mode = this.className;
+				if( mode === 'brush:html' ){
+					mode = 'text/html';
+				}
+				else if( mode === 'brush:css' ){
+					mode = 'text/css';
+				}
+				else if( mode === 'brush:js' ){
+					mode = 'javascript';
+				}
+				             console.dir(this)
+				cm.fromTextArea(this, {
+					mode: mode
+					, lineNumbers : true
+					//, foldGutter: true
+					//, gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter']
+					, matchBrackets: true
+					//, readOnly: true
+				});
+			});
+
 		});
 	});
 
