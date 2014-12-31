@@ -3,215 +3,34 @@
  * 全局设置
  * */
 require.config({
-	packages: [{
-		name: 'plugin/syntaxhighlighter'
-		, main: 'XRegExp'
-	}]
-	, shim: {
-		template: ['jquery']
-	}
-	, paths: {
-		'socket.io': '../socket.io/socket.io'
-		, jquery: 'lib/jquery/jquery.min'
+	paths: {
+		jquery: 'lib/jquery.min'
+		, d3: 'lib/d3.min'
+
 		, template: 'ui/jquery.template'
 
-		, d3: 'lib/d3/d3.min'
-
 		// 全局模块设置
+		, global: 'module/global'
+		, socket: 'module/socket'
+		, tag: 'module/tag'
+		, time: 'module/time'
+
 
 		// 应用模块设置
-		, blog: 'module/blog'
-		, document: 'module/document'
-		, editor: 'module/editor'
-		, talk: 'module/talk'
-		, time: 'module/time'
+		, blog: 'module/blog/blog'
+		, document: 'module/document/document'
+		, editor: 'module/editor/editor'
+		, talk: 'module/talk/talk'
 	}
 });
 
 //---------- 工具模块 ----------
-//----- web socket 模块 目前基于 socket.io -----
-define('socket', ['socket.io'], function(io){
-	var socket = io('http://localhost:9001');
-
-	socket.on('error', function(err){
-
-		if( err === 'session not found' ){
-			/**
-			 * session 失效
-			 *  todo
-			 *  断开连接
-			 *  提示用户
-			 * */
-			socket.disconnect();
-			console.log('断开连接')
-		}
-	});
-
-	return socket;
-});
 //----- 地理定位 -----
 define('location', function(){});
 //----- 本地存储 模块 -----
 define('storage', function(){});
 
 //---------- 公用基础模块 ----------
-//----- 全局模块 -----
-define('global', ['jquery', 'socket'], function($, socket){
-	// 兼容 console
-	if( !('console' in window) || !('log' in console) || (typeof console.log !== 'function') ){
-		window.console = {
-			logStack:[],
-			log:function(value){
-				this.logStack.push(value);
-			}
-		}
-	}
-	else{
-		// 自娱自乐。。。
-		console.log(
-			'      __    __   __ __ __   __         __         __ __ __\n'  +
-			'    /  /  /  / /   __ __/ /  /       /  /       /   __   /\n'  +
-			'   /  /__/  / /  /__     /  /       /  /       /  /  /  /\n'   +
-			'  /   __   / /   __/    /  /       /  /       /  /  /  /\n'    +
-			' /  /  /  / /  /__ __  /  /__ __  /  /__ __  /  /__/  /\n'     +
-			'/__/  /__/ /__ __ __/ /__ __ __/ /__ __ __/ /__ __ __/\n'      +
-			'\n\n 有什么疑问吗？直接给我留言吧 :)');
-	}
-
-	var g =  window.GLOBAL || {}
-		, animationEnd = 'webkitAnimationEnd mozAnimationEnd msAnimationEnd animationEnd'
-		;
-
-	g.$body = $(document.body);
-	g.$overlay = $('#overlay');
-
-	g._MODULE = [];
-	g._$MODULE = {};
-	g.mod = function(moduleName, moduleValue){
-		var type = typeof moduleName
-			, rs = false
-			;
-
-		if( moduleValue && typeof type === 'string' ){
-
-			g._MODULE.push(moduleName);
-			g._$MODULE[moduleName] = moduleValue;
-
-			rs = true;
-		}
-		else if( type === 'string' ){
-			rs = moduleName in g._$MODULE ? g._$MODULE[moduleName] : null;
-		}
-		else if( type === 'number' ){
-			rs = (moduleName >= 0 && moduleName < g._MODULE.length) ? g._$MODULE[g._MODULE[moduleName]] : null;
-		}
-
-		return rs;
-	};
-	g.numMod = function(){
-		return g._MODULE.length;
-	};
-
-	g.eventType = {
-		animationEnd: animationEnd
-	};
-
-	window.GLOBAL = g;// 释放到全局
-
-	var $container = $('#container')
-		, target
-		;
-	$container.on({
-		'webkitAnimationEnd mozAnimationEnd msAnimationEnd animationEnd': function(){
-			var $t = g.mod('$' + target);
-
-			$container.addClass('animate-done');
-
-			if( $container.hasClass('fadeOut') ){   // 淡出
-
-				if( $container.hasClass('main-show') ){ // 显示 main 模块
-
-					// 隐藏 metro 模块
-					$container.addClass('hideMetro');
-
-					// 切换 main 模块状态
-					$t.removeClass('module-metro ' + $t.data('width')).addClass('module-main large');
-
-					// todo
-					if( $container.hasClass('main-data') ){
-						$container.triggerHandler('showMain')
-					}
-				}
-				else{   // 显示全部 metro 模块
-					$t.removeClass('module-main large').addClass('module-metro ' + $t.data('width')).wrap('<a href="/'+ $t.attr('id') +'/"></a>');
-
-					$container.triggerHandler('showMetro');
-				}
-			}
-			else if( $container.hasClass('fadeIn') ){   // 淡入
-				$container.removeClass('fadeIn animate-done');
-			}
-		}
-		, dataReady: function(){
-			if( $container.hasClass('animate-done') ){
-				$container.triggerHandler('showMain');
-			}
-			else{
-				$container.addClass('main-data');
-			}
-		}
-		, showMain: function(){
-			$container.removeClass('animate-done main-data fadeOut').addClass('fadeIn');
-		}
-		, showMetro: function(){
-			$container.removeClass('animate-done fadeOut hideMetro').addClass('fadeIn');
-		}
-	}).on('click', '.module', function(e){
-		e.preventDefault();
-		e.stopImmediatePropagation();
-
-		var $target;
-
-		if( $container.hasClass('fadeOut') || $container.hasClass('fadeIn') ) return;
-
-		target = this.id;
-		$target = g.mod('$'+ target);
-
-		if( !$target.hasClass('module-metro') ) return;
-
-		// todo 加入 本地存储
-
-		$target.unwrap();
-		$container.addClass('main-show fadeOut');
-
-		if( $target.data('getData') ){  // 已获取基础数据
-			// 展开
-			$container.triggerHandler('dataReady');
-		}
-		else{   // 未获取基础数据
-			require([target], function(){
-				socket.emit('getData', {
-					topic: target
-					, receive: 'get'+ target.replace(/^(.{1})/, function(s){return s.toUpperCase();}) +'Data'
-				});
-			});
-		}
-	}).on('click', '.module-main .module_close', function(e){
-		e.preventDefault();
-		e.stopImmediatePropagation();
-
-		if( $container.hasClass('fadeOut') || $container.hasClass('fadeIn') ) return;
-
-		var $t = $(this).parents('.module');
-		target = $t.attr('id');
-
-		$container.removeClass('main-show').addClass('fadeOut');
-	});
-
-	g.$container = $container;
-
-	return g;
-});
 //----- 页头 Header -----
 define('header', ['jquery', 'global'], function($, g){
 	var $header = $('#header')
@@ -235,28 +54,6 @@ define('user', ['jquery', 'global', 'socket', 'header'], function($, g, socket, 
 	$user.on('click', function(){
 		$user.after('<div class="loginBar"><form action=""></form></div>');
 	});
-});
-//----- 标签数据 Tag -----
-define('tag', ['jquery', 'socket', 'template'], function($, socket){
-	var Tag = {
-		tagTmpl: $.template({
-			template: 'span.tag[data-tagid=%Id%]{%name%}'
-		})
-	};
-	socket.emit('getData', {
-		topic: 'tag'
-		, receive: 'getTagData'
-	});
-
-	socket.on('getTagData', function(data){
-		Tag.data = data;
-	}).on('addTag', function(){
-		socket.emit('addTag', {
-			name: ''
-		});
-	});
-
-	return Tag;
 });
 
 //---------- 应用模块 ----------

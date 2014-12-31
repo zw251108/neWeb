@@ -1,6 +1,6 @@
 /**
  * @module  talk
- */
+ * */
 define(['jquery', 'global', 'socket', 'template'], function($, g, socket){
 	var $talk = g.mod('$talk') || $('#talk')
 		, timeNodeTmpl = $.template({

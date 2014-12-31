@@ -266,18 +266,23 @@ textarea{
 .datetime{
 	float: right;
 }
-
+dt{
+	cursor: pointer;
+}
 dd{
 	display: none;
+	overflow: hidden;
+	margin: 0 10px;
+	text-indent: 2em;
 }
 
 .CodeMirror{
 	height: auto;
 	border: 1px solid #ddd;
-	margin-right: 10px;
 	font-family: inherit;
 	font-size: 13px;
 	line-height: 1;
+	text-indent: 0;
 }
 
 .CodeMirror-scroll{
@@ -296,31 +301,3 @@ dd{
 	margin-bottom: -30px;
 	padding-bottom: 0;
 }
-/*.CodeMirror{*/
-	/*overflow: hidden;*/
-	/*height: auto;*/
-	/*height: 100px;*/
-	/*margin-right: 10px;*/
-
-	/*font-family: inherit;*/
-/*}*/
-/*.CodeMirror-linenumber,*/
-/*.CodeMirror pre,*/
-/*.CodeMirror .CodeMirror-lines span{*/
-	/*font-size: 15px;*/
-	/*line-height: 1em;*/
-/*}*/
-/*.CodeMirror-lines{*/
-	/*padding: 0;*/
-/*}*/
-/*.CodeMirror-scroll{*/
-	/*overflow: auto;*/
-	/*max-height: 105px;*/
-	/*min-height: 1em;*/
-	/*overflow: visible;*/
-/*}*/
-/*.CodeMirror-gutters,*/
-/*.CodeMirror-gutter{*/
-	/*margin-bottom: 0;*/
-	/*padding-bottom: 0;*/
-/*}*/

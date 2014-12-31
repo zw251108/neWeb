@@ -1,6 +1,6 @@
 /**
  * @module editor
- */
+ * */
 define('code', [
 	'plugin/codeMirror/lib/codemirror'
 	, 'plugin/codeMirror/mode/xml/xml'

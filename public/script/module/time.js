@@ -1,6 +1,6 @@
 /**
  * @module  time
- */
+ * */
 define(['jquery', 'global'], function($, g){
 	var $time = $('#time')
 		, $watch = $('#watch')

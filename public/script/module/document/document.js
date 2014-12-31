@@ -1,14 +1,8 @@
 /**
  * @module  document
- */
-// 兼容 CommonJS 加载模式
-//define('shCore', ['plugin/syntaxhighlighter', 'plugin/syntaxhighlighter/shCore'], function(){
-//	return {
-//		SyntaxHighlighter: SyntaxHighlighter
-//	}
-//});
-define(['jquery', 'global', 'socket',
-	'plugin/codeMirror/lib/codemirror'
+ * */
+define(['jquery', 'global', 'socket'
+	, 'plugin/codeMirror/lib/codemirror'
 	, 'plugin/codeMirror/mode/xml/xml'
 	, 'plugin/codeMirror/mode/htmlmixed/htmlmixed'
 	, 'plugin/codeMirror/mode/javascript/javascript'
@@ -19,10 +13,6 @@ define(['jquery', 'global', 'socket',
 	, 'plugin/codeMirror/addon/fold/foldgutter'
 	, 'plugin/codeMirror/addon/fold/brace-fold'
 	, 'plugin/codeMirror/addon/fold/xml-fold'
-	//, 'shCore'
-	//'plugin/syntaxhighlighter/shBrushCss',
-	//'plugin/syntaxhighlighter/shBrushJScript',
-	//'plugin/syntaxhighlighter/shBrushXml'
 	, 'template'
 ], function($, g, socket, cm){
 	var $document = g.mod('$document') || $('#document')
@@ -41,10 +31,6 @@ define(['jquery', 'global', 'socket',
 		})
 		, $container = g.$container
 		;
-
-	//highlight = highlight.SyntaxHighlighter;
-
-	//window.cm = cm;
 
 	// 绑定 socket 回调 事件
 	socket.on('getDocumentData', function(data){
@@ -90,14 +76,14 @@ define(['jquery', 'global', 'socket',
 				else if( mode === 'brush:js' ){
 					mode = 'javascript';
 				}
-				             console.dir(this)
+
 				cm.fromTextArea(this, {
 					mode: mode
 					, lineNumbers : true
-					//, foldGutter: true
-					//, gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter']
+					, foldGutter: true
+					, gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter']
 					, matchBrackets: true
-					//, readOnly: true
+					, readOnly: true
 				});
 			});
 

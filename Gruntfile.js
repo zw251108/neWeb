@@ -15,9 +15,9 @@ module.exports = function(grunt){
 					 * JavaScript 工具库
 					 * */
 					// jQuery
-					'public/script/lib/jquery/jquery.min.js': ['bower_components/jquery/dist/jquery.min.js']
+					'public/script/lib/jquery.min.js': ['bower_components/jquery/dist/jquery.min.js']
 					// require
-					, 'public/script/lib/require/require.min.js': ['bower_components/requirejs/require.js']
+					, 'public/script/lib/require.min.js': ['bower_components/requirejs/require.js']
 
 //					// underscroe
 //					, 'public/script/lib/underscore/underscore.min.js': ['bower_components/underscore/underscore.js']
@@ -25,7 +25,12 @@ module.exports = function(grunt){
 //					, 'public/script/lib/html5shiv/html5shiv.min.js': ['bower_components/html5shiv/dist/html5shiv.min.js']
 //					// modernizr
 //					, 'public/script/lib/modernizr/modernizr.js': ['bower_components/modernizr/modernizr.js']
-//					/**
+					/**
+					 * 数据可视化
+					 * */
+					// d3
+					, 'public/script/lib/d3.min.js': ['bower_components/d3/d3.js']
+//                  /**
 //					 * UI 框架
 //					 * */
 //					// jQuery UI
@@ -44,11 +49,6 @@ module.exports = function(grunt){
 //					, 'public/script/lib/ember/ember.min.js': ['bower_components/ember/ember.js']
 //					, 'public/script/lib/ember/ember-data.min.js': ['bower_components/ember-data/ember-data.js']
 //					, 'public/script/lib/ember/ember-localstorage_adapter.js': ['bower_components/ember-localstorage-adapter/localstorage_adapter.js']
-					/**
-					 * 数据可视化
-					 * */
-					// d3
-					, 'public/script/lib/d3/d3.min.js': ['bower_components/d3/d3.js']
 //					/**
 //					 * 游戏、动画相关框架
 //					 * 渲染引擎、物理引擎
@@ -99,10 +99,10 @@ module.exports = function(grunt){
 //					// highlight
 //					, 'public/script/plugin/highlight/highlight.js': ['bower_components/highlightjs/highlight.pack.js']
 
-					// SyntaxHighlighter
+//					// SyntaxHighlighter
 //					, 'public/script/plugin/syntaxhighlighter/XRegExp.js': ['bower_components/SyntaxHighlighter/scripts/XRegExp.js']
 //					, 'public/script/plugin/syntaxhighlighter/shCore.js': ['bower_components/SyntaxHighlighter/scripts/shCore.js']
-////					, 'public/script/plugin/syntaxhighlighter/shAutoloader.js': ['bower_components/SyntaxHighlighter/scripts/shAutoloader.js']
+//					, 'public/script/plugin/syntaxhighlighter/shAutoloader.js': ['bower_components/SyntaxHighlighter/scripts/shAutoloader.js']
 //					, 'public/script/plugin/syntaxhighlighter/shBrushJScript.js': ['bower_components/SyntaxHighlighter/scripts/shBrushJScript.js']
 //					, 'public/script/plugin/syntaxhighlighter/shBrushCss.js': ['bower_components/SyntaxHighlighter/scripts/shBrushCss.js']
 //					, 'public/script/plugin/syntaxhighlighter/shBrushXml.js': ['bower_components/SyntaxHighlighter/scripts/shBrushXml.js']
@@ -230,10 +230,8 @@ module.exports = function(grunt){
 //					, 'public/script/plugin/highlight/style/vs.css': ['bower_components/highlightjs/styles/vs.css']
 //					, 'public/script/plugin/highlight/style/xcode.css': ['bower_components/highlightjs/styles/xcode.css']
 //					, 'public/script/plugin/highlight/style/zenburn.css': ['bower_components/highlightjs/styles/zenburn.css']
-
-					//// SyntaxHighlighter
-					//, 'public/script/plugin/syntaxhighlighter/style/shCoreDefault.css': ['bower_components/SyntaxHighlighter/styles/shCoreDefault.css']
-
+//					// SyntaxHighlighter
+//					, 'public/script/plugin/syntaxhighlighter/style/shCoreDefault.css': ['bower_components/SyntaxHighlighter/styles/shCoreDefault.css']
 //					, 'public/script/plugin/syntaxhighlighter/style/shCoreDjango.css': ['bower_components/SyntaxHighlighter/styles/shCoreDjango.css']
 //					, 'public/script/plugin/syntaxhighlighter/style/shCoreEclipse.css': ['bower_components/SyntaxHighlighter/styles/shCoreEclipse.css']
 //					, 'public/script/plugin/syntaxhighlighter/style/shCoreEmacs.css': ['bower_components/SyntaxHighlighter/styles/shCoreEmacs.css']
@@ -241,7 +239,6 @@ module.exports = function(grunt){
 //					, 'public/script/plugin/syntaxhighlighter/style/shCoreMDUltra.css': ['bower_components/SyntaxHighlighter/styles/shCoreMDUltra.css']
 //					, 'public/script/plugin/syntaxhighlighter/style/shCoreMidnight.css': ['bower_components/SyntaxHighlighter/styles/shCoreMidnight.css']
 //					, 'public/script/plugin/syntaxhighlighter/style/shCoreRDark.css': ['bower_components/SyntaxHighlighter/styles/shCoreRDark.css']
-
 //					// chardin.js
 //					, 'public/script/plugin/chardin/chardinjs.css': ['bower_components/chardin.js/chardinjs.css']
 //					// intro.js
@@ -311,7 +308,6 @@ module.exports = function(grunt){
 		, less: {
 			destiny: {
 				options: {
-//					paths: ["assets/css"]
 					cleancss: true
 				},
 				files: {
@@ -333,16 +329,16 @@ module.exports = function(grunt){
 //			}
 		}
 		, htmlmin: {                                     // Task
-			destiny: {                                      // Target
-				options: {                                 // Target options
-					removeComments: true,
-					collapseWhitespace: true
-				},
-				files: {                                   // Dictionary of files
-					'dist/index.html': 'src/index.html',     // 'destination': 'source'
-					'dist/contact.html': 'src/contact.html'
-				}
-			}
+			//destiny: {                                      // Target
+			//	options: {                                 // Target options
+			//		removeComments: true,
+			//		collapseWhitespace: true
+			//	},
+			//	files: {                                   // Dictionary of files
+			//		'dist/index.html': 'src/index.html',     // 'destination': 'source'
+			//		'dist/contact.html': 'src/contact.html'
+			//	}
+			//}
 		}
 		, jsdoc: {
 			destiny: {
@@ -366,7 +362,7 @@ module.exports = function(grunt){
 //		,'uglify'
 //		, 'copy'
 //		, 'cssmin'
-////		, 'htmlmin'
+//		, 'htmlmin'
 //		, 'less'
 	]);
 };
