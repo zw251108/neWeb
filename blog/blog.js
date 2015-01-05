@@ -1,6 +1,6 @@
 'use strict';
 
-var tpl = require('../module/tpl.js')
+var tpl = require('./tpl.js')
 	;
 
 var SQL = {

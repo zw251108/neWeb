@@ -76,13 +76,19 @@ webApp.use( session({
 }) );
 
 //----- 静态资源 重定向 -----
+// js
 webApp.use('/script', express.static(__dirname + '/public/script') );
+// 前后端通用模板引擎
+webApp.use('/script/ui/jquery.template.js', express.static(__dirname + '/module/template/template.js') );
 
+//样式
 webApp.use('/font', express.static(__dirname + '/public/font') );
 webApp.use('/image', express.static(__dirname + '/public/image') );
 webApp.use('/style', express.static(__dirname + '/public/style') );
-
+// 离线缓存
 webApp.use('/cache.manifest', express.static(__dirname + '/public/cache.manifest') );
+
+webApp.use('/test_case', express.static(__dirname + '/test_case') );
 
 //webApp.use(function(req, res, next){
 //	var err = new Error('not found');
