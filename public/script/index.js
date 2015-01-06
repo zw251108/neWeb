@@ -7,7 +7,7 @@ require.config({
 		jquery: 'lib/jquery.min'
 		, d3: 'lib/d3.min'
 
-		, template: 'ui/jquery.template'
+		, template: 'ui/jquery.emmetTpl'
 
 		// 全局模块设置
 		, global: 'module/global'

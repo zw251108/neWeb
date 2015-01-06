@@ -46,7 +46,7 @@ var
 
 	// 模块库
 	, tpl = require('./module/tpl.js').tpl
-	, template = require('./module/template/template.js').template
+	, template = require('./module/emmetTpl/emmetTpl.js').template
 
 	// Web Socket
 	, socketServer = require('./module/socket.js')
@@ -79,7 +79,7 @@ webApp.use( session({
 // js
 webApp.use('/script', express.static(__dirname + '/public/script') );
 // 前后端通用模板引擎
-webApp.use('/script/ui/jquery.template.js', express.static(__dirname + '/module/template/template.js') );
+webApp.use('/script/ui/jquery.emmetTpl.js', express.static(__dirname + '/module/template/emmetTpl.js') );
 
 //样式
 webApp.use('/font', express.static(__dirname + '/public/font') );
