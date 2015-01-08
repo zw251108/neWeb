@@ -6,7 +6,7 @@
 var sio = require('socket.io')()
 	, CLIENT_LIST = {}
 	, CLIENT_INDEX_LIST = []
-	, db = require('./module/db.js').db
+	, db = require('./db.js').db
 	;
 
 sio.on('connection', function(socket){

@@ -1,6 +1,6 @@
 /**
  * @module profile
  * */
-define(['jquery', '../../../../bower_components/d3/d3'], function($, d3){
+define(['jquery', 'd3'], function($, d3){
 
 });

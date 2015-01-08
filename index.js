@@ -79,7 +79,7 @@ webApp.use( session({
 // js
 webApp.use('/script', express.static(__dirname + '/public/script') );
 // 前后端通用模板引擎
-webApp.use('/script/ui/jquery.emmetTpl.js', express.static(__dirname + '/module/template/emmetTpl.js') );
+webApp.use('/script/ui/jquery.emmetTpl.js', express.static(__dirname + '/module/emmetTpl/emmetTpl.js') );
 
 //样式
 webApp.use('/font', express.static(__dirname + '/public/font') );
