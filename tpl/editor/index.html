@@ -1,12 +1,22 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="utf-8"/>
-<!--[if lt IE 9]><meta http-equiv="content-type" content="text/html; charset=utf-8" /><![endif]-->
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-<title></title>
-</head>
-<body>
+<section class="module large module-main module-blog">
+	<h2 class="module_title">博客 Blog</h2>
+	<div class="module_content blog-detail" id="blogDetail">
+		<article class="article">
+			<h3 class="article_title">
+				<?php echo isset($rs) ? $rs->title : '';?>
+			</h3>
 
-</body>
-</html>
+			<div class="article_content">
+				<?php echo isset($rs) ? $rs->content : '';?>
+			</div>
+
+			<hr/>
+
+			<div id="articleTags"></div>
+
+            <span class="article_date">
+                <?php echo isset($rs) ? $rs->datetime : '';?>
+            </span>
+		</article>
+	</div>
+</section>

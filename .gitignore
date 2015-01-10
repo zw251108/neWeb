@@ -11,6 +11,9 @@ bower_components/
 # 离线缓存文件 此文件为动态生成
 public/cache.manifest
 
+# 样式文件 由 less 编译生成
+public/style/style.css
+
 # 图片文件夹
 public/image/
 

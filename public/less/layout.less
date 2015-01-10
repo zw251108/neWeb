@@ -2,18 +2,19 @@
 
 /**
  *---------- Layout 布局 汇总 ----------
- *  布局使用流式栅格系统
+ *  布局使用栅格系统
  *  最大宽度/最小宽度由最外层的 .Container 来控制
  *
  *  默认标准 屏幕宽度 1024 以下 页面宽度 960
  *  针对标准显示器
- *  .Container 宽度 960
+ *      .Container 宽度 960
  *  共 24 列
- *  .large    24
- *  .big      16
- *  .normal   12
- *  .small    8
- *  .tiny     4
+ *      .large    24
+ *      .big      16
+ *      .normal   12
+ *      .small    8
+ *      .tiny     4
+ *
  * */
 
 // 主容器
@@ -23,6 +24,14 @@
 	width: @grid-unit *24;
 
 	margin:0 auto;
+}
+.Wrap{
+	position: relative;
+	width: 100%;
+
+	.large{
+		margin: auto;
+	}
 }
 
 .large{

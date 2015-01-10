@@ -112,7 +112,7 @@ webApp.use('/test_case', express.static(__dirname + '/test_case') );
 //});
 
 //var Tag = {
-//	tagTmpl: $.template({
+//	tagTpl: $.template({
 //		template: 'span.tag[data-tagid=%Id%]{%name%}'
 //	})
 //};
@@ -128,10 +128,10 @@ webApp.get('/blog/', function(req, res){
 		var header = tpl('header')
 			, footer = tpl('footer')
 			, main = tpl('blog/index')
-			, articleTmpl = template({
-				template:'article#blogArt%Id%.article>a[href=blog/detail/?id=%Id%]>h3.article_title{%title%}' +
+			, articleTpl = template({
+				template:'article#blogArt%Id%.article>a[href=blog/detail?id=%Id%]>h3.article_title{%title%}' +
 				'^hr+span.article_date{%datetime%}+div.tagsArea{%tags%}'
-				, filter:{
+				, filter: {
 					//tags: function(d){
 					//	var data = []
 					//		, tagsId = (d.tags_id || '').split(',')
@@ -145,23 +145,39 @@ webApp.get('/blog/', function(req, res){
 					//		});
 					//	});
 					//
-					//	return tagTmpl(data).join('');
+					//	return tagTpl(data).join('');
 					//}
 				}
 			})
 			;
 
-		res.send(header.replace('%pageTitle%', '博客 Blog') + main.replace('%blogList%', articleTmpl(data).join('')) + footer);
+		res.send(header.replace('%pageTitle%', '博客 Blog') + main.replace('%blogList%', articleTpl(data).join('')) + footer);
 		res.end();
 	}, function(){
 		res.end();
 	});
 });
-webApp.get('/blog/detail/', function(req, res){
+webApp.get('/blog/detail', function(req, res){
 	var id = req.query.id || '';
 
 	if( id ){
+		db.query('blog/detail', [id], function(data){
+			var header = tpl('header')
+				, footer = tpl('footer')
+				, main = tpl('blog/detail')
+				, articleDetailTpl = template({
+					template: 'article.article>h3.article_title{%title%}+div.article_content{%content%}+hr' +
+					'+span.article_date{%datetime%}+div.tagsArea{%tags%}'
+					, filter: {
 
+					}
+				})
+				;
+			res.send(header.replace('%pageTitle%', '博客 Blog') + main.replace('%blogDetail%', articleDetailTpl(data).join('')) + footer);
+			res.end();
+		}, function(){
+			res.end();
+		})
 	}
 	else{
 		res.end();
@@ -177,20 +193,20 @@ webApp.get('/document/', function(req, res){
 		var header = tpl('header')
 			, footer = tpl('footer')
 			, main = tpl('document/index')
-			, dlTmpl = template({
+			, dlTpl = template({
 				template: 'dt.icon.icon-arrow-r{%title%}+dd{%content%}'
 			})
-			, sectionTmpl = template({
+			, sectionTpl = template({
 				template: 'section.document_section.section>h3.section_title{%section_title%}>span.icon-CSS.icon-minus^dl{%dl%}'
 				, filter: {
 					dl: function(d){
-						return dlTmpl(d.dl).join('');
+						return dlTpl(d.dl).join('');
 					}
 				}
 			})
 			;
 
-		res.send(header.replace('%pageTitle%', '前端文档 Document') + main.replace('%documentList%', sectionTmpl(data).join('') ) + footer);
+		res.send(header.replace('%pageTitle%', '前端文档 Document') + main.replace('%documentList%', sectionTpl(data).join('') ) + footer);
 		res.end();
 	}, function(){
 		res.end();

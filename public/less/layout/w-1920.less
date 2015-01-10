@@ -2,30 +2,30 @@
 
 /**
  * 针对宽度为 1920px 以下的设备
- *  .Container 宽度 1280
- *  共 32 列
- *  .large    48
- *  .big      32
- *  .normal   24
- *  .small    16
- *  .tiny     4
+ *  .Container 宽度 1920
+ *  共 45 列
+ *  .large    45
+ *  .big      40
+ *  .normal   30
+ *  .small    18
+ *  .tiny     4(默认)
  * */
 @media screen and (min-width:1920px){
 	.Container{
-		width: @grid-unit *48;
+		width: @grid-unit *45;
 	}
 
 	.large{
-		.grid-x(48);
+		.grid-x(45);
 	}
     .big{
-	    .grid-x(32);
+	    .grid-x(40);
     }
     .normal{
-	    .grid-x(24);
+	    .grid-x(30);
     }
     .small{
-	    .grid-x(16);
+	    .grid-x(18);
     }
     .tiny{
 	    .grid-x(4);
