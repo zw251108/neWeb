@@ -49,7 +49,7 @@ define(['jquery', 'socket'], function($, socket){
 		, target
 		;
 	$container.length && $container.on({
-		'webkitAnimationEnd mozAnimationEnd msAnimationEnd animationEnd': function(){
+		'webkitAnimationEnd mozAnimationEnd msAnimationEnd animationend': function(){
 			var $t = g.mod('$' + target);
 
 			$container.addClass('animate-done');

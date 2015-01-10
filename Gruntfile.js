@@ -86,7 +86,7 @@ module.exports = function(grunt){
 					, 'public/script/plugin/codeMirror/addon/fold/foldgutter.js': ['bower_components/codemirror/addon/fold/foldgutter.js']
 					, 'public/script/plugin/codeMirror/addon/fold/brace-fold.js': ['bower_components/codemirror/addon/fold/brace-fold.js']
 					, 'public/script/plugin/codeMirror/addon/fold/xml-fold.js': ['bower_components/codemirror/addon/fold/xml-fold.js']
-					, 'public/script/plugin/codeMirror/emmet/emmet.min.js': ['bower_components/codemirror-emmet/dist/emmet.min.js']
+					, 'public/script/plugin/codeMirror/emmet/emmet.min.js': ['bower_components/codemirror-emmet/dist/emmet.js']
 //					// pace
 //					, 'public/script/plugin/pace/pace.min.js': ['bower_components/pace/pace.min.js']
 //					// handlebars

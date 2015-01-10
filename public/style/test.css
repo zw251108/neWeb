@@ -190,11 +190,25 @@
 	opacity: 1;
 }
 
-.module_content > * {
+.module_content article,
+.module_content section,
+.module_content h3,
+.module_content .editor_container{
 	background: #000;
 	margin-bottom: 10px;
 }
-
+.editor_container{
+	overflow: hidden;
+}
+.editor_area{
+	margin: 10px 0 0 10px;
+}
+iframe{
+	display: block;
+	width: 100%;
+	border: 0;
+	background: #fff;
+}
 textarea{
 	border: 1px solid #efefef;
 	border-radius: 5px;
@@ -245,7 +259,7 @@ textarea{
 	position: absolute;
 	top: 5px;
 	left: -20px;
-	height: 0px;
+	height: 0;
 	width: 0;
 	border: 10px solid transparent;
 	border-right-color: #fff;

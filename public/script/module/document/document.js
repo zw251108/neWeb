@@ -86,9 +86,9 @@ define(['jquery', 'global', 'socket'
 					, readOnly: true
 				});
 			});
-
 		});
-	});
+	})
+	;
 
 	return $document;
 });

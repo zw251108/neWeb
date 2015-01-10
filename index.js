@@ -10,7 +10,7 @@ var
 
 	// Web 服务器
 	, express = require('express')
-	, webApp = express()
+	, web = express()
 	, webServer
 
 	// 监听端口
@@ -58,16 +58,16 @@ fs.writeFileSync(__dirname + '/public/cache.manifest', new Buffer(manifest.repla
 console.log('cache.mainfest has reset');
 
 //----- web 服务器设置 -----
-webApp.use( bodyParser.json() );
-webApp.use( bodyParser.urlencoded({extended: true}) );
-webApp.use( cookieParser() );
-webApp.use( logger('dev') );
+web.use( bodyParser.json() );
+web.use( bodyParser.urlencoded({extended: true}) );
+web.use( cookieParser() );
+web.use( logger('dev') );
 // 文件上传设置
-webApp.use( multer({
+web.use( multer({
 	dest: './public/upload/'
 }) );
 // session 设置
-webApp.use( session({
+web.use( session({
 	store: sessionStore
 	, secret: COOKIE_SECRET
 	, key: COOKIE_KEY
@@ -77,32 +77,32 @@ webApp.use( session({
 
 //----- 静态资源 重定向 -----
 // js
-webApp.use('/script', express.static(__dirname + '/public/script') );
+web.use('/script', express.static(__dirname + '/public/script') );
 // 前后端通用模板引擎
-webApp.use('/script/ui/jquery.emmetTpl.js', express.static(__dirname + '/module/emmetTpl/emmetTpl.js') );
+web.use('/script/ui/jquery.emmetTpl.js', express.static(__dirname + '/module/emmetTpl/emmetTpl.js') );
 
 //样式
-webApp.use('/font', express.static(__dirname + '/public/font') );
-webApp.use('/image', express.static(__dirname + '/public/image') );
-webApp.use('/style', express.static(__dirname + '/public/style') );
+web.use('/font', express.static(__dirname + '/public/font') );
+web.use('/image', express.static(__dirname + '/public/image') );
+web.use('/style', express.static(__dirname + '/public/style') );
 // 离线缓存
-webApp.use('/cache.manifest', express.static(__dirname + '/public/cache.manifest') );
+web.use('/cache.manifest', express.static(__dirname + '/public/cache.manifest') );
 
-webApp.use('/test_case', express.static(__dirname + '/test_case') );
+web.use('/test_case', express.static(__dirname + '/test_case') );
 
-//webApp.use(function(req, res, next){
+//web.use(function(req, res, next){
 //	var err = new Error('not found');
 //	err.status = 404;
 //	next( err );
 //});
-//webApp.use(function(err, req, res, next){
+//web.use(function(err, req, res, next){
 //	res.status(err.status)
 //})
 
 ///**
 //* 统一上传接口
 //* */
-//webApp.post('/upload', function(req, res){
+//web.post('/upload', function(req, res){
 //
 //	// todo 上传成功，返回信息
 //
@@ -117,67 +117,75 @@ webApp.use('/test_case', express.static(__dirname + '/test_case') );
 //	})
 //};
 
+var moduleTpl = template({
+	template: 'div.Container>section#%moduleId%.module.module-main.module-%moduleId%.large>div.module_content{%moduleContent%}'
+});
+var scriptTpl = template({
+	template: 'script[data-main=%main% src=%require%]'
+});
+
 /**
  * 博客模块
  *  /blog/
  *  /blog/detail/?id=:id&_=.*
  * */
-webApp.get('/blog/', function(req, res){
+web.get('/blog/', function(req, res){
+	var header = tpl('header')
+		, footer = tpl('footer')
+		, articleTpl = template({
+			template:'article#blogArt%Id%.article>a[href=detail?id=%Id%]>h3.article_title{%title%}' +
+			'^hr+span.article_date{%datetime%}+div.tagsArea{%tags%}'
+			, filter: {
+				//tags: function(d){
+				//	var data = []
+				//		, tagsId = (d.tags_id || '').split(',')
+				//		, tagsName = (d.tags_name || '').split(',')
+				//		;
+				//
+				//	$.each(tagsId, function(i, d){
+				//		data.push({
+				//			Id: d
+				//			, name: tagsName[i]
+				//		});
+				//	});
+				//
+				//	return tagTpl(data).join('');
+				//}
+			}
+		})
+		;
 	db.query('blog', [], function(data){
-
-		var header = tpl('header')
-			, footer = tpl('footer')
-			, main = tpl('blog/index')
-			, articleTpl = template({
-				template:'article#blogArt%Id%.article>a[href=blog/detail?id=%Id%]>h3.article_title{%title%}' +
-				'^hr+span.article_date{%datetime%}+div.tagsArea{%tags%}'
-				, filter: {
-					//tags: function(d){
-					//	var data = []
-					//		, tagsId = (d.tags_id || '').split(',')
-					//		, tagsName = (d.tags_name || '').split(',')
-					//		;
-					//
-					//	$.each(tagsId, function(i, d){
-					//		data.push({
-					//			Id: d
-					//			, name: tagsName[i]
-					//		});
-					//	});
-					//
-					//	return tagTpl(data).join('');
-					//}
-				}
-			})
-			;
-
-		res.send(header.replace('%pageTitle%', '博客 Blog') + main.replace('%blogList%', articleTpl(data).join('')) + footer);
+		res.send(header.replace('%pageTitle%', '博客 Blog').replace('%style%', '') + moduleTpl([{
+			moduleId: 'blog'
+			, moduleContent: articleTpl(data).join('')
+		}]).join('') + footer);
 		res.end();
 	}, function(){
 		res.end();
 	});
 });
-webApp.get('/blog/detail', function(req, res){
-	var id = req.query.id || '';
+web.get('/blog/detail', function(req, res){
+	var id = req.query.id || ''
+		, header = tpl('header')
+		, footer = tpl('footer')
+		, articleDetailTpl = template({
+			template: 'article.article>h3.article_title{%title%}+div.article_content{%content%}+hr' +
+			'+span.article_date{%datetime%}+div.tagsArea{%tags%}'
+			, filter: {
 
+			}
+		})
+		;
 	if( id ){
 		db.query('blog/detail', [id], function(data){
-			var header = tpl('header')
-				, footer = tpl('footer')
-				, main = tpl('blog/detail')
-				, articleDetailTpl = template({
-					template: 'article.article>h3.article_title{%title%}+div.article_content{%content%}+hr' +
-					'+span.article_date{%datetime%}+div.tagsArea{%tags%}'
-					, filter: {
-
-					}
-				})
-				;
-			res.send(header.replace('%pageTitle%', '博客 Blog') + main.replace('%blogDetail%', articleDetailTpl(data).join('')) + footer);
+			res.send(header.replace('%pageTitle%', '博客 Blog').replace('%style%', '') + moduleTpl([{
+				moduleId: 'blog'
+				, moduleContent: articleDetailTpl(data).join('')
+			}]).join('') + footer);
 			res.end();
 		}, function(){
 			res.end();
-		})
+		});
 	}
 	else{
 		res.end();
@@ -188,29 +196,34 @@ webApp.get('/blog/detail', function(req, res){
  * Web 前端文档
  *  /document/
  * */
-webApp.get('/document/', function(req, res){
-	db.query('document', [], function(data){
-		var header = tpl('header')
-			, footer = tpl('footer')
-			, main = tpl('document/index')
-			, dlTpl = template({
-				template: 'dt.icon.icon-arrow-r{%title%}+dd{%content%}'
-			})
-			, sectionTpl = template({
-				template: 'section.document_section.section>h3.section_title{%section_title%}>span.icon-CSS.icon-minus^dl{%dl%}'
-				, filter: {
-					dl: function(d){
-						return dlTpl(d.dl).join('');
-					}
+web.get('/document/', function(req, res){
+	var header = tpl('header')
+		, footer = tpl('footer')
+		, dlTpl = template({
+			template: 'dt.icon.icon-arrow-r{%title%}+dd{%content%}'
+		})
+		, sectionTpl = template({
+			template: 'section.document_section.section>h3.section_title{%section_title%}>span.icon-CSS.icon-minus^dl{%dl%}'
+			, filter: {
+				dl: function(d){
+					return dlTpl(d.dl).join('');
 				}
-			})
-			;
-
-		res.send(header.replace('%pageTitle%', '前端文档 Document') + main.replace('%documentList%', sectionTpl(data).join('') ) + footer);
+			}
+		})
+		;
+	db.query('document', [], function(data){
+		res.send(header.replace('%pageTitle%', '前端文档 Document')
+			.replace('%style%', '<link rel="stylesheet" href="../script/plugin/codeMirror/lib/codemirror.css" />') + moduleTpl([{
+			moduleId: 'document'
+			, moduleContent: sectionTpl(data).join('')
+		}]).join('') + scriptTpl([{
+			main: '../script/module/document/index'
+			, require: '../script/lib/require.min.js'
+		}]).join('') + footer);
 		res.end();
 	}, function(){
 		res.end();
-	})
+	});
 });
 
 /**
@@ -218,14 +231,86 @@ webApp.get('/document/', function(req, res){
  * editor/
  * editor/code/
  * */
-webApp.get('/editor/', function(req, res){
-	res.end();
+web.get('/editor/', function(req, res){
+	var header = tpl('header')
+		, footer = tpl('footer')
+		, codeTpl = template({
+			template: 'a[href=code?id=%Id%]' +
+				'>article.article.editor_article[data-tagsid=%tagsId%]' +
+				'>h3.article_title{%name%}' +
+				'+img.article_preview[src=%preview% width=%width% height=%height% alt=%alt%]',
+			filter:{
+				alt:function(data, index){
+					return data.preview ? data.name : '没有预览图片';
+				}
+			}
+		})
+		;
+	db.query('editor', [], function(data){
+		res.send(header.replace('%pageTitle%', '前端编辑器 Editor').replace('%style%', '') + moduleTpl([{
+			moduleId: 'editor'
+			, moduleContent: codeTpl(data).join('')
+		//}]).join('') + scriptTpl([{
+		//	main: '../script/module/editor/index'
+		//	, require: '../script/lib/require.min.js'
+		}]).join('') + footer);
+		res.end();
+	}, function(){
+		res.end();
+	});
 });
-webApp.get('/editor/code/', function(req, res){
-	res.end();
+web.get('/editor/code', function(req, res){
+	var id = req.query.id || ''
+		, header = tpl('header')
+		, footer = tpl('footer')
+		, codeEditTpl = template({
+			template: 'h3.editor_title{%name%}>input#id[type=hidden name=id value=%Id%]' +
+				'^div#editorContainer.editor_container' +
+				'>div.editor_area>label[for=html]{HTML}+textarea#html.hidden.code-html[name=html]{%html%}' +
+				'^div.editor_area>label[for=css]{CSS}+textarea#css.hidden.code-css[name=css]{%css%}' +
+				'^div.editor_area>label[for=js]{JavaScript}+textarea#js.hidden.code-js[name=js]{%js%}' +
+				'^div.editor_area>span{Result}+iframe#result.editor_text[src=result?id=%Id% name=result]'
+		})
+		;
+	if( id ){
+		db.query('editor/code', [id], function(data){
+			res.send(header.replace('%pageTitle%', '前端编辑器 Editor')
+				.replace('%style%', '<link rel="stylesheet" href="../script/plugin/codeMirror/lib/codemirror.css" />') + moduleTpl([{
+				moduleId: 'editor'
+				, moduleContent: codeEditTpl(data).join('')
+			}]).join('') + scriptTpl([{
+				main: '../script/module/editor/code'
+				, require: '../script/lib/require.min.js'
+			}]).join('') + footer);
+			res.end();
+		}, function(){
+			res.end();
+		});
+	}
+	else{
+		res.end();
+	}
+});
+web.get('/editor/result', function(req, res){
+	var id = req.query.id || ''
+		, result = tpl('editor/result')
+		;
+	if( id ){
+		db.query('editor/code', [id], function(data){
+			res.send(result.replace('%style%', data.css)
+				.replace('%html%', data.html)
+				.replace('%script%', data.js));
+			res.end();
+		}, function(){
+			res.end();
+		});
+	}
+	else{
+		res.end();
+	}
 });
 
-//webApp.all('/user/:id/:op?', function(req, res, next){
+//web.all('/user/:id/:op?', function(req, res, next){
 //	req.user = users[req.params.id];
 //	console.log('\n', req.user);
 //	if( req.user ){
@@ -235,13 +320,13 @@ webApp.get('/editor/code/', function(req, res){
 //		next( new Error('can not find id: '+ req.params.id ) );
 //	}
 //});
-//webApp.get(/^\/(\d+)$/, function(req, res){
+//web.get(/^\/(\d+)$/, function(req, res){
 //	res.send( 'reg '+ req.params[0] );
 //});
-//webApp.get('/a*', function(req, res){
+//web.get('/a*', function(req, res){
 //	res.send('a');
 //});
-//webApp.get('/:id(b\\d+)', function(req, res){
+//web.get('/:id(b\\d+)', function(req, res){
 //	if( req.params.id ){
 //		res.send( req.params.id );
 //	}
@@ -249,7 +334,7 @@ webApp.get('/editor/code/', function(req, res){
 //		res.send('hello world');
 //	}
 //});
-//webApp.get('/user/:id', function(req, res, next){
+//web.get('/user/:id', function(req, res, next){
 //	var id = req.params.id;
 //	if( /^\d+$/.test( id ) ){
 //		res.send( 'id: '+ id );
@@ -258,17 +343,17 @@ webApp.get('/editor/code/', function(req, res){
 //		next();
 //	}
 //});
-//webApp.get('/user/:name', function(req, res){
+//web.get('/user/:name', function(req, res){
 //	var name = req.params.name;
 //	res.send( 'name: '+ name );
 //});
-//webApp.get('/user/:id/edit', function(req, res){
+//web.get('/user/:id/edit', function(req, res){
 //	res.send('edit user: '+ req.user.name);
 //});
-//webApp.get('/user/:id/getData.:format((json|xml))', function(req, res){
+//web.get('/user/:id/getData.:format((json|xml))', function(req, res){
 //	res.send('{"name":"zwb"}');
 //});
-//webApp.get('*', function(req, res){
+//web.get('*', function(req, res){
 //	res.send('<form action="/" method="post">' +
 //	'<input type="hidden" name="_method" value="put"/>' +
 //	'<input type="text" name="name"/>' +
@@ -276,13 +361,13 @@ webApp.get('/editor/code/', function(req, res){
 //	'</form>');
 //});
 //
-//webApp.put('/', function(req, res){
+//web.put('/', function(req, res){
 //	res.send('welcome, '+ req.body.name);
 //});
 ///**
 // * 访问静态资源 *.*
 // * */
-//webApp.get(/.*\..*$/, function(req, res){
+//web.get(/.*\..*$/, function(req, res){
 //	var pathname = url.parse( req.url ).pathname
 //		, extname = path.extname( pathname )
 //		, type = extname.slice(1)
@@ -316,14 +401,14 @@ webApp.get('/editor/code/', function(req, res){
 /**
 * 访问主页	/
 * */
-webApp.get('/', function(req, res){
+web.get('/', function(req, res){
 	console.log('session id', req.session.id);
 
 	res.send( tpl('index') );
 	res.end();
 });
 
-webServer = webApp.listen( WEB_APP_PORT );
+webServer = web.listen( WEB_APP_PORT );
 
 console.log('Web Server is listening...');
 

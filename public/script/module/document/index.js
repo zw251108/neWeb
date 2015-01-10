@@ -10,9 +10,4 @@ require.config({
 		, template: 'ui/jquery.emmetTpl'
 	}
 });
-require(['jquery', 'module/document/document'], function($, $document){
-	$('<link/>', {
-		rel: 'stylesheet'
-		, href: '../script/plugin/codeMirror/lib/codemirror.css'
-	}).prependTo('head');
-});
+require(['jquery', 'module/document/document'], function($, $document){});
