@@ -8,6 +8,9 @@ bower_components/
 .idea
 *.iml
 
+# 离线缓存文件 此文件为动态生成
+public/cache.manifest
+
 # 图片文件夹
 public/image/
 
