@@ -282,11 +282,13 @@ textarea{
 }
 dt{
 	cursor: pointer;
+	text-indent: 2em;
 }
 dd{
 	display: none;
 	overflow: hidden;
 	margin: 0 10px;
+	font-size: 12px;
 	text-indent: 2em;
 }
 
