@@ -199,9 +199,26 @@
 }
 .editor_container{
 	overflow: hidden;
+	padding-bottom: 10px;
 }
 .editor_area{
-	margin: 10px 0 0 10px;
+	position: relative;
+	margin: 10px 10px 0;
+}
+.editor_area label{
+	position: absolute;
+	z-index: 120;
+	top: 10px;
+	right: 25px;
+	min-width: 100px;
+	border: 1px solid #a1a1a1;
+	border-radius: 10px;
+	background: #efefef;
+	color: #000;
+	font-size: 12px;
+	line-height: 2em;
+	text-align: center;
+	opacity: .4;
 }
 iframe{
 	display: block;

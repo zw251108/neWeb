@@ -269,7 +269,7 @@ web.get('/editor/code', function(req, res){
 				'>div.editor_area>label[for=html]{HTML}+textarea#html.hidden.code-html[name=html]{%html%}' +
 				'^div.editor_area>label[for=css]{CSS}+textarea#css.hidden.code-css[name=css]{%css%}' +
 				'^div.editor_area>label[for=js]{JavaScript}+textarea#js.hidden.code-js[name=js]{%js%}' +
-				'^div.editor_area>span{Result}+iframe#result.editor_text[src=result?id=%Id% name=result]'
+				'^div.editor_area>label{Result}+iframe#result.editor_text[src=result?id=%Id% name=result]'
 		})
 		;
 	if( id ){
