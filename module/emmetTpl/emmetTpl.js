@@ -60,6 +60,7 @@
 			, img: ''
 			, br: ''
 			, hr: ''
+			, link: ''
 		}
 		, attrDefault: {    // 属性默认值
 			disabled: 'disabled'

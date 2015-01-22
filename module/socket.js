@@ -7,6 +7,7 @@ var sio = require('socket.io')()
 	, CLIENT_LIST = {}
 	, CLIENT_INDEX_LIST = []
 	, db = require('./db.js').db
+	, bower = require('./bower.js').bower
 	;
 
 sio.on('connection', function(socket){
@@ -69,7 +70,16 @@ sio.on('connection', function(socket){
 		console.log('user chat');
 	}).on('disconnect', function(){ // 断开连接
 		console.log('socket: session id ', clientIndex, 'disconnect');
-	});
+	})
+	// bower 接口
+	.on('bower_search', function(name){
+		bower.search(name, function(rs){
+			socket.emit('bower_search_result', rs);
+		});
+	}).on('bower_install', function(){
+
+	})
+	;
 });
 
 exports.listen = function(webServer){

@@ -24,7 +24,7 @@ require(['jquery', 'global', 'socket'
 	, 'plugin/codeMirror/addon/fold/brace-fold'
 	, 'plugin/codeMirror/addon/fold/xml-fold'
 	, 'template'
-], function($, g, socket, cm, plugin){          console.log(plugin)
+], function($, g, socket, cm){
 	$('#editor').find('textarea').each(function(){
 		var mode = this.className;
 

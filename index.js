@@ -120,6 +120,12 @@ web.use('/test_case', express.static(__dirname + '/test_case') );
 var moduleTpl = template({
 	template: 'div.Container>section#%moduleId%.module.module-main.module-%moduleId%.large>div.module_content{%moduleContent%}'
 });
+var stylesheetTpl = template({
+	template: 'link[rel=stylesheet href=%path%]'
+});
+var styleTpl = template({
+	template: 'style{%style%}'
+});
 var scriptTpl = template({
 	template: 'script[data-main=%main% src=%require%]'
 });
@@ -213,13 +219,15 @@ web.get('/document/', function(req, res){
 		;
 	db.query('document', [], function(data){
 		res.send(header.replace('%pageTitle%', '前端文档 Document')
-			.replace('%style%', '<link rel="stylesheet" href="../script/plugin/codeMirror/lib/codemirror.css" />') + moduleTpl([{
-			moduleId: 'document'
-			, moduleContent: sectionTpl(data).join('')
-		}]).join('') + scriptTpl([{
-			main: '../script/module/document/index'
-			, require: '../script/lib/require.min.js'
-		}]).join('') + footer);
+			.replace('%style%', stylesheetTpl({
+				path: '../script/plugin/codeMirror/lib/codemirror.css'
+			}).join('')) + moduleTpl([{
+				moduleId: 'document'
+				, moduleContent: sectionTpl(data).join('')
+			}]).join('') + scriptTpl([{
+				main: '../script/module/document/index'
+				, require: '../script/lib/require.min.js'
+			}]).join('') + footer);
 		res.end();
 	}, function(){
 		res.end();
@@ -275,13 +283,15 @@ web.get('/editor/code', function(req, res){
 	if( id ){
 		db.query('editor/code', [id], function(data){
 			res.send(header.replace('%pageTitle%', '前端编辑器 Editor')
-				.replace('%style%', '<link rel="stylesheet" href="../script/plugin/codeMirror/lib/codemirror.css" />') + moduleTpl([{
-				moduleId: 'editor'
-				, moduleContent: codeEditTpl(data).join('')
-			}]).join('') + scriptTpl([{
-				main: '../script/module/editor/code'
-				, require: '../script/lib/require.min.js'
-			}]).join('') + footer);
+				.replace('%style%', stylesheetTpl({
+					path: '../script/plugin/codeMirror/lib/codemirror.css'
+				}).join('')) + moduleTpl([{
+					moduleId: 'editor'
+					, moduleContent: codeEditTpl(data).join('')
+				}]).join('') + scriptTpl([{
+					main: '../script/module/editor/code'
+					, require: '../script/lib/require.min.js'
+				}]).join('') + footer);
 			res.end();
 		}, function(){
 			res.end();
@@ -308,6 +318,35 @@ web.get('/editor/result', function(req, res){
 	else{
 		res.end();
 	}
+});
+
+web.get('/bower/', function(req, res){
+	var header = tpl('header')
+		, footer = tpl('footer')
+		, bowerTpl = template({
+			template: 'tr>td{%name%}+td{%version%}+td{%css_path%}+td{%js_path%}' +
+				'+td>a[href=%demo_path% target=_blank]{%demo_path%}^td{%tags_html%}+td{%receipt_time%}'
+		})
+	    ;
+	db.query('bower', [], function(data){
+		res.send(header.replace('%pageTitle%', 'Bower 组件管理').replace('%style%', '<style>th,td{border:1px solid #c0c0c0;color:#000;}</style>') +
+			'<button>搜索</button><dialog><ul></ul></dialog>' +
+			moduleTpl({
+				moduleId: 'bower'
+				, moduleContent: '<table><thead><tr>' +
+					'<th>组件名称</th>' +
+					'<th>版本</th>' +
+					'<th>CSS 文件路径</th>' +
+					'<th>JS 文件路径</th>' +
+					'<th>demo 页面</th>' +
+					'<th>标签</th>' +
+					'<th>收录时间</th>' +
+					'</tr></thead>'+ bowerTpl(data).join('')
+			}).join('') + '<script data-main="../script/bower" src="../script/lib/require.min.js"></script>' + footer);
+		res.end();
+	}, function(){
+		res.end();
+	})
 });
 
 //web.all('/user/:id/:op?', function(req, res, next){
@@ -444,3 +483,5 @@ socketServer.use(function(socket, next){
 });
 
 console.log('Socket Server is listening...');
+
+//require('./module/bower.js').init(db, socketServer);

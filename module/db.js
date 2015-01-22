@@ -53,6 +53,9 @@ var
 		, tag: {
 			sql: 'select Id,name from tag'
 		}
+		, bower: {
+			sql: 'select * from ui_lib'
+		}
 	}
 	,
 	mysql = require('mysql')
