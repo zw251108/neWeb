@@ -319,14 +319,11 @@ web.get('/bower/', function(req, res){
 				'+td>a[href=%demo_path% target=_blank]{%demo_path%}^td{%tags_html%}+td{%receipt_time%}'
 		})
 	    ;
-	db.query('bower', [], function(data){
-		res.send(header.replace('%pageTitle%', 'Bower 组件管理').replace('%style%', styleTpl({
-				style: 'th,td{border:1px solid #c0c0c0;color:#000;}'
-			}).join('')) +
-			'<button>搜索</button><dialog><ul></ul></dialog>' +
+	db.query('bower', [], function(data){console.log(data);
+		res.send(header.replace('%pageTitle%', 'Bower 组件管理').replace('%style%', '') +
 			moduleTpl({
 				moduleId: 'bower'
-				, moduleContent: '<table><thead><tr>' +
+				, moduleContent: '<div class="wrap"><table class="lib_table"><thead><tr>' +
 					'<th>组件名称</th>' +
 					'<th>版本</th>' +
 					'<th>CSS 文件路径</th>' +
@@ -334,12 +331,13 @@ web.get('/bower/', function(req, res){
 					'<th>demo 页面</th>' +
 					'<th>标签</th>' +
 					'<th>收录时间</th>' +
-					'</tr></thead>'+ bowerTpl(data).join('')
+					'</tr></thead><tbody>'+ bowerTpl(data).join('') +'</tbody></table></div>'
 			}).join('') +
 			scriptTpl({
 				main: '../script/bower'
 				, require: '../script/lib/require.min.js'
-			}).join('') + footer);
+			}).join('') +
+		footer);
 		res.end();
 	}, function(){
 		res.end();
