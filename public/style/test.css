@@ -297,6 +297,18 @@ textarea{
 .datetime{
 	float: right;
 }
+.section_title{
+	text-indent: 1em;
+	line-height: 30px;
+}
+.section_title .icon{
+	float: right;
+	height: 30px;
+	text-indent: 0;
+}
+dl{
+	margin: 0;
+}
 dt{
 	cursor: pointer;
 	text-indent: 2em;

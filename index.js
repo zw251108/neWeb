@@ -1,12 +1,9 @@
 'use strict';
 
 /**
-* Web Server
-* */
-var
-	//sys = require('util')
-	//,
-	fs = require('fs')
+ * Web Server
+ * */
+var fs = require('fs')
 
 	// Web 服务器
 	, express = require('express')
@@ -29,20 +26,14 @@ var
 	, sessionStore = new session.MemoryStore()
 
 	// 数据库
-	, db = require('./module/db.js').db
-	, DB_SERVER_HOST = 'localhost'
-	, DB_SERVER_PORT = 3306
-	, DB_USERNAME = 'root'
-	, DB_PASSWORD = 'zw251108'
-	, DB_DATABASE = 'destiny'
-	//, db = require('mysql').createConnection({
-	//	host: DB_SERVER_HOST
-	//	, port: DB_SERVER_PORT
-	//	, user: DB_USERNAME
-	//	, password: DB_PASSWORD
-	//	, database: DB_DATABASE
-	//	, dateStrings: true	// 强制日期类型(TIMESTAMP, DATETIME, DATE)以字符串返回，而不是一javascript Date对象返回. (默认: false)
-	//})
+	, DB_CONFIG = {
+		DB_SERVER_HOST: 'localhost'
+		, DB_SERVER_PORT: 3306
+		, DB_USERNAME: 'root'
+		, DB_PASSWORD: 'zw251108'
+		, DB_DATABASE: 'destiny'
+	}
+	, db = require('./module/db.js').db( DB_CONFIG )
 
 	// 模块库
 	, tpl = require('./module/tpl.js').tpl
@@ -209,7 +200,7 @@ web.get('/document/', function(req, res){
 			template: 'dt.icon.icon-arrow-r{%title%}+dd{%content%}'
 		})
 		, sectionTpl = template({
-			template: 'section.document_section.section>h3.section_title{%section_title%}>span.icon-CSS.icon-minus^dl{%dl%}'
+			template: 'section.document_section.section>h3.section_title{%section_title%}>span.icon.icon-minus^dl{%dl%}'
 			, filter: {
 				dl: function(d){
 					return dlTpl(d.dl).join('');
@@ -329,7 +320,9 @@ web.get('/bower/', function(req, res){
 		})
 	    ;
 	db.query('bower', [], function(data){
-		res.send(header.replace('%pageTitle%', 'Bower 组件管理').replace('%style%', '<style>th,td{border:1px solid #c0c0c0;color:#000;}</style>') +
+		res.send(header.replace('%pageTitle%', 'Bower 组件管理').replace('%style%', styleTpl({
+				style: 'th,td{border:1px solid #c0c0c0;color:#000;}'
+			}).join('')) +
 			'<button>搜索</button><dialog><ul></ul></dialog>' +
 			moduleTpl({
 				moduleId: 'bower'
@@ -342,7 +335,11 @@ web.get('/bower/', function(req, res){
 					'<th>标签</th>' +
 					'<th>收录时间</th>' +
 					'</tr></thead>'+ bowerTpl(data).join('')
-			}).join('') + '<script data-main="../script/bower" src="../script/lib/require.min.js"></script>' + footer);
+			}).join('') +
+			scriptTpl({
+				main: '../script/bower'
+				, require: '../script/lib/require.min.js'
+			}).join('') + footer);
 		res.end();
 	}, function(){
 		res.end();
@@ -452,7 +449,7 @@ webServer = web.listen( WEB_APP_PORT );
 console.log('Web Server is listening...');
 
 //----- socket 服务器 -----
-socketServer = socketServer.listen(webServer);
+socketServer = socketServer.listen(webServer, db);
 
 //----- 设置 socket.IO 与 express 共用 session -----
 socketServer.use(function(socket, next){
@@ -483,5 +480,3 @@ socketServer.use(function(socket, next){
 });
 
 console.log('Socket Server is listening...');
-
-//require('./module/bower.js').init(db, socketServer);

@@ -6,7 +6,7 @@
 var sio = require('socket.io')()
 	, CLIENT_LIST = {}
 	, CLIENT_INDEX_LIST = []
-	, db = require('./db.js').db
+	, db
 	, bower = require('./bower.js').bower
 	;
 
@@ -82,6 +82,7 @@ sio.on('connection', function(socket){
 	;
 });
 
-exports.listen = function(webServer){
+exports.listen = function(webServer, database){
+	db = database;
 	return sio.listen( webServer );
 };

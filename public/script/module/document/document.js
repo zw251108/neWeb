@@ -44,7 +44,7 @@ define(['jquery', 'global', 'socket'
 		// todo 保存未保存的数据
 	}).on('click', '.section_title', function(){
 			$temp.add(this)
-				.find('.icon-CSS').toggleClass('icon-plus icon-minus').end()
+				.find('.icon').toggleClass('icon-plus icon-minus').end()
 				.next('dl').slideToggle();
 	}).on('click', 'dt', function(){
 		if( $curr ){

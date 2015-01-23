@@ -3,8 +3,7 @@
 /**
  * MySQL 数据库
  * */
-var
-	SQL = {
+var SQL = {
 		blog: {
 			sql: 'select Id,title,datetime,tags_id,tags_name from blog where status=1 order by Id desc'
 			, detail: {
@@ -39,7 +38,7 @@ var
 			}
 		}
 		, editor: {
-			sql: 'select editor.Id,editor.name,preview,tags_id,tags_name,width,height from editor,image where editor.preview=image.src order by editor.Id'
+			sql: 'select editor.Id,editor.name,preview,tags_id,tags_name,width,height from editor,image where tags_id like \'%48%\' and editor.preview=image.src order by editor.Id'
 			, code: {
 				sql: 'select Id,name,tags_id,tags_name,include_file,html,css,js from editor where Id=?'
 				, handler: function(rs){
@@ -57,16 +56,9 @@ var
 			sql: 'select * from ui_lib'
 		}
 	}
-	,
-	mysql = require('mysql')
-	, conn = mysql.createConnection({
-		host: 'localhost'
-		, port: 3306
-		, user: 'root'
-		, password: 'zw251108'
-		, database: 'destiny'
-		, dateStrings: true	// 强制日期类型(TIMESTAMP, DATETIME, DATE)以字符串返回，而不是一javascript Date对象返回. (默认: false)
-	})
+
+	, mysql = require('mysql')
+	, conn
 	//----- 定义数据库统一接口 -----
 	, db = {
 		query: function(topic, data, callback, errorHandler){
@@ -93,4 +85,14 @@ var
 	}
 	;
 
-exports.db = db;
+exports.db = function(config){
+	conn = mysql.createConnection({
+		host: config.DB_SERVER_HOST
+		, port: config.DB_SERVER_PORT
+		, user: config.DB_USERNAME
+		, password: config.DB_PASSWORD
+		, database: config.DB_DATABASE
+		, dateStrings: true	// 强制日期类型(TIMESTAMP, DATETIME, DATE)以字符串返回，而不是一javascript Date对象返回. (默认: false)
+	});
+	return db;
+};
