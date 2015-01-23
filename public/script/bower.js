@@ -19,7 +19,7 @@ require(['jquery'
 			template: 'li>span.name{%name%}+span.git{%url%}'
 		})
 		, tableTpl = tpl({
-			template: 'tr>td>label>input[type=radio]{%name%}^^td{%url%}'
+			template: 'tr>td>label>input[type=radio name=install]{%name%}^^td{%url%}'
 		})
 		, $dialog = $('<dialog/>', {
 			'class': 'module module-popup normal'
