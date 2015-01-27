@@ -66,7 +66,7 @@ function install(names, log, prompt, error, end){
 //bower.commands.install(['ember-data'], {save: true}, {interactive: true});
 
 function search(name, end){
-	bower.commands.search('jquery', {}).on('end', function (results) {
+	bower.commands.search(name, {}).on('end', function (results) {
 		end(results);
 		console.log(results);
 	});

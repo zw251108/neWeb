@@ -25,15 +25,16 @@ var fs = require('fs')
 	, session = require('express-session')
 	, sessionStore = new session.MemoryStore()
 
-	// 数据库
+	// MySQL 数据库配置
 	, DB_CONFIG = {
-		DB_SERVER_HOST: 'localhost'
-		, DB_SERVER_PORT: 3306
-		, DB_USERNAME: 'root'
-		, DB_PASSWORD: 'zw251108'
-		, DB_DATABASE: 'destiny'
+		host: 'localhost'
+		, port: 3306
+		, user: 'root'
+		, password: 'zw251108'
+		, database: 'destiny'
+		, dateStrings: true
 	}
-	, db = require('./module/db.js').db( DB_CONFIG )
+	, db = require('mysql').createConnection( DB_CONFIG )
 
 	// 模块库
 	, tpl = require('./module/tpl.js').tpl
@@ -43,7 +44,7 @@ var fs = require('fs')
 	, socketServer = require('./module/socket.js')
 	;
 
-//----- 重置 manifest 版本代号
+//----- 重置 manifest 版本代号 -----
 var manifest = fs.readFileSync(__dirname + '/tpl/cache.manifest').toString();
 fs.writeFileSync(__dirname + '/public/cache.manifest', new Buffer(manifest.replace('%v%', Math.floor(Math.random()*100))) );
 console.log('cache.mainfest has reset');
@@ -121,6 +122,14 @@ var scriptTpl = template({
 	template: 'script[data-main=%main% src=%require%]'
 });
 
+web.set('header', tpl('header'));
+web.set('footer', tpl('footer'));
+web.set('emmetTpl', template);
+web.set('moduleTpl', moduleTpl);
+web.set('stylesheetTpl', stylesheetTpl);
+web.set('styleTpl', styleTpl);
+web.set('scriptTpl', scriptTpl);
+
 /**
  * 博客模块
  *  /blog/
@@ -193,37 +202,37 @@ web.get('/blog/detail', function(req, res){
  * Web 前端文档
  *  /document/
  * */
-web.get('/document/', function(req, res){
-	var header = tpl('header')
-		, footer = tpl('footer')
-		, dlTpl = template({
-			template: 'dt.icon.icon-arrow-r{%title%}+dd{%content%}'
-		})
-		, sectionTpl = template({
-			template: 'section.document_section.section>h3.section_title{%section_title%}>span.icon.icon-minus^dl{%dl%}'
-			, filter: {
-				dl: function(d){
-					return dlTpl(d.dl).join('');
-				}
-			}
-		})
-		;
-	db.query('document', [], function(data){
-		res.send(header.replace('%pageTitle%', '前端文档 Document')
-			.replace('%style%', stylesheetTpl({
-				path: '../script/plugin/codeMirror/lib/codemirror.css'
-			}).join('')) + moduleTpl([{
-				moduleId: 'document'
-				, moduleContent: sectionTpl(data).join('')
-			}]).join('') + scriptTpl([{
-				main: '../script/module/document/index'
-				, require: '../script/lib/require.min.js'
-			}]).join('') + footer);
-		res.end();
-	}, function(){
-		res.end();
-	});
-});
+//web.get('/document/', function(req, res){
+//	var header = tpl('header')
+//		, footer = tpl('footer')
+//		, dlTpl = template({
+//			template: 'dt.icon.icon-arrow-r{%title%}+dd{%content%}'
+//		})
+//		, sectionTpl = template({
+//			template: 'section.document_section.section>h3.section_title{%section_title%}>span.icon.icon-minus^dl{%dl%}'
+//			, filter: {
+//				dl: function(d){
+//					return dlTpl(d.dl).join('');
+//				}
+//			}
+//		})
+//		;
+//	db.query('document', [], function(data){
+//		res.send(header.replace('%pageTitle%', '前端文档 Document')
+//			.replace('%style%', stylesheetTpl({
+//				path: '../script/plugin/codeMirror/lib/codemirror.css'
+//			}).join('')) + moduleTpl([{
+//				moduleId: 'document'
+//				, moduleContent: sectionTpl(data).join('')
+//			}]).join('') + scriptTpl([{
+//				main: '../script/module/document/index'
+//				, require: '../script/lib/require.min.js'
+//			}]).join('') + footer);
+//		res.end();
+//	}, function(){
+//		res.end();
+//	});
+//});
 
 /**
  * 编辑器模块
@@ -433,14 +442,17 @@ web.get('/bower/', function(req, res){
 //});
 
 /**
-* 访问主页	/
-* */
+ * 访问主页	/
+ * */
 web.get('/', function(req, res){
 	console.log('session id', req.session.id);
 
 	res.send( tpl('index') );
 	res.end();
 });
+
+// 加载 document 模块
+require('./module/document.js')(web, db, socketServer);
 
 webServer = web.listen( WEB_APP_PORT );
 
@@ -449,7 +461,7 @@ console.log('Web Server is listening...');
 //----- socket 服务器 -----
 socketServer = socketServer.listen(webServer, db);
 
-//----- 设置 socket.IO 与 express 共用 session -----
+// 设置 socket.IO 与 express 共用 session
 socketServer.use(function(socket, next){
 	var data = socket.handshake || socket.request
 		, cookieData = data.headers.cookie
@@ -478,3 +490,4 @@ socketServer.use(function(socket, next){
 });
 
 console.log('Socket Server is listening...');
+//----- socket 服务器 -----

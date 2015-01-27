@@ -8,6 +8,7 @@ var sio = require('socket.io')()
 	, CLIENT_INDEX_LIST = []
 	, db
 	, bower = require('./bower.js').bower
+	, eventList = {}
 	;
 
 sio.on('connection', function(socket){
@@ -81,8 +82,16 @@ sio.on('connection', function(socket){
 	})
 	;
 });
+exports.socket = {
+	listen: function(){
 
+	}
+	, eventRegister: function(){}
+}
 exports.listen = function(webServer, database){
 	db = database;
 	return sio.listen( webServer );
+};
+exports.addEvent = function(topic, data){
+
 };
