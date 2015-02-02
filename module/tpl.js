@@ -82,8 +82,6 @@ var fs = require('fs')
 	}
 	;
 
-
-
 exports.tpl = function(filePath){
 	var rs = ''
 		, type = typeof filePath

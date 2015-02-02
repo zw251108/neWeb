@@ -146,106 +146,125 @@ module.exports = function(grunt){
 		, cssmin: {
 			destiny: {
 				options:{},
-				files: {
-//					// jQuery UI
-//					'public/script/lib/jQueryUI/theme/base/jquery-ui.min.css': ['bower_components/jquery-ui/themes/base/minified/jquery-ui.min.css']
-//					// bootstrap
-//					, 'public/script/lib/bootstrap/css/bootstrap.min.css': ['bower_components/bootstrap/dist/css/bootstrap.min.css']
-//					, 'public/script/lib/bootstrap/css/bootstrap-theme.min.css': ['bower_components/bootstrap/dist/css/bootstrap-theme.min.css']
-//					// foundation
-//					, 'public/script/lib/foundation/css/foundation.min.css': ['bower_components/foundation/css/foundation.css']
-//					// pure
-//					, 'public/style/lib/pure/pure.min.css': ['bower_components/pure/pure-min.css']
-//					// animate.css
-//					, 'public/style/lib/animate/animate.min.css': ['bower_components/animate.css/animate.min.css']
-//					// Buttons
-//					, 'public/style/lib/buttons/buttons.css': ['bower_components/Buttons/css/buttons.css']
-//					// csshake
-//					, 'public/style/lib/csshake/csshake.min.css': ['bower_components/csshake/csshake.min.css']
-//					// font-awesome
-//					, 'public/style/lib/font-awesome/css/font-awesome.min.css': ['bower_components/font-awesome/css/font-awesome.min.css']
-//					// Hover
-//					, 'public/style/lib/hover/hover.min.css': ['bower_components/Hover/css/hover-min.css']
-//					// pace themes
-//					, 'public/script/plugin/pace/themes/pace-theme-barber-shop.css': ['bower_components/pace/themes/pace-theme-barber-shop.css']
-//					, 'public/script/plugin/pace/themes/pace-theme-big-counter.css': ['bower_components/pace/themes/pace-theme-big-counter.css']
-//					, 'public/script/plugin/pace/themes/pace-theme-bounce.css': ['bower_components/pace/themes/pace-theme-bounce.css']
-//					, 'public/script/plugin/pace/themes/pace-theme-center-atom.css': ['bower_components/pace/themes/pace-theme-center-atom.css']
-//					, 'public/script/plugin/pace/themes/pace-theme-center-circle.css': ['bower_components/pace/themes/pace-theme-center-circle.css']
-//					, 'public/script/plugin/pace/themes/pace-theme-center-radar.css': ['bower_components/pace/themes/pace-theme-center-radar.css']
-//					, 'public/script/plugin/pace/themes/pace-theme-center-simple.css': ['bower_components/pace/themes/pace-theme-center-simple.css']
-//					, 'public/script/plugin/pace/themes/pace-theme-corner-indicator.css': ['bower_components/pace/themes/pace-theme-corner-indicator.css']
-//					, 'public/script/plugin/pace/themes/pace-theme-fill-left.css': ['bower_components/pace/themes/pace-theme-fill-left.css']
-//					, 'public/script/plugin/pace/themes/pace-theme-flash.css': ['bower_components/pace/themes/pace-theme-flash.css']
-//					, 'public/script/plugin/pace/themes/pace-theme-flat-top.css': ['bower_components/pace/themes/pace-theme-flat-top.css']
-//					, 'public/script/plugin/pace/themes/pace-theme-loading-bar.css': ['bower_components/pace/themes/pace-theme-loading-bar.css']
-//					, 'public/script/plugin/pace/themes/pace-theme-mac-osx.css': ['bower_components/pace/themes/pace-theme-mac-osx.css']
-//					, 'public/script/plugin/pace/themes/pace-theme-minimal.css': ['bower_components/pace/themes/pace-theme-minimal.css']
-					// Code Mirror
-					//,
-					'public/script/plugin/codeMirror/lib/codemirror.css': ['bower_components/codemirror/lib/codemirror.css']
-					, 'public/script/plugin/codeMirror/addon/fold/foldgutter.css': ['bower_components/codemirror/addon/fold/foldgutter.css']
-//					// highlight
-//					, 'public/script/plugin/highlight/style/default.css': ['bower_components/highlightjs/styles/default.css']
-//					, 'public/script/plugin/highlight/style/arta.css': ['bower_components/highlightjs/styles/arta.css']
-//					, 'public/script/plugin/highlight/style/ascetic.css': ['bower_components/highlightjs/styles/ascetic.css']
-//					, 'public/script/plugin/highlight/style/atelier-dune.dark.css': ['bower_components/highlightjs/styles/atelier-dune.dark.css']
-//					, 'public/script/plugin/highlight/style/atelier-dune.light.css': ['bower_components/highlightjs/styles/atelier-dune.light.css']
-//					, 'public/script/plugin/highlight/style/atelier-forest.dark.css': ['bower_components/highlightjs/styles/atelier-forest.dark.css']
-//					, 'public/script/plugin/highlight/style/atelier-forest.light.css': ['bower_components/highlightjs/styles/atelier-forest.light.css']
-//					, 'public/script/plugin/highlight/style/atelier-heath.dark.css': ['bower_components/highlightjs/styles/atelier-heath.dark.css']
-//					, 'public/script/plugin/highlight/style/atelier-heath.light.css': ['bower_components/highlightjs/styles/atelier-heath.light.css']
-//					, 'public/script/plugin/highlight/style/atelier-lakeside.dark.css': ['bower_components/highlightjs/styles/atelier-lakeside.dark.css']
-//					, 'public/script/plugin/highlight/style/atelier-lakeside.light.css': ['bower_components/highlightjs/styles/atelier-lakeside.light.css']
-//					, 'public/script/plugin/highlight/style/atelier-seaside.dark.css': ['bower_components/highlightjs/styles/atelier-seaside.dark.css']
-//					, 'public/script/plugin/highlight/style/atelier-seaside.light.css': ['bower_components/highlightjs/styles/atelier-seaside.light.css']
-//					, 'public/script/plugin/highlight/style/brown_paper.css': ['bower_components/highlightjs/styles/brown_paper.css']
-//					, 'public/script/plugin/highlight/style/dark.css': ['bower_components/highlightjs/styles/dark.css']
-//					, 'public/script/plugin/highlight/style/docco.css': ['bower_components/highlightjs/styles/docco.css']
-//					, 'public/script/plugin/highlight/style/far.css': ['bower_components/highlightjs/styles/far.css']
-//					, 'public/script/plugin/highlight/style/foundation.css': ['bower_components/highlightjs/styles/foundation.css']
-//					, 'public/script/plugin/highlight/style/github.css': ['bower_components/highlightjs/styles/github.css']
-//					, 'public/script/plugin/highlight/style/googlecode.css': ['bower_components/highlightjs/styles/googlecode.css']
-//					, 'public/script/plugin/highlight/style/idea.css': ['bower_components/highlightjs/styles/idea.css']
-//					, 'public/script/plugin/highlight/style/ir_black.css': ['bower_components/highlightjs/styles/ir_black.css']
-//					, 'public/script/plugin/highlight/style/magula.css': ['bower_components/highlightjs/styles/magula.css']
-//					, 'public/script/plugin/highlight/style/mono-blue.css': ['bower_components/highlightjs/styles/mono-blue.css']
-//					, 'public/script/plugin/highlight/style/monokai.css': ['bower_components/highlightjs/styles/monokai.css']
-//					, 'public/script/plugin/highlight/style/monokai_sublime.css': ['bower_components/highlightjs/styles/monokai_sublime.css']
-//					, 'public/script/plugin/highlight/style/obsidian.css': ['bower_components/highlightjs/styles/obsidian.css']
-//					, 'public/script/plugin/highlight/style/paraiso.dark.css': ['bower_components/highlightjs/styles/paraiso.dark.css']
-//					, 'public/script/plugin/highlight/style/paraiso.light.css': ['bower_components/highlightjs/styles/paraiso.light.css']
-//					, 'public/script/plugin/highlight/style/pojoaque.css': ['bower_components/highlightjs/styles/pojoaque.css']
-//					, 'public/script/plugin/highlight/style/railscasts.css': ['bower_components/highlightjs/styles/railscasts.css']
-//					, 'public/script/plugin/highlight/style/rainbow.css': ['bower_components/highlightjs/styles/rainbow.css']
-//					, 'public/script/plugin/highlight/style/school_book.css': ['bower_components/highlightjs/styles/school_book.css']
-//					, 'public/script/plugin/highlight/style/solarized_dark.css': ['bower_components/highlightjs/styles/solarized_dark.css']
-//					, 'public/script/plugin/highlight/style/solarized_light.css': ['bower_components/highlightjs/styles/solarized_light.css']
-//					, 'public/script/plugin/highlight/style/sunburst.css': ['bower_components/highlightjs/styles/sunburst.css']
-//					, 'public/script/plugin/highlight/style/tomorrow.css': ['bower_components/highlightjs/styles/tomorrow.css']
-//					, 'public/script/plugin/highlight/style/tomorrow-night.css': ['bower_components/highlightjs/styles/tomorrow-night.css']
-//					, 'public/script/plugin/highlight/style/tomorrow-night-blue.css': ['bower_components/highlightjs/styles/tomorrow-night-blue.css']
-//					, 'public/script/plugin/highlight/style/tomorrow-night-bright.css': ['bower_components/highlightjs/styles/tomorrow-night-bright.css']
-//					, 'public/script/plugin/highlight/style/tomorrow-night-eighties.css': ['bower_components/highlightjs/styles/tomorrow-night-eighties.css']
-//					, 'public/script/plugin/highlight/style/vs.css': ['bower_components/highlightjs/styles/vs.css']
-//					, 'public/script/plugin/highlight/style/xcode.css': ['bower_components/highlightjs/styles/xcode.css']
-//					, 'public/script/plugin/highlight/style/zenburn.css': ['bower_components/highlightjs/styles/zenburn.css']
-//					// SyntaxHighlighter
-//					, 'public/script/plugin/syntaxhighlighter/style/shCoreDefault.css': ['bower_components/SyntaxHighlighter/styles/shCoreDefault.css']
-//					, 'public/script/plugin/syntaxhighlighter/style/shCoreDjango.css': ['bower_components/SyntaxHighlighter/styles/shCoreDjango.css']
-//					, 'public/script/plugin/syntaxhighlighter/style/shCoreEclipse.css': ['bower_components/SyntaxHighlighter/styles/shCoreEclipse.css']
-//					, 'public/script/plugin/syntaxhighlighter/style/shCoreEmacs.css': ['bower_components/SyntaxHighlighter/styles/shCoreEmacs.css']
-//					, 'public/script/plugin/syntaxhighlighter/style/shCoreFadeToGrey.css': ['bower_components/SyntaxHighlighter/styles/shCoreFadeToGrey.css']
-//					, 'public/script/plugin/syntaxhighlighter/style/shCoreMDUltra.css': ['bower_components/SyntaxHighlighter/styles/shCoreMDUltra.css']
-//					, 'public/script/plugin/syntaxhighlighter/style/shCoreMidnight.css': ['bower_components/SyntaxHighlighter/styles/shCoreMidnight.css']
-//					, 'public/script/plugin/syntaxhighlighter/style/shCoreRDark.css': ['bower_components/SyntaxHighlighter/styles/shCoreRDark.css']
-//					// chardin.js
-//					, 'public/script/plugin/chardin/chardinjs.css': ['bower_components/chardin.js/chardinjs.css']
-//					// intro.js
-//					, 'public/script/plugin/intro/introjs.css': ['bower_components/intro.js/introjs.css']
-//					// qunit
-//					, 'public/script/lib/qunit/qunit.css': ['bower_components/qunit/qunit/qunit.css']
-				}
+				files: [{
+					expand: true
+					, cwd: 'bower_components/codemirror/lib/'
+					, src: ['*.css']
+					, dest: 'public/script/plugin/codeMirror/lib/'
+				}, {
+					expand: true
+					, cwd: 'bower_components/codemirror/addon/fold/'
+					, src: ['*.css']
+					, dest: 'public/script/plugin/codeMirror/addon/fold/'
+				}, {
+					expand: true
+					, cwd: 'bower_components/codemirror/theme/'
+					, src: ['*.css']
+					, dest: 'public/script/plugin/codeMirror/theme/'
+				}]
+//				{
+////					// jQuery UI
+////					'public/script/lib/jQueryUI/theme/base/jquery-ui.min.css': ['bower_components/jquery-ui/themes/base/minified/jquery-ui.min.css']
+////					// bootstrap
+////					, 'public/script/lib/bootstrap/css/bootstrap.min.css': ['bower_components/bootstrap/dist/css/bootstrap.min.css']
+////					, 'public/script/lib/bootstrap/css/bootstrap-theme.min.css': ['bower_components/bootstrap/dist/css/bootstrap-theme.min.css']
+////					// foundation
+////					, 'public/script/lib/foundation/css/foundation.min.css': ['bower_components/foundation/css/foundation.css']
+////					// pure
+////					, 'public/style/lib/pure/pure.min.css': ['bower_components/pure/pure-min.css']
+////					// animate.css
+////					, 'public/style/lib/animate/animate.min.css': ['bower_components/animate.css/animate.min.css']
+////					// Buttons
+////					, 'public/style/lib/buttons/buttons.css': ['bower_components/Buttons/css/buttons.css']
+////					// csshake
+////					, 'public/style/lib/csshake/csshake.min.css': ['bower_components/csshake/csshake.min.css']
+////					// font-awesome
+////					, 'public/style/lib/font-awesome/css/font-awesome.min.css': ['bower_components/font-awesome/css/font-awesome.min.css']
+////					// Hover
+////					, 'public/style/lib/hover/hover.min.css': ['bower_components/Hover/css/hover-min.css']
+////					// pace themes
+////					, 'public/script/plugin/pace/themes/pace-theme-barber-shop.css': ['bower_components/pace/themes/pace-theme-barber-shop.css']
+////					, 'public/script/plugin/pace/themes/pace-theme-big-counter.css': ['bower_components/pace/themes/pace-theme-big-counter.css']
+////					, 'public/script/plugin/pace/themes/pace-theme-bounce.css': ['bower_components/pace/themes/pace-theme-bounce.css']
+////					, 'public/script/plugin/pace/themes/pace-theme-center-atom.css': ['bower_components/pace/themes/pace-theme-center-atom.css']
+////					, 'public/script/plugin/pace/themes/pace-theme-center-circle.css': ['bower_components/pace/themes/pace-theme-center-circle.css']
+////					, 'public/script/plugin/pace/themes/pace-theme-center-radar.css': ['bower_components/pace/themes/pace-theme-center-radar.css']
+////					, 'public/script/plugin/pace/themes/pace-theme-center-simple.css': ['bower_components/pace/themes/pace-theme-center-simple.css']
+////					, 'public/script/plugin/pace/themes/pace-theme-corner-indicator.css': ['bower_components/pace/themes/pace-theme-corner-indicator.css']
+////					, 'public/script/plugin/pace/themes/pace-theme-fill-left.css': ['bower_components/pace/themes/pace-theme-fill-left.css']
+////					, 'public/script/plugin/pace/themes/pace-theme-flash.css': ['bower_components/pace/themes/pace-theme-flash.css']
+////					, 'public/script/plugin/pace/themes/pace-theme-flat-top.css': ['bower_components/pace/themes/pace-theme-flat-top.css']
+////					, 'public/script/plugin/pace/themes/pace-theme-loading-bar.css': ['bower_components/pace/themes/pace-theme-loading-bar.css']
+////					, 'public/script/plugin/pace/themes/pace-theme-mac-osx.css': ['bower_components/pace/themes/pace-theme-mac-osx.css']
+////					, 'public/script/plugin/pace/themes/pace-theme-minimal.css': ['bower_components/pace/themes/pace-theme-minimal.css']
+//					// Code Mirror
+//					//,
+//					'public/script/plugin/codeMirror/lib/codemirror.css': ['bower_components/codemirror/lib/codemirror.css']
+//					, 'public/script/plugin/codeMirror/addon/fold/foldgutter.css': ['bower_components/codemirror/addon/fold/foldgutter.css']
+//					, 'public/script/theme/eclipse.css': ['bower_components/codemirror/theme/eclipse.css']
+//					, 'public/script/theme/eclipse.css': ['bower_components/codemirror/theme/eclipse.css']
+//
+////					// highlight
+////					, 'public/script/plugin/highlight/style/default.css': ['bower_components/highlightjs/styles/default.css']
+////					, 'public/script/plugin/highlight/style/arta.css': ['bower_components/highlightjs/styles/arta.css']
+////					, 'public/script/plugin/highlight/style/ascetic.css': ['bower_components/highlightjs/styles/ascetic.css']
+////					, 'public/script/plugin/highlight/style/atelier-dune.dark.css': ['bower_components/highlightjs/styles/atelier-dune.dark.css']
+////					, 'public/script/plugin/highlight/style/atelier-dune.light.css': ['bower_components/highlightjs/styles/atelier-dune.light.css']
+////					, 'public/script/plugin/highlight/style/atelier-forest.dark.css': ['bower_components/highlightjs/styles/atelier-forest.dark.css']
+////					, 'public/script/plugin/highlight/style/atelier-forest.light.css': ['bower_components/highlightjs/styles/atelier-forest.light.css']
+////					, 'public/script/plugin/highlight/style/atelier-heath.dark.css': ['bower_components/highlightjs/styles/atelier-heath.dark.css']
+////					, 'public/script/plugin/highlight/style/atelier-heath.light.css': ['bower_components/highlightjs/styles/atelier-heath.light.css']
+////					, 'public/script/plugin/highlight/style/atelier-lakeside.dark.css': ['bower_components/highlightjs/styles/atelier-lakeside.dark.css']
+////					, 'public/script/plugin/highlight/style/atelier-lakeside.light.css': ['bower_components/highlightjs/styles/atelier-lakeside.light.css']
+////					, 'public/script/plugin/highlight/style/atelier-seaside.dark.css': ['bower_components/highlightjs/styles/atelier-seaside.dark.css']
+////					, 'public/script/plugin/highlight/style/atelier-seaside.light.css': ['bower_components/highlightjs/styles/atelier-seaside.light.css']
+////					, 'public/script/plugin/highlight/style/brown_paper.css': ['bower_components/highlightjs/styles/brown_paper.css']
+////					, 'public/script/plugin/highlight/style/dark.css': ['bower_components/highlightjs/styles/dark.css']
+////					, 'public/script/plugin/highlight/style/docco.css': ['bower_components/highlightjs/styles/docco.css']
+////					, 'public/script/plugin/highlight/style/far.css': ['bower_components/highlightjs/styles/far.css']
+////					, 'public/script/plugin/highlight/style/foundation.css': ['bower_components/highlightjs/styles/foundation.css']
+////					, 'public/script/plugin/highlight/style/github.css': ['bower_components/highlightjs/styles/github.css']
+////					, 'public/script/plugin/highlight/style/googlecode.css': ['bower_components/highlightjs/styles/googlecode.css']
+////					, 'public/script/plugin/highlight/style/idea.css': ['bower_components/highlightjs/styles/idea.css']
+////					, 'public/script/plugin/highlight/style/ir_black.css': ['bower_components/highlightjs/styles/ir_black.css']
+////					, 'public/script/plugin/highlight/style/magula.css': ['bower_components/highlightjs/styles/magula.css']
+////					, 'public/script/plugin/highlight/style/mono-blue.css': ['bower_components/highlightjs/styles/mono-blue.css']
+////					, 'public/script/plugin/highlight/style/monokai.css': ['bower_components/highlightjs/styles/monokai.css']
+////					, 'public/script/plugin/highlight/style/monokai_sublime.css': ['bower_components/highlightjs/styles/monokai_sublime.css']
+////					, 'public/script/plugin/highlight/style/obsidian.css': ['bower_components/highlightjs/styles/obsidian.css']
+////					, 'public/script/plugin/highlight/style/paraiso.dark.css': ['bower_components/highlightjs/styles/paraiso.dark.css']
+////					, 'public/script/plugin/highlight/style/paraiso.light.css': ['bower_components/highlightjs/styles/paraiso.light.css']
+////					, 'public/script/plugin/highlight/style/pojoaque.css': ['bower_components/highlightjs/styles/pojoaque.css']
+////					, 'public/script/plugin/highlight/style/railscasts.css': ['bower_components/highlightjs/styles/railscasts.css']
+////					, 'public/script/plugin/highlight/style/rainbow.css': ['bower_components/highlightjs/styles/rainbow.css']
+////					, 'public/script/plugin/highlight/style/school_book.css': ['bower_components/highlightjs/styles/school_book.css']
+////					, 'public/script/plugin/highlight/style/solarized_dark.css': ['bower_components/highlightjs/styles/solarized_dark.css']
+////					, 'public/script/plugin/highlight/style/solarized_light.css': ['bower_components/highlightjs/styles/solarized_light.css']
+////					, 'public/script/plugin/highlight/style/sunburst.css': ['bower_components/highlightjs/styles/sunburst.css']
+////					, 'public/script/plugin/highlight/style/tomorrow.css': ['bower_components/highlightjs/styles/tomorrow.css']
+////					, 'public/script/plugin/highlight/style/tomorrow-night.css': ['bower_components/highlightjs/styles/tomorrow-night.css']
+////					, 'public/script/plugin/highlight/style/tomorrow-night-blue.css': ['bower_components/highlightjs/styles/tomorrow-night-blue.css']
+////					, 'public/script/plugin/highlight/style/tomorrow-night-bright.css': ['bower_components/highlightjs/styles/tomorrow-night-bright.css']
+////					, 'public/script/plugin/highlight/style/tomorrow-night-eighties.css': ['bower_components/highlightjs/styles/tomorrow-night-eighties.css']
+////					, 'public/script/plugin/highlight/style/vs.css': ['bower_components/highlightjs/styles/vs.css']
+////					, 'public/script/plugin/highlight/style/xcode.css': ['bower_components/highlightjs/styles/xcode.css']
+////					, 'public/script/plugin/highlight/style/zenburn.css': ['bower_components/highlightjs/styles/zenburn.css']
+////					// SyntaxHighlighter
+////					, 'public/script/plugin/syntaxhighlighter/style/shCoreDefault.css': ['bower_components/SyntaxHighlighter/styles/shCoreDefault.css']
+////					, 'public/script/plugin/syntaxhighlighter/style/shCoreDjango.css': ['bower_components/SyntaxHighlighter/styles/shCoreDjango.css']
+////					, 'public/script/plugin/syntaxhighlighter/style/shCoreEclipse.css': ['bower_components/SyntaxHighlighter/styles/shCoreEclipse.css']
+////					, 'public/script/plugin/syntaxhighlighter/style/shCoreEmacs.css': ['bower_components/SyntaxHighlighter/styles/shCoreEmacs.css']
+////					, 'public/script/plugin/syntaxhighlighter/style/shCoreFadeToGrey.css': ['bower_components/SyntaxHighlighter/styles/shCoreFadeToGrey.css']
+////					, 'public/script/plugin/syntaxhighlighter/style/shCoreMDUltra.css': ['bower_components/SyntaxHighlighter/styles/shCoreMDUltra.css']
+////					, 'public/script/plugin/syntaxhighlighter/style/shCoreMidnight.css': ['bower_components/SyntaxHighlighter/styles/shCoreMidnight.css']
+////					, 'public/script/plugin/syntaxhighlighter/style/shCoreRDark.css': ['bower_components/SyntaxHighlighter/styles/shCoreRDark.css']
+////					// chardin.js
+////					, 'public/script/plugin/chardin/chardinjs.css': ['bower_components/chardin.js/chardinjs.css']
+////					// intro.js
+////					, 'public/script/plugin/intro/introjs.css': ['bower_components/intro.js/introjs.css']
+////					// qunit
+////					, 'public/script/lib/qunit/qunit.css': ['bower_components/qunit/qunit/qunit.css']
+//				}
 			}
 		}
 		, copy: {

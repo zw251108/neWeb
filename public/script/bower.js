@@ -28,10 +28,13 @@ require(['jquery', 'template', 'socket'], function($, tpl, socket){
 
 			var $form = $(this);
 
-			socket.emit('bower_search', $form.find('input').val());
+			socket.emit('getData', {
+				topic: 'bower/search'
+				, name: $form.find('input').val()
+			});
 		}).appendTo('body').on('click', '.popup_close', function(){
 			$dialog[0].close();
-		}).on('click', '', function(e){
+		}).on('click', 'a', function(e){
 
 		})
 		;
@@ -55,8 +58,10 @@ require(['jquery', 'template', 'socket'], function($, tpl, socket){
 		$dialog[0].showModal();
 	}).appendTo('.module_content');
 
-	socket.on('bower_search_result', function(data){
+	socket.on('getData', function(data){
 		//console.log(data);
-		$dialog.find('tbody').append( tableTpl(data).join('') );
+		if( data.topic === 'bower/search' ){
+			$dialog.find('tbody').append( tableTpl(data).join('') );
+		}
 	});
 });
