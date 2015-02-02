@@ -63,16 +63,16 @@ module.exports = function(web, db, socket){
 	web.get('/document/', function(req, res){
 		var index = document.index;
 
-		db.query(index.sql, function(e, data){
+		db.query(index.sql, function(e, rs){
 			if( !e ){
-				data = index.handler( data );
+				rs = index.handler( rs );
 
 				res.send( header.replace('%pageTitle%', '前端文档 Document')
 					.replace('%style%', stylesheetTpl({
 						path: '../script/plugin/codeMirror/lib/codemirror.css'
 					}).join('')) + moduleTpl([{
 					moduleId: 'document'
-					, moduleContent: sectionTpl(data).join('')
+					, moduleContent: sectionTpl(rs).join('')
 				}]).join('') + scriptTpl([{
 					main: '../script/module/document/index'
 					, require: '../script/lib/require.min.js'
@@ -83,5 +83,28 @@ module.exports = function(web, db, socket){
 			}
 			res.end();
 		});
+	});
+
+	socket.register({
+		document: function(socket){
+			var index = document.index;
+		    db.query(index.sql, function(e, rs){
+			    if( !e ){
+				    rs = index.handler( rs );
+
+				    socket.emit('getData', {
+					    topic: 'document'
+					    , data: rs
+				    });
+			    }
+			    else{
+				    socket.emit('getData', {
+					    error: ''
+					    , msg: ''
+				    });
+				    console.log('\n', 'DB', '\n', index.sql, '\n', e.message);
+			    }
+		    });
+		}
 	});
 };

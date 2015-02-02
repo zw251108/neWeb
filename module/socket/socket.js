@@ -54,7 +54,10 @@ sio.on('connection', function(socket){
 		}
 		else{
 			// todo 发送错误信息
-			socket.emit('getData', {err: '', msg: ''});
+			socket.emit('getData', {
+				error: ''
+				, msg: '未注册的主题'
+			});
 		}
 
 		//db.query(topic, data, function(rs){

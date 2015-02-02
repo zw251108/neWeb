@@ -30,7 +30,9 @@ require(['jquery', 'template', 'socket'], function($, tpl, socket){
 
 			socket.emit('getData', {
 				topic: 'bower/search'
-				, name: $form.find('input').val()
+				, query: {
+					name: $form.find('input').val()
+				}
 			});
 		}).appendTo('body').on('click', '.popup_close', function(){
 			$dialog[0].close();

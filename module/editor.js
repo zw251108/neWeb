@@ -105,4 +105,55 @@ module.exports = function(web, db, socket){
 			res.end();
 		}
 	});
+
+	socket.register({
+		editor: function(socket){
+			var index = editor.index;
+			db.query(index.sql, function(e, rs){
+				if( !e ){
+					socket.emit('getData', {
+						topic: 'editor'
+						, data: rs
+					});
+				}
+				else{
+					socket.emit('getData', {
+						error: ''
+						, msg: ''
+					});
+					console.log('\n', 'db', '\n', index.sql, '\n', e.message);
+				}
+			});
+		}
+		, 'editor/code': function(socket, data){
+			var id = data.query.id || ''
+				, code = editor.code
+				;
+			if( id ){
+				db.query(code.sql, [id], function(e, rs){
+					if( !e ){
+						rs = code.handler(rs);
+						socket.emit('getData', {
+							topic: 'editor/code'
+							, info: rs
+						});
+					}
+					else{
+						socket.emit('getData', {
+							error: ''
+							, msg: ''
+						});
+						console.log('\n', 'db', '\n', code.sql, '\n', e.message);
+					}
+				});
+			}
+			else{
+				socket.emit('getData', {
+					error: ''
+					, msg: ''
+				});
+				console.log('\n', 'socket editor/code', '\n', 'no id');
+			}
+		}
+	});
 };

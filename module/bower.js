@@ -125,9 +125,12 @@ module.exports = function(web, db, socket){
 		bower: function(socket, query){
 
 		}
-		, 'bower/search': function(socket, query){
-			bower.commands.search(query.name, {}).on('end', function (results) {
-				socket.emit('bower/search', results);
+		, 'bower/search': function(socket, data){
+			bower.commands.search(data.query.name, {}).on('end', function (results) {
+				socket.emit('getData', {
+					topic: 'bower/search'
+					, data: results
+				});
 				console.log(results);
 			});
 		}
