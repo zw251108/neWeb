@@ -23,7 +23,6 @@
     "codemirror": "~4.10.0",
     "codemirror-emmet": "~1.1.0",
     "impress.js": "~0.5.3",
-    "ember": "~1.9.1",
-    "ember-data": "~0.0.14"
+    "ember": "~1.9.1"
   }
 }

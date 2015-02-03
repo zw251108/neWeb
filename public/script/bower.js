@@ -14,16 +14,11 @@ require(['jquery', 'template', 'socket'], function($, tpl, socket){
 			template: 'tr>td>button[type=button]{安装}^td{%name%}+td[title=%url%]{%url%}'
 		})
 		, $dialog = $('<dialog/>', {
-			'class': 'module module-popup large'
+			'class': 'module module-popup big'
 		}).append('<div><button type="button" class="icon icon-cancel popup_close f-r"></button></div>' +
-			'<form action="#" id="bowerSearch">' +
-				'<input type="text"/>' +
-				'<input type="submit" value="提交"/>' +
-			'</form>' +
-			'<table>' +
-				'<thead><tr><th></th><th>组件名称</th><th>组件来源</th></tr></thead>' +
-				'<tbody></tbody>' +
-			'</table>').on('submit', '#bowerSearch', function(e){
+			'<form action="#" id="bowerSearch"><input type="text"/><input type="submit" value="提交"/></form>' +
+			'<table><thead><tr><th></th><th>组件名称</th><th>组件来源</th></tr></thead><tbody></tbody></table>'
+		).on('submit', '#bowerSearch', function(e){
 			e.preventDefault();
 
 			var $form = $(this);
@@ -60,10 +55,22 @@ require(['jquery', 'template', 'socket'], function($, tpl, socket){
 		$dialog[0].showModal();
 	}).appendTo('.module_content');
 
-	socket.on('getData', function(data){
-		//console.log(data);
-		if( data.topic === 'bower/search' ){
-			$dialog.find('tbody').append( tableTpl(data).join('') );
+	//----- socket -----
+	socket.register({
+		'bower/search': function(data){
+			$dialog.find('tbody').append( tableTpl(data.data).join('') );
+		}
+		, 'bower/info': function(data){
+
+		}
+		, 'bower/install': function(data){
+
+		}
+		, 'bower/install/prompts': function(data){
+
+		}
+		, 'bower/install/end': function(data){
+
 		}
 	});
 });

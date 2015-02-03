@@ -3,7 +3,10 @@
  * */
 //----- web socket 模块 目前基于 socket.io -----
 define(['/socket.io/socket.io.js'], function(io){
-	var socket = io('http://localhost:9001');
+	var socket = io('http://localhost:9001')
+		, EVENT_LIST = {}
+		, EVENT_INDEX_LIST = []
+		;
 
 	socket.on('error', function(err){
 
@@ -17,7 +20,43 @@ define(['/socket.io/socket.io.js'], function(io){
 			socket.disconnect();
 			console.log('断开连接')
 		}
+	}).on('getData', function(data){
+		var topic = data.topic;
+
+		if( 'error' in data ){
+			// todo 错误
+		}
+		else if( topic in EVENT_LIST ){
+			EVENT_LIST[topic](data);
+		}
+		else{
+			// todo 未存在主题
+		}
 	});
+
+	socket.register = function(topic, event){
+		var temp;
+		if( typeof topic === 'string' ){
+			if( topic in EVENT_LIST ){
+				// todo 事件主题已存在
+				return;
+			}
+
+			// 加载事件
+			EVENT_LIST[topic] = event;
+			EVENT_INDEX_LIST.push( topic );
+		}
+		else if( typeof topic === 'object' ){
+			event = topic;
+			for( topic in event ) if( event.hasOwnProperty(topic) ){
+
+				if( !(topic in EVENT_LIST) && typeof EVENT_LIST[topic] !== 'function' ){
+					EVENT_LIST[topic] = event[topic];
+					EVENT_INDEX_LIST.push( topic );
+				}
+			}
+		}
+	};
 
 	return socket;
 });
