@@ -27,54 +27,61 @@ var Bower = {
 		template: 'tr>td{%name%}+td{%version%}+td{%css_path%}+td{%js_path%}+td>a[href=%demo_path% target=_blank]{%demo_path%}^td{%tags_html%}+td{%receipt_time%}'
 	})
 	, bower         = require('bower')
-, inquirer =  require('inquirer')
+	, pickerCallback
+//, inquirer =  require('inquirer')
 	;
 
-bower.commands.install(['ember-data'], {save: true}, {interactive: true})
-	.on('data', function(msg){
-		console.log('data\n', msg);
-	}).on('log', function(msg){
-		console.log('['+ msg.level+']', msg.id, msg.message);
-		if( msg.level === 'conflict' ){
-			console.dir(msg);
-			msg.data.picks.forEach(function(d, i){
-				console.log('pick');
-				console.dir(d);
-
-				var temp = d.endpoint;
-				console.log( (i+1) + ') ' + temp.name + ' version: ' + temp.target );
-
-				temp = d.dependants;
-				console.log(temp);
-				//temp = temp[0].dependencies
-				//console.log(temp);
-			});
-
-			console.log(
-				msg.data.picks.map(function(d, i){
-					var endpoint = d.endpoint
-						, dependants = d.dependants
-						;
-					d = d.endpoint;
-					return {
-						name: d.name
-						, version: d.target
-						, require: ''
-					};
-				//return (i+1) + ') ' + temp.name + ' version: ' + temp.target;
-			}).join('\n')
-			);
-		}
-	}).on('prompt', function(prompts, callback) {
-		console.log('prompt\n', prompts);
-		//callback({prompt: '2'});
-		inquirer.prompt(prompts, callback);
-	}).on('error', function(e){
-		console.log(e);
-	}).on('end', function(installed){
-		//var name = installed
-		console.dir(installed);
-	});
+//bower.commands.install(['ember-data'], {save: true}, {interactive: true})
+//	.on('data', function(msg){
+//		console.log('data\n', msg);
+//	}).on('log', function(msg){
+//		console.log('['+ msg.level+']', msg.id, msg.message);
+//		if( msg.level === 'conflict' ){
+//			console.dir(msg);
+//			msg.data.picks.forEach(function(d, i){
+//				console.log('pick');
+//				console.dir(d);
+//
+//				var temp = d.endpoint;
+//				console.log( (i+1) + ') ' + temp.name + ' version: ' + temp.target );
+//
+//				temp = d.dependants;
+//				console.log(temp);
+//				//temp = temp[0].dependencies
+//				//console.log(temp);
+//			});
+//
+//			console.log(
+//				msg.data.picks.map(function(d, i){
+//					var endpoint = d.endpoint
+//						, dependants = d.dependants
+//						;
+//					d = d.endpoint;
+//					return {
+//						name: d.name
+//						, version: d.target
+//						, required: dependants.map(function(d, i){
+//							var t = d.endpoint;
+//							return {
+//								name: t.name
+//								, version: t.target
+//							};
+//						})
+//					};
+//				//return (i+1) + ') ' + temp.name + ' version: ' + temp.target;
+//			}).join('\n')
+//			);
+//		}
+//	}).on('prompt', function(prompts, callback) {
+//		console.log('prompt\n', prompts);
+//		//callback({prompt: '2'});
+//		inquirer.prompt(prompts, callback);
+//	}).on('error', function(e){
+//		console.log(e);
+//	}).on('end', function(installed){
+//		//var name = installed
+//		console.dir(installed);
+//	});
 
 module.exports = function(web, db, socket){
 
@@ -124,58 +131,77 @@ module.exports = function(web, db, socket){
 			});
 		}
 		, 'bower/install': function(socket, data){
-			bower.commands.install([data.query.name], {save: true}, {}).on('log', function(msg){
-
+			bower.commands.install([data.query.name], {save: true}, {interactive: true}).on('log', function(msg){
+				var data = {}
+					;
 				if( msg.level !== 'conflict' ){
-					socket.emit('getData', {
-						topic: 'bower/info'
-						, msg: {
-							level: msg.level
-							, id: msg.id
-							, message: msg.message
-						}
-					});
+					data.topic = 'bower/info';
+					data.msg = {
+						level: msg.level
+						, id: msg.id
+						, message: msg.message
+					};
 				}
 				else{
-					socket.emit('getData', {
-						topic: 'bower/install/prompts'
-						, msg: []
+					data.topic = 'bower/install/prompts';
+					data.info = msg.data.picks.map(function(d, i){
+						var dependants = d.dependants;
+						d = d.endpoint;
+						return {
+							name: d.name
+							, version: d.target
+							, required: dependants.map(function(d, i){
+								var t = d.endpoint;
+								console.log({
+									name: t.name
+									, version: t.target
+								});
+								return {
+									name: t.name
+									, version: t.target
+								};
+							})
+						};
 					});
 				}
 
-				console.log(msg);
-				//if( msg.level === 'conflict' ){
-				//	msg.data.picks.forEach(function(d, i){
-				//		console.dir(d)
-				//	});
-				//
-				//	console.log(msg.data.picks.map(function(d, i){
-				//		var temp = d.endpoint;
-				//		return (i+1) + ') ' + temp.name + ' version: ' + temp.target;
-				//	}).join('\n'));
-				//}
+				socket.emit('getData', data);
+				console.dir(data);
 			}).on('prompt', function(prompts, callback) {
 
-				socket.emit('getData', {
-					topic: 'bower/install/prompts'
-					, msg: prompts
-				});
+				//socket.emit('getData', {
+				//	topic: 'bower/install/prompts'
+				//	, msg: prompts
+				//});
+
+				//pickerCallback = callback;
+
 				console.log(prompts);
-				//callback({prompt: '2'});
-				//inquirer.prompt(prompts, callback);
 			}).on('error', function(e){
+
 				socket.emit('getData', {
 					error: ''
 					, msg: ''
 				});
 				console.log(e);
-			}).on('end', function(installed){
-				//var name = installed
+			}).on('end', function(installed){console.log(installed)
+				var k
+					, t
+					, info = []
+					;
+				for( k in installed ) if( installed.hasOwnProperty( k ) ){
+					t = installed[k].endpoint;
+
+					info.push({
+						name: t.name
+						, version: t.target
+					});
+				}
 				socket.emit('getData', {
 					topic: 'bower/install/end'
-					, msg: ''
+					, info: info
 				});
-				console.dir(installed);
+				console.log(installed);
 			});
 		}
 		, 'bower/install/prompt': function(socket, data){
