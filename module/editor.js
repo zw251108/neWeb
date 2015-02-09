@@ -7,7 +7,9 @@ var Editor = {
 		, code: {
 			sql: 'select Id,name,tags_id,tags_name,include_file,html,css,js from editor where Id=?'
 			, handler: function(data){
-				return data[0];
+				data = data[0];
+				data.html = data.html.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+				return data;
 			}
 		}
 	}
@@ -28,7 +30,25 @@ var Editor = {
 	, scriptTpl     = emmetTpl({
 		template: 'script[data-main=%main% src=%require%]'
 	})
-
+	, codeTpl       = emmetTpl({
+		template: 'a[href=code?id=%Id%]' +
+				'>article.article.editor_article[data-tagsid=%tagsId%]' +
+				'>h3.article_title{%name%}' +
+				'+img.article_preview[src=%preview% width=%width% height=%height% alt=%alt%]',
+		filter:{
+			alt:function(data, index){
+				return data.preview ? data.name : '没有预览图片';
+			}
+		}
+	})
+	, codeEditTpl   = emmetTpl({
+		template: 'h3.editor_title{%name%}>input#id[type=hidden name=id value=%Id%]' +
+				'^div#editorContainer.editor_container' +
+				'>div.editor_area>label[for=html]{HTML}+textarea#html.hidden.code-html[name=html]{%html%}' +
+				'^div.editor_area>label[for=css]{CSS}+textarea#css.hidden.code-css[name=css]{%css%}' +
+				'^div.editor_area>label[for=js]{JavaScript}+textarea#js.hidden.code-js[name=js]{%js%}' +
+				'^div.editor_area>label{Result}+iframe#result.editor_text[src=result?id=%Id% name=result]'
+	})
 	, result        = tpl('editor/result')
 	;
 
@@ -62,9 +82,11 @@ module.exports = function(web, db, socket){
 				if( !e ){
 					data = code.handler( data );
 					res.send(header.replace('%pageTitle%', '前端编辑器 Editor')
-						.replace('%style%', stylesheetTpl({
+						.replace('%style%', stylesheetTpl([{
 							path: '../script/plugin/codeMirror/lib/codemirror.css'
-						}).join('')) + moduleTpl([{
+						}, {
+							path: '../script/plugin/codeMirror/addon/fold/foldgutter.css'
+						}]).join('')) + moduleTpl([{
 						moduleId: 'editor'
 						, moduleContent: codeEditTpl(data).join('')
 					}]).join('') + scriptTpl([{
@@ -88,9 +110,10 @@ module.exports = function(web, db, socket){
 			;
 
 		if( id ){
-			db.query(code.sql, [id], function(e, data){console.log(data);
+			db.query(code.sql, [id], function(e, data){
 				if( !e ){
-					data = code.handler( data );
+					//data = code.handler( data );
+					data = data[0];
 					res.send(result.replace('%style%', data.css)
 						.replace('%html%', data.html)
 						.replace('%script%', data.js));

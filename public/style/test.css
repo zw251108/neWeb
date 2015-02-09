@@ -197,40 +197,6 @@
 	background: #000;
 	margin-bottom: 10px;
 }
-.editor_container{
-	overflow: hidden;
-	padding-bottom: 10px;
-}
-.editor_area{
-	position: relative;
-	margin: 10px 10px 0;
-}
-.editor_area label{
-	position: absolute;
-	z-index: 120;
-	top: 10px;
-	right: 25px;
-	min-width: 100px;
-	border: 1px solid #a1a1a1;
-	border-radius: 10px;
-	background: #efefef;
-	color: #000;
-	font-size: 12px;
-	line-height: 2em;
-	text-align: center;
-	opacity: .4;
-}
-iframe{
-	display: block;
-	width: 100%;
-	border: 0;
-	background: #fff;
-}
-textarea{
-	border: 1px solid #efefef;
-	border-radius: 5px;
-	margin: 5px;
-}
 
 .timeLine{
 	overflow: hidden;
@@ -297,6 +263,67 @@ textarea{
 .datetime{
 	float: right;
 }
+
+/*----- editor -----*/
+.editor_container{
+	overflow: hidden;
+	padding-bottom: 10px;
+}
+.editor_area{
+	position: relative;
+	margin: 10px 10px 0;
+}
+.editor_area label{
+	position: absolute;
+	z-index: 120;
+	top: 10px;
+	right: 25px;
+	min-width: 100px;
+	border: 1px solid #a1a1a1;
+	border-radius: 10px;
+	background: #efefef;
+	color: #000;
+	font-size: 12px;
+	line-height: 2em;
+	text-align: center;
+	opacity: .4;
+}
+iframe{
+	display: block;
+	width: 100%;
+	border: 0;
+	background: #fff;
+}
+textarea{
+	border: 1px solid #efefef;
+	border-radius: 5px;
+	margin: 5px;
+}
+.CodeMirror{
+	height: auto;
+	border: 1px solid #ddd;
+	font-family: inherit;
+	font-size: 13px;
+	line-height: 1;
+	text-indent: 0;
+}
+.CodeMirror-scroll{
+	overflow: scroll !important;
+	max-height: 200px;
+}
+.CodeMirror pre{
+	padding-left: 7px;
+	line-height: 1.25;
+}
+.CodeMirror-gutters{
+	padding-bottom: 0;
+}
+.CodeMirror-gutter{
+	margin-bottom: -30px;
+	padding-bottom: 0;
+}
+
+/*----- document -----*/
 .section_title{
 	text-indent: 1em;
 	line-height: 30px;
@@ -319,30 +346,4 @@ dd{
 	margin: 0 10px;
 	font-size: 12px;
 	text-indent: 2em;
-}
-
-.CodeMirror{
-	height: auto;
-	border: 1px solid #ddd;
-	font-family: inherit;
-	font-size: 13px;
-	line-height: 1;
-	text-indent: 0;
-}
-
-.CodeMirror-scroll{
-	overflow: scroll !important;
-	max-height: 200px;
-}
-
-.CodeMirror pre{
-	padding-left: 7px;
-	line-height: 1.25;
-}
-.CodeMirror-gutters{
-	padding-bottom: 0;
-}
-.CodeMirror-gutter{
-	margin-bottom: -30px;
-	padding-bottom: 0;
 }
