@@ -153,4 +153,8 @@ module.exports = function(web, db, socket){
 			}
 		}
 	});
+
+	web.get('/admin/blog', function(req, res){  // 后台管理 blog 模块
+
+	});
 };
