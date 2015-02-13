@@ -107,6 +107,9 @@ module.exports = function(web, db, socket){
 	web.get('/editor/result', function(req, res){
 		var code = editor.code
 			, id = req.query.id || ''
+			, linkArr
+			, scriptArr
+			, temp
 			;
 
 		if( id ){
@@ -114,9 +117,25 @@ module.exports = function(web, db, socket){
 				if( !e ){
 					//data = code.handler( data );
 					data = data[0];
-					res.send(result.replace('%style%', data.css)
-						.replace('%html%', data.html)
-						.replace('%script%', data.js));
+
+					temp = data.include_file.split(',');
+					linkArr = temp.filter(function(d){
+						return /\.css$/.test( d );
+					});
+					scriptArr = temp.filter(function(d){
+						return /\.js$/.test( d );
+					});
+
+					res.send(
+						result
+							.replace('%style%',
+								(linkArr.length ? '<link rel="stylesheet" href="' + linkArr.join('"/><link rel="stylesheet" href="') + '"/>' : '') +
+								'<style>' + data.css + '</style>')
+							.replace('%html%', data.html)
+							.replace('%script%',
+								(scriptArr.length ? '<script src="' + scriptArr.join('"></script><script src="')+ '"></script>' : '') +
+								'<script>' + data.js + '</script>')
+					);
 				}
 				else{
 					console.log('\n', 'db', '\n', code.sql, '\n', e.message);

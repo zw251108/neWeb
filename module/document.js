@@ -48,7 +48,7 @@ var Document = {
 		template: 'dt.icon.icon-arrow-r{%title%}+dd{%content%}'
 	})
 	, sectionTpl    = emmetTpl({
-		template: 'section.document_section.section>h3.section_title{%section_title%}>span.icon.icon-minus^dl{%dl%}'
+		template: 'section.document_section.section>h3.section_title[section_id=%section_id%]{%section_title%}>span.icon.icon-minus^dl{%dl%}'
 		, filter: {
 			dl: function(d){
 				return dlTpl(d.dl).join('');
@@ -61,7 +61,8 @@ module.exports = function(web, db, socket){
 	var document = Document;
 
 	web.get('/document/', function(req, res){
-		var index = document.index;
+		var index = document.index
+			;
 
 		db.query(index.sql, function(e, rs){
 			if( !e ){
