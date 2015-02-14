@@ -299,6 +299,41 @@ textarea{
 	border-radius: 5px;
 	margin: 5px;
 }
+.btnOptions{
+	z-index: 10;
+	background: #000;
+}
+.list{
+	position: absolute;
+	top: 36px;
+	overflow: auto;
+	height: 16em;
+}
+.list li{
+	overflow: hidden;
+	position: relative;
+	height: 2em;
+	/*width: 10em;*/
+	border-bottom: 1px solid #fff;
+	padding: 0 1em;
+	background: #000;
+	white-space: nowrap;
+
+	cursor: pointer;
+
+	-ms-text-overflow: ellipsis;
+	text-overflow: ellipsis;
+
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+.list .on{
+	border: 1px solid #fff;
+}
+.list li:hover{
+	background: #444;
+}
 .CodeMirror{
 	height: auto;
 	border: 1px solid #ddd;

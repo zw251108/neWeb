@@ -27,8 +27,11 @@ require(['jquery', 'global', 'socket'
 ], function($, g, socket, cm){
 	var $editor = $('#editor')
 		, html  = $editor.find('#html')[0]
+		, $html
 		, css   = $editor.find('#css')[0]
+		, $css
 		, js    = $editor.find('#js')[0]
+		, $js
 		, $rs    = $editor.find('#result')
 		, cmOptions = {
 			lineNumbers : true
@@ -40,26 +43,44 @@ require(['jquery', 'global', 'socket'
 
 	cmOptions.mode = 'text/html';
 	html = cm.fromTextArea(html, cmOptions);
+	$html = $(html.display.wrapper).parent();
 
 	cmOptions.mode = 'text/css';
 	css = cm.fromTextArea(css, cmOptions);
+	$css = $(html.display.wrapper).parent();
 
 	cmOptions.mode = 'javascript';
 	js = cm.fromTextArea(js, cmOptions);
-
-	console.log(html.display.wrapper);
-
-	var skinTpl = $.template({
-			template: 'option[value=%name%]{%name%}'
+	$js = $(html.display.wrapper).parent();
+	console.log($js)
+	var listTpl = $.template({
+			template: 'li[title=%name% data-type=%type%]{%name%}'
+			, filter: {
+				type: function(d){
+					return d.id || '';
+				}
+			}
 		})
 		, $skinLink = $('<link />', {
 			rel: 'stylesheet'
 		}).appendTo('head')
-		, $skin = $('<select />').css({
+		, $skin = $('<div class="btnOptions"></div>').css({
 			position: 'absolute'
 			, top: 0
 			, left: 0
-		}).append(skinTpl([{
+		}).on('click', 'button', function(){
+			$(this).next().slideToggle();
+		}).on('click', 'li', function(){
+			var skin = this.innerHTML;
+
+			$skinLink.attr('href', skin !== 'default' ? '../script/plugin/codeMirror/theme/'+ skin +'.css' : '');
+
+			html.setOption('theme', skin);
+			css.setOption('theme', skin);
+			js.setOption('theme', skin);
+
+			$skin.find('ul').slideUp();
+		}).append('<button class="btn icon icon-skin">更改皮肤</button><ul class="list skinList hidden"></ul>').find('ul').append(listTpl([{
 			name: 'default'}, {
 			name: '3024-day'}, {
 			name: '3024-night'}, {
@@ -93,30 +114,137 @@ require(['jquery', 'global', 'socket'
 			name: 'xq-dark'}, {
 			name: 'xq-light'}, {
 			name: 'zenburn'
-		}]).join('')).appendTo( $editor ).on('change', function(){
-			var skin = this.value;
+		}]).join('')).end().appendTo( $editor )
 
-			if( skin === 'default' ){
-				$skinLink.attr('src', '');
-			}
-			else{
-				$skinLink.attr('href', '../script/plugin/codeMirror/theme/'+ skin +'.css');
-			}
-
-			html.setOption('theme', skin);
-			css.setOption('theme', skin);
-			js.setOption('theme', skin);
-		})
-		, $layout = $('<button />', {
-			'class': 'btn icon icon-skin'
-			, text: '改变布局'
-		}).css({
+		, $layout = $('<div class="btnOptions"></div>').css({
 			position: 'absolute'
 			, top: 0
 			, left: '150px'
-		}).appendTo( $editor).on('click', function(){
+		}).on('click', 'button', function(){
+			$(this).next().slideToggle();
+		}).on('click', 'li', function(){
+			var $that = $(this)
+				, type = $that.data('type')
+				;
+			       console.log(type)
+			switch( type ){
+				case 1:
+					$html.css({
+						position: 'fixed'
+						, top: '0'
+						, left: '0'
+						, height: '25%'
+						, width: '100%'
+						, padding: '5px'
+					});
+					$css.css({
+						position: 'fixed'
+						, top: '25%'
+						, left: '0'
+						, height: '25%'
+						, width: '100%'
+						, padding: '5px'
+					});
+					$js.css({
+						position: 'fixed'
+						, top: '50%'
+						, left: '0'
+						, height: '25%'
+						, width: '100%'
+						, padding: '5px'
+					});
+					$rs.css({
+						position: 'fixed'
+						, top: '75%'
+						, left: '0'
+						, height: '25%'
+						, width: '100%'
+						, padding: '5px'
+					});
+					break;
+				case 2:
+					$html.css({
+						position: 'fixed'
+						, top: '0'
+						, left: '0'
+						, height: '100%'
+						, width: '25%'
+						, padding: '5px'
+					});
+					$css.css({
+						position: 'fixed'
+						, top: '0'
+						, left: '25%'
+						, height: '100%'
+						, width: '25%'
+						, padding: '5px'
+					});
+					$js.css({
+						position: 'fixed'
+						, top: '0'
+						, left: '50%'
+						, height: '100%'
+						, width: '25%'
+						, padding: '5px'
+					});
+					$rs.css({
+						position: 'fixed'
+						, top: '0'
+						, left: '75%'
+						, height: '100%'
+						, width: '25%'
+						, padding: '5px'
+					});
+					break;
+				case 3:
+					$html.css({
+						position: 'fixed'
+						, top: '0'
+						, left: '0'
+						, height: '40%'
+						, width: '40%'
+						, padding: '5px'
+					});
+					$css.css({
+						position: 'fixed'
+						, top: '0'
+						, left: '40%'
+						, height: '40%'
+						, width: '60%'
+						, padding: '5px'
+					});
+					$js.css({
+						position: 'fixed'
+						, top: '40%'
+						, left: '0'
+						, height: '60%'
+						, width: '40%'
+						, padding: '5px'
+					});
+					$rs.css({
+						position: 'fixed'
+						, top: '40%'
+						, left: '40%'
+						, height: '60%'
+						, width: '60%'
+						, padding: '5px'
+					});
+					break;
+			}
 
-		})
+			$skin.find('ul').slideUp();
+			//html.fr
+		}).append('<button class="btn icon icon-layout">改变布局</button><ul class="list layoutList hidden"></ul>').find('ul').append(listTpl([{
+			name: '四行布局'
+			, type: '1'
+		}, {
+			name: '四列布局'
+			, type: '2'
+		}, {
+		    name: '四角布局'
+			, type: '3'
+		}]).join('')).end().appendTo( $editor)
+
 		, $open = $('<button />', {
 			'class': 'btn icon'
 			, text: '打开新窗口'
