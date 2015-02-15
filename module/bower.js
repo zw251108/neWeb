@@ -6,27 +6,14 @@ var Bower = {
 	    }
 	}
 
-	, tpl           = require('./tpl.js').tpl
+	, bower         = require('bower')
+
+	, tpl           = require('./tpl.js')
 	, emmetTpl      = require('./emmetTpl/emmetTpl.js').template
-	, header        = tpl('header')
-	, footer        = tpl('footer')
-	, moduleTpl     = emmetTpl({
-		template: 'div.Container>section#%moduleId%.module.module-main.module-%moduleId%.large>div.module_content{%moduleContent%}'
-	})
-	, stylesheetTpl = emmetTpl({
-		template: 'link[rel=stylesheet href=%path%]'
-	})
-	, styleTpl      = emmetTpl({
-		template: 'style{%style%}'
-	})
-	, scriptTpl     = emmetTpl({
-		template: 'script[data-main=%main% src=%require%]'
-	})
 
 	, bowerTpl      = emmetTpl({
 		template: 'tr>td{%name%}+td{%version%}+td{%css_path%}+td{%js_path%}+td>a[href=%demo_path% target=_blank]{%demo_path%}^td{%tags_html%}+td{%receipt_time%}'
 	})
-	, bower         = require('bower')
 	, pickerCallback
 //, inquirer =  require('inquirer')
 	;
@@ -83,30 +70,47 @@ var Bower = {
 //		console.dir(installed);
 //	});
 
-module.exports = function(web, db, socket){
+module.exports = function(web, db, socket, metro){
+
+	metro.push({
+		id: 'bower'
+		, type: 'metro'
+		, size: 'normal'
+		, title: '前端组件管理 bower'
+	});
 
 	web.get('/bower/', function(req, res){
 		var index = Bower.index;
 		db.query(index.sql, function(e, data){console.log(data);
 			if( !e ){
-				res.send(header.replace('%pageTitle%', 'Bower 组件管理').replace('%style%', '') +
-				moduleTpl({
-					moduleId: 'bower'
-					, moduleContent: '<div class="wrap"><table class="lib_table"><thead><tr>' +
-					'<th>组件名称</th>' +
-					'<th>版本</th>' +
-					'<th>CSS 文件路径</th>' +
-					'<th>JS 文件路径</th>' +
-					'<th>demo 页面</th>' +
-					'<th>标签</th>' +
-					'<th>收录时间</th>' +
-					'</tr></thead><tbody>'+ bowerTpl(data).join('') +'</tbody></table></div>'
-				}).join('') +
-				scriptTpl({
-					main: '../script/bower'
-					, require: '../script/lib/require.min.js'
-				}).join('') +
-				footer);
+				res.send(tpl.html('index', {
+					title: '前端组件管理 Bower'
+					, modules: tpl.moduleTpl({
+						id: 'bower'
+						, type: 'main'
+						, size: 'large'
+						, title: '前端组件管理 bower'
+						, content: '<div class="wrap"><table class="lib_table">' +
+									'<thead>' +
+										'<tr>' +
+											'<th>组件名称</th>' +
+											'<th>版本</th>' +
+											'<th>CSS 文件路径</th>' +
+											'<th>JS 文件路径</th>' +
+											'<th>demo 页面</th>' +
+											'<th>标签</th>' +
+											'<th>收录时间</th>' +
+										'</tr>' +
+									'</thead>' +
+									'<tbody>'+ bowerTpl(data).join('') +'</tbody>' +
+								'</table>' +
+							'</div>'
+					}).join('')
+					, script: {
+						main: '../script/bower'
+						, src: '../script/lib/require.min.js'
+					}
+				}) );
 			}
 			else{
 				console.log('\n', 'db', '\n', index.sql, '\n', e.message);

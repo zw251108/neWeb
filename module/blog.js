@@ -12,22 +12,8 @@ var Blog = {
 		}
 	}
 
-	, tpl           = require('./tpl.js').tpl
+	, tpl           = require('./tpl.js')
 	, emmetTpl      = require('./emmetTpl/emmetTpl.js').template
-	, header        = tpl('header')
-	, footer        = tpl('footer')
-	, moduleTpl     = emmetTpl({
-		template: 'div.Container>section#%moduleId%.module.module-main.module-%moduleId%.large>div.module_content{%moduleContent%}'
-	})
-	, stylesheetTpl = emmetTpl({
-		template: 'link[rel=stylesheet href=%path%]'
-	})
-	, styleTpl      = emmetTpl({
-		template: 'style{%style%}'
-	})
-	, scriptTpl     = emmetTpl({
-		template: 'script[data-main=%main% src=%require%]'
-	})
 
 	, articleTpl    = emmetTpl({
 		template:'article#blogArt%Id%.article>a[href=detail?id=%Id%]>h3.article_title{%title%}' +
@@ -59,18 +45,35 @@ var Blog = {
 	})
 	;
 
-module.exports = function(web, db, socket){
+module.exports = function(web, db, socket, metro){
 	var blog = Blog;
+
+	metro.push({
+		id: 'blog'
+		, type: 'metro'
+		, size: 'big'
+		, title: '博客 blog'
+	});
 
 	web.get('/blog/', function(req, res){
 		var index = blog.index;
 
 		db.query(index.sql, function(e, rs){
 			if( !e ){
-				res.send(header.replace('%pageTitle%', '博客 Blog').replace('%style%', '') + moduleTpl([{
-					moduleId: 'blog'
-					, moduleContent: articleTpl(rs).join('')
-				}]).join('') + footer);
+				res.send(tpl.html('module', {
+					title: '博客 Blog'
+					, modules: tpl.moduleTpl({
+						id: 'blog'
+						, type: 'main'
+						, size: 'large'
+						, title: '博客 blog'
+						, content: articleTpl(rs).join('')
+					}).join('')
+					, script: {
+						main: '../script/module/blog/index'
+						, src: '../script/lib/require.min.js'
+					}
+				}) );
 			}
 			else{
 				console.log('\n', 'db', '\n', index.sql, '\n', e.message);
@@ -85,10 +88,22 @@ module.exports = function(web, db, socket){
 		if( id ){
 			db.query(detail.sql, [id], function(e, rs){
 				if( !e ){
-					res.send(header.replace('%pageTitle%', '博客 Blog').replace('%style%', '') + moduleTpl([{
-						moduleId: 'blog'
-						, moduleContent: articleDetailTpl(rs).join('')
-					}]).join('') + footer);
+					res.send(tpl.html('module', {
+						title: '博客 Blog'
+						, dir: '../'
+						, header: 1
+						, modules: tpl.moduleTpl({
+							id: 'blog'
+							, type: 'main'
+							, size: 'large'
+							, title: '博客 blog'
+							, content: articleDetailTpl(rs).join('')
+						}).join('')
+						, script: {
+							main: '../script/module/blog/index'
+							, src: '../script/lib/require.min.js'
+						}
+					}) );
 				}
 				else{
 					console.log('\n', 'db', '\n', detail.sql, '\n', e.message);

@@ -3,6 +3,7 @@
  * */
 var fs = require('fs')
 	, path = require('path')
+	, emmetTpl = require('./emmetTpl/emmetTpl.js').template
 	, TPL_CACHE = {}
 	, TPL_DIR = 'tpl/'
 	, TPL_KEY = '%'
@@ -82,19 +83,59 @@ var fs = require('fs')
 	}
 	;
 
-exports.tpl = function(filePath){
-	var rs = ''
-		, type = typeof filePath
-		, i, j, t
-		;
+module.exports = {
+	tpl:                function(filePath){
+		return readTpl( filePath );
+	}
+	, moduleTpl:        emmetTpl({
+		template: 'section#%id%.module.module-%type%.module-%id%.%size%' +
+			'>h2.module_title.icon.icon-%id%{%title%}' +
+			//'+ul.toolbar>li>span.module_close.icon.icon-cancel' +
+			//'^^' +
+		'+' +
+		'div.module_content{%content%}'
+	})
+	, metroTpl:          emmetTpl({
+		template: 'a[href=%id%/]>section#%id%.module.module-%type%.module-%id%.%size%' +
+		'>h2.module_title.icon.icon-%id%{%title%}+div.m_info{%info%}'
+		, filter: {
+			info: function(d){
+				return d.info || '';
+			}
+		}
+	})
+	, stylesheetTpl:    emmetTpl({
+		template: 'link[rel=stylesheet href=%path%]'
+	})
+	, styleTpl:         emmetTpl({
+		template: 'style{%style%}'
+	})
+	, scriptTpl:        emmetTpl({
+		template: 'script[data-main=%main% src=%src%]'
+	})
+	, scriptCodeTpl:    emmetTpl({
+		template: 'script{%script%}'
+	})
+	, html: function(filePath, options){
+		var rs = ''
+			, script = ''
+			, style = ''
+			;
 
-	if( type === 'string' ){
 		rs += readTpl( filePath );
-	}
-	else if( type === 'object' && Array.isArray( filePath ) ){
 
-		rs = handlerData( filePath );
-	}
+		rs = rs.replace('%title%', options.title || '');
 
-	return rs;
+		options.stylesheet  && ( style += this.stylesheetTpl(options.stylesheet).join('') );
+		options.style       && ( style += this.styleTpl(options.style).join('') );
+		rs = rs.replace('%style%', style);
+
+		rs = rs.replace('%module%', options.modules || '');
+
+		options.script      && ( script += this.scriptTpl(options.script).join('') );
+		options.scriptCode  && ( script += this.scriptCodeTpl(options.scriptCode).join('') );
+		rs = rs.replace('%script%', script);
+
+		return rs;
+	}
 };

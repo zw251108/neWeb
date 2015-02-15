@@ -382,3 +382,121 @@ dd{
 	font-size: 12px;
 	text-indent: 2em;
 }
+
+.fullScreen{
+	position: fixed;
+	z-index: 10;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin: 0;
+}
+.row-1{
+	position: fixed;
+	top: 0;
+	bottom: 75%;
+	left: 0;
+	right: 0;
+	margin: 0;
+	padding: 5px;
+}
+.row-2{
+	position: fixed;
+	top: 25%;
+	bottom: 50%;
+	left: 0;
+	right: 0;
+	margin: 0;
+	padding: 5px;
+}
+.row-3{
+	position: fixed;
+	top: 50%;
+	bottom: 25%;
+	left: 0;
+	right: 0;
+	margin: 0;
+	padding: 5px;
+}
+.row-4{
+	position: fixed;
+	top: 75%;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin: 0;
+	padding: 5px;
+}
+.col-1{
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 75%;
+	margin: 0;
+	padding: 5px;
+}
+.col-2{
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 25%;
+	right: 50%;
+	margin: 0;
+	padding: 5px;
+}
+.col-3{
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 50%;
+	right: 25%;
+	margin: 0;
+	padding: 5px;
+}
+.col-4{
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 75%;
+	right: 0;
+	margin: 0;
+	padding: 5px;
+}
+.corner-1{
+	position: fixed;
+	top: 0;
+	bottom: 50%;
+	left: 0;
+	right: 50%;
+	margin: 0;
+	padding: 5px;
+}
+.corner-2{
+	position: fixed;
+	top: 0;
+	bottom: 50%;
+	left: 50%;
+	right: 0;
+	margin: 0;
+	padding: 5px;
+}
+.corner-3{
+	position: fixed;
+	top: 50%;
+	bottom: 0;
+	left: 0;
+	right: 50%;
+	margin: 0;
+	padding: 5px;
+}
+.corner-4{
+	position: fixed;
+	top: 50%;
+	bottom: 0;
+	left: 50%;
+	right: 0;
+	margin: 0;
+	padding: 5px;
+}

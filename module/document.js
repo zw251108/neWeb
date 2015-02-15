@@ -27,22 +27,8 @@ var Document = {
 		}
 	}
 
-	, tpl           = require('./tpl.js').tpl
+	, tpl           = require('./tpl.js')
 	, emmetTpl      = require('./emmetTpl/emmetTpl.js').template
-	, header        = tpl('header')
-	, footer        = tpl('footer')
-	, moduleTpl     = emmetTpl({
-		template: 'div.Container>section#%moduleId%.module.module-main.module-%moduleId%.large>div.module_content{%moduleContent%}'
-	})
-	, stylesheetTpl = emmetTpl({
-		template: 'link[rel=stylesheet href=%path%]'
-	})
-	, styleTpl      = emmetTpl({
-		template: 'style{%style%}'
-	})
-	, scriptTpl     = emmetTpl({
-		template: 'script[data-main=%main% src=%require%]'
-	})
 
 	, dlTpl         = emmetTpl({
 		template: 'dt.icon.icon-arrow-r{%title%}+dd{%content%}'
@@ -57,8 +43,15 @@ var Document = {
 	})
 	;
 
-module.exports = function(web, db, socket){
+module.exports = function(web, db, socket, metro){
 	var document = Document;
+
+	metro.push({
+		id: 'document'
+		, type: 'metro'
+		, size: 'small'
+		, title: '前端文档 document'
+	});
 
 	web.get('/document/', function(req, res){
 		var index = document.index
@@ -68,16 +61,20 @@ module.exports = function(web, db, socket){
 			if( !e ){
 				rs = index.handler( rs );
 
-				res.send( header.replace('%pageTitle%', '前端文档 Document')
-					.replace('%style%', stylesheetTpl({
-						path: '../script/plugin/codeMirror/lib/codemirror.css'
-					}).join('')) + moduleTpl([{
-					moduleId: 'document'
-					, moduleContent: sectionTpl(rs).join('')
-				}]).join('') + scriptTpl([{
-					main: '../script/module/document/index'
-					, require: '../script/lib/require.min.js'
-				}]).join('') + footer);
+				res.send(tpl.html('module', {
+					title: '前端文档 Document'
+					, modules: tpl.moduleTpl({
+						id: 'document'
+						, type: 'main'
+						, size: 'large'
+						, title: '前端文档 document'
+						, content: sectionTpl(rs).join('')
+					}).join('')
+					, script: {
+						main: '../script/module/document/index'
+						, src: '../script/lib/require.min.js'
+					}
+				}) );
 			}
 			else{
 				console.log('\n', 'DB', '\n', index.sql, '\n', e.message);

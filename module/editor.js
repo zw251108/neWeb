@@ -2,7 +2,8 @@
 
 var Editor = {
 		index: {
-			sql: 'select editor.Id,editor.name,preview,tags_id,tags_name,width,height from editor,image where tags_id like \'%48%\' and editor.preview=image.src order by editor.Id'
+			sql: 'select editor.Id,editor.name,preview,tags_id,tags_name,width,height from editor,image' +
+					' where tags_id like \'%48%\' and editor.preview=image.src order by editor.Id'
 		}
 		, code: {
 			sql: 'select Id,name,tags_id,tags_name,include_file,html,css,js from editor where Id=?'
@@ -14,22 +15,9 @@ var Editor = {
 		}
 	}
 
-	, tpl           = require('./tpl.js').tpl
+	, tpl           = require('./tpl.js')
 	, emmetTpl      = require('./emmetTpl/emmetTpl.js').template
-	, header        = tpl('header')
-	, footer        = tpl('footer')
-	, moduleTpl     = emmetTpl({
-		template: 'div.Container>section#%moduleId%.module.module-main.module-%moduleId%.large>div.module_content{%moduleContent%}'
-	})
-	, stylesheetTpl = emmetTpl({
-		template: 'link[rel=stylesheet href=%path%]'
-	})
-	, styleTpl      = emmetTpl({
-		template: 'style{%style%}'
-	})
-	, scriptTpl     = emmetTpl({
-		template: 'script[data-main=%main% src=%require%]'
-	})
+
 	, codeTpl       = emmetTpl({
 		template: 'a[href=code?id=%Id%]' +
 				'>article.article.editor_article[data-tagsid=%tagsId%]' +
@@ -49,22 +37,38 @@ var Editor = {
 				'^div.editor_area>label[for=js]{JavaScript}+textarea#js.hidden.code-js[name=js]{%js%}' +
 				'^div.editor_area>label{Result}+iframe#result.editor_text[src=result?id=%Id% name=result]'
 	})
-	, result        = tpl('editor/result')
+	//, result        = tpl('editor/result')
 	;
 
-module.exports = function(web, db, socket){
+module.exports = function(web, db, socket, metro){
 	var editor = Editor;
+
+	metro.push({
+		id: 'editor'
+		, type: 'metro'
+		, size: 'normal'
+		, title: '前端编辑器 editor'
+	});
 
 	web.get('/editor/', function(req, res){
 		var index = editor.index;
 
-		db.query(index.sql, function(e, data){
+		db.query(index.sql, function(e, rs){
 			if( !e ){
-				res.send(header.replace('%pageTitle%', '前端编辑器 Editor')
-					.replace('%style%', '') + moduleTpl([{
-					moduleId: 'editor'
-					, moduleContent: codeTpl(data).join('')
-				}]).join('') + footer);
+				res.send(tpl.html('module', {
+					title: '前端编辑器 Editor'
+					, modules: tpl.moduleTpl({
+						id: 'editor'
+						, type: 'main'
+						, size: 'large'
+						, title: '前端编辑器 editor'
+						, content: codeTpl(rs).join('')
+					}).join('')
+					, script: {
+						main: '../script/module/editor/index'
+						, src: '../script/lib/require.min.js'
+					}
+				}) );
 			}
 			else{
 				console.log('\n', 'db', '\n', index.sql, '\n', e.message);
@@ -78,21 +82,29 @@ module.exports = function(web, db, socket){
 			;
 
 		if( id ){
-			db.query(code.sql, [id], function(e, data){
+			db.query(code.sql, [id], function(e, rs){
 				if( !e ){
-					data = code.handler( data );
-					res.send(header.replace('%pageTitle%', '前端编辑器 Editor')
-						.replace('%style%', stylesheetTpl([{
+					rs = code.handler( rs );
+
+					res.send(tpl.html('module', {
+						title: '前端编辑器 Editor'
+						, stylesheet: [{
 							path: '../script/plugin/codeMirror/lib/codemirror.css'
 						}, {
 							path: '../script/plugin/codeMirror/addon/fold/foldgutter.css'
-						}]).join('')) + moduleTpl([{
-						moduleId: 'editor'
-						, moduleContent: codeEditTpl(data).join('')
-					}]).join('') + scriptTpl([{
-						main: '../script/module/editor/code'
-						, require: '../script/lib/require.min.js'
-					}]).join('') + footer);
+						}]
+						, modules: tpl.moduleTpl({
+							id: 'editor'
+							, type: 'main'
+							, size: 'large'
+							, title: '前端编辑器 editor'
+							, content: codeEditTpl(rs).join('')
+						}).join('')
+						, script: {
+							main: '../script/module/editor/code'
+							, src: '../script/lib/require.min.js'
+						}
+					}) );
 				}
 				else{
 					console.log('\n', 'db', '\n', code.sql, '\n', e.message);
@@ -121,20 +133,31 @@ module.exports = function(web, db, socket){
 					temp = data.include_file.split(',');
 					linkArr = temp.filter(function(d){
 						return /\.css$/.test( d );
+					}).map(function(d){
+						return {path: d};
 					});
 					scriptArr = temp.filter(function(d){
 						return /\.js$/.test( d );
+					}).map(function(d){
+						return {src: d};
 					});
 
-					res.send(
-						result
-							.replace('%style%',
-								(linkArr.length ? '<link rel="stylesheet" href="' + linkArr.join('"/><link rel="stylesheet" href="') + '"/>' : '') +
-								'<style>' + data.css + '</style>')
-							.replace('%html%', data.html)
-							.replace('%script%',
-								(scriptArr.length ? '<script src="' + scriptArr.join('"></script><script src="')+ '"></script>' : '') +
-								'<script>' + data.js + '</script>')
+					res.send(tpl.html('editor/result', {
+						title: '运行结果'
+						, stylesheet:   linkArr
+						, style:        {style:data.css}
+						, modules:      data.html
+						, script:       scriptArr
+						, scriptCode:   {script:data.js}
+					})
+						//result
+						//	.replace('%style%',
+						//		(linkArr.length ? '<link rel="stylesheet" href="' + linkArr.join('"/><link rel="stylesheet" href="') + '"/>' : '') +
+						//		'<style>' + data.css + '</style>')
+						//	.replace('%html%', data.html)
+						//	.replace('%script%',
+						//		(scriptArr.length ? '<script src="' + scriptArr.join('"></script><script src="')+ '"></script>' : '') +
+						//		'<script>' + data.js + '</script>')
 					);
 				}
 				else{

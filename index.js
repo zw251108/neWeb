@@ -41,8 +41,14 @@ var fs = require('fs')
 	, socketServer
 
 	//----- 自定义模块 -----
-	, tpl           = require('./module/tpl.js').tpl   // 模块库
-	, template      = require('./module/emmetTpl/emmetTpl.js').template
+	, tpl           = require('./module/tpl.js')
+		//.tpl   // 模块库
+	//, template      = require('./module/emmetTpl/emmetTpl.js').template
+	//, emmetTplConfig = {
+	//
+	//}
+	//, index         = tpl.tpl('index')
+	, metro           = []
 	;
 
 //----- 重置 manifest 版本代号 -----
@@ -75,8 +81,6 @@ web.use('/image', express.static(__dirname + '/public/image') );    // 图片
 web.use('/style', express.static(__dirname + '/public/style') );    // 样式
 
 web.use('/cache.manifest', express.static(__dirname + '/public/cache.manifest') );  // 离线缓存配置文件
-
-web.use('/test_case', express.static(__dirname + '/test_case') );
 
 //web.use(function(req, res, next){
 //	var err = new Error('not found');
@@ -111,16 +115,98 @@ web.use('/test_case', express.static(__dirname + '/test_case') );
 web.get('/', function(req, res){
 	console.log('session id', req.session.id);
 
-	res.send( tpl('index') );
+	res.send( tpl.html('index', {
+		title: '个人小站（开发测试中...）'
+		, modules: tpl.metroTpl(metro).join('')
+		, script: {
+			main: 'script/index'
+			, src: 'script/lib/require.min.js'
+		}
+	}) );
 	res.end();
 });
 
 //----- 加载模块 -----
-require('./module/blog.js')(web, db, socket);     // 加载模块 blog
-require('./module/document.js')(web, db, socket); // 加载模块 document
-require('./module/editor.js')(web, db, socket);   // 加载模块 editor
+require('./module/blog.js')(    web, db, socket, metro);  // 加载模块 blog
+require('./module/document.js')(web, db, socket, metro);  // 加载模块 document
+require('./module/editor.js')(  web, db, socket, metro);  // 加载模块 editor
 
-require('./module/bower.js')(web, db, socket);    // 加载模块 bower
+require('./module/bower.js')(   web, db, socket, metro);  // 加载模块 bower
+
+metro.push({
+	id: 'time'
+	, type: 'metro'
+	, size: 'tiny'
+	, title: '时间 time'
+	, info: '<div class="watch_wrap hidden" id="watch">' +
+				'<span class="watch_hourHand" id="hourHand"></span>' +
+				'<span class="watch_minuteHand" id="minuteHand"></span>' +
+				'<span class="watch_secondHand" id="secondHand"></span>' +
+				'<span class="watch_mark watch_mark-1"></span>' +
+				'<span class="watch_mark watch_mark-2"></span>' +
+				'<span class="watch_mark watch_mark-3"></span>' +
+				'<span class="watch_mark watch_mark-4"></span>' +
+				'<span class="watch_mark watch_mark-5"></span>' +
+				'<span class="watch_mark watch_mark-6"></span>' +
+				'<span class="watch_mark watch_mark-7"></span>' +
+				'<span class="watch_mark watch_mark-8"></span>' +
+				'<span class="watch_mark watch_mark-9"></span>' +
+				'<span class="watch_mark watch_mark-10"></span>' +
+				'<span class="watch_mark watch_mark-11"></span>' +
+				'<span class="watch_mark watch_mark-12"></span>' +
+			'</div>'
+});
+
+//<section id="time" class="module module-metro tiny module-time">
+//<h2 class="module_title">时间 time</h2>
+//<div class="watch_wrap hidden" id="watch">
+//<span class="watch_hourHand" id="hourHand"></span>
+//<span class="watch_minuteHand" id="minuteHand"></span>
+//<span class="watch_secondHand" id="secondHand"></span>
+//<span class="watch_mark watch_mark-1"></span>
+//<span class="watch_mark watch_mark-2"></span>
+//<span class="watch_mark watch_mark-3"></span>
+//<span class="watch_mark watch_mark-4"></span>
+//<span class="watch_mark watch_mark-5"></span>
+//<span class="watch_mark watch_mark-6"></span>
+//<span class="watch_mark watch_mark-7"></span>
+//<span class="watch_mark watch_mark-8"></span>
+//<span class="watch_mark watch_mark-9"></span>
+//<span class="watch_mark watch_mark-10"></span>
+//<span class="watch_mark watch_mark-11"></span>
+//<span class="watch_mark watch_mark-12"></span>
+//</div>
+//</section>
+//
+//<a href="document/">
+//<section id="document" class="module module-metro small module-document">
+//<h2 class="module_title icon icon-document">前端文档 document</h2>
+//<ul class="toolbar">
+//<li><span class="module_close icon icon-cancel"></span></li>
+//</ul>
+//<div class="module_content"></div>
+//</section>
+//</a>
+//
+//<a href="editor/">
+//<section id="editor" class="module module-metro module-editor normal">
+//<h2 class="module_title icon icon-editor">前端编辑器 editor</h2>
+//<ul class="toolbar">
+//<li><span class="module_close icon icon-cancel"></span></li>
+//</ul>
+//<div class="module_content"></div>
+//</section>
+//</a>
+//
+//<a href="bower/">
+//<section id="bower" class="module module-metro module-bower normal">
+//<h2 class="module_title icon">前端组件管理 bower</h2>
+//<ul class="toolbar">
+//<li><span class="module_close icon icon-cancel"></span></li>
+//</ul>
+//<div class="module_content"></div>
+//</section>
+//</a>
 
 webServer = web.listen( WEB_APP_PORT );
 console.log('Web Server is listening...');

@@ -41,23 +41,27 @@ require(['jquery', 'global', 'socket'
 		}
 		;
 
+	g.mod('$editor', $editor);
+
 	cmOptions.mode = 'text/html';
 	html = cm.fromTextArea(html, cmOptions);
 	$html = $(html.display.wrapper).parent();
 
 	cmOptions.mode = 'text/css';
 	css = cm.fromTextArea(css, cmOptions);
-	$css = $(html.display.wrapper).parent();
+	$css = $(css.display.wrapper).parent();
 
 	cmOptions.mode = 'javascript';
 	js = cm.fromTextArea(js, cmOptions);
-	$js = $(html.display.wrapper).parent();
-	console.log($js)
+	$js = $(js.display.wrapper).parent();
+
+	console.log(js);
+
 	var listTpl = $.template({
 			template: 'li[title=%name% data-type=%type%]{%name%}'
 			, filter: {
 				type: function(d){
-					return d.id || '';
+					return d.type || '';
 				}
 			}
 		})
@@ -126,114 +130,34 @@ require(['jquery', 'global', 'socket'
 			var $that = $(this)
 				, type = $that.data('type')
 				;
-			       console.log(type)
+
+			$editor.addClass('fullScreen').parent().addClass('fullScreen');
+
 			switch( type ){
 				case 1:
-					$html.css({
-						position: 'fixed'
-						, top: '0'
-						, left: '0'
-						, height: '25%'
-						, width: '100%'
-						, padding: '5px'
-					});
-					$css.css({
-						position: 'fixed'
-						, top: '25%'
-						, left: '0'
-						, height: '25%'
-						, width: '100%'
-						, padding: '5px'
-					});
-					$js.css({
-						position: 'fixed'
-						, top: '50%'
-						, left: '0'
-						, height: '25%'
-						, width: '100%'
-						, padding: '5px'
-					});
-					$rs.css({
-						position: 'fixed'
-						, top: '75%'
-						, left: '0'
-						, height: '25%'
-						, width: '100%'
-						, padding: '5px'
-					});
+					$html.addClass('row-1');
+					$css.addClass('row-2');
+					$js.addClass('row-3');
+					$rs.addClass('row-4');
 					break;
 				case 2:
-					$html.css({
-						position: 'fixed'
-						, top: '0'
-						, left: '0'
-						, height: '100%'
-						, width: '25%'
-						, padding: '5px'
-					});
-					$css.css({
-						position: 'fixed'
-						, top: '0'
-						, left: '25%'
-						, height: '100%'
-						, width: '25%'
-						, padding: '5px'
-					});
-					$js.css({
-						position: 'fixed'
-						, top: '0'
-						, left: '50%'
-						, height: '100%'
-						, width: '25%'
-						, padding: '5px'
-					});
-					$rs.css({
-						position: 'fixed'
-						, top: '0'
-						, left: '75%'
-						, height: '100%'
-						, width: '25%'
-						, padding: '5px'
-					});
+					$html.addClass('col-1');
+					$css.addClass('col-2');
+					$js.addClass('col-3');
+					$rs.addClass('col-4');
 					break;
 				case 3:
-					$html.css({
-						position: 'fixed'
-						, top: '0'
-						, left: '0'
-						, height: '40%'
-						, width: '40%'
-						, padding: '5px'
-					});
-					$css.css({
-						position: 'fixed'
-						, top: '0'
-						, left: '40%'
-						, height: '40%'
-						, width: '60%'
-						, padding: '5px'
-					});
-					$js.css({
-						position: 'fixed'
-						, top: '40%'
-						, left: '0'
-						, height: '60%'
-						, width: '40%'
-						, padding: '5px'
-					});
-					$rs.css({
-						position: 'fixed'
-						, top: '40%'
-						, left: '40%'
-						, height: '60%'
-						, width: '60%'
-						, padding: '5px'
-					});
+					$html.addClass('corner-1');
+					$css.addClass('corner-2');
+					$js.addClass('corner-3');
+					$rs.addClass('corner-4');
 					break;
 			}
 
-			$skin.find('ul').slideUp();
-			//html.fr
+			$layout.find('ul').slideUp();
+			html.refresh();
+			css.refresh();
+			js.refresh();
 		}).append('<button class="btn icon icon-layout">改变布局</button><ul class="list layoutList hidden"></ul>').find('ul').append(listTpl([{
 			name: '四行布局'
 			, type: '1'
@@ -245,6 +169,16 @@ require(['jquery', 'global', 'socket'
 			, type: '3'
 		}]).join('')).end().appendTo( $editor)
 
+		, $hideHeader = $('<button />', {
+			'class': 'btn icon'
+			, text: '隐藏页头'
+		}).css({
+			position: 'absolute'
+			, top: 0
+			, left: '300px'
+		}).appendTo( $editor).on('click', function(){
+			$('#header').slideUp();
+		})
 		, $open = $('<button />', {
 			'class': 'btn icon'
 			, text: '打开新窗口'
