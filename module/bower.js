@@ -83,7 +83,7 @@ module.exports = function(web, db, socket, metro){
 		var index = Bower.index;
 		db.query(index.sql, function(e, data){console.log(data);
 			if( !e ){
-				res.send(tpl.html('index', {
+				res.send(tpl.html('module', {
 					title: '前端组件管理 Bower'
 					, modules: tpl.moduleTpl({
 						id: 'bower'

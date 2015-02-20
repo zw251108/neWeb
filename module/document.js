@@ -63,6 +63,11 @@ module.exports = function(web, db, socket, metro){
 
 				res.send(tpl.html('module', {
 					title: '前端文档 Document'
+					, stylesheet: [{
+						path: '../script/plugin/codeMirror/lib/codemirror.css'
+					}, {
+						path: '../script/plugin/codeMirror/addon/fold/foldgutter.css'
+					}]
 					, modules: tpl.moduleTpl({
 						id: 'document'
 						, type: 'main'

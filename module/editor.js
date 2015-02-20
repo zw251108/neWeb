@@ -3,10 +3,10 @@
 var Editor = {
 		index: {
 			sql: 'select editor.Id,editor.name,preview,tags_id,tags_name,width,height from editor,image' +
-					' where tags_id like \'%48%\' and editor.preview=image.src order by editor.Id'
+					' where status=1 and editor.preview=image.src order by editor.Id'
 		}
 		, code: {
-			sql: 'select Id,name,tags_id,tags_name,include_file,html,css,js from editor where Id=?'
+			sql: 'select Id,name,tags_id,tags_name,css_lib,js_lib,html,css,js from editor where Id=?'
 			, handler: function(data){
 				data = data[0];
 				data.html = data.html.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -31,7 +31,7 @@ var Editor = {
 	})
 	, codeEditTpl   = emmetTpl({
 		template: 'h3.editor_title{%name%}>input#id[type=hidden name=id value=%Id%]' +
-				'^div#editorContainer.editor_container' +
+				'^form#editorForm.editor_form[action=result method=post target=result]' +
 				'>div.editor_area>label[for=html]{HTML}+textarea#html.hidden.code-html[name=html]{%html%}' +
 				'^div.editor_area>label[for=css]{CSS}+textarea#css.hidden.code-css[name=css]{%css%}' +
 				'^div.editor_area>label[for=js]{JavaScript}+textarea#js.hidden.code-js[name=js]{%js%}' +
@@ -130,15 +130,10 @@ module.exports = function(web, db, socket, metro){
 					//data = code.handler( data );
 					data = data[0];
 
-					temp = data.include_file.split(',');
-					linkArr = temp.filter(function(d){
-						return /\.css$/.test( d );
-					}).map(function(d){
+					linkArr = (data.css_lib || '').split(',').map(function(d){
 						return {path: d};
 					});
-					scriptArr = temp.filter(function(d){
-						return /\.js$/.test( d );
-					}).map(function(d){
+					scriptArr = (data.js_lib || '').split(',').map(function(d){
 						return {src: d};
 					});
 
@@ -149,16 +144,7 @@ module.exports = function(web, db, socket, metro){
 						, modules:      data.html
 						, script:       scriptArr
 						, scriptCode:   {script:data.js}
-					})
-						//result
-						//	.replace('%style%',
-						//		(linkArr.length ? '<link rel="stylesheet" href="' + linkArr.join('"/><link rel="stylesheet" href="') + '"/>' : '') +
-						//		'<style>' + data.css + '</style>')
-						//	.replace('%html%', data.html)
-						//	.replace('%script%',
-						//		(scriptArr.length ? '<script src="' + scriptArr.join('"></script><script src="')+ '"></script>' : '') +
-						//		'<script>' + data.js + '</script>')
-					);
+					}) );
 				}
 				else{
 					console.log('\n', 'db', '\n', code.sql, '\n', e.message);
@@ -169,6 +155,30 @@ module.exports = function(web, db, socket, metro){
 		else{
 			res.end();
 		}
+	});
+
+	// 编辑器 提交运行代码
+	web.post('/editor/result', function(req, res){
+		var query   = req.body
+			, html  = query.html
+			, css   = query.css
+			, js    = query.js
+			, linkArr   = (query.css_lib || '').split(',').map(function(d){
+				return {path: d};
+			})
+			, scriptArr = (query.js_lib || '').split(',').map(function(d){
+				return {src: d};
+			})
+			;
+
+		res.send(tpl.html('editor/result', {
+			title: '运行结果'
+			, stylesheet:   linkArr
+			, style:        {style:css}
+			, modules:      html
+			, script:       scriptArr
+			, scriptCode:   {script:js}
+		}) );
 	});
 
 	socket.register({

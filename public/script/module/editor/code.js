@@ -26,6 +26,7 @@ require(['jquery', 'global', 'socket'
 	, 'template'
 ], function($, g, socket, cm){
 	var $editor = $('#editor')
+		, $form = $editor.find('#editorForm')
 		, html  = $editor.find('#html')[0]
 		, $html
 		, css   = $editor.find('#css')[0]
@@ -135,22 +136,22 @@ require(['jquery', 'global', 'socket'
 
 			switch( type ){
 				case 1:
-					$html.addClass('row-1');
-					$css.addClass('row-2');
-					$js.addClass('row-3');
-					$rs.addClass('row-4');
+					$html.removeClass('col-1 corner-1').addClass('row-1');
+					$css.removeClass('col-2 corner-2').addClass('row-2');
+					$js.removeClass('col-3 corner-3').addClass('row-3');
+					$rs.removeClass('col-4 corner-4').addClass('row-4');
 					break;
 				case 2:
-					$html.addClass('col-1');
-					$css.addClass('col-2');
-					$js.addClass('col-3');
-					$rs.addClass('col-4');
+					$html.removeClass('row-1 corner-1').addClass('col-1');
+					$css.removeClass('row-2 corner-2').addClass('col-2');
+					$js.removeClass('row-3 corner-3').addClass('col-3');
+					$rs.removeClass('row-4 corner-4').addClass('col-4');
 					break;
 				case 3:
-					$html.addClass('corner-1');
-					$css.addClass('corner-2');
-					$js.addClass('corner-3');
-					$rs.addClass('corner-4');
+					$html.removeClass('row-1 col-1').addClass('corner-1');
+					$css.removeClass('row-2 col-2').addClass('corner-2');
+					$js.removeClass('row-3 col-3').addClass('corner-3');
+					$rs.removeClass('row-4 col-4').addClass('corner-4');
 					break;
 			}
 
@@ -168,7 +169,20 @@ require(['jquery', 'global', 'socket'
 		    name: '四角布局'
 			, type: '3'
 		}]).join('')).end().appendTo( $editor)
+		, $run = $('<button/>', {
+			'class': 'btn icon icon-play'
+			, text: '运行'
+		}).css({
+			position: 'absolute'
+			, top: 0
+			, left: '350px'
+		}).appendTo( $editor).on('click', function(){
+			html.save();
+			css.save();
+			js.save();
 
+			$form.submit();
+		})
 		, $hideHeader = $('<button />', {
 			'class': 'btn icon'
 			, text: '隐藏页头'
@@ -177,7 +191,7 @@ require(['jquery', 'global', 'socket'
 			, top: 0
 			, left: '300px'
 		}).appendTo( $editor).on('click', function(){
-			$('#header').slideUp();
+			$('#header').css('minHeight', 'auto').slideUp();
 		})
 		, $open = $('<button />', {
 			'class': 'btn icon'
