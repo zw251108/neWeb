@@ -9,7 +9,7 @@ var Editor = {
 			sql: 'select Id,name,tags_id,tags_name,css_lib,js_lib,html,css,js from editor where Id=?'
 			, handler: function(data){
 				data = data[0];
-				data.html = data.html.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+				data.html = data.html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 				return data;
 			}
 		}
@@ -30,12 +30,15 @@ var Editor = {
 		}
 	})
 	, codeEditTpl   = emmetTpl({
-		template: 'h3.editor_title{%name%}>input#id[type=hidden name=id value=%Id%]' +
-				'^form#editorForm.editor_form[action=result method=post target=result]' +
-				'>div.editor_area>label[for=html]{HTML}+textarea#html.hidden.code-html[name=html]{%html%}' +
-				'^div.editor_area>label[for=css]{CSS}+textarea#css.hidden.code-css[name=css]{%css%}' +
-				'^div.editor_area>label[for=js]{JavaScript}+textarea#js.hidden.code-js[name=js]{%js%}' +
-				'^div.editor_area>label{Result}+iframe#result.editor_text[src=result?id=%Id% name=result]'
+		template: 'h3.editor_title{%name%}' +
+				'+form#editorForm.editor_form[action=result method=post target=result]' +
+				'>input#id[type=hidden name=id value=%Id%]' +
+				'+input#cssLib[type=hidden name=css_lib value=%css_lib%]' +
+				'+input#jsLib[type=hidden name=js_lib value=%js_lib%]' +
+				'+div.editor_area.editor_area-html>label[for=html]{HTML}+textarea#html.hidden[name=html placeholder=body之间的HTML代码]{%html%}' +
+				'^div.editor_area.editor_area-css>label[for=css]{CSS}+textarea#css.hidden[name=css placeholder=CSS代码]{%css%}' +
+				'^div.editor_area.editor_area-js>label[for=js]{JavaScript}+textarea#js.hidden[name=js placeholder=JavaScript代码]{%js%}' +
+				'^div.editor_area.editor_area-rs>label{Result}+iframe#result[src=result?id=%Id% name=result]'
 	})
 	//, result        = tpl('editor/result')
 	;
@@ -98,6 +101,31 @@ module.exports = function(web, db, socket, metro){
 							, type: 'main'
 							, size: 'large'
 							, title: '前端编辑器 editor'
+							, toolbar: tpl.toolbarTpl([{
+								id: 'changeSkin'
+								, icon: 'skin'
+								, title: '更改皮肤'
+							}, {
+								id: 'changeLayout'
+								, icon: 'layout'
+								, title: '更改布局'
+							}, {
+								id: 'run'
+								, icon: 'play'
+								, title: '运行'
+							}, {
+							//	id: 'newWin'
+							//	, icon: ''
+							//	, title: '打开新窗口查看'
+							//}, {
+								id: 'lib'
+								, icon: ''
+								, title: '引用组件'
+							}, {
+								id: 'save'
+								, icon: 'save'
+								, title: '保存'
+							}]).join('')
 							, content: codeEditTpl(rs).join('')
 						}).join('')
 						, script: {
@@ -119,8 +147,8 @@ module.exports = function(web, db, socket, metro){
 	web.get('/editor/result', function(req, res){
 		var code = editor.code
 			, id = req.query.id || ''
-			, linkArr
-			, scriptArr
+			, css_lib
+			, js_lib
 			, temp
 			;
 
@@ -130,19 +158,19 @@ module.exports = function(web, db, socket, metro){
 					//data = code.handler( data );
 					data = data[0];
 
-					linkArr = (data.css_lib || '').split(',').map(function(d){
+					css_lib = (data.css_lib || '').split(',').map(function(d){
 						return {path: d};
 					});
-					scriptArr = (data.js_lib || '').split(',').map(function(d){
+					js_lib = (data.js_lib || '').split(',').map(function(d){
 						return {src: d};
 					});
 
 					res.send(tpl.html('editor/result', {
 						title: '运行结果'
-						, stylesheet:   linkArr
+						, stylesheet:   css_lib
 						, style:        {style:data.css}
 						, modules:      data.html
-						, script:       scriptArr
+						, script:       js_lib
 						, scriptCode:   {script:data.js}
 					}) );
 				}
@@ -163,20 +191,20 @@ module.exports = function(web, db, socket, metro){
 			, html  = query.html
 			, css   = query.css
 			, js    = query.js
-			, linkArr   = (query.css_lib || '').split(',').map(function(d){
+			, css_lib   = (query.css_lib || '').split(',').map(function(d){
 				return {path: d};
 			})
-			, scriptArr = (query.js_lib || '').split(',').map(function(d){
+			, js_lib = (query.js_lib || '').split(',').map(function(d){
 				return {src: d};
 			})
 			;
 
 		res.send(tpl.html('editor/result', {
 			title: '运行结果'
-			, stylesheet:   linkArr
+			, stylesheet:   css_lib
 			, style:        {style:css}
 			, modules:      html
-			, script:       scriptArr
+			, script:       js_lib
 			, scriptCode:   {script:js}
 		}) );
 	});

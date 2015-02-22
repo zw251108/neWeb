@@ -83,9 +83,12 @@
 }
 .toolbar{
 	float: right;
+	z-index: 130;
+	font-size: 0;
+	line-height: 1em;
 }
-.toolbar li{
-	float: right;
+.toolbar > li{
+	display: inline-block;
 }
 .toolbar .icon{
 	float: left;
@@ -101,18 +104,6 @@
 	margin: 10px;
 	font-size: 20px;
 }
-/*.icon-close{*/
-	/*background-image: url("../image/default/icon/close.png");*/
-/*}*/
-/*.icon-user{*/
-	/*background-image: url("../image/default/icon/user.png");*/
-/*}*/
-/*.icon-menu{*/
-	/*background-image: url("../image/default/icon/menu.png");*/
-/*}*/
-/*.icon-write{*/
-	/*background-image: url("../image/default/icon/write.png");*/
-/*}*/
 
 .Container{
 	/** 进入硬件加速 **/
@@ -149,16 +140,23 @@
 .module-hide{}
 
 
-/*.module-main{*/
+.module-main{
 	/*border-bottom: 5px solid #fff;*/
-/*}*/
-
+	float: none;
+}
+.module-metro .toolbar{
+	display: none;
+}
 .module-main > .toolbar{
 	position: absolute;
 	top: 0;
 	right: 0;
 }
-.module_close.icon{
+.module-main > .toolbar > li{
+	display: inline-block;
+	position: relative;
+}
+.module-main > .toolbar .icon{
 	width: 29px;
 	height: 29px;
 	border-width: 0 0 1px 1px;
@@ -171,12 +169,11 @@
 	font-size: 90px;
 	text-align: center;
 }
+.module-main .icon{
+}
 .module-main .icon:before{
 	margin: 5px;
 	font-size: 20px;
-}
-.module-metro .toolbar{
-	display: none;
 }
 
 .module-popup{
@@ -271,7 +268,9 @@
 }
 .editor_area{
 	position: relative;
-	margin: 10px 10px 0;
+	height: 200px;
+	margin: 10px 0 0;
+	background: #888;
 }
 .editor_area label{
 	position: absolute;
@@ -290,24 +289,28 @@
 }
 iframe{
 	display: block;
+	height: 100%;
 	width: 100%;
-	border: 0;
+	border: 1px solid #ddd;
 	background: #fff;
+
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
 }
 textarea{
 	border: 1px solid #efefef;
 	border-radius: 5px;
 	margin: 5px;
 }
-.btnOptions{
-	z-index: 10;
-	background: #000;
-}
 .list{
-	position: absolute;
-	top: 36px;
 	overflow: auto;
+	position: absolute;
+	top: 30px;
+	right: 0;
 	height: 16em;
+	margin-bottom: -1px;
+	font-size: 14px;
 }
 .list li{
 	overflow: hidden;
@@ -317,6 +320,8 @@ textarea{
 	border-bottom: 1px solid #fff;
 	padding: 0 1em;
 	background: #000;
+
+	line-height: 2em;
 	white-space: nowrap;
 
 	cursor: pointer;
@@ -334,17 +339,143 @@ textarea{
 .list li:hover{
 	background: #444;
 }
-.CodeMirror{
+
+.editor-4row .editor_area-html{
+	position: fixed;
+	top: 0;
+	bottom: 75%;
+	left: 0;
+	right: 0;
 	height: auto;
+	margin: 0;
+	padding: 5px;
+}
+.editor-4row .editor_area-css{
+	position: fixed;
+	top: 25%;
+	bottom: 50%;
+	left: 0;
+	right: 0;
+	height: auto;
+	margin: 0;
+	padding: 5px;
+}
+.editor-4row .editor_area-js{
+	position: fixed;
+	top: 50%;
+	bottom: 25%;
+	left: 0;
+	right: 0;
+	height: auto;
+	margin: 0;
+	padding: 5px;
+}
+.editor-4row .editor_area-rs{
+	position: fixed;
+	top: 75%;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: auto;
+	margin: 0;
+	padding: 5px;
+}
+.editor-4col .editor_area-html{
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 75%;
+	height: auto;
+	margin: 0;
+	padding: 5px;
+}
+.editor-4col .editor_area-css{
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 25%;
+	right: 50%;
+	height: auto;
+	margin: 0;
+	padding: 5px;
+}
+.editor-4col .editor_area-js{
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 50%;
+	right: 25%;
+	height: auto;
+	margin: 0;
+	padding: 5px;
+}
+.editor-4col .editor_area-rs{
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 75%;
+	right: 0;
+	height: auto;
+	margin: 0;
+	padding: 5px;
+}
+.editor-4cor .editor_area-html{
+	position: fixed;
+	top: 0;
+	bottom: 60%;
+	left: 0;
+	right: 50%;
+	height: auto;
+	margin: 0;
+	padding: 5px;
+}
+.editor-4cor .editor_area-css{
+	position: fixed;
+	top: 0;
+	bottom: 60%;
+	left: 50%;
+	right: 0;
+	height: auto;
+	margin: 0;
+	padding: 5px;
+}
+.editor-4cor .editor_area-js{
+	position: fixed;
+	top: 40%;
+	bottom: 0;
+	left: 0;
+	right: 50%;
+	height: auto;
+	margin: 0;
+	padding: 5px;
+}
+.editor-4cor .editor_area-rs{
+	position: fixed;
+	top: 40%;
+	bottom: 0;
+	left: 50%;
+	right: 0;
+	height: auto;
+	margin: 0;
+	padding: 5px;
+}
+
+.CodeMirror{
+	height: 100%;
 	border: 1px solid #ddd;
 	font-family: inherit;
 	font-size: 13px;
-	line-height: 1;
+	line-height: 1em;
 	text-indent: 0;
+
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
 }
 .CodeMirror-scroll{
 	overflow: scroll !important;
-	max-height: 200px;
+	/*max-height: 200px;*/
 }
 .CodeMirror pre{
 	padding-left: 7px;
@@ -393,112 +524,4 @@ dd{
 	height: auto;
 	width: auto;
 	margin: 0;
-}
-.row-1{
-	position: fixed;
-	top: 0;
-	bottom: 75%;
-	left: 0;
-	right: 0;
-	margin: 0;
-	padding: 5px;
-}
-.row-2{
-	position: fixed;
-	top: 25%;
-	bottom: 50%;
-	left: 0;
-	right: 0;
-	margin: 0;
-	padding: 5px;
-}
-.row-3{
-	position: fixed;
-	top: 50%;
-	bottom: 25%;
-	left: 0;
-	right: 0;
-	margin: 0;
-	padding: 5px;
-}
-.row-4{
-	position: fixed;
-	top: 75%;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	margin: 0;
-	padding: 5px;
-}
-.col-1{
-	position: fixed;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 75%;
-	margin: 0;
-	padding: 5px;
-}
-.col-2{
-	position: fixed;
-	top: 0;
-	bottom: 0;
-	left: 25%;
-	right: 50%;
-	margin: 0;
-	padding: 5px;
-}
-.col-3{
-	position: fixed;
-	top: 0;
-	bottom: 0;
-	left: 50%;
-	right: 25%;
-	margin: 0;
-	padding: 5px;
-}
-.col-4{
-	position: fixed;
-	top: 0;
-	bottom: 0;
-	left: 75%;
-	right: 0;
-	margin: 0;
-	padding: 5px;
-}
-.corner-1{
-	position: fixed;
-	top: 0;
-	bottom: 50%;
-	left: 0;
-	right: 50%;
-	margin: 0;
-	padding: 5px;
-}
-.corner-2{
-	position: fixed;
-	top: 0;
-	bottom: 50%;
-	left: 50%;
-	right: 0;
-	margin: 0;
-	padding: 5px;
-}
-.corner-3{
-	position: fixed;
-	top: 50%;
-	bottom: 0;
-	left: 0;
-	right: 50%;
-	margin: 0;
-	padding: 5px;
-}
-.corner-4{
-	position: fixed;
-	top: 50%;
-	bottom: 0;
-	left: 50%;
-	right: 0;
-	margin: 0;
-	padding: 5px;
 }

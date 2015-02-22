@@ -90,17 +90,31 @@ module.exports = {
 	, moduleTpl:        emmetTpl({
 		template: 'section#%id%.module.module-%type%.module-%id%.%size%' +
 			'>h2.module_title.icon.icon-%id%{%title%}' +
-			//'+ul.toolbar>li>span.module_close.icon.icon-cancel' +
-			//'^^' +
-		'+' +
-		'div.module_content{%content%}'
+			'+ul.toolbar{%toolbar%}' +
+			'+div.module_content{%content%}'
+		, filter: {
+			toolbar: function(d){
+				return d.toolbar || '';
+			}
+		}
 	})
-	, metroTpl:          emmetTpl({
+	, metroTpl:         emmetTpl({
 		template: 'a[href=%id%/]>section#%id%.module.module-%type%.module-%id%.%size%' +
-		'>h2.module_title.icon.icon-%id%{%title%}+div.m_info{%info%}'
+		'>h2.module_title.icon.icon-%id%{%title%}' +
+		'+ul.toolbar>li>span.icon.icon-cancel.module_close' +
+		'^^div.m_info{%info%}' +
+		'+div.module_content'
 		, filter: {
 			info: function(d){
 				return d.info || '';
+			}
+		}
+	})
+	, toolbarTpl:       emmetTpl({
+		template: 'li>button#%id%.btn.icon.icon-%icon%[title=%title%]{%text%}'
+		, filter: {
+			icon: function(d){
+				return d.icon || 'settle';
 			}
 		}
 	})

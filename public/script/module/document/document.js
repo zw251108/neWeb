@@ -22,7 +22,7 @@ define(['jquery', 'global', 'socket'
 			template: 'dt.icon.icon-arrow-r{%title%}+dd{%content%}'
 		})
 		, sectionTmpl = $.template({
-			template: 'section.document_section.section>h3.section_title{%section_title%}>span.icon-CSS.icon-minus^dl{%dl%}'
+			template: 'section.document_section.section>h3.section_title{%section_title%}>span.icon.icon-minus^dl{%dl%}'
 			, filter: {
 				dl: function(d){
 					return dlTmpl(d.dl).join('');
@@ -33,11 +33,13 @@ define(['jquery', 'global', 'socket'
 		;
 
 	// 绑定 socket 回调 事件
-	socket.on('getDocumentData', function(data){
-		$document.data('getData', true).find('.module_content').append( sectionTmpl(data).join('') );
+	socket.register({
+		document: function(data){
+			$document.data('getData', true).find('.module_content').append( sectionTmpl(data.data).join('') );
 
-		// 数据已加载完成
-		$container.triggerHandler('dataReady');
+			// 数据已加载完成
+			$container.triggerHandler('dataReady');
+		}
 	});
 
 	$document.on('click', '.icon-close', function(e){

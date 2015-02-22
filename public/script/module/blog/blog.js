@@ -30,17 +30,19 @@ define(['jquery', 'global', 'socket', 'tag', 'template'], function($, g, socket,
 		, pageSize = 20
 		;
 
-	socket.on('getBlogData', function(data){
+	socket.register({
+		blog: function(data){
+			$blog.data('getData', true).find('.module_content').append(articleTmpl(data.data, page, pageSize).join(''));
 
-		$blog.data('getData', true).find('.module_content').append( articleTmpl(data, page, pageSize).join('') );
-
-		// 数据已加载完成
-		$container.triggerHandler('dataReady');
-	}).on('getArticleData', function(data){
-
+			// 数据已加载完成
+			$container.triggerHandler('dataReady');
+		}
+		, 'blog/detail': function(data){
+			data = data.info;
 			$('<div class="article_content">'+ data.content +'</div>').hide()
 				.insertAfter( $blog.find('#blogArt'+ data.Id).find('a').data('deploy', true) ).slideDown();
-		});
+		}
+	});
 
 	$blog.on('click', '.icon-close', function(e){
 		// todo 检查是否有需要保存的数据
@@ -55,8 +57,9 @@ define(['jquery', 'global', 'socket', 'tag', 'template'], function($, g, socket,
 			else{
 				socket.emit('getData', {
 					topic: 'blog/detail'
-					, receive: 'getArticleData'
-					, id: /=(\d*)$/.exec($self.attr('href'))[1]
+					, query: {
+						id: /=(\d*)$/.exec($self.attr('href'))[1]
+					}
 				});
 			}
 

@@ -52,12 +52,15 @@ define(['jquery', 'global', 'socket', 'tag', 'template'], function($, g, socket,
 		, pageSize = 20
 		;
 
-	socket.on('getEditorData', function(data){
-		$editor.data('getData', true).find('.module_content').append( editorTmpl(data, page, pageSize).join('') );
+	socket.register({
+		editor: function(data){
+			$editor.data('getData', true).find('.module_content').append( editorTmpl(data.data, page, pageSize).join('') );
 
-		$container.triggerHandler('dataReady');
-	}).on('getCodeData', function(data){
-		$editor.find('#editor.Detail')
+			$container.triggerHandler('dataReady');
+		}
+		, 'editor/code': function(){
+			$editor.find('#editor.Detail')
+		}
 	});
 
 	$editor.on('click', '.icon-close', function(e){
@@ -77,8 +80,9 @@ define(['jquery', 'global', 'socket', 'tag', 'template'], function($, g, socket,
 		else{
 			socket.emit('getData', {
 				topic: 'editor/code'
-				, receive: 'getCodeData'
-				, id: /=(\d*)$/.exec($self.attr('href'))[1]
+				, query: {
+					id: /=(\d*)$/.exec($self.attr('href'))[1]
+				}
 			});
 
 			require(['code'], function(cm){
