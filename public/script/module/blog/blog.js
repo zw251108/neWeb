@@ -5,8 +5,8 @@ define(['jquery', 'global', 'socket', 'tag', 'template'], function($, g, socket,
 	var $blog = g.mod('$blog') || $('#blog')
 		, tagTmpl = tag.tagTmpl
 		, articleTmpl = $.template({
-			template:'article#blogArt%Id%.article>a[href=blog/detail/?id=%Id%]>h3.article_title{%title%}' +
-				'^hr+span.article_date{%datetime%}+div.tagsArea{%tags%}'
+			template:'article#blogArt%Id%.article>a[href=blog/detail?id=%Id%]>h3.article_title{%title%}' +
+				'^span.article_date{%datetime%}+div.tagsArea{%tags%}'
 			, filter:{
 				tags: function(d){
 					var data = []

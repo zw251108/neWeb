@@ -38,7 +38,7 @@ var Editor = {
 				'+div.editor_area.editor_area-html>label[for=html]{HTML}+textarea#html.hidden[name=html placeholder=body之间的HTML代码]{%html%}' +
 				'^div.editor_area.editor_area-css>label[for=css]{CSS}+textarea#css.hidden[name=css placeholder=CSS代码]{%css%}' +
 				'^div.editor_area.editor_area-js>label[for=js]{JavaScript}+textarea#js.hidden[name=js placeholder=JavaScript代码]{%js%}' +
-				'^div.editor_area.editor_area-rs>label{Result}+iframe#result[src=result?id=%Id% name=result]'
+				'^div.editor_area.editor_area-rs>label{Result}+iframe#result.editor_rs[src=result?id=%Id% name=result]'
 	})
 	//, result        = tpl('editor/result')
 	;
@@ -96,7 +96,7 @@ module.exports = function(web, db, socket, metro){
 						}, {
 							path: '../script/plugin/codeMirror/addon/fold/foldgutter.css'
 						}]
-						, modules: tpl.moduleTpl({
+						, modules: tpl.moduleTpl([{
 							id: 'editor'
 							, type: 'main'
 							, size: 'large'
@@ -110,24 +110,26 @@ module.exports = function(web, db, socket, metro){
 								, icon: 'layout'
 								, title: '更改布局'
 							}, {
-								id: 'run'
-								, icon: 'play'
-								, title: '运行'
-							}, {
-							//	id: 'newWin'
-							//	, icon: ''
-							//	, title: '打开新窗口查看'
-							//}, {
 								id: 'lib'
 								, icon: ''
 								, title: '引用组件'
+							}, {
+								id: 'newWin'
+								, icon: ''
+								, title: '在新窗口浏览'
+							}, {
+								id: 'run'
+								, icon: 'play'
+								, title: '运行'
 							}, {
 								id: 'save'
 								, icon: 'save'
 								, title: '保存'
 							}]).join('')
 							, content: codeEditTpl(rs).join('')
-						}).join('')
+						}, {
+
+						}]).join('')
 						, script: {
 							main: '../script/module/editor/code'
 							, src: '../script/lib/require.min.js'

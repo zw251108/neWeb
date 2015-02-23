@@ -80,8 +80,8 @@
 //
 //@import "module/document";    // 文档
 //
-//@import "module/editor";      // 编码
-//
+@import "module/editor";      // 编码
+
 @import "module/time";       // 时钟
 
 //@import "module/blog";        // 博客
@@ -122,7 +122,7 @@
 
 		padding: 10px 10px 0 10px;
 
-		background-color: @font-color;
+		background-color: #fff;
 	}
 }
 
@@ -132,9 +132,11 @@
 
 	background-position: center 20px;
 
+	color: #fff;
+
 	&:hover{
 		background-color: @a-hover;
-		color: @font-color;
+		color: @metro-hover_c;
 	}
 
 	> .module_title{

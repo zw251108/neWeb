@@ -99,6 +99,7 @@
 	padding: 0 !important;
 	background-position: center center;
 	background-repeat: no-repeat;
+	color: #fff;
 }
 .toolbar .icon:before{
 	margin: 10px;
@@ -160,6 +161,10 @@
 	width: 29px;
 	height: 29px;
 	border-width: 0 0 1px 1px;
+	background: #888;
+}
+.module-main > .toolbar .icon:before{
+	margin: 0;
 }
 .module_title.icon:before{
 	position: absolute;
@@ -187,13 +192,13 @@
 	opacity: 1;
 }
 
-.module_content article,
-.module_content section,
-.module_content h3,
-.module_content .editor_container{
-	background: #000;
-	margin-bottom: 10px;
-}
+/*.module_content article,*/
+/*.module_content section,*/
+/*.module_content h3,*/
+/*.module_content .editor_container{*/
+	/*background: #000;*/
+	/*margin-bottom: 10px;*/
+/*}*/
 
 .timeLine{
 	overflow: hidden;
@@ -261,48 +266,7 @@
 	float: right;
 }
 
-/*----- editor -----*/
-.editor_container{
-	overflow: hidden;
-	padding-bottom: 10px;
-}
-.editor_area{
-	position: relative;
-	height: 200px;
-	margin: 10px 0 0;
-	background: #888;
-}
-.editor_area label{
-	position: absolute;
-	z-index: 120;
-	top: 10px;
-	right: 25px;
-	min-width: 100px;
-	border: 1px solid #a1a1a1;
-	border-radius: 10px;
-	background: #efefef;
-	color: #000;
-	font-size: 12px;
-	line-height: 2em;
-	text-align: center;
-	opacity: .4;
-}
-iframe{
-	display: block;
-	height: 100%;
-	width: 100%;
-	border: 1px solid #ddd;
-	background: #fff;
-
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	box-sizing: border-box;
-}
-textarea{
-	border: 1px solid #efefef;
-	border-radius: 5px;
-	margin: 5px;
-}
+/* toolbar 子菜单 */
 .list{
 	overflow: auto;
 	position: absolute;
@@ -320,6 +284,8 @@ textarea{
 	border-bottom: 1px solid #fff;
 	padding: 0 1em;
 	background: #000;
+
+	color: #fff;
 
 	line-height: 2em;
 	white-space: nowrap;
@@ -340,154 +306,7 @@ textarea{
 	background: #444;
 }
 
-.editor-4row .editor_area-html{
-	position: fixed;
-	top: 0;
-	bottom: 75%;
-	left: 0;
-	right: 0;
-	height: auto;
-	margin: 0;
-	padding: 5px;
-}
-.editor-4row .editor_area-css{
-	position: fixed;
-	top: 25%;
-	bottom: 50%;
-	left: 0;
-	right: 0;
-	height: auto;
-	margin: 0;
-	padding: 5px;
-}
-.editor-4row .editor_area-js{
-	position: fixed;
-	top: 50%;
-	bottom: 25%;
-	left: 0;
-	right: 0;
-	height: auto;
-	margin: 0;
-	padding: 5px;
-}
-.editor-4row .editor_area-rs{
-	position: fixed;
-	top: 75%;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	height: auto;
-	margin: 0;
-	padding: 5px;
-}
-.editor-4col .editor_area-html{
-	position: fixed;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 75%;
-	height: auto;
-	margin: 0;
-	padding: 5px;
-}
-.editor-4col .editor_area-css{
-	position: fixed;
-	top: 0;
-	bottom: 0;
-	left: 25%;
-	right: 50%;
-	height: auto;
-	margin: 0;
-	padding: 5px;
-}
-.editor-4col .editor_area-js{
-	position: fixed;
-	top: 0;
-	bottom: 0;
-	left: 50%;
-	right: 25%;
-	height: auto;
-	margin: 0;
-	padding: 5px;
-}
-.editor-4col .editor_area-rs{
-	position: fixed;
-	top: 0;
-	bottom: 0;
-	left: 75%;
-	right: 0;
-	height: auto;
-	margin: 0;
-	padding: 5px;
-}
-.editor-4cor .editor_area-html{
-	position: fixed;
-	top: 0;
-	bottom: 60%;
-	left: 0;
-	right: 50%;
-	height: auto;
-	margin: 0;
-	padding: 5px;
-}
-.editor-4cor .editor_area-css{
-	position: fixed;
-	top: 0;
-	bottom: 60%;
-	left: 50%;
-	right: 0;
-	height: auto;
-	margin: 0;
-	padding: 5px;
-}
-.editor-4cor .editor_area-js{
-	position: fixed;
-	top: 40%;
-	bottom: 0;
-	left: 0;
-	right: 50%;
-	height: auto;
-	margin: 0;
-	padding: 5px;
-}
-.editor-4cor .editor_area-rs{
-	position: fixed;
-	top: 40%;
-	bottom: 0;
-	left: 50%;
-	right: 0;
-	height: auto;
-	margin: 0;
-	padding: 5px;
-}
 
-.CodeMirror{
-	height: 100%;
-	border: 1px solid #ddd;
-	font-family: inherit;
-	font-size: 13px;
-	line-height: 1em;
-	text-indent: 0;
-
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	box-sizing: border-box;
-}
-.CodeMirror-scroll{
-	overflow: scroll !important;
-	/*max-height: 200px;*/
-}
-.CodeMirror pre{
-	padding-left: 7px;
-	line-height: 1.25;
-}
-.CodeMirror-gutters{
-	padding-bottom: 0;
-}
-.CodeMirror-gutter{
-	margin-bottom: -30px;
-	padding-bottom: 0;
-}
 
 /*----- document -----*/
 .section_title{
@@ -514,14 +333,14 @@ dd{
 	text-indent: 2em;
 }
 
-.fullScreen{
-	position: fixed;
-	z-index: 10;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	height: auto;
-	width: auto;
-	margin: 0;
+.article{
+	border: 1px #c0c0c0 solid;
+	margin-bottom: 10px;
+	padding: 10px;
+}
+.article_title{
+	border-bottom: 1px dotted #c0c0c0;
+}
+.article_preview{
+	margin-top: 10px;
 }

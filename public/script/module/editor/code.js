@@ -54,7 +54,8 @@ require(['jquery', 'global', 'socket'
 		})
 
 		, $skinList = $toolbar.find('#changeSkin').on('click', function(){
-			$(this).next().slideToggle();
+			$layoutList.slideUp();
+			$skinList.slideToggle();
 		}).after('<ul class="list skinList hidden"></ul>').next('ul').append(listTpl([{
 			name: 'default'}, {
 			name: '3024-day'}, {
@@ -102,7 +103,8 @@ require(['jquery', 'global', 'socket'
 		})
 
 		, $layoutList = $toolbar.find('#changeLayout').on('click', function(){
-			$(this).next().slideToggle();
+			$skinList.slideUp();
+			$layoutList.slideToggle();
 		}).after('<ul class="list layoutList hidden"></ul>').next('ul').append(listTpl([{
 			name: '四行布局', type: '1'}, {
 			name: '四列布局', type: '2'}, {
@@ -113,8 +115,7 @@ require(['jquery', 'global', 'socket'
 				;
 
 			$skinList.slideUp();
-			g.$container.addClass('fullScreen');
-			$editor.addClass('fullScreen');
+			g.$container.addClass('Container-eFS');
 
 			switch( type ){
 				case 1:
@@ -128,8 +129,8 @@ require(['jquery', 'global', 'socket'
 					break;
 				case 0:
 				default:
-					g.$container.removeClass('fullScreen');
-					$editor.removeClass('fullScreen editor-4row editor-4col editor-4cor');
+					g.$container.removeClass('Container-eFS');
+					$editor.removeClass('editor-4row editor-4col editor-4cor');
 					break;
 			}
 
@@ -137,6 +138,15 @@ require(['jquery', 'global', 'socket'
 			html.refresh();
 			css.refresh();
 			js.refresh();
+		})
+
+		, $newWin = $toolbar.find('#newWin').on('click', function(){
+			var  newWin = window.open()
+				, cssLib = $cssLib.val()
+				, jsLib = $jsLib.val()
+				;
+
+			newWin.document.write( runCode(html.getValue(), css.getValue(), js.getValue(), cssLib, jsLib) );
 		})
 
 		, $run = $toolbar.find('#run').on('click', function(){
@@ -160,6 +170,7 @@ require(['jquery', 'global', 'socket'
 			frame.close();
 
 		})
+
 
 		//, $newWin = $toolbar.find('#newWin').on('click', function(){
 		//	window.open( $rs.attr('src') );

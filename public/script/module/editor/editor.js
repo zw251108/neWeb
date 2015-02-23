@@ -23,7 +23,7 @@ define(['jquery', 'global', 'socket', 'tag', 'template'], function($, g, socket,
 		, editorTmpl = $.template({
 			template:
 				'article.article.editor_article[data-tagsid=%tagsId%]' +
-				'>a[href=editor/code/?id=%Id%]' +
+				'>a[href=editor/code?id=%Id%]' +
 				'>h3.article_title{%name%}' +
 				'^img.article_preview[src=%preview% width=%width% height=%height% alt=%alt%]+div.tagsArea{%tags%}',
 			filter:{
@@ -87,7 +87,6 @@ define(['jquery', 'global', 'socket', 'tag', 'template'], function($, g, socket,
 
 			require(['code'], function(cm){
 				require(['plugin/codeMirror/emmet/emmet.min']);
-				console.log(1)
 			})
 		}
 

@@ -92,11 +92,6 @@ module.exports = {
 			'>h2.module_title.icon.icon-%id%{%title%}' +
 			'+ul.toolbar{%toolbar%}' +
 			'+div.module_content{%content%}'
-		, filter: {
-			toolbar: function(d){
-				return d.toolbar || '';
-			}
-		}
 	})
 	, metroTpl:         emmetTpl({
 		template: 'a[href=%id%/]>section#%id%.module.module-%type%.module-%id%.%size%' +
@@ -104,11 +99,9 @@ module.exports = {
 		'+ul.toolbar>li>span.icon.icon-cancel.module_close' +
 		'^^div.m_info{%info%}' +
 		'+div.module_content'
-		, filter: {
-			info: function(d){
-				return d.info || '';
-			}
-		}
+	})
+	, popupTpl:         emmetTpl({
+		template: 'dialog#popup%id%.module.module-popup.%size%'
 	})
 	, toolbarTpl:       emmetTpl({
 		template: 'li>button#%id%.btn.icon.icon-%icon%[title=%title%]{%text%}'
