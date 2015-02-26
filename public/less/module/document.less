@@ -3,124 +3,151 @@
 @import "../lib/color.less";
 @import "../lib/function.less";
 @import "../lib/grid.less";
-@import "../lib/text-indent";
-@import "../lib/z-index.less";
+//@import "../lib/text-indent";
+//@import "../lib/z-index.less";
 
 //---------- Document 文档 ---------
 .module-document{
-//    .metroBgSprite(1);
-	background-image: url("../image/default/metro/Document.png");
+////    .metroBgSprite(1);
+//	background-image: url("../image/default/metro/Document.png");
+//
+//	font-weight: bold;
+//
+//    .module_title{
+//        background-image:url("../image/default/metro-small/document.png");
+//    }
+//
+//    .module_content{
+//        margin-bottom: -@space;
+//    }
+//
+//    .icon-CSS{
+//        position:absolute;
+//        top: 5px;
+//        right: @space;
+//
+//	    height: @module-main-title-height - 10px *2;
+//        width: @module-main-title-height - 10px *2;
+//    }
+//
+//    dl{
+//        display:block;
+//        overflow:hidden;
+//        height:auto;
+//
+//        margin: 0 0 @space;
+//
+//        background: @document_dl-bg;
+//
+//        text-indent: @text-indent;
+//    }
+//    dt{
+//	    position: relative;
+//	    z-index: 2;
+//
+//	    border-top: 10px solid #fff;
+//	    margin: 0 0 0 10px;
+//
+////        .marginSpace();
+//
+//        background-color: @document_dt-bg;
+//
+//        cursor: pointer;
+//
+//        font-size: 20px;
+//        line-height: @grid-unit;
+//    }
+//    dd{
+//        display: none;
+//	    overflow: hidden;
+//
+//	    border: 10px solid #fff;
+//	    border-right-width: 0;
+//
+//	    outline: rgb(211, 84, 0) solid 10px;
+//
+//	    margin: 0 0 -10px 20px;
+//	    padding: @space;
+//
+//	    background: @document_dd-color;
+//
+//        color: #fff;
+//    }
 
-	font-weight: bold;
-
-    .module_title{
-        background-image:url("../image/default/metro-small/document.png");
-    }
-
-    .module_content{
-        margin-bottom: -@space;
-    }
-
-    .icon-CSS{
-        position:absolute;
-        top: 5px;
-        right: @space;
-
-	    height: @module-main-title-height - 10px *2;
-        width: @module-main-title-height - 10px *2;
-    }
-
-    dl{
-        display:block;
-        overflow:hidden;
-        height:auto;
-
-        margin: 0 0 @space;
-
-        background: @document_dl-bg;
-
-        text-indent: @text-indent;
-    }
-    dt{
-	    position: relative;
-	    z-index: 2;
-
-	    border-top: 10px solid #fff;
-	    margin: 0 0 0 10px;
-
-//        .marginSpace();
-
-        background-color: @document_dt-bg;
-
-        cursor: pointer;
-
-        font-size: 20px;
-        line-height: @grid-unit;
-    }
-    dd{
-        display: none;
-	    overflow: hidden;
-
-	    border: 10px solid #fff;
-	    border-right-width: 0;
-
-	    outline: rgb(211, 84, 0) solid 10px;
-
-	    margin: 0 0 -10px 20px;
-	    padding: @space;
-
-	    background: @document_dd-color;
-
-        color: #fff;
-    }
-	.icon{
-		padding: 0;
-		background-position: 10px 10px;
+	dl{
+		margin: 0;
 	}
-    p{
-        margin:0;
-    }
-	ol{
-		text-indent: 0;
+	dt{
+		cursor: pointer;
+		text-indent: 2em;
 	}
-	/**
-	 * @extend  ../component/code.less
-	 */
-	span.code{
-		display: inline-block;
-		text-indent: 0;
-		line-height: 150%;
+	dd{
+		display: none;
+		overflow: hidden;
+		margin: 0 10px;
+		font-size: 12px;
+		text-indent: 2em;
 	}
-
-    table{
-        width: 100%;
-    }
-    th,
-    td{
-        border: 1px solid @border-color;
-	    padding: 0 5px;
-
-        text-align: center;
-		text-indent: 0;
-    }
-
-    .syntaxhighlighter{
-        width: auto !important;
-
-        border: 1px solid @border-color;
-        margin: 0 !important;
-        padding: 5px 0;
-
-        text-indent:0;
-    }
+//	.icon{
+//		padding: 0;
+//		background-position: 10px 10px;
+//	}
+//    p{
+//        margin:0;
+//    }
+//	ol{
+//		text-indent: 0;
+//	}
+//	/**
+//	 * @extend  ../component/code.less
+//	 */
+//	span.code{
+//		display: inline-block;
+//		text-indent: 0;
+//		line-height: 150%;
+//	}
+//
+//    table{
+//        width: 100%;
+//    }
+//    th,
+//    td{
+//        border: 1px solid @border-color;
+//	    padding: 0 5px;
+//
+//        text-align: center;
+//		text-indent: 0;
+//    }
+//
+//    .syntaxhighlighter{
+//        width: auto !important;
+//
+//        border: 1px solid @border-color;
+//        margin: 0 !important;
+//        padding: 5px 0;
+//
+//        text-indent:0;
+//    }
 }
 
-.document_section{
-    margin-bottom: @space;
-    padding: 0 0 0 @space;
-    background: @document_section-bg;
+//.document_section{
+//    margin-bottom: @space;
+//    padding: 0 0 0 @space;
+//    background: @document_section-bg;
+//
+//	.section_title{
+//		padding-right: 70px;
+//	}
+//}
 
-	.section_title{
-		padding-right: 70px;
+/*----- document -----*/
+.section_title{
+	text-indent: 1em;
+	line-height: 30px;
+
+	.icon{
+		float: right;
+		height: 30px;
+		text-indent: 0;
 	}
 }

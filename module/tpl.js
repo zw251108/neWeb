@@ -87,21 +87,21 @@ module.exports = {
 	tpl:                function(filePath){
 		return readTpl( filePath );
 	}
-	, moduleTpl:        emmetTpl({
-		template: 'section#%id%.module.module-%type%.module-%id%.%size%' +
+	, mainTpl:        emmetTpl({
+		template: 'section#%id%.module.module-main.module-%id%.%size%' +
 			'>h2.module_title.icon.icon-%id%{%title%}' +
 			'+ul.toolbar{%toolbar%}' +
 			'+div.module_content{%content%}'
 	})
 	, metroTpl:         emmetTpl({
-		template: 'a[href=%id%/]>section#%id%.module.module-%type%.module-%id%.%size%' +
+		template: 'a[href=%id%/]>section#%id%.module.module-metro.module-%id%.%size%' +
 		'>h2.module_title.icon.icon-%id%{%title%}' +
-		'+ul.toolbar>li>span.icon.icon-cancel.module_close' +
+		'+ul.toolbar>li>button.icon.icon-cancel.module_close' +
 		'^^div.m_info{%info%}' +
 		'+div.module_content'
 	})
 	, popupTpl:         emmetTpl({
-		template: 'dialog#popup%id%.module.module-popup.%size%'
+		template: 'dialog#popup%id%.module.module-popup.%size%{%content%}'
 	})
 	, toolbarTpl:       emmetTpl({
 		template: 'li>button#%id%.btn.icon.icon-%icon%[title=%title%]{%text%}'

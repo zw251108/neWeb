@@ -307,32 +307,6 @@
 }
 
 
-
-/*----- document -----*/
-.section_title{
-	text-indent: 1em;
-	line-height: 30px;
-}
-.section_title .icon{
-	float: right;
-	height: 30px;
-	text-indent: 0;
-}
-dl{
-	margin: 0;
-}
-dt{
-	cursor: pointer;
-	text-indent: 2em;
-}
-dd{
-	display: none;
-	overflow: hidden;
-	margin: 0 10px;
-	font-size: 12px;
-	text-indent: 2em;
-}
-
 .article{
 	border: 1px #c0c0c0 solid;
 	margin-bottom: 10px;
@@ -343,4 +317,101 @@ dd{
 }
 .article_preview{
 	margin-top: 10px;
+}
+
+/* bower */
+.module_content{
+	position: relative;
+}
+
+.wrap{
+	overflow: auto;
+	margin-left: 152px;
+	margin-bottom: 10px;
+}
+
+table{
+	table-layout: fixed;
+}
+
+th, td{
+	height: 100px;
+	border: 1px solid #c0c0c0;
+	color: #000;
+}
+
+.lib_table th:first-child, .lib_table td:first-child{
+	position: absolute;
+	left: 10px;
+	height: 100px;
+	width: 150px;
+	text-align: center;
+}
+
+li{
+	overflow: hidden;
+}
+
+.bower_level{
+	float: left;
+	min-width: 80px;
+	margin: 0 10px;
+	color: red;
+}
+
+.bower_level:before{
+	content: "["
+}
+
+.bower_level:after{
+	content: "]"
+}
+
+.bower_id{
+	float: left;
+	min-width: 120px;
+	margin: 0 10px;
+	color: green
+}
+
+.bower_message{
+	float: left;
+	margin: 0 0 0 20px;
+}
+
+.module-popup{
+	height: auto;
+	max-height: 500px;
+	background: #fff;
+}
+
+.module-popup th, .module-popup td{
+	height: 2em;
+}
+
+.module-popup th:first-child, .module-popup td:first-child{
+	width: 150px;
+	text-align: center;
+}
+
+.module-popup th:last-child, .module-popup td:last-child{
+	overflow: hidden;
+	max-width: 300px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+dialog{
+	overflow: auto;
+	padding: 0;
+}
+
+dialog::backdrop{
+	background: rgba(0, 0, 0, .5);
+}
+
+.showModal{
+	position: absolute;
+	top: 0;
+	left: 0;
 }

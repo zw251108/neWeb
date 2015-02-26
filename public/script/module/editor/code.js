@@ -28,6 +28,7 @@ require(['jquery', 'global', 'socket'
 	var $editor = $('#editor')
 		, $form = $editor.find('#editorForm')
 		, $toolbar = $editor.find('.toolbar')
+		, $id = $editor.find('#id')
 		, $cssLib = $editor.find('#cssLib')
 		, $jsLib = $editor.find('#jsLib')
 
@@ -150,7 +151,7 @@ require(['jquery', 'global', 'socket'
 		})
 
 		, $run = $toolbar.find('#run').on('click', function(){
-			var frame
+			var frame = $rs[0]
 				, cssLib = $cssLib.val()
 				, jsLib = $jsLib.val()
 				;
@@ -161,8 +162,8 @@ require(['jquery', 'global', 'socket'
 
 			//$form.submit();
 
-			$rs.removeAttr('src');
-			frame = $rs[0];
+			//$rs.removeAttr('src');
+			//frame = $rs[0];
 
 			frame = frame.contentDocument || frame.contentWindow.document;
 			frame.open();
@@ -171,10 +172,20 @@ require(['jquery', 'global', 'socket'
 
 		})
 
+		, $save  = $toolbar.find('#save').on('click', function(){
+			socket.emit('getData', {
+				topic: 'editor/save'
+				, query: {
+					id: $id.val()
+					, html: html.getValue()
+					, css: css.getValue()
+					, js: js.getValue()
+					, cssLib: $cssLib.val()
+					, jsLib: $jsLib.val()
+				}
+			});
+		})
 
-		//, $newWin = $toolbar.find('#newWin').on('click', function(){
-		//	window.open( $rs.attr('src') );
-		//})
 		, runCode = function(html, css, js, cssLib, jsLib){
 			return '<!DOCTYPE html>' +
 				'<html lang="zh-CN">' +
@@ -213,12 +224,22 @@ require(['jquery', 'global', 'socket'
 	};
 	js = cm.fromTextArea(js[0], cmOptions);
 
-	$editor.on({
-		mouseenter: function(){
-			$(this).find('label').addClass('hidden');
+	$run.triggerHandler('click');
+
+	$editor.find('label').removeClass('hidden');
+
+	socket.register({
+		'editor/save': function(data){
+			alert(data.msg);
 		}
-		, mouseleave: function(){
-			$(this).find('label').removeClass('hidden');
-		}
-	}, '.editor_area');
+	});
+
+	//$editor.on({
+	//	mouseenter: function(){
+	//		$(this).find('label').addClass('hidden');
+	//	}
+	//	, mouseleave: function(){
+	//		$(this).find('label').removeClass('hidden');
+	//	}
+	//}, '.editor_area');
 });

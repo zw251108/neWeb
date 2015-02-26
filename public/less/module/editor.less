@@ -7,6 +7,9 @@
 //---------- Editor 前端编辑器 ----------
 .module-editor{
 
+	.article{
+		display: inline-block;
+	}
 }
 
 /*----- editor -----*/
@@ -23,17 +26,22 @@
 	label{
 		position: absolute;
 		z-index: 120;
-		top: 10px;
+		top: 0;
 		right: 25px;
 		min-width: 100px;
-		border: 1px solid #a1a1a1;
-		border-radius: 10px;
+		border: solid #a1a1a1;
+		border-width: 0 1px 1px;
+		border-radius: 0 0 10px 10px;
 		background: #efefef;
 		color: #000;
 		font-size: 12px;
 		line-height: 2em;
 		text-align: center;
 		opacity: .4;
+	}
+
+	&:hover label{
+		display: none;
 	}
 }
 .editor_area-html{
@@ -49,14 +57,21 @@
 	padding-left: 5px;
 }
 .editor_area-rs{
-	min-height: 500px;
-	width: 100%;
-}
-.editor_rs{
 	display: block;
 	min-height: 500px;
 	width: 100%;
-	border: 1px solid #ddd;
+	-webkit-box-sizing: content-box;
+	-moz-box-sizing: content-box;
+	box-sizing: content-box;
+}
+.editor_rs{
+//	display: block;
+	height: 100%;
+	width: 100%;
+	border: 0;
+//	border: 1px solid #ddd;
+	outline: 1px solid #ddd;
+
 	background: #fff;
 
 	-webkit-box-sizing: border-box;
@@ -154,11 +169,14 @@
 
 .CodeMirror{
 	height: 100%;
-	border: 1px solid #ddd;
+	outline: 1px solid #ddd;
 	font-family: inherit;
 	font-size: 13px;
 	line-height: 1em;
 	text-indent: 0;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
 }
 .CodeMirror-scroll{
 	overflow: scroll !important;
@@ -204,5 +222,12 @@
 		width: auto;
 		margin: 0;
 		padding: 5px;
+		background: #888;
+	}
+	.editor_area-rs{
+		min-height: 0;
+	}
+	label{
+		display: none;
 	}
 }

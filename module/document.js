@@ -68,9 +68,8 @@ module.exports = function(web, db, socket, metro){
 					}, {
 						path: '../script/plugin/codeMirror/addon/fold/foldgutter.css'
 					}]
-					, modules: tpl.moduleTpl({
+					, modules: tpl.mainTpl({
 						id: 'document'
-						, type: 'main'
 						, size: 'large'
 						, title: '前端文档 document'
 						, content: sectionTpl(rs).join('')

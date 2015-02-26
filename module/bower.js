@@ -4,6 +4,9 @@ var Bower = {
 	    index: {
 		    sql: 'select * from ui_lib'
 	    }
+		, save: {
+			sql: 'insert into ui_lib(name,version,css_path,js_path,source,homepage,receipt_time) values(?,?,?,?,?,now())'
+		}
 	}
 
 	, bower         = require('bower')
@@ -15,6 +18,118 @@ var Bower = {
 		template: 'tr>td{%name%}+td{%version%}+td{%css_path%}+td{%js_path%}+td>a[href=%demo_path% target=_blank]{%demo_path%}^td{%tags_html%}+td{%receipt_time%}'
 	})
 	, pickerCallback
+	, bowerMethods = {
+		search: function(name, socket){
+			bower.commands.search(name, {}).on('end', function (results) {
+				socket.emit('getData', {
+					topic: 'bower/search'
+					, data: results
+				});
+			});
+		}
+		, install: function(name, socket, db){
+			bower.commands.install([name], {save: true}, {interactive: true}).on('log', function(msg){
+				var data = {}
+					;
+				if( msg.level !== 'conflict' ){
+					data.topic = 'bower/info';
+					data.msg = {
+						level: msg.level
+						, id: msg.id
+						, message: msg.message
+					};
+				}
+				else{
+					data.topic = 'bower/install/prompts';
+					data.info = msg.data.picks.map(function(d, i){
+						var dependants = d.dependants;
+						d = d.endpoint;
+						return {
+							name: d.name
+							, version: d.target
+							, required: dependants.map(function(d, i){
+								var t = d.endpoint;
+								console.log({
+									name: t.name
+									, version: t.target
+								});
+								return {
+									name: t.name
+									, version: t.target
+								};
+							})
+						};
+					});
+				}
+
+				socket.emit('getData', data);
+			}).on('prompt', function(prompts, callback) {
+
+				//socket.emit('getData', {
+				//	topic: 'bower/install/prompts'
+				//	, msg: prompts
+				//});
+
+				//pickerCallback = callback;
+
+				console.log(prompts);
+			}).on('error', function(e){
+
+				socket.emit('getData', {
+					error: ''
+					, msg: ''
+				});
+				console.log(e);
+			}).on('end', function(installed){
+				var k
+					, t
+					, info = []
+					, js = ''
+					, css = ''
+					, temp
+					;
+				for( k in installed ) if( installed.hasOwnProperty(k) ){
+					//t = installed[k].endpoint;
+					t = installed[k].pkgMeta;
+
+					info.push({
+						name: t.name
+						, version: '~'+ t.target
+					});
+
+					temp = t.main;
+					if( typeof temp === 'string' ){
+						if( /\.js$/.test(temp) ){
+							js = temp;
+						}
+						else if( /\.css$/.test(temp) ){
+							css = temp;
+						}
+					}
+					else if( Array.isArray(temp) ){
+						js = temp.filter(function(d){
+							return /\.js$/.test(d);
+						}).join(',');
+						css = temp.filter(function(d){
+							return /\.css$/.test(d);
+						}).join('');
+					}
+
+					db.query(Bower.save.sql, [t.name, '~'+ t.version, css, js, t._source, t.homepage], function(e){
+
+					});
+				}
+
+				socket.emit('getData', {
+					topic: 'bower/install/end'
+					, info: info
+				});
+
+				console.log(installed);
+			});
+		}
+	}
+
 //, inquirer =  require('inquirer')
 	;
 
@@ -70,6 +185,8 @@ var Bower = {
 //		console.dir(installed);
 //	});
 
+
+
 module.exports = function(web, db, socket, metro){
 
 	metro.push({
@@ -85,11 +202,15 @@ module.exports = function(web, db, socket, metro){
 			if( !e ){
 				res.send(tpl.html('module', {
 					title: '前端组件管理 Bower'
-					, modules: tpl.moduleTpl({
+					, modules: tpl.mainTpl({
 						id: 'bower'
-						, type: 'main'
 						, size: 'large'
 						, title: '前端组件管理 bower'
+						, toolbar: tpl.toolbarTpl([{
+							id: 'switch_dialog'
+							, icon: 'search'
+							, title: '搜索组件'
+						}]).join('')
 						, content: '<div class="wrap"><table class="lib_table">' +
 									'<thead>' +
 										'<tr>' +
@@ -126,13 +247,7 @@ module.exports = function(web, db, socket, metro){
 
 		}
 		, 'bower/search': function(socket, data){
-			bower.commands.search(data.query.name, {}).on('end', function (results) {
-				socket.emit('getData', {
-					topic: 'bower/search'
-					, data: results
-				});
-				console.log(results);
-			});
+			bowerMethods.search(data.query.name, socket);
 		}
 		, 'bower/install': function(socket, data){
 			bower.commands.install([data.query.name], {save: true}, {interactive: true}).on('log', function(msg){
@@ -188,7 +303,7 @@ module.exports = function(web, db, socket, metro){
 					, msg: ''
 				});
 				console.log(e);
-			}).on('end', function(installed){console.log(installed)
+			}).on('end', function(installed){
 				var k
 					, t
 					, info = []

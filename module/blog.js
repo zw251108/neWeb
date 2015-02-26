@@ -62,9 +62,8 @@ module.exports = function(web, db, socket, metro){
 			if( !e ){
 				res.send(tpl.html('module', {
 					title: '博客 Blog'
-					, modules: tpl.moduleTpl({
+					, modules: tpl.mainTpl({
 						id: 'blog'
-						, type: 'main'
 						, size: 'large'
 						, title: '博客 blog'
 						, content: articleTpl(rs).join('')
@@ -92,9 +91,8 @@ module.exports = function(web, db, socket, metro){
 						title: '博客 Blog'
 						, dir: '../'
 						, header: 1
-						, modules: tpl.moduleTpl({
+						, modules: tpl.mainTpl({
 							id: 'blog'
-							, type: 'main'
 							, size: 'large'
 							, title: '博客 blog'
 							, content: articleDetailTpl(rs).join('')

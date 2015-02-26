@@ -25,6 +25,7 @@ define(['/socket.io/socket.io.js'], function(io){
 
 		if( 'error' in data ){
 			// todo 错误
+			console.log('socket error: ', data.msg);
 		}
 		else if( topic in EVENT_LIST ){
 			EVENT_LIST[topic](data);

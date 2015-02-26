@@ -13,6 +13,12 @@ var Editor = {
 				return data;
 			}
 		}
+		, edit: {
+			sql: 'update editor set html=?,css=?,js=?,css_lib=?,js_lib=? where Id=?'
+		}
+		, save: {
+			sql: 'insert into editor(status,html,css,js,css_lib,js_lib) values(1,?,?,?,?,?)'
+		}
 	}
 
 	, tpl           = require('./tpl.js')
@@ -35,10 +41,10 @@ var Editor = {
 				'>input#id[type=hidden name=id value=%Id%]' +
 				'+input#cssLib[type=hidden name=css_lib value=%css_lib%]' +
 				'+input#jsLib[type=hidden name=js_lib value=%js_lib%]' +
-				'+div.editor_area.editor_area-html>label[for=html]{HTML}+textarea#html.hidden[name=html placeholder=body之间的HTML代码]{%html%}' +
-				'^div.editor_area.editor_area-css>label[for=css]{CSS}+textarea#css.hidden[name=css placeholder=CSS代码]{%css%}' +
-				'^div.editor_area.editor_area-js>label[for=js]{JavaScript}+textarea#js.hidden[name=js placeholder=JavaScript代码]{%js%}' +
-				'^div.editor_area.editor_area-rs>label{Result}+iframe#result.editor_rs[src=result?id=%Id% name=result]'
+				'+div.editor_area.editor_area-html>label.hidden[for=html]{HTML}+textarea#html.hidden[name=html placeholder=body之间的HTML代码]{%html%}' +
+				'^div.editor_area.editor_area-css>label.hidden[for=css]{CSS}+textarea#css.hidden[name=css placeholder=CSS代码]{%css%}' +
+				'^div.editor_area.editor_area-js>label.hidden[for=js]{JavaScript}+textarea#js.hidden[name=js placeholder=JavaScript代码]{%js%}' +
+				'^div.editor_area.editor_area-rs>label.hidden{Result}+iframe#result.editor_rs[name=result]'
 	})
 	//, result        = tpl('editor/result')
 	;
@@ -60,9 +66,8 @@ module.exports = function(web, db, socket, metro){
 			if( !e ){
 				res.send(tpl.html('module', {
 					title: '前端编辑器 Editor'
-					, modules: tpl.moduleTpl({
+					, modules: tpl.mainTpl({
 						id: 'editor'
-						, type: 'main'
 						, size: 'large'
 						, title: '前端编辑器 editor'
 						, content: codeTpl(rs).join('')
@@ -96,9 +101,8 @@ module.exports = function(web, db, socket, metro){
 						}, {
 							path: '../script/plugin/codeMirror/addon/fold/foldgutter.css'
 						}]
-						, modules: tpl.moduleTpl([{
+						, modules: tpl.mainTpl([{
 							id: 'editor'
-							, type: 'main'
 							, size: 'large'
 							, title: '前端编辑器 editor'
 							, toolbar: tpl.toolbarTpl([{
@@ -111,11 +115,11 @@ module.exports = function(web, db, socket, metro){
 								, title: '更改布局'
 							}, {
 								id: 'lib'
-								, icon: ''
+								, icon: 'lib'
 								, title: '引用组件'
 							}, {
 								id: 'newWin'
-								, icon: ''
+								, icon: 'window'
 								, title: '在新窗口浏览'
 							}, {
 								id: 'run'
@@ -127,9 +131,10 @@ module.exports = function(web, db, socket, metro){
 								, title: '保存'
 							}]).join('')
 							, content: codeEditTpl(rs).join('')
-						}, {
-
-						}]).join('')
+						}]).join('') + tpl.popupTpl({
+							id: 'lib_bower'
+							, type: 'popup'
+						})
 						, script: {
 							main: '../script/module/editor/code'
 							, src: '../script/lib/require.min.js'
@@ -146,70 +151,70 @@ module.exports = function(web, db, socket, metro){
 			res.end();
 		}
 	});
-	web.get('/editor/result', function(req, res){
-		var code = editor.code
-			, id = req.query.id || ''
-			, css_lib
-			, js_lib
-			, temp
-			;
-
-		if( id ){
-			db.query(code.sql, [id], function(e, data){
-				if( !e ){
-					//data = code.handler( data );
-					data = data[0];
-
-					css_lib = (data.css_lib || '').split(',').map(function(d){
-						return {path: d};
-					});
-					js_lib = (data.js_lib || '').split(',').map(function(d){
-						return {src: d};
-					});
-
-					res.send(tpl.html('editor/result', {
-						title: '运行结果'
-						, stylesheet:   css_lib
-						, style:        {style:data.css}
-						, modules:      data.html
-						, script:       js_lib
-						, scriptCode:   {script:data.js}
-					}) );
-				}
-				else{
-					console.log('\n', 'db', '\n', code.sql, '\n', e.message);
-				}
-				res.end();
-			});
-		}
-		else{
-			res.end();
-		}
-	});
-
-	// 编辑器 提交运行代码
-	web.post('/editor/result', function(req, res){
-		var query   = req.body
-			, html  = query.html
-			, css   = query.css
-			, js    = query.js
-			, css_lib   = (query.css_lib || '').split(',').map(function(d){
-				return {path: d};
-			})
-			, js_lib = (query.js_lib || '').split(',').map(function(d){
-				return {src: d};
-			})
-			;
-
-		res.send(tpl.html('editor/result', {
-			title: '运行结果'
-			, stylesheet:   css_lib
-			, style:        {style:css}
-			, modules:      html
-			, script:       js_lib
-			, scriptCode:   {script:js}
-		}) );
-	});
+	//web.get('/editor/result', function(req, res){
+	//	var code = editor.code
+	//		, id = req.query.id || ''
+	//		, css_lib
+	//		, js_lib
+	//		, temp
+	//		;
+	//
+	//	if( id ){
+	//		db.query(code.sql, [id], function(e, data){
+	//			if( !e ){
+	//				//data = code.handler( data );
+	//				data = data[0];
+	//
+	//				css_lib = (data.css_lib || '').split(',').map(function(d){
+	//					return {path: d};
+	//				});
+	//				js_lib = (data.js_lib || '').split(',').map(function(d){
+	//					return {src: d};
+	//				});
+	//
+	//				res.send(tpl.html('editor/result', {
+	//					title: '运行结果'
+	//					, stylesheet:   css_lib
+	//					, style:        {style:data.css}
+	//					, modules:      data.html
+	//					, script:       js_lib
+	//					, scriptCode:   {script:data.js}
+	//				}) );
+	//			}
+	//			else{
+	//				console.log('\n', 'db', '\n', code.sql, '\n', e.message);
+	//			}
+	//			res.end();
+	//		});
+	//	}
+	//	else{
+	//		res.end();
+	//	}
+	//});
+	//
+	//// 编辑器 提交运行代码
+	//web.post('/editor/result', function(req, res){
+	//	var query   = req.body
+	//		, html  = query.html
+	//		, css   = query.css
+	//		, js    = query.js
+	//		, css_lib   = (query.css_lib || '').split(',').map(function(d){
+	//			return {path: d};
+	//		})
+	//		, js_lib = (query.js_lib || '').split(',').map(function(d){
+	//			return {src: d};
+	//		})
+	//		;
+	//
+	//	res.send(tpl.html('editor/result', {
+	//		title: '运行结果'
+	//		, stylesheet:   css_lib
+	//		, style:        {style:css}
+	//		, modules:      html
+	//		, script:       js_lib
+	//		, scriptCode:   {script:js}
+	//	}) );
+	//});
 
 	socket.register({
 		editor: function(socket){
@@ -259,6 +264,34 @@ module.exports = function(web, db, socket, metro){
 				});
 				console.log('\n', 'socket editor/code', '\n', 'no id');
 			}
+		}
+		, 'editor/save': function(socket, data){
+			var arr = []
+				, query = data.query
+				, id = query.id || ''
+				, sql
+				;
+
+			arr.push.call(arr, query.html, query.css, query.js, query.cssLib, query.jsLib);
+
+			if( id ){
+				sql = editor.edit;
+				arr.push( id );
+			}
+			else{
+				sql = editor.save;
+			}
+			db.query(sql.sql, arr, function(e){
+				if( !e ){
+					socket.emit('getData', {
+						topic: 'editor/save'
+						, msg: 'success'
+					});
+				}
+				else{
+					console.log('\n', 'db', '\n', sql.sql, '\n', e.message);
+				}
+			});
 		}
 	});
 };

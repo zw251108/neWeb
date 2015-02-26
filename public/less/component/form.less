@@ -13,6 +13,19 @@
 /*label*/.radio{
 
 }
+
+:checked + .icon-radio:before{
+	content: '\e800';
+}
+:checked + .icon-checkbox:before{
+	content: '\e803';
+}
+
+.icon-radio-checked:before { content: '\e800'; } /* '' */
+.icon-radio:before { content: '\e801'; } /* '' */
+.icon-checkbox:before { content: '\e802'; } /* '' */
+.icon-checkbox-checked:before { content: '\e803'; } /* '' */
+
 [type="checkbox"],
 [type="radio"]{
 	display: none;
