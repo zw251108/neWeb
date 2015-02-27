@@ -15,7 +15,7 @@ var Bower = {
 	, emmetTpl      = require('./emmetTpl/emmetTpl.js').template
 
 	, bowerTpl      = emmetTpl({
-		template: 'tr>td{%name%}+td{%version%}+td{%css_path%}+td{%js_path%}+td>a[href=%demo_path% target=_blank]{%demo_path%}^td{%tags_html%}+td{%receipt_time%}'
+		template: 'tr>td{%name%}+td{%version%}+td{%css_path%}+td{%js_path%}+td>a[href=%demo_path% target=_blank]{%demo_path%}^td{%source%}+td{%homepage%}+td{%tags_html%}+td{%receipt_time%}'
 	})
 	, pickerCallback
 	, bowerMethods = {

@@ -84,9 +84,26 @@
 	dd{
 		display: none;
 		overflow: hidden;
+
+		border: 1px solid #ddd;
+
 		margin: 0 10px;
-		font-size: 12px;
+		margin-left: 3em;
+		padding-left: 10px;
+
+		font-size: 14px;
 		text-indent: 2em;
+	}
+	ul,
+	ol{
+		margin-left: 2em;
+		padding-left: 2em;
+	}
+	ul{
+		list-style: disc;
+	}
+	li{
+		text-indent: 0;
 	}
 //	.icon{
 //		padding: 0;
@@ -130,20 +147,24 @@
 //    }
 }
 
-//.document_section{
+.document_section{
 //    margin-bottom: @space;
 //    padding: 0 0 0 @space;
 //    background: @document_section-bg;
-//
+
+	border: 1px solid #ddd;
+	margin-bottom: 10px;
+
 //	.section_title{
 //		padding-right: 70px;
 //	}
-//}
+}
 
 /*----- document -----*/
 .section_title{
+	height: 2em;
 	text-indent: 1em;
-	line-height: 30px;
+	line-height: 2em;
 
 	.icon{
 		float: right;

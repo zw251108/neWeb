@@ -349,7 +349,7 @@ th, td{
 }
 
 li{
-	overflow: hidden;
+	/*overflow: hidden;*/
 }
 
 .bower_level{

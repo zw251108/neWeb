@@ -330,7 +330,7 @@ module.exports = function(grunt){
 					cleancss: true
 				},
 				files: {
-					'public/style/style.css': 'public/less/style.less'
+					'public/style/style.css': 'less/style.less'
 				}
 			}
 //			, production: {
