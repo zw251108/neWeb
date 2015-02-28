@@ -1,20 +1,35 @@
 /**
  * @module  document
  * */
-define(['jquery', 'global', 'socket'
-	, 'plugin/codeMirror/lib/codemirror'
-	, 'plugin/codeMirror/mode/xml/xml'
-	, 'plugin/codeMirror/mode/htmlmixed/htmlmixed'
-	, 'plugin/codeMirror/mode/javascript/javascript'
-	, 'plugin/codeMirror/mode/css/css'
-	, 'plugin/codeMirror/addon/comment/comment'
-	, 'plugin/codeMirror/addon/comment/continuecomment'
-	, 'plugin/codeMirror/addon/fold/foldcode'
-	, 'plugin/codeMirror/addon/fold/foldgutter'
-	, 'plugin/codeMirror/addon/fold/brace-fold'
-	, 'plugin/codeMirror/addon/fold/xml-fold'
-	, 'template'
-], function($, g, socket, cm){
+//define(['jquery', 'global', 'socket'
+//	, 'plugin/codeMirror/lib/codemirror'
+//	, 'plugin/codeMirror/mode/xml/xml'
+//	, 'plugin/codeMirror/mode/htmlmixed/htmlmixed'
+//	, 'plugin/codeMirror/mode/javascript/javascript'
+//	, 'plugin/codeMirror/mode/css/css'
+//	, 'plugin/codeMirror/addon/comment/comment'
+//	, 'plugin/codeMirror/addon/comment/continuecomment'
+//	, 'plugin/codeMirror/addon/fold/foldcode'
+//	, 'plugin/codeMirror/addon/fold/foldgutter'
+//	, 'plugin/codeMirror/addon/fold/brace-fold'
+//	, 'plugin/codeMirror/addon/fold/xml-fold'
+//	, 'template'
+//], function($, g, socket, cm){
+define(function(require){
+	var $ = require('jquery')
+		, g = require('../global')
+		, socket = require('../socket')
+		, cm = require('../../plugin/codeMirror/lib/codemirror')
+		;
+	require('../plugin/codeMirror/mode/xml/xml');
+	require('../plugin/codeMirror/mode/htmlmixed/htmlmixed');
+	require('../plugin/codeMirror/mode/xml/xml');
+	require('../plugin/codeMirror/mode/xml/xml');
+	require('../plugin/codeMirror/mode/xml/xml');
+	require('../plugin/codeMirror/mode/xml/xml');
+	require('../plugin/codeMirror/mode/xml/xml');
+	require('/script/ui/jquery.emmetTpl.js');
+
 	var $document = g.mod('$document') || $('#document')
 		, $curr = null
 		, $temp = $([])

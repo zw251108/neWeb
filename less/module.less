@@ -50,6 +50,15 @@
 //----- 模块标题 建议标签 h2 -----
 /*h2*/.module_title{
 	text-transform: capitalize;
+
+	&.icon:before{
+		position: absolute;
+		top: -90px;
+		left: 0;
+		width: 100%;
+		font-size: 90px;
+		text-align: center;
+	}
 }
 
 //----- 模块内容 -----
@@ -156,5 +165,57 @@
 
 	> .module_content{
 		display:none;
+	}
+
+	.toolbar{
+		display: none;
+	}
+}
+
+.module-main{
+	/*border-bottom: 5px solid #fff;*/
+	float: none;
+
+	.icon:before{
+		margin: 5px;
+		font-size: 20px;
+	}
+
+	> .toolbar{
+		position: absolute;
+		top: 0;
+		right: 0;
+
+		> li{
+			display: inline-block;
+			position: relative;
+		}
+
+		.icon{
+			width: 29px;
+			height: 29px;
+			border-width: 0 0 1px 1px;
+			background: #888;
+		}
+		.icon:before{
+			margin: 0;
+		}
+	}
+}
+
+/*dialog*/.module-popup{
+	overflow: hidden;
+	position: absolute;
+	top: 70px;
+	left: 0;
+	right: 0;
+	height: 100px;
+	padding: 0;
+	margin: auto;
+
+	opacity: 1;
+
+	&::backdrop{
+	  background: rgba(0, 0, 0, .5);
 	}
 }

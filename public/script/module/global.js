@@ -2,7 +2,10 @@
  * @module  global
  * */
 //----- 全局模块 -----
-define(['jquery', 'socket'], function($, socket){
+define(function(require){
+	var $ = require('jquery')
+		, socket = require('./socket')
+		;
 	var
 		// 单全局变量
 		g =  window.GLOBAL || {}

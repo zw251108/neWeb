@@ -219,6 +219,8 @@ module.exports = function(web, db, socket, metro){
 											'<th>CSS 文件路径</th>' +
 											'<th>JS 文件路径</th>' +
 											'<th>demo 页面</th>' +
+											'<th>组件来源</th>' +
+											'<th>组件主页</th>' +
 											'<th>标签</th>' +
 											'<th>收录时间</th>' +
 										'</tr>' +

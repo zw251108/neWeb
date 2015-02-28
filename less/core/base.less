@@ -19,7 +19,8 @@ body{
 
 	font-size: @default-font-size;
 	line-height: @default-line-height;
-	font-family: Consolas, \5b8b\4f53; // 宋体
+//	font-family: Consolas, \5b8b\4f53; // 宋体
+	font-family: Consolas, "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
 	color: @font-color;
 }
 
@@ -229,6 +230,14 @@ p { font-size: 1.2em; line-height: 1.0em; color: #333; }
 }
 ::-webkit-selection{
 	background:@selection;
+}
+
+dialog{
+	padding: 0;
+}
+
+dialog::backdrop{
+	background: rgba(0, 0, 0, .5);
 }
 
 //----- 页面隐藏元素 -----
