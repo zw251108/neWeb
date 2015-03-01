@@ -19,6 +19,8 @@ module.exports = function(grunt){
 					// require
 					, 'public/script/lib/require.min.js': ['bower_components/requirejs/require.js']
 
+					, 'public/script/lib/css.js': ['bower_components/require-css/css.js']
+
 //					// underscroe
 //					, 'public/script/lib/underscore/underscore.min.js': ['bower_components/underscore/underscore.js']
 //					// html5shiv

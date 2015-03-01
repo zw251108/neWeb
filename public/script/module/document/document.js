@@ -1,35 +1,7 @@
 /**
  * @module  document
  * */
-//define(['jquery', 'global', 'socket'
-//	, 'plugin/codeMirror/lib/codemirror'
-//	, 'plugin/codeMirror/mode/xml/xml'
-//	, 'plugin/codeMirror/mode/htmlmixed/htmlmixed'
-//	, 'plugin/codeMirror/mode/javascript/javascript'
-//	, 'plugin/codeMirror/mode/css/css'
-//	, 'plugin/codeMirror/addon/comment/comment'
-//	, 'plugin/codeMirror/addon/comment/continuecomment'
-//	, 'plugin/codeMirror/addon/fold/foldcode'
-//	, 'plugin/codeMirror/addon/fold/foldgutter'
-//	, 'plugin/codeMirror/addon/fold/brace-fold'
-//	, 'plugin/codeMirror/addon/fold/xml-fold'
-//	, 'template'
-//], function($, g, socket, cm){
-define(function(require){
-	var $ = require('jquery')
-		, g = require('../global')
-		, socket = require('../socket')
-		, cm = require('../../plugin/codeMirror/lib/codemirror')
-		;
-	require('../plugin/codeMirror/mode/xml/xml');
-	require('../plugin/codeMirror/mode/htmlmixed/htmlmixed');
-	require('../plugin/codeMirror/mode/xml/xml');
-	require('../plugin/codeMirror/mode/xml/xml');
-	require('../plugin/codeMirror/mode/xml/xml');
-	require('../plugin/codeMirror/mode/xml/xml');
-	require('../plugin/codeMirror/mode/xml/xml');
-	require('/script/ui/jquery.emmetTpl.js');
-
+define(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g, socket, code){
 	var $document = g.mod('$document') || $('#document')
 		, $curr = null
 		, $temp = $([])
@@ -83,25 +55,26 @@ define(function(require){
 			$curr.toggleClass('icon-arrow-r icon-arrow-d').next().slideToggle();
 
 			!$curr.data('codeMirror') && $curr.data('codeMirror', true).next().find('textarea').each(function(){
-				var mode = this.className;
-				if( mode === 'brush:html' ){
-					mode = 'text/html';
-				}
-				else if( mode === 'brush:css' ){
-					mode = 'text/css';
-				}
-				else if( mode === 'brush:js' ){
-					mode = 'javascript';
-				}
+				var mode = /brush:(.*)(?:\s|$)/.exec(this.className)[1];
+				//if( mode === 'brush:html' ){
+				//	mode = 'text/html';
+				//}
+				//else if( mode === 'brush:css' ){
+				//	mode = 'text/css';
+				//}
+				//else if( mode === 'brush:js' ){
+				//	mode = 'javascript';
+				//}
 
-				cm.fromTextArea(this, {
-					mode: mode
-					, lineNumbers : true
-					, foldGutter: true
-					, gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter']
-					, matchBrackets: true
-					, readOnly: true
-				});
+				code(this, mode, true);
+				//cm.fromTextArea(this, {
+				//	mode: mode
+				//	, lineNumbers : true
+				//	, foldGutter: true
+				//	, gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter']
+				//	, matchBrackets: true
+				//	, readOnly: true
+				//});
 			});
 		});
 	})

@@ -25,6 +25,7 @@
     "animate.css": "~3.2.0",
     "less": "~2.4.0",
     "requirejs": "~2.1.16",
-    "codemirror": "~5.0.0"
+    "codemirror": "~5.0.0",
+    "require-css": "~0.1.8"
   }
 }

@@ -96,11 +96,11 @@ module.exports = function(web, db, socket, metro){
 
 					res.send(tpl.html('module', {
 						title: '前端编辑器 Editor'
-						, stylesheet: [{
-							path: '../script/plugin/codeMirror/lib/codemirror.css'
-						}, {
-							path: '../script/plugin/codeMirror/addon/fold/foldgutter.css'
-						}]
+						//, stylesheet: [{
+						//	path: '../script/plugin/codeMirror/lib/codemirror.css'
+						//}, {
+						//	path: '../script/plugin/codeMirror/addon/fold/foldgutter.css'
+						//}]
 						, modules: tpl.mainTpl([{
 							id: 'editor'
 							, size: 'large'

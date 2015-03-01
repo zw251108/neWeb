@@ -81,7 +81,10 @@ require(['jquery', 'template', 'socket'], function($, tpl, socket){
 	//----- socket 接收事件主题注册 -----
 	socket.register({
 		'bower/search': function(data){
-			$dialog.find('tbody').append( tableTpl(data.data).join('') );
+			var l = data.data.length
+				, $tbody = $dialog.find('tbody')
+				;
+			l ? $tbody.append( tableTpl(data.data).join('') ) : $tbody.append('<tr><td colspan="3">没有相关信息</td></tr>');
 		}
 		, 'bower/info': function(data){
 			var msg = data.msg;

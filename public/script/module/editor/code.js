@@ -1,30 +1,19 @@
 /**
- * @module code
+ * @module  code
  * */
 require.config({
 	baseUrl: '../script/'
 	, paths: {
 		jquery: 'lib/jquery.min'
+		, css: 'lib/css'
+
 		, global: 'module/global'
 		, socket: 'module/socket'
+		, codeEditor: 'module/codeEditor'
 		, template: 'ui/jquery.emmetTpl'
 	}
 });
-require(['jquery', 'global', 'socket'
-	, 'plugin/codeMirror/lib/codemirror'
-	, 'plugin/codeMirror/emmet/emmet.min'
-	, 'plugin/codeMirror/mode/xml/xml'
-	, 'plugin/codeMirror/mode/htmlmixed/htmlmixed'
-	, 'plugin/codeMirror/mode/javascript/javascript'
-	, 'plugin/codeMirror/mode/css/css'
-	, 'plugin/codeMirror/addon/comment/comment'
-	, 'plugin/codeMirror/addon/comment/continuecomment'
-	, 'plugin/codeMirror/addon/fold/foldcode'
-	, 'plugin/codeMirror/addon/fold/foldgutter'
-	, 'plugin/codeMirror/addon/fold/brace-fold'
-	, 'plugin/codeMirror/addon/fold/xml-fold'
-	, 'template'
-], function($, g, socket, cm){
+require(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g, socket, code){
 	var $editor = $('#editor')
 		, $form = $editor.find('#editorForm')
 		, $toolbar = $editor.find('.toolbar')
@@ -37,14 +26,14 @@ require(['jquery', 'global', 'socket'
 		, js = $editor.find('#js')
 		, $rs = $editor.find('#result')
 
-		, cmOptions = {
-			lineNumbers : true
-			, foldGutter: true
-			, gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter']
-			, matchBrackets: true
-			, indentUnit: 4
-			, tabSize: 4
-		}
+		//, cmOptions = {
+		//	lineNumbers : true
+		//	, foldGutter: true
+		//	, gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter']
+		//	, matchBrackets: true
+		//	, indentUnit: 4
+		//	, tabSize: 4
+		//}
 
 		, $skinLink = $('<link />', {
 			rel: 'stylesheet'
@@ -209,20 +198,9 @@ require(['jquery', 'global', 'socket'
 
 	g.mod('$editor', $editor);
 
-	cmOptions.mode = 'text/html';
-	cmOptions.profile = 'xhtml';
-	html = cm.fromTextArea(html[0], cmOptions);
-	delete cmOptions.profile;
-
-	cmOptions.mode = 'text/css';
-	css = cm.fromTextArea(css[0], cmOptions);
-
-	cmOptions.mode = 'javascript';
-	cmOptions.extraKeys = {
-		Enter:'newlineAndIndentContinueComment'
-		, 'Ctrl-/': 'toggleComment'
-	};
-	js = cm.fromTextArea(js[0], cmOptions);
+	html = code(html[0], 'html');
+	css = code(css[0], 'css');
+	js = code(js[0], 'js');
 
 	$run.triggerHandler('click');
 
@@ -233,13 +211,4 @@ require(['jquery', 'global', 'socket'
 			alert(data.msg);
 		}
 	});
-
-	//$editor.on({
-	//	mouseenter: function(){
-	//		$(this).find('label').addClass('hidden');
-	//	}
-	//	, mouseleave: function(){
-	//		$(this).find('label').removeClass('hidden');
-	//	}
-	//}, '.editor_area');
 });

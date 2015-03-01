@@ -10,6 +10,34 @@
 	.article{
 		display: inline-block;
 	}
+
+
+	.CodeMirror{
+		height: 100%;
+		outline: 1px solid #ddd;
+		font-family: inherit;
+		font-size: 13px;
+		line-height: 1em;
+		text-indent: 0;
+		-webkit-box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		box-sizing: border-box;
+	}
+	.CodeMirror-scroll{
+		overflow: scroll !important;
+		/*max-height: 200px;*/
+	}
+	.CodeMirror pre{
+		padding-left: 7px;
+		line-height: 1.25;
+	}
+	.CodeMirror-gutters{
+		padding-bottom: 0;
+	}
+	.CodeMirror-gutter{
+		margin-bottom: -30px;
+		padding-bottom: 0;
+	}
 }
 
 /*----- editor -----*/
@@ -165,33 +193,6 @@
 		left: 0;
 		right: 0;
 	}
-}
-
-.CodeMirror{
-	height: 100%;
-	outline: 1px solid #ddd;
-	font-family: inherit;
-	font-size: 13px;
-	line-height: 1em;
-	text-indent: 0;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	box-sizing: border-box;
-}
-.CodeMirror-scroll{
-	overflow: scroll !important;
-	/*max-height: 200px;*/
-}
-.CodeMirror pre{
-	padding-left: 7px;
-	line-height: 1.25;
-}
-.CodeMirror-gutters{
-	padding-bottom: 0;
-}
-.CodeMirror-gutter{
-	margin-bottom: -30px;
-	padding-bottom: 0;
 }
 
 .Container-eFS{
