@@ -26,15 +26,6 @@ require(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g,
 		, js = $editor.find('#js')
 		, $rs = $editor.find('#result')
 
-		//, cmOptions = {
-		//	lineNumbers : true
-		//	, foldGutter: true
-		//	, gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter']
-		//	, matchBrackets: true
-		//	, indentUnit: 4
-		//	, tabSize: 4
-		//}
-
 		, $skinLink = $('<link />', {
 			rel: 'stylesheet'
 		}).appendTo('head')

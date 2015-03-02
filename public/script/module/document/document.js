@@ -6,7 +6,7 @@ define(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g, 
 		, $curr = null
 		, $temp = $([])
 		, dlTmpl = $.template({
-			template: 'dt.icon.icon-arrow-r{%title%}+dd{%content%}'
+			template: 'dt.icon.icon-right{%title%}+dd{%content%}'
 		})
 		, sectionTmpl = $.template({
 			template: 'section.document_section.section>h3.section_title{%section_title%}>span.icon.icon-minus^dl{%dl%}'
@@ -37,7 +37,7 @@ define(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g, 
 				.next('dl').slideToggle();
 	}).on('click', 'dt', function(){
 		if( $curr ){
-			$curr.toggleClass('icon-arrow-r icon-arrow-d');
+			$curr.toggleClass('icon-right icon-down');
 
 			if( $curr.is(this) ){
 				$curr.next().slideToggle();
@@ -52,29 +52,11 @@ define(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g, 
 		g.$body.animate({
 			scrollTop: this.offsetTop -80
 		}, function(){
-			$curr.toggleClass('icon-arrow-r icon-arrow-d').next().slideToggle();
+			$curr.toggleClass('icon-right icon-down').next().slideToggle();
 
 			!$curr.data('codeMirror') && $curr.data('codeMirror', true).next().find('textarea').each(function(){
 				var mode = /brush:(.*)(?:\s|$)/.exec(this.className)[1];
-				//if( mode === 'brush:html' ){
-				//	mode = 'text/html';
-				//}
-				//else if( mode === 'brush:css' ){
-				//	mode = 'text/css';
-				//}
-				//else if( mode === 'brush:js' ){
-				//	mode = 'javascript';
-				//}
-
 				code(this, mode, true);
-				//cm.fromTextArea(this, {
-				//	mode: mode
-				//	, lineNumbers : true
-				//	, foldGutter: true
-				//	, gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter']
-				//	, matchBrackets: true
-				//	, readOnly: true
-				//});
 			});
 		});
 	})

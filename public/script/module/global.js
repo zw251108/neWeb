@@ -107,7 +107,7 @@ define(function(require){
 		target = this.id;
 		$target = g.mod('$'+ target);
 
-		if( !$target.hasClass('module-metro') ) return;
+		if( !$target || !$target.hasClass('module-metro') ) return;
 
 		// todo 加入 本地存储
 

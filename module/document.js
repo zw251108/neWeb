@@ -31,7 +31,7 @@ var Document = {
 	, emmetTpl      = require('./emmetTpl/emmetTpl.js').template
 
 	, dlTpl         = emmetTpl({
-		template: 'dt.icon.icon-arrow-r{%title%}+dd{%content%}'
+		template: 'dt.icon.icon-right{%title%}+dd{%content%}'
 	})
 	, sectionTpl    = emmetTpl({
 		template: 'section.document_section.section>h3.section_title[section_id=%section_id%]{%section_title%}>span.icon.icon-minus^dl{%dl%}'

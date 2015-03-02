@@ -75,25 +75,38 @@
 //    }
 
 	dl{
-		margin: 0;
+		margin: 0 0 -1px;
 	}
 	dt{
+		width: 90%;
+		border-bottom: 1px dashed #ddd;
+		margin: auto;
 		cursor: pointer;
-		text-indent: 2em;
+		line-height: 40px;
+//		text-indent: 1em;
 	}
 	dd{
 		display: none;
-		overflow: hidden;
+//		overflow: hidden;
 
-		border: 1px solid #ddd;
+		width: 90%;
 
-		margin: 0 10px;
-		margin-left: 3em;
-		padding-left: 10px;
+//		border: 1px solid #ddd;
+		margin: 0 auto 1em;
+
+//		margin: 0 10px;
+//		margin-left: 3em;
+		padding: 0 10px;
 
 		font-size: 14px;
 		text-indent: 2em;
 	}
+	dt.icon:before{
+		margin: 0 5px 0 0;
+		font-size: 1em;
+		text-indent: 0;
+	}
+
 	ul,
 	ol{
 		margin-left: 2em;
