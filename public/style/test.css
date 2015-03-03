@@ -232,7 +232,8 @@
 	border-bottom: 1px dotted #c0c0c0;
 }
 .article_preview{
-	margin-top: 10px;
+	display: block;
+	margin: 10px auto 0;
 }
 
 /* bower */
