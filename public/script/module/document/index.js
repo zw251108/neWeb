@@ -2,7 +2,6 @@
  *
  * */
 require.config({
-	baseUrl: '../script/',
 	paths: {
 		jquery: 'lib/jquery.min'
 		, css: 'lib/css'
@@ -14,5 +13,6 @@ require.config({
 
 		, document: 'module/document/document'
 	}
+	, 	baseUrl: '../script/'
 });
 require(['document'], function(document){});

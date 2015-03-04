@@ -38,7 +38,7 @@
  * */
 
 // 模块样式
-/*section*/.module{
+/*section,dialog*/.module{
 	float:left;
 	position: relative;
 	margin: @grid-space;
@@ -63,6 +63,7 @@
 
 //----- 模块内容 -----
 /*div*/.module_content{
+	position: relative;
 	overflow:hidden;
 }
 //----- 模块信息 -----
@@ -116,7 +117,7 @@
 ////@import "module/footer";      // 页脚
 
 //----- Main 主内容模块 ------
-.module-main{
+/*section*/.module-main{
 	overflow: hidden;
 	background-image: none;
 
@@ -136,7 +137,7 @@
 }
 
 //----- Metro 动态磁砖 -----
-.module-metro{
+/*section*/.module-metro{
 	height: 150px;
 
 	background-position: center 20px;
@@ -172,12 +173,11 @@
 	}
 }
 
-.module-main{
+/*section*/.module-main{
 	/*border-bottom: 5px solid #fff;*/
 	float: none;
 
 	.icon:before{
-		margin: 5px;
 		font-size: 20px;
 	}
 
@@ -209,7 +209,8 @@
 	top: 70px;
 	left: 0;
 	right: 0;
-	height: 100px;
+	min-height: 300px;
+	max-height: 500px;
 	padding: 0;
 	margin: auto;
 
@@ -217,5 +218,32 @@
 
 	&::backdrop{
 	  background: rgba(0, 0, 0, .5);
+	}
+
+	> .toolbar{
+		position: absolute;
+		top: 0;
+		right: 0;
+
+		> li{
+			display: inline-block;
+			position: relative;
+		}
+
+		.icon{
+		  width: 29px;
+		  height: 29px;
+		  border-width: 0 0 1px 1px;
+		  background: #888;
+		}
+		.icon:before{
+		  margin: 0;
+		}
+	}
+
+	> .module_content{
+		margin: 40px 10px 10px;
+		padding: 10px 10px 0 10px;
+		background-color: #fff;
 	}
 }

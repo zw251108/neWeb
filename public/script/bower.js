@@ -15,9 +15,16 @@ require(['jquery', 'template', 'socket'], function($, tpl, socket){
 		})
 		, $dialog = $('<dialog/>', {
 			'class': 'module module-popup big'
-		}).append('<div><button type="button" class="icon icon-cancel popup_close f-r"></button></div>' +
-			'<form action="#" id="bowerSearch"><input type="text"/><input type="submit" value="提交"/></form>' +
-			'<table><thead><tr><th></th><th>组件名称</th><th>组件来源</th></tr></thead><tbody></tbody></table>'
+		}).append('<ul class="toolbar">' +
+					'<li><button type="button" class="icon icon-cancel popup_close f-r"></button><li>' +
+			'</ul>' +
+			'<div class="module_content">' +
+			'<form action="#" id="bowerSearch">' +
+				'<input class="input" type="text"/><button class="btn icon icon-search" type="submit" value=""></button>' +
+			'</form>' +
+			'<div class="bower_resultList">' +
+			'<table><thead><tr><th></th><th>组件名称</th><th>组件来源</th></tr></thead><tbody></tbody></table>' +
+			'</div></div>'
 		).on('submit', '#bowerSearch', function(e){
 			e.preventDefault();
 

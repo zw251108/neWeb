@@ -5,6 +5,7 @@ VERSION: %v%
 CACHE:
 
 script/lib/require.min.js
+script/lib/css.js
 script/lib/d3.min.js
 script/lib/jquery.min.js
 

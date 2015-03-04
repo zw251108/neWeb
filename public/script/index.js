@@ -5,6 +5,7 @@
 require.config({
 	paths: {
 		jquery: 'lib/jquery.min'
+		, css: 'lib/css'
 		, d3: 'lib/d3.min'
 
 		, template: 'ui/jquery.emmetTpl'
@@ -14,7 +15,7 @@ require.config({
 		, socket: 'module/socket'
 		, tag: 'module/tag'
 		, time: 'module/time'
-
+		, codeEditor: 'module/codeEditor'
 
 		// 应用模块设置
 		, blog: 'module/blog/blog'

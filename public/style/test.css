@@ -237,10 +237,6 @@
 }
 
 /* bower */
-.module_content{
-	position: relative;
-}
-
 .wrap{
 	overflow: auto;
 	margin-left: 152px;
@@ -299,9 +295,10 @@ th, td{
 }
 
 .module-popup{
+	overflow: auto;
 	height: auto;
 	max-height: 500px;
-	background: #fff;
+	/*background: #fff;*/
 }
 
 .module-popup th, .module-popup td{

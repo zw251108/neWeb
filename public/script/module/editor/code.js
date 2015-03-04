@@ -2,8 +2,7 @@
  * @module  code
  * */
 require.config({
-	baseUrl: '../script/'
-	, paths: {
+	paths: {
 		jquery: 'lib/jquery.min'
 		, css: 'lib/css'
 
@@ -12,6 +11,7 @@ require.config({
 		, codeEditor: 'module/codeEditor'
 		, template: 'ui/jquery.emmetTpl'
 	}
+	, baseUrl: '../script/'
 });
 require(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g, socket, code){
 	var $editor = $('#editor')
@@ -167,10 +167,7 @@ require(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g,
 		})
 
 		, runCode = function(html, css, js, cssLib, jsLib){
-			return '<!DOCTYPE html>' +
-				'<html lang="zh-CN">' +
-				'<head>' +
-				'<meta charset="utf-8"/>' +
+			return '<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"/>' +
 				'<!--[if lt IE 9]><meta http-equiv="content-type" content="text/html; charset=utf-8" /><![endif]-->' +
 				'<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>' +
 				'<title>前端代码运行结果</title>' +
@@ -182,10 +179,9 @@ require(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g,
 				(jsLib ? $.map(jsLib.split(','), function(d){return '<script src="'+ d +'"></script>'}).join('') : '') +
 				'<script>' +
 				js +
-			'</script></body></html>';
+				'</script></body></html>';
 		}
 		;
-
 
 	g.mod('$editor', $editor);
 
