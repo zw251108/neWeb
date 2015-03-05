@@ -77,18 +77,50 @@ module.exports = function(grunt){
 					 * 单一功能插件
 					 * */
 					// Code Mirror
-					, 'public/script/plugin/codeMirror/lib/codemirror.js': ['bower_components/codemirror/lib/codemirror.js']
-					, 'public/script/plugin/codeMirror/mode/xml/xml.js': ['bower_components/codemirror/mode/xml/xml.js']
-					, 'public/script/plugin/codeMirror/mode/htmlmixed/htmlmixed.js': ['bower_components/codemirror/mode/htmlmixed/htmlmixed.js']
-					, 'public/script/plugin/codeMirror/mode/javascript/javascript.js': ['bower_components/codemirror/mode/javascript/javascript.js']
-					, 'public/script/plugin/codeMirror/mode/css/css.js': ['bower_components/codemirror/mode/css/css.js']
-					, 'public/script/plugin/codeMirror/addon/comment/comment.js': ['bower_components/codemirror/addon/comment/comment.js']
-					, 'public/script/plugin/codeMirror/addon/comment/continuecomment.js': ['bower_components/codemirror/addon/comment/continuecomment.js']
-					, 'public/script/plugin/codeMirror/addon/fold/foldcode.js': ['bower_components/codemirror/addon/fold/foldcode.js']
-					, 'public/script/plugin/codeMirror/addon/fold/foldgutter.js': ['bower_components/codemirror/addon/fold/foldgutter.js']
-					, 'public/script/plugin/codeMirror/addon/fold/brace-fold.js': ['bower_components/codemirror/addon/fold/brace-fold.js']
-					, 'public/script/plugin/codeMirror/addon/fold/xml-fold.js': ['bower_components/codemirror/addon/fold/xml-fold.js']
-					, 'public/script/plugin/codeMirror/emmet/emmet.min.js': ['bower_components/codemirror-emmet/dist/emmet.js']
+					, 'public/script/plugin/codeMirror/lib/codemirror.js':
+						['bower_components/codemirror/lib/codemirror.js']
+					, 'public/script/plugin/codeMirror/mode/xml/xml.js':
+						['bower_components/codemirror/mode/xml/xml.js']
+					, 'public/script/plugin/codeMirror/mode/htmlmixed/htmlmixed.js':
+						['bower_components/codemirror/mode/htmlmixed/htmlmixed.js']
+					, 'public/script/plugin/codeMirror/mode/javascript/javascript.js':
+						['bower_components/codemirror/mode/javascript/javascript.js']
+					, 'public/script/plugin/codeMirror/mode/css/css.js':
+						['bower_components/codemirror/mode/css/css.js']
+					, 'public/script/plugin/codeMirror/addon/comment/comment.js':
+						['bower_components/codemirror/addon/comment/comment.js']
+					, 'public/script/plugin/codeMirror/addon/comment/continuecomment.js':
+						['bower_components/codemirror/addon/comment/continuecomment.js']
+					, 'public/script/plugin/codeMirror/addon/fold/foldcode.js':
+						['bower_components/codemirror/addon/fold/foldcode.js']
+					, 'public/script/plugin/codeMirror/addon/fold/foldgutter.js':
+						['bower_components/codemirror/addon/fold/foldgutter.js']
+					, 'public/script/plugin/codeMirror/addon/fold/brace-fold.js':
+						['bower_components/codemirror/addon/fold/brace-fold.js']
+					, 'public/script/plugin/codeMirror/addon/fold/xml-fold.js':
+						['bower_components/codemirror/addon/fold/xml-fold.js']
+
+					//// 括号 自动闭合
+					//, 'public/script/plugin/codeMirror/addon/edit/closebrackets.js': ['bower_components/codemirror/addon/edit/closebrackets.js']
+					//// 标签 自动闭合
+					//, 'public/script/plugin/codeMirror/addon/edit/closetag.js': ['bower_components/codemirror/addon/edit/closetag.js']
+					//// 全屏显示
+					//, 'public/script/plugin/codeMirror/addon/display/fullscreen.js': ['bower_components/codemirror/addon/display/fullscreen.js']
+					//// 代码检测
+					//, 'public/script/plugin/codeMirror/addon/lint/lint.js':
+					//	['bower_components/codemirror/addon/lint/lint.js']
+					//, 'public/script/plugin/codeMirror/addon/lint/css-lint.js':
+					//	['bower_components/codemirror/addon/lint/css-lint.js']
+					//, 'public/script/plugin/codeMirror/addon/lint/javascript-lint.js':
+					//	['bower_components/codemirror/addon/lint/javascript-lint.js']
+					//, 'public/script/plugin/codeMirror/addon/lint/json-lint.js':
+					//	['bower_components/codemirror/addon/lint/json-lint.js']
+					// panel
+					, 'public/script/plugin/codeMirror/addon/display/panel.js':
+						['bower_components/codemirror/addon/display/panel.js']
+
+					, 'public/script/plugin/codeMirror/emmet/emmet.min.js':
+						['bower_components/codemirror-emmet/dist/emmet.js']
 //					// pace
 //					, 'public/script/plugin/pace/pace.min.js': ['bower_components/pace/pace.min.js']
 //					// handlebars
@@ -159,6 +191,11 @@ module.exports = function(grunt){
 					, src: ['*.css']
 					, dest: 'public/script/plugin/codeMirror/addon/fold/'
 				}, {
+				//	expand: true
+				//	, cwd: 'bower_components/codemirror/addon/lint/'
+				//	, src: ['*.css']
+				//	, dest: 'public/script/plugin/codeMirror/addon/lint/'
+				//}, {
 					expand: true
 					, cwd: 'bower_components/codemirror/theme/'
 					, src: ['*.css']

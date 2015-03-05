@@ -70,6 +70,10 @@ module.exports = function(web, db, socket, metro){
 						id: 'editor'
 						, size: 'large'
 						, title: '前端编辑器 editor'
+						, toolbar: tpl.toolbarTpl([{
+							id: 'newCode',  icon: 'file-code',  title: '新建代码'}, {
+							id: 'filter',   icon: 'filter',     title: '过滤'
+						}]).join('')
 						, content: codeTpl(rs).join('')
 					}).join('')
 					, script: {
@@ -96,44 +100,21 @@ module.exports = function(web, db, socket, metro){
 
 					res.send(tpl.html('module', {
 						title: '前端编辑器 Editor'
-						//, stylesheet: [{
-						//	path: '../script/plugin/codeMirror/lib/codemirror.css'
-						//}, {
-						//	path: '../script/plugin/codeMirror/addon/fold/foldgutter.css'
-						//}]
 						, modules: tpl.mainTpl([{
 							id: 'editor'
 							, size: 'large'
 							, title: '前端编辑器 editor'
 							, toolbar: tpl.toolbarTpl([{
-								id: 'changeSkin'
-								, icon: 'skin'
-								, title: '更改皮肤'
-							}, {
-								id: 'changeLayout'
-								, icon: 'layout'
-								, title: '更改布局'
-							}, {
-								id: 'lib'
-								, icon: 'lib'
-								, title: '引用组件'
-							}, {
-								id: 'newWin'
-								, icon: 'window'
-								, title: '在新窗口浏览'
-							}, {
-								id: 'run'
-								, icon: 'play'
-								, title: '运行'
-							}, {
-								id: 'save'
-								, icon: 'save'
-								, title: '保存'
+								id: 'changeSkin',   icon: 'skin',   title: '更改皮肤'}, {
+								id: 'changeLayout', icon: 'layout', title: '更改布局'}, {
+								id: 'lib',          icon: 'lib',    title: '引用组件'}, {
+								id: 'newWin',       icon: 'window', title: '在新窗口浏览'}, {
+								id: 'run',          icon: 'play',   title: '运行'}, {
+								id: 'save',         icon: 'save',   title: '保存'
 							}]).join('')
 							, content: codeEditTpl(rs).join('')
 						}]).join('') + tpl.popupTpl({
-							id: 'lib_bower'
-							, type: 'popup'
+							id: 'lib_bower', type: 'popup'
 						})
 						, script: {
 							main: '../script/module/editor/code'

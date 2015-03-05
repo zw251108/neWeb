@@ -207,9 +207,7 @@ module.exports = function(web, db, socket, metro){
 						, size: 'large'
 						, title: '前端组件管理 bower'
 						, toolbar: tpl.toolbarTpl([{
-							id: 'switch_dialog'
-							, icon: 'search'
-							, title: '搜索组件'
+							id: 'switch_dialog', icon: 'search', title: '搜索组件'
 						}]).join('')
 						, content: '<div class="wrap"><table class="lib_table">' +
 									'<thead>' +

@@ -13,7 +13,7 @@ require.config({
 	}
 	, baseUrl: '../script/'
 });
-require(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g, socket, code){
+require(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g, socket, codeArea){
 	var $editor = $('#editor')
 		, $form = $editor.find('#editorForm')
 		, $toolbar = $editor.find('.toolbar')
@@ -185,9 +185,9 @@ require(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g,
 
 	g.mod('$editor', $editor);
 
-	html = code(html[0], 'html');
-	css = code(css[0], 'css');
-	js = code(js[0], 'js');
+	html = codeArea(html[0], 'html');
+	css = codeArea(css[0], 'css');
+	js = codeArea(js[0], 'js');
 
 	$run.triggerHandler('click');
 

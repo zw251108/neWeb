@@ -20,11 +20,18 @@ script/plugin/codeMirror/mode/css/css.js
 script/plugin/codeMirror/addon/comment/comment.js
 script/plugin/codeMirror/addon/comment/continuecomment.js
 
-script/plugin/codeMirror/addon/fold/foldcode.js
 script/plugin/codeMirror/addon/fold/foldgutter.css
+script/plugin/codeMirror/addon/fold/foldcode.js
 script/plugin/codeMirror/addon/fold/foldgutter.js
 script/plugin/codeMirror/addon/fold/brace-fold.js
 script/plugin/codeMirror/addon/fold/xml-fold.js
+
+script/plugin/codeMirror/addon/addon/lint/lint.css
+script/plugin/codeMirror/addon/lint/lint
+script/plugin/codeMirror/addon/lint/css-lint
+script/plugin/codeMirror/addon/lint/javascript-lint
+script/plugin/codeMirror/addon/lint/json-lint
+
 script/plugin/codeMirror/emmet/emmet.min.js
 
 socket.io/socket.io.js

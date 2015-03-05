@@ -95,13 +95,16 @@ module.exports = {
 	})
 	, metroTpl:         emmetTpl({
 		template: 'a[href=%id%/]>section#%id%.module.module-metro.module-%id%.%size%' +
-		'>h2.module_title.icon.icon-%id%{%title%}' +
-		'+ul.toolbar>li>button.icon.icon-cancel.module_close' +
-		'^^div.m_info{%info%}' +
-		'+div.module_content'
+			'>h2.module_title.icon.icon-%id%{%title%}' +
+			'+ul.toolbar>li>button.icon.icon-cancel.module_close' +
+			'^^div.m_info{%info%}' +
+			'+div.module_content'
 	})
 	, popupTpl:         emmetTpl({
-		template: 'dialog#popup%id%.module.module-popup.%size%{%content%}'
+		template: 'dialog#popup%id%.module.module-popup.%size%{%content%}' +
+			'>ul.toolbar{%toolbar%}' +
+			'+div.module_content{%content%}' +
+			'+div.btnGroup{%button%}'
 	})
 	, toolbarTpl:       emmetTpl({
 		template: 'li>button#%id%.btn.icon.icon-%icon%[title=%title%]{%text%}'
