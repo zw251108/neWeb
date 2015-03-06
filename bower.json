@@ -26,6 +26,9 @@
     "less": "~2.4.0",
     "requirejs": "~2.1.16",
     "codemirror": "~5.0.0",
-    "require-css": "~0.1.8"
+    "require-css": "~0.1.8",
+    "jcrop": "~0.9.12",
+    "cropzoom": "*",
+    "jquery-mobile": "~1.4.5"
   }
 }

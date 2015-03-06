@@ -13,19 +13,27 @@ require(['jquery', 'template', 'socket'], function($, tpl, socket){
 	var tableTpl = tpl({
 			template: 'tr>td>button[type=button]{安装}+input[type=hidden value=%name%]^td{%name%}+td[title=%url%]{%url%}'
 		})
-		, $dialog = $('<dialog/>', {
-			'class': 'module module-popup big'
-		}).append('<ul class="toolbar">' +
-					'<li><button type="button" class="icon icon-cancel popup_close f-r"></button><li>' +
-			'</ul>' +
-			'<div class="module_content">' +
+
+		, $dialog
+		//	= $('<dialog/>', {
+		//	'class': 'module module-popup big'
+		//})
+	= $('#result').find('.module_content')
+			.append(
+			//'<ul class="toolbar">' +
+			//		'<li><button type="button" class="icon icon-cancel popup_close f-r"></button><li>' +
+			//'</ul>' +
+			//'<div class="module_content">' +
 			'<form action="#" id="bowerSearch">' +
 				'<input class="input" type="text"/><button class="btn icon icon-search" type="submit" value=""></button>' +
 			'</form>' +
 			'<div class="bower_resultList">' +
 			'<table><thead><tr><th></th><th>组件名称</th><th>组件来源</th></tr></thead><tbody></tbody></table>' +
-			'</div></div>'
-		).on('submit', '#bowerSearch', function(e){
+			//'</div>' +
+			'</div>'
+		)
+			.end()
+			.on('submit', '#bowerSearch', function(e){
 			e.preventDefault();
 
 			var $form = $(this);
@@ -36,7 +44,9 @@ require(['jquery', 'template', 'socket'], function($, tpl, socket){
 					name: $form.find('input').val()
 				}
 			});
-		}).appendTo('body').on('click', '.popup_close', function(){
+		})
+			//.appendTo('body')
+			.on('click', '.popup_close', function(){
 			$dialog[0].close();
 		}).on('click', 'td button', function(e){
 			var name =  $(this).next().val();
@@ -80,10 +90,12 @@ require(['jquery', 'template', 'socket'], function($, tpl, socket){
 		//.appendTo('.module_content')
 		;
 
-	var $infoDialog = $('<dialog/>', {
-		'class': 'module module-popup big'
-		, id: 'info'
-	}).append('<ul></ul>').appendTo('body');
+	var $infoDialog =
+		//$('#info');
+	//	$('<dialog/>', {
+	//	'class': 'module module-popup big'
+	//	, id: 'info'
+	//}).append('<ul></ul>').appendTo('body');
 
 	//----- socket 接收事件主题注册 -----
 	socket.register({

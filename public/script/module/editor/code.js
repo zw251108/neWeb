@@ -90,7 +90,8 @@ require(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g,
 			name: '四行布局', type: '1'}, {
 			name: '四列布局', type: '2'}, {
 			name: '四角布局', type: '3'}, {
-			name: '回到默认', type: '0'}]).join('')).on('click', 'li', function(){
+			name: '回到默认', type: '0'
+		}]).join('')).on('click', 'li', function(){
 			var $that = $(this)
 				, type = $that.data('type')
 				;

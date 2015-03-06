@@ -198,14 +198,12 @@ module.exports = function(web, db, socket, metro){
 
 	web.get('/bower/', function(req, res){
 		var index = Bower.index;
-		db.query(index.sql, function(e, data){console.log(data);
+		db.query(index.sql, function(e, rs){
 			if( !e ){
 				res.send(tpl.html('module', {
 					title: '前端组件管理 Bower'
 					, modules: tpl.mainTpl({
-						id: 'bower'
-						, size: 'large'
-						, title: '前端组件管理 bower'
+						id: 'bower', size: 'large', title: '前端组件管理 bower'
 						, toolbar: tpl.toolbarTpl([{
 							id: 'switch_dialog', icon: 'search', title: '搜索组件'
 						}]).join('')
@@ -223,10 +221,13 @@ module.exports = function(web, db, socket, metro){
 											'<th>收录时间</th>' +
 										'</tr>' +
 									'</thead>' +
-									'<tbody>'+ bowerTpl(data).join('') +'</tbody>' +
+									'<tbody>'+ bowerTpl(rs).join('') +'</tbody>' +
 								'</table>' +
 							'</div>'
-					}).join('')
+					}).join('') + tpl.popupTpl([, {
+						id: 'result', type: 'popup', size: 'big'}, {
+						id: 'info', type: 'popup', size: 'big'
+					}]).join('')
 					, script: {
 						main: '../script/bower'
 						, src: '../script/lib/require.min.js'
