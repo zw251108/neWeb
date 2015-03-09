@@ -224,7 +224,7 @@ module.exports = function(web, db, socket, metro){
 									'<tbody>'+ bowerTpl(rs).join('') +'</tbody>' +
 								'</table>' +
 							'</div>'
-					}).join('') + tpl.popupTpl([, {
+					}).join('') + tpl.popupTpl([{
 						id: 'result', type: 'popup', size: 'big'}, {
 						id: 'info', type: 'popup', size: 'big'
 					}]).join('')
@@ -238,9 +238,7 @@ module.exports = function(web, db, socket, metro){
 				console.log('\n', 'db', '\n', index.sql, '\n', e.message);
 			}
 			res.end();
-		}, function(){
-			res.end();
-		})
+		});
 	});
 
 	socket.register({

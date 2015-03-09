@@ -41,6 +41,21 @@
 		margin-bottom: -30px;
 		padding-bottom: 0;
 	}
+
+//	.CodeMirror-empty{
+////		outline: 1px solid #c22;
+//	}
+//	.CodeMirror-empty
+	.CodeMirror-focused{
+		outline: 1px solid #888;
+	}
+	.CodeMirror pre.CodeMirror-placeholder{
+		color: #999;
+	}
+
+	.CodeMirror-focused + label{
+		display: none;
+	}
 }
 
 /*----- editor -----*/
@@ -60,15 +75,18 @@
 		top: 0;
 		right: 25px;
 		min-width: 100px;
-		border: solid #a1a1a1;
+		border: solid #ddd;
 		border-width: 0 1px 1px;
 		border-radius: 0 0 10px 10px;
-		background: #efefef;
-		color: #000;
+//		background: #efefef;
+//		background: #fff;
+		background: rgba(255, 255, 255, .5);
+
+		color: #888;
 		font-size: 12px;
 		line-height: 2em;
 		text-align: center;
-		opacity: .6;
+//		opacity: .6;
 	}
 
 	&:hover label{

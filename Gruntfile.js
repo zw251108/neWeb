@@ -106,6 +106,10 @@ module.exports = function(grunt){
 					//, 'public/script/plugin/codeMirror/addon/edit/closetag.js': ['bower_components/codemirror/addon/edit/closetag.js']
 					//// 全屏显示
 					//, 'public/script/plugin/codeMirror/addon/display/fullscreen.js': ['bower_components/codemirror/addon/display/fullscreen.js']
+
+					// placeholder
+					, 'public/script/plugin/codeMirror/addon/display/placeholder.js': ['bower_components/codemirror/addon/display/placeholder.js']
+
 					//// 代码检测
 					//, 'public/script/plugin/codeMirror/addon/lint/lint.js':
 					//	['bower_components/codemirror/addon/lint/lint.js']
@@ -115,10 +119,12 @@ module.exports = function(grunt){
 					//	['bower_components/codemirror/addon/lint/javascript-lint.js']
 					//, 'public/script/plugin/codeMirror/addon/lint/json-lint.js':
 					//	['bower_components/codemirror/addon/lint/json-lint.js']
+
 					// panel
 					, 'public/script/plugin/codeMirror/addon/display/panel.js':
 						['bower_components/codemirror/addon/display/panel.js']
 
+					// emmet
 					, 'public/script/plugin/codeMirror/emmet/emmet.min.js':
 						['bower_components/codemirror-emmet/dist/emmet.js']
 //					// pace

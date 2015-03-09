@@ -41,12 +41,36 @@ var Editor = {
 				'>input#id[type=hidden name=id value=%Id%]' +
 				'+input#cssLib[type=hidden name=css_lib value=%css_lib%]' +
 				'+input#jsLib[type=hidden name=js_lib value=%js_lib%]' +
-				'+div.editor_area.editor_area-html>label.hidden[for=html]{HTML}+textarea#html.hidden[name=html placeholder=body之间的HTML代码]{%html%}' +
-				'^div.editor_area.editor_area-css>label.hidden[for=css]{CSS}+textarea#css.hidden[name=css placeholder=CSS代码]{%css%}' +
-				'^div.editor_area.editor_area-js>label.hidden[for=js]{JavaScript}+textarea#js.hidden[name=js placeholder=JavaScript代码]{%js%}' +
+				'+div.editor_area.editor_area-html>textarea#html.hidden[name=html placeholder=body&nbsp;之间的&nbsp;HTML代码]{%html%}+label.hidden[for=html]{HTML}' +
+				'^div.editor_area.editor_area-css>textarea#css.hidden[name=css placeholder=CSS&nbsp;代码]{%css%}+label.hidden[for=css]{CSS}' +
+				'^div.editor_area.editor_area-js>textarea#js.hidden[name=js placeholder=JavaScript&nbsp;代码]{%js%}+label.hidden[for=js]{JavaScript}' +
 				'^div.editor_area.editor_area-rs>label.hidden{Result}+iframe#result.editor_rs[name=result]'
 	})
 	//, result        = tpl('editor/result')
+	, resCode = function(rs){
+		return tpl.html('module', {
+			title: '前端编辑器 Editor'
+			, modules: tpl.mainTpl({
+				id: 'editor'
+				, title: '前端编辑器 editor'
+				, toolbar: tpl.toolbarTpl([{
+					id: 'changeSkin',   icon: 'skin',   title: '更改皮肤'}, {
+					id: 'changeLayout', icon: 'layout', title: '更改布局'}, {
+					id: 'lib',          icon: 'lib',    title: '引用组件'}, {
+					id: 'newWin',       icon: 'window', title: '在新窗口浏览'}, {
+					id: 'run',          icon: 'play',   title: '运行'}, {
+					id: 'save',         icon: 'save',   title: '保存'
+				}]).join('')
+				, content: codeEditTpl(rs).join('')
+			}).join('') + tpl.popupTpl({
+				id: 'lib_bower', type: 'popup'
+			})
+			, script: {
+				main: '../script/module/editor/code'
+				, src: '../script/lib/require.min.js'
+			}
+		});
+	}
 	;
 
 module.exports = function(web, db, socket, metro){
@@ -68,7 +92,6 @@ module.exports = function(web, db, socket, metro){
 					title: '前端编辑器 Editor'
 					, modules: tpl.mainTpl({
 						id: 'editor'
-						, size: 'large'
 						, title: '前端编辑器 editor'
 						, toolbar: tpl.toolbarTpl([{
 							id: 'newCode',  icon: 'file-code',  title: '新建代码'}, {
@@ -93,40 +116,22 @@ module.exports = function(web, db, socket, metro){
 			, id = req.query.id || ''
 			;
 
-		if( id ){
+		if( id !== '0' ){
 			db.query(code.sql, [id], function(e, rs){
 				if( !e ){
 					rs = code.handler( rs );
 
-					res.send(tpl.html('module', {
-						title: '前端编辑器 Editor'
-						, modules: tpl.mainTpl([{
-							id: 'editor'
-							, size: 'large'
-							, title: '前端编辑器 editor'
-							, toolbar: tpl.toolbarTpl([{
-								id: 'changeSkin',   icon: 'skin',   title: '更改皮肤'}, {
-								id: 'changeLayout', icon: 'layout', title: '更改布局'}, {
-								id: 'lib',          icon: 'lib',    title: '引用组件'}, {
-								id: 'newWin',       icon: 'window', title: '在新窗口浏览'}, {
-								id: 'run',          icon: 'play',   title: '运行'}, {
-								id: 'save',         icon: 'save',   title: '保存'
-							}]).join('')
-							, content: codeEditTpl(rs).join('')
-						}]).join('') + tpl.popupTpl({
-							id: 'lib_bower', type: 'popup'
-						})
-						, script: {
-							main: '../script/module/editor/code'
-							, src: '../script/lib/require.min.js'
-						}
-					}) );
+					res.send( resCode(rs) );
 				}
 				else{
 					console.log('\n', 'db', '\n', code.sql, '\n', e.message);
 				}
 				res.end();
 			});
+		}
+		else if( id === '0' ){
+			res.send( resCode({}) );
+			res.end();
 		}
 		else{
 			res.end();

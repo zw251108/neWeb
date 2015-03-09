@@ -17,6 +17,7 @@ define(['plugin/codeMirror/lib/codemirror'
 	, 'plugin/codeMirror/addon/fold/brace-fold'
 	, 'plugin/codeMirror/addon/fold/xml-fold'
 
+	, 'plugin/codeMirror/addon/display/placeholder'
 	, 'plugin/codeMirror/addon/display/panel'
 
 	, 'plugin/codeMirror/emmet/emmet.min'

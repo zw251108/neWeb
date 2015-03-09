@@ -101,9 +101,9 @@ module.exports = {
 			'+div.module_content'
 	})
 	, popupTpl:         emmetTpl({
-		template: 'dialog#popup%id%.module.module-popup.%size%{%content%}' +
-			'>ul.toolbar{%toolbar%}' +
-			'+div.module_content{%content%}' +
+		template: 'dialog#%id%.module.module-popup.%size%{%content%}' +
+			'>ul.toolbar>li>button.icon.icon-cancel.module_close' +
+			'^^div.module_content{%content%}' +
 			'+div.btnGroup{%button%}'
 	})
 	, toolbarTpl:       emmetTpl({

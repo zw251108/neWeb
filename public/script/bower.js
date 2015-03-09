@@ -14,26 +14,13 @@ require(['jquery', 'template', 'socket'], function($, tpl, socket){
 			template: 'tr>td>button[type=button]{安装}+input[type=hidden value=%name%]^td{%name%}+td[title=%url%]{%url%}'
 		})
 
-		, $dialog
-		//	= $('<dialog/>', {
-		//	'class': 'module module-popup big'
-		//})
-	= $('#result').find('.module_content')
-			.append(
-			//'<ul class="toolbar">' +
-			//		'<li><button type="button" class="icon icon-cancel popup_close f-r"></button><li>' +
-			//'</ul>' +
-			//'<div class="module_content">' +
-			'<form action="#" id="bowerSearch">' +
+		, $dialog = $('#result').find('.module_content')
+			.append('<form action="#" id="bowerSearch">' +
 				'<input class="input" type="text"/><button class="btn icon icon-search" type="submit" value=""></button>' +
 			'</form>' +
 			'<div class="bower_resultList">' +
-			'<table><thead><tr><th></th><th>组件名称</th><th>组件来源</th></tr></thead><tbody></tbody></table>' +
-			//'</div>' +
-			'</div>'
-		)
-			.end()
-			.on('submit', '#bowerSearch', function(e){
+				'<table><thead><tr><th></th><th>组件名称</th><th>组件来源</th></tr></thead><tbody></tbody></table>' +
+			'</div>').end().on('submit', '#bowerSearch', function(e){
 			e.preventDefault();
 
 			var $form = $(this);
@@ -44,9 +31,7 @@ require(['jquery', 'template', 'socket'], function($, tpl, socket){
 					name: $form.find('input').val()
 				}
 			});
-		})
-			//.appendTo('body')
-			.on('click', '.popup_close', function(){
+		}).on('click', '.popup_close', function(){
 			$dialog[0].close();
 		}).on('click', 'td button', function(e){
 			var name =  $(this).next().val();
@@ -62,36 +47,12 @@ require(['jquery', 'template', 'socket'], function($, tpl, socket){
 			console.log( name );
 		})
 		;
-	//$('<style></style>').html('.module_content{position:relative;}' +
-	//	'.wrap{overflow:auto;margin-left:152px;margin-bottom:10px;}' +
-	//	'table{table-layout:fixed;}' +
-	//	'th,td{height:100px;border:1px solid #c0c0c0;color:#000;}' +
-	//	'.lib_table th:first-child,.lib_table td:first-child{position:absolute;left:10px;height:100px;width:150px;text-align:center;}' +
-	//	'li{overflow: hidden;}' +
-	//	'.bower_level{float:left; min-width: 80px; margin:0 10px;color:red;}.bower_level:before{content:"["}.bower_level:after{content:"]"}' +
-	//	'.bower_id{float: left; min-width: 120px; margin: 0 10px;color:green}' +
-	//	'.bower_message{float: left; margin: 0 0 0 20px;}' +
-	//	'.module-popup{height:auto;max-height:500px;background:#fff;}' +
-	//	'.module-popup th,.module-popup td{height:2em;}' +
-	//	'.module-popup th:first-child,.module-popup td:first-child{width:150px;text-align:center;}' +
-	//	'.module-popup th:last-child,.module-popup td:last-child{overflow:hidden;max-width:300px;text-overflow:ellipsis;white-space:nowrap;}' +
-	//	'dialog{overflow:auto;padding:0;}dialog::backdrop{background:rgba(0,0,0,.5);}' +
-	//	'.showModal{position:absolute;top:0;left:0;}').appendTo('head');
 
-	//$('<button/>', {
-	//	id: 'switch_dialog'
-	//	, 'class': 'icon icon-search showModal'
-	//	, text: '显示'
-	//})
-	$('#switch_dialog')
-		.on('click', function(e){
+	$('#switch_dialog').on('click', function(e){
 		$dialog[0].showModal();
-	})
-		//.appendTo('.module_content')
-		;
+	});
 
-	var $infoDialog =
-		//$('#info');
+	var $infoDialog = $('#info');
 	//	$('<dialog/>', {
 	//	'class': 'module module-popup big'
 	//	, id: 'info'
