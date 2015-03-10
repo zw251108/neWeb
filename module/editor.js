@@ -130,7 +130,7 @@ module.exports = function(web, db, socket, metro){
 			});
 		}
 		else if( id === '0' ){
-			res.send( resCode({}) );
+			res.send( resCode({Id: 0}) );
 			res.end();
 		}
 		else{
@@ -260,9 +260,12 @@ module.exports = function(web, db, socket, metro){
 
 			arr.push.call(arr, query.html, query.css, query.js, query.cssLib, query.jsLib);
 
-			if( id ){
+			if( id !== '0' ){
 				sql = editor.edit;
 				arr.push( id );
+			}
+			else if( id === '0' ){
+
 			}
 			else{
 				sql = editor.save;
