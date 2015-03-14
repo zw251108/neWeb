@@ -14,9 +14,6 @@ public/cache.manifest
 # 样式文件 由 less 编译生成
 public/style/style.css
 
-# 图片文件夹
-public/image/
-
 # 文件上传文件夹
 public/upload/
 
