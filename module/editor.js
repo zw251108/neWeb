@@ -17,7 +17,7 @@ var Editor = {
 			sql: 'update editor set html=?,css=?,js=?,css_lib=?,js_lib=? where Id=?'
 		}
 		, save: {
-			sql: 'insert into editor(status,html,css,js,css_lib,js_lib) values(1,?,?,?,?,?)'
+			sql: 'insert into editor(status,html,css,js,css_lib,js_lib,name,preview,create_time) values(1,?,?,?,?,?,?,\'../image/default/no-pic.png\',now())'
 		}
 	}
 
@@ -62,9 +62,20 @@ var Editor = {
 					id: 'save',         icon: 'save',   title: '保存'
 				}]).join('')
 				, content: codeEditTpl(rs).join('')
-			}).join('') + tpl.popupTpl({
-				id: 'lib_bower', type: 'popup'
-			})
+			}).join('') + tpl.popupTpl([{
+				id: 'editorLib',    size: 'normal'}, {
+				id: 'editorSave',   size: 'normal'
+					, content: '<div class="formGroup">' +
+						'<label for="codeName">请输入名称</label>' +
+						'<input type="text" id="codeName" class="input" placeholder="请输入标题" value="%name%"  data-validator="title"/>' +
+					//'</div>' +
+					//'<div class="formGroup">' +
+					//	'<label for="codeTags">请选择标签</label>' +
+					//	'<div id="Tag">' +
+					//		'<input type="text" id="" class="input"/>' +
+					'</div>'
+					, button: '<button type="button" id="codeSave" class="btn">保存</button>'
+			}]).join('')
 			, script: {
 				main: '../script/module/editor/code'
 				, src: '../script/lib/require.min.js'
@@ -265,10 +276,8 @@ module.exports = function(web, db, socket, metro){
 				arr.push( id );
 			}
 			else if( id === '0' ){
-
-			}
-			else{
 				sql = editor.save;
+				arr.push( query.codeName );
 			}
 			db.query(sql.sql, arr, function(e){
 				if( !e ){

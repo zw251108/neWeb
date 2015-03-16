@@ -26,9 +26,23 @@ require(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g,
 		, js = $editor.find('#js')
 		, $rs = $editor.find('#result')
 
-		, $skinLink = $('<link />', {
-			rel: 'stylesheet'
-		}).appendTo('head')
+		, runCode = function(html, css, js, cssLib, jsLib){
+			return '<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"/>' +
+				'<!--[if lt IE 9]><meta http-equiv="content-type" content="text/html; charset=utf-8" /><![endif]-->' +
+				'<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>' +
+				'<title>前端代码运行结果</title>' +
+				(cssLib ? $.map(cssLib.split(','), function(d){return '<link rel="stylesheet" href="'+ d +'">'}).join('') : '') +
+				'<style>' +
+				css +
+				'</style></head><body>' +
+				html +
+				(jsLib ? $.map(jsLib.split(','), function(d){return '<script src="'+ d +'"></script>'}).join('') : '') +
+				'<script>' +
+				js +
+				'</script></body></html>';
+		}
+
+		, $skinLink = $('<link />', {rel: 'stylesheet'}).appendTo('head')
 
 		, listTpl = $.template({
 			template: 'li[title=%name% data-type=%type%]{%name%}'
@@ -153,11 +167,13 @@ require(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g,
 
 		})
 
-		, $save  = $toolbar.find('#save').on('click', function(){
+		, $savePopup = $('#editorSave').on('click', '#codeSave', function(){
+
 			socket.emit('getData', {
 				topic: 'editor/save'
 				, query: {
 					id: $id.val()
+					, codeName: $codeName.val()
 					, html: html.getValue()
 					, css: css.getValue()
 					, js: js.getValue()
@@ -165,23 +181,15 @@ require(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g,
 					, jsLib: $jsLib.val()
 				}
 			});
+			$savePopup[0].close();
+		}).on('click', '.module_close', function(){
+			$savePopup[0].close();
 		})
-
-		, runCode = function(html, css, js, cssLib, jsLib){
-			return '<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"/>' +
-				'<!--[if lt IE 9]><meta http-equiv="content-type" content="text/html; charset=utf-8" /><![endif]-->' +
-				'<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>' +
-				'<title>前端代码运行结果</title>' +
-				(cssLib ? $.map(cssLib.split(','), function(d){return '<link rel="stylesheet" href="'+ d +'">'}).join('') : '') +
-				'<style>' +
-				css +
-				'</style></head><body>' +
-				html +
-				(jsLib ? $.map(jsLib.split(','), function(d){return '<script src="'+ d +'"></script>'}).join('') : '') +
-				'<script>' +
-				js +
-				'</script></body></html>';
-		}
+		, $codeName = $savePopup.find('#codeName')
+		, $save  = $toolbar.find('#save').on('click', function(){
+			$codeName.val( $editor.find('h3').html() );
+			$savePopup[0].showModal();
+		})
 		;
 
 	g.mod('$editor', $editor);

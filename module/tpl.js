@@ -84,29 +84,29 @@ var fs = require('fs')
 	;
 
 module.exports = {
-	tpl:                function(filePath){
+	tpl:        function(filePath){
 		return readTpl( filePath );
 	}
-	, mainTpl:        emmetTpl({
+	, mainTpl:  emmetTpl({
 		template: 'section#%id%.module.module-main.module-%id%.%size%' +
 			'>h2.module_title.icon.icon-%id%{%title%}' +
 			'+ul.toolbar{%toolbar%}' +
 			'+div.module_content{%content%}'
 	})
-	, metroTpl:         emmetTpl({
+	, metroTpl: emmetTpl({
 		template: 'a[href=%id%/]>section#%id%.module.module-metro.module-%id%.%size%' +
 			'>h2.module_title.icon.icon-%id%{%title%}' +
 			'+ul.toolbar>li>button.icon.icon-cancel.module_close' +
 			'^^div.m_info{%info%}' +
 			'+div.module_content'
 	})
-	, popupTpl:         emmetTpl({
-		template: 'dialog#%id%.module.module-popup.%size%{%content%}' +
+	, popupTpl: emmetTpl({
+		template: 'dialog#%id%.module.module-popup.%size%' +
 			'>ul.toolbar>li>button.icon.icon-cancel.module_close' +
 			'^^div.module_content{%content%}' +
 			'+div.btnGroup{%button%}'
 	})
-	, toolbarTpl:       emmetTpl({
+	, toolbarTpl:   emmetTpl({
 		template: 'li>button#%id%.btn.icon.icon-%icon%[title=%title%]{%text%}'
 		, filter: {
 			icon: function(d){
@@ -117,10 +117,10 @@ module.exports = {
 	, stylesheetTpl:    emmetTpl({
 		template: 'link[rel=stylesheet href=%path%]'
 	})
-	, styleTpl:         emmetTpl({
+	, styleTpl: emmetTpl({
 		template: 'style{%style%}'
 	})
-	, scriptTpl:        emmetTpl({
+	, scriptTpl:    emmetTpl({
 		template: 'script[data-main=%main% src=%src%]'
 	})
 	, scriptCodeTpl:    emmetTpl({

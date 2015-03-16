@@ -13,10 +13,12 @@ script/ui/jquery.emmetTpl.js
 
 script/plugin/codeMirror/lib/codemirror.css
 script/plugin/codeMirror/lib/codemirror.js
+
 script/plugin/codeMirror/mode/xml/xml.js
 script/plugin/codeMirror/mode/htmlmixed/htmlmixed.js
 script/plugin/codeMirror/mode/javascript/javascript.js
 script/plugin/codeMirror/mode/css/css.js
+
 script/plugin/codeMirror/addon/comment/comment.js
 script/plugin/codeMirror/addon/comment/continuecomment.js
 
@@ -26,11 +28,8 @@ script/plugin/codeMirror/addon/fold/foldgutter.js
 script/plugin/codeMirror/addon/fold/brace-fold.js
 script/plugin/codeMirror/addon/fold/xml-fold.js
 
-script/plugin/codeMirror/addon/addon/lint/lint.css
-script/plugin/codeMirror/addon/lint/lint
-script/plugin/codeMirror/addon/lint/css-lint
-script/plugin/codeMirror/addon/lint/javascript-lint
-script/plugin/codeMirror/addon/lint/json-lint
+script/plugin/codeMirror/addon/display/placeholder.js
+script/plugin/codeMirror/addon/display/panel.js
 
 script/plugin/codeMirror/emmet/emmet.min.js
 

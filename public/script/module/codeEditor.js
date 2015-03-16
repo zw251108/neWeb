@@ -14,6 +14,7 @@ define(['plugin/codeMirror/lib/codemirror'
 
 	, 'css!plugin/codeMirror/addon/fold/foldgutter.css'
 	, 'plugin/codeMirror/addon/fold/foldcode'
+	, 'plugin/codeMirror/addon/fold/foldgutter'
 	, 'plugin/codeMirror/addon/fold/brace-fold'
 	, 'plugin/codeMirror/addon/fold/xml-fold'
 
