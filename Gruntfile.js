@@ -1,3 +1,160 @@
+var jsFiles = {
+	/**
+	 * JavaScript 工具库
+	 * */
+	// jQuery
+	'public/script/lib/jquery.min.js': ['bower_components/jquery/dist/jquery.min.js']
+	// require
+	, 'public/script/lib/require.min.js': ['bower_components/requirejs/require.js']
+
+	, 'public/script/lib/css.js': ['bower_components/require-css/css.js']
+
+	//// underscroe
+	//, 'public/script/lib/underscore/underscore.min.js': ['bower_components/underscore/underscore.js']
+	//// html5shiv
+	//, 'public/script/lib/html5shiv/html5shiv.min.js': ['bower_components/html5shiv/dist/html5shiv.min.js']
+	//// modernizr
+	//, 'public/script/lib/modernizr/modernizr.js': ['bower_components/modernizr/modernizr.js']
+	/**
+	 * 数据可视化
+	 * */
+	// d3
+	, 'public/script/lib/d3.min.js': ['bower_components/d3/d3.js']
+
+	///**
+	// * UI 框架
+	// * */
+	//// jQuery UI
+	//, 'public/script/lib/jQueryUI/jquery-ui.custom.min.js': ['bower_components/jquery-ui/ui/minified/jquery-ui.custom.min.js']
+	//// bootstrap
+	//, 'public/script/lib/bootstrap/js/bootstrap.min.js': ['bower_components/bootstrap/dist/js/bootstrap.min.js']
+	//// foundation
+	//, 'public/script/lib/foundation/js/foundation.min.js': ['bower_components/foundation/js/foundation.min.js']
+	///**
+	// * MV* 框架
+	// * */
+	//// Angular
+	//, 'public/script/lib/angular/angular.min.js': ['bower_components/angular/angular.min.js']
+	//, 'public/script/lib/angular/angular-route.min.js': ['bower_components/angular-route/angular-route.min.js']
+	//// Ember
+	//, 'public/script/lib/ember/ember.min.js': ['bower_components/ember/ember.js']
+	//, 'public/script/lib/ember/ember-data.min.js': ['bower_components/ember-data/ember-data.js']
+	//, 'public/script/lib/ember/ember-localstorage_adapter.js': ['bower_components/ember-localstorage-adapter/localstorage_adapter.js']
+	///**
+	// * 游戏、动画相关框架
+	// * 渲染引擎、物理引擎
+	// * */
+	//// threejs
+	//, 'public/script/lib/threejs/three.min.js': ['bower_components/threejs/build/three.min.js']
+	//// tweenjs
+	//, 'public/script/lib/tweenjs/tween.min.js': ['bower_components/tweenjs/build/tween.min.js']
+	//// CutJS
+	//, 'public/script/lib/cutjs/cut.web.min.js': ['bower_components/cutjs/dist/cut.web.min.js']
+	//// PhysicsJS
+	//, 'public/script/lib/physicsjs/physicsjs-full.min.js': ['bower_components/physicsjs/dist/physicsjs-full-0.6.0.min.js']
+	//// isomer
+	//, 'public/script/lib/isomer/isomer.min.js': ['bower_components/isomer/dist/isomer.min.js']
+	//// svg.js
+	//, 'public/script/lib/svgjs/svg.min.js': ['bower_components/svg.js/dist/svg.min.js']
+	//// kiwi.js
+	//, 'public/script/lib/kiwi/kiwi.min.js': ['bower_components/kiwijs/build/kiwi.min.js']
+	//// verlet.js
+	//, 'public/script/lib/verlet/verlet.min.js': ['bower_components/verlet/js/verlet-1.0.0.min.js']
+	//// qunit
+	//, 'public/script/lib/qunit/qunit.js': ['bower_components/qunit/qunit/qunit.js']
+	/**
+	 * 单一功能插件
+	 * */
+	// Code Mirror
+	, 'public/script/plugin/codeMirror/lib/codemirror.js':  ['bower_components/codemirror/lib/codemirror.js']
+	, 'public/script/plugin/codeMirror/mode/xml/xml.js':    ['bower_components/codemirror/mode/xml/xml.js']
+	, 'public/script/plugin/codeMirror/mode/htmlmixed/htmlmixed.js':    ['bower_components/codemirror/mode/htmlmixed/htmlmixed.js']
+	, 'public/script/plugin/codeMirror/mode/javascript/javascript.js':  ['bower_components/codemirror/mode/javascript/javascript.js']
+	, 'public/script/plugin/codeMirror/mode/css/css.js':    ['bower_components/codemirror/mode/css/css.js']
+	, 'public/script/plugin/codeMirror/addon/comment/comment.js':   ['bower_components/codemirror/addon/comment/comment.js']
+	, 'public/script/plugin/codeMirror/addon/comment/continuecomment.js':   ['bower_components/codemirror/addon/comment/continuecomment.js']
+	, 'public/script/plugin/codeMirror/addon/fold/foldcode.js':     ['bower_components/codemirror/addon/fold/foldcode.js']
+	, 'public/script/plugin/codeMirror/addon/fold/foldgutter.js':   ['bower_components/codemirror/addon/fold/foldgutter.js']
+	, 'public/script/plugin/codeMirror/addon/fold/brace-fold.js':	['bower_components/codemirror/addon/fold/brace-fold.js']
+	, 'public/script/plugin/codeMirror/addon/fold/xml-fold.js':	    ['bower_components/codemirror/addon/fold/xml-fold.js']
+
+	//// 括号 自动闭合
+	//, 'public/script/plugin/codeMirror/addon/edit/closebrackets.js': ['bower_components/codemirror/addon/edit/closebrackets.js']
+	//// 标签 自动闭合
+	//, 'public/script/plugin/codeMirror/addon/edit/closetag.js': ['bower_components/codemirror/addon/edit/closetag.js']
+	//// 全屏显示
+	//, 'public/script/plugin/codeMirror/addon/display/fullscreen.js': ['bower_components/codemirror/addon/display/fullscreen.js']
+
+	// placeholder
+	, 'public/script/plugin/codeMirror/addon/display/placeholder.js':   ['bower_components/codemirror/addon/display/placeholder.js']
+
+	//// 代码检测
+	//, 'public/script/plugin/codeMirror/addon/lint/lint.js': ['bower_components/codemirror/addon/lint/lint.js']
+	//, 'public/script/plugin/codeMirror/addon/lint/css-lint.js': ['bower_components/codemirror/addon/lint/css-lint.js']
+	//, 'public/script/plugin/codeMirror/addon/lint/javascript-lint.js': ['bower_components/codemirror/addon/lint/javascript-lint.js']
+	//, 'public/script/plugin/codeMirror/addon/lint/json-lint.js': ['bower_components/codemirror/addon/lint/json-lint.js']
+
+	// panel
+	, 'public/script/plugin/codeMirror/addon/display/panel.js':         ['bower_components/codemirror/addon/display/panel.js']
+
+	// emmet
+	, 'public/script/plugin/codeMirror/emmet/emmet.min.js':             ['bower_components/codemirror-emmet/dist/emmet.js']
+
+	//// pace
+	//, 'public/script/plugin/pace/pace.min.js': ['bower_components/pace/pace.min.js']
+	//// handlebars
+	//, 'public/script/plugin/handlebars/handlebars.min.js': ['bower_components/handlebars/handlebars.min.js']
+	//// Highcharts
+	//, 'public/script/plugin/highcharts/highcharts.js': ['bower_components/highcharts.com/js/highcharts.src.js']
+	//, 'public/script/plugin/highcharts/highcharts-3d.js': ['bower_components/highcharts.com/js/highcharts.src.js']
+	//, 'public/script/plugin/highcharts/highcharts-more.js': ['bower_components/highcharts.com/js/highcharts-more.src.js']
+	//, 'public/script/plugin/highcharts/modules/exporting.js': ['bower_components/highcharts.com/js/modules/exporting.src.js']
+	//// highlight
+	//, 'public/script/plugin/highlight/highlight.js': ['bower_components/highlightjs/highlight.pack.js']
+	//
+	//// SyntaxHighlighter
+	//, 'public/script/plugin/syntaxhighlighter/XRegExp.js': ['bower_components/SyntaxHighlighter/scripts/XRegExp.js']
+	//, 'public/script/plugin/syntaxhighlighter/shCore.js': ['bower_components/SyntaxHighlighter/scripts/shCore.js']
+	//, 'public/script/plugin/syntaxhighlighter/shAutoloader.js': ['bower_components/SyntaxHighlighter/scripts/shAutoloader.js']
+	//, 'public/script/plugin/syntaxhighlighter/shBrushJScript.js': ['bower_components/SyntaxHighlighter/scripts/shBrushJScript.js']
+	//, 'public/script/plugin/syntaxhighlighter/shBrushCss.js': ['bower_components/SyntaxHighlighter/scripts/shBrushCss.js']
+	//, 'public/script/plugin/syntaxhighlighter/shBrushXml.js': ['bower_components/SyntaxHighlighter/scripts/shBrushXml.js']
+	//
+	//// Stellar
+	//, 'public/script/plugin/stellar/jquery.stellar.min.js': ['bower_components/jquery.stellar/jquery.stellar.min.js']
+	//// scrollReveal
+	//, 'public/script/plugin/scrollReveal/scrollReveal.min.js': ['bower_components/scrollReveal.js/dist/scrollReveal.min.js']
+	//// skrollr
+	//, 'public/script/plugin/skrollr/skrollr.min.js': ['bower_components/skrollr/dist/skrollr.min.js']
+	//// transit
+	//, 'public/script/plugin/transit/jquery.transit.js': ['bower_components/jquery.transit/jquery.transit.js']
+	//// impress
+	//, 'public/script/plugin/impress/impress.js': ['bower_components/impress.js/js/impress.js']
+	//// chardin.js
+	//, 'public/script/plugin/chardin/chardinjs.min.js': ['bower_components/chardin.js/chardinjs.min.js']
+	//// intro.js
+	//, 'public/script/plugin/intro/intro.js': ['bower_components/intro.js/intro.js']
+	//// ZeroClipboard.min.js
+	//, 'public/script/plugin/ZeroClipboard/ZeroClipboard.min.js': ['bower_components/zeroclipboard/ZeroClipboard.min.js']
+	//// kreate
+	//, 'public/script/plugin/kreate/kreate.min.js': ['bower_components/kreate/dist/kreate.min.js']
+	//// randomColor
+	//, 'public/script/plugin/randomColor/randomColor.js': ['bower_components/randomColor/randomColor.js']
+	//// shine
+	//, 'public/script/plugin/shine/shine.min.js': ['bower_components/shine/dist/shine.min.js']
+	///**
+	//* bower 目前未收录
+	//* */
+	//// facedetection
+	//, 'public/script/plugin/facedetection/jquery.facedetection.js': ['bower_components/facedetection/jquery.facedetection.js']
+	//, 'public/script/plugin/facedetection/facedetection/ccv.js': ['bower_components/facedetection/facedetection/ccv.js']
+	//, 'public/script/plugin/facedetection/facedetection/face.js': ['bower_components/facedetection/facedetection/face.js']
+	//// harmony
+	//, 'public/script/plugin/harmony/harmony.js': ['bower_components/harmony/harmony.js']
+	//, 'public/script/plugin/harmony/dollar.js': ['bower_components/harmony/dollar.js']
+	//, 'impress/impress.js': ['bower_components/impress.js/js/impress.js']
+};
+
 module.exports = function(grunt){
 	grunt.initConfig({
 		concurrent: {
@@ -10,177 +167,7 @@ module.exports = function(grunt){
 		}
 		, uglify: {
 			destiny: {
-				files: {
-					/**
-					 * JavaScript 工具库
-					 * */
-					// jQuery
-					'public/script/lib/jquery.min.js': ['bower_components/jquery/dist/jquery.min.js']
-					// require
-					, 'public/script/lib/require.min.js': ['bower_components/requirejs/require.js']
-
-					, 'public/script/lib/css.js': ['bower_components/require-css/css.js']
-
-//					// underscroe
-//					, 'public/script/lib/underscore/underscore.min.js': ['bower_components/underscore/underscore.js']
-//					// html5shiv
-//					, 'public/script/lib/html5shiv/html5shiv.min.js': ['bower_components/html5shiv/dist/html5shiv.min.js']
-//					// modernizr
-//					, 'public/script/lib/modernizr/modernizr.js': ['bower_components/modernizr/modernizr.js']
-					/**
-					 * 数据可视化
-					 * */
-					// d3
-					, 'public/script/lib/d3.min.js': ['bower_components/d3/d3.js']
-//                  /**
-//					 * UI 框架
-//					 * */
-//					// jQuery UI
-//					, 'public/script/lib/jQueryUI/jquery-ui.custom.min.js': ['bower_components/jquery-ui/ui/minified/jquery-ui.custom.min.js']
-//					// bootstrap
-//					, 'public/script/lib/bootstrap/js/bootstrap.min.js': ['bower_components/bootstrap/dist/js/bootstrap.min.js']
-//					// foundation
-//					, 'public/script/lib/foundation/js/foundation.min.js': ['bower_components/foundation/js/foundation.min.js']
-//					/**
-//					 * MV* 框架
-//					 * */
-//					// Angular
-//					, 'public/script/lib/angular/angular.min.js': ['bower_components/angular/angular.min.js']
-//					, 'public/script/lib/angular/angular-route.min.js': ['bower_components/angular-route/angular-route.min.js']
-//					// Ember
-//					, 'public/script/lib/ember/ember.min.js': ['bower_components/ember/ember.js']
-//					, 'public/script/lib/ember/ember-data.min.js': ['bower_components/ember-data/ember-data.js']
-//					, 'public/script/lib/ember/ember-localstorage_adapter.js': ['bower_components/ember-localstorage-adapter/localstorage_adapter.js']
-//					/**
-//					 * 游戏、动画相关框架
-//					 * 渲染引擎、物理引擎
-//					 * */
-//					// threejs
-//					, 'public/script/lib/threejs/three.min.js': ['bower_components/threejs/build/three.min.js']
-//			        // tweenjs
-//					, 'public/script/lib/tweenjs/tween.min.js': ['bower_components/tweenjs/build/tween.min.js']
-//					// CutJS
-//					, 'public/script/lib/cutjs/cut.web.min.js': ['bower_components/cutjs/dist/cut.web.min.js']
-//					// PhysicsJS
-//					, 'public/script/lib/physicsjs/physicsjs-full.min.js': ['bower_components/physicsjs/dist/physicsjs-full-0.6.0.min.js']
-//					// isomer
-//					, 'public/script/lib/isomer/isomer.min.js': ['bower_components/isomer/dist/isomer.min.js']
-//					// svg.js
-//					, 'public/script/lib/svgjs/svg.min.js': ['bower_components/svg.js/dist/svg.min.js']
-//					// kiwi.js
-//					, 'public/script/lib/kiwi/kiwi.min.js': ['bower_components/kiwijs/build/kiwi.min.js']
-//					// verlet.js
-//					, 'public/script/lib/verlet/verlet.min.js': ['bower_components/verlet/js/verlet-1.0.0.min.js']
-//					// qunit
-//					, 'public/script/lib/qunit/qunit.js': ['bower_components/qunit/qunit/qunit.js']
-					/**
-					 * 单一功能插件
-					 * */
-					// Code Mirror
-					, 'public/script/plugin/codeMirror/lib/codemirror.js':
-						['bower_components/codemirror/lib/codemirror.js']
-					, 'public/script/plugin/codeMirror/mode/xml/xml.js':
-						['bower_components/codemirror/mode/xml/xml.js']
-					, 'public/script/plugin/codeMirror/mode/htmlmixed/htmlmixed.js':
-						['bower_components/codemirror/mode/htmlmixed/htmlmixed.js']
-					, 'public/script/plugin/codeMirror/mode/javascript/javascript.js':
-						['bower_components/codemirror/mode/javascript/javascript.js']
-					, 'public/script/plugin/codeMirror/mode/css/css.js':
-						['bower_components/codemirror/mode/css/css.js']
-					, 'public/script/plugin/codeMirror/addon/comment/comment.js':
-						['bower_components/codemirror/addon/comment/comment.js']
-					, 'public/script/plugin/codeMirror/addon/comment/continuecomment.js':
-						['bower_components/codemirror/addon/comment/continuecomment.js']
-					, 'public/script/plugin/codeMirror/addon/fold/foldcode.js':
-						['bower_components/codemirror/addon/fold/foldcode.js']
-					, 'public/script/plugin/codeMirror/addon/fold/foldgutter.js':
-						['bower_components/codemirror/addon/fold/foldgutter.js']
-					, 'public/script/plugin/codeMirror/addon/fold/brace-fold.js':
-						['bower_components/codemirror/addon/fold/brace-fold.js']
-					, 'public/script/plugin/codeMirror/addon/fold/xml-fold.js':
-						['bower_components/codemirror/addon/fold/xml-fold.js']
-
-					//// 括号 自动闭合
-					//, 'public/script/plugin/codeMirror/addon/edit/closebrackets.js': ['bower_components/codemirror/addon/edit/closebrackets.js']
-					//// 标签 自动闭合
-					//, 'public/script/plugin/codeMirror/addon/edit/closetag.js': ['bower_components/codemirror/addon/edit/closetag.js']
-					//// 全屏显示
-					//, 'public/script/plugin/codeMirror/addon/display/fullscreen.js': ['bower_components/codemirror/addon/display/fullscreen.js']
-
-					// placeholder
-					, 'public/script/plugin/codeMirror/addon/display/placeholder.js': ['bower_components/codemirror/addon/display/placeholder.js']
-
-					//// 代码检测
-					//, 'public/script/plugin/codeMirror/addon/lint/lint.js':
-					//	['bower_components/codemirror/addon/lint/lint.js']
-					//, 'public/script/plugin/codeMirror/addon/lint/css-lint.js':
-					//	['bower_components/codemirror/addon/lint/css-lint.js']
-					//, 'public/script/plugin/codeMirror/addon/lint/javascript-lint.js':
-					//	['bower_components/codemirror/addon/lint/javascript-lint.js']
-					//, 'public/script/plugin/codeMirror/addon/lint/json-lint.js':
-					//	['bower_components/codemirror/addon/lint/json-lint.js']
-
-					// panel
-					, 'public/script/plugin/codeMirror/addon/display/panel.js':
-						['bower_components/codemirror/addon/display/panel.js']
-
-					// emmet
-					, 'public/script/plugin/codeMirror/emmet/emmet.min.js':
-						['bower_components/codemirror-emmet/dist/emmet.js']
-//					// pace
-//					, 'public/script/plugin/pace/pace.min.js': ['bower_components/pace/pace.min.js']
-//					// handlebars
-//					, 'public/script/plugin/handlebars/handlebars.min.js': ['bower_components/handlebars/handlebars.min.js']
-//					// Highcharts
-//					, 'public/script/plugin/highcharts/highcharts.js': ['bower_components/highcharts.com/js/highcharts.src.js']
-//					, 'public/script/plugin/highcharts/highcharts-3d.js': ['bower_components/highcharts.com/js/highcharts.src.js']
-//					, 'public/script/plugin/highcharts/highcharts-more.js': ['bower_components/highcharts.com/js/highcharts-more.src.js']
-//					, 'public/script/plugin/highcharts/modules/exporting.js': ['bower_components/highcharts.com/js/modules/exporting.src.js']
-//					// highlight
-//					, 'public/script/plugin/highlight/highlight.js': ['bower_components/highlightjs/highlight.pack.js']
-
-//					// SyntaxHighlighter
-//					, 'public/script/plugin/syntaxhighlighter/XRegExp.js': ['bower_components/SyntaxHighlighter/scripts/XRegExp.js']
-//					, 'public/script/plugin/syntaxhighlighter/shCore.js': ['bower_components/SyntaxHighlighter/scripts/shCore.js']
-//					, 'public/script/plugin/syntaxhighlighter/shAutoloader.js': ['bower_components/SyntaxHighlighter/scripts/shAutoloader.js']
-//					, 'public/script/plugin/syntaxhighlighter/shBrushJScript.js': ['bower_components/SyntaxHighlighter/scripts/shBrushJScript.js']
-//					, 'public/script/plugin/syntaxhighlighter/shBrushCss.js': ['bower_components/SyntaxHighlighter/scripts/shBrushCss.js']
-//					, 'public/script/plugin/syntaxhighlighter/shBrushXml.js': ['bower_components/SyntaxHighlighter/scripts/shBrushXml.js']
-
-//					// Stellar
-//					, 'public/script/plugin/stellar/jquery.stellar.min.js': ['bower_components/jquery.stellar/jquery.stellar.min.js']
-//					// scrollReveal
-//					, 'public/script/plugin/scrollReveal/scrollReveal.min.js': ['bower_components/scrollReveal.js/dist/scrollReveal.min.js']
-//					// skrollr
-//					, 'public/script/plugin/skrollr/skrollr.min.js': ['bower_components/skrollr/dist/skrollr.min.js']
-//					// transit
-//					, 'public/script/plugin/transit/jquery.transit.js': ['bower_components/jquery.transit/jquery.transit.js']
-//					// impress
-//					, 'public/script/plugin/impress/impress.js': ['bower_components/impress.js/js/impress.js']
-//					// chardin.js
-//					, 'public/script/plugin/chardin/chardinjs.min.js': ['bower_components/chardin.js/chardinjs.min.js']
-//					// intro.js
-//					, 'public/script/plugin/intro/intro.js': ['bower_components/intro.js/intro.js']
-//					// ZeroClipboard.min.js
-//					, 'public/script/plugin/ZeroClipboard/ZeroClipboard.min.js': ['bower_components/zeroclipboard/ZeroClipboard.min.js']
-//					// kreate
-//					, 'public/script/plugin/kreate/kreate.min.js': ['bower_components/kreate/dist/kreate.min.js']
-//					// randomColor
-//					, 'public/script/plugin/randomColor/randomColor.js': ['bower_components/randomColor/randomColor.js']
-//					// shine
-//					, 'public/script/plugin/shine/shine.min.js': ['bower_components/shine/dist/shine.min.js']
-//					/**
-//					 * bower 目前未收录
-//					 * */
-//					// facedetection
-//					, 'public/script/plugin/facedetection/jquery.facedetection.js': ['bower_components/facedetection/jquery.facedetection.js']
-//					, 'public/script/plugin/facedetection/facedetection/ccv.js': ['bower_components/facedetection/facedetection/ccv.js']
-//					, 'public/script/plugin/facedetection/facedetection/face.js': ['bower_components/facedetection/facedetection/face.js']
-//					// harmony
-//					, 'public/script/plugin/harmony/harmony.js': ['bower_components/harmony/harmony.js']
-//					, 'public/script/plugin/harmony/dollar.js': ['bower_components/harmony/dollar.js']
-//					, 'impress/impress.js': ['bower_components/impress.js/js/impress.js']
-				}
+				files: jsFiles
 			}
 		}
 		, cssmin: {
@@ -378,31 +365,18 @@ module.exports = function(grunt){
 					'public/style/style.css': 'less/style.less'
 				}
 			}
-//			, production: {
-//				options: {
-//					paths: ["assets/css"],
-//					cleancss: true,
-//					modifyVars: {
-//						imgPath: '"http://mycdn.com/path/to/images"',
-//						bgColor: 'red'
-//					}
-//				},
-//				files: {
-//					"style/style.css": "less/style.less"
-//				}
-//			}
 		}
-		, htmlmin: {                                     // Task
-			//destiny: {                                      // Target
-			//	options: {                                 // Target options
-			//		removeComments: true,
-			//		collapseWhitespace: true
-			//	},
-			//	files: {                                   // Dictionary of files
-			//		'dist/index.html': 'src/index.html',     // 'destination': 'source'
-			//		'dist/contact.html': 'src/contact.html'
-			//	}
-			//}
+		, htmlmin: {
+			destiny: {
+				options: {
+					removeComments: true,
+					collapseWhitespace: true
+				},
+				files: {
+					'public/index.html': 'tpl/index.html',
+					'public/module.html': 'tpl/module.html'
+				}
+			}
 		}
 		, jsdoc: {
 			destiny: {
@@ -413,14 +387,30 @@ module.exports = function(grunt){
 
 			}
 		}
+		, watch: {
+			destiny: {
+				files: ['less/*.less', 'public/style/*.css', 'public/script/*.js']
+				, tasks: ['less']
+				, options: {
+					livereload: 9090
+				}
+			}
+		}
 	});
-	grunt.loadNpmTasks('grunt-concurrent');
+
 	grunt.loadNpmTasks('grunt-contrib-htmlmin');
 	grunt.loadNpmTasks('grunt-contrib-cssmin');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-copy');
 	grunt.loadNpmTasks('grunt-contrib-less');
 	grunt.loadNpmTasks('grunt-jsdoc');
+
+	// 文件监视
+	grunt.loadNpmTasks('grunt-contrib-watch');
+
+	// 多任务并行
+	grunt.loadNpmTasks('grunt-concurrent');
+
 	grunt.registerTask('default', [
 		'concurrent'
 //		,'uglify'
