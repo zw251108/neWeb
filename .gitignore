@@ -15,7 +15,7 @@ public/cache.manifest
 public/style/style.css
 
 # 图片文件夹
-public/image/
+#public/image/
 
 # 文件上传文件夹
 public/upload/
