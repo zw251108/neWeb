@@ -124,7 +124,7 @@ module.exports = function(web, db, socket, metro){
 	});
 	web.get('/editor/code', function(req, res){
 		var code = editor.code
-			, id = req.query.id || ''
+			, id = req.query.id || '0'
 			;
 
 		if( id !== '0' ){
@@ -140,11 +140,8 @@ module.exports = function(web, db, socket, metro){
 				res.end();
 			});
 		}
-		else if( id === '0' ){
-			res.send( resCode({Id: 0}) );
-			res.end();
-		}
 		else{
+			res.send( resCode({Id: 0}) );
 			res.end();
 		}
 	});

@@ -29,6 +29,7 @@
     "require-css": "~0.1.8",
     "jcrop": "~0.9.12",
     "cropzoom": "*",
-    "jquery-mobile": "~1.4.5"
+    "jquery-mobile": "~1.4.5",
+    "cropper": "~0.9.0"
   }
 }
