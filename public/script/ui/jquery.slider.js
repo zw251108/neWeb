@@ -14,18 +14,18 @@
  * @desc
  * @example
  * */
-;(function(p, jqPath){
+;(function(factory, jqPath){
 	if( typeof exports === 'object' && typeof module === 'object' ){
-		p( require( jqPath || 'jquery') );
+		factory( require( jqPath || 'jquery') );
 	}
 	else if( typeof define === 'function' && define.amd ){
-		define([jqPath || 'jquery'], p);
+		define([jqPath || 'jquery'], factory);
 	}
 	else{
-		p(jQuery);
+		factory(jQuery);
 	}
 })(function($){
-	var slider = function(options){
+	var Slider = function(options){
 		var opts = $({}, slider.defaults, options)
 			, $container = opts.container
 			, $items = options.items
@@ -75,7 +75,7 @@
 		}
 	};
 
-	slider.defaults = {
+	Slider.defaults = {
 		container: ''
 		, items: ''
 		, render: 'css'
@@ -85,7 +85,7 @@
 		, controls: true
 	};
 
-	$.slider = slider;
+	$.slider = Slider;
 }, '');
 
 
