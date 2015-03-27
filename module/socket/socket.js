@@ -30,8 +30,6 @@ sio.on('connection', function(socket){
 
 	console.log('socket: session id ', clientIndex, 'connect');
 
-
-
 	socket.on('getData', function(query){   // 获取数据接口
 		var topic = query.topic
 			//, receive = query.receive
@@ -40,23 +38,16 @@ sio.on('connection', function(socket){
 
 		console.log('get data topic:', topic);
 
-		//switch( topic ){
-		//	case 'blog/detail':
-		//		data.push( query.id );
-		//		break;
-		//	default:
-		//		break;
-		//}
-
 		// 判断事件是否存在
 		if( topic in EVENT_LIST ){  // 存在
 			EVENT_LIST[topic](socket, query);
 		}
 		else{
+			console.log( topic );
 			// todo 发送错误信息
 			socket.emit('getData', {
 				error: ''
-				, msg: '未注册的主题'
+				, msg: topic + '是一个未注册的主题'
 			});
 		}
 

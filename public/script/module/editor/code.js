@@ -181,14 +181,14 @@ require(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g,
 					, jsLib: $jsLib.val()
 				}
 			});
-			$savePopup[0].close();
+			$savePopup.addClass('');
 		}).on('click', '.module_close', function(){
 			$savePopup[0].close();
 		})
 		, $codeName = $savePopup.find('#codeName')
 		, $save  = $toolbar.find('#save').on('click', function(){
 			$codeName.val( $editor.find('h3').html() );
-			$savePopup[0].showModal();
+			$savePopup.removeClass('hidden');
 		})
 		;
 

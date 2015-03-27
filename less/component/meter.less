@@ -1,0 +1,30 @@
+/**
+ * 进度条
+ * */
+meter{
+	overflow: hidden;
+	display: block;
+	height: 13px;
+	width: 80%;
+
+	border: 2px solid @module_userLv_meter_bd;
+	border-radius: 5px;
+	margin: 10px auto;
+	background: @module_userLv_meter_empty_bg;
+
+	-webkit-appearance: none;
+}
+meter::-webkit-meter-bar {
+	background: @module_userLv_meter_empty_bg;
+	border: 0;
+}
+meter::-webkit-meter-optimum-value {
+	background: @module_userLv_meter_full_top_bg;
+	//    background: -moz-linear-gradient(top, #a1d4e6 0%, #6bb4d1 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, @module_userLv_meter_full_top_bg), color-stop(100%, @module_userLv_meter_full_bottom_bg));
+	background: -webkit-linear-gradient(top, @module_userLv_meter_full_top_bg 0%, @module_userLv_meter_full_bottom_bg 100%);
+	//    background: -o-linear-gradient(top, #a1d4e6 0%, #6bb4d1 100%);
+	//    background: -ms-linear-gradient(top, #a1d4e6 0%, #6bb4d1 100%);
+	//    background: linear-gradient(to bottom, #a1d4e6 0%, #6bb4d1 100%);
+	//    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#a1d4e6', endColorstr='#6bb4d1',GradientType=0);
+}

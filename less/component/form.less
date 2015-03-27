@@ -2,7 +2,9 @@
  * 表单相关
  *  formGroup 是用来包裹 input 和 label 等进行布局，一个表单项用一个
  * */
+@import "../lib/color";
 
+@placeholder: #888;
 
 /*div*/.formGroup{
 
@@ -32,4 +34,20 @@
 }
 :checked{
 
+}
+
+
+::-webkit-input-placeholder { /* WebKit browsers */
+	color: @placeholder;
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+	color: @placeholder;
+	opacity:  1;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+	color: @placeholder;
+	opacity:  1;
+}
+:-ms-input-placeholder { /* Internet Explorer 10+ */
+	color: @placeholder;
 }

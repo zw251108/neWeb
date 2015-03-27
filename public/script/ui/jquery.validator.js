@@ -132,6 +132,7 @@
 			, $form = opts.selector
 			, validType = Validator.validType
 			, validMethods = Validator.validMethods
+			, validEvent = Validator.validEvent
 			, validTrigger = function(){
 				var $self = $form.formItems.filter(this)
 					, type = $self.data('validator')
@@ -146,6 +147,7 @@
 
 				$form.triggerHandler('valid', [$self, type]);
 			}
+			, k
 			;
 
 		$form = (typeof $form === 'object' && $form.jQuery) ? $form : $($form);
@@ -266,14 +268,14 @@
 			if( ('focus' in type) && ('focus' in opts) ){
 				opts.focus.call($self, type.focus);
 			}
-		})
-			.on('blur', ':text[data-validator], :password[data-validator], textarea[data-validator]', validTrigger)
-			.on('click', ':radio[data-validator], :checkbox[data-validator]', validTrigger)
-			.on('change', 'select[data-validator]', validTrigger);
+		});
+
+		for( k in validEvent ) if( validEvent.hasOwnProperty(k) ){
+			$form.on(validEvent[k], k +'[data-validator]', validTrigger);
+		}
 
 		$form.validOpts = opts;
 		$form.formItems = $form.find('[data-validator]');
-
 		$.extend($form, methods);
 
 		return $form;
@@ -286,6 +288,13 @@
 		, normal:null
 	};
 	Validator.validType = {};
+	Validator.validEvent = {
+		':text': 'blur'
+		, ':password': 'blur'
+		, ':radio': 'click'
+		, ':checkbox': 'click'
+		, 'select': 'change'
+	};
 	Validator.validMethods = {
 		/**
 		 *  必填项验证
@@ -596,4 +605,6 @@
 	};
 
 	$.validator = Validator;
+
+	return Validator;
 }, '');
