@@ -183,7 +183,7 @@ require(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g,
 			});
 			$savePopup.addClass('');
 		}).on('click', '.module_close', function(){
-			$savePopup[0].close();
+			$savePopup.addClass('hidden');
 		})
 		, $codeName = $savePopup.find('#codeName')
 		, $save  = $toolbar.find('#save').on('click', function(){
