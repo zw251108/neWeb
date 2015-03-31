@@ -107,13 +107,21 @@ ul{
 //----- 重置图片元素 -----
 img{
 	-ms-interpolation-mode: bicubic; // IE 下图片缩放不失真
-	border:0;
+	border: 0;
 }
 
 //----- 重置表格元素 -----
 table{
 	border-collapse:collapse;
 	border-spacing:0;
+}
+caption,
+th,
+td{
+	/* float: none 阻止 span-想类破坏表格单元的显示 */
+	float: none !important;
+	font-weight: normal;
+	text-align: left;
 }
 
 //----- 引用 -----
@@ -127,6 +135,13 @@ q:before,
 q:after{
 	//    content:"";
 	content:none;
+}
+
+sup{
+	vertical-align: text-top;
+}
+sub{
+	vertical-align: text-bottom;
 }
 
 //----- 标题 -----
