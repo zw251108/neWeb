@@ -1,12 +1,14 @@
-/**
- *
- * */
-
 'use strict';
 
 var Tag = {
 		all: {
 			sql:'select Id,name,num,description as desc form tag'
+		}
+		, getById: {
+			sql: ''
+		}
+		, add: {
+			sql: ''
 		}
 	}
 	, tpl = require('./tpl.js')
@@ -25,7 +27,10 @@ module.exports = function(web, db, socket, metro){
 	var editor = Tag;
 
 	socket.register({
-		'tag/add': function(){
+	    'tag': function(){
+
+	    }
+		, 'tag/add': function(){
 
 		}
 	});

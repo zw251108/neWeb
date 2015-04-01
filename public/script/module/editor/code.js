@@ -206,5 +206,8 @@ require(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g,
 		'editor/save': function(data){
 			alert(data.msg);
 		}
+		, 'editor/lib': function(data){
+
+		}
 	});
 });

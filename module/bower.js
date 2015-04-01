@@ -245,6 +245,23 @@ module.exports = function(web, db, socket, metro){
 		bower: function(socket, query){
 
 		}
+		, 'bower/lib': function(socket){
+			db.query(Bower.index.sql, function(e, rs){
+				if( !e ){
+					socket.emit('getData', {
+						topic: 'editor/lib'
+						, data: rs
+					});
+				}
+				else{
+					socket.emit('getData', {
+						error: ''
+						, msg: ''
+					});
+					console.log('\n', 'db', '\n', Bower.index.sql, '\n', e.message);
+				}
+			})
+		}
 		, 'bower/search': function(socket, data){
 			bowerMethods.search(data.query.name, socket);
 		}
@@ -315,6 +332,7 @@ module.exports = function(web, db, socket, metro){
 						, version: t.target
 					});
 				}
+
 				socket.emit('getData', {
 					topic: 'bower/install/end'
 					, info: info

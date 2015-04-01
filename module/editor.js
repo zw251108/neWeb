@@ -74,7 +74,9 @@ var Editor = {
 					//	'<div id="Tag">' +
 					//		'<input type="text" id="" class="input"/>' +
 					'</div>'
-					, button: '<button type="button" id="codeSave" class="btn">保存</button>'
+					, button: '<button type="button" id="codeSave" class="btn">保存</button>'}, {
+				id: 'alert',    size: 'small', content: '<div class="msg" id="alertContent"></div>'
+					, button: '<button type="button" id="" class="btn">确定</button>'
 			}]).join('')
 			, script: {
 				main: '../script/module/editor/code'

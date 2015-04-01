@@ -41,14 +41,8 @@ var fs = require('fs')
 	, socketServer
 
 	//----- 自定义模块 -----
-	, tpl           = require('./module/tpl.js')
-		//.tpl   // 模块库
-	//, template      = require('./module/emmetTpl/emmetTpl.js').template
-	//, emmetTplConfig = {
-	//
-	//}
-	//, index         = tpl.tpl('index')
-	, metro           = []
+	, tpl           = require('./module/tpl.js') // 模板库
+	, metro           = [] // 首页模块
 	;
 
 //----- 重置 manifest 版本代号 -----
@@ -135,28 +129,30 @@ require('./module/editor.js')(  web, db, socket, metro);  // 加载模块 editor
 
 require('./module/bower.js')(   web, db, socket, metro);  // 加载模块 bower
 
+require('./module/tag.js')(     web, db, socket, metro); // 加载 tag 功能模块
+
 metro.push({
 	id: 'time'
 	, type: 'metro'
 	, size: 'tiny'
 	, title: '时间 time'
 	, info: '<div class="watch_wrap hidden" id="watch">' +
-				'<span class="watch_hourHand" id="hourHand"></span>' +
-				'<span class="watch_minuteHand" id="minuteHand"></span>' +
-				'<span class="watch_secondHand" id="secondHand"></span>' +
-				'<span class="watch_mark watch_mark-1"></span>' +
-				'<span class="watch_mark watch_mark-2"></span>' +
-				'<span class="watch_mark watch_mark-3"></span>' +
-				'<span class="watch_mark watch_mark-4"></span>' +
-				'<span class="watch_mark watch_mark-5"></span>' +
-				'<span class="watch_mark watch_mark-6"></span>' +
-				'<span class="watch_mark watch_mark-7"></span>' +
-				'<span class="watch_mark watch_mark-8"></span>' +
-				'<span class="watch_mark watch_mark-9"></span>' +
-				'<span class="watch_mark watch_mark-10"></span>' +
-				'<span class="watch_mark watch_mark-11"></span>' +
-				'<span class="watch_mark watch_mark-12"></span>' +
-			'</div>'
+	'<span class="watch_hourHand" id="hourHand"></span>' +
+	'<span class="watch_minuteHand" id="minuteHand"></span>' +
+	'<span class="watch_secondHand" id="secondHand"></span>' +
+	'<span class="watch_mark watch_mark-1"></span>' +
+	'<span class="watch_mark watch_mark-2"></span>' +
+	'<span class="watch_mark watch_mark-3"></span>' +
+	'<span class="watch_mark watch_mark-4"></span>' +
+	'<span class="watch_mark watch_mark-5"></span>' +
+	'<span class="watch_mark watch_mark-6"></span>' +
+	'<span class="watch_mark watch_mark-7"></span>' +
+	'<span class="watch_mark watch_mark-8"></span>' +
+	'<span class="watch_mark watch_mark-9"></span>' +
+	'<span class="watch_mark watch_mark-10"></span>' +
+	'<span class="watch_mark watch_mark-11"></span>' +
+	'<span class="watch_mark watch_mark-12"></span>' +
+	'</div>'
 });
 
 
