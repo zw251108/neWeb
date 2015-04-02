@@ -204,6 +204,7 @@ require(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g,
 
 	socket.register({
 		'editor/save': function(data){
+			$savePopup.addClass('hidden');
 			alert(data.msg);
 		}
 		, 'editor/lib': function(data){
