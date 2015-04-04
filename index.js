@@ -124,7 +124,10 @@ web.get('/', function(req, res){
 // 测试用
 web.get('/getJson', function(req, res){
 	res.send('{"title":"这是一个 JSON ","data":[{},{},{},{}]}');
-	res.end()
+	res.end();
+});
+web.get('import.html', function(req, res){
+	res.end();
 });
 
 //----- 加载模块 -----
