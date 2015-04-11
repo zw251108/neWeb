@@ -48,7 +48,7 @@
             }
         });
     })
- *  HTML 代码:
+ *  HTML 代码：
  <form id="userNameForm" action="">
     <input type="text" name="username" id="username" data-validator="username" /><span></span>
  </form>

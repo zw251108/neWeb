@@ -137,12 +137,14 @@ require(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g,
 		})
 
 		, $newWin = $toolbar.find('#newWin').on('click', function(){
-			var  newWin = window.open()
+			var  newWin = window.open('').document
 				, cssLib = $cssLib.val()
 				, jsLib = $jsLib.val()
 				;
 
-			newWin.document.write( runCode(html.getValue(), css.getValue(), js.getValue(), cssLib, jsLib) );
+			newWin.open();
+			newWin.write( runCode(html.getValue(), css.getValue(), js.getValue(), cssLib, jsLib) );
+			newWin.close();
 		})
 
 		, $run = $toolbar.find('#run').on('click', function(){
@@ -154,11 +156,6 @@ require(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g,
 			html.save();
 			css.save();
 			js.save();
-
-			//$form.submit();
-
-			//$rs.removeAttr('src');
-			//frame = $rs[0];
 
 			frame = frame.contentDocument || frame.contentWindow.document;
 			frame.open();
@@ -201,6 +198,10 @@ require(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g,
 	$run.triggerHandler('click');
 
 	$editor.find('label').removeClass('hidden');
+
+	$(window).bind('beforeunload', function(){
+		return '确定不保存您幸苦写下的代码么？';
+	});
 
 	socket.register({
 		'editor/save': function(data){

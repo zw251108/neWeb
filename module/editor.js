@@ -143,7 +143,7 @@ module.exports = function(web, db, socket, metro){
 			});
 		}
 		else{
-			res.send( resCode({Id: 0}) );
+			res.send( resCode({Id: 0, js_lib: '../script/lib/jquery.min.js'}) );
 			res.end();
 		}
 	});
