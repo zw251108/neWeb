@@ -278,11 +278,12 @@ module.exports = function(web, db, socket, metro){
 				sql = editor.save;
 				arr.push( query.codeName );
 			}
-			db.query(sql.sql, arr, function(e){
+			db.query(sql.sql, arr, function(e, rs){
 				if( !e ){
 					socket.emit('getData', {
 						topic: 'editor/save'
 						, msg: 'success'
+						, id: rs.insertId || id
 					});
 				}
 				else{
