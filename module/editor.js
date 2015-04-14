@@ -14,7 +14,7 @@ var Editor = {
 			}
 		}
 		, edit: {
-			sql: 'update editor set html=?,css=?,js=?,css_lib=?,js_lib=? where Id=?'
+			sql: 'update editor set name=?,html=?,css=?,js=?,css_lib=?,js_lib=? where Id=?'
 		}
 		, save: {
 			sql: 'insert into editor(status,html,css,js,css_lib,js_lib,name,preview,create_time) values(1,?,?,?,?,?,?,\'../image/default/no-pic.png\',now())'
@@ -212,6 +212,15 @@ module.exports = function(web, db, socket, metro){
 	//	}) );
 	//});
 
+	// 测试用数据
+	web.get('/editor/getJSON', function(req, res){
+		res.send('{"title":"这是一个 JSON ","data":[{},{},{},{}]}');
+		res.end();
+	});
+	web.get('/editor/import.html', function(req, res){
+		res.end();
+	});
+
 	socket.register({
 		editor: function(socket){
 			var index = editor.index;
@@ -272,6 +281,7 @@ module.exports = function(web, db, socket, metro){
 
 			if( id !== '0' ){
 				sql = editor.edit;
+				arr.unshift( query.codeName );
 				arr.push( id );
 			}
 			else if( id === '0' ){

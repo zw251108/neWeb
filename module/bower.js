@@ -245,7 +245,7 @@ module.exports = function(web, db, socket, metro){
 		bower: function(socket, query){
 
 		}
-		, 'bower/lib': function(socket){
+		, 'bower/editor/lib': function(socket){
 			db.query(Bower.index.sql, function(e, rs){
 				if( !e ){
 					socket.emit('getData', {

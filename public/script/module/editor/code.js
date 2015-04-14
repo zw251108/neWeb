@@ -37,6 +37,10 @@ require(['../config'], function(config){
 			, listTpl = $.template({
 				template: 'li[title=%name% data-type=%type%]{%name%}'
 			})
+			, libTpl = $.template({
+				template: ''
+				, filter: {}
+			})
 
 			, $skinList = $toolbar.find('#changeSkin').on('click', function(){
 				$layoutList.slideUp();
@@ -86,7 +90,6 @@ require(['../config'], function(config){
 
 				$skinList.slideUp();
 			})
-
 			, $layoutList = $toolbar.find('#changeLayout').on('click', function(){
 				$skinList.slideUp();
 				$layoutList.slideToggle();
@@ -126,34 +129,6 @@ require(['../config'], function(config){
 				js.refresh();
 			})
 
-			, $newWin = $toolbar.find('#newWin').on('click', function(){
-				var  newWin = window.open('').document
-					, cssLib = $cssLib.val()
-					, jsLib = $jsLib.val()
-					;
-
-				newWin.open();
-				newWin.write( runCode(html.getValue(), css.getValue(), js.getValue(), cssLib, jsLib) );
-				newWin.close();
-			})
-
-			, $run = $toolbar.find('#run').on('click', function(){
-				var frame = $rs[0]
-					, cssLib = $cssLib.val()
-					, jsLib = $jsLib.val()
-					;
-
-				html.save();
-				css.save();
-				js.save();
-
-				frame = frame.contentDocument || frame.contentWindow.document;
-				frame.open();
-				frame.write( runCode(html.getValue(), css.getValue(), js.getValue(), cssLib, jsLib) );
-				frame.close();
-
-			})
-
 			, $savePopup = $('#editorSave').on('click', '#codeSave', function(){
 				socket.emit('getData', {
 					topic: 'editor/save'
@@ -173,9 +148,45 @@ require(['../config'], function(config){
 				$savePopup.addClass('hidden');
 			})
 			, $codeName = $savePopup.find('#codeName')
-			, $save  = $toolbar.find('#save').on('click', function(){
-				$codeName.val( $editor.find('h3').html() );
-				$savePopup.removeClass('hidden');
+
+			, $libPopup = $('editorLib').on('click').on('click', '.module_close', function(){
+				$libPopup.addClass('hidden');
+			})
+			;
+
+		$toolbar.on('click', '#save', function(){
+			$codeName.val( $editor.find('h3').html() );
+			$savePopup.removeClass('hidden');
+		})
+			.on('click', '#run', function(){
+			var frame = $rs[0]
+				, cssLib = $cssLib.val()
+				, jsLib = $jsLib.val()
+				;
+
+			html.save();
+			css.save();
+			js.save();
+
+			frame = frame.contentDocument || frame.contentWindow.document;
+			frame.open();
+			frame.write( runCode(html.getValue(), css.getValue(), js.getValue(), cssLib, jsLib) );
+			frame.close();
+		})
+			.on('click', '#newWin', function(){
+			var  newWin = window.open('').document
+				, cssLib = $cssLib.val()
+				, jsLib = $jsLib.val()
+				;
+
+			newWin.open();
+			newWin.write( runCode(html.getValue(), css.getValue(), js.getValue(), cssLib, jsLib) );
+			newWin.close();
+		})
+			.on('click', '#lib', function(){
+				socket.emit('getData', {
+					topic: 'bower/editor/lib'
+				});
 			})
 			;
 
@@ -195,7 +206,7 @@ require(['../config'], function(config){
 			isEdit = true;
 		});
 
-		$run.triggerHandler('click');
+		$toolbar.find('#run').trigger('click');
 
 		$editor.find('label').removeClass('hidden');
 
@@ -213,7 +224,8 @@ require(['../config'], function(config){
 				}
 			}
 			, 'editor/lib': function(data){
-
+				$
+				console.dir(data)
 			}
 		});
 	});

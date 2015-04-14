@@ -121,14 +121,6 @@ web.get('/', function(req, res){
 	}) );
 	res.end();
 });
-// 测试用
-web.get('/getJson', function(req, res){
-	res.send('{"title":"这是一个 JSON ","data":[{},{},{},{}]}');
-	res.end();
-});
-web.get('import.html', function(req, res){
-	res.end();
-});
 
 //----- 加载模块 -----
 //require('./module/blog.js')(    web, db, socket, metro);  // 加载模块 blog

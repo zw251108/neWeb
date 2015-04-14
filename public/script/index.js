@@ -2,29 +2,6 @@
  * 首页
  * 全局设置
  * */
-require.config({
-	paths: {
-		jquery: 'lib/jquery.min'
-		, css: 'lib/css'
-		, d3: 'lib/d3.min'
-
-		, template: 'ui/jquery.emmetTpl'
-
-		// 全局模块设置
-		, global: 'module/global'
-		, socket: 'module/socket'
-		, tag: 'module/tag'
-		, time: 'module/time'
-		, codeEditor: 'module/codeEditor'
-
-		// 应用模块设置
-		, blog: 'module/blog/blog'
-		, document: 'module/document/document'
-		, editor: 'module/editor/editor'
-		, talk: 'module/talk/talk'
-	}
-});
-
 //---------- 工具模块 ----------
 //----- 地理定位 -----
 define('location', function(){});
@@ -56,22 +33,46 @@ define('user', ['jquery', 'global', 'socket', 'header'], function($, g, socket, 
 		$user.after('<div class="loginBar"><form action=""></form></div>');
 	});
 });
+//----- 绘制雷达图 -----
+define('radarChart', ['jquery', 'd3'], function($, d3){
+	var defaults = {
+		width: ''
+		, height: ''
+		, a: ''
+	};
+
+	return function(options){
+		var opts = $.extend({}, options, defaults)
+			, h = opts.height
+			, w = opts.width
+			, radius = Math.min(w/2, h/2)
+
+			, chart = d3.select(opts.selector).append('svg')
+				.attr('class', opts.className)
+				.attr('height', h)
+				.attr('width', w)
+			;
+
+		chart
+	};
+});
 
 //---------- 应用模块 ----------
-require(['jquery', 'global', 'socket', 'time'], function($, g, socket, $time){
+require(['module/config'], function(config){
+	require.config(config);
+	require(['jquery', 'global', 'socket', 'time'], function($, g, socket, $time){
+		var $container = g.$container
+			, $blog = $('#blog').data('width', 'big') // Blog 模块
+			, $document = $('#document').data('width', 'small') // Document 文档模块
+			, $editor = $('#editor').data('width', 'normal')   // Editor 编辑器
+			, $talk = $('#talk').data('width', 'small') // Talk 模块
+			;
 
-	var $container = g.$container
-		, $blog = $('#blog').data('width', 'big') // Blog 模块
-		, $document = $('#document').data('width', 'small') // Document 文档模块
-		, $editor = $('#editor').data('width', 'normal')   // Editor 编辑器
-		, $talk = $('#talk').data('width', 'small') // Talk 模块
-		;
-
-	g.mod('$blog', $blog);
-	g.mod('$document', $document);
-	g.mod('$editor', $editor);
-	g.mod('$talk', $talk);
-	g.mod('$time', $time);
+		g.mod('$blog', $blog);
+		g.mod('$document', $document);
+		g.mod('$editor', $editor);
+		g.mod('$talk', $talk);
+		g.mod('$time', $time);
 
 //	var $login = $('#login')
 //		, $loginForm = $login.find('#loginForm')
@@ -116,84 +117,63 @@ require(['jquery', 'global', 'socket', 'time'], function($, g, socket, $time){
 //		e.preventDefault();
 //		e.stopImmediatePropagation();
 //	});
-});
 
-define('radarChart', ['jquery', 'd3'], function(d3){
-	var defaults = {
-		width: ''
-		, height: ''
-		, a: ''
-	};
+	});
 
-	return function(options){
-		var opts = $.extend({}, options, defaults)
-			, h = opts.height
-			, w = opts.width
-			, radius = Math.min(w/2, h/2)
+	require(['jquery', 'd3', 'radarChart'], function($, d3, draw){
+		var chartContainer = d3.select('#profile')
+				.select('.module_content')
+			;
 
-			, chart = d3.select(opts.selector).append('svg')
-				.attr('class', opts.className)
-				.attr('height', h)
-				.attr('width', w)
-		    ;
-
-		chart
-	};
-});
-require(['jquery', 'd3', 'radarChart'], function($, d3, draw){
-	var chartContainer = d3.select('#profile')
-			.select('.module_content')
-		;
-
-	var d = [
-		[
-			{axis: 'HTML(5) & CSS(3)', value: 9},
-			{axis: 'JavaScript(jQuery)', value: 8},
-			{axis: 'Node.js', value: 7},
-			{axis: '前端工具', value: 7},
-			{axis: '设计能力', value: 2},
-			{axis: '用户体验', value: 7}
-		]
-	], data = [
-		[
-			{axis: '学习能力',value: 9},
-			{axis: '创意',value: 7},
-			{axis: '团队协作',value: 9},
-			{axis: '应变能力',value: 8},
-			{axis: '责任心',value: 8},
-			{axis: '耐心',value: 8}
-		]
-	];
+		var d = [
+			[
+				{axis: 'HTML(5) & CSS(3)', value: 9},
+				{axis: 'JavaScript(jQuery)', value: 8},
+				{axis: 'Node.js', value: 7},
+				{axis: '前端工具', value: 7},
+				{axis: '设计能力', value: 2},
+				{axis: '用户体验', value: 7}
+			]
+		], data = [
+			[
+				{axis: '学习能力',value: 9},
+				{axis: '创意',value: 7},
+				{axis: '团队协作',value: 9},
+				{axis: '应变能力',value: 8},
+				{axis: '责任心',value: 8},
+				{axis: '耐心',value: 8}
+			]
+		];
 
 //Options for the Radar chart, other than default
-	var mycfg = {
-		w: w,
-		h: h,
-		maxValue: 10,
-		levels: 2,
-		ExtraWidthX: 300
-	};
+		var mycfg = {
+			w: w,
+			h: h,
+			maxValue: 10,
+			levels: 2,
+			ExtraWidthX: 300
+		};
 
 //	var RadarChart = {
 //		draw: function(id, d, options){
-			var cfg = {
-				padding: '',
-				radius: 5,
-				w: 270,
-				h: 270,
+		var cfg = {
+			padding: '',
+			radius: 5,
+			w: 270,
+			h: 270,
 //				factor: 1,
-				factorLegend: 0.4,
-				levels: 2,
-				maxValue: 10,
-				radians: 2 * Math.PI,
-				opacityArea: 0.5,
-				ToRight: 5,
-				TranslateX: 0,
-				TranslateY: 0,
-				ExtraWidthX: 0,
-				ExtraWidthY: 0,
-				color: d3.scale.category10()
-			};
+			factorLegend: 0.4,
+			levels: 2,
+			maxValue: 10,
+			radians: 2 * Math.PI,
+			opacityArea: 0.5,
+			ToRight: 5,
+			TranslateX: 0,
+			TranslateY: 0,
+			ExtraWidthX: 0,
+			ExtraWidthY: 0,
+			color: d3.scale.category10()
+		};
 
 //			cfg.maxValue = Math.max(cfg.maxValue, d3.max(d, function(i){
 //				return d3.max(i.map(function(o){
@@ -201,90 +181,90 @@ require(['jquery', 'd3', 'radarChart'], function($, d3, draw){
 //				}))
 //			}));
 
-			var allAxis = (d[0].map(function(i, j){
-				return i.axis
-			}));
-			var total = allAxis.length;
-			var radius = Math.min(cfg.w/2, cfg.h/2);
+		var allAxis = (d[0].map(function(i, j){
+			return i.axis
+		}));
+		var total = allAxis.length;
+		var radius = Math.min(cfg.w/2, cfg.h/2);
 //			var Format = d3.format('%');
 //			d3.select(id).select("svg").remove();
 //			d3.select('#profile').find('.module_content')
-			var g = d3.select('#profile').select('.module_content')
-					.append('div').attr('class', 'radarChart')
-					.style('height', '270px')
-					.append("svg").style('background', '#fff')
-					.attr("width", cfg.w+cfg.ExtraWidthX)
-					.attr("height", cfg.h+cfg.ExtraWidthY)
-					.append("g")
-					.attr("transform", "translate(" + cfg.TranslateX + "," + cfg.TranslateY + ")")
-				;
+		var g = d3.select('#profile').select('.module_content')
+				.append('div').attr('class', 'radarChart')
+				.style('height', '270px')
+				.append("svg").style('background', '#fff')
+				.attr("width", cfg.w+cfg.ExtraWidthX)
+				.attr("height", cfg.h+cfg.ExtraWidthY)
+				.append("g")
+				.attr("transform", "translate(" + cfg.TranslateX + "," + cfg.TranslateY + ")")
+			;
 
-			var tooltip;
+		var tooltip;
 
-			//Circular segments
-			for(var j=0; j<cfg.levels; j++){
-				var levelFactor = radius*((j+1)/cfg.levels);
+		//Circular segments
+		for(var j=0; j<cfg.levels; j++){
+			var levelFactor = radius*((j+1)/cfg.levels);
 
-				g.selectAll(".levels")
-					.data(allAxis)
-					.enter()
-					.append("svg:line")
-					.attr("x1", function(d, i){
-						return levelFactor*(1-Math.sin(i*cfg.radians/total));
-					})
-					.attr("y1", function(d, i){
-						return levelFactor*(1-Math.cos(i*cfg.radians/total));
-					})
-					.attr("x2", function(d, i){
-						return levelFactor*(1-Math.sin((i+1)*cfg.radians/total));
-					})
-					.attr("y2", function(d, i){
-						return levelFactor*(1-Math.cos((i+1)*cfg.radians/total));
-					})
-					.attr("class", "line")
-					.attr("stroke", "grey")
-					.attr("stroke-opacity", "0.75")
-					.attr("stroke-width", 2)
-					.attr("transform", "translate(" + (cfg.w/2-levelFactor) + ", " + (cfg.h/2-levelFactor) + ")");
-			}
-
-			//Text indicating at what % each level is
-			for(var j=0; j<cfg.levels; j++){
-				var levelFactor = radius*((j+1)/cfg.levels);
-				g.selectAll(".levels")
-					.data([1]) //dummy data
-					.enter()
-					.append("svg:text")
-					.attr("x", function(d){
-						return levelFactor*(1-Math.sin(0));
-					})
-					.attr("y", function(d){
-						return levelFactor*(1-Math.cos(0));
-					})
-					.attr("class", "legend")
-					.style("font-family", "sans-serif")
-					.style("font-size", "10px")
-					.attr("transform", "translate(" + (cfg.w/2-levelFactor + cfg.ToRight) + ", " + (cfg.h/2-levelFactor) + ")")
-					.attr("fill", "#737373")
-					.text((j+1)*cfg.maxValue/cfg.levels);
-			}
-
-			var series = 0;
-
-			var axis = g.selectAll(".axis")
+			g.selectAll(".levels")
 				.data(allAxis)
 				.enter()
-				.append("g")
-				.attr("class", "axis");
-
-			axis.append("line")
-				.attr("x1", cfg.w/2)
-				.attr("y1", cfg.h/2)
-				.attr("x2", function(d, i){return cfg.w/2*(1-Math.sin(i*cfg.radians/total));})
-				.attr("y2", function(d, i){return cfg.h/2*(1-Math.cos(i*cfg.radians/total));})
+				.append("svg:line")
+				.attr("x1", function(d, i){
+					return levelFactor*(1-Math.sin(i*cfg.radians/total));
+				})
+				.attr("y1", function(d, i){
+					return levelFactor*(1-Math.cos(i*cfg.radians/total));
+				})
+				.attr("x2", function(d, i){
+					return levelFactor*(1-Math.sin((i+1)*cfg.radians/total));
+				})
+				.attr("y2", function(d, i){
+					return levelFactor*(1-Math.cos((i+1)*cfg.radians/total));
+				})
 				.attr("class", "line")
-				.style("stroke", "grey")
-				.style("stroke-width", "1px");
+				.attr("stroke", "grey")
+				.attr("stroke-opacity", "0.75")
+				.attr("stroke-width", 2)
+				.attr("transform", "translate(" + (cfg.w/2-levelFactor) + ", " + (cfg.h/2-levelFactor) + ")");
+		}
+
+		//Text indicating at what % each level is
+		for(var j=0; j<cfg.levels; j++){
+			var levelFactor = radius*((j+1)/cfg.levels);
+			g.selectAll(".levels")
+				.data([1]) //dummy data
+				.enter()
+				.append("svg:text")
+				.attr("x", function(d){
+					return levelFactor*(1-Math.sin(0));
+				})
+				.attr("y", function(d){
+					return levelFactor*(1-Math.cos(0));
+				})
+				.attr("class", "legend")
+				.style("font-family", "sans-serif")
+				.style("font-size", "10px")
+				.attr("transform", "translate(" + (cfg.w/2-levelFactor + cfg.ToRight) + ", " + (cfg.h/2-levelFactor) + ")")
+				.attr("fill", "#737373")
+				.text((j+1)*cfg.maxValue/cfg.levels);
+		}
+
+		var series = 0;
+
+		var axis = g.selectAll(".axis")
+			.data(allAxis)
+			.enter()
+			.append("g")
+			.attr("class", "axis");
+
+		axis.append("line")
+			.attr("x1", cfg.w/2)
+			.attr("y1", cfg.h/2)
+			.attr("x2", function(d, i){return cfg.w/2*(1-Math.sin(i*cfg.radians/total));})
+			.attr("y2", function(d, i){return cfg.h/2*(1-Math.cos(i*cfg.radians/total));})
+			.attr("class", "line")
+			.style("stroke", "grey")
+			.style("stroke-width", "1px");
 
 //			axis.append("text")
 //				.attr("class", "legend")
@@ -297,36 +277,36 @@ require(['jquery', 'd3', 'radarChart'], function($, d3, draw){
 //				.attr("x", function(d, i){return cfg.w/2*(1-cfg.factorLegend*Math.sin(i*cfg.radians/total))-60*Math.sin(i*cfg.radians/total);})
 //				.attr("y", function(d, i){return cfg.h/2*(1-Math.cos(i*cfg.radians/total))-20*Math.cos(i*cfg.radians/total);});
 
-			var dataValues = [];
-			d.forEach(function(y, x){
+		var dataValues = [];
+		d.forEach(function(y, x){
 
-				g.selectAll(".nodes")
-					.data(y, function(j, i){
-						dataValues.push([
-							cfg.w/2*(1-(parseFloat(Math.max(j.value, 0))/cfg.maxValue)*Math.sin(i*cfg.radians/total)),
-							cfg.h/2*(1-(parseFloat(Math.max(j.value, 0))/cfg.maxValue)*Math.cos(i*cfg.radians/total))
-						]);
-					});
-				dataValues.push(dataValues[0]);
-				g.selectAll(".area")
-					.data([dataValues])
-					.enter()
-					.append("polygon")
-					.attr("class", "radar-chart-serie"+series)
-					.style("stroke-width", "2px")
-					.style("stroke", cfg.color(series))
-					.attr("points",function(d) {
-						var str="";
-						for(var pti=0;pti<d.length;pti++){
-							str=str+d[pti][0]+","+d[pti][1]+" ";
-						}
-						return str;
-					})
-					.style("fill", '#fff')
+			g.selectAll(".nodes")
+				.data(y, function(j, i){
+					dataValues.push([
+						cfg.w/2*(1-(parseFloat(Math.max(j.value, 0))/cfg.maxValue)*Math.sin(i*cfg.radians/total)),
+						cfg.h/2*(1-(parseFloat(Math.max(j.value, 0))/cfg.maxValue)*Math.cos(i*cfg.radians/total))
+					]);
+				});
+			dataValues.push(dataValues[0]);
+			g.selectAll(".area")
+				.data([dataValues])
+				.enter()
+				.append("polygon")
+				.attr("class", "radar-chart-serie"+series)
+				.style("stroke-width", "2px")
+				.style("stroke", cfg.color(series))
+				.attr("points",function(d) {
+					var str="";
+					for(var pti=0;pti<d.length;pti++){
+						str=str+d[pti][0]+","+d[pti][1]+" ";
+					}
+					return str;
+				})
+				.style("fill", '#fff')
 //				function(j, i){return cfg.color(series)})
-					.style("fill-opacity", 0)
+				.style("fill-opacity", 0)
 //				cfg.opacityArea)
-					.on('mouseover', function (d){
+				.on('mouseover', function (d){
 //						z = "polygon."+d3.select(this).attr("class");
 //						g.selectAll("polygon")
 //							.transition(200)
@@ -334,37 +314,37 @@ require(['jquery', 'd3', 'radarChart'], function($, d3, draw){
 //						g.selectAll(z)
 //							.transition(200)
 //							.style("fill-opacity", .7);
-					})
-					.on('mouseout', function(){
+				})
+				.on('mouseout', function(){
 //						g.selectAll("polygon")
 //							.transition(200)
 //							.style("fill-opacity", cfg.opacityArea);
-					});
-				series++;
-			});
-			series=0;
+				});
+			series++;
+		});
+		series=0;
 
 
-			d.forEach(function(y, x){
-				g.selectAll("circle")
-					.data(y).enter()
-					.append("svg:circle")
-					.attr("class", "radar-chart-serie"+series)
-					.attr('r', cfg.radius)
-					.attr("alt", function(j){return Math.max(j.value, 0)})
-					.attr("cx", function(j, i){
-						dataValues.push([
-							cfg.w/2*(1-(parseFloat(Math.max(j.value, 0))/cfg.maxValue)*Math.sin(i*cfg.radians/total)),
-							cfg.h/2*(1-(parseFloat(Math.max(j.value, 0))/cfg.maxValue)*Math.cos(i*cfg.radians/total))
-						]);
-						return cfg.w/2*(1-(Math.max(j.value, 0)/cfg.maxValue)*Math.sin(i*cfg.radians/total));
-					})
-					.attr("cy", function(j, i){
-						return cfg.h/2*(1-(Math.max(j.value, 0)/cfg.maxValue)*Math.cos(i*cfg.radians/total));
-					})
-					.attr("data-id", function(j){return j.axis})
-					.style("fill", cfg.color(series)).style("fill-opacity", .9)
-					.on('mouseover', function (d){
+		d.forEach(function(y, x){
+			g.selectAll("circle")
+				.data(y).enter()
+				.append("svg:circle")
+				.attr("class", "radar-chart-serie"+series)
+				.attr('r', cfg.radius)
+				.attr("alt", function(j){return Math.max(j.value, 0)})
+				.attr("cx", function(j, i){
+					dataValues.push([
+						cfg.w/2*(1-(parseFloat(Math.max(j.value, 0))/cfg.maxValue)*Math.sin(i*cfg.radians/total)),
+						cfg.h/2*(1-(parseFloat(Math.max(j.value, 0))/cfg.maxValue)*Math.cos(i*cfg.radians/total))
+					]);
+					return cfg.w/2*(1-(Math.max(j.value, 0)/cfg.maxValue)*Math.sin(i*cfg.radians/total));
+				})
+				.attr("cy", function(j, i){
+					return cfg.h/2*(1-(Math.max(j.value, 0)/cfg.maxValue)*Math.cos(i*cfg.radians/total));
+				})
+				.attr("data-id", function(j){return j.axis})
+				.style("fill", cfg.color(series)).style("fill-opacity", .9)
+				.on('mouseover', function (d){
 //						newX =  parseFloat(d3.select(this).attr('cx')) - 10;
 //						newY =  parseFloat(d3.select(this).attr('cy')) - 5;
 //
@@ -389,8 +369,8 @@ require(['jquery', 'd3', 'radarChart'], function($, d3, draw){
 //						g.selectAll(z)
 //							.transition(200)
 //							.style("fill-opacity", .7);
-					})
-					.on('mouseout', function(){
+				})
+				.on('mouseout', function(){
 //						d3.select(this).attr('r', '5')
 //
 //						tooltip
@@ -399,31 +379,31 @@ require(['jquery', 'd3', 'radarChart'], function($, d3, draw){
 //						g.selectAll("polygon")
 //							.transition(200)
 //							.style("fill-opacity", cfg.opacityArea);
-					})
-					.append("svg:title")
-					.text(function(j){return Math.max(j.value, 0)});
+				})
+				.append("svg:title")
+				.text(function(j){return Math.max(j.value, 0)});
 
-				series++;
-			});
-			//Tooltip
-			tooltip = g.append('text')
-				.style('opacity', 0)
-				.style('font-family', 'sans-serif')
-				.style('font-size', '13px');
+			series++;
+		});
+		//Tooltip
+		tooltip = g.append('text')
+			.style('opacity', 0)
+			.style('font-family', 'sans-serif')
+			.style('font-size', '13px');
 //		}
 //	};
 
 
-	var chartWidth = 500
-		, chartHeight = 500
-		, w = 500
-		, h = 500
-		;
+		var chartWidth = 500
+			, chartHeight = 500
+			, w = 500
+			, h = 500
+			;
 
-	var colorscale = d3.scale.category10();
+		var colorscale = d3.scale.category10();
 
 //Legend titles
-	var LegendOptions = ['Smartphone','Tablet'];
+		var LegendOptions = ['Smartphone','Tablet'];
 
 //Data
 
@@ -436,51 +416,52 @@ require(['jquery', 'd3', 'radarChart'], function($, d3, draw){
 /////////// Initiate legend ////////////////
 ////////////////////////////////////////////
 
-	var svg = d3.select('#body')
-		.selectAll('svg')
-		.append('svg')
-		.attr("width", w+300)
-		.attr("height", h)
+		var svg = d3.select('#body')
+			.selectAll('svg')
+			.append('svg')
+			.attr("width", w+300)
+			.attr("height", h)
 
 //Create the title for the legend
-	var text = svg.append("text")
-		.attr("class", "title")
-		.attr('transform', 'translate(90,0)')
-		.attr("x", w - 70)
-		.attr("y", 10)
-		.attr("font-size", "12px")
-		.attr("fill", "#404040")
-		.text("What % of owners use a specific service in a week");
+		var text = svg.append("text")
+			.attr("class", "title")
+			.attr('transform', 'translate(90,0)')
+			.attr("x", w - 70)
+			.attr("y", 10)
+			.attr("font-size", "12px")
+			.attr("fill", "#404040")
+			.text("What % of owners use a specific service in a week");
 
 //Initiate Legend
-	var legend = svg.append("g")
-			.attr("class", "legend")
-			.attr("height", 100)
-			.attr("width", 200)
-			.attr('transform', 'translate(90,20)')
+		var legend = svg.append("g")
+				.attr("class", "legend")
+				.attr("height", 100)
+				.attr("width", 200)
+				.attr('transform', 'translate(90,20)')
+			;
+		//Create colour squares
+		legend.selectAll('rect')
+			.data(LegendOptions)
+			.enter()
+			.append("rect")
+			.attr("x", w - 65)
+			.attr("y", function(d, i){ return i * 20;})
+			.attr("width", 10)
+			.attr("height", 10)
+			.style("fill", function(d, i){ return colorscale(i);})
 		;
-	//Create colour squares
-	legend.selectAll('rect')
-		.data(LegendOptions)
-		.enter()
-		.append("rect")
-		.attr("x", w - 65)
-		.attr("y", function(d, i){ return i * 20;})
-		.attr("width", 10)
-		.attr("height", 10)
-		.style("fill", function(d, i){ return colorscale(i);})
-	;
-	//Create text next to squares
-	legend.selectAll('text')
-		.data(LegendOptions)
-		.enter()
-		.append("text")
-		.attr("x", w - 52)
-		.attr("y", function(d, i){ return i * 20 + 9;})
-		.attr("font-size", "11px")
-		.attr("fill", "#737373")
-		.text(function(d) { return d; })
-	;
+		//Create text next to squares
+		legend.selectAll('text')
+			.data(LegendOptions)
+			.enter()
+			.append("text")
+			.attr("x", w - 52)
+			.attr("y", function(d, i){ return i * 20 + 9;})
+			.attr("font-size", "11px")
+			.attr("fill", "#737373")
+			.text(function(d) { return d; })
+		;
 
 
+	});
 });
