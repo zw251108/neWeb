@@ -63,9 +63,11 @@ var Editor = {
 				}]).join('')
 				, content: codeEditTpl(rs).join('')
 			}).join('') + tpl.popupTpl([{
-				id: 'editorLib',    size: 'normal'}, {
+				id: 'editorLib',    size: 'normal'
+					, content: '<dl class="list-tree" id="libList"></dl>'
+					, button: '<button type="button" id="" class="btn">确定</button>'}, {
 				id: 'editorSave',   size: 'normal'
-					, content: '<div class="formGroup">' +
+					, content: '<form><div class="formGroup">' +
 						'<label for="codeName">请输入名称</label>' +
 						'<input type="text" id="codeName" class="input" placeholder="请输入标题" value="%name%"  data-validator="title"/>' +
 					//'</div>' +
@@ -73,7 +75,7 @@ var Editor = {
 					//	'<label for="codeTags">请选择标签</label>' +
 					//	'<div id="Tag">' +
 					//		'<input type="text" id="" class="input"/>' +
-					'</div>'
+					'</div></form>'
 					, button: '<button type="button" id="codeSave" class="btn">保存</button>'}, {
 				id: 'alert',    size: 'small', content: '<div class="msg" id="alertContent"></div>'
 					, button: '<button type="button" id="" class="btn">确定</button>'

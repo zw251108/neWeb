@@ -96,37 +96,49 @@ define(function(require){
 		, showMetro: function(){
 			$container.removeClass('animate-done fadeOut hideMetro').addClass('fadeIn');
 		}
-	}).on('click', '.module', function(e){
-		e.preventDefault();
-		e.stopImmediatePropagation();
-
-		var $target;
-
-		if( $container.hasClass('fadeOut') || $container.hasClass('fadeIn') ) return;
-
-		target = this.id;
-		$target = g.mod('$'+ target);
-
-		if( !$target || !$target.hasClass('module-metro') ) return;
-
-		// todo 加入 本地存储
-
-		$target.unwrap();
-		$container.addClass('main-show fadeOut');
-
-		if( $target.data('getData') ){  // 已获取基础数据
-			// 展开
-			$container.triggerHandler('dataReady');
-		}
-		else{   // 未获取基础数据
-			require([target], function(){
-				socket.emit('getData', {
-					topic: target
-					, receive: 'get'+ target.replace(/^(.{1})/, function(s){return s.toUpperCase();}) +'Data'
-				});
-			});
-		}
-	}).on('click', '.module-main .module_close', function(e){
+	})
+	//	.on('click', '.module', function(e){
+	//	e.preventDefault();
+	//	e.stopImmediatePropagation();
+	//
+	//	var $target;
+	//
+	//	if( $container.hasClass('fadeOut') || $container.hasClass('fadeIn') ) return;
+	//
+	//	target = this.id;
+	//	$target = g.mod('$'+ target);
+	//
+	//	if( !$target || !$target.hasClass('module-metro') ) return;
+	//
+	//	// todo 加入 本地存储
+	//
+	//	$target.unwrap();
+	//	$container.addClass('main-show fadeOut');
+	//
+	//	if( $target.data('getData') ){  // 已获取基础数据
+	//		// 展开
+	//		$container.triggerHandler('dataReady');
+	//	}
+	//	else{   // 未获取基础数据
+	//		require([target], function(){
+	//			socket.emit('getData', {
+	//				topic: target
+	//				, receive: 'get'+ target.replace(/^(.{1})/, function(s){return s.toUpperCase();}) +'Data'
+	//			});
+	//		});
+	//	}
+	//})
+		.on({
+			showDialog: function(){
+				this.className = this.className.replace('hidden', '');
+			}
+			, closeDialog: function(){
+				this.className += ' hidden';
+			}
+		}, '.module-popup').on('click', '.module-popup .module_close', function(){
+			$(this).parents('.module-popup').addClass('hidden');
+		})
+		.on('click', '.module-main .module_close', function(e){
 		e.preventDefault();
 		e.stopImmediatePropagation();
 

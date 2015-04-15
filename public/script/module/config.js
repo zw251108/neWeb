@@ -8,6 +8,7 @@ define({
 		, d3: 'lib/d3.min'
 
 		, global: 'module/global'
+		//, popup: 'module/popup'
 		, socket: 'module/socket'
 		, tag: 'module/tag'
 		, time: 'module/time'

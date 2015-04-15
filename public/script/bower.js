@@ -3,18 +3,12 @@
  * */
 require(['module/config'], function(config){
 	require.config(config);
-	require(['jquery', 'template', 'socket'], function($, tpl, socket){
-		var tableTpl = tpl({
-				template: 'tr>td>button[type=button]{安装}+input[type=hidden value=%name%]^td{%name%}+td[title=%url%]{%url%}'
+	require(['jquery', 'global', 'socket', 'template'], function($, g, socket){
+		var tableTpl = $.template({
+				template: 'tr>td>button[type=button]{安装}+input[type=hidden value=%name%]^td[title=%name%]{%name%}+td[title=%url%]{%url%}'
 			})
 
-			, $dialog = $('#result').find('.module_content')
-				.append('<form action="#" id="bowerSearch">' +
-				'<input class="input" type="text"/><button class="btn icon icon-search" type="submit" value=""></button>' +
-				'</form>' +
-				'<div class="bower_resultList">' +
-				'<table><thead><tr><th></th><th>组件名称</th><th>组件来源</th></tr></thead><tbody></tbody></table>' +
-				'</div>').end().on('submit', '#bowerSearch', function(e){
+			, $searchDialog = $('#result').on('submit', '#bowerSearch', function(e){
 					e.preventDefault();
 
 					var $form = $(this);
@@ -25,8 +19,8 @@ require(['module/config'], function(config){
 							name: $form.find('input').val()
 						}
 					});
-				}).on('click', '.popup_close', function(){
-					$dialog[0].close();
+				}).on('click', '.module_close', function(){
+					$searchDialog.trigger('closeDialog');
 				}).on('click', 'td button', function(e){
 					var name =  $(this).next().val();
 					socket.emit('getData', {
@@ -35,28 +29,25 @@ require(['module/config'], function(config){
 							name: name
 						}
 					});
-					$dialog[0].close();
-					$infoDialog[0].showModal();
+
+					$searchDialog.trigger('closeDialog');
+					$infoDialog.trigger('showDialog');
 
 					console.log( name );
 				})
+			, $infoDialog = $('#info')
 			;
 
 		$('#switch_dialog').on('click', function(e){
-			$dialog[0].showModal();
+			$searchDialog.trigger('showDialog');
 		});
 
-		var $infoDialog = $('#info');
-		//	$('<dialog/>', {
-		//	'class': 'module module-popup big'
-		//	, id: 'info'
-		//}).append('<ul></ul>').appendTo('body');
 
 		//----- socket 接收事件主题注册 -----
 		socket.register({
 			'bower/search': function(data){
 				var l = data.data.length
-					, $tbody = $dialog.find('tbody')
+					, $tbody = $searchDialog.find('tbody')
 					;
 				l ? $tbody.append( tableTpl(data.data).join('') ) : $tbody.append('<tr><td colspan="3">没有相关信息</td></tr>');
 			}

@@ -225,7 +225,14 @@ module.exports = function(web, db, socket, metro){
 								'</table>' +
 							'</div>'
 					}).join('') + tpl.popupTpl([{
-						id: 'result', type: 'popup', size: 'big'}, {
+						id: 'result', type: 'popup', size: 'big'
+							, content: '<form action="#" id="bowerSearch">' +
+								'<input class="input" type="text"/>' +
+								'<button class="btn icon icon-search" type="submit" value=""></button>' +
+							'</form>' +
+							'<div class="bower_resultList">' +
+								'<table><thead><tr><th></th><th>组件名称</th><th>组件来源</th></tr></thead><tbody></tbody></table>' +
+							'</div>'}, {
 						id: 'info', type: 'popup', size: 'big'
 					}]).join('')
 					, script: {

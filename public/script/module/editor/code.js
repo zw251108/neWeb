@@ -34,18 +34,36 @@ require(['../config'], function(config){
 
 			, $skinLink = $('<link />', {rel: 'stylesheet'}).appendTo('head')
 
+			// 各个模板引擎
 			, listTpl = $.template({
 				template: 'li[title=%name% data-type=%type%]{%name%}'
 			})
 			, libTpl = $.template({
-				template: ''
-				, filter: {}
+				template: 'dt>label>input[type=checkbox]+span.left.icon.icon-checkbox{%name%}^span.right{%version%}^dd{%paths%}'
+				, filter: {
+					paths: function(d){
+						var css = d.css_path
+							, js = d.js_path
+							;
+						css = css ? $.map(css.split(','), function(d){
+							return {path: d};
+						}) : [];
+						js = js ? $.map(js.split(','), function(d){
+							return {path: d}
+						}) : [];
+
+						return pathTpl(css.concat(js)).join('');
+					}
+				}
+			})
+			, pathTpl = $.template({
+				template: 'div>label>input[type=checkbox value=%path%]+span.left.icon.icon-checkbox{%path%}'
 			})
 
 			, $skinList = $toolbar.find('#changeSkin').on('click', function(){
-				$layoutList.slideUp();
-				$skinList.slideToggle();
-			}).after('<ul class="list skinList hidden"></ul>').next('ul').append(listTpl([{
+				$layoutList.slideUp().prev().hide();
+				$skinList.slideToggle().prev().toggle();
+			}).after('<span class="arrow hidden"></span><ul class="list skinList hidden"></ul>').nextAll('ul').append(listTpl([{
 				name: 'default'}, {
 				name: '3024-day'}, {
 				name: '3024-night'}, {
@@ -81,19 +99,19 @@ require(['../config'], function(config){
 			}]).join('')).on('click', 'li', function(){
 				var skin = this.innerHTML;
 
-				$layoutList.slideUp();
+				$layoutList.slideUp().prev().hide();
 				$skinLink.attr('href', skin !== 'default' ? '../script/plugin/codeMirror/theme/'+ skin +'.css' : '');
 
 				html.setOption('theme', skin);
 				css.setOption('theme', skin);
 				js.setOption('theme', skin);
 
-				$skinList.slideUp();
+				$skinList.slideUp().prev().hide();
 			})
 			, $layoutList = $toolbar.find('#changeLayout').on('click', function(){
-				$skinList.slideUp();
-				$layoutList.slideToggle();
-			}).after('<ul class="list layoutList hidden"></ul>').next('ul').append(listTpl([{
+				$skinList.slideUp().prev().hide();
+				$layoutList.slideToggle().prev().toggle();
+			}).after('<span class="arrow hidden"></span><ul class="list layoutList hidden"></ul>').nextAll('ul').append(listTpl([{
 				name: '四行布局', type: '1'}, {
 				name: '四列布局', type: '2'}, {
 				name: '四角布局', type: '3'}, {
@@ -103,7 +121,7 @@ require(['../config'], function(config){
 					, type = $that.data('type')
 					;
 
-				$skinList.slideUp();
+				$skinList.slideUp().prev().hide();
 				g.$container.addClass('Container-eFS');
 
 				switch( type ){
@@ -123,12 +141,13 @@ require(['../config'], function(config){
 						break;
 				}
 
-				$layoutList.slideUp();
+				$layoutList.slideUp().prev().hide();
 				html.refresh();
 				css.refresh();
 				js.refresh();
 			})
 
+			// 各个弹窗
 			, $savePopup = $('#editorSave').on('click', '#codeSave', function(){
 				socket.emit('getData', {
 					topic: 'editor/save'
@@ -144,21 +163,44 @@ require(['../config'], function(config){
 				});
 				isEdit = false;
 				$savePopup.addClass('');
-			}).on('click', '.module_close', function(){
-				$savePopup.addClass('hidden');
 			})
-			, $codeName = $savePopup.find('#codeName')
+			, $libPopup = $('#editorLib').on('click', 'dt input:checkbox', function(){
+				$(this).parents('dt').next().find('input:checkbox').prop('checked', this.checked);
+			}).on('click', 'dd input:checkbox', function(){
+				var $parent = $(this).parents('dd')
+					, $checkbox = $parent.find('input:checkbox')
+					, lChecked = $checkbox.filter(':checked').length
+					;
+				$parent.prev().find('input:checkbox').prop('checked', lChecked === $checkbox.length);
+			}).on('click', 'button.btn', function(){
+				var $checked = $libPopup.find('input:checkbox:checked')
+					, jsLib = []
+					, cssLib = [];
 
-			, $libPopup = $('editorLib').on('click').on('click', '.module_close', function(){
-				$libPopup.addClass('hidden');
+				$libPopup.trigger('closeDialog');
+				$checked.each(function(){
+					var val = this.value;
+
+					if( /\.js$/.test( val ) ){
+						jsLib.push( '../lib/'+ val );
+					}
+					else if( /\.css$/.test( val ) ){
+						cssLib.push( '../lib/'+ val );
+					}
+				});
+
+				$jsLib.val( jsLib.join() );
+				$cssLib.val( cssLib.join() );
 			})
+			, $alert = $('#alert')
+
+			, $codeName = $savePopup.find('#codeName')
 			;
 
 		$toolbar.on('click', '#save', function(){
 			$codeName.val( $editor.find('h3').html() );
-			$savePopup.removeClass('hidden');
-		})
-			.on('click', '#run', function(){
+			$savePopup.trigger('showDialog');
+		}).on('click', '#run', function(){
 			var frame = $rs[0]
 				, cssLib = $cssLib.val()
 				, jsLib = $jsLib.val()
@@ -172,8 +214,7 @@ require(['../config'], function(config){
 			frame.open();
 			frame.write( runCode(html.getValue(), css.getValue(), js.getValue(), cssLib, jsLib) );
 			frame.close();
-		})
-			.on('click', '#newWin', function(){
+		}).on('click', '#newWin', function(){
 			var  newWin = window.open('').document
 				, cssLib = $cssLib.val()
 				, jsLib = $jsLib.val()
@@ -182,13 +223,11 @@ require(['../config'], function(config){
 			newWin.open();
 			newWin.write( runCode(html.getValue(), css.getValue(), js.getValue(), cssLib, jsLib) );
 			newWin.close();
-		})
-			.on('click', '#lib', function(){
-				socket.emit('getData', {
-					topic: 'bower/editor/lib'
-				});
-			})
-			;
+		}).on('click', '#lib', function(){
+			socket.emit('getData', {
+				topic: 'bower/editor/lib'
+			});
+		});
 
 		g.mod('$editor', $editor);
 
@@ -218,14 +257,26 @@ require(['../config'], function(config){
 
 		socket.register({
 			'editor/save': function(data){
-				$savePopup.addClass('hidden');
-				if( data.msg === 'success' && location.search !== '?id='+ data.id ){
-					location.search = '?id='+ data.id;
+				$savePopup.trigger('closeDialog');
+
+				if( 'error' in data ){
+					$alert.find('#alertConternt').html('保存失败' + data.msg)
+						.end().trigger('showDialog');
+				}
+				else{
+					if( data.msg === 'success' && location.search !== '?id='+ data.id ){
+						location.search = '?id='+ data.id;
+					}
+					else{
+						$alert.find('#alertContent').html('保存成功')
+							.end().trigger('showDialog');
+					}
 				}
 			}
 			, 'editor/lib': function(data){
-				$
-				console.dir(data)
+				$libPopup.find('#libList').html( libTpl(data.data).join('') )
+					.end().trigger('showDialog');
+				//console.dir(data)
 			}
 		});
 	});

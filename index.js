@@ -76,7 +76,9 @@ web.use('/style',   express.static(__dirname + '/public/style') );  // 样式
 
 web.use('/cache.manifest', express.static(__dirname + '/public/cache.manifest') );  // 离线缓存配置文件
 
-web.use('/doc.html', express.static(__dirname + '/doc.html') );  // 离线缓存配置文件
+web.use('/doc.html', express.static(__dirname + '/doc.html') );  //
+
+web.use('/lib', express.static(__dirname + '/bower_components'))
 
 //web.use(function(req, res, next){
 //	var err = new Error('not found');
