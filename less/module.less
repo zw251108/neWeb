@@ -1,6 +1,8 @@
 @import "lib/color";
 @import "lib/grid";
 
+@import "lib/function";
+
 @module-bg: #888;
 
 /**
@@ -184,8 +186,15 @@
 	right: 0;
 	min-height: 300px;
 	max-height: 500px;
-	padding: 0;
+
+	border: 1px solid #888;
+
 	margin: auto;
+	padding: 0;
+
+	outline: 100em solid rgba(0, 0, 0, .5);
+
+	.boxShadow(~"2px 2px 5px #c0c0c0,2px -2px 5px #c0c0c0,-2px 2px 5px #c0c0c0,-2px -2px 5px #c0c0c0");
 
 	opacity: 1;
 
@@ -220,8 +229,10 @@
 	}
 
 	> .module_content{
-		margin: 40px 10px 10px;
-		padding: 10px 10px 0 10px;
+		overflow: auto;
+		height: 20em;
+		margin: 40px 0 0;
+		padding: 0;
 		background-color: #fff;
 	}
 }

@@ -22,9 +22,8 @@
 		font-size: 13px;
 		line-height: 1em;
 		text-indent: 0;
-		-webkit-box-sizing: border-box;
-		-moz-box-sizing: border-box;
-		box-sizing: border-box;
+
+		.boxSizing( border-box );
 	}
 	.CodeMirror-scroll{
 		overflow: scroll !important;
@@ -65,9 +64,7 @@
 	height: 200px;
 	margin: 0 0 10px;
 
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	box-sizing: border-box;
+	.boxSizing( border-box );
 
 	label{
 		position: absolute;
@@ -109,9 +106,8 @@
 	display: block;
 	min-height: 500px;
 	width: 100%;
-	-webkit-box-sizing: content-box;
-	-moz-box-sizing: content-box;
-	box-sizing: content-box;
+
+	.boxSizing( content-box );
 }
 .editor_rs{
 //	display: block;
@@ -123,9 +119,7 @@
 
 	background: #fff;
 
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	box-sizing: border-box;
+	.boxSizing( border-box );
 }
 
 .editor-4row{

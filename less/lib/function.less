@@ -40,19 +40,16 @@
 
 //----- CSS3 盒子阴影 box-shadow -----
 .boxShadow(@boxShadow){
-    -webkit-box-shadow: @boxShadow;
-    -moz-box-shadow: @boxShadow;
-    -ms-box-shadow: @boxShadow;
-    -o-box-shadow: @boxShadow;
-    box-shadow: @boxShadow;
+	-webkit-box-shadow+: @boxShadow;
+    -moz-box-shadow+: @boxShadow;
+    -ms-box-shadow+: @boxShadow;
+    box-shadow+: @boxShadow;
 }
 
 //----- CSS3 透明 opacity -----
 .transparent(@transparency:50){
     -webkit-opacity: @transparency/100;
     -moz-opacity: @transparency/100;
-//    -ms-filter: @transparency/100;
-//    -o-filter: @transparency/100;
     opacity: @transparency/100;
     filter: alpha(opacity=@transparency);
 }
@@ -63,14 +60,6 @@
     -moz-transition: @translate;
     -ms-transition: @translate;
     transition: @translate;
-}
-
-//----- CSS3 变换效果 transform -----
-.transform(@transform){
-    -webkit-transition: @transform;
-    -moz-transition: @transform;
-    -ms-transition: @transform;
-    transition: @transform;
 }
 
 //----- CSS3 动画效果 animation -----
@@ -87,6 +76,14 @@
     animation-name: @name;
 }
 
+//----- CSS3 变换效果 transform -----
+.transform(@transform){
+	-webkit-transition: @transform;
+	-moz-transition: @transform;
+	-ms-transition: @transform;
+	transition: @transform;
+}
+
 //----- CSS3 变形效果：变形基础定位 -----
 .transformOrigin(@origin){
     -webkit-transform-origin: @origin;
@@ -100,7 +97,6 @@
 	-webkit-transform: skewX(@deg);
 	-moz-transform: skewX(@deg);
 	-ms-transform: skewX(@deg);
-//	-o-transform: skewX(@deg);
 	transform: skewX(@deg);
 }
 
@@ -109,7 +105,6 @@
 	-webkit-transform: skewY(@deg);
 	-moz-transform: skewY(@deg);
 	-ms-transform: skewY(@deg);
-//	-o-transform: skewY(@deg);
 	transform: skewY(@deg);
 }
 
@@ -118,6 +113,5 @@
     -webkit-transform: rotate(@deg);
     -moz-transform: rotate(@deg);
     -ms-transform: rotate(@deg);
-//    -o-transform: rotate(@deg);
     transform: rotate(@deg);
 }

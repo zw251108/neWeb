@@ -137,8 +137,22 @@ define(function(require){
 			}
 		}, '.module-popup').on('click', '.module-popup .module_close', function(){
 			$(this).parents('.module-popup').addClass('hidden');
-		})
-		.on('click', '.module-main .module_close', function(e){
+		}).on('mousewheel DOMMouseScroll', '.module-popup .module_content', function(e){
+			var delta = e.originalEvent.wheelDelta || -e.originalEvent.detail
+				, $that = $(this)
+				;
+
+			if( delta < 0 ){
+				if( $that[0].scrollTop + $that.height() >= $that[0].scrollHeight ){
+					return false;
+				}
+			}
+			else{
+				if( $that[0].scrollTop === 0 ){
+					return false;
+				}
+			}
+		}).on('click', '.module-main .module_close', function(e){
 		e.preventDefault();
 		e.stopImmediatePropagation();
 

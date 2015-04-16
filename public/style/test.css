@@ -236,9 +236,9 @@
 }
 
 .list-tree{
-	overflow: auto;
+	/*overflow: auto;*/
 	height: 20em;
-	margin: 0;
+	margin: 10px 10px 0;
 }
 .list-tree dt{
 	height: 2em;
@@ -347,22 +347,6 @@ th, td{
 .bower_message{
 	float: left;
 	margin: 0 0 0 20px;
-}
-
-.module-popup{
-	/*overflow: auto;*/
-	/*height: auto;*/
-	/*max-height: 500px;*/
-	/*background: #fff;*/
-	border: 1px solid #888;
-	-webkit-box-shadow: 2px 0 5px #c0c0c0, -2px 0 5px #c0c0c0, 0 2px 5px #c0c0c0, 0 -2px 5px #c0c0c0;
-	-moz-box-shadow: 2px 0 5px #c0c0c0, -2px 0 5px #c0c0c0, 0 2px 5px #c0c0c0, 0 -2px 5px #c0c0c0;
-	box-shadow: 2px 0 5px #c0c0c0, -2px 0 5px #c0c0c0, 0 2px 5px #c0c0c0, 0 -2px 5px #c0c0c0;
-}
-.module-popup>.module_content{
-	margin: 40px 0 0;
-	padding: 0 0 0 10px;
-
 }
 
 .module-popup th, .module-popup td{

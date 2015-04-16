@@ -21,12 +21,13 @@ require(['../config'], function(config){
 				return '<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"/>' +
 					'<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>' +
 					'<title>前端代码运行结果</title>' +
-					(cssLib ? $.map(cssLib.split(','), function(d){return '<link rel="stylesheet" href="'+ d +'">'}).join('') : '') +
+					(cssLib ? $.map(cssLib.split(','), function(d){return '<link rel="stylesheet" href="../lib/'+ d +'">'}).join('') : '') +
 					'<style>' +
 					css +
 					'</style></head><body>' +
 					html +
-					(jsLib ? $.map(jsLib.split(','), function(d){return '<script src="'+ d +'"></script>'}).join('') : '') +
+					//'<script src="../script/lib/jquery.min.js"></script>' +
+					(jsLib ? $.map(jsLib.split(','), function(d){return '<script src="../lib/ '+ d +'"></script>'}).join('') : '') +
 					'<script>' +
 					js +
 					'</script></body></html>';
@@ -49,10 +50,10 @@ require(['../config'], function(config){
 							return {path: d};
 						}) : [];
 						js = js ? $.map(js.split(','), function(d){
-							return {path: d}
+							return {path: d};
 						}) : [];
 
-						return pathTpl(css.concat(js)).join('');
+						return pathTpl( css.concat(js) ).join('');
 					}
 				}
 			})
@@ -224,7 +225,7 @@ require(['../config'], function(config){
 			newWin.write( runCode(html.getValue(), css.getValue(), js.getValue(), cssLib, jsLib) );
 			newWin.close();
 		}).on('click', '#lib', function(){
-			socket.emit('getData', {
+			$libPopup.data('data') ? $libPopup.trigger('showDialog') : socket.emit('getData', {
 				topic: 'bower/editor/lib'
 			});
 		});
@@ -274,7 +275,19 @@ require(['../config'], function(config){
 				}
 			}
 			, 'editor/lib': function(data){
-				$libPopup.find('#libList').html( libTpl(data.data).join('') )
+				var cssLib = $cssLib.val()
+					, jsLib = $jsLib.val()
+					;
+				cssLib = cssLib ? cssLib.split(',') : [];
+				jsLib = jsLib ? jsLib.split(',') : [];
+				//con
+				$libPopup.data('data', true)
+					.find('#libList').html( libTpl(data.data).join('')).find('dd input:checkbox').each(function(d){
+						var v = this.value;
+						if( $.inArray(v, cssLib) !== -1 || $.inArray(v, jsLib) !== -1 ){
+							$(this).trigger('click');
+						}
+					})
 					.end().trigger('showDialog');
 				//console.dir(data)
 			}

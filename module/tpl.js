@@ -107,7 +107,7 @@ module.exports = {
 			'+div.btnGroup{%button%}'
 	})
 	, toolbarTpl:   emmetTpl({
-		template: 'li>button#%id%.btn.icon.icon-%icon%[title=%title%]{%text%}'
+		template: 'li>button#%id%.icon.icon-%icon%[title=%title%]{%text%}'
 		, filter: {
 			icon: function(d){
 				return d.icon || 'settle';
