@@ -27,7 +27,7 @@ require(['../config'], function(config){
 					'</style></head><body>' +
 					html +
 					//'<script src="../script/lib/jquery.min.js"></script>' +
-					(jsLib ? $.map(jsLib.split(','), function(d){return '<script src="../lib/ '+ d +'"></script>'}).join('') : '') +
+					(jsLib ? $.map(jsLib.split(','), function(d){return '<script src="../lib/'+ d +'"></script>'}).join('') : '') +
 					'<script>' +
 					js +
 					'</script></body></html>';
