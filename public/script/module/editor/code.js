@@ -22,15 +22,11 @@ require(['../config'], function(config){
 					'<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>' +
 					'<title>前端代码运行结果</title>' +
 					(cssLib ? $.map(cssLib.split(','), function(d){return '<link rel="stylesheet" href="../lib/'+ d +'">'}).join('') : '') +
-					'<style>' +
-					css +
-					'</style></head><body>' +
-					html +
-					//'<script src="../script/lib/jquery.min.js"></script>' +
+					'<style>' +	css + '</style>' +
+					'</head><body>' + html +
 					(jsLib ? $.map(jsLib.split(','), function(d){return '<script src="../lib/'+ d +'"></script>'}).join('') : '') +
-					'<script>' +
-					js +
-					'</script></body></html>';
+					'<script>' + js + '</script>' +
+					'</body></html>';
 			}
 
 			, $skinLink = $('<link />', {rel: 'stylesheet'}).appendTo('head')
@@ -282,14 +278,13 @@ require(['../config'], function(config){
 				jsLib = jsLib ? jsLib.split(',') : [];
 				//con
 				$libPopup.data('data', true)
-					.find('#libList').html( libTpl(data.data).join('')).find('dd input:checkbox').each(function(d){
-						var v = this.value;
-						if( $.inArray(v, cssLib) !== -1 || $.inArray(v, jsLib) !== -1 ){
+					.find('#libList').html( libTpl(data.data).join('')).find('dd input:checkbox').each(function(){
+						var v = '../lib/'+ this.value;
+
+						if( $.inArray(v, jsLib) !== -1 || $.inArray(v, cssLib) !== -1 ){
 							$(this).trigger('click');
 						}
-					})
-					.end().trigger('showDialog');
-				//console.dir(data)
+					}).end().trigger('showDialog');
 			}
 		});
 	});
