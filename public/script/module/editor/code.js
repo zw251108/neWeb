@@ -179,10 +179,10 @@ require(['../config'], function(config){
 					var val = this.value;
 
 					if( /\.js$/.test( val ) ){
-						jsLib.push( '../lib/'+ val );
+						jsLib.push( val );
 					}
 					else if( /\.css$/.test( val ) ){
-						cssLib.push( '../lib/'+ val );
+						cssLib.push( val );
 					}
 				});
 
@@ -279,7 +279,7 @@ require(['../config'], function(config){
 				//con
 				$libPopup.data('data', true)
 					.find('#libList').html( libTpl(data.data).join('')).find('dd input:checkbox').each(function(){
-						var v = '../lib/'+ this.value;
+						var v = this.value;
 
 						if( $.inArray(v, jsLib) !== -1 || $.inArray(v, cssLib) !== -1 ){
 							$(this).trigger('click');
