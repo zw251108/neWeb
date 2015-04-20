@@ -1,45 +1,45 @@
 /**
  * @module
  */
-///**
-//* 定义常量
-//* */
-//var CONST_VAR = {}
-//	, FEED_URL_ARRAY = [
-//		'http://feed.feedsky.com/programmer'
-//	]
-//	, ARTICLE_URL_ARRAY = [
-////		'http://zw150026.com/blog/detail.php?id=14&type=1'
-////		, 'http://blog.csdn.net/zuoninger/article/details/38842823'
-////		,
-//		'http://www.iteye.com/news/26243'
-//	]
-//	, mainContent = {
-//		'www.csdn.net': '.news_content'
-//		, 'blog.csdn.net': '#article_content'
-//		, 'www.iteye.com': '#news_content'
-//	}
-//	;
-///**
-//* 分析 URL
-//* */
-//var URL = require('url')
-//	/**
-//	 * 创建 HTTP 请求
-//	 * */
-//	,  HTTP = require('http')
-//	/**
-//	 * node-segment
-//	 *  分词
-//	 * */
-//	, Segment = require('node-segment').Segment
-//	, segment = new Segment()
-//	/**
-//	 * cheerio
-//	 *  解析 HTML 结构
-//	 * */
-//	, Cheerio = require('cheerio')
-//	;
+/**
+ * 定义常量
+ * */
+var CONST_VAR = {}
+	, FEED_URL_ARRAY = [
+		'http://feed.feedsky.com/programmer'
+	]
+	, ARTICLE_URL_ARRAY = [
+//		'http://zw150026.com/blog/detail.php?id=14&type=1'
+//		, 'http://blog.csdn.net/zuoninger/article/details/38842823'
+//		,
+		'http://www.iteye.com/news/26243'
+	]
+	, mainContent = {
+		'www.csdn.net': '.news_content'
+		, 'blog.csdn.net': '#article_content'
+		, 'www.iteye.com': '#news_content'
+	}
+	;
+/**
+ * 分析 URL
+ * */
+var URL = require('url')
+	/**
+	 * 创建 HTTP 请求
+	 * */
+	,  HTTP = require('http')
+	/**
+	 * node-segment
+	 *  分词
+	 * */
+	, Segment = require('node-segment').Segment // 载入模块
+	, segment = new Segment()   // 创建实例
+	/**
+	 * cheerio
+	 *  解析 HTML 结构
+	 * */
+	, Cheerio = require('cheerio')
+	;
 //
 //segment
 //	// 识别模块
@@ -197,42 +197,32 @@
 //
 //ARTICLE_URL_ARRAY.forEach(getArticle);
 
-//// 载入模块
-//var Segment = require('node-segment').Segment;
-//// 创建实例
-//var segment = new Segment();
-//// 配置，可根据实际情况增删，详见segment.useDefault()方法
-//segment.use('DictTokenizer')  // 载入识别模块，详见lib/module目录，或者是自定义模块的绝对路径
-////.use('URLTokenizer')            // URL识别
-////	.use('WildcardTokenizer')       // 通配符，必须在标点符号识别之前
-////	.use('PunctuationTokenizer')    // 标点符号识别
-////	.use('ForeignTokenizer')        // 外文字符、数字识别，必须在标点符号识别之后
-//segment.loadDict('dict.txt'); // 载入字典，详见dicts目录，或者是自定义字典文件的绝对路径
-//
-//segment
-//	// 识别模块
-//	// 强制分割类单词识别
-//	.use('URLTokenizer')            // URL识别
-//	.use('WildcardTokenizer')       // 通配符，必须在标点符号识别之前
-//	.use('PunctuationTokenizer')    // 标点符号识别
-//	.use('ForeignTokenizer')        // 外文字符、数字识别，必须在标点符号识别之后
-//	// 中文单词识别
-//	.use('DictTokenizer')           // 词典识别
-//	.use('ChsNameTokenizer')        // 人名识别，建议在词典识别之后
-//
-//	// 优化模块
-//	.use('EmailOptimizer')          // 邮箱地址识别
-//	.use('ChsNameOptimizer')        // 人名识别优化
-//	.use('DictOptimizer')           // 词典识别优化
-//	.use('DatetimeOptimizer')       // 日期时间识别优化
-//
-//	// 字典文件
-//	.loadDict('dict.txt')           // 盘古词典
-//	.loadDict('dict2.txt')          // 扩展词典（用于调整原盘古词典）
-//	.loadDict('names.txt')          // 常见名词、人名
-//	.loadDict('wildcard.txt', 'WILDCARD', true)   // 通配符
-//// 自定义
-//segment.loadDict('../../../segment/web.txt', 'Web', true);
-//
-//// 开始分词
-//console.log('\n', segment.doSegment('<p>前端工程师，有一个人</p>这是一个基于Node.js的中文分词模块。互联网，Java'));
+/**
+ * 配置，可根据实际情况增删，详见segment.useDefault()方法
+ * */
+segment
+	// 载入识别模块，强制分割类单词识别，详见 lib/module 目录，或者是自定义模块的绝对路径
+	.use('URLTokenizer')            // URL识别
+	.use('WildcardTokenizer')       // 通配符，必须在标点符号识别之前
+	.use('PunctuationTokenizer')    // 标点符号识别
+	.use('ForeignTokenizer')        // 外文字符、数字识别，必须在标点符号识别之后
+	// 中文单词识别
+	.use('DictTokenizer')           // 词典识别
+	.use('ChsNameTokenizer')        // 人名识别，建议在词典识别之后
+
+	// 优化模块
+	.use('EmailOptimizer')          // 邮箱地址识别
+	.use('ChsNameOptimizer')        // 人名识别优化
+	.use('DictOptimizer')           // 词典识别优化
+	.use('DatetimeOptimizer')       // 日期时间识别优化
+
+	// 载入字典，详见 dicts 目录，或者是自定义字典文件的绝对路径
+	.loadDict('dict.txt')           // 盘古词典
+	.loadDict('dict2.txt')          // 扩展词典（用于调整原盘古词典）
+	.loadDict('names.txt')          // 常见名词、人名
+	.loadDict('wildcard.txt', 'WILDCARD', true)   // 通配符
+	;
+segment.loadDict(__dirname + '/web.txt', 'Web', true);  // 自定义
+
+// 开始分词
+console.log('\n', segment.doSegment('<p>前端工程师，有一个人</p>这是一个基于Node.js的中文分词模块。互联网，Java'));
