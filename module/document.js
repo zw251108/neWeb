@@ -34,7 +34,7 @@ var Document = {
 		template: 'dt.icon.icon-right{%title%}+dd{%content%}'
 	})
 	, sectionTpl    = emmetTpl({
-		template: 'section.document_section.section>h3.section_title[section_id=%section_id%]{%section_title%}>span.icon.icon-minus^dl{%dl%}'
+		template: 'section.document_section.section>h3.section_title{%section_title%}>span.icon.icon-minus^dl{%dl%}'
 		, filter: {
 			dl: function(d){
 				return dlTpl(d.dl).join('');

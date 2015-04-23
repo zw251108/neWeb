@@ -157,19 +157,32 @@ var jsFiles = {
 
 module.exports = function(grunt){
 	grunt.initConfig({
+		// 并行运行任务
 		concurrent: {
-			destiny: ['uglify'
-				, 'less'
+			destiny: [
+//				'htmlmin'
+//				,
+				'less'
 				, 'cssmin'
-//				, 'htmlmin'
-				, 'copy'
+//				, requirejs
+				, 'uglify'
+//				, 'copy'
 			]
 		}
-		, uglify: {
+
+		, htmlmin: {
 			destiny: {
-				files: jsFiles
+				options: {
+					removeComments: true,
+					collapseWhitespace: true
+				},
+				files: {
+					'public/index.html': 'tpl/index.html',
+					'public/module.html': 'tpl/module.html'
+				}
 			}
 		}
+
 		, cssmin: {
 			destiny: {
 				options:{},
@@ -184,11 +197,11 @@ module.exports = function(grunt){
 					, src: ['*.css']
 					, dest: 'public/script/plugin/codeMirror/addon/fold/'
 				}, {
-				//	expand: true
-				//	, cwd: 'bower_components/codemirror/addon/lint/'
-				//	, src: ['*.css']
-				//	, dest: 'public/script/plugin/codeMirror/addon/lint/'
-				//}, {
+					//	expand: true
+					//	, cwd: 'bower_components/codemirror/addon/lint/'
+					//	, src: ['*.css']
+					//	, dest: 'public/script/plugin/codeMirror/addon/lint/'
+					//}, {
 					expand: true
 					, cwd: 'bower_components/codemirror/theme/'
 					, src: ['*.css']
@@ -299,6 +312,44 @@ module.exports = function(grunt){
 //				}
 			}
 		}
+		, less: {
+			destiny: {
+				options: {
+					cleancss: true
+				},
+				files: {
+					'public/style/style.css': 'less/style.less'
+				}
+			}
+		}
+		, sass: {
+			destiny: {
+				options: {
+					outputStyle: 'compressed'
+				},
+				files: {
+					'sass/to/style.css': 'sass/source/style.scss'
+				}
+			}
+		}
+
+		, requirejs: {
+			destiny: {
+				options: {
+					baseUrl: 'public/script'
+					, mainConfigFile: ''
+					, out: ''
+					, paths: {}
+					, shim: {}
+				}
+			}
+		}
+		, uglify: {
+			destiny: {
+				files: jsFiles
+			}
+		}
+
 		, copy: {
 			destiny: {
 //				files: [{   // jQuery
@@ -356,28 +407,7 @@ module.exports = function(grunt){
 //				}]
 			}
 		}
-		, less: {
-			destiny: {
-				options: {
-					cleancss: true
-				},
-				files: {
-					'public/style/style.css': 'less/style.less'
-				}
-			}
-		}
-		, htmlmin: {
-			destiny: {
-				options: {
-					removeComments: true,
-					collapseWhitespace: true
-				},
-				files: {
-					'public/index.html': 'tpl/index.html',
-					'public/module.html': 'tpl/module.html'
-				}
-			}
-		}
+
 		, jsdoc: {
 			destiny: {
 				options: {
@@ -389,7 +419,11 @@ module.exports = function(grunt){
 		}
 		, watch: {
 			destiny: {
-				files: ['less/*.less', 'public/style/*.css', 'public/script/*.js']
+				files: ['less/*.less'
+					, 'sass/source/*.scss'
+					, 'public/style/*.css'
+					, 'public/script/*.js'
+				]
 				, tasks: ['less']
 				, options: {
 					livereload: 9090
@@ -398,25 +432,45 @@ module.exports = function(grunt){
 		}
 	});
 
+	/**
+	 * html 文件压缩
+	 * */
 	grunt.loadNpmTasks('grunt-contrib-htmlmin');
+	/**
+	 * css 编译及压缩
+	 * */
 	grunt.loadNpmTasks('grunt-contrib-cssmin');
-	grunt.loadNpmTasks('grunt-contrib-uglify');
-	grunt.loadNpmTasks('grunt-contrib-copy');
-	grunt.loadNpmTasks('grunt-contrib-less');
-	grunt.loadNpmTasks('grunt-jsdoc');
+	grunt.loadNpmTasks('grunt-contrib-less');   // less 编译
+	grunt.loadNpmTasks('grunt-sass');   // sass 编辑（基于 node-sass，不是基于 ruby）
+	/**
+	 * js 打包及压缩
+	 * */
+	grunt.loadNpmTasks('grunt-contrib-requirejs');  // requirejs 打包
+	grunt.loadNpmTasks('grunt-contrib-uglify'); // js 文件压缩
 
-	// 文件监视
+	/**
+	 * 文件拷贝移动
+	 *  主要为 图片 等静态资源
+	 * */
+	grunt.loadNpmTasks('grunt-contrib-copy');
+
+	/**
+	 * 生成 jsdoc
+	 * */
+//	grunt.loadNpmTasks('grunt-jsdoc');
+
+	/**
+	 * 文件监视
+	 * */
 	grunt.loadNpmTasks('grunt-contrib-watch');
 
-	// 多任务并行
+	/**
+	 * 多任务并行
+	 * */
 	grunt.loadNpmTasks('grunt-concurrent');
 
+	// 默认任务
 	grunt.registerTask('default', [
 		'concurrent'
-//		,'uglify'
-//		, 'copy'
-//		, 'cssmin'
-//		, 'htmlmin'
-//		, 'less'
 	]);
 };

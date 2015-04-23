@@ -266,3 +266,11 @@ dialog::backdrop{
 .hidden{
 	display:none;
 }
+
+/**
+ * IE10 没有对 屏幕的宽度 和 视口（viewport） 进行区分
+ *  可能导致媒体查询并不能发挥作用
+ */
+@-ms-viewport{
+	width: device-width;
+}
