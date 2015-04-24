@@ -126,8 +126,9 @@ web.get('/', function(req, res){
 
 //----- 加载模块 -----
 //require('./module/blog.js')(    web, db, socket, metro);  // 加载模块 blog
-require('./module/document.js')(web, db, socket, metro);  // 加载模块 document
-require('./module/editor.js')(  web, db, socket, metro);  // 加载模块 editor
+require('./module/document.js')(web, db, socket, metro);    // 加载模块 document
+require('./module/editor.js')(  web, db, socket, metro);    // 加载模块 editor
+//require('./module/feed.js')(    web, db, socket, metro);    // 加载模块 rss
 
 require('./module/bower.js')(   web, db, socket, metro);  // 加载模块 bower
 

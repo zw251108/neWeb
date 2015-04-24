@@ -6,7 +6,8 @@
  * */
 var CONST_VAR = {}
 	, FEED_URL_ARRAY = [
-		'http://feed.feedsky.com/programmer'
+		//'http://feed.feedsky.com/programmer'
+		'http://www.huxiu.com/rss/0.xml'
 	]
 	, ARTICLE_URL_ARRAY = [
 //		'http://zw150026.com/blog/detail.php?id=14&type=1'
@@ -30,10 +31,10 @@ var URL = require('url')
 	,  HTTP = require('http')
 
 	/**
-	 * node-segment
+	 * segment
 	 *  分词
 	 * */
-	, Segment = require('node-segment').Segment // 载入模块
+	, Segment = require('segment').Segment // 载入模块
 	, segment = new Segment()   // 创建实例
 
 	/**
@@ -47,8 +48,10 @@ var URL = require('url')
  * 配置，可根据实际情况增删，详见segment.useDefault()方法
  * */
 segment
+	.use( require(__dirname +'/HtmlTagTokenizer.js') )
+
 	// 载入识别模块，强制分割类单词识别，详见 lib/module 目录，或者是自定义模块的绝对路径
-	.use('URLTokenizer')            // URL识别
+	.use('URLTokenizer')            // URL 识别
 	.use('WildcardTokenizer')       // 通配符，必须在标点符号识别之前
 	.use('PunctuationTokenizer')    // 标点符号识别
 	.use('ForeignTokenizer')        // 外文字符、数字识别，必须在标点符号识别之后
@@ -68,8 +71,7 @@ segment
 	.loadDict('names.txt')          // 常见名词、人名
 	.loadDict('wildcard.txt', 'WILDCARD', true)   // 通配符
 	;
-segment.loadDict(__dirname + '/web.txt', 'Web', true);  // 自定义
-
+//segment.loadDict(__dirname + '/web.txt', 'Web', true);  // 自定义
 
 //var parsedUrl = URL.parse( ARTICLE_URL_ARRAY[1], true )
 //	, host = parsedUrl.host
@@ -79,30 +81,32 @@ segment.loadDict(__dirname + '/web.txt', 'Web', true);  // 自定义
  * HTTP GET 请求
  *  发送请求，获取 RSS
  * */
-var rssReq = HTTP.get(FEED_URL_ARRAY[0], function(res){
-	var rss = '';
-
-	res.setEncoding('utf8');
-	res.on('data', function(c){
-		rss += c;
-	});
-	res.on('end', function(){
-		console.log('\n',  rss );
-		var $ = Cheerio.load(rss)
-			;
-		var item = $('item');
-		var item1 = item.eq(0);
-
-//		console.log('\n',  item1.find('title').text() )
-//		console.log('\n',  item1.find('link')[0].next.data )
-//		console.log('\n',  item1.find('description').text() )
-//		console.log('\n',  item1.find('author').text() );
-		// title link description author
-
-		getArticle( item1.find('link')[0].next.data );
-	});
-});
-rssReq.end();
+//var rssReq = HTTP.get(FEED_URL_ARRAY[0], function(res){
+//	var rss = '';
+//
+//	res.setEncoding('utf8');
+//	res.on('data', function(c){
+//		rss += c;
+//	});
+//	res.on('end', function(){
+//		console.log('\n',  rss );
+//		var $ = Cheerio.load(rss)
+//			;
+//		var item = $('item');
+//		var item1 = item.eq(0);
+//
+////		console.log('\n',  item1.find('title').text() )
+////		console.log('\n',  item1.find('link')[0].next.data )
+////		console.log('\n',  item1.find('description').text() )
+////		console.log('\n',  item1.find('author').text() );
+//		// title link description author
+//console.log(rss, item1.find('link')[0].next.data);
+//		getArticle( item1.find('link')[0].next.data );
+//	});
+//}).on('error', function(e){
+//	console.log('error: ' + e.message);
+//});
+//rssReq.end();
 
 
 /**
@@ -154,8 +158,14 @@ function getArticle(url){
 				p = temp.p;
 
 				/**
-				 * 过滤
-				 *  只统计 专有名词 外文字符 机构团体 地名 人名 动词 名词
+				 * 过滤，只统计
+				 *  8   专有名词
+				 *  16  外文字符
+				 *  32  机构团体
+				 *  64  地名
+				 *  128 人名
+				 *  4096    动词
+				 *  1048576 名词
 				 * */
 				if( !(p === 8 ||
 					p === 16 ||
@@ -191,12 +201,14 @@ function getArticle(url){
 
 			w = 0;
 			j = filterRs.length;
-			while( w !== 10 && w < j ){
+			while( w < j ){
 				console.log('\n', filterRs[w]);
 
 				w++;
 			}
 		});
+	}).on('error', function(e){
+		console.log('Error: ' + e.message);
 	});
 	req.end();
 }
@@ -209,4 +221,4 @@ module.exports = function(url){
 };
 
 // 开始分词
-console.log('\n', segment.doSegment('<p>前端工程师，有一个人</p>这是一个基于Node.js的中文分词模块。互联网，Java'));
+console.log('\n', segment.doSegment('<a>http://www.baidu.com</a><p>http:// 前端工程师，http://www.baidu.com有一个人</p>这是一个基于Node.js的中文分词模块。互联网，Java'));

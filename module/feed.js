@@ -7,7 +7,7 @@ var Feed = {
 	}
 	, tpl = require('./tpl.js')
 	, emmetTpl = require('./emmetTpl/emmetTpl.js').template
-	, segment = require('./segment')
+	, segment = require('./segment/segment.js')
 
 	, feedTpl = emmetTpl({
 		template: 'section.rss_section.section>a[href=%html_href% data-rss=%xml_url%]>h3.section_title{%name%}>span.icon.icon-minus^dl{%dl%}'
