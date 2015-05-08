@@ -12,6 +12,7 @@ define({
 		, socket: 'module/socket'
 		, tag: 'module/tag'
 		, time: 'module/time'
+
 		, codeEditor: 'module/codeEditor'
 
 		, template: 'ui/jquery.emmetTpl'

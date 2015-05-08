@@ -337,10 +337,52 @@ module.exports = function(grunt){
 			destiny: {
 				options: {
 					baseUrl: 'public/script'
-					, mainConfigFile: ''
-					, out: ''
-					, paths: {}
-					, shim: {}
+					, dir:'public/build'
+					//, optimize: 'uglify2'
+					//, out: 'public/build/'
+					//, paths: {
+					//	'jquery': 'lib/jquery.min.js'
+					//	//, 'd3': 'lib/d3.min.js'
+					//}
+					//, fileExclusionRegExp: /\.css/
+					, paths: {
+						css: 'lib/css'
+						, codeEditor: 'module/codeEditor'
+					}
+					, modules: [{
+						name: 'codeEditor'
+						, include: [
+							'plugin/codeMirror/lib/codemirror.js'
+							, 'plugin/codeMirror/mode/xml/xml.js'
+							, 'plugin/codeMirror/mode/htmlmixed/htmlmixed.js'
+							, 'plugin/codeMirror/mode/javascript/javascript.js'
+							, 'plugin/codeMirror/mode/css/css.js'
+
+							, 'plugin/codeMirror/addon/comment/comment.js'
+							, 'plugin/codeMirror/addon/comment/continuecomment.js'
+
+							, 'plugin/codeMirror/addon/fold/foldcode.js'
+							, 'plugin/codeMirror/addon/fold/foldgutter.js'
+							, 'plugin/codeMirror/addon/fold/brace-fold.js'
+							, 'plugin/codeMirror/addon/fold/xml-fold.js'
+
+							, 'plugin/codeMirror/addon/display/placeholder.js'
+							, 'plugin/codeMirror/addon/display/panel.js'
+
+							, 'plugin/codeMirror/emmet/emmet.min.js'
+							, 'module/codeEditor.js'
+							//'lib/jquery.min.js'
+							//, 'lib/d3.min.js'
+						]
+					}]
+					, optimizeCss: 'standard'
+				}
+			}
+		}
+		, rjs: {
+			destiny: {
+				opitons: {
+				// https://www.npmjs.com/package/grunt-croc-requirejs
 				}
 			}
 		}
