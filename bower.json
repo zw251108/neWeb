@@ -30,6 +30,7 @@
     "jcrop": "~0.9.12",
     "cropzoom": "*",
     "jquery-mobile": "~1.4.5",
-    "cropper": "~0.9.0"
+    "cropper": "~0.9.0",
+    "art-dialog": "~6.0.4"
   }
 }
