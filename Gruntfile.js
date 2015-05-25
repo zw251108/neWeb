@@ -455,7 +455,9 @@ module.exports = function(grunt){
 				options: {
 					destination: 'doc'
 				},
-				src: ['public/script/*/*.js', 'public/script/*/*/*.js']
+				src: ['public/script/ui/*.js'
+					, 'public/script/*/*/*.js'
+				]
 
 			}
 		}
@@ -499,7 +501,7 @@ module.exports = function(grunt){
 	/**
 	 * 生成 jsdoc
 	 * */
-//	grunt.loadNpmTasks('grunt-jsdoc');
+	grunt.loadNpmTasks('grunt-jsdoc');
 
 	/**
 	 * 文件监视

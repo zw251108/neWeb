@@ -78,7 +78,11 @@ web.use('/cache.manifest', express.static(__dirname + '/public/cache.manifest') 
 
 web.use('/doc.html', express.static(__dirname + '/doc.html') );  //
 
-web.use('/lib', express.static(__dirname + '/bower_components'))
+web.use('/lib', express.static(__dirname + '/bower_components'));
+web.use('/lib/zui', express.static(__dirname + '/public/script/ui'));
+web.use('/lib/zui/jquery.emmetTpl.js', express.static(__dirname + '/module/emmetTpl/emmetTpl.js') );  // 前后端通用模板引擎
+
+web.use('/doc', express.static(__dirname + '/doc'));
 
 //web.use(function(req, res, next){
 //	var err = new Error('not found');

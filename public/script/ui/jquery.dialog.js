@@ -5,8 +5,9 @@
  * @function    $.dialog
  * @param   {object}    options
  *
- * @return  {object}(jQuery)
+ * @return  {object(jQuery)}
  * @desc
+ * <pre>
  *  model alert
 	 +------------------------------------+
 	 |                                  |X|
@@ -20,10 +21,10 @@
 	 |               | OK |               |
 	 |               +----+               |
 	 +------------------------------------+
-    dialog.dialog.dialog-alert
+	dialog.dialog.dialog-alert
 	dialog form.dialog_operate[method=dialog]
 	dialog form button:submit.dialog_btn.dialog_ok[value=ok]
-    dialog form button:button.dialog_btn-custom#dialogCustom$
+	dialog form button:button.dialog_btn-custom#dialogCustom$
  *
  *  model confirm
 	 +------------------------------------+
@@ -59,8 +60,13 @@
 	 |       |   OK   |  | Cancel |       |
 	 |       +--------+  +--------+       |
 	 +------------------------------------+
- *
+ *  </pre>
  * @example
+	var $dialog = $.dialog({
+		title: 'å¼¹çª—ç¤ºä¾‹'
+		, content: '#content'
+		, extendClass: 'module module-input'
+	});
  * */
 ;(function(factory, jqPath){
 	if( typeof exports === 'object' && typeof module === 'object' ){
@@ -82,7 +88,7 @@
 			open: function(){
 				var $content = this.data('dialogContent');
 
-				// ÔÚÏÔÊ¾ dialog Ç°½« content ²åÈëµ½ dialog ÖÐ
+				// åœ¨æ˜¾ç¤º dialog å‰å°† content æ’å…¥åˆ° dialog ä¸­
 				$content.appendTo(this).show();
 
 				this.triggerHandler('show');
@@ -96,7 +102,7 @@
 						.hide()
 						.triggerHandler('close');
 				};
-				// todo ½« content »¹Ô­µ½Ô­À´Î»ÖÃ
+				// todo å°† content è¿˜åŽŸåˆ°åŽŸæ¥ä½ç½®
 			})()
 		}
 		, dialogEvent = {
@@ -142,15 +148,15 @@
 				;
 
 			switch( returnValue ){
-				case 0:         // Ö±½ÓÍË³ö³ÌÐò
+				case 0:         // ç›´æŽ¥é€€å‡ºç¨‹åº
 					break;
-				case 'ok':      // Ö´ÐÐ ok °´Å¥µÄ»Øµ÷º¯Êý
+				case 'ok':      // æ‰§è¡Œ ok æŒ‰é’®çš„å›žè°ƒå‡½æ•°
 					cb = opts.ok.callback;
 					break;
-				case 'cancel':  // Ö´ÐÐ cancel °´Å¥µÄ»Øµ÷º¯Êý
+				case 'cancel':  // æ‰§è¡Œ cancel æŒ‰é’®çš„å›žè°ƒå‡½æ•°
 					cb = opts.cancel.callback;
 					break;
-				default:        // ×Ô¶¨Òå°´Å¥µÄ»Øµ÷º¯Êý returnValue Óë¶¨ÒåµÄ°´Å¥µÄ value ÏàÍ¬
+				default:        // è‡ªå®šä¹‰æŒ‰é’®çš„å›žè°ƒå‡½æ•° returnValue ä¸Žå®šä¹‰çš„æŒ‰é’®çš„ value ç›¸åŒ
 					if( returnValue > 0 && returnValue < opts.buttons.length ){
 						cb = opts.buttons[returnValue];
 					}
@@ -192,7 +198,7 @@
 		opts.extendClass && $dialog.addClass( opts.extendClass );
 		opts.overlay && $dialog.addClass('dialog-bg');
 
-		// °ó¶¨ÊÂ¼þ
+		// ï¿½ï¿½ï¿½Â¼ï¿½
 		$dialog.data('options', opts).on( dialogEvent ).on('click', '.dialog_close', dialogCloseEvent);
 		if( !isOrigin ){
 			$dialog.on('click', 'form.dialog_operate button.dialog_btn', function(){
@@ -206,11 +212,11 @@
 		//	});
 		//}
 
-		// Éú³É°´Å¥
+		// ï¿½ï¿½ï¿½É°ï¿½Å¥
 		if( model !== 'tips' && (okOpts || cancelOpts || btnOpts) ){
 			$dialogOperate = $('<form class="dialog_operate" method="dialog"></form>').appendTo( $dialog );
 
-			// °´Å¥ÅÅÐò
+			// ï¿½ï¿½Å¥ï¿½ï¿½ï¿½ï¿½
 			if( opts.sort ){
 				if( okOpts ){
 					okOpts.value = 'ok';
@@ -258,7 +264,7 @@
 						btn.push( h );
 					}
 					else if( t.value in btnCb ){
-						log('value Îª '+ t.value +' µÄ button ÒÑ´æÔÚ');
+						log('value Îª '+ t.value +' ï¿½ï¿½ button ï¿½Ñ´ï¿½ï¿½ï¿½');
 					}
 				}
 			}

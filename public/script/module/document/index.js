@@ -2,6 +2,6 @@
  * @module
  * */
 require(['../config'], function(config){
-	require(config);
-	require(['document'], function(document){});
+	var r = require(config);
+	r(['document'], function(document){});
 });

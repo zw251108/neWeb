@@ -2,8 +2,8 @@
  * @module  code
  * */
 require(['../config'], function(config){
-	require.config(config);
-	require(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g, socket, codeArea){
+	var r = require.config(config);
+	r(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g, socket, codeArea){
 		var $editor = $('#editor')
 			, $form = $editor.find('#editorForm')
 			, $toolbar = $editor.find('.toolbar')
