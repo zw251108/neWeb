@@ -28,12 +28,12 @@
  * @param   {string}    options.styleConfig.next.show   下一页 是否显示 设置为 false 时才不显示
  * @param   {string}    options.styleConfig.next.text   下一页 设置文本
  * @param   {string}    options.styleConfig.next.extendClass    下一页 样式的扩展 class 名
+  * @param   {object}    options.styleConfig.current 当前页码 样式配置
+ * @param   {string}    options.styleConfig.current.text    当前页码 设置文本
+ * @param   {string}    options.styleConfig.current.extendClass 当前页码 样式的扩展 class 名
  * @param   {object}    options.styleConfig.page    数字页码 样式配置
  * @param   {function}  options.styleConfig.page.pageText    数字页码 设置文本 函数传入参数为 pageIndex
  * @param   {string}    options.styleConfig.page.extendClass    数字页码 样式的扩展 class 名
- * @param   {object}    options.styleConfig.current 当前页码 样式配置
- * @param   {string}    options.styleConfig.current.text    当前页码 设置文本
- * @param   {string}    options.styleConfig.current.extendClass 当前页码 样式的扩展 class 名
  * @param   {object}    options.styleConfig.form    页面跳转表单
  * @return  {object(jQuery)}    参数 container 所对应的 jQuery 对象
  * @require jquery
@@ -85,6 +85,13 @@
 				, html = []
 				, i = 0, t
 				, styleConfig = opts.styleConfig
+				, first = styleConfig.first || {}
+				, last = styleConfig.last || {}
+				, prev = styleConfig.prev || {}
+				, next = styleConfig.next || {}
+				, current = styleConfig.current || {}
+				, page = styleConfig.page || {}
+				, form = styleConfig.form || {}
 				;
 
 			count = count ? count : opts.count;
@@ -102,32 +109,29 @@
 			left = index > left ? (index - left + pageShow > pageNum ? (pageNum-pageShow+1<=0 ? 1 : pageNum-pageShow+1) : index-left) : 1;
 			right = left+pageShow-1>pageNum ? pageNum : left+pageShow-1;
 
-			//styleConfig.first.show === false && html.push('<a class="page page-first "'+ (styleConfig.first.extendClass || '') +'">'+ (styleConfig.first.text || '首页') +'</a>');
 
-			//html.push('<a class="page page-first '+ (opts.styleConfig.first.extendClass || '') +'">首页</a>');
-            //html.push('<a class="page page-prev '+ (opts.styleConfig.prev.extendClass || '') +'">上一页</a>');
 
-            html.push( index===1 ? '<a class="page page-first page-disabled '+ (opts.styleConfig.first.extendClass || '') +'">上一页</a>' : '<a title="上一页" id="prevPage" class="page prevPage"><b></b>&nbsp;上一页</a>' );
-            html.push( left===1 ? '' : '<a class="page" title="第1页">1</a>' );
-            html.push( left>2 ? '<b>...</b>' : '' );
+            html.push( index===1 ? '<a class="page page-prev" href="javascript:;">上一页</a>' : '<a href="javascript:;" title="上一页" class="page page-prev">上一页</a>' );
+            html.push( left===1 ? '' : '<a class="page" href="'+'1" title="第1页">1</a>' );
+			html.push( left>2 ? '<b>...</b>' : '' );
 
-            t = opts.styleConfig.page.extendClass || '';
+            t = page.extendClass || '';
             for(; left<index; left++, i++){
-				html.push('<a class="page '+ t +'" title="第'+ left +'页">'+ left +'</a>');
+				html.push('<a class="page '+ t +'" href="javascript:;" title="第'+ left +'页">'+ left +'</a>');
             }
 
-            html.push('<a class="page page-current '+ (opts.styleConfig.current.extendClass || '') +'" title="第'+ index +'页">'+ index +'</a>');
+            html.push('<a class="page page-current '+ (opts.styleConfig.current.extendClass || '') +'" href="javascript:;" title="第'+ index +'页">'+ index +'</a>');
             i++;
 
             for(left=index+1 ; left<=pageNum && i!==pageShow; i++, left++){
-				html.push( '<a class="page '+ t +'" title="第'+ left +'页">'+ left +'</a>' );
+				html.push( '<a class="page '+ t +'" href="javascript:;" title="第'+ left +'页">'+ left +'</a>' );
             }
 
-            //html.push('<a class="page page-next '+ (opts.styleConfig.next.extendClass || '') +'">下一页</a>');
-            //html.push('<a class="page page-last '+ (opts.styleConfig.last.extendClass || '') +'">尾页</a>');
             html.push( pageNum-right>=2 ? '<b>...</b>' : '' );
-            html.push( right===pageNum ? '' : '<a class="page" title="第'+pageNum+'页">'+pageNum+'</a>' );
-            html.push( index===pageNum ? '<span class="page nextPage">下一页&nbsp;<b>?</b></span>' : '<a title="下一页" id="nextPage" class="page nextPage">下一页&nbsp;<b></b></a>' );
+            html.push( right===pageNum ? '' : '<a class="page" href="javascript:;" title="第'+pageNum+'页">'+pageNum+'</a>' );
+            html.push( index===pageNum ? '<a class="page page-next" title="下一页" href="javascript:;">下一页</a>' : '<a title="下一页" href="javascript:;" class="page page-next">下一页</a>' );
+
+			html.push('共'+ pageNum +'页 到第<input type="text" id="jumpPage">页<a class="list_num_btn" href="#">确定</a>');
 
 			$container.html( html.join('') );
 		}
