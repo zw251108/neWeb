@@ -66,6 +66,8 @@
 		factory(jQuery);
 	}
 })(function($){
+	'use strict';
+
 	var methods = {
 			valid: function(){
 				var $items = this.formItems

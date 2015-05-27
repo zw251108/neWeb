@@ -26,6 +26,8 @@
 		factory(jQuery);
 	}
 })(function($){
+	'use strict';
+
 	var Slider = function(options){
 		var opts = $({}, slider.defaults, options)
 			, $container = opts.container
@@ -87,6 +89,8 @@
 	};
 
 	$.slider = Slider;
+
+	return Slider;
 }, '');
 
 

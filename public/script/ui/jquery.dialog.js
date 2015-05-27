@@ -79,6 +79,8 @@
 		factory(jQuery);
 	}
 })(function($){
+	'use strict';
+
 	var isOrigin = (function(){
 			var dialog = document.createElement('dialog');
 
@@ -198,7 +200,7 @@
 		opts.extendClass && $dialog.addClass( opts.extendClass );
 		opts.overlay && $dialog.addClass('dialog-bg');
 
-		// ���¼�
+		// 绑定事件
 		$dialog.data('options', opts).on( dialogEvent ).on('click', '.dialog_close', dialogCloseEvent);
 		if( !isOrigin ){
 			$dialog.on('click', 'form.dialog_operate button.dialog_btn', function(){
@@ -212,11 +214,11 @@
 		//	});
 		//}
 
-		// ���ɰ�ť
+		// 生成按钮
 		if( model !== 'tips' && (okOpts || cancelOpts || btnOpts) ){
 			$dialogOperate = $('<form class="dialog_operate" method="dialog"></form>').appendTo( $dialog );
 
-			// ��ť����
+			// 按钮排序
 			if( opts.sort ){
 				if( okOpts ){
 					okOpts.value = 'ok';
@@ -254,7 +256,7 @@
 					if( 'value' in t && !(t.value in btnCb) && 'text' in t ){
 						h = '<button type="submit"';
 						h += ' value="' + t.value +'"';
-						h += ' class="dialog_btn' + (t.extendClass ? ' '+ t.extendClass : '') +'"'
+						h += ' class="dialog_btn' + (t.extendClass ? ' '+ t.extendClass : '') +'"';
 						t.id && (h += ' id="' + t.id +'"');
 
 						h += '>' + t.text + '</button>';
@@ -264,7 +266,7 @@
 						btn.push( h );
 					}
 					else if( t.value in btnCb ){
-						log('value Ϊ '+ t.value +' �� button �Ѵ���');
+						log('value 为 '+ t.value +' 的 button 已存在');
 					}
 				}
 			}

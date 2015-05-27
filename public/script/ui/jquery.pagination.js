@@ -28,7 +28,7 @@
  * @param   {string}    options.styleConfig.next.show   下一页 是否显示 设置为 false 时才不显示
  * @param   {string}    options.styleConfig.next.text   下一页 设置文本
  * @param   {string}    options.styleConfig.next.extendClass    下一页 样式的扩展 class 名
-  * @param   {object}    options.styleConfig.current 当前页码 样式配置
+ * @param   {object}    options.styleConfig.current 当前页码 样式配置
  * @param   {string}    options.styleConfig.current.text    当前页码 设置文本
  * @param   {string}    options.styleConfig.current.extendClass 当前页码 样式的扩展 class 名
  * @param   {object}    options.styleConfig.page    数字页码 样式配置
@@ -109,10 +109,10 @@
 			left = index > left ? (index - left + pageShow > pageNum ? (pageNum-pageShow+1<=0 ? 1 : pageNum-pageShow+1) : index-left) : 1;
 			right = left+pageShow-1>pageNum ? pageNum : left+pageShow-1;
 
-
+			first.show && html.push('<a href="javascript:;" class="page page-first '+ first.extendClass +'" title="'+ first.text +'">'+ first.text +'</a>');
 
             html.push( index===1 ? '<a class="page page-prev" href="javascript:;">上一页</a>' : '<a href="javascript:;" title="上一页" class="page page-prev">上一页</a>' );
-            html.push( left===1 ? '' : '<a class="page" href="'+'1" title="第1页">1</a>' );
+            html.push( left===1 ? '' : '<a class="page" href="javascript:;" title="第1页">1</a>' );
 			html.push( left>2 ? '<b>...</b>' : '' );
 
             t = page.extendClass || '';
@@ -132,6 +132,8 @@
             html.push( index===pageNum ? '<a class="page page-next" title="下一页" href="javascript:;">下一页</a>' : '<a title="下一页" href="javascript:;" class="page page-next">下一页</a>' );
 
 			html.push('共'+ pageNum +'页 到第<input type="text" id="jumpPage">页<a class="list_num_btn" href="#">确定</a>');
+
+			last.show && html.push('<a href="javascript:;" class="page page-last "'+ last.extendClass +'" title="'+ last.text +'">'+ last.text +'</a>');
 
 			$container.html( html.join('') );
 		}
@@ -177,10 +179,12 @@
 		;
 
 
-	$.pagination = function( options ){
+	var Pagination = function( options ){
 		var opts = $.extend({}, $.pagination.defaults, options)
 			, $container = opts.container
 			;
+
+		opts.styleConfig = $.extend({}, Pagination.styleConfig, opts.styleConfig);
 
 		$container = (typeof $container === 'object' && $container.jquery) ? $container : $( $container );
 
@@ -196,7 +200,7 @@
 		return $container;
 	};
 
-	$.pagination.defaults = {
+	Pagination.defaults = {
 		container: ''
 		, action: null
 		, count: 0
@@ -206,20 +210,54 @@
 		, pageShow: 10
 		, error: null
 		, styleConfig: {
-			first: {
-
-			}
-			, last: {
-
-			}
-			, prev: {
-
-			}
-			, next: {}
-			, page: {}
-			, current: {}
-			, form: {}
-			, point: {}
 		}
 	};
+	Pagination.styleConfig = {
+		first: {
+			show: true
+			, extendClass: ''
+			, text: '1'
+			, index: 2
+		}
+		, last: {
+			show: true
+			, extendClass: ''
+			, text: '$page'
+			, index: -2
+		}
+		, prev: {
+			show: true
+			, extendClass: ''
+			, text: '上一页'
+			, index: 1
+		}
+		, next: {
+			show: true
+			, extendClass: ''
+			, text: '下一页'
+			, index: -3
+		}
+		, page: {
+			show: true
+			, extendClass: ''
+			, text: ''
+		}
+		, current: {
+			show: true
+			, extendClass: ''
+		}
+		, form: {
+			show: true
+			, extendClass: ''
+			, index: -1
+		}
+		, point: {
+			show: true
+			, extendClass: ''
+		}
+	};
+
+	$.pagination = Pagination;
+
+	return Pagination;
 }, '');
