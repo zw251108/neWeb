@@ -1,5 +1,5 @@
 /**
- * @module  blog
+ * @module  blog/blog
  * */
 define(['jquery', 'global', 'socket', 'tag', 'template'], function($, g, socket, tag){
 	var $blog = g.mod('$blog') || $('#blog')

@@ -1,3 +1,6 @@
+/**
+ * @module popup
+ * */
 define(['jquery', 'global'], function($, g){
 	g.$body.on({
 		showDialog: function(){

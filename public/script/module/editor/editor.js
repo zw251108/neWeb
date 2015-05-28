@@ -1,5 +1,5 @@
 /**
- * @module editor
+ * @module editor/editor
  * */
 define('code', [
 	'plugin/codeMirror/lib/codemirror'

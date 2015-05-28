@@ -1,5 +1,5 @@
 /**
- * @module  code
+ * @module  codeEditor
  * */
 define(['plugin/codeMirror/lib/codemirror'
 	, 'css!plugin/codeMirror/lib/codemirror.css'
@@ -23,7 +23,11 @@ define(['plugin/codeMirror/lib/codemirror'
 
 	, 'plugin/codeMirror/emmet/emmet.min'
 ], function(cm){
-	var codeArea = function(target, type, readOnly){
+
+	/**
+	 * @constructor
+	 * */
+	var codeEditor = function(target, type, readOnly){
 		var options = {
 			lineNumbers : true
 			, foldGutter: true
@@ -56,7 +60,7 @@ define(['plugin/codeMirror/lib/codemirror'
 		return cm.fromTextArea(target, options);
 	};
 
-	codeArea.addPanel = function(text, target){
+	codeEditor.addPanel = function(text, target){
 		var $panel = $('<div class="panel"><button class="btn icon icon-cancel" type="button"></button>'+ text +'</div>').css({
 				position: 'absolute'
 				, top: 0
@@ -72,5 +76,5 @@ define(['plugin/codeMirror/lib/codemirror'
 		});
 	};
 
-	return codeArea;
+	return codeEditor;
 });

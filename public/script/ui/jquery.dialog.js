@@ -1,7 +1,7 @@
 /**
  * @file
  * @author  ZwB
- * @version 0.1
+ * @version 0.8
  * @function    $.dialog
  * @param   {object}    options
  *
@@ -44,22 +44,6 @@
 	dialog form button:submit.dialog_btn.dialog_ok[value=ok]
 	dialog form button:submit.dialog_btn.dialog_cancel[value=cancel]
 	dialog form button:button.dialog_btn-custom#dialogCustom$
- *
- * todo model prompt ?
-	 +------------------------------------+
-	 |                                  |X|
-	 |                                  +-+
-	 |                                    |
-	 |    model alert example             |
-	 |   +----------------------------+   |
-	 |   |  input something           |   |
-	 |   +----------------------------+   |
-	 |                                    |
-	 +------------------------------------+
-	 |       +--------+  +--------+       |
-	 |       |   OK   |  | Cancel |       |
-	 |       +--------+  +--------+       |
-	 +------------------------------------+
  *  </pre>
  * @example
 	var $dialog = $.dialog({
@@ -67,6 +51,9 @@
 		, content: '#content'
 		, extendClass: 'module module-input'
 	});
+
+	@todo 添加 title 和 dialog_close 关闭按钮
+	@todo 设置 dialog css 样式（宽度 高度 z-index）
  * */
 ;(function(factory, jqPath){
 	if( typeof exports === 'object' && typeof module === 'object' ){
@@ -97,76 +84,79 @@
 			}
 			, close: (function(){
 				return isOrigin ? function(v){
+					v = v || 0;
 					this[0].returnValue = v;
-					this.trigger('close');
+					this.trigger('close', [v]);
 				} : function(v){
+					v = v || 0;
 					this.data('returnValue', v)
 						.hide()
-						.triggerHandler('close');
+						.triggerHandler('close', [v]);
 				};
 				// todo 将 content 还原到原来位置
 			})()
 		}
 		, dialogEvent = {
 			show: (function(){
-				return isOrigin ? function(){
-					this.show()
+				return isOrigin ? function(e){
+					e.data.overlay ? this.showModal() : this.show();
 				} : function(){
 					$(this).show();
 				}
 			})()
 			, close: (function(){
-				return isOrigin ? function(e, v){
-					callback(v || this.returnValue || 0, $(this))
-				} : function(e, v){
+				return isOrigin ? function(e, returnValue){
+					$(this).triggerHandler('handleCallback', [returnValue || this.returnValue]);
+				} : function(e, returnValue){
 					var $dialog = $(this);
-
-					callback(v || $dialog.data('returnValue') || 0, $dialog);
+					$dialog.triggerHandler('handleCallback', [returnValue || $dialog.data('returnValue')]);
 				}
 			})()
+			, handleCallback: function(e, returnValue){
+				var $dialog = $(this)
+					, opts = e.data
+					, cb
+					;
+
+				switch( returnValue ){
+					case 0:         // 直接退出程序
+						break;
+					case 'ok':      // 执行 ok 按钮的回调函数
+						cb = opts.ok.callback;
+						break;
+					case 'cancel':  // 执行 cancel 按钮的回调函数
+						cb = opts.cancel.callback;
+						break;
+					default:        // 自定义按钮的回调函数 returnValue 与定义的按钮的 value 相同
+						cb = opts.buttons.callbackList;
+
+						if( returnValue in cb ){
+							cb = cb[returnValue];
+						}
+						break;
+				}
+				cb && cb.call( $dialog );
+			}
 		}
 		, dialogCloseEvent = (function(){
-			return isOrigin ? function(){
+			return isOrigin ? function(e){
 				var $dialog = $(this)
-					, opts = $dialog.data('options')
+					, model = e.data.model
 					;
 
-				this.returnValue = opts.model !== 'alert' ? 'cancel' : 'ok';
+				this.returnValue = model !== 'alert' ? 'cancel' : 'ok';
 
 				$dialog.trigger('close');
-			} : function(){
+			} : function(e){
 				var $dialog = $(this)
-					, opts = $dialog.data('options')
+					, model = e.data.model
 					;
 
-				$dialog.data('returnValue', opts.model !== 'alert' ? 'cancel' : 'ok')
+				$dialog.data('returnValue', model !== 'alert' ? 'cancel' : 'ok')
 					.hide()
 					.triggerHandler('close');
 			}
 		})()
-		, callback = function(returnValue, $dialog){
-			var opts = $dialog.data('options')
-				, cb
-				;
-
-			switch( returnValue ){
-				case 0:         // 直接退出程序
-					break;
-				case 'ok':      // 执行 ok 按钮的回调函数
-					cb = opts.ok.callback;
-					break;
-				case 'cancel':  // 执行 cancel 按钮的回调函数
-					cb = opts.cancel.callback;
-					break;
-				default:        // 自定义按钮的回调函数 returnValue 与定义的按钮的 value 相同
-					if( returnValue > 0 && returnValue < opts.buttons.length ){
-						cb = opts.buttons[returnValue];
-					}
-					break;
-			}
-
-			cb && cb.call( $dialog );
-		}
 		, log = function( msg ){
 			console && console.log && console.log( msg );
 		}
@@ -175,20 +165,23 @@
 	var Dialog = function( options ){
 		var model = options.model || 'dialog'
 			, opts = $.extend({}, Dialog.defaults, Dialog.model[model], options)
-			, $dialog
-			, dialog
-			, $dialogOperate
-			, $content = opts.content
 
-			, okOpts = opts.ok
+			, okOpts = opts.ok && (opts.ok = $.extend(opts.ok, Dialog.okOpts))
 			, okBtn = ''
 
-			, cancelOpts = opts.cancel
+			, cancelOpts = opts.cancel && (opts.cancel = $.extend(opts.cancel, Dialog.cancelOpts))
 			, cancelBtn = ''
 
 			, btnOpts = opts.buttons || []
 			, btn = []
-			, btnCb = {}
+			, btnCb = {
+				'0': null   // 0 为默认退出状态
+			}
+
+			, $dialog, dialog
+			, $dialogOperate
+			, $content = opts.content
+
 			, i, j, t, h
 			;
 
@@ -201,7 +194,7 @@
 		opts.overlay && $dialog.addClass('dialog-bg');
 
 		// 绑定事件
-		$dialog.data('options', opts).on( dialogEvent ).on('click', '.dialog_close', dialogCloseEvent);
+		$dialog.on(dialogEvent, opts).on('click', '.dialog_close', opts, dialogCloseEvent);
 		if( !isOrigin ){
 			$dialog.on('click', 'form.dialog_operate button.dialog_btn', function(){
 				$dialog.data('returnValue', this.value).triggerHandler('hide');
@@ -228,13 +221,15 @@
 				}
 				if( cancelOpts ){
 					cancelOpts.value = 'cancel';
-					cancelOpts.text = cancelOpts.text || 'OK';
-					btnOpts.push( cancelBtn );
+					cancelOpts.text = cancelOpts.text || 'Cancel';
+					btnOpts.push( cancelOpts );
 					cancelOpts = null;
 				}
 				btnOpts = btnOpts.sort(function(a, b){
 					return a.index - b.index;
 				});
+
+				opts.buttons = btnOpts;
 			}
 
 			if( okOpts ){
@@ -253,15 +248,15 @@
 				for(i = 0, j = btnOpts.length; i < j; i++){
 					t = btnOpts[i];
 
-					if( 'value' in t && !(t.value in btnCb) && 'text' in t ){
+					if( !(t.value && t.value in btnCb) ){
 						h = '<button type="submit"';
-						h += ' value="' + t.value +'"';
+						h += ' value="' + (t.value || i) +'"';
 						h += ' class="dialog_btn' + (t.extendClass ? ' '+ t.extendClass : '') +'"';
 						t.id && (h += ' id="' + t.id +'"');
 
-						h += '>' + t.text + '</button>';
+						h += '>' + (t.text || i) + '</button>';
 
-						t.callback && (btnCb[t.value] = t.callback);
+						t.callback && (btnCb[t.value || i] = t.callback);
 
 						btn.push( h );
 					}
@@ -269,13 +264,19 @@
 						log('value 为 '+ t.value +' 的 button 已存在');
 					}
 				}
+
+				btnOpts.callbackList = btnCb;
 			}
 
-			$dialogOperate.append( okBtn + btnOpts.join('') + cancelBtn );
+			$dialogOperate.append( okBtn + btn.join('') + cancelBtn );
 		}
 
 		$content = (typeof $content === 'object' && $content.jquery) ? $content : $($content);
-		$dialog.data('dialogContent', $content);
+
+		$dialog.data({
+			options: opts
+			, dialogContent: $content
+		});
 		//switch( model ){
 		//	case 'alert':
 		//
@@ -308,7 +309,7 @@
 		, width: ''
 		, zIndex: 100
 		, extendClass: ''
-		, overlay: 'true'
+		, overlay: true
 		, model: 'dialog'
 	};
 	Dialog.model = {
@@ -346,6 +347,15 @@
 		//	, ok: {}
 		//	, cancel: {}
 		//}
+	};
+
+	Dialog.cancelOpts ={
+		value: 'cancel'
+		, text: 'Cancel'
+	};
+	Dialog.okOpts = {
+		value: 'ok'
+		, text: 'OK'
 	};
 
 	$.dialog = Dialog;

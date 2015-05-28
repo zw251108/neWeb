@@ -1,21 +1,24 @@
 /**
- * @module form.input.city ±íµ¥ÔöÇ¿£º³ÇÊĞÑ¡Ôñ¿Ø¼ş
- *
- dialog#inputCity[open=open]
- dialog form[method=dialog]
- dialog form :submit.input_close[value=0]
- dialog form ul#cityList
+ * @namespace form.input
+ * @module form.input.city è¡¨å•å¢å¼º-é€‰æ‹©åŸå¸‚
+ * @desc
+ * <pre>
+	 dialog#inputCity[open=open]
+	 dialog form[method=dialog]
+	 dialog form :submit.input_close[value=0]
+	 dialog form ul#cityList
 
- // ¶¯Ì¬Éú³É
- dialog form ul li
- dialog form ul label>:checkbox
+	 // åŠ¨æ€ç”Ÿæˆ
+	 dialog form ul li
+	 dialog form ul label>:checkbox
+ * </pre>
  * */
 define(['jquery'], function($){
 	var $inputCity = $('#inputCity')
-		, origin = 'returnValue' in $inputCity[0]   // ÊÇ·ñÖ§³ÖÔ­Éú½Ó¿Ú
+		, origin = 'returnValue' in $inputCity[0]   // ï¿½Ç·ï¿½Ö§ï¿½ï¿½Ô­ï¿½ï¿½ï¿½Ó¿ï¿½
 		;
 
-	// »ñÈ¡Êı¾İ
+	// ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½
 	$.ajax({
 		url: '../../../UED/matchup/data/hrcenter/arealist1.json'
 		, dataType: 'json'
@@ -34,10 +37,10 @@ define(['jquery'], function($){
 	}
 
 	$inputCity.on({
-		show: function(){   // ÏÔÊ¾µ¯´°
+		show: function(){   // ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½
 			origin ? $inputCity[0].show() : $inputCity.removeClass('hidden');
 		}
-		, hide: function(){    // ¹Ø±Õµ¯´°
+		, hide: function(){    // ï¿½Ø±Õµï¿½ï¿½ï¿½
 			var rs = this.returnValue || $inputCity.data('returnValue')
 				, $idTarget
 				, $valTarget
@@ -50,7 +53,7 @@ define(['jquery'], function($){
 				!$inputCity.hasClass('hidden') && $inputCity.addClass('hidden');
 			}
 
-			if( rs !== '0' ){  // ·Çµã»÷¹Ø±Õ
+			if( rs !== '0' ){  // ï¿½Çµï¿½ï¿½ï¿½Ø±ï¿½
 				$idTarget = $inputCity.data('idTarget');
 				$valTarget = $inputCity.data('valTarget');
 
@@ -71,7 +74,7 @@ define(['jquery'], function($){
 				}
 			}
 		}
-	}).on('click', '.dialog_close', function(){ // ¹Ø±ÕÊÂ¼ş
+	}).on('click', '.dialog_close', function(){ // ï¿½Ø±ï¿½ï¿½Â¼ï¿½
 		!origin && $inputCity.data('returnValue', '0').triggerHandler('hide');
 	}).on('click', 'li', function(){
 		var $list = $(this).find('ul');
@@ -94,10 +97,10 @@ define(['jquery'], function($){
 
 		$inputCity.triggerHandler('show');
 
-		// ÉèÖÃÊÇ·ñ¶àÑ¡
+		// ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½Ñ¡
 		$inputCity.data('multi', +multi);
 
-		// °ó¶¨Êä³ö Ä¿±ê
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ Ä¿ï¿½ï¿½
 		$inputCity.data('valTarget', valTarget);
 		$inputCity.data('idTarget', idTarget);
 	});

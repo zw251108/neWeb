@@ -1,5 +1,5 @@
 /**
- * @module  document
+ * @module  document/document
  * */
 define(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g, socket, code){
 	var $document = g.mod('$document') || $('#document')

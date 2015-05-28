@@ -1,5 +1,5 @@
 /**
- *
+ * @module config
  * */
 define({
 	paths: {

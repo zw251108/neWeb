@@ -456,7 +456,8 @@ module.exports = function(grunt){
 					destination: 'doc'
 				},
 				src: ['public/script/ui/*.js'
-					, 'public/script/*/*/*.js'
+					, 'public/script/module/*.js'
+					, 'public/script/module/*/*.js'
 				]
 
 			}
