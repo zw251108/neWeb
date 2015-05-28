@@ -2,7 +2,17 @@
  * @file    基于 jQuery 的分页插件
  * @author  ZwB
  * @version 0.9
+ * @require jquery
  * @method  $.pagination
+ * @desc
+ *  <pre>
+	 页码的 class 为 page 为 a 标签
+	 首页的 class 为 page-first
+	 末页的 class 为 page-last
+	 上一页的 class 为 page-prev
+	 下一页的 class 为 page-next
+	 当前页码 class 为 page-current
+ *  </pre>
  * @param   {object}    options
  * @param   {string|object} options.container   jQuery 选择器|jQuery 对象
  * @param   {number}    options.count   数据总条数
@@ -35,15 +45,7 @@
  * @param   {function}  options.styleConfig.page.pageText    数字页码 设置文本 函数传入参数为 pageIndex
  * @param   {string}    options.styleConfig.page.extendClass    数字页码 样式的扩展 class 名
  * @param   {object}    options.styleConfig.form    页面跳转表单
- * @return  {object(jQuery)}    参数 container 所对应的 jQuery 对象
- * @require jquery
- * @desc
- *  页码的 class 为 page 为 a 标签
- *  首页的 class 为 page-first
- *  末页的 class 为 page-last
- *  上一页的 class 为 page-prev
- *  下一页的 class 为 page-next
- *  当前页码 class 为 page-current
+ * @return  {object}    参数 container 所对应的 jQuery 对象
  * @example
 	var $pagination = $.pagination({
 	    container: '#pagination'
@@ -52,6 +54,9 @@
 	    , action: function(page, size){
 	    }
 	});
+ * @todo    点击页码触发页面跳转或 ajax
+ * @todo    在文本框输入页码 点击跳转触发页面跳转或 ajax
+ * @todo    验证文本框输入的页码
  * */
 ;(function(factory, jqPath){
 	if( typeof exports === 'object' && typeof module === 'object' ){

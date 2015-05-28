@@ -2,21 +2,22 @@
  * @file    基于 jQuery 的 validator 插件
  * @author  ZwB
  * @version 1.0
- * @function    $.validator
+ * @require jquery
+ * @method  $.validator
+ * @desc
+ *  <pre>
+ *  validType       验证类型 对象集合 每一个属性都是一种验证类别 每一个属性对应一个对象
+        该对象中的属性名 对应着执行验证的方法 值为提示信息
+
+ *  validMethods    验证方法 对象集合 每一个方法都是使用 apply 方式被调用，方法中的 this 是进行验证的 jQuery 对象
+ *  </pre>
  * @param   {object}    options
  * @param   {string|object} options.selector    需要验证的表单对象
  * @param   {function}  options.normal  重置表单时的操作
  * @param   {function}  options.focus   表单项获得焦点时的操作
  * @param   {function}  options.wrong   表单项未通过验证时的操作
  * @param   {function}  options.right   表单项通过验证时的操作
- * @return  {object(jQuery)}    参数 selector 所对应的 jQuery 对象
- * @desc
- * <pre>
- *  validType       验证类型 对象集合 每一个属性都是一种验证类别 每一个属性对应一个对象
-        该对象中的属性名 对应着执行验证的方法 值为提示信息
-
- *  validMethods    验证方法 对象集合 每一个方法都是使用 apply 方式被调用，方法中的 this 是进行验证的 jQuery 对象
- *  </pre>
+ * @return  {object}    参数 selector 所对应的 jQuery 对象
  * @example
  *  JavaScript 代码：
     $(function(){
@@ -54,6 +55,7 @@
 	<form id="userNameForm" action="">
 		<input type="text" name="username" id="username" data-validator="username" /><span></span>
 	</form>
+ * @todo    重构
  */
 ;(function(factory, jqPath){
 	if( typeof exports === 'object' && typeof module === 'object' ){

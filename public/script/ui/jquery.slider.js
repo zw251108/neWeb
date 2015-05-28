@@ -1,8 +1,10 @@
 /**
- * @file
+ * @file    基于 jQuery 的 slider 插件
  * @author  ZwB
  * @version 0.1
+ * @require jquery
  * @method  $.slider
+ * @desc    slider
  * @param   {object}    options
  * @param   {string|object} options.container
  * @param   {string|object} options.items
@@ -11,9 +13,10 @@
  * @param   {boolean}   options.next
  * @param   {boolean}   options.prev
  * @param   {boolean}   options.controls
- * @desc    slider
+ * @return  {object}
  * @example
     $.slider();
+ * @todo    完善
  * */
 ;(function(factory, jqPath){
 	if( typeof exports === 'object' && typeof module === 'object' ){

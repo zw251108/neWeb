@@ -1,13 +1,11 @@
 /**
- * @file
+ * @file    基于 jquery 的 HTML5 dialog 标签兼容插件
  * @author  ZwB
  * @version 0.8
- * @function    $.dialog
- * @param   {object}    options
- *
- * @return  {object(jQuery)}
+ * @require jquery
+ * @method    $.dialog
  * @desc
- * <pre>
+ *  <pre>
  *  model alert
 	 +------------------------------------+
 	 |                                  |X|
@@ -45,6 +43,9 @@
 	dialog form button:submit.dialog_btn.dialog_cancel[value=cancel]
 	dialog form button:button.dialog_btn-custom#dialogCustom$
  *  </pre>
+ * @param   {object}    options
+ *
+ * @return  {object}    在页面内生成 dialog 标签所对应的 jQuery 对象
  * @example
 	var $dialog = $.dialog({
 		title: '弹窗示例'
