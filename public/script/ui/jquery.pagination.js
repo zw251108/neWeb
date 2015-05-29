@@ -2,6 +2,7 @@
  * @file    基于 jQuery 的分页插件
  * @author  ZwB
  * @version 0.9
+ * @module  pagination
  * @require jquery
  * @method  $.pagination
  * @desc

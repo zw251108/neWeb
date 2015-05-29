@@ -2,6 +2,7 @@
  * @file    基于 jquery 的 HTML5 dialog 标签兼容插件
  * @author  ZwB
  * @version 0.8
+ * @module  dialog
  * @require jquery
  * @method    $.dialog
  * @desc

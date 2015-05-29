@@ -2,6 +2,7 @@
  * @file    基于 jQuery 的 validator 插件
  * @author  ZwB
  * @version 1.0
+ * @module  validator
  * @require jquery
  * @method  $.validator
  * @desc

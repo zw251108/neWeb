@@ -1,6 +1,6 @@
 /**
- * @namespace form.input
- * @module form.input.city 表单增强-选择城市
+ * @namespace form/input
+ * @module form/input/city 表单增强-选择城市
  * @desc
  * <pre>
 	 dialog#inputCity[open=open]

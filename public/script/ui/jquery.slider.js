@@ -2,6 +2,7 @@
  * @file    基于 jQuery 的 slider 插件
  * @author  ZwB
  * @version 0.1
+ * @module  slider
  * @require jquery
  * @method  $.slider
  * @desc    slider

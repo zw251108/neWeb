@@ -1,5 +1,9 @@
 /**
  * @module  codeEditor
+ * @require plugin/codeMirror/lib/codemirror
+ * @require plugin/codeMirror/lib/codemirror
+ * @require plugin/codeMirror/lib/codemirror
+ * @require plugin/codeMirror/lib/codemirror
  * */
 define(['plugin/codeMirror/lib/codemirror'
 	, 'css!plugin/codeMirror/lib/codemirror.css'
