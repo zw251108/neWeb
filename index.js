@@ -134,9 +134,11 @@ require('./module/document.js')(web, db, socket, metro);    // 加载模块 docu
 require('./module/editor.js')(  web, db, socket, metro);    // 加载模块 editor
 //require('./module/feed.js')(    web, db, socket, metro);    // 加载模块 rss
 
-require('./module/bower.js')(   web, db, socket, metro);  // 加载模块 bower
+require('./module/bower.js')(   web, db, socket, metro);    // 加载模块 bower
 
-require('./module/tag.js')(     web, db, socket, metro); // 加载 tag 功能模块
+require('./module/tag.js')(     web, db, socket, metro);    // 加载 tag 功能模块
+
+require('./module/reader.js')(  web, db, socket, metro);    // 待读文字 模块
 
 metro.push({
 	id: 'time'

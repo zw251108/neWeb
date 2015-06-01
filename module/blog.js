@@ -51,7 +51,7 @@ module.exports = function(web, db, socket, metro){
 	metro.push({
 		id: 'blog'
 		, type: 'metro'
-		, size: 'big'
+		, size: 'small'
 		, title: '博客 blog'
 	});
 
