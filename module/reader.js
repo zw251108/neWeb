@@ -2,13 +2,13 @@
 
 var Reader = {
 		index: {
-			sql: 'select Id,url,status from reader order by Id desc'
+			sql: 'select Id,url,status from reader order by status, Id desc'
 		}
 		, checked: {
 			sql: 'select url from reader where url like ?'
 		}
 		, get: {
-			sql: 'select status form reader where Id=?'
+			sql: 'select status from reader where Id=?'
 		}
 		, add: {
 			sql: 'insert reader(url,datetime) value(?,now())'
@@ -25,11 +25,20 @@ var Reader = {
 	, emmetTpl      = require('./emmetTpl/emmetTpl.js').template
 
 	, articleTpl    = emmetTpl({
-		template:'article#blogArt%Id%.article>a[href=%url% title=%url% target=_blank]>h3.article_title{%url%}' +
-		'^hr+span.icon.icon-checkbox+span.icon.icon-star-empty+span.icon.icon-cancel'
+		template:'article#blogArt%Id%.article[data-id=%Id%]>a[href=%url% title=%url% target=_blank]>h3.article_title{%url%}' +
+		'^hr+span.icon.icon-checkbox%readStatus%[title=%readTitle%]+span.icon.icon-star%favorStatus%[title=%favorTitle%]+span.icon.icon-cancel'
 		, filter: {
-			status: function(d, i){
-
+			readStatus: function(d){
+				return +d.status > 0 ? '-checked' : '';
+			}
+			, readTitle: function(d){
+				return +d.status > 0 ? '已读' : '未读';
+			}
+			, favorStatus: function(d){
+				return +d.status > 1 ? '' : '-empty';
+			}
+			, favorTitle: function(d){
+				return +d.status > 1 ? '已收藏' : '未收藏';
 			}
 		}
 	})
@@ -99,7 +108,7 @@ module.exports =  function(web, db, socket, metro){
 				db.query(reader.get.sql, [id], function(e, rs){
 					if( !e ){
 						if( rs.length && +rs[0].status < 2 ){   // 数据存在并不为收藏状态
-							db.query(reader.favor.sql, [id], function(e, rs){
+							db.query(reader.read.sql, [id], function(e, rs){
 								if( !e ){
 									if( rs ){
 										socket.emit('getData', {
@@ -209,8 +218,11 @@ module.exports =  function(web, db, socket, metro){
 									socket.emit('getData', {
 										topic: 'reader/add'
 										, msg: 'success'
-										, id: rs.insertId || id
-										, url: url
+										, info: {
+											id: rs.insertId || id
+											, url: url
+											, status: 0
+										}
 									});
 								}
 								else{
