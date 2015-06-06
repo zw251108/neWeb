@@ -44,7 +44,7 @@ var Editor = {
 				'+div.editor_area.editor_area-html>textarea#html.hidden[name=html placeholder=body&nbsp;之间的&nbsp;HTML代码]{%html%}+label.hidden[for=html]{HTML}' +
 				'^div.editor_area.editor_area-css>textarea#css.hidden[name=css placeholder=CSS&nbsp;代码]{%css%}+label.hidden[for=css]{CSS}' +
 				'^div.editor_area.editor_area-js>textarea#js.hidden[name=js placeholder=JavaScript&nbsp;代码]{%js%}+label.hidden[for=js]{JavaScript}' +
-				'^div.editor_area.editor_area-rs>label.hidden{Result}+iframe#result.editor_rs[name=result]'
+				'^div.editor_area.editor_area-rs>label.hidden{Result}+iframe#result.editor_rs[name=result src=result]'
 	})
 	//, result        = tpl('editor/result')
 	, resCode = function(rs){
@@ -149,70 +149,74 @@ module.exports = function(web, db, socket, metro){
 			res.end();
 		}
 	});
-	//web.get('/editor/result', function(req, res){
-	//	var code = editor.code
-	//		, id = req.query.id || ''
-	//		, css_lib
-	//		, js_lib
-	//		, temp
-	//		;
-	//
-	//	if( id ){
-	//		db.query(code.sql, [id], function(e, data){
-	//			if( !e ){
-	//				//data = code.handler( data );
-	//				data = data[0];
-	//
-	//				css_lib = (data.css_lib || '').split(',').map(function(d){
-	//					return {path: d};
-	//				});
-	//				js_lib = (data.js_lib || '').split(',').map(function(d){
-	//					return {src: d};
-	//				});
-	//
-	//				res.send(tpl.html('editor/result', {
-	//					title: '运行结果'
-	//					, stylesheet:   css_lib
-	//					, style:        {style:data.css}
-	//					, modules:      data.html
-	//					, script:       js_lib
-	//					, scriptCode:   {script:data.js}
-	//				}) );
-	//			}
-	//			else{
-	//				console.log('\n', 'db', '\n', code.sql, '\n', e.message);
-	//			}
-	//			res.end();
-	//		});
-	//	}
-	//	else{
-	//		res.end();
-	//	}
-	//});
-	//
-	//// 编辑器 提交运行代码
-	//web.post('/editor/result', function(req, res){
-	//	var query   = req.body
-	//		, html  = query.html
-	//		, css   = query.css
-	//		, js    = query.js
-	//		, css_lib   = (query.css_lib || '').split(',').map(function(d){
-	//			return {path: d};
-	//		})
-	//		, js_lib = (query.js_lib || '').split(',').map(function(d){
-	//			return {src: d};
-	//		})
-	//		;
-	//
-	//	res.send(tpl.html('editor/result', {
-	//		title: '运行结果'
-	//		, stylesheet:   css_lib
-	//		, style:        {style:css}
-	//		, modules:      html
-	//		, script:       js_lib
-	//		, scriptCode:   {script:js}
-	//	}) );
-	//});
+	web.get('/editor/codePanel', function(req, res){
+
+	});
+
+	web.get('/editor/result', function(req, res){
+		var code = editor.code
+			, id = req.query.id || ''
+			, css_lib
+			, js_lib
+			, temp
+			;
+
+		if( id ){
+			db.query(code.sql, [id], function(e, data){
+				if( !e ){
+					//data = code.handler( data );
+					data = data[0];
+
+					css_lib = (data.css_lib || '').split(',').map(function(d){
+						return {path: d};
+					});
+					js_lib = (data.js_lib || '').split(',').map(function(d){
+						return {src: d};
+					});
+
+					res.send(tpl.html('editor/result', {
+						title: '运行结果'
+						, stylesheet:   css_lib
+						, style:        {style:data.css}
+						, modules:      data.html
+						, script:       js_lib
+						, scriptCode:   {script:data.js}
+					}) );
+				}
+				else{
+					console.log('\n', 'db', '\n', code.sql, '\n', e.message);
+				}
+				res.end();
+			});
+		}
+		else{
+			res.end();
+		}
+	});
+
+	// 编辑器 提交运行代码
+	web.post('/editor/result', function(req, res){
+		var query   = req.body
+			, html  = query.html
+			, css   = query.css
+			, js    = query.js
+			, css_lib   = (query.css_lib || '').split(',').map(function(d){
+				return {path: d};
+			})
+			, js_lib = (query.js_lib || '').split(',').map(function(d){
+				return {src: d};
+			})
+			;
+
+		res.send(tpl.html('editor/result', {
+			title: '运行结果'
+			, stylesheet:   css_lib
+			, style:        {style:css}
+			, modules:      html
+			, script:       js_lib
+			, scriptCode:   {script:js}
+		}) );
+	});
 
 	// 测试用数据
 	web.get('/editor/getJSON', function(req, res){
