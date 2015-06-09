@@ -38,5 +38,5 @@ segment.use( require(__dirname +'/HtmlTagTokenizer.js') )
 
 module.exports = segment;
 
-// 开始分词
-console.log('\n', segment.doSegment('<a href="http://12311.com">http://www.baidu.com</a><p> http:// 前端工程师，http://www.baidu.com 有一个人 </p>这是一个基于Node.js的中文分词模块。互联网，Java'));
+// test 开始分词
+//console.log('\n', segment.doSegment('<a href="http://12311.com">http://www.baidu.com</a><p> http:// 前端工程师，http://www.baidu.com 有一个人 </p>这是一个基于Node.js的中文分词模块。互联网，Java'));

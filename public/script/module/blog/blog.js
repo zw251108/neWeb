@@ -6,7 +6,7 @@ define(['jquery', 'global', 'socket', 'tag', 'template'], function($, g, socket,
 		, tagTmpl = tag.tagTmpl
 		, articleTmpl = $.template({
 			template:'article#blogArt%Id%.article>a[href=blog/detail?id=%Id%]>h3.article_title{%title%}' +
-				'^span.article_date{%datetime%}+div.tagsArea{%tags%}'
+				'^time.article_date[pubdate=pubdate datetime=%datetime%]{%datetime%}+div.tagsArea{%tags%}'
 			, filter:{
 				tags: function(d){
 					var data = []

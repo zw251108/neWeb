@@ -5,8 +5,27 @@ require(['../config'], function(config){
 	var r = require(config);
 	r(['jquery', 'global', 'socket', 'template'], function($, g, socket){
 		var $rss = $('#rss')
-			, dlTpl = $.template({
-				template: 'dt>a[href=%link%]{%title%}^dd{%content%}'
+			, articleTpl = $.template({
+				template:'li.rss_article.article>a[href=%url% target=_blank]>h3.article_title{%title%}^div.article_content{%content%}' +
+				'+time.article_date[pubdate=pubdate datetime=%datetime%]{%datetime%}+div.tagsArea{%tags%}'
+				, filter:{
+					tags: function(d){
+						return '<span class="tag">'+ d.tags.split(',').join('</span><span class="tag">') +'</span>';
+						//var data = []
+						//	, tagsId = (d.tags_id || '').split(',')
+						//	, tagsName = (d.tags_name || '').split(',')
+						//	;
+						//
+						//$.each(tagsId, function(i, d){
+						//	data.push({
+						//		Id: d
+						//		, name: tagsName[i]
+						//	});
+						//});
+						//
+						//return tagTmpl(data).join('');
+					}
+				}
 			})
 			;
 
@@ -18,14 +37,24 @@ require(['../config'], function(config){
 				, id = $that.data('id')
 				;
 
-			socket.emit('getData', {
-				topic: 'rss/feedList'
-				, query: {
-					feed: feed
-					, id: id
-				}
-			})
-		}).on('click', 'dt > a', function(e){
+			if( $that.data('deploy') ){ // 已获取列表
+				$that.next().slideToggle();
+			}
+			else{
+				$that.next().html('<li><div class="spinner chasing"><div class="dot1"></div><div class="dot2"></div></div></li>')
+				socket.emit('getData', {
+					topic: 'rss/feedList'
+					, query: {
+						feed: feed
+						, id: id
+					}
+				});
+				$that.data('deploy', true);
+			}
+			$that.find('.icon').toggleClass('icon-plus icon-minus');
+
+
+		}).on('click', '.rss_article > a', function(e){
 			e.preventDefault();
 
 			var $that = $(this);
@@ -42,16 +71,19 @@ require(['../config'], function(config){
 			'rss/feedList': function(data){
 				var id;
 				if( 'error' in data ){
-
+					alert(data.msg);
 				}
 				else{
 					id = data.id;
 					data = data.data;
 
-					$rss.find('#rss'+ id).find('dl').html( dlTpl(data).join('') );
+					$rss.find('#rss_'+ id).find('ul').html( articleTpl(data).join('') );
 				}
 			}
 			, 'rss/article': function(data){
+				if( 'error' in data ){
+					alert(data.msg);
+				}
 				console.log(data);
 			}
 		})

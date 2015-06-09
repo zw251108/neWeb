@@ -4,7 +4,7 @@
 define(['jquery', 'global', 'socket', 'template'], function($, g, socket){
 	var $talk = g.mod('$talk') || $('#talk')
 		, timeNodeTmpl = $.template({
-			template: 'li.timeNode>a.icon.icon-user+div.message{%content%}>span.datetime{%datetime%}'
+			template: 'li.timeNode>a.icon.icon-user+div.message{%content%}>time.datetime[datatime=%datetime% pubdate=pubdate]{%datetime%}'
 			, filter: {
 				content: function(data){
 					if( data.type === 'blog' ){

@@ -17,7 +17,7 @@ var Blog = {
 
 	, articleTpl    = emmetTpl({
 		template:'article#blogArt%Id%.article>a[href=detail?id=%Id%]>h3.article_title{%title%}' +
-		'^hr+span.article_date{%datetime%}+div.tagsArea{%tags%}'
+		'^hr+time.article_date[pubdate=pubdate datetime=%datetime%]{%datetime%}+div.tagsArea{%tags%}'
 		, filter: {
 			//tags: function(d){
 			//	var data = []
@@ -38,7 +38,7 @@ var Blog = {
 	})
 	, articleDetailTpl = emmetTpl({
 		template: 'article.article>h3.article_title{%title%}+div.article_content{%content%}+hr' +
-		'+span.article_date{%datetime%}+div.tagsArea{%tags%}'
+		'+time.article_date[pubdate=pubdate datetime=%datetime%]{%datetime%}+div.tagsArea{%tags%}'
 		, filter: {
 
 		}
