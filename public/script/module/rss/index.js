@@ -2,8 +2,10 @@
  *
  * */
 require(['../config'], function(config){
-	var r = require(config);
-	r(['jquery', 'global', 'socket', 'template'], function($, g, socket){
+	var r = require(config.requireConfig);
+	r(['jquery', 'global', 'socket', 'template', config.dataSource.json], function($, g, socket, a, json){
+		console.log($.parseJSON( json ) );
+
 		var $rss = $('#rss')
 			, articleTpl = $.template({
 				template:'li.rss_article.article>a[href=%url% target=_blank]>h3.article_title{%title%}^div.article_content{%content%}' +

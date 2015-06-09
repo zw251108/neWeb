@@ -52,7 +52,8 @@ var RSS = {
 						temp.title = $t.find('title').text();
 						temp.url = $t.find('link').text();
 						temp.content = $t.find('description').text();
-						temp.author = $t.find('dc\\:creator').text();
+						temp.author = $t.find('author').text();
+						!temp.author && (temp.author = $t.find('dc\\:creator').text());
 						temp.tags = $t.find('category').map(function(){
 							return $(this).text();
 						}).get().join();
