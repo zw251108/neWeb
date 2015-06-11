@@ -59,8 +59,11 @@ define('radarChart', ['jquery', 'd3'], function($, d3){
 
 //---------- 应用模块 ----------
 require(['module/config'], function(config){
-	require.config(config);
-	require(['jquery', 'global', 'socket', 'time'], function($, g, socket, $time){
+	config.requireConfig.baseUrl = 'script/';
+
+	var r = require.config(config.requireConfig);
+
+	r(['jquery', 'global', 'socket', 'time'], function($, g, socket, $time){
 		var $container = g.$container
 			, $blog = $('#blog').data('width', 'big') // Blog 模块
 			, $document = $('#document').data('width', 'small') // Document 文档模块

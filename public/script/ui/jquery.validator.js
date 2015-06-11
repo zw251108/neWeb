@@ -57,6 +57,7 @@
 		<input type="text" name="username" id="username" data-validator="username" /><span></span>
 	</form>
  * @todo    重构
+ * @todo    submit 事件可以不触发
  */
 ;(function(factory, jqPath){
 	if( typeof exports === 'object' && typeof module === 'object' ){
@@ -238,11 +239,12 @@
 				else{
 					if( isRequired ){
 						wrong.call($item, validText);
+						result = false;
 					}
 					else{
 						opts.normal.call($item);
+						result = true;
 					}
-					result = false;
 				}
 
 				if( result ){ // 通过验证

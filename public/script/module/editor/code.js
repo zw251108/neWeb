@@ -2,7 +2,7 @@
  *
  * */
 require(['../config'], function(config){
-	var r = require.config(config);
+	var r = require.config(config.requireConfig);
 	r(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g, socket, codeArea){
 		var $editor = $('#editor')
 			, $form = $editor.find('#editorForm')

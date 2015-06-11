@@ -2,7 +2,7 @@
  *
  * */
 require(['../config'], function(config){
-	var r = require(config);
+	var r = require(config.requireConfig);
 	r(['jquery', 'global', 'socket', 'template'], function($, g, socket){
 		var $reader = $('#reader').on('click', '.icon-star-empty', function(){
 				var $that = $(this)
