@@ -4,28 +4,34 @@
 require(['../config'], function(config){
 	var r = require(config.requireConfig);
 	r(['jquery', 'global', 'socket', 'template'], function($, g, socket){
-		var $reader = $('#reader').on('click', '.icon-star-empty', function(){
+		var $reader = $('#reader').on('click', '.icon-star-empty', function(e){
+				e.preventDefault();
+
 				var $that = $(this)
 					, $parent = $that.parents('article')
 					;
-				$(this).toggleClass('icon-star icon-star-empty');
+				$(this).toggleClass('icon-star icon-star-empty').text('已读过');
 				socket.emit('getData', {
 					topic: 'reader/favor'
 					, query: {
 						id: $parent.data('id')
 					}
 				});
-			}).on('click', '.icon-checkbox', function(){
+			}).on('click', '.icon-checkbox', function(e){
+				e.preventDefault();
+
 				var $that = $(this)
 					, $parent = $that.parents('article')
 					;
-				$(this).toggleClass('icon-checkbox icon-checkbox-checked');
+				$(this).toggleClass('icon-checkbox icon-checkbox-checked').text('已收藏');
 				socket.emit('getData', {
 					topic: 'reader/read'
 					, query: {
 						id: $parent.data('id')
 					}
 				});
+			}).on('click', '.icon-remove', function(e){
+				e.preventDefault();
 			})
 			, $addPopup = $('#addPopup').on('click', '#addReader', function(){
 				if( $url.val() ){
