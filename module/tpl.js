@@ -1,3 +1,5 @@
+'use strict';
+console.log(12313)
 /**
  * 模板管理
  * */

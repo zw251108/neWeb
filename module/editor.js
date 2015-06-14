@@ -37,14 +37,19 @@ var Editor = {
 	})
 	, codeEditTpl   = emmetTpl({
 		template: 'h3.editor_title{%name%}' +
-				'+form#editorForm.editor_form[action=result method=post target=result]' +
+			'+form#editorForm.editor_form[action=result method=post target=result]' +
 				'>input#id[type=hidden name=id value=%Id%]' +
 				'+input#cssLib[type=hidden name=css_lib value=%css_lib%]' +
 				'+input#jsLib[type=hidden name=js_lib value=%js_lib%]' +
-				'+div.editor_area.editor_area-html>textarea#html.hidden[name=html placeholder=body&nbsp;之间的&nbsp;HTML代码]{%html%}+label.hidden[for=html]{HTML}' +
-				'^div.editor_area.editor_area-css>textarea#css.hidden[name=css placeholder=CSS&nbsp;代码]{%css%}+label.hidden[for=css]{CSS}' +
-				'^div.editor_area.editor_area-js>textarea#js.hidden[name=js placeholder=JavaScript&nbsp;代码]{%js%}+label.hidden[for=js]{JavaScript}' +
-				'^div.editor_area.editor_area-rs>label.hidden{Result}+iframe#result.editor_rs[name=result src=result]'
+				'+div.editor_area.editor_area-html' +
+					'>textarea#html.hidden[name=html placeholder=body&nbsp;之间的&nbsp;HTML代码]{%html%}' +
+					'+label.hidden[for=html]{HTML}' +
+				'^div.editor_area.editor_area-css' +
+					'>textarea#css.hidden[name=css placeholder=CSS&nbsp;代码]{%css%}' +
+					'+label.hidden[for=css]{CSS}' +
+			'^div.editor_area.editor_area-js' +
+		'>textarea#js.hidden[name=js placeholder=JavaScript&nbsp;代码]{%js%}+label.hidden[for=js]{JavaScript}' +
+			'^div.editor_area.editor_area-rs>label.hidden{Result}+iframe#result.editor_rs[name=result src=result]'
 	})
 	//, result        = tpl('editor/result')
 	, resCode = function(rs){
