@@ -3,16 +3,6 @@
 var Reader = {
 		index: {
 			sql: 'select * from rss'
-			//, function()
-			, json: function(){
-
-			}
-			, web: function(res, rs){
-
-			}
-			, socket: function(socket, rs){
-				socket.emit('getData', {});
-			}
 		}
 		, bookmark: {
 			sql: 'select Id,title,url,status from reader order by status,Id desc'
@@ -24,7 +14,7 @@ var Reader = {
 			sql: 'select status from reader where Id=?'
 		}
 		, addToList: {
-			sql: 'insert reader(url,datetime) value(?,now())'
+			sql: 'insert reader(url,title,datetime) value(?,?,now())'
 		}
 		, read: {
 			sql: 'update reader set status=1 where Id=?'
@@ -33,6 +23,17 @@ var Reader = {
 			sql: 'update reader set status=2 where Id=?'
 		}
 	}
+
+	/**
+ * 访问 路径
+ * */
+	, superAgent = require('superagent')
+
+	/**
+ * cheerio
+ *  解析 HTML 结构
+ * */
+	, Cheerio = require('cheerio')
 
 	, db        = require('./db.js')
 	, web       = require('./web.js')
@@ -48,7 +49,7 @@ var Reader = {
 		template: 'section#rss_%Id%.rss_section.section>a[href=%html_url% data-feed=%xml_url% data-id=%Id%]>h3.section_title{%name%}>span.icon.icon-plus^^ul.rss_articleList'
 	})
 	, articleTpl    = emmetTpl({
-		template:'article#blogArt%Id%.article[data-id=%Id%]>a[href=%url% title=%url% target=_blank]>h3.article_title{%url%}' +
+		template:'article#blogArt%Id%.article[data-id=%Id%]>a[href=%url% title=%url% target=_blank]>h3.article_title{%title%}' +
 		'^hr+a.icon.icon-checkbox%readStatus%[href=reader/read title=%readTitle%]{%readText%}' +
 		'+a.icon.icon-star%favorStatus%[href=reader/favor title=%favorTitle%]{%favorText%}+a.icon.icon-cancel[href=reader/remove title=删除]{删除}'
 		, filter: {
@@ -125,8 +126,8 @@ var Reader = {
 		});
 	}
 	/**
- * 获取订阅文章 并分解截取
- * */
+	 * 获取订阅文章 并分解截取
+	 * */
 	, getArticle = function(url, done, error){
 		console.log('获取 feed 文章：', url);
 
@@ -152,7 +153,7 @@ var Reader = {
 					$main = $('article');
 					content = $main.length ? $main.html() : $('body').html();
 
-					console.log(content)
+					console.log(content);
 
 					rs = segment.doSegment( content );
 					console.log(rs);
@@ -218,14 +219,33 @@ var Reader = {
 			}
 		});
 	}
+	/**
+	 * 获取文章标题
+	 * */
+	, getTitle = function(url, done, error){
+		superAgent.get(url).end(function(err, res){
+			if( !err ){
+				var html = res.text
+					, $
+					;
 
-	, checkExist = function(){
+				if( html ){
+					$ = Cheerio.load(html, {decodeEntities: false});
 
+					done(url, $('title').text());
+				}
+				else{
+					error( err );
+				}
+			}
+			else{
+				error( err );
+			}
+		});
 	}
+	, checkExist = function(){}
 	, checkRead = function(){}
-	, checkFavor = function(){
-
-	}
+	, checkFavor = function(){}
 	;
 
 metro.push({
@@ -246,11 +266,10 @@ web.get('/reader/', function(req, res){
 				, modules: tpl.mainTpl({
 					id: 'rss'
 					, title: '阅读 reader'
-					, toolbar: '<a href="bookmark" id="bookmark" class="icon icon-bookmark" title="待读文章列表"></a>'
-					//+
-					//	tpl.toolbarTpl([{
-					//	id: 'bookmark', icon: 'bookmark', title: '待读文章列表'
-					//}])
+					, toolbar: '<li><a href="bookmark" id="bookmark" class="icon icon-bookmark" title="待读文章列表"></a></li>'+
+						tpl.toolbarTpl([{
+							id: 'add', icon: 'plus', title: '添加订阅源'
+						}])
 					, content: rssTpl(rs).join('')
 				}).join('')
 				, script: {
@@ -280,9 +299,6 @@ web.get('/reader/bookmark', function(req, res){
 				}).join('') + tpl.popupTpl([{
 					id: 'addPopup', size: 'normal'
 					, content: '<form><div class="formGroup">' +
-					'<label for="title">请输入标题</label>' +
-					'<input type="text" id="title" class="input" placeholder="请输入标题" data-validator="title"/>' +
-					'</div><div class="formGroup">' +
 					'<label for="url">请输入链接</label>' +
 					'<input type="text" id="url" class="input" placeholder="请输入链接" data-validator="url">' +
 					'</div></form>'
@@ -303,9 +319,8 @@ socket.register({
 
 	}
 	, 'reader/bookmark': function(){}
-	, 'reader/bookmarkAdd': function(socket, data){
+	, 'reader/bookmarkRead': function(socket, data){
 		var id = data.query.id
-			, getRead
 			;
 
 		if( id ){
@@ -376,49 +391,55 @@ socket.register({
 			console.log('\n', 'socket reader/favor', '\n', 'no id')
 		}
 	}
-	, 'reader/add': function(socket, data){
+	, 'reader/bookmarkAdd': function(socket, data){
 		var url = data.query.url
 			;
 
 		if( url ){
-			db.query(reader.checked.sql, ['%'+ url +'%'], function(e, rs){
-				if( !e ){
-					//console.log(rs)
+			db.handle({
+				sql: Reader.isInList.sql
+				, data: [url]
+				, success: function(rs){
 					if( Array.isArray( rs ) && rs.length ){
 						socket.emit('getData', {
-							topic: 'reader/add'
+							topic: 'reader/bookmarkAdd'
 							, msg: '数据已存在'
 						});
 					}
 					else{
-						db.query(reader.add.sql, [url], function(e, rs){
-							if( !e ){
-								socket.emit('getData', {
-									topic: 'reader/add'
-									, msg: 'success'
-									, info: {
-										id: rs.insertId || id
-										, url: url
-										, status: 0
-									}
-								});
-							}
-							else{
-								socket.emit('getData', {
-									error: ''
-									, msg: ''
-								});
-								console.log('\n', 'db', '\n', reader.add.sql, '\n', e.message)
-							}
+						getTitle(url, function(url, title){
+							db.handle({
+								sql: Reader.addToList.sql
+								, data: [url, title]
+								, success: function(rs){
+									socket.emit('getData', {
+										topic: 'reader/bookmarkAdd'
+										, msg: 'success'
+										, info: {
+											id: rs.insertId || id
+											, url: url
+											, title: title
+											, status: 0
+										}
+									});
+								}
+								, error: function(e){
+									socket.emit('getData', {
+										error: ''
+										, msg: ''
+									});
+								}
+							})
+						}, function(e){
+							console.log(e);
 						});
 					}
 				}
-				else{
+				, error: function(e){
 					socket.emit('getData', {
 						error: ''
 						, msg: ''
 					});
-					console.log('\n', 'db', '\n', reader.checked.sql, '\n', e.message);
 				}
 			});
 		}

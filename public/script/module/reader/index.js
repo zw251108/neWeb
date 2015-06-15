@@ -36,7 +36,7 @@ require(['../config'], function(config){
 			, $addPopup = $('#addPopup').on('click', '#addReader', function(){
 				if( $url.val() ){
 					socket.emit('getData', {
-						topic: 'reader/add'
+						topic: 'reader/bookmarkAdd'
 						, query: {
 							url: $url.val()
 						}
@@ -48,7 +48,8 @@ require(['../config'], function(config){
 			, $url = $('#url')
 			, tpl = $.template({
 				template: 'article#blogArt%Id%.article[data-id=%Id%]>a[href=%url% title=%url% target=_blank]>h3.article_title{%title%}' +
-				'^hr+span.icon.icon-checkbox%readStatus%[title=%readTitle%]+span.icon.icon-star%favorStatus%[title=%favorTitle%]+span.icon.icon-cancel'
+				'^hr+a.icon.icon-checkbox%readStatus%[href=reader/read title=%readTitle%]{%readText%}' +
+				'+a.icon.icon-star%favorStatus%[href=reader/favor title=%favorTitle%]{%favorText%}+a.icon.icon-cancel[href=reader/remove title=删除]{删除}'
 				, filter: {
 					title: function(d){
 						return d.title || d.url;
@@ -74,7 +75,7 @@ require(['../config'], function(config){
 		});
 
 		socket.register({
-			'reader/add': function(data){
+			'reader/bookmarkAdd': function(data){
 
 				if( data.msg !== 'success' ){
 					alert( data.msg );
