@@ -47,10 +47,13 @@ require(['../config'], function(config){
 			})
 			, $url = $('#url')
 			, tpl = $.template({
-				template: 'article#blogArt%Id%.article[data-id=%Id%]>a[href=%url% title=%url% target=_blank]>h3.article_title{%url%}' +
+				template: 'article#blogArt%Id%.article[data-id=%Id%]>a[href=%url% title=%url% target=_blank]>h3.article_title{%title%}' +
 				'^hr+span.icon.icon-checkbox%readStatus%[title=%readTitle%]+span.icon.icon-star%favorStatus%[title=%favorTitle%]+span.icon.icon-cancel'
 				, filter: {
-					readStatus: function(d){
+					title: function(d){
+						return d.title || d.url;
+					}
+					, readStatus: function(d){
 						return +d.status > 0 ? '-checked' : '';
 					}
 					, readTitle: function(d){

@@ -1,48 +1,67 @@
 'use strict';
 
 /**
- * Web Server
+ *
  * */
 var fs = require('fs')
 
-	//----- 全局变量 -----
-	, WEB_APP_PORT  = 9001     	// Web 监听端口
-	, COOKIE_SECRET = 'secret'
-	, COOKIE_KEY    = 'express.sid'
+	// 全局配置信息
+	, CONFIG = require('./config.js')
 
-	, DB_CONFIG     = {    // MySQL 数据库配置
-		host: 'localhost'
-		, port: 3306
-		, user: 'root'
-		, password: 'zw251108'
-		, database: 'destiny'
-		, dateStrings: true
-	}
+	//----- Web Server -----
+	, express       = require('express')
+	, web           = require('./module/web.js')
+	, webServer
 
-	//----- MySQL 数据库 -----
-	, db = require('mysql').createConnection( DB_CONFIG )
+	//----- Web Socket -----
+	, socket        = require('./module/socket/socket.js')
+	, socketServer
 
 	//----- Web 服务器及相关组件 -----
-	, express       = require('express')
-	, url           = require('url')
 	, bodyParser    = require('body-parser')
 	, cookie        = require('cookie')
 	, cookieParser  = require('cookie-parser')
 	, multer        = require('multer')
 	, logger        = require('morgan')
 	, session       = require('express-session')
-
-	, web           = express()
-	, webServer
 	, sessionStore  = new session.MemoryStore()
 
-	//----- Web Socket -----
-	, socket        = require('./module/socket/socket.js')
-	, socketServer
+	// 数据库操作
+	, db     = require('./module/db.js')
 
 	//----- 自定义模块 -----
 	, tpl           = require('./module/tpl.js') // 模板库
-	, metro           = [] // 首页模块
+	, metro         = require('./module/metro.js') // 首页模块
+
+	/**
+	 *@param {object} args
+	 * */
+	, handle = function(args){
+
+		if( args && typeof args === 'object' && args.sql ){
+
+			if( args.db ){
+				db.query(args.sql, args.db, function(e, rs){
+					if( !e ){
+						args.succ && args.succ( rs );
+					}
+					else{
+						args.error ? args.error( e ) : console.log( e );
+					}
+				});
+			}
+			else{
+				db.query(args.sql, function(e, rs){
+					if( !e ){
+						args.succ && args.succ( rs );
+					}
+					else{
+						args.error ? args.error( e ) : console.log(db, '\n', args.sql, '\n', e.message);
+					}
+				});
+			}
+		}
+	}
 	;
 
 //----- 重置 manifest 版本代号 -----
@@ -55,18 +74,23 @@ web.use( bodyParser.json() );
 web.use( bodyParser.urlencoded({extended: true}) );
 web.use( cookieParser() );
 web.use( logger('dev') );
-web.use(multer({   // 文件上传设置
-	dest: './public/upload/'
+
+// 文件上传路径
+web.use(multer({
+	dest: CONFIG.web.uploadDir
 }));
-web.use(session({  // session 设置
-	store: sessionStore
-	, secret: COOKIE_SECRET
-	, key: COOKIE_KEY
-	, resave: true
+// session 设置
+web.use(session({
+	store:      sessionStore
+	, secret:   CONFIG.web.cookieSecret
+	, key:      CONFIG.web.cookieKey
+	, resave:   true
 	, saveUninitialized: true
 }));
 
 //----- 静态资源 重定向 -----
+web.use('/cache.manifest', express.static(__dirname + '/public/cache.manifest') );  // 离线缓存配置文件
+
 web.use('/script',  express.static(__dirname + '/public/script') ); // 前端 js 静态资源
 web.use('/script/ui/jquery.emmetTpl.js', express.static(__dirname + '/module/emmetTpl/emmetTpl.js') );  // 前后端通用模板引擎
 
@@ -74,42 +98,14 @@ web.use('/font',    express.static(__dirname + '/public/font') );   // 字体图
 web.use('/image',   express.static(__dirname + '/public/image') );  // 图片
 web.use('/style',   express.static(__dirname + '/public/style') );  // 样式
 
-web.use('/cache.manifest', express.static(__dirname + '/public/cache.manifest') );  // 离线缓存配置文件
+web.use('/doc.html',    express.static(__dirname + '/doc.html') );  //
 
-web.use('/doc.html', express.static(__dirname + '/doc.html') );  //
-
-web.use('/lib', express.static(__dirname + '/bower_components'));
+web.use('/lib',     express.static(__dirname + '/bower_components'));
 web.use('/lib/zui', express.static(__dirname + '/public/script/ui'));
 web.use('/lib/zui/jquery.emmetTpl.js', express.static(__dirname + '/module/emmetTpl/emmetTpl.js') );  // 前后端通用模板引擎
 
-web.use('/doc', express.static(__dirname + '/doc'));
+web.use('/doc',     express.static(__dirname + '/doc'));
 
-//web.use(function(req, res, next){
-//	var err = new Error('not found');
-//	err.status = 404;
-//	next( err );
-//});
-//web.use(function(err, req, res, next){
-//	res.status(err.status)
-//})
-
-///**
-//* 统一上传接口
-//* */
-//web.post('/upload', function(req, res){
-//
-//	// todo 上传成功，返回信息
-//
-//	console.log('\n', req.params);
-//	console.log('\n', req.body);
-//	console.log('\n', req.files);
-//});
-
-//var Tag = {
-//	tagTpl: $.template({
-//		template: 'span.tag[data-tagid=%Id%]{%name%}'
-//	})
-//};
 
 /**
  * 访问主页	/
@@ -132,14 +128,15 @@ web.get('/', function(req, res){
 //require('./module/blog.js')(    web, db, socket, metro);  // 加载模块 blog
 require('./module/document.js')(web, db, socket, metro);    // 加载模块 document
 require('./module/editor.js')(  web, db, socket, metro);    // 加载模块 editor
-require('./module/rss.js')(     web, db, socket, metro);    // 加载模块 rss
+//require('./module/rss.js')(     web, db, socket, metro);    // 加载模块 rss
 
 require('./module/bower.js')(   web, db, socket, metro);    // 加载模块 bower
 
 require('./module/tag.js')(     web, db, socket, metro);    // 加载 tag 功能模块
 
-require('./module/reader.js')(  web, db, socket, metro);    // 待读文字 模块
+require('./module/reader.js')(  web, handle, socket, metro);    // 待读文字 模块
 
+//console.log(metro);
 metro.push({
 	id: 'time'
 	, type: 'metro'
@@ -165,14 +162,15 @@ metro.push({
 });
 
 
-webServer = web.listen( WEB_APP_PORT );
+webServer = web.listen( CONFIG.web.port );
 console.log('Web Server is listening...');
 
 
 //----- socket 服务器 -----
-socketServer = socket.listen(webServer);
+socketServer = socket.listen( webServer );
 
-socketServer.use(function(socket, next){    // 设置 socket.IO 与 express 共用 session
+// 设置 socket.IO 与 express 共用 session
+socketServer.use(function(socket, next){
 	var data = socket.handshake || socket.request
 		, cookieData = data.headers.cookie
 		;
@@ -180,7 +178,7 @@ socketServer.use(function(socket, next){    // 设置 socket.IO 与 express 共�
 	if( cookieData ){
 
 		data.cookie = cookie.parse( cookieData );
-		data.sessionID = cookieParser.signedCookie(data.cookie[COOKIE_KEY], COOKIE_SECRET);
+		data.sessionID = cookieParser.signedCookie(data.cookie[CONFIG.web.cookieKey], CONFIG.web.cookieSecret);
 		data.sessionStore = sessionStore;
 
 		sessionStore.get(data.sessionID, function(err, session){
