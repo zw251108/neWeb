@@ -3,7 +3,10 @@
 /**
  * 错误信息配置
  * */
-module.exports = {
+var error = {
 	E0001: ''
 	, E0002: '数据库错误'
+};
+module.exports = function(e){
+
 };

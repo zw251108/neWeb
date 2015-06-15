@@ -14,7 +14,7 @@ var Reader = {
 			sql: 'select status from reader where Id=?'
 		}
 		, addToList: {
-			sql: 'insert reader(url,title,datetime) value(?,?,now())'
+			sql: 'insert into reader(url,title,datetime) value(?,?,now())'
 		}
 		, read: {
 			sql: 'update reader set status=1 where Id=?'
@@ -246,7 +246,60 @@ var Reader = {
 	, checkExist = function(){}
 	, checkRead = function(){}
 	, checkFavor = function(){}
+
+	, Event = require('events').EventEmitter()
+	, readerController = new Event()
+	, readerData = new Event()
+	, readerResponse = new Event()
+	, readerSocket = new Event()
 	;
+
+readerController.on('reader/web', function(res){
+	readerData.emit('reader', readerResponse, res);
+}).on('reader/socket', function(socket){
+	readerData.emit('reader', readerSocket, socket);
+}).on('reader/bookmark/add/socket', function(socket, data){
+	readerData.emit('reader/bookmark/exist', function(){
+
+	})
+});
+
+readerData.on('reader', function(next, args){
+	db.query('select * from rss', function(err, rs){
+		if( !err ){
+			eventTarget.emit('reader', rs, args);
+		}
+		else{
+			error( err );
+		}
+	});
+}).on('reader/bookmark', function(next, args){
+	db.query('select * from reader', function(err, rs){
+		if( !err ){
+			next.emit('reader/bookmark', rs, args);
+		}
+		else{
+			error( err );
+		}
+	});
+}).on('reader/bookmark/add', function(data, next, args){
+	db.query('insert into reader(url,title,datetime) select ?,?,now() from reader where not exists (select * from reader where url like ?)', data, function(err, rs){
+		next.emit('reader/bookmark/add', rs, args);
+	});
+}).on('reader/bookmark/read', function(data){
+
+}).on('reader/bookmark/favor', function(data){
+
+});
+
+readerResponse.on('reader', function(rs, res){
+	res.send( tpl );
+}).on('reader/bookmark', function(req, res){
+	reader.emit('db/reader', res);
+});
+readerSocket.on('reader', function(){
+
+});
 
 metro.push({
 	id: 'reader'
