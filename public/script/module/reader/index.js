@@ -83,7 +83,7 @@ require(['../config'], function(config){
 		socket.register({
 			'reader/bookmark/add': function(data){
 
-				if( data.msg !== 'success' ){
+				if( 'error' in data ){
 					alert( data.msg );
 				}
 				else{
@@ -93,14 +93,14 @@ require(['../config'], function(config){
 				}
 			}
 			, 'reader/bookmark/read': function(data){
-				if( data.msg === 'success' ){
+				if( 'error' in data ){
 					$reader.find('#blogArt'+ data.id).find('.icon-checkbox')
 						.toggleClass('icon-checkbox icon-checkbox-checked')
 						.attr('title', '已读');
 				}
 			}
 			, 'reader/bookmark/favor': function(data){
-				if( data.msg === 'success' ){
+				if( 'error' in data ){
 					$reader.find('#blogArt'+ data.id)
 						.find('.icon-star-empty')
 							.toggleClass('icon-star-empty icon-star')
