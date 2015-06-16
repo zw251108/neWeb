@@ -12,7 +12,7 @@ require(['../config'], function(config){
 					;
 				$(this).toggleClass('icon-star icon-star-empty').text('已读过');
 				socket.emit('data', {
-					topic: 'reader/favor'
+					topic: 'reader/bookmark/favor'
 					, query: {
 						id: $parent.data('id')
 					}
@@ -25,7 +25,7 @@ require(['../config'], function(config){
 					;
 				$(this).toggleClass('icon-checkbox icon-checkbox-checked').text('已收藏');
 				socket.emit('data', {
-					topic: 'reader/read'
+					topic: 'reader/bookmark/read'
 					, query: {
 						id: $parent.data('id')
 					}
@@ -36,7 +36,7 @@ require(['../config'], function(config){
 			, $addPopup = $('#addPopup').on('click', '#addReader', function(){
 				if( $url.val() ){
 					socket.emit('data', {
-						topic: 'reader/bookmarkAdd'
+						topic: 'reader/bookmark/add'
 						, query: {
 							url: $url.val()
 						}
@@ -60,11 +60,17 @@ require(['../config'], function(config){
 					, readTitle: function(d){
 						return +d.status > 0 ? '已读' : '未读';
 					}
+					, readText: function(d){
+						return +d.status > 0 ? '已读过' : '读过';
+					}
 					, favorStatus: function(d){
 						return +d.status > 1 ? '' : '-empty';
 					}
 					, favorTitle: function(d){
 						return +d.status > 1 ? '已收藏' : '未收藏';
+					}
+					, favorText: function(d){
+						return +d.status > 1 ? '已收藏' : '收藏';
 					}
 				}
 			})
@@ -75,7 +81,7 @@ require(['../config'], function(config){
 		});
 
 		socket.register({
-			'reader/bookmarkAdd': function(data){
+			'reader/bookmark/add': function(data){
 
 				if( data.msg !== 'success' ){
 					alert( data.msg );
@@ -86,14 +92,14 @@ require(['../config'], function(config){
 					$reader.find('.module_content').prepend( tpl(data) )
 				}
 			}
-			, 'reader/read': function(data){
+			, 'reader/bookmark/read': function(data){
 				if( data.msg === 'success' ){
 					$reader.find('#blogArt'+ data.id).find('.icon-checkbox')
 						.toggleClass('icon-checkbox icon-checkbox-checked')
 						.attr('title', '已读');
 				}
 			}
-			, 'reader/favor': function(data){
+			, 'reader/bookmark/favor': function(data){
 				if( data.msg === 'success' ){
 					$reader.find('#blogArt'+ data.id)
 						.find('.icon-star-empty')

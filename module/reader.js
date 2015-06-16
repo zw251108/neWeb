@@ -247,7 +247,7 @@ var Reader = {
 	, checkRead = function(){}
 	, checkFavor = function(){}
 
-	, Event = require('events').EventEmitter()
+	, Event = require('events').EventEmitter
 	, readerController  = new Event()
 	, readerModel       = new Event()
 	, readerResponse    = new Event()
@@ -258,44 +258,21 @@ readerController.on('reader/web', function(res){
 	readerModel.emit('reader', readerResponse, res);
 }).on('reader/socket', function(socket){
 	readerModel.emit('reader', socket);
-}).on('reader/bookmark/add/socket', function(socket, data){
-	if( data.query.url ){
-		readerModel.emit('reader/bookmark/add', socket, data);
-	}
-	else{
-		socket.emit('error', {
-			error: 'E0004'
-			, msg: ''
-		});
-		error( 'E0004' );
-	}
-	readerModel.emit('reader/bookmark/add', data)
+}).on('reader/bookmark/web', function(res){
+	readerModel.emit('reader/bookmark', readerResponse, res);
+}).on('reader/bookmark/add/socket', function(data, socket){
+	//if( data.query.url ){
+		readerModel.emit('reader/bookmark/add', data, readerSocket, socket);
+	//}
+	//else{
+	//	socket.emit('error', {
+	//		error: 'E0004'
+	//		, msg: ''
+	//	});
+	//	error( 'E0004' );
+	//}
+	//readerModel.emit('reader/bookmark/add', data)
 });
-
-
-var Reader = {
-	index: {
-		sql: 'select * from rss'
-	}
-	, bookmark: {
-		sql: 'select Id,title,url,status from reader order by status,Id desc'
-	}
-	, isInList: {
-		sql: 'select url from reader where url like ?'
-	}
-	, getStatus: {
-		sql: 'select status from reader where Id=?'
-	}
-	, addToList: {
-		sql: 'insert into reader(url,title,datetime) value(?,?,now())'
-	}
-	, read: {
-		sql: 'update reader set status=1 where Id=?'
-	}
-	, favor: {
-		sql: 'update reader set status=2 where Id=?'
-	}
-}
 
 readerModel.on('reader', function(next, args){
 	db.query('select * from rss', function(err, rs){
@@ -318,9 +295,15 @@ readerModel.on('reader', function(next, args){
 		}
 	});
 }).on('reader/bookmark/add', function(data, next, args){
-	db.query('insert into reader(url,title,datetime) select ?,?,now() from reader where not exists (select * from reader where url like ?)', data, function(err, rs){
+	db.query('insert into reader(url,title,datetime) select ?,?,now() from dual where not exists (select * from reader where url like ? limit 0,1)', data, function(err, rs){
+		console.log(123123)
 		if( !err ){
-			next.emit('reader/bookmark/add', rs, args);
+			next.emit('reader/bookmark/add', {
+				id: rs.insertId
+				, url: data[0]
+				, title: data[1]
+				, status: 0
+			}, args);
 		}
 		else{
 			error( err );
@@ -337,12 +320,56 @@ readerModel.on('reader', function(next, args){
 });
 
 readerResponse.on('reader', function(rs, res){
-	res.send( tpl );
-}).on('reader/bookmark', function(req, res){
-	reader.emit('db/reader', res);
+	res.send( tpl.html('module', {
+		title: '订阅 rss'
+		, modules: tpl.mainTpl({
+			id: 'rss'
+			, title: '阅读 reader'
+			, toolbar: '<li><a href="bookmark" id="bookmark" class="icon icon-bookmark" title="待读文章列表"></a></li>'+
+				tpl.toolbarTpl([{
+					id: 'add', icon: 'plus', title: '添加订阅源'
+				}])
+			, content: rssTpl(rs).join('')
+		}).join('')
+		, script: {
+			main: '../script/module/rss/index'
+			, src: '../script/lib/require.min.js'
+		}
+	}) );
+	res.end();
+}).on('reader/bookmark', function(rs, res){
+	res.send( tpl.html('module', {
+		title: '待读文章 reader'
+		, modules: tpl.mainTpl({
+			id: 'reader'
+			, title: '待读文章 reader'
+			, toolbar: tpl.toolbarTpl([{
+				id: 'add', icon: 'plus', title: '添加待读文章'
+			}])
+			, content: articleTpl(rs).join('')
+		}).join('') + tpl.popupTpl([{
+			id: 'addPopup', size: 'normal'
+			, content: '<form><div class="formGroup">' +
+			'<label for="url">请输入链接</label>' +
+			'<input type="text" id="url" class="input" placeholder="请输入链接" data-validator="url">' +
+			'</div></form>'
+			, button: '<button type="button" id="addReader" class="btn">确定</button>'
+		}])
+		, script: {
+			main: '../script/module/reader/index'
+			, src: '../script/lib/require.min.js'
+		}
+	}) );
+	res.end();
 });
 readerSocket.on('reader', function(){
 
+}).on('reader/bookmark/add', function(data, socket){
+	socket.emit('data', {
+		topic: 'reader/bookmark/add'
+		, msg: 'success'
+		, info: data
+	})
 });
 
 metro.push({
@@ -475,7 +502,7 @@ socket.register({
 			;
 
 		if( url ){
-			getTitle(url, function(title){
+			getTitle(url, function(url, title){console.log(title)
 				readerController.emit('reader/bookmark/add/socket', [url, title, url], socket)
 			}, error);
 			//readerController.emit('reader/bookmark/add/socket', [url, url, url], socket)
