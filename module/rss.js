@@ -19,7 +19,7 @@ var RSS = {
 
 	, segment = require('./segment/segment.js')
 
-	, tpl = require('./tpl.js')
+	, tpl = require('./emmetTpl/tpl.js')
 	, emmetTpl = require('./emmetTpl/emmetTpl.js').template
 
 	, rssTpl = emmetTpl({

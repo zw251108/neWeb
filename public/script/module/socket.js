@@ -21,7 +21,7 @@ define(function(require){
 			socket.disconnect();
 			console.log('断开连接')
 		}
-	}).on('getData', function(data){
+	}).on('data', function(data){
 		var topic = data.topic;
 
 		if( 'error' in data ){

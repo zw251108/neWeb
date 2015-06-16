@@ -32,7 +32,7 @@ define(['jquery', 'global', 'socket', 'tag', 'template'], function($, g, socket,
 
 	socket.register({
 		blog: function(data){
-			$blog.data('getData', true).find('.module_content').append(articleTmpl(data.data, page, pageSize).join(''));
+			$blog.data('data', true).find('.module_content').append(articleTmpl(data.data, page, pageSize).join(''));
 
 			// 数据已加载完成
 			$container.triggerHandler('dataReady');
@@ -55,7 +55,7 @@ define(['jquery', 'global', 'socket', 'tag', 'template'], function($, g, socket,
 				$self.next().slideToggle();
 			}
 			else{
-				socket.emit('getData', {
+				socket.emit('data', {
 					topic: 'blog/detail'
 					, query: {
 						id: /=(\d*)$/.exec($self.attr('href'))[1]

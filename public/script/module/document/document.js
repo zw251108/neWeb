@@ -22,7 +22,7 @@ define(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g, 
 	// 绑定 socket 回调 事件
 	socket.register({
 		document: function(data){
-			$document.data('getData', true).find('.module_content').append( sectionTmpl(data.data).join('') );
+			$document.data('data', true).find('.module_content').append( sectionTmpl(data.data).join('') );
 
 			// 数据已加载完成
 			$container.triggerHandler('dataReady');

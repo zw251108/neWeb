@@ -54,7 +54,7 @@ define(['jquery', 'global', 'socket', 'tag', 'template'], function($, g, socket,
 
 	socket.register({
 		editor: function(data){
-			$editor.data('getData', true).find('.module_content').append( editorTmpl(data.data, page, pageSize).join('') );
+			$editor.data('data', true).find('.module_content').append( editorTmpl(data.data, page, pageSize).join('') );
 
 			$container.triggerHandler('dataReady');
 		}
@@ -78,7 +78,7 @@ define(['jquery', 'global', 'socket', 'tag', 'template'], function($, g, socket,
 			//$self.next().slideToggle();
 		}
 		else{
-			socket.emit('getData', {
+			socket.emit('data', {
 				topic: 'editor/code'
 				, query: {
 					id: /=(\d*)$/.exec($self.attr('href'))[1]

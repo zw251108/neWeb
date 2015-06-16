@@ -1,11 +1,11 @@
 'use strict';
-console.log(12313)
+
 /**
  * 模板管理
  * */
 var fs = require('fs')
 	, path = require('path')
-	, emmetTpl = require('./emmetTpl/emmetTpl.js').template
+	, emmetTpl = require('./emmetTpl.js').template
 	, TPL_CACHE = {}
 	, TPL_DIR = 'tpl/'
 	, TPL_KEY = '%'

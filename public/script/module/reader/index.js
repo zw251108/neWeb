@@ -11,7 +11,7 @@ require(['../config'], function(config){
 					, $parent = $that.parents('article')
 					;
 				$(this).toggleClass('icon-star icon-star-empty').text('已读过');
-				socket.emit('getData', {
+				socket.emit('data', {
 					topic: 'reader/favor'
 					, query: {
 						id: $parent.data('id')
@@ -24,7 +24,7 @@ require(['../config'], function(config){
 					, $parent = $that.parents('article')
 					;
 				$(this).toggleClass('icon-checkbox icon-checkbox-checked').text('已收藏');
-				socket.emit('getData', {
+				socket.emit('data', {
 					topic: 'reader/read'
 					, query: {
 						id: $parent.data('id')
@@ -35,7 +35,7 @@ require(['../config'], function(config){
 			})
 			, $addPopup = $('#addPopup').on('click', '#addReader', function(){
 				if( $url.val() ){
-					socket.emit('getData', {
+					socket.emit('data', {
 						topic: 'reader/bookmarkAdd'
 						, query: {
 							url: $url.val()

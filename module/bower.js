@@ -11,7 +11,7 @@ var Bower = {
 
 	, bower         = require('bower')
 
-	, tpl           = require('./tpl.js')
+	, tpl           = require('./emmetTpl/tpl.js')
 	, emmetTpl      = require('./emmetTpl/emmetTpl.js').template
 
 	, bowerTpl      = emmetTpl({

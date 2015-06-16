@@ -4,7 +4,7 @@
  * 数据处理接口
  * */
 var mysql = require('mysql')
-	, config = require('../config.js')
+	, config = require('../../config.js')
 	, db = mysql.createConnection( config.db )
 	;
 

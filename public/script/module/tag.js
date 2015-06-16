@@ -8,7 +8,7 @@ define('tag', ['jquery', 'socket', 'template'], function($, socket){
 			template: 'span.tag[data-tagid=%Id%]{%name%}'
 		})
 	};
-	socket.emit('getData', {
+	socket.emit('data', {
 		topic: 'tag'
 		, receive: 'getTagData'
 	});

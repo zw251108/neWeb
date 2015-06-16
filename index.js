@@ -10,7 +10,7 @@ var fs = require('fs')
 
 	//----- Web Server -----
 	, express       = require('express')
-	, web           = require('./module/web.js')
+	, web           = require('./module/web/web.js')
 	, webServer
 
 	//----- Web Socket -----
@@ -27,10 +27,10 @@ var fs = require('fs')
 	, sessionStore  = new session.MemoryStore()
 
 	// 数据库操作
-	, db     = require('./module/db.js')
+	, db     = require('./module/db/db.js')
 
 	//----- 自定义模块 -----
-	, tpl           = require('./module/tpl.js') // 模板库
+	, tpl           = require('./module/emmetTpl/tpl.js') // 模板库
 	, metro         = require('./module/metro.js') // 首页模块
 
 	/**

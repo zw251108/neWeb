@@ -13,7 +13,7 @@ require(['module/config'], function(config){
 
 					var $form = $(this);
 
-					socket.emit('getData', {
+					socket.emit('data', {
 						topic: 'bower/search'
 						, query: {
 							name: $form.find('input').val()
@@ -23,7 +23,7 @@ require(['module/config'], function(config){
 					$searchDialog.trigger('closeDialog');
 				}).on('click', 'td button', function(e){
 					var name =  $(this).next().val();
-					socket.emit('getData', {
+					socket.emit('data', {
 						topic: 'bower/install'
 						, query: {
 							name: name

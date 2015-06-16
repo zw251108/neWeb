@@ -4,15 +4,13 @@
  * Web Socket 服务器
  * */
 var sio = require('socket.io')()
+	, error = require('../error/error.js')
 
 	, CLIENT_LIST       = {}
 	, CLIENT_INDEX_LIST = []
 
 	, EVENT_LIST        = {}
 	, EVENT_INDEX_LIST  = []
-
-	//, db
-	//, bower = require('./../bower.js').bower
 	;
 
 sio.on('connection', function(socket){
@@ -30,10 +28,8 @@ sio.on('connection', function(socket){
 
 	console.log('socket: session id ', clientIndex, 'connect');
 
-	socket.on('getData', function(query){   // 获取数据接口
+	socket.on('data', function(query){   // 获取数据接口
 		var topic = query.topic
-			//, receive = query.receive
-			//, data = []
 			;
 
 		console.log('get data topic:', topic);
@@ -43,19 +39,14 @@ sio.on('connection', function(socket){
 			EVENT_LIST[topic](socket, query);
 		}
 		else{
-			console.log( topic );
+			error('E0001', topic);
+
 			// todo 发送错误信息
-			socket.emit('getData', {
-				error: ''
+			socket.emit('data', {
+				error: 'E0001'
 				, msg: topic + '是一个未注册的主题'
 			});
 		}
-
-		//db.query(topic, data, function(rs){
-		//	socket.emit(receive, rs);
-		//}, function(){
-		//	socket.emit(receive, {});
-		//});
 	}).on('message', function(data){    // 即时通信接口
 		console.log('user chat');
 	}).on('disconnect', function(){ // 断开连接

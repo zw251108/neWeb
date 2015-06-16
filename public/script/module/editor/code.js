@@ -146,7 +146,7 @@ require(['../config'], function(config){
 
 			// 各个弹窗
 			, $savePopup = $('#editorSave').on('click', '#codeSave', function(){
-				socket.emit('getData', {
+				socket.emit('data', {
 					topic: 'editor/save'
 					, query: {
 						id: $id.val()
@@ -221,7 +221,7 @@ require(['../config'], function(config){
 			newWin.write( runCode(html.getValue(), css.getValue(), js.getValue(), cssLib, jsLib) );
 			newWin.close();
 		}).on('click', '#lib', function(){
-			$libPopup.data('data') ? $libPopup.trigger('showDialog') : socket.emit('getData', {
+			$libPopup.data('data') ? $libPopup.trigger('showDialog') : socket.emit('data', {
 				topic: 'bower/editor/lib'
 			});
 		});

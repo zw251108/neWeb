@@ -44,7 +44,7 @@ require(['../config'], function(config){
 			}
 			else{
 				$that.next().html('<li><div class="spinner chasing"><div class="dot1"></div><div class="dot2"></div></div></li>')
-				socket.emit('getData', {
+				socket.emit('data', {
 					topic: 'rss/feedList'
 					, query: {
 						feed: feed
@@ -61,7 +61,7 @@ require(['../config'], function(config){
 
 			var $that = $(this);
 
-			socket.emit('getData', {
+			socket.emit('data', {
 				topic: 'rss/article'
 				, query: {
 					url: this.href
