@@ -3,112 +3,91 @@
  * */
 require(['../config'], function(config){
 	var r = require(config.requireConfig);
-	r(['jquery', 'global', 'socket', 'template'], function($, g, socket){
-		var $reader = $('#reader').on('click', '.icon-star-empty', function(e){
-				e.preventDefault();
+	r(['jquery', 'global', 'socket', 'template', config.dataSource.json], function($, g, socket, a, json){
+		console.log($.parseJSON( json ) );
 
-				var $that = $(this)
-					, $parent = $that.parents('article')
-					;
-				$(this).toggleClass('icon-star icon-star-empty').text('已读过');
-				socket.emit('data', {
-					topic: 'reader/bookmark/favor'
-					, query: {
-						id: $parent.data('id')
-					}
-				});
-			}).on('click', '.icon-checkbox', function(e){
-				e.preventDefault();
-
-				var $that = $(this)
-					, $parent = $that.parents('article')
-					;
-				$(this).toggleClass('icon-checkbox icon-checkbox-checked').text('已收藏');
-				socket.emit('data', {
-					topic: 'reader/bookmark/read'
-					, query: {
-						id: $parent.data('id')
-					}
-				});
-			}).on('click', '.icon-remove', function(e){
-				e.preventDefault();
-			})
-			, $addPopup = $('#addPopup').on('click', '#addReader', function(){
-				if( $url.val() ){
-					socket.emit('data', {
-						topic: 'reader/bookmark/add'
-						, query: {
-							url: $url.val()
-						}
-					});
-
-					$addPopup.trigger('closeDialog').find('form')[0].reset();
-				}
-			})
-			, $url = $('#url')
-			, tpl = $.template({
-				template: 'article#blogArt%Id%.article[data-id=%Id%]>a[href=%url% title=%url% target=_blank]>h3.article_title{%title%}' +
-				'^hr+a.icon.icon-checkbox%readStatus%[href=reader/read title=%readTitle%]{%readText%}' +
-				'+a.icon.icon-star%favorStatus%[href=reader/favor title=%favorTitle%]{%favorText%}+a.icon.icon-cancel[href=reader/remove title=删除]{删除}'
-				, filter: {
-					title: function(d){
-						return d.title || d.url;
-					}
-					, readStatus: function(d){
-						return +d.status > 0 ? '-checked' : '';
-					}
-					, readTitle: function(d){
-						return +d.status > 0 ? '已读' : '未读';
-					}
-					, readText: function(d){
-						return +d.status > 0 ? '已读过' : '读过';
-					}
-					, favorStatus: function(d){
-						return +d.status > 1 ? '' : '-empty';
-					}
-					, favorTitle: function(d){
-						return +d.status > 1 ? '已收藏' : '未收藏';
-					}
-					, favorText: function(d){
-						return +d.status > 1 ? '已收藏' : '收藏';
+		var $reader = $('#reader')
+			, articleTpl = $.template({
+				template:'li.reader_article.article>a[href=%url% target=_blank]>h3.article_title{%title%}^div.article_content{%content%}' +
+				'+time.article_date[pubdate=pubdate datetime=%datetime%]{%datetime%}+div.tagsArea{%tags%}'
+				, filter:{
+					tags: function(d){
+						return '<span class="tag">'+ d.tags.split(',').join('</span><span class="tag">') +'</span>';
+						//var data = []
+						//	, tagsId = (d.tags_id || '').split(',')
+						//	, tagsName = (d.tags_name || '').split(',')
+						//	;
+						//
+						//$.each(tagsId, function(i, d){
+						//	data.push({
+						//		Id: d
+						//		, name: tagsName[i]
+						//	});
+						//});
+						//
+						//return tagTmpl(data).join('');
 					}
 				}
 			})
 			;
 
-		$('#add').on('click', function(){
-			$addPopup.trigger('showDialog');
+		$reader.on('click', '.reader_section > a', function(e){
+			e.preventDefault();
+
+			var $that = $(this)
+				, feed = $that.data('feed')
+				, id = $that.data('id')
+				;
+
+			if( $that.data('deploy') ){ // 已获取列表
+				$that.next().slideToggle();
+			}
+			else{
+				$that.next().html('<li><div class="spinner chasing"><div class="dot1"></div><div class="dot2"></div></div></li>')
+				socket.emit('data', {
+					topic: 'reader/feed'
+					, query: {
+						feed: feed
+						, id: id
+					}
+				});
+				$that.data('deploy', true);
+			}
+			$that.find('.icon').toggleClass('icon-plus icon-minus');
+
+
+		}).on('click', '.reader_article > a', function(e){
+			e.preventDefault();
+
+			var $that = $(this);
+
+			socket.emit('data', {
+				topic: 'reader/article'
+				, query: {
+					url: this.href
+				}
+			});
 		});
 
 		socket.register({
-			'reader/bookmark/add': function(data){
-
+			'reader/feed': function(data){
+				var id;
 				if( 'error' in data ){
-					alert( data.msg );
+					alert(data.msg);
 				}
 				else{
-					data = data.info;
-					data.Id = data.id;
-					$reader.find('.module_content').prepend( tpl(data) )
+					data = data.info
+					id = data.id;
+					data = data.data;
+
+					$reader.find('#reader_'+ id).find('ul').html( articleTpl(data).join('') );
 				}
 			}
-			, 'reader/bookmark/read': function(data){
+			, 'reader/article': function(data){
 				if( 'error' in data ){
-					$reader.find('#blogArt'+ data.id).find('.icon-checkbox')
-						.toggleClass('icon-checkbox icon-checkbox-checked')
-						.attr('title', '已读');
+					alert(data.msg);
 				}
-			}
-			, 'reader/bookmark/favor': function(data){
-				if( 'error' in data ){
-					$reader.find('#blogArt'+ data.id)
-						.find('.icon-star-empty')
-							.toggleClass('icon-star-empty icon-star')
-							.attr('title', '已收藏')
-						.end().find('.icon-checkbox')
-							.toggleClass('icon-checkbox icon-checkbox-checked')
-							.attr('title', '已读');
-				}
+				console.log(data);
 			}
 		})
 	});

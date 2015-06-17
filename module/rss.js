@@ -66,7 +66,7 @@ module.exports = function(web, db, socket, metro){
 		rss: function(socket){
 
 		}
-		, 'rss/feedList': function(socket, data){
+		, 'rss/feed': function(socket, data){
 			var feed = data.query.feed;
 
 			if( feed ){
