@@ -1,0 +1,92 @@
+.scrollBar{
+	/*三角箭头的颜色*/
+	scrollbar-arrow-color: @background;
+
+	/*立体滚动条的颜色（包括箭头部分的背景色）*/
+	scrollbar-face-color: @background;
+
+	/*立体滚动条亮边的颜色*/
+	scrollbar-3dlight-color: @background;
+
+	/*滚动条的高亮颜色（左阴影？）*/
+	scrollbar-highlight-color: @background;
+
+	/*立体滚动条阴影的颜色*/
+	scrollbar-shadow-color: @background;
+
+	/*立体滚动条外阴影的颜色*/
+	scrollbar-darkshadow-color: @background;
+
+	/*立体滚动条背景颜色*/
+	scrollbar-track-color: @background;
+
+	/*滚动条的基色*/
+	scrollbar-base-color:@background;
+
+	//::-moz-scrollbar{
+	//    width: @grid-unit;
+	//}
+
+	/* Turn on a 16x16 scrollbar */
+	::-webkit-scrollbar {
+		width: @grid-unit;
+		//    margin-left: 10px;
+		//        16px;
+		//    height: 16px;
+	}
+
+	/* Turn on single button up on top, and down on bottom */
+	//::-webkit-scrollbar-button:start:decrement,
+	//::-webkit-scrollbar-button:end:increment {
+	//    display: block;
+	//}
+
+	/* Turn off the down area up on top, and up area on bottom */
+	//::-webkit-scrollbar-button:vertical:start:increment,
+	//::-webkit-scrollbar-button:vertical:end:decrement {
+	//    display: none;
+	//}
+
+	/* Place The scroll down button at the bottom */
+	::-webkit-scrollbar-button:end
+		//:increment
+	{
+		height: @grid-unit;
+		border-radius: 20px;
+		background: @background;
+
+		color: white;
+	}
+
+	/* Place The scroll up button at the up */
+	::-webkit-scrollbar-button:start
+		//:decrement
+	{
+		height: @grid-unit;
+		border-radius: 20px;
+		background: @background;
+
+		color: white;
+	}
+
+	/* Top area above thumb and below up button */
+	//::-webkit-scrollbar-track-piece:vertical:start {
+	::-webkit-scrollbar-track-piece:start {
+		//    background: yellow;
+	}
+
+	/* Bottom area below thumb and down button */
+	//::-webkit-scrollbar-track-piece:vertical:end
+	::-webkit-scrollbar-track-piece:end {
+		//    background: purple;
+	}
+
+	/* The thumb itself */
+	::-webkit-scrollbar-thumb
+		//:vertical
+	{
+		height: 56px;
+		border-radius: 20px;
+		background: @background;
+	}
+}

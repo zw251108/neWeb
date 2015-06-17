@@ -28,7 +28,8 @@ define(function(require){
 			// todo 错误
 			console.log('socket error: ', data.msg);
 		}
-		else if( topic in EVENT_LIST ){
+
+		if( topic && topic in EVENT_LIST ){
 			EVENT_LIST[topic](data);
 		}
 		else{

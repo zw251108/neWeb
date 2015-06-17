@@ -1,14 +1,14 @@
 'use strict';
 
 var ReaderModel = {
-		reader: 'select * from rss'
+		reader: 'select * from reader'
 		, 'reader/add': ''
 		, 'reader/favor': 'select status from reader where Id=?'
 		, addToList: 'insert into reader(url,title,datetime) value(?,?,now())'
 
-		, 'reader/bookmark': 'select Id,title,url,status from reader order by status,Id desc'
+		, 'reader/bookmark': 'select Id,title,url,status from bookmark order by status,Id desc'
 		, 'reader/bookmark/add': {
-			sql: 'insert into reader(url,title,datetime) select ?,?,now() from dual where not exists (select * from reader where url like ?)'
+			sql: 'insert into bookmark(url,title,datetime) select ?,?,now() from dual where not exists (select * from bookmark where url like ?)'
 			, handle: function(data, rs){console.log(rs);
 				var r;
 				if( rs.insertId ){
@@ -26,7 +26,7 @@ var ReaderModel = {
 			}
 		}
 		, 'reader/bookmark/read': {
-			sql:'update reader set status=1 where Id=? and status<1'
+			sql: 'update bookmark set status=1 where Id=? and status<1'
 			, handle: function(data, rs){
 				var r;
 				if( rs.changedRows ){
@@ -41,7 +41,7 @@ var ReaderModel = {
 			}
 		}
 		, 'reader/bookmark/favor': {
-			sql: 'update reader set status=2 where Id=? and status<2'
+			sql: 'update bookmark set status=2 where Id=? and status<2'
 			, handle: function(data, rs){
 				var r;
 				if( rs.changedRows ){
@@ -91,7 +91,7 @@ var ReaderModel = {
 					'<label for="url">请输入链接</label>' +
 					'<input type="text" id="url" class="input" placeholder="请输入链接" data-validator="url">' +
 					'</div></form>'
-					, button: '<button type="button" id="addReader" class="btn">确定</button>'
+					, button: '<button type="button" id="addBookmark" class="btn">确定</button>'
 				}])
 				, script: {
 					main: '../script/module/reader/bookmark'
