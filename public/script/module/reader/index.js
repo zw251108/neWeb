@@ -57,6 +57,7 @@ require(['../config'], function(config){
 
 
 		}).on('click', '.reader_article > a', function(e){
+		}).on('click', '.icon-segment', function(){
 			e.preventDefault();
 
 			var $that = $(this);
@@ -76,7 +77,7 @@ require(['../config'], function(config){
 					alert(data.msg);
 				}
 				else{
-					data = data.info
+					data = data.info;
 					id = data.id;
 					data = data.data;
 

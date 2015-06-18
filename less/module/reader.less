@@ -11,6 +11,21 @@
 .reader_section{
 	border: 1px solid #ddd;
 	margin-bottom: 10px;
+
+	.section_title{
+		overflow: hidden;
+		width: 90%;
+		margin: 0;
+		-ms-text-overflow: ellipsis;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+
+		.icon{
+			position: absolute;
+			right: 1em;
+			text-indent: 0;
+		}
+	}
 }
 .reader_title{
 	height: 2em;
@@ -28,6 +43,21 @@
 }
 .reader_articleList{
 	margin: 0 10px;
+
+	.article{
+		overflow: hidden;
+	}
+	a{
+		@extend: .link;
+	}
+	.article_content{
+		text-indent: 2em;
+	}
+	img{
+		float: left;
+		max-width: 300px !important;
+		height: auto !important;
+	}
 }
 .chasing{
 	margin: 55px auto;

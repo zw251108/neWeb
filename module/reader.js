@@ -1,120 +1,6 @@
 'use strict';
 
-var ReaderModel = {
-		reader: 'select * from reader'
-		, 'reader/add': ''
-		, 'reader/favor': 'select status from reader where Id=?'
-		, addToList: 'insert into reader(url,title,datetime) value(?,?,now())'
-
-		, 'reader/bookmark': 'select Id,title,url,status from bookmark order by status,Id desc'
-		, 'reader/bookmark/add': {
-			sql: 'insert into bookmark(url,title,datetime) select ?,?,now() from dual where not exists (select * from bookmark where url like ?)'
-			, handle: function(data, rs){console.log(rs);
-				var r;
-				if( rs.insertId ){
-					r = {
-						id: rs.insertId
-						, url: data[0]
-						, title: data[1]
-						, status: 0
-					};
-				}
-				else{
-					r = '数据已存在';
-				}
-				return r;
-			}
-		}
-		, 'reader/bookmark/read': {
-			sql: 'update bookmark set status=1 where Id=? and status<1'
-			, handle: function(data, rs){
-				var r;
-				if( rs.changedRows ){
-					r = {
-						id: data[0]
-					}
-				}
-				else{
-					r = '该文章已被读过' ;
-				}
-				return r;
-			}
-		}
-		, 'reader/bookmark/favor': {
-			sql: 'update bookmark set status=2 where Id=? and status<2'
-			, handle: function(data, rs){
-				var r;
-				if( rs.changedRows ){
-					r = {
-						id: data[0]
-					}
-				}
-				else{
-					r = '该文章已被收藏';
-				}
-				return r;
-			}
-		}
-	}
-	, ReaderView = {
-		reader: function(rs){
-			return tpl.html('module', {
-				title: '订阅 reader'
-				, modules: tpl.mainTpl({
-					id: 'reader'
-					, title: '阅读 reader'
-					, toolbar: '<li><a href="bookmark" id="bookmark" class="icon icon-bookmark" title="待读文章列表"></a></li>'+
-					tpl.toolbarTpl([{
-						id: 'add', icon: 'plus', title: '添加订阅源'
-					}])
-					, content: readerTpl(rs).join('')
-				}).join('')
-				, script: {
-					main: '../script/module/reader/index'
-					, src: '../script/lib/require.min.js'
-				}
-			});
-		}
-		, 'reader/bookmark': function(rs){
-			return tpl.html('module', {
-				title: '书签 bookmark'
-				, modules: tpl.mainTpl({
-					id: 'bookmark'
-					, title: '待读文章 bookmark'
-					, toolbar: tpl.toolbarTpl([{
-						id: 'add', icon: 'plus', title: '添加待读文章'
-					}])
-					, content: articleTpl(rs).join('')
-				}).join('') + tpl.popupTpl([{
-					id: 'addPopup', size: 'normal'
-					, content: '<form><div class="formGroup">' +
-					'<label for="url">请输入链接</label>' +
-					'<input type="text" id="url" class="input" placeholder="请输入链接" data-validator="url">' +
-					'</div></form>'
-					, button: '<button type="button" id="addBookmark" class="btn">确定</button>'
-				}])
-				, script: {
-					main: '../script/module/reader/bookmark'
-					, src: '../script/lib/require.min.js'
-				}
-			});
-		}
-	}
-
-	/**
-	 * 访问 路径
-	 * */
-	, superAgent = require('superagent')
-
-	/**
-	 * cheerio
-	 *  解析 HTML 结构
-	 * */
-	, Cheerio = require('cheerio')
-
-	, segment = require('./segment/segment.js')
-
-	, db        = require('./db/db.js')
+var db        = require('./db/db.js')
 	, web       = require('./web/web.js')
 	, socket    = require('./socket/socket.js')
 	, error     = require('./error/error.js')
@@ -130,7 +16,7 @@ var ReaderModel = {
 	, articleTpl    = emmetTpl({
 		template:'article#blogArt%Id%.article[data-id=%Id%]>a[href=%url% title=%url% target=_blank]>h3.article_title{%title%}' +
 		'^hr+a.icon.icon-checkbox%readStatus%[href=reader/read title=%readTitle%]{%readText%}' +
-		'+a.icon.icon-star%favorStatus%[href=reader/favor title=%favorTitle%]{%favorText%}+a.icon.icon-cancel[href=reader/remove title=删除]{删除}'
+		'+a.icon.icon-star%favorStatus%[href=reader/favor title=%favorTitle%]{%favorText%}'
 		, filter: {
 			title: function(d){
 				return d.title || d.url;
@@ -157,12 +43,25 @@ var ReaderModel = {
 	})
 
 	/**
+	 * 访问 路径
+	 * */
+	, superAgent = require('superagent')
+
+	/**
+	 * cheerio
+	 *  解析 HTML 结构
+	 * */
+	, Cheerio = require('cheerio')
+
+	, segment = require('./segment/segment.js')
+
+	/**
 	 * 获取订阅 rss
 	 * */
 	, getFeedList = function(feed, done, error){
 		console.log('获取 rss 订阅源：', feed);
 
-		superAgent.get(feed).end(function(err, res){
+		superAgent.get(feed).buffer(true).end(function(err, res){
 
 			if( !err ){
 				var rss = res.text
@@ -171,7 +70,7 @@ var ReaderModel = {
 					, i, j, temp, $t
 					, rs = []
 					;
-
+				console.log(rss)
 				if( rss ){
 					$ = Cheerio.load(rss, {xmlMode: true});
 					$item = $('item');
@@ -309,7 +208,7 @@ var ReaderModel = {
 				var html = res.text
 					, $
 					;
-
+				console.log(res, html)
 				if( html ){
 					$ = Cheerio.load(html, {decodeEntities: false});
 
@@ -327,6 +226,132 @@ var ReaderModel = {
 
 	, Event = require('events').EventEmitter
 	, reader = new Event()
+
+	, ReaderModel = {
+		reader: 'select * from reader where status=1'
+		, 'reader/add': ''
+		, 'reader/favor': 'select status from reader where Id=?'
+		, addToList: 'insert into reader(url,title,datetime) value(?,?,now())'
+
+		, 'reader/favorite': 'select * from bookmark where status=\'2\' order by datetime desc'
+
+		, 'reader/bookmark': 'select Id,title,url,status from bookmark order by status,Id desc'
+		, 'reader/bookmark/add': {
+			sql: 'insert into bookmark(url,title,datetime) select ?,?,now() from dual where not exists (select * from bookmark where url like ?)'
+			, handle: function(data, rs){console.log(rs);
+				var r;
+				if( rs.insertId ){
+					r = {
+						id: rs.insertId
+						, url: data[0]
+						, title: data[1]
+						, status: 0
+					};
+				}
+				else{
+					r = '数据已存在';
+				}
+				return r;
+			}
+		}
+		, 'reader/bookmark/read': {
+			sql: 'update bookmark set status=1 where Id=? and status<1'
+			, handle: function(data, rs){
+				var r;
+				if( rs.changedRows ){
+					r = {
+						id: data[0]
+					}
+				}
+				else{
+					r = '该文章已被读过' ;
+				}
+				return r;
+			}
+		}
+		, 'reader/bookmark/favor': {
+			sql: 'update bookmark set status=2 where Id=? and status<2'
+			, handle: function(data, rs){
+				var r;
+				if( rs.changedRows ){
+					r = {
+						id: data[0]
+					}
+				}
+				else{
+					r = '该文章已被收藏';
+				}
+				return r;
+			}
+		}
+	}
+	, ReaderView = {
+		reader: function(rs){
+			return tpl.html('module', {
+				title: '订阅 reader'
+				, modules: tpl.mainTpl({
+					id: 'reader'
+					, title: '阅读 reader'
+					, toolbar: '<li><a href="bookmark" id="bookmark" class="icon icon-bookmark" title="待读文章列表"></a></li>' +
+					'<li><a href="favorite" id="favorite" class="icon icon-star" title="收藏文章"></a></li>'+
+					tpl.toolbarTpl([{
+						id: 'add', icon: 'plus', title: '添加订阅源'
+					}])
+					, content: readerTpl(rs).join('')
+				}).join('')
+				, script: {
+					main: '../script/module/reader/index'
+					, src: '../script/lib/require.min.js'
+				}
+			});
+		}
+		, 'reader/bookmark': function(rs){
+			return tpl.html('module', {
+				title: '书签 bookmark'
+				, modules: tpl.mainTpl({
+					id: 'bookmark'
+					, title: '待读文章 bookmark'
+					, toolbar: '<li><a href="favorite" id="favorite" class="icon icon-star" title="收藏文章"></a></li>' +
+					tpl.toolbarTpl([{
+						id: 'add', icon: 'plus', title: '添加待读文章'
+					}])
+					, content: articleTpl(rs).join('')
+				}).join('') + tpl.popupTpl([{
+					id: 'addPopup', size: 'normal'
+					, content: '<form><div class="formGroup">' +
+					'<label for="url">请输入链接</label>' +
+					'<input type="text" id="url" class="input" placeholder="请输入链接" data-validator="url">' +
+					'</div></form>'
+					, button: '<button type="button" id="addBookmark" class="btn">确定</button>'
+				}])
+				, script: {
+					main: '../script/module/reader/bookmark'
+					, src: '../script/lib/require.min.js'
+				}
+			});
+		}
+		, 'reader/favorite': function(rs){
+			return tpl.html('module', {
+				title: '书签 bookmark'
+				, modules: tpl.mainTpl({
+					id: 'bookmark'
+					, title: '收藏文章 favorite'
+					, toolbar: '<li><a href="bookmark" id="favorite" class="icon icon-bookmark" title="待读文章"></a></li>' +
+					tpl.toolbarTpl([{
+						id: 'add', icon: 'plus', title: '添加待读文章'
+					}])
+					, content: articleTpl(rs).join('')
+				}).join('') + tpl.popupTpl([{
+					id: 'addPopup', size: 'normal'
+					, content: '<form><div class="formGroup">' +
+					'<label for="url">请输入链接</label>' +
+					'<input type="text" id="url" class="input" placeholder="请输入链接" data-validator="url">' +
+					'</div></form>'
+					, button: '<button type="button" id="addBookmark" class="btn">确定</button>'
+				}])
+			});
+		}
+	}
 	;
 
 reader.on('data', function(topic, next, args, data){
@@ -388,7 +413,7 @@ metro.push({
 	id: 'reader'
 	, type: 'metro'
 	, size: 'tiny'
-	, title: '待读文章 reader'
+	, title: '阅读 reader'
 });
 
 web.get('/reader/', function(req, res){
@@ -398,6 +423,10 @@ web.get('/reader/', function(req, res){
 web.get('/reader/bookmark', function(req, res){
 
 	reader.emit('data', 'reader/bookmark', 'response', res);
+});
+web.get('/reader/favorite', function(req, res){
+
+	reader.emit('data', 'reader/favorite', 'response', res);
 });
 
 socket.register({
@@ -460,7 +489,7 @@ socket.register({
 	, 'reader/bookmark': function(socket){}
 	, 'reader/bookmark/add': function(socket, data){
 		var url = data.query.url;
-
+		console.log(url)
 		if( url ){
 			getTitle(url, function(url, title){
 				reader.emit('data', 'reader/bookmark/add', 'socket', socket, [url, title, url]);
