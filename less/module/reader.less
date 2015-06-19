@@ -12,10 +12,15 @@
 	border: 1px solid #ddd;
 	margin-bottom: 10px;
 
+	hr{
+		border: 0;
+		border-bottom: 1px dashed #ddd;
+		margin: 0 10px;
+	}
 	.section_title{
 		overflow: hidden;
 		width: 90%;
-		margin: 0;
+		margin: 0 0 10px;
 		-ms-text-overflow: ellipsis;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -43,20 +48,24 @@
 }
 .reader_articleList{
 	margin: 0 10px;
+	padding: 10px 10px 0;
 
 	.article{
 		overflow: hidden;
+		//margin: 0 10px 10px;
 	}
 	a{
 		@extend: .link;
 	}
 	.article_content{
+		margin: 30px;
 		text-indent: 2em;
 	}
 	img{
 		float: left;
-		max-width: 300px !important;
 		height: auto !important;
+		max-width: 300px !important;
+		margin-right: 10px;
 	}
 }
 .chasing{
@@ -69,7 +78,8 @@
 	-webkit-animation: rotate 2.0s infinite linear;
 	animation: rotate 2.0s infinite linear;
 }
-.dot1, .dot2{
+.dot1,
+.dot2{
 	width: 60%;
 	height: 60%;
 	display: inline-block;
@@ -144,5 +154,17 @@
 	50%{
 		transform: scale(1.0);
 		-webkit-transform: scale(1.0);
+	}
+}
+
+.module-bookmark{
+	.article .icon{
+		display: inline-block;
+		width: 5em;
+
+		&:before{
+			margin-right: 3px;
+			font-size: 16px;
+		}
 	}
 }

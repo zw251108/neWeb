@@ -11,12 +11,13 @@ var db        = require('./db/db.js')
 	, emmetTpl  = require('./emmetTpl/emmetTpl.js').template
 
 	, readerTpl    = emmetTpl({
-		template: 'section#reader_%Id%.reader_section.section>a[href=%html_url% data-feed=%xml_url% data-id=%Id%]>h3.section_title{%name%}>span.icon.icon-plus^^ul.reader_articleList'
+		template: 'section#reader_%Id%.reader_section.section>a[href=%html_url% data-feed=%xml_url% data-id=%Id%]>h3.section_title{%name%}>span.icon.icon-plus^^hr+ul.reader_articleList'
 	})
 	, articleTpl    = emmetTpl({
 		template:'article#blogArt%Id%.article[data-id=%Id%]>a[href=%url% title=%url% target=_blank]>h3.article_title{%title%}' +
 		'^hr+a.icon.icon-checkbox%readStatus%[href=reader/read title=%readTitle%]{%readText%}' +
-		'+a.icon.icon-star%favorStatus%[href=reader/favor title=%favorTitle%]{%favorText%}'
+		'+a.icon.icon-star%favorStatus%[href=reader/favor title=%favorTitle%]{%favorText%}' +
+		'+time.article_date[pubdate=pubdate datetime=%datetime%]{%datetime%}+div.tagsArea{%tags%}'
 		, filter: {
 			title: function(d){
 				return d.title || d.url;
@@ -38,6 +39,22 @@ var db        = require('./db/db.js')
 			}
 			, favorText: function(d){
 				return +d.status > 1 ? '已收藏' : '收藏';
+			}
+			, tags: function(d){
+				return d.tag_name ? '<span class="tag">'+ d.tag_name.split(',').join('</span><span class="tag">') +'</span>' : '';
+				//var data = []
+				//	, tagsId = (d.tags_id || '').split(',')
+				//	, tagsName = (d.tags_name || '').split(',')
+				//	;
+				//
+				//$.each(tagsId, function(i, d){
+				//	data.push({
+				//		Id: d
+				//		, name: tagsName[i]
+				//	});
+				//});
+				//
+				//return tagTmpl(data).join('');
 			}
 		}
 	})
@@ -65,12 +82,18 @@ var db        = require('./db/db.js')
 
 			if( !err ){
 				var rss = res.text
+					, charset = res.charset
 					, $
 					, $item
 					, i, j, temp, $t
 					, rs = []
 					;
-				console.log(rss)
+
+				console.log(charset, rss)
+				//if( charset !== 'utf8' ){
+				//	rss = iconv.decode(rss, charset);
+				//}
+
 				if( rss ){
 					$ = Cheerio.load(rss, {xmlMode: true});
 					$item = $('item');
@@ -112,6 +135,7 @@ var db        = require('./db/db.js')
 		superAgent.get(url).end(function(err, res){
 			if( !err ){
 				var html = res.text
+					, charset = res.charset
 					, $
 					, $main
 					, content
@@ -123,18 +147,22 @@ var db        = require('./db/db.js')
 					, temp
 					, w, p
 					;
+				console.log(charset, html)
+				if( charset !== 'utf8' ){
+					html = iconv.decode(html, charset);
+				}
 
-				console.log(html);
+				//console.log(html);
 				if( html ){
 					$ = Cheerio.load(html, {decodeEntities: false});
 
 					$main = $('article');
 					content = $main.length ? $main.html() : $('body').html();
 
-					console.log(content);
+					//console.log(content);
 
 					rs = segment.doSegment( content );
-					console.log(rs);
+					//console.log(rs);
 
 					// 统计
 					j = rs.length;
@@ -208,7 +236,7 @@ var db        = require('./db/db.js')
 				var html = res.text
 					, $
 					;
-				console.log(res, html)
+				//console.log(res, html)
 				if( html ){
 					$ = Cheerio.load(html, {decodeEntities: false});
 
@@ -238,7 +266,7 @@ var db        = require('./db/db.js')
 		, 'reader/bookmark': 'select Id,title,url,status from bookmark order by status,Id desc'
 		, 'reader/bookmark/add': {
 			sql: 'insert into bookmark(url,title,datetime) select ?,?,now() from dual where not exists (select * from bookmark where url like ?)'
-			, handle: function(data, rs){console.log(rs);
+			, handle: function(data, rs){
 				var r;
 				if( rs.insertId ){
 					r = {
@@ -293,8 +321,8 @@ var db        = require('./db/db.js')
 					id: 'reader'
 					, title: '阅读 reader'
 					, toolbar: '<li><a href="bookmark" id="bookmark" class="icon icon-bookmark" title="待读文章列表"></a></li>' +
-					'<li><a href="favorite" id="favorite" class="icon icon-star" title="收藏文章"></a></li>'+
-					tpl.toolbarTpl([{
+						'<li><a href="favorite" id="favorite" class="icon icon-star" title="收藏文章"></a></li>'+
+						tpl.toolbarTpl([{
 						id: 'add', icon: 'plus', title: '添加订阅源'
 					}])
 					, content: readerTpl(rs).join('')
@@ -311,8 +339,9 @@ var db        = require('./db/db.js')
 				, modules: tpl.mainTpl({
 					id: 'bookmark'
 					, title: '待读文章 bookmark'
-					, toolbar: '<li><a href="favorite" id="favorite" class="icon icon-star" title="收藏文章"></a></li>' +
-					tpl.toolbarTpl([{
+					, toolbar: '<li><a href="./" id="reader" class="icon icon-rss" title="返回订阅列表"></a></li>' +
+						'<li><a href="favorite" id="favorite" class="icon icon-star" title="收藏文章"></a></li>' +
+						tpl.toolbarTpl([{
 						id: 'add', icon: 'plus', title: '添加待读文章'
 					}])
 					, content: articleTpl(rs).join('')
@@ -332,12 +361,13 @@ var db        = require('./db/db.js')
 		}
 		, 'reader/favorite': function(rs){
 			return tpl.html('module', {
-				title: '书签 bookmark'
+				title: '收藏文章 favorite'
 				, modules: tpl.mainTpl({
 					id: 'bookmark'
 					, title: '收藏文章 favorite'
-					, toolbar: '<li><a href="bookmark" id="favorite" class="icon icon-bookmark" title="待读文章"></a></li>' +
-					tpl.toolbarTpl([{
+					, toolbar: '<li><a href="./" id="reader" class="icon icon-rss" title="返回订阅列表"></a></li>' +
+						'<li><a href="bookmark" id="favorite" class="icon icon-bookmark" title="待读文章"></a></li>' +
+						tpl.toolbarTpl([{
 						id: 'add', icon: 'plus', title: '添加待读文章'
 					}])
 					, content: articleTpl(rs).join('')
@@ -489,7 +519,7 @@ socket.register({
 	, 'reader/bookmark': function(socket){}
 	, 'reader/bookmark/add': function(socket, data){
 		var url = data.query.url;
-		console.log(url)
+		//console.log(url)
 		if( url ){
 			getTitle(url, function(url, title){
 				reader.emit('data', 'reader/bookmark/add', 'socket', socket, [url, title, url]);

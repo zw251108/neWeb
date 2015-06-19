@@ -49,7 +49,8 @@ require(['../config'], function(config){
 			, tpl = $.template({
 				template: 'article#blogArt%Id%.article[data-id=%Id%]>a[href=%url% title=%url% target=_blank]>h3.article_title{%title%}' +
 				'^hr+a.icon.icon-checkbox%readStatus%[href=read title=%readTitle%]{%readText%}' +
-				'+a.icon.icon-star%favorStatus%[href=favor title=%favorTitle%]{%favorText%}+a.icon.icon-cancel[href=remove title=删除]{删除}'
+				'+a.icon.icon-star%favorStatus%[href=favor title=%favorTitle%]{%favorText%}' +
+				'+time.article_date[pubdate=pubdate datetime=%datetime%]{%datetime%}+div.tagsArea{%tags%}'
 				, filter: {
 					title: function(d){
 						return d.title || d.url;
@@ -71,6 +72,22 @@ require(['../config'], function(config){
 					}
 					, favorText: function(d){
 						return +d.status > 1 ? '已收藏' : '收藏';
+					}
+					, tags: function(d){
+						return d.tag_name ? '<span class="tag">'+ d.tag_name.split(',').join('</span><span class="tag">') +'</span>' : '';
+						//var data = []
+						//	, tagsId = (d.tags_id || '').split(',')
+						//	, tagsName = (d.tags_name || '').split(',')
+						//	;
+						//
+						//$.each(tagsId, function(i, d){
+						//	data.push({
+						//		Id: d
+						//		, name: tagsName[i]
+						//	});
+						//});
+						//
+						//return tagTmpl(data).join('');
 					}
 				}
 			})
