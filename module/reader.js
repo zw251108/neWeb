@@ -89,7 +89,6 @@ var db        = require('./db/db.js')
 					, rs = []
 					;
 
-				console.log(charset, rss)
 				//if( charset !== 'utf8' ){
 				//	rss = iconv.decode(rss, charset);
 				//}
@@ -115,6 +114,7 @@ var db        = require('./db/db.js')
 						rs.push(temp);
 					}
 
+					console.log(rs);
 					done(rs);
 				}
 				else{
@@ -145,9 +145,10 @@ var db        = require('./db/db.js')
 					, j
 					, prefix = '_' + (+new Date())
 					, temp
+					, title
 					, w, p
 					;
-				console.log(charset, html)
+				console.log(charset, html);
 				if( charset !== 'utf8' ){
 					html = iconv.decode(html, charset);
 				}
@@ -157,6 +158,7 @@ var db        = require('./db/db.js')
 					$ = Cheerio.load(html, {decodeEntities: false});
 
 					$main = $('article');
+					title = $('title').text();
 					content = $main.length ? $main.html() : $('body').html();
 
 					//console.log(content);
@@ -214,7 +216,7 @@ var db        = require('./db/db.js')
 
 					console.log('\n', filterRs);
 
-					done( filterRs.slice(0, 20) );
+					done(url, title, filterRs.slice(0, 20) );
 				}
 				else{
 					error( err );
@@ -489,19 +491,12 @@ socket.register({
 
 		if( url ){
 			getArticle(url, function(rs){
+
 				reader.emit('socket', 'reader/article', socket, rs);
-				//socket.emit('getData', {
-				//	topic: 'rss/article'
-				//	, data: rs
-				//});
 			}, function(err){
+
 				reader.emit('socket', 'reader/article', socket, '订阅文章获取失败');
 				error( err );
-				//socket.emit('getData', {
-				//	topic: 'rss/article'
-				//	, error: ''
-				//	, msg: '订阅文章获取失败'
-				//});
 			});
 		}
 		else{
@@ -519,10 +514,10 @@ socket.register({
 	, 'reader/bookmark': function(socket){}
 	, 'reader/bookmark/add': function(socket, data){
 		var url = data.query.url;
-		//console.log(url)
+
 		if( url ){
-			getTitle(url, function(url, title){
-				reader.emit('data', 'reader/bookmark/add', 'socket', socket, [url, title, url]);
+			getTitle(url, function(url, title, tags){
+				reader.emit('data', 'reader/bookmark/add', 'socket', socket, [url, title, url, tags]);
 			}, function(err){
 				reader.emit('socket', 'reader/bookmark/add', socket, '缺少参数');
 				error( err );

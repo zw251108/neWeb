@@ -34,6 +34,7 @@ require(['../config'], function(config){
 				e.preventDefault();
 			})
 			, $addPopup = $('#addPopup').on('click', '#addBookmark', function(){
+
 				if( $url.val() ){
 					socket.emit('data', {
 						topic: 'reader/bookmark/add'
