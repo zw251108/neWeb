@@ -1,15 +1,13 @@
 'use strict';
 
 var Tag = {
-		all: {
-			sql:'select Id,name,num,description as desc form tag'
-		}
+		all: 'select Id,name,num,description as desc form tag'
 		, getById: {
 			sql: ''
 		}
-		, add: {
-			sql: ''
-		}
+		, add: 'insert into tag(name,num,description) values(?,0,?)'
+		, plus: 'update tag set num+=1 where Id=?'
+		, change: 'update tag set name=?,description=? where Id=?'
 	}
 	, tpl = require('./emmetTpl/tpl.js')
 	, emmetTpl      = require('./emmetTpl/emmetTpl.js').template

@@ -89,7 +89,6 @@ var db        = require('./db/db.js')
 					, rs = []
 					;
 
-				console.log(charset, rss)
 				//if( charset !== 'utf8' ){
 				//	rss = iconv.decode(rss, charset);
 				//}
@@ -115,6 +114,7 @@ var db        = require('./db/db.js')
 						rs.push(temp);
 					}
 
+					console.log(rs);
 					done(rs);
 				}
 				else{
@@ -128,6 +128,10 @@ var db        = require('./db/db.js')
 	}
 	/**
 	 * 获取订阅文章 并分解截取
+	 * object
+	 * object.url
+	 * object.title
+	 * object.tag_name
 	 * */
 	, getArticle = function(url, done, error){
 		console.log('获取 feed 文章：', url);
@@ -145,18 +149,20 @@ var db        = require('./db/db.js')
 					, j
 					, prefix = '_' + (+new Date())
 					, temp
+					, title
 					, w, p
 					;
-				console.log(charset, html)
-				if( charset !== 'utf8' ){
-					html = iconv.decode(html, charset);
-				}
+				console.log(charset, html);
+				//if( charset !== 'utf8' ){
+				//	html = iconv.decode(html, charset);
+				//}
 
 				//console.log(html);
 				if( html ){
 					$ = Cheerio.load(html, {decodeEntities: false});
 
 					$main = $('article');
+					title = $('title').text();
 					content = $main.length ? $main.html() : $('body').html();
 
 					//console.log(content);
@@ -214,33 +220,12 @@ var db        = require('./db/db.js')
 
 					console.log('\n', filterRs);
 
-					done( filterRs.slice(0, 20) );
-				}
-				else{
-					error( err );
-				}
-			}
-			else{
-				error( err );
-			}
-		});
-	}
-	/**
-	 * 获取文章标题
-	 * */
-	, getTitle = function(url, done, error){
-		console.log('获取文章标题：', url);
-
-		superAgent.get(url).end(function(err, res){
-			if( !err ){
-				var html = res.text
-					, $
-					;
-				//console.log(res, html)
-				if( html ){
-					$ = Cheerio.load(html, {decodeEntities: false});
-
-					done(url, $('title').text());
+					done({
+						url: url
+						, title: title
+						, tag_name: filterRs.slice(0, 20)
+					});
+					//done(url, title, filterRs.slice(0, 20) );
 				}
 				else{
 					error( err );
@@ -255,8 +240,118 @@ var db        = require('./db/db.js')
 	, Event = require('events').EventEmitter
 	, reader = new Event()
 
+	, ReaderWebCrawler = {
+		'reader/feed': function(){
+			console.log('获取 feed 文章：', url);
+
+			superAgent.get(url).end(function(err, res){
+				if( !err ){
+					var html = res.text
+						, charset = res.charset
+						, $
+						, $main
+						, content
+						, rs
+						, obj = {}
+						, filterRs = []
+						, j
+						, prefix = '_' + (+new Date())
+						, temp
+						, title
+						, w, p
+						;
+					console.log(charset, html);
+					//if( charset !== 'utf8' ){
+					//	html = iconv.decode(html, charset);
+					//}
+
+					//console.log(html);
+					if( html ){
+						$ = Cheerio.load(html, {decodeEntities: false});
+
+						$main = $('article');
+						title = $('title').text();
+						content = $main.length ? $main.html() : $('body').html();
+
+						//console.log(content);
+
+						rs = segment.doSegment( content );
+						//console.log(rs);
+
+						// 统计
+						j = rs.length;
+						while( j-- ){
+							temp = rs[j];
+							p = temp.p;
+
+							/**
+							 * 过滤，只统计
+							 *  8   专有名词
+							 *  16  外文字符
+							 *  32  机构团体
+							 *  64  地名
+							 *  128 人名
+							 *  4096    动词
+							 *  1048576 名词
+							 * */
+							if( !(p === 8 ||
+								p === 16 ||
+								p === 32 ||
+								p === 64 ||
+								p === 128 ||
+								p === 4096 ||
+								p === 1048576) ) continue;
+
+							/**
+							 * 对分出来的词加个前缀作为 key 存在 obj 对象中
+							 *  防止分出来的词存在 toString 一类已存在于对象中的属性的关键字
+							 * */
+							w = prefix + temp.w;
+
+							if( w in obj ){
+								filterRs[obj[w]].n++;
+							}
+							else{
+								filterRs.push({
+									tagName: temp.w
+									, p: p
+									, n: 1
+								});
+								obj[w] = filterRs.length - 1;
+							}
+						}
+
+						// 排序
+						filterRs.sort(function(a, b){
+							return b.n - a.n;
+						});
+
+						console.log('\n', filterRs);
+
+
+						done({
+							url: url
+							, title: title
+							, tag_name: filterRs.slice(0, 20)
+						});
+						//done(url, title, filterRs.slice(0, 20) );
+					}
+					else{
+						error( err );
+					}
+				}
+				else{
+					error( err );
+				}
+			});
+		}
+		, 'reader/article': function(){
+
+		}
+	}
 	, ReaderModel = {
 		reader: 'select * from reader where status=1'
+		, 'reader/isExist': 'select * form reader where html_url like ?'
 		, 'reader/add': ''
 		, 'reader/favor': 'select status from reader where Id=?'
 		, addToList: 'insert into reader(url,title,datetime) value(?,?,now())'
@@ -264,6 +359,7 @@ var db        = require('./db/db.js')
 		, 'reader/favorite': 'select * from bookmark where status=\'2\' order by datetime desc'
 
 		, 'reader/bookmark': 'select Id,title,url,status from bookmark order by status,Id desc'
+		, 'reader/bookmark/isExist': 'select * from bookmark where url like ?'
 		, 'reader/bookmark/add': {
 			sql: 'insert into bookmark(url,title,datetime) select ?,?,now() from dual where not exists (select * from bookmark where url like ?)'
 			, handle: function(data, rs){
@@ -273,6 +369,7 @@ var db        = require('./db/db.js')
 						id: rs.insertId
 						, url: data[0]
 						, title: data[1]
+						, tag_name: data[3].map(function(d){return d.tagName}).join()
 						, status: 0
 					};
 				}
@@ -475,7 +572,7 @@ socket.register({
 					, data: rs
 				});
 			}, function(err){
-				reader.emit('socket', 'reader/feed', socket, '订阅源获取失败')
+				reader.emit('socket', 'reader/feed', socket, '订阅源获取失败');
 				error( err );
 			});
 		}
@@ -489,29 +586,17 @@ socket.register({
 
 		if( url ){
 			getArticle(url, function(rs){
+
 				reader.emit('socket', 'reader/article', socket, rs);
-				//socket.emit('getData', {
-				//	topic: 'rss/article'
-				//	, data: rs
-				//});
 			}, function(err){
+
 				reader.emit('socket', 'reader/article', socket, '订阅文章获取失败');
 				error( err );
-				//socket.emit('getData', {
-				//	topic: 'rss/article'
-				//	, error: ''
-				//	, msg: '订阅文章获取失败'
-				//});
 			});
 		}
 		else{
 			reader.emit('socket', 'reader/article', socket, '缺少参数');
 			error( 'E0002' );
-			//socket.emit('getData', {
-			//	topic: 'rss/article'
-			//	, error: ''
-			//	, msg: ''
-			//});
 		}
 	}
 	, 'reader/favorArticle': function(socket, data){}
@@ -519,14 +604,21 @@ socket.register({
 	, 'reader/bookmark': function(socket){}
 	, 'reader/bookmark/add': function(socket, data){
 		var url = data.query.url;
-		//console.log(url)
+
 		if( url ){
-			getTitle(url, function(url, title){
-				reader.emit('data', 'reader/bookmark/add', 'socket', socket, [url, title, url]);
-			}, function(err){
+			getArticle(url, function(rs){
+				reader.emit('data', 'reader/bookmark/add', 'socket', socket, [rs.url, rs.title, rs.url, rs.tag_name]);
+			},function(err){
 				reader.emit('socket', 'reader/bookmark/add', socket, '缺少参数');
 				error( err );
 			});
+
+			//getTitle(url, function(url, title, tags){
+			//	reader.emit('data', 'reader/bookmark/add', 'socket', socket, [url, title, url, tags]);
+			//}, function(err){
+			//	reader.emit('socket', 'reader/bookmark/add', socket, '缺少参数');
+			//	error( err );
+			//});
 		}
 		else{
 			reader.emit('socket', 'reader/bookmark/add', socket, '缺少参数');

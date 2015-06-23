@@ -237,13 +237,13 @@ module.exports = function(web, db, socket, metro){
 			var index = editor.index;
 			db.query(index.sql, function(e, rs){
 				if( !e ){
-					socket.emit('getData', {
+					socket.emit('data', {
 						topic: 'editor'
 						, data: rs
 					});
 				}
 				else{
-					socket.emit('getData', {
+					socket.emit('data', {
 						error: ''
 						, msg: ''
 					});
@@ -259,13 +259,13 @@ module.exports = function(web, db, socket, metro){
 				db.query(code.sql, [id], function(e, rs){
 					if( !e ){
 						rs = code.handler(rs);
-						socket.emit('getData', {
+						socket.emit('data', {
 							topic: 'editor/code'
 							, info: rs
 						});
 					}
 					else{
-						socket.emit('getData', {
+						socket.emit('data', {
 							error: ''
 							, msg: ''
 						});
@@ -274,7 +274,7 @@ module.exports = function(web, db, socket, metro){
 				});
 			}
 			else{
-				socket.emit('getData', {
+				socket.emit('data', {
 					error: ''
 					, msg: ''
 				});
@@ -301,7 +301,7 @@ module.exports = function(web, db, socket, metro){
 			}
 			db.query(sql.sql, arr, function(e, rs){
 				if( !e ){
-					socket.emit('getData', {
+					socket.emit('data', {
 						topic: 'editor/save'
 						, msg: 'success'
 						, id: rs.insertId || id

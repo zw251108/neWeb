@@ -117,13 +117,13 @@ module.exports = function(web, db, socket, metro){
 
 			db.query(index.sql, function(e, rs){
 				if( !e ){
-					socket.emit('getData', {
+					socket.emit('data', {
 						topic: 'blog'
 						, data: rs
 					});
 				}
 				else{
-					socket.emit('getData', {
+					socket.emit('data', {
 						error: ''
 						, msg: ''
 					});
@@ -140,13 +140,13 @@ module.exports = function(web, db, socket, metro){
 				db.query(detail.sql, [id], function(e, rs){
 					if( !e ){
 						rs = detail.handler( rs );
-						socket.emit('getData', {
+						socket.emit('data', {
 							topic: 'blog/detail'
 							, info: rs
 						});
 					}
 					else{
-						socket.emit('getData', {
+						socket.emit('data', {
 							error: ''
 							, msg: ''
 						});
@@ -155,7 +155,7 @@ module.exports = function(web, db, socket, metro){
 				});
 			}
 			else{
-				socket.emit('getData', {
+				socket.emit('data', {
 					error: ''
 					, msg: ''
 				});

@@ -21,7 +21,7 @@ var Bower = {
 	, bowerMethods = {
 		search: function(name, socket){
 			bower.commands.search(name, {}).on('end', function (results) {
-				socket.emit('getData', {
+				socket.emit('data', {
 					topic: 'bower/search'
 					, data: results
 				});
@@ -62,10 +62,10 @@ var Bower = {
 					});
 				}
 
-				socket.emit('getData', data);
+				socket.emit('data', data);
 			}).on('prompt', function(prompts, callback) {
 
-				//socket.emit('getData', {
+				//socket.emit('data', {
 				//	topic: 'bower/install/prompts'
 				//	, msg: prompts
 				//});
@@ -75,7 +75,7 @@ var Bower = {
 				console.log(prompts);
 			}).on('error', function(e){
 
-				socket.emit('getData', {
+				socket.emit('data', {
 					error: ''
 					, msg: ''
 				});
@@ -120,7 +120,7 @@ var Bower = {
 					});
 				}
 
-				socket.emit('getData', {
+				socket.emit('data', {
 					topic: 'bower/install/end'
 					, info: info
 				});
@@ -255,13 +255,13 @@ module.exports = function(web, db, socket, metro){
 		, 'bower/editor/lib': function(socket){
 			db.query(Bower.index.sql, function(e, rs){
 				if( !e ){
-					socket.emit('getData', {
+					socket.emit('data', {
 						topic: 'editor/lib'
 						, data: rs
 					});
 				}
 				else{
-					socket.emit('getData', {
+					socket.emit('data', {
 						error: ''
 						, msg: ''
 					});
@@ -307,11 +307,11 @@ module.exports = function(web, db, socket, metro){
 					});
 				}
 
-				socket.emit('getData', data);
+				socket.emit('data', data);
 				console.dir(data);
 			}).on('prompt', function(prompts, callback) {
 
-				//socket.emit('getData', {
+				//socket.emit('data', {
 				//	topic: 'bower/install/prompts'
 				//	, msg: prompts
 				//});
@@ -321,7 +321,7 @@ module.exports = function(web, db, socket, metro){
 				console.log(prompts);
 			}).on('error', function(e){
 
-				socket.emit('getData', {
+				socket.emit('data', {
 					error: ''
 					, msg: ''
 				});
@@ -340,7 +340,7 @@ module.exports = function(web, db, socket, metro){
 					});
 				}
 
-				socket.emit('getData', {
+				socket.emit('data', {
 					topic: 'bower/install/end'
 					, info: info
 				});

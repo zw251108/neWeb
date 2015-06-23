@@ -278,7 +278,7 @@
 	padding: 10px;
 }
 .article_title{
-	border-bottom: 1px dotted #c0c0c0;
+	/*border-bottom: 1px dotted #c0c0c0;*/
 }
 .article_preview{
 	display: block;

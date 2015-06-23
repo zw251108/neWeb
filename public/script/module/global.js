@@ -121,7 +121,7 @@ define(function(require){
 	//	}
 	//	else{   // 未获取基础数据
 	//		require([target], function(){
-	//			socket.emit('getData', {
+	//			socket.emit('data', {
 	//				topic: target
 	//				, receive: 'get'+ target.replace(/^(.{1})/, function(s){return s.toUpperCase();}) +'Data'
 	//			});

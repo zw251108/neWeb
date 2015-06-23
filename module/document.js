@@ -89,13 +89,13 @@ module.exports = function(web, db, socket, metro){
 			    if( !e ){
 				    rs = index.handler( rs );
 
-				    socket.emit('getData', {
+				    socket.emit('data', {
 					    topic: 'document'
 					    , data: rs
 				    });
 			    }
 			    else{
-				    socket.emit('getData', {
+				    socket.emit('data', {
 					    error: ''
 					    , msg: ''
 				    });

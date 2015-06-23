@@ -3,8 +3,9 @@
  * */
 //----- web socket 模块 目前基于 socket.io -----
 define(function(require){
-	var io = require('/socket.io/socket.io.js');
-	var socket = io('http://localhost:9001')
+	var io = require('/socket.io/socket.io.js')
+		, host = location.host
+		, socket = io('http://'+ host)
 		, EVENT_LIST = {}
 		, EVENT_INDEX_LIST = []
 		;
@@ -19,7 +20,7 @@ define(function(require){
 			 *  提示用户
 			 * */
 			socket.disconnect();
-			console.log('断开连接')
+			console.log('断开连接');
 		}
 	}).on('data', function(data){
 		var topic = data.topic;
