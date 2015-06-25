@@ -6,34 +6,29 @@
 var mysql = require('mysql')
 	, config = require('../../config.js')
 	, db = mysql.createConnection( config.db )
+	, Promise = require('promise')
 	;
 
-db.handle = function(args){
+db.handle = function(sql, data){
+	var promise;
 
-	if( args && typeof args === 'object' && args.sql ){
-
-		if( args.data ){
-			db.query(args.sql, args.data, function(e, rs){
-				if( !e ){
-					args.success && args.success( rs );
+	if( sql ){
+		promise = new Promise(function(resolve, reject){
+			db.query(sql, data, function(err, rs){
+				if( !err ){
+					resolve(rs);
 				}
 				else{
-					args.error ? args.error( e ) : console.log( e );
+					reject(err);
 				}
 			});
-		}
-		else{
-			db.query(args.sql, function(e, rs){
-				if( !e ){
-					args.success && args.success( rs );
-				}
-				else{
-					args.error && args.error( e );
-					console.log(db, '\n', args.sql, '\n', e.message);
-				}
-			});
-		}
+		});
 	}
+	else{
+		promise = null;
+	}
+
+	return promise
 };
 
 module.exports = db;

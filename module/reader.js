@@ -72,6 +72,61 @@ var db        = require('./db/db.js')
 
 	, segment = require('./segment/segment.js')
 
+	, Promise = require('promise')
+
+	, httpRequest = function(url){
+		return new Promise(function(resolve, reject){
+			superAgent.get(url).buffer(true).end(function(err, res){
+
+				if( !err ){
+					resolve( res );
+				}
+				else{
+					reject( err );
+				}
+			});
+		});
+	}
+	, feedHandle = function(res){
+		var rss = res.text
+			, charset = res.charset
+			, $
+			, $item
+			, i, j, temp, $t
+			, rs = []
+			;
+
+		if( rss ){
+			$ = Cheerio.load(rss, {xmlMode: true});
+			$item = $('item');
+
+			for(i = 0, j = $item.length; i < j; i++){
+				temp = {};
+				$t = $item.eq(i);
+
+				temp.title = $t.find('title').text();
+				temp.url = $t.find('link').text();
+				temp.content = $t.find('description').text();
+				temp.author = $t.find('author').text();
+				!temp.author && (temp.author = $t.find('dc\\:creator').text());
+				temp.tags = $t.find('category').map(function(){
+					return $(this).text();
+				}).get().join();
+				temp.datetime = $t.find('pubDate').text();
+
+				rs.push(temp);
+			}
+
+			console.log(rs);
+			//done(rs);
+
+			return rs;
+		}
+	}
+	, articleHandle = function(res){
+
+	}
+
 	/**
 	 * 获取订阅 rss
 	 * */
@@ -223,7 +278,7 @@ var db        = require('./db/db.js')
 					done({
 						url: url
 						, title: title
-						, tag_name: filterRs.slice(0, 20)
+						, tags: filterRs.slice(0, 20)
 					});
 					//done(url, title, filterRs.slice(0, 20) );
 				}
@@ -236,6 +291,8 @@ var db        = require('./db/db.js')
 			}
 		});
 	}
+
+
 
 	, Event = require('events').EventEmitter
 	, reader = new Event()
@@ -358,10 +415,10 @@ var db        = require('./db/db.js')
 
 		, 'reader/favorite': 'select * from bookmark where status=\'2\' order by datetime desc'
 
-		, 'reader/bookmark': 'select Id,title,url,status from bookmark order by status,Id desc'
+		, 'reader/bookmark': 'select Id,title,url,status,tag_id,tag_name from bookmark order by status,Id desc'
 		, 'reader/bookmark/isExist': 'select * from bookmark where url like ?'
 		, 'reader/bookmark/add': {
-			sql: 'insert into bookmark(url,title,datetime) select ?,?,now() from dual where not exists (select * from bookmark where url like ?)'
+			sql: 'insert into bookmark(url,title,tag_name,datetime) select ?,?,?,now() from dual where not exists (select * from bookmark where url like ?)'
 			, handle: function(data, rs){
 				var r;
 				if( rs.insertId ){
@@ -369,7 +426,7 @@ var db        = require('./db/db.js')
 						id: rs.insertId
 						, url: data[0]
 						, title: data[1]
-						, tag_name: data[3].map(function(d){return d.tagName}).join()
+						, tag_name: data[2]
 						, status: 0
 					};
 				}
@@ -607,7 +664,8 @@ socket.register({
 
 		if( url ){
 			getArticle(url, function(rs){
-				reader.emit('data', 'reader/bookmark/add', 'socket', socket, [rs.url, rs.title, rs.url, rs.tag_name]);
+
+				reader.emit('data', 'reader/bookmark/add', 'socket', socket, [rs.url, rs.title, rs.tags.map(function(d){return d.tagName;}).join(), rs.url]);
 			},function(err){
 				reader.emit('socket', 'reader/bookmark/add', socket, '缺少参数');
 				error( err );

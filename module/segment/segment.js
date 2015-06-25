@@ -10,7 +10,8 @@ var Segment = require('segment').Segment // 载入模块
 /**
  * 配置，可根据实际情况增删，详见 segment.useDefault() 方法
  * */
-segment.use( require(__dirname +'/HtmlTagTokenizer.js') )
+segment
+	.use( require(__dirname +'/HtmlTagTokenizer.js') )  // 自定义 识别 HTML 标签
 
 	// 载入识别模块，强制分割类单词识别，详见 lib/module 目录，或者是自定义模块的绝对路径
 	.use('URLTokenizer')            // URL 识别
@@ -28,11 +29,11 @@ segment.use( require(__dirname +'/HtmlTagTokenizer.js') )
 	.use('DatetimeOptimizer')       // 日期时间识别优化
 
 	// 载入字典，详见 dicts 目录，或者是自定义字典文件的绝对路径
+	//.loadDict(__dirname + '\\web.txt', 'Web', true)  // 自定义
 	.loadDict('dict.txt')           // 盘古词典
 	.loadDict('dict2.txt')          // 扩展词典（用于调整原盘古词典）
 	.loadDict('names.txt')          // 常见名词、人名
 	.loadDict('wildcard.txt', 'WILDCARD', true)   // 通配符
-	//.loadDict(__dirname + '/web.txt', 'Web', true);  // 自定义
 	;
 
 

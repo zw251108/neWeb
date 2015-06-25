@@ -120,7 +120,24 @@ var db = require('mysql').createConnection({
 			})
 		});
 	}
+	, Promise = require('promise')
+	, dbQuery = function(sql, data){console.log(1230)
+		return new Promise(function(fulfill, reject){
+			db.query(sql, data, function(err, rs){
+				if( err ){
+					reject(err);
+				}
+				else{
+					fulfill( rs );
+				}
+			});
+		});
+	}
 	;
+
+dbQuery('select * from reader').then(function(rs){console.log(rs)}).catch(function(){
+	console.log(arguments)
+});
 
 //db.query('select * from reader where status<>?', ['2'], function(e, rs){
 //	if( !e ){
@@ -137,14 +154,14 @@ var db = require('mysql').createConnection({
 //	}
 //});
 
-db.query('select * from reader where status is null', function(err, rs){console.log(rs)
-	if( !err ){
-		var i, j;
-		for( i = 0, j = rs.length; i < j; i++ ){
-			setRss( rs[i] );
-		}
-	}
-	else{
-		console.log(err)
-	}
-})
+//db.query('select * from reader where status is null', function(err, rs){console.log(rs)
+//	if( !err ){
+//		var i, j;
+//		for( i = 0, j = rs.length; i < j; i++ ){
+//			setRss( rs[i] );
+//		}
+//	}
+//	else{
+//		console.log(err)
+//	}
+//})
