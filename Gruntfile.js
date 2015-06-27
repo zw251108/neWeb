@@ -454,8 +454,9 @@ module.exports = function(grunt){
 			destiny: {
 				options: {
 					destination: 'doc'
-				},
-				src: ['public/script/ui/*.js'
+					, private: true
+				}
+				, src: ['public/script/ui/*.js'
 					, 'public/script/module/*.js'
 					, 'public/script/module/*/*.js'
 				]
