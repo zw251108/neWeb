@@ -8,6 +8,39 @@
 
 .input{
 	-webkit-appearance: none;
+
+
+	&::-webkit-input-placeholder{ /* WebKit browsers */
+		color: @placeholder;
+	}
+	&:-moz-placeholder{ /* Mozilla Firefox 4 to 18 */
+		color: @placeholder;
+		opacity:  1;
+	}
+	&::-moz-placeholder{ /* Mozilla Firefox 19+ */
+		color: @placeholder;
+		opacity:  1;
+	}
+	&:-ms-input-placeholder{ /* Internet Explorer 10+ */
+		color: @placeholder;
+	}
+
+	&:focus{
+		&::-webkit-input-placeholder{ /* WebKit browsers */
+			color: transparent;
+		}
+		&:-moz-placeholder{ /* Mozilla Firefox 4 to 18 */
+			color: transparent;
+		}
+		&::-moz-placeholder{ /* Mozilla Firefox 19+ */
+			color: transparent;
+		}
+		&:-ms-input-placeholder{ /* Internet Explorer 10+ */
+			color: transparent;
+		}
+	}
+
+	/*textarea*/&-multiply{}
 }
 
 /*div*/.formGroup{
@@ -27,10 +60,22 @@
 	content: '\e803';
 }
 
-.icon-radio:before { content: '\e800'; } /* '' */
-.icon-radio-checked:before { content: '\e801'; } /* '' */
-.icon-checkbox:before { content: '\e802'; } /* '' */
-.icon-checkbox-checked:before { content: '\e803'; } /* '' */
+.icon-radio{
+	&:before{
+		content: '\e800';
+	}
+	&-checked:before{
+		content: '\e801';
+	}
+}
+.icon-checkbox{
+	&:before{
+		content: '\e802';
+	}
+	&-checked:before{
+		content: '\e803';
+	}
+}
 
 [type="checkbox"],
 [type="radio"]{
@@ -38,22 +83,6 @@
 }
 :checked{
 
-}
-
-
-::-webkit-input-placeholder { /* WebKit browsers */
-	color: @placeholder;
-}
-:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-	color: @placeholder;
-	opacity:  1;
-}
-::-moz-placeholder { /* Mozilla Firefox 19+ */
-	color: @placeholder;
-	opacity:  1;
-}
-:-ms-input-placeholder { /* Internet Explorer 10+ */
-	color: @placeholder;
 }
 
 // textarea

@@ -89,7 +89,7 @@ exports.split = function( words ){
 	return ret;
 };
 
-var tagExpr = /(<\w+.*?>|<\/\w+.*?>|<\w+.*?\/?>)/g;
+var tagExpr = /(<script.*?<\/script>|<\w+.*?>|<\/\w+.*?>|<\w+.*?\/?>)/g;
 
 /**
  * 匹配标签，返回相关信息

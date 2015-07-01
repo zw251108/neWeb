@@ -10,26 +10,33 @@ require(['../config'], function(config){
 				var $that = $(this)
 					, $parent = $that.parents('article')
 					;
-				$(this).toggleClass('icon-star icon-star-empty').text('已读过');
-				socket.emit('data', {
-					topic: 'reader/bookmark/favor'
-					, query: {
-						id: $parent.data('id')
-					}
-				});
+
+				$bookmarkId.val( $parent.data('id') );
+				$favorPopup.find('div.tagsArea').html( $parent.find('div.tagsArea').html() );
+				$favorPopup.trigger('showDialog');
+
+				//$(this).toggleClass('icon-star icon-star-empty').text('已读过');
+				//socket.emit('data', {
+				//	topic: 'reader/bookmark/favor'
+				//	, query: {
+				//		id: $parent.data('id')
+				//	}
+				//});
 			}).on('click', '.icon-checkbox', function(e){
 				e.preventDefault();
 
 				var $that = $(this)
 					, $parent = $that.parents('article')
 					;
-				$(this).toggleClass('icon-checkbox icon-checkbox-checked').text('已收藏');
+
+				//$(this).toggleClass('icon-checkbox icon-checkbox-checked').text('已读过');
 				socket.emit('data', {
 					topic: 'reader/bookmark/read'
 					, query: {
 						id: $parent.data('id')
 					}
 				});
+
 			}).on('click', '.icon-remove', function(e){
 				e.preventDefault();
 			})
@@ -46,7 +53,38 @@ require(['../config'], function(config){
 					$addPopup.trigger('closeDialog').find('form')[0].reset();
 				}
 			})
+			, $favorPopup = $('#favorPopup').on('click', '#favorBookmark', function(){
+
+				var tags = $favorPopup.find('span.tag-checked').map(function(){
+					return this.innerHTML;
+				}).get().join();
+
+				if( tags !== '' ){
+					socket.emit('data', {
+						topic: 'reader/bookmark/favor'
+						, query: {
+							id: $bookmarkId.val()
+							, tag_name: tags
+						}
+					});
+					$bookmark.find('#blogArt'+ $bookmarkId.val()).find('div.tagsArea').html( '<span class="tag tag-checked">'+ tags.split(',').join('</span><span class="tag tag-checked">') +'</span>' )
+					$favorPopup.trigger('closeDialog').find('form')[0].reset();
+				}
+				else{
+					// todo 替换为自定义弹窗
+					alert('请至少添加一个标签，以方便管理！');
+				}
+			}).on('click', '#addTag', function(){
+				var value = $tag.val();
+				if( value !== '' ){
+					$favorPopup.find('div.tagsArea').append('<span class="tag tag-checked">'+ value +'</div>');
+				}
+			}).on('click', '.tagsArea .tag', function(){
+				$(this).toggleClass('tag-checked');
+			})
 			, $url = $('#url')
+			, $bookmarkId = $('#bookmarkId')
+			, $tag = $('#tag')
 			, tpl = $.template({
 				template: 'article#blogArt%Id%.article[data-id=%Id%]>a[href=%url% title=%url% target=_blank]>h3.article_title{%title%}' +
 				'^hr+a.icon.icon-checkbox%readStatus%[href=read title=%readTitle%]{%readText%}' +
@@ -74,8 +112,8 @@ require(['../config'], function(config){
 					, favorText: function(d){
 						return +d.status > 1 ? '已收藏' : '收藏';
 					}
-					, tags: function(d){
-						return d.tag_name ? '<span class="tag">'+ d.tag_name.split(',').join('</span><span class="tag">') +'</span>' : '';
+					, tags: function(d){console.log(123, d)
+						return d.tag_name ? '<span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">'+ d.tag_name.split(',').join('</span><span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">') +'</span>' : '';
 						//var data = []
 						//	, tagsId = (d.tags_id || '').split(',')
 						//	, tagsName = (d.tags_name || '').split(',')

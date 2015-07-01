@@ -41,7 +41,7 @@ var db        = require('./db/db.js')
 				return +d.status > 1 ? '已收藏' : '收藏';
 			}
 			, tags: function(d){
-				return d.tag_name ? '<span class="tag">'+ d.tag_name.split(',').join('</span><span class="tag">') +'</span>' : '';
+				return d.tag_name ? '<span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">'+ d.tag_name.split(',').join('</span><span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">') +'</span>' : '';
 				//var data = []
 				//	, tagsId = (d.tags_id || '').split(',')
 				//	, tagsName = (d.tags_name || '').split(',')
@@ -452,12 +452,12 @@ var db        = require('./db/db.js')
 			}
 		}
 		, 'reader/bookmark/favor': {
-			sql: 'update bookmark set status=2 where Id=? and status<2'
+			sql: 'update bookmark set status=2,tag_name=? where Id=? and status<2'
 			, handle: function(data, rs){
 				var r;
 				if( rs.changedRows ){
 					r = {
-						id: data[0]
+						id: data[1]
 					}
 				}
 				else{
@@ -503,9 +503,19 @@ var db        = require('./db/db.js')
 					id: 'addPopup', size: 'normal'
 					, content: '<form><div class="formGroup">' +
 					'<label for="url">请输入链接</label>' +
-					'<input type="text" id="url" class="input" placeholder="请输入链接" data-validator="url">' +
+					'<input type="text" id="url" class="input" placeholder="请输入链接" data-validator="url"/>' +
 					'</div></form>'
 					, button: '<button type="button" id="addBookmark" class="btn">确定</button>'
+				}, {
+					id: 'favorPopup', size: 'normal'
+					, content: '<form>' +
+					'<input type="hidden" id="bookmarkId" name="bookmarkId"/>' +
+					'<div class="formGroup"><label for="tag">请输入标签</label>' +
+					'<input type="text" id="tag" class="input" placeholder="请输入标签" data-validator="tag"/><button id="addTag" class="btn" type="button">添加</button>' +
+					'</div><div class="formGroup"><label for="tag">请选择标签</label>' +
+					'<div class="tagsArea"></div>' +
+					'</div></form>'
+					, button: '<button type="button" id="favorBookmark" class="btn">确定</button>'
 				}])
 				, script: {
 					main: '../script/module/reader/bookmark'
@@ -684,7 +694,8 @@ socket.register({
 		}
 	}
 	, 'reader/bookmark/read': function(socket, data){
-		var id = data.query.id;
+		var id = data.query.id
+			;
 
 		if( id ){
 			reader.emit('data', 'reader/bookmark/read', 'socket', socket, [id]);
@@ -695,10 +706,12 @@ socket.register({
 		}
 	}
 	, 'reader/bookmark/favor': function(socket, data){
-		var id = data.query.id;
+		var id = data.query.id
+			, tag_name = data.query.tag_name || ''
+			;
 
 		if( id ){
-			reader.emit('data', 'reader/bookmark/favor', 'socket', socket, [id]);
+			reader.emit('data', 'reader/bookmark/favor', 'socket', socket, [tag_name, id]);
 		}
 		else{
 			reader.emit('socket', 'reader/bookmark/favor', socket, '缺少参数');
