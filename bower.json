@@ -33,6 +33,7 @@
     "cropper": "~0.9.0",
     "art-dialog": "~6.0.4",
     "font-awsome": "~4.3.0",
-    "requirejs-text": "~2.0.14"
+    "requirejs-text": "~2.0.14",
+    "artTemplate": "~3.0.1"
   }
 }

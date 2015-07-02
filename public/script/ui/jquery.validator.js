@@ -782,12 +782,12 @@
 				;
 
 			if( argc === 1 ){
-				regexp = new RegExp('^-?\d+\.?\d{0,'+ digit +'}$');
+				regexp = new RegExp('^-?\\d+\\.?\\d{0,'+ digit +'}$');
 				result = regexp.test( this.val() );
 			}
 			else if( argc > 1 ){
 				temp = size - digit;
-				regexp = new RegExp('^-?\d'+ (temp >= 1 ? '{1'+ (temp === 1 ? '' : ','+ temp) +'}' : '+') +'\.?\d{0,'+ digit +'}$');
+				regexp = new RegExp('^-?\\d'+ (temp >= 1 ? '{1'+ (temp === 1 ? '' : ','+ temp) +'}' : '+') +'\\.?\\d{0,'+ digit +'}$');
 				result = regexp.test( this.val() );
 			}
 			else{

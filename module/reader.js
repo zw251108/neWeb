@@ -59,6 +59,8 @@ var db        = require('./db/db.js')
 		}
 	})
 
+	, Url = require('url')
+
 	/**
 	 * 访问 路径
 	 * */
@@ -206,13 +208,15 @@ var db        = require('./db/db.js')
 					, temp
 					, title
 					, w, p
+					, urlResult = Url.parse(url)
+					, source = urlResult.protocol + '//' + urlResult.host
 					;
-				console.log(charset, html);
-				//if( charset !== 'utf8' ){
-				//	html = iconv.decode(html, charset);
-				//}
+				console.log(charset, html, source);
 
-				//console.log(html);
+				if( charset.toUpperCase() !== 'UTF-8' ){
+					// todo 转码：将 GBK 转成 UTF-8
+				}
+
 				if( html ){
 					$ = Cheerio.load(html, {decodeEntities: false});
 
@@ -279,6 +283,7 @@ var db        = require('./db/db.js')
 						url: url
 						, title: title
 						, tags: filterRs.slice(0, 20)
+						, source: source
 					});
 					//done(url, title, filterRs.slice(0, 20) );
 				}
@@ -418,7 +423,7 @@ var db        = require('./db/db.js')
 		, 'reader/bookmark': 'select Id,title,url,status,tag_id,tag_name from bookmark order by status,Id desc'
 		, 'reader/bookmark/isExist': 'select * from bookmark where url like ?'
 		, 'reader/bookmark/add': {
-			sql: 'insert into bookmark(url,title,tag_name,datetime) select ?,?,?,now() from dual where not exists (select * from bookmark where url like ?)'
+			sql: 'insert into bookmark(url,title,source,tag_name,datetime) select ?,?,?,?,now() from dual where not exists (select * from bookmark where url like ?)'
 			, handle: function(data, rs){
 				var r;
 				if( rs.insertId ){
@@ -654,7 +659,7 @@ socket.register({
 		if( url ){
 			getArticle(url, function(rs){
 
-				reader.emit('socket', 'reader/article', socket, rs);
+				reader.emit('socket', 'reader/article', socket, [rs.url, rs.title, rs.source, rs.tags.map(function(d){return d.tagName;}).join(), rs.url]);
 			}, function(err){
 
 				reader.emit('socket', 'reader/article', socket, '订阅文章获取失败');
@@ -675,7 +680,7 @@ socket.register({
 		if( url ){
 			getArticle(url, function(rs){
 
-				reader.emit('data', 'reader/bookmark/add', 'socket', socket, [rs.url, rs.title, rs.tags.map(function(d){return d.tagName;}).join(), rs.url]);
+				reader.emit('data', 'reader/bookmark/add', 'socket', socket, [rs.url, rs.title, rs.source, rs.tags.map(function(d){return d.tagName;}).join(), rs.url]);
 			},function(err){
 				reader.emit('socket', 'reader/bookmark/add', socket, '缺少参数');
 				error( err );
