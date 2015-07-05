@@ -1,6 +1,6 @@
 'use strict';
 
-var db        = require('./db/db.js')
+var db          = require('./db/db.js')
 	, web       = require('./web/web.js')
 	, socket    = require('./socket/socket.js')
 	, error     = require('./error/error.js')
@@ -13,7 +13,7 @@ var db        = require('./db/db.js')
 	, readerTpl    = emmetTpl({
 		template: 'section#reader_%Id%.reader_section.section>a[href=%html_url% data-feed=%xml_url% data-id=%Id%]>h3.section_title{%name%}>span.icon.icon-plus^^hr+ul.reader_articleList'
 	})
-	, articleTpl    = emmetTpl({
+	, articleTpl   = emmetTpl({
 		template:'article#blogArt%Id%.article[data-id=%Id%]>a[href=%url% title=%url% target=_blank]>h3.article_title{%title%}' +
 		'^hr+a.icon.icon-checkbox%readStatus%[href=reader/read title=%readTitle%]{%readText%}' +
 		'+a.icon.icon-star%favorStatus%[href=reader/favor title=%favorTitle%]{%favorText%}' +

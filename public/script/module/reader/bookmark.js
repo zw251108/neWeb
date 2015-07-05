@@ -77,6 +77,7 @@ require(['../config'], function(config){
 			}).on('click', '#addTag', function(){
 				var value = $tag.val();
 				if( value !== '' ){
+					$tag.val('');
 					$favorPopup.find('div.tagsArea').append('<span class="tag tag-checked">'+ value +'</div>');
 				}
 			}).on('click', '.tagsArea .tag', function(){
@@ -112,7 +113,7 @@ require(['../config'], function(config){
 					, favorText: function(d){
 						return +d.status > 1 ? '已收藏' : '收藏';
 					}
-					, tags: function(d){console.log(123, d)
+					, tags: function(d){
 						return d.tag_name ? '<span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">'+ d.tag_name.split(',').join('</span><span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">') +'</span>' : '';
 						//var data = []
 						//	, tagsId = (d.tags_id || '').split(',')

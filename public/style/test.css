@@ -84,10 +84,10 @@
 
 .Container{
 	/** 进入硬件加速 **/
-	-webkit-transform: translateZ(0);
-	-moz-transform: translateZ(0);
-	-ms-transform: translateZ(0);
-	transform: translateZ(0);
+	/*-webkit-transform: translateZ(0);*/
+	/*-moz-transform: translateZ(0);*/
+	/*-ms-transform: translateZ(0);*/
+	/*transform: translateZ(0);*/
 
 	-webkit-animation: 1s both;
 	-moz-animation: 1s both;
