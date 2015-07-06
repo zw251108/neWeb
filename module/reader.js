@@ -32,7 +32,7 @@ var db        = require('./db/db.js')
 				return +d.status > 0 ? '已读过' : '读过';
 			}
 			, favorStatus: function(d){
-				return +d.status > 1 ? '' : '-empty';
+				return +d.status > 1 ? '-full' : '';
 			}
 			, favorTitle: function(d){
 				return +d.status > 1 ? '已收藏' : '未收藏';
@@ -213,7 +213,7 @@ var db        = require('./db/db.js')
 					;
 				console.log(charset, html, source);
 
-				if( charset.toUpperCase() !== 'UTF-8' ){
+				if( !charset || charset.toUpperCase() !== 'UTF-8' ){
 					// todo 转码：将 GBK 转成 UTF-8
 				}
 
@@ -431,7 +431,7 @@ var db        = require('./db/db.js')
 						id: rs.insertId
 						, url: data[0]
 						, title: data[1]
-						, tag_name: data[2]
+						, tag_name: data[3]
 						, status: 0
 					};
 				}
@@ -457,7 +457,7 @@ var db        = require('./db/db.js')
 			}
 		}
 		, 'reader/bookmark/favor': {
-			sql: 'update bookmark set status=2,tag_name=? where Id=? and status<2'
+			sql: 'update bookmark set status=2,tag_name=?,score=? where Id=? and status<2'
 			, handle: function(data, rs){
 				var r;
 				if( rs.changedRows ){
@@ -507,7 +507,7 @@ var db        = require('./db/db.js')
 				}).join('') + tpl.popupTpl([{
 					id: 'addPopup', size: 'normal'
 					, content: '<form><div class="formGroup">' +
-					'<label for="url">请输入链接</label>' +
+					'<label class="label" for="url">请输入链接</label>' +
 					'<input type="text" id="url" class="input" placeholder="请输入链接" data-validator="url"/>' +
 					'</div></form>'
 					, button: '<button type="button" id="addBookmark" class="btn">确定</button>'
@@ -515,9 +515,17 @@ var db        = require('./db/db.js')
 					id: 'favorPopup', size: 'normal'
 					, content: '<form>' +
 					'<input type="hidden" id="bookmarkId" name="bookmarkId"/>' +
-					'<div class="formGroup"><label for="tag">请输入标签</label>' +
+					'<div class="formGroup">' +
+						'<label class="label" for="star1">请评分</label>' +
+						'<input name="star" type="radio" value="5" id="star5"><label for="star5" class="icon icon-star"></label>' +
+						'<input name="star" type="radio" value="4" id="star4"><label for="star4" class="icon icon-star"></label>' +
+						'<input name="star" type="radio" value="3" id="star3"><label for="star3" class="icon icon-star"></label>' +
+						'<input name="star" type="radio" value="2" id="star2"><label for="star2" class="icon icon-star"></label>' +
+						'<input name="star" type="radio" value="1" id="star1"><label for="star1" class="icon icon-star"></label>' +
+					'</div>' +
+					'<div class="formGroup"><label class="label" for="tag">请输入标签</label>' +
 					'<input type="text" id="tag" class="input" placeholder="请输入标签" data-validator="tag"/><button id="addTag" class="btn" type="button">添加</button>' +
-					'</div><div class="formGroup"><label for="tag">请选择标签</label>' +
+					'</div><div class="formGroup"><label class="label" for="tag">请选择标签</label>' +
 					'<div class="tagsArea"></div>' +
 					'</div></form>'
 					, button: '<button type="button" id="favorBookmark" class="btn">确定</button>'
@@ -711,12 +719,14 @@ socket.register({
 		}
 	}
 	, 'reader/bookmark/favor': function(socket, data){
-		var id = data.query.id
-			, tag_name = data.query.tag_name || ''
+		var query = data.query
+			, id = query.id
+			, tag_name = query.tag_name || ''
+			, score = query.score || 0
 			;
 
 		if( id ){
-			reader.emit('data', 'reader/bookmark/favor', 'socket', socket, [tag_name, id]);
+			reader.emit('data', 'reader/bookmark/favor', 'socket', socket, [tag_name, score, id]);
 		}
 		else{
 			reader.emit('socket', 'reader/bookmark/favor', socket, '缺少参数');

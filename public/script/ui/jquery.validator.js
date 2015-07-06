@@ -217,6 +217,10 @@
 					}
 					else if( validName === 'and' ){ // 多项同时填写
 						isValid = isValid && validMethods.and.apply($item, validTemp);
+						isRequired = false;
+					}
+					else{   // 自定义
+						isValid = validMethods[validName].apply($item);
 					}
 					result = isValid;
 				}

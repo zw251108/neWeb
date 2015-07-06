@@ -105,6 +105,7 @@ web.use('/lib/zui', express.static(__dirname + '/public/script/ui'));
 web.use('/lib/zui/jquery.emmetTpl.js', express.static(__dirname + '/module/emmetTpl/emmetTpl.js') );  // 前后端通用模板引擎
 
 web.use('/doc',     express.static(__dirname + '/doc'));
+web.use('/requirement',     express.static(__dirname + '/requirement'));
 
 
 /**

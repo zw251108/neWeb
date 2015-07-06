@@ -54,24 +54,27 @@
 }
 
 :checked + .icon-radio:before{
-	content: '\e800';
+	content: '\e801';
 }
 :checked + .icon-checkbox:before{
 	content: '\e803';
 }
+:checked ~ .icon-star:before{
+	content: '\e821'
+}
 
 .icon-radio{
-	&:before{
-		content: '\e800';
-	}
+	//&:before{
+	//	content: '\e800';
+	//}
 	&-checked:before{
 		content: '\e801';
 	}
 }
 .icon-checkbox{
-	&:before{
-		content: '\e802';
-	}
+	//&:before{
+	//	content: '\e802';
+	//}
 	&-checked:before{
 		content: '\e803';
 	}
@@ -85,13 +88,13 @@
 
 }
 
-// textarea
-textarea::-webkit-input-placeholder:after{
-	display:block;
-	content:"line@ \A line#";/* \A 表示换行 */
-	color:red;
-};
-textarea::-moz-placeholder:after{
-	content:"line@ \A line#";/* \A 表示换行 */
-	color:red;
-};
+//// textarea
+//textarea::-webkit-input-placeholder:after{
+//	display:block;
+//	content:"line@ \A line#";/* \A 表示换行 */
+//	color:red;
+//};
+//textarea::-moz-placeholder:after{
+//	content:"line@ \A line#";/* \A 表示换行 */
+//	color:red;
+//};

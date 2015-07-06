@@ -73,7 +73,7 @@ var Editor = {
 					, button: '<button type="button" id="" class="btn">确定</button>'}, {
 				id: 'editorSave',   size: 'normal'
 					, content: '<form><div class="formGroup">' +
-						'<label for="codeName">请输入名称</label>' +
+						'<label class="label" for="codeName">请输入名称</label>' +
 						'<input type="text" id="codeName" class="input" placeholder="请输入标题" value="%name%"  data-validator="title"/>' +
 					//'</div>' +
 					//'<div class="formGroup">' +

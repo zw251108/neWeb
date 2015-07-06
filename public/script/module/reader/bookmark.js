@@ -4,7 +4,7 @@
 require(['../config'], function(config){
 	var r = require(config.requireConfig);
 	r(['jquery', 'global', 'socket', 'template'], function($, g, socket){
-		var $bookmark = $('#bookmark').on('click', '.icon-star-empty', function(e){
+		var $bookmark = $('#bookmark').on('click', '.icon-star', function(e){
 				e.preventDefault();
 
 				var $that = $(this)
@@ -104,7 +104,7 @@ require(['../config'], function(config){
 						return +d.status > 0 ? '已读过' : '读过';
 					}
 					, favorStatus: function(d){
-						return +d.status > 1 ? '' : '-empty';
+						return +d.status > 1 ? '-full' : '';
 					}
 					, favorTitle: function(d){
 						return +d.status > 1 ? '已收藏' : '未收藏';
@@ -112,7 +112,7 @@ require(['../config'], function(config){
 					, favorText: function(d){
 						return +d.status > 1 ? '已收藏' : '收藏';
 					}
-					, tags: function(d){console.log(123, d)
+					, tags: function(d){
 						return d.tag_name ? '<span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">'+ d.tag_name.split(',').join('</span><span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">') +'</span>' : '';
 						//var data = []
 						//	, tagsId = (d.tags_id || '').split(',')
