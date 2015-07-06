@@ -1,6 +1,6 @@
 'use strict';
 
-var db        = require('./db/db.js')
+var db          = require('./db/db.js')
 	, web       = require('./web/web.js')
 	, socket    = require('./socket/socket.js')
 	, error     = require('./error/error.js')
@@ -13,7 +13,7 @@ var db        = require('./db/db.js')
 	, readerTpl    = emmetTpl({
 		template: 'section#reader_%Id%.reader_section.section>a[href=%html_url% data-feed=%xml_url% data-id=%Id%]>h3.section_title{%name%}>span.icon.icon-plus^^hr+ul.reader_articleList'
 	})
-	, articleTpl    = emmetTpl({
+	, articleTpl   = emmetTpl({
 		template:'article#blogArt%Id%.article[data-id=%Id%]>a[href=%url% title=%url% target=_blank]>h3.article_title{%title%}' +
 		'^hr+a.icon.icon-checkbox%readStatus%[href=reader/read title=%readTitle%]{%readText%}' +
 		'+a.icon.icon-star%favorStatus%[href=reader/favor title=%favorTitle%]{%favorText%}' +
@@ -210,6 +210,7 @@ var db        = require('./db/db.js')
 					, w, p
 					, urlResult = Url.parse(url)
 					, source = urlResult.protocol + '//' + urlResult.host
+					, charExpr = /^[a-z]$/i
 					;
 				console.log(charset, html, source);
 
@@ -220,13 +221,17 @@ var db        = require('./db/db.js')
 				if( html ){
 					$ = Cheerio.load(html, {decodeEntities: false});
 
-					$main = $('article');
+					// todo 删除代码片段 script style
+
 					title = $('title').text();
+					rs = segment.doSegment( title );
+
+					$main = $('article');
 					content = $main.length ? $main.html() : $('body').html();
 
 					//console.log(content);
 
-					rs = segment.doSegment( content );
+					rs = rs.concat( segment.doSegment( content ) );
 					//console.log(rs);
 
 					// 统计
@@ -234,14 +239,15 @@ var db        = require('./db/db.js')
 					while( j-- ){
 						temp = rs[j];
 						p = temp.p;
+						w = temp.w;
 
 						/**
 						 * 过滤，只统计
-						 *  8   专有名词
-						 *  16  外文字符
-						 *  32  机构团体
-						 *  64  地名
-						 *  128 人名
+						 *  8       专有名词
+						 *  16      外文字符
+						 *  32      机构团体
+						 *  64      地名
+						 *  128     人名
 						 *  4096    动词
 						 *  1048576 名词
 						 * */
@@ -254,10 +260,15 @@ var db        = require('./db/db.js')
 							p === 1048576) ) continue;
 
 						/**
+						 * 将单个字符排除
+						 * */
+						if( charExpr.test( w ) ) continue;
+
+						/**
 						 * 对分出来的词加个前缀作为 key 存在 obj 对象中
 						 *  防止分出来的词存在 toString 一类已存在于对象中的属性的关键字
 						 * */
-						w = prefix + temp.w;
+						w = prefix + w;
 
 						if( w in obj ){
 							filterRs[obj[w]].n++;
@@ -277,7 +288,7 @@ var db        = require('./db/db.js')
 						return b.n - a.n;
 					});
 
-					console.log('\n', filterRs);
+					console.log('\n', filterRs.slice(0, 20));
 
 					done({
 						url: url

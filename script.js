@@ -136,24 +136,24 @@ var db = require('mysql').createConnection({
 	, url = require('url')
 	;
 
-db.query('select * from bookmark', function(err, rs){
-	var t, i, j
-		, source
-		;
-	if( !err ){
-
-		for(i = 0, j = rs.length; i < j; i++){
-			t = rs[i];
-
-			source = url.parse( t.url );
-			source = source.protocol +'//'+ source.host;
-
-			db.query('update bookmark set source=? where Id=?', [source, t.Id], function(err, rs){
-				console.log(rs)
-			});
-		}
-	}
-})
+//db.query('select * from bookmark', function(err, rs){
+//	var t, i, j
+//		, source
+//		;
+//	if( !err ){
+//
+//		for(i = 0, j = rs.length; i < j; i++){
+//			t = rs[i];
+//
+//			source = url.parse( t.url );
+//			source = source.protocol +'//'+ source.host;
+//
+//			db.query('update bookmark set source=? where Id=?', [source, t.Id], function(err, rs){
+//				console.log(rs)
+//			});
+//		}
+//	}
+//})
 
 //dbQuery('select * from reader').then(function(rs){console.log(rs)}).catch(function(){
 //	console.log(arguments)

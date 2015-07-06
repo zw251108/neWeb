@@ -77,6 +77,7 @@ require(['../config'], function(config){
 			}).on('click', '#addTag', function(){
 				var value = $tag.val();
 				if( value !== '' ){
+					$tag.val('');
 					$favorPopup.find('div.tagsArea').append('<span class="tag tag-checked">'+ value +'</div>');
 				}
 			}).on('click', '.tagsArea .tag', function(){
