@@ -528,11 +528,13 @@ var db          = require('./db/db.js')
 					'<input type="hidden" id="bookmarkId" name="bookmarkId"/>' +
 					'<div class="formGroup">' +
 						'<label class="label" for="star1">请评分</label>' +
+						'<div class="input-score">' +
 						'<input name="star" type="radio" value="5" id="star5"><label for="star5" class="icon icon-star"></label>' +
 						'<input name="star" type="radio" value="4" id="star4"><label for="star4" class="icon icon-star"></label>' +
 						'<input name="star" type="radio" value="3" id="star3"><label for="star3" class="icon icon-star"></label>' +
 						'<input name="star" type="radio" value="2" id="star2"><label for="star2" class="icon icon-star"></label>' +
 						'<input name="star" type="radio" value="1" id="star1"><label for="star1" class="icon icon-star"></label>' +
+						'</div>' +
 					'</div>' +
 					'<div class="formGroup"><label class="label" for="tag">请输入标签</label>' +
 					'<input type="text" id="tag" class="input" placeholder="请输入标签" data-validator="tag"/><button id="addTag" class="btn" type="button">添加</button>' +
