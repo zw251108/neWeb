@@ -163,6 +163,8 @@ metro.push({
 });
 
 
+require('./admin/tag.js');
+
 webServer = web.listen( CONFIG.web.port );
 console.log('Web Server is listening...');
 
