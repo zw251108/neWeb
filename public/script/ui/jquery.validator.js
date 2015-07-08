@@ -58,7 +58,7 @@
 	</form>
  * @todo    重构
  * @todo    submit 事件可以不触发
- */
+ * */
 ;(function(factory, jqPath){
 	if( typeof exports === 'object' && typeof module === 'object' ){
 		factory( require(jqPath || 'jquery') );
@@ -134,7 +134,9 @@
 			console && console.log && console.log( msg );
 		}
 		;
-
+	/**
+	 * @namespace   Validator
+	 * */
 	var Validator = function( options ){
 		var opts = $.extend({}, Validator.defaults, options)
 			, $form = opts.selector
@@ -300,19 +302,62 @@
 		, right:null
 		, normal:null
 	};
+	/**
+	 * @memberof    Validator
+	 * @namespace   validType
+	 * @desc    验证类型集合
+	 * @example
+	    $.validator.validType.username = {// 用户名 验证配置
+            type: ['required', '请填写用户名'],
+            trim: true, // 验证时对值进行 trim
+            focus: '请输入6~12位数字、字母、下划线组合，并以字母开头', // 获得焦点时的操作
+            valid:[
+                ['regexp', /^[a-z]/i],
+                ['regexp', /^[a-z0-9_]$/i],
+                ['length', 6, 20],
+                ['ajax', 'url', '']
+            ],
+            text:['只能字母开头', '只能输入数字、字母、下划线组合', '只能输入6~12位字符', '该用户名已被注册，请尝试其他用户名'],
+            right:'',
+            callback:function(rs){alert(rs?'通过验证':'未通过验证')} // 验证后的回调函数
+        };
+	 * */
 	Validator.validType = {};
+	/**
+	 * @memberof    Validator
+	 * @namespace   validEvent
+	 * @desc    验证事件类型
+	 * 默认事件类型：
+	 * <pre>
+	    selector    事件
+	    :text       blur
+	    :password   blur
+	    :radio      click
+	    :checkbox   click
+	    select      change
+	    textarea    blur
+	 * </pre>
+	 * */
 	Validator.validEvent = {
 		':text': 'blur'
 		, ':password': 'blur'
 		, ':radio': 'click'
 		, ':checkbox': 'click'
 		, 'select': 'change'
+		, 'textarea': 'blur'
 	};
+	/**
+	 * @memberof    Validator
+	 * @namespace   validMethods
+	 * @desc    验证方法集合
+	 * */
 	Validator.validMethods = {
 		/**
 		 *  必填项验证
 		 * */
 		/**
+		 * @memberof    Validator.validMethods
+		 * @method  required
 		 * @return  {boolean}   验证结果
 		 * @desc    验证是否为空
 		 * */
@@ -329,6 +374,8 @@
 			return result;
 		}
 		/**
+		 * @method  or
+		 * @memberof    Validator.validMethods
 		 * @param   {string=}   selector   参数至少 1 个 为 jquery 选择器
 		 * @return  {boolean}   验证结果
 		 * @desc    检测当前标签与目标标签至少一个不为空，参数至少 1 个 为 jquery 选择器
@@ -354,6 +401,8 @@
 			return result;
 		}
 		/**
+		 * @method  and
+		 * @memberof    Validator.validMethods
 		 * @param   {string=}   selector    参数至少 1 个 为 jquery 选择器
 		 * @return  {boolean}   验证结果
 		 * @desc    检测当前标签与目标标签同时不为空，参数至少 1 个 为 jquery 选择器
@@ -384,6 +433,8 @@
 		 *  特殊标签验证
 		 * */
 		/**
+		 * @method  select
+		 * @memberof    Validator.validMethods
 		 * @param   {number}    min 最小选择个数
 		 * @param   {number=}   max 最大选择个数（可选）
 		 * @return  {boolean}   验证结果
@@ -419,6 +470,8 @@
 			return result;
 		}
 		/**
+		 * @method  checkbox
+		 * @memberof    Validator.validMethods
 		 * @param   {number}    min 最小选择个数
 		 * @param   {number=}   max 最大选择个数（可选）
 		 * @return  {boolean}   验证结果
@@ -454,6 +507,8 @@
 		 *  字符串类型验证
 		 * */
 		/**
+		 * @method  length
+		 * @memberof    Validator.validMethods
 		 * @param   {number}    min 最小选择个数
 		 * @param   {number=}   max 最大选择个数（可选）
 		 * @return  {boolean}   验证结果
@@ -478,6 +533,8 @@
 			return result;
 		}
 		/**
+		 * @method  regexp
+		 * @memberof    Validator.validMethods
 		 * @param   {regexp=}   regexp
 		 * @return  {boolean}   验证结果
 		 * @desc    检测是否非法字符，reg 为正则表达式规则 默认值为 /^[a-z0-9_]*$/i
@@ -489,6 +546,8 @@
 		 *  比较类型验证
 		 * */
 		/**
+		 * @method  equal
+		 * @memberof    Validator.validMethods
 		 * @param   {*} value   一个固定数据
 		 * @return  {boolean}   验证结果
 		 * @desc    检测与目标 value 是否相等，参数 value 为一个固定数据
@@ -506,7 +565,9 @@
 			return  result;
 		}
 		/**
-		 * @param    {*} value   一个固定数据
+		 * @method  unequal
+		 * @memberof    Validator.validMethods
+		 * @param   {*} value   一个固定数据
 		 * @return  {boolean}   验证结果
 		 * @desc    检测与目标 value 是否不相等，参数 value 为一个固定数据
 		 * */
@@ -523,6 +584,8 @@
 			return result;
 		}
 		/**
+		 * @method  lt
+		 * @memberof    Validator.validMethods
 		 * @param   {*} value   一个固定数据
 		 * @param   {boolean}    equal   是否可以等于 value
 		 * @return  {boolean}   验证结果
@@ -541,6 +604,8 @@
 			return result;
 		}
 		/**
+		 * @method  gt
+		 * @memberof    Validator.validMethods
 		 * @param   {*} value   一个固定数据
 		 * @param   {boolean}    equal   是否可以等于 value
 		 * @return  {boolean}   验证结果
@@ -563,6 +628,8 @@
 		 *  DOM 对象属性值比较类型验证
 		 * */
 		/**
+		 * @method  equalDOMProp
+		 * @memberof    Validator.validMethods
 		 * @param   {string}    selector    为 jquery 选择器，若只有一个参数则默认从 val 取值
 		 * @param   {string=}   method  为 jquery 方法名（attr,data,html,prop,text,val）
 		 * @param   {string=}   name    为属性名
@@ -605,6 +672,8 @@
 			return result;
 		}
 		/**
+		 * @method  unequalDOMProp
+		 * @memberof    Validator.validMethods
 		 * @param   {string}    selector    为 jquery 选择器，若只有一个参数则默认从 val 取值
 		 * @param   {string=}   method  为 jquery 方法名（attr,data,html,prop,text,val）
 		 * @param   {string=}   name    为属性名
@@ -649,6 +718,8 @@
 			return result;
 		}
 		/**
+		 * @method  ltDOMProp
+		 * @memberof    Validator.validMethods
 		 * @param   {string}    selector    为 jquery 选择器，若只有一个参数则默认从 val 取值
 		 * @param   {boolean}   equal   是否可以与目标值相等
 		 * @param   {string=}   method  为 jquery 方法名（attr,data,html,prop,text,val）
@@ -694,6 +765,8 @@
 			return result;
 		}
 		/**
+		 * @method  gtDOMProp
+		 * @memberof    Validator.validMethods
 		 * @param   {string}    selector    为 jquery 选择器，若只有一个参数则默认从 val 取值
 		 * @param   {boolean}   equal   是否可以与目标值相等
 		 * @param   {string=}   method  为 jquery 方法名（attr,data,html,prop,text,val）
@@ -743,12 +816,17 @@
 		 *  数字类型验证
 		 * */
 		/**
+		 * @method  isNumber
+		 * @memberof    Validator.validMethods
+		 * @return  {boolean}   检测结果
 		 * @desc    检测是否为数字 包括负数和小数的情况
 		 * */
 		, isNumber: function(){
 			return /^-?\d+\.?\d*$/.test( this.val() );
 		}
 		/**
+		 * @method  limit
+		 * @memberof    Validator.validMethods
 		 * @param   {number}    min 最小值
 		 * @param   {number=}   max 最大值（可选）
 		 * @return  {boolean}   验证结果
@@ -773,6 +851,8 @@
 			return result;
 		}
 		/**
+		 * @method  decimal
+		 * @memberof    Validator.validMethods
 		 * @param   {number}    digit   小数点右侧的最大位数
 		 * @param   {number=}   size    数字的最大位数（可选）
 		 * @return  {boolean}   验证结果
@@ -801,6 +881,8 @@
 			return result;
 		}
 		/**
+		 * @method  exponent
+		 * @memberof    Validator.validMethods
 		 * @return  {boolean}   验证结果
 		 * @desc    检测指数数值
 		 * */
@@ -812,6 +894,8 @@
 		 *  todo 改成 异步
 		 * */
 		/**
+		 * @method  ajax
+		 * @memberof    Validator.validMethods
 		 * @param   {string}    url 服务器链接路径
 		 * @param   {*} expected    对服务器返回结果的期望值
 		 * @param   {string}    type    发送 ajax 的类型
@@ -850,6 +934,8 @@
 		 *  特殊验证类型
 		 * */
 		/**
+		 * @method  url
+		 * @memberof    Validator.validMethods
 		 * @param   {regexp=}   regexp  自定义验证正则表达式
 		 * @return  {boolean}   验证结果
 		 * @desc    检验是否为合法 url，可以自定义验证正则表达式
@@ -858,6 +944,8 @@
 			return (regexp || /^(?:http(?:s?):\/\/)?[a-z0-9\u4E00-\u9FA5\-_\.]*[a-z0-9\-_\u4E00-\u9FA5]+(?::(\d+))?\.[a-z0-9\u4E00-\u9FA5]+[0-9a-z\$\-\._'\(\)\/!\?#&\+=%\u4E00-\u9FA5]*/i).test( this.val() );
 		}
 		/**
+		 * @method  email
+		 * @memberof    Validator.validMethods
 		 * @param   {regexp=}   regexp  自定义验证正则表达式
 		 * @return  {boolean}   验证结果
 		 * @desc    检验是否为合法邮箱，可以自定义验证正则表达式
@@ -873,6 +961,8 @@
 			return /^[\u4E00-\u9FA5]*$/.test( this.val() );
 		}
 		/**
+		 * @method  idNumber
+		 * @memberof    Validator.validMethods
 		 * @param   {regexp=}   regexp  自定义验证正则表达式
 		 * @return  {boolean}   验证结果
 		 * @desc    检测是否为合法身份证号码，可以自定义验证正则表达式
@@ -881,6 +971,8 @@
 			return (regexp || /^\d{6}(?:((?:19|20)\d{2})(?:0[1-9]|1[0-2])(?:0[1-9]|[1-2]\d|3[0-1])\d{3}(?:x|X|\d)|(?:\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[1-2]\d|3[0-1])\d{3}))$/).test( this.val() );
 		}
 		/**
+		 * @method  file
+		 * @memberof    Validator.validMethods
 		 * @param   {string|string[]}   type    验证文件类型，字符串格式为逗号分隔，或为文件类型的数组
 		 * @param   {string|number} size    文件大小
 		 * @return  {boolean}   验证结果
@@ -900,6 +992,8 @@
 			return result;
 		}
 		/**
+		 * @method  tel
+		 * @memberof    Validator.validMethods
 		 * @return  {boolean}   验证结果
 		 * @desc    验证是否为电话号码
 		 * @todo    待完成
@@ -912,6 +1006,8 @@
 			return result;
 		}
 		/**
+		 * @method  phone
+		 * @memberof    Validator.validMethods
 		 * @return  {boolean}   验证结果
 		 * @desc    验证是否为手机号码
 		 * @todo    待完成
