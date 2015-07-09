@@ -57,7 +57,7 @@ require(['../config'], function(config){
 
 
 		}).on('click', '.reader_article > a', function(e){
-		}).on('click', '.icon-segment', function(){
+		}).on('click', '.icon-segment', function(e){
 			e.preventDefault();
 
 			var $that = $(this);

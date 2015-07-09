@@ -4,7 +4,7 @@
 require(['../config'], function(config){
 	var r = require(config.requireConfig);
 	r(['jquery', 'global', 'socket', 'template'], function($, g, socket){
-		var $bookmark = $('#bookmark').on('click', '.icon-star', function(e){
+		var $bookmark = $('#bookmark').on('click', '.article > .icon-star', function(e){
 				e.preventDefault();
 
 				var $that = $(this)
@@ -160,8 +160,8 @@ require(['../config'], function(config){
 			, 'reader/bookmark/favor': function(data){
 				if( !('error' in data) ){
 					$bookmark.find('#blogArt'+ data.info.id)
-						.find('.icon-star-empty')
-							.toggleClass('icon-star-empty icon-star')
+						.find('.icon-star')
+							.toggleClass('icon-star-full icon-star')
 							.attr('title', '已收藏')
 							.text('已收藏')
 						.end().find('.icon-checkbox')

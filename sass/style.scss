@@ -3,11 +3,11 @@
  */
 
 $fontFamily: Consolas, "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
-$color: #333;
+$color: blog;
 
 body{
 	color: $color;
 	font-family: $fontFamily;
 }
-
+.#{$color}-blog{color: red;}
 @import "base.scss";
