@@ -221,8 +221,9 @@
 						isValid = isValid && validMethods.and.apply($item, validTemp);
 						isRequired = false;
 					}
-					else{   // 自定义
+					else{   // 自定义，视为选填项，根据返回结果是否继续验证
 						isValid = validMethods[validName].apply($item);
+						isRequired = false;
 					}
 					result = isValid;
 				}
