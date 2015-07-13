@@ -54,30 +54,13 @@
 }
 
 :checked + .icon-radio:before{
-	content: '\e801';
+	&:extend(.icon-radio-checked:before);
 }
 :checked + .icon-checkbox:before{
-	content: '\e803';
+	&:extend(.icon-checkbox-checked:before);
 }
 :checked ~ .icon-star:before{
-	content: '\e821'
-}
-
-.icon-radio{
-	//&:before{
-	//	content: '\e800';
-	//}
-	&-checked:before{
-		content: '\e801';
-	}
-}
-.icon-checkbox{
-	//&:before{
-	//	content: '\e802';
-	//}
-	&-checked:before{
-		content: '\e803';
-	}
+	&:extend(.icon-star-full:before);
 }
 
 [type="checkbox"],

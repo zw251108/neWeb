@@ -9,26 +9,35 @@ var mysql = require('mysql')
 	, Promise = require('promise')
 	;
 
-db.handle = function(sql, data){
-	var promise;
+/**
+ * @method  handle
+ * @param   {object}    query
+ * @param   {string}    query.sql
+ * @param   {array?}     query.data
+ * */
+db.handle = function(query){
+	var sql
+		, data
+		;
+	query = query || {};
+	sql = query.sql;
+	data = query.data || [];
 
-	if( sql ){
-		promise = new Promise(function(resolve, reject){
+	return new Promise(function(resolve, reject){
+		if( sql ){
 			db.query(sql, data, function(err, rs){
 				if( !err ){
-					resolve(rs);
+					resolve( rs );
 				}
 				else{
-					reject(err);
+					reject( err );
 				}
 			});
-		});
-	}
-	else{
-		promise = null;
-	}
-
-	return promise
+		}
+		else{
+			reject( new Error('缺少 SQL 语句') );
+		}
+	});
 };
 
 module.exports = db;

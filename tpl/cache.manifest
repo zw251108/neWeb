@@ -43,6 +43,7 @@ font/font.ttf
 font/font.woff
 
 image/logo.png
+image/favicon.ico
 image/default/icon/menu.png
 image/default/icon/user.png
 image/default/icon/close.png
@@ -50,6 +51,7 @@ image/default/icon/close.png
 NETWORK:
 socket.io/
 
+script/index.js
 script/bookmark.js
 script/module/
 

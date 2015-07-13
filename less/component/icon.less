@@ -53,11 +53,11 @@
 	cancel	    取消
 	plus	    加号
 	minus	    减号
-	heart	    心
-	heart-empty	心-空
-	star	    星
+	heart	    心-空
+	heart-full	心-满
+	star	    星-空
 	star-half	星-半
-	star-empty	星-空
+	star-full	星-满
 
 	male	    性别-男
 	female	    性别-女
@@ -117,19 +117,9 @@
 
 
 .icon-radio:before { content: '\e800'; } /* '' */
-/** 表单  form.less
-    :checked + .icon-radio:before{
-		content: '\e801';
-    }
- */
-//.icon-radio-checked:before { content: '\e801'; } /* '' */
+.icon-radio-checked:before { content: '\e801'; } /* '' */
 .icon-checkbox:before { content: '\e802'; } /* '' */
-/** 表单  form.less
-    :checked + .icon-checkbox:before{
-		content: '\e803';
-    }
- */
-//.icon-checkbox-checked:before { content: '\e803'; } /* '' */
+.icon-checkbox-checked:before { content: '\e803'; } /* '' */
 
 .icon-heart:before { content: '\e81e'; } /* '' */
 .icon-heart-full:before { content: '\e81d'; } /* '' */
@@ -202,6 +192,7 @@
 .icon-document:before { content: '\e83c'; } /* '' */
 .icon-editor:before { content: '\e83d'; } /* '' */
 .icon-bookmark:before { content: '\e83e'; } /* '' */
+//.icon-reader:before { content: '\e83f'; } /* '' */
 .icon-rss:before { content: '\e83f'; } /* '' */
 .icon-mail:before { content: '\e840'; } /* '' */
 .icon-picture:before { content: '\e841'; } /* '' */
