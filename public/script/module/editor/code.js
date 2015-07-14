@@ -147,7 +147,7 @@ require(['../config'], function(config){
 			// 各个弹窗
 			, $savePopup = $('#editorSave').on('click', '#codeSave', function(){
 				socket.emit('data', {
-					topic: 'editor/save'
+					topic: 'editor/code/save'
 					, query: {
 						id: $id.val()
 						, codeName: $codeName.val()
@@ -253,7 +253,7 @@ require(['../config'], function(config){
 		});
 
 		socket.register({
-			'editor/save': function(data){
+			'editor/code/save': function(data){
 				$savePopup.trigger('closeDialog');
 
 				if( 'error' in data ){

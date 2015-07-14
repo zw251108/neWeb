@@ -27,6 +27,6 @@ define({
 		, baseUrl: '../script/'
 	}
 	, dataSource: {
-		json: 'text!../editor/getJSON'
+		json: 'text!../data/example'
 	}
 });

@@ -56,16 +56,29 @@ require(['../config'], function(config){
 			, $favorPopup = $('#favorPopup').on('click', '#favorBookmark', function(){
 
 				var tags = $favorPopup.find('span.tag-checked').map(function(){
-					return this.innerHTML;
-				}).get().join();
+						return this.innerHTML;
+					}).get().join()
+					, data = $favorForm.serializeArray()
+					, query = {}
+					;
+
+				$.each(data, function(i, d){
+					if( d.name in query ){
+						query[d.name] += ','+ d.value;
+					}
+					else{
+						query[d.name] = d.value;
+					}
+				});
 
 				if( tags !== '' ){
+					query.id = query.bookmarkId;
+					query.tag_name = tags;
+					query.score = +query.score;
+
 					socket.emit('data', {
 						topic: 'reader/bookmark/favor'
-						, query: {
-							id: $bookmarkId.val()
-							, tag_name: tags
-						}
+						, query: query
 					});
 					$bookmark.find('#blogArt'+ $bookmarkId.val()).find('div.tagsArea').html( '<span class="tag tag-checked">'+ tags.split(',').join('</span><span class="tag tag-checked">') +'</span>' )
 					$favorPopup.trigger('closeDialog').find('form')[0].reset();
@@ -84,7 +97,8 @@ require(['../config'], function(config){
 				$(this).toggleClass('tag-checked');
 			})
 			, $url = $('#url')
-			, $bookmarkId = $('#bookmarkId')
+			, $bookmarkId = $favorPopup.find('#bookmarkId')
+			, $favorForm = $favorPopup.find('#favorForm')
 			, $tag = $('#tag')
 			, tpl = $.template({
 				template: 'article#blogArt%Id%.article[data-id=%Id%]>a[href=%url% title=%url% target=_blank]>h3.article_title{%title%}' +

@@ -13,7 +13,8 @@ var mysql = require('mysql')
  * @method  handle
  * @param   {object}    query
  * @param   {string}    query.sql
- * @param   {array?}     query.data
+ * @param   {array?}    query.data
+ * @return  {object}    数据操作的 Promise 对象
  * */
 db.handle = function(query){
 	var sql
@@ -27,7 +28,10 @@ db.handle = function(query){
 		if( sql ){
 			db.query(sql, data, function(err, rs){
 				if( !err ){
-					resolve( rs );
+					resolve({
+						result: rs
+						, data: data
+					});
 				}
 				else{
 					reject( err );

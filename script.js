@@ -185,3 +185,23 @@ var db = require('mysql').createConnection({
 //		console.log(err)
 //	}
 //})
+
+db.query('select Id,content from document', function(err, rs){
+	var i, j, t;
+	var s = 0;
+	if( !err ){console.log(123)
+		for(i = 0, j = rs.length; i < j; i++){console.log(i)
+			t = rs[i];
+                                console.log(t)
+			t.content = t.content.replace(/<textarea class="brush:(.*)">/g, '<textarea data-code-type="$1">');
+			t.content = t.content.replace(/<span class="code">(.*?)<\/span>/g, '<code class="code">$1</code>');
+
+			db.query('update document set content=? where Id=?', [t.content, t.Id], function(err, rs){
+				console.log(rs.changedRows);
+			});
+		}
+	}
+	else{
+		console.log(err)
+	}
+});
