@@ -22,6 +22,8 @@ var db          = require('./db/db.js')
 		}
 	})
 
+	, Promise = require('promise')
+
 	/**
 	 * @namespace   Document
 	 * */
@@ -133,6 +135,4 @@ socket.register({
 	}
 });
 
-module.exports = function(web, db, socket, metro){
-
-};
+module.exports = function(){};

@@ -310,6 +310,7 @@ var db          = require('./db/db.js')
 			, favoriteCount: 'select count(*) as count from bookmark where status=2'
 			, favoritePage: 'select * from bookmark where status=2 order by datetime desc limit ?,?'
 		}
+
 		/**
 		 * @namespace   Handler
 		 * @memberof    Reader
@@ -502,6 +503,7 @@ var db          = require('./db/db.js')
 				return !!(rs && rs.length);
 			}
 		}
+
 		/**
 		 * @namespace   View
 		 * @memberof    Reader
@@ -553,22 +555,27 @@ var db          = require('./db/db.js')
 					}, {
 						id: 'favorPopup', size: 'normal'
 						, content: '<form id="favorForm">' +
-						'<input type="hidden" id="bookmarkId" name="bookmarkId"/>' +
-						'<div class="formGroup">' +
-						'<label class="label" for="star1">请评分</label>' +
-						'<div class="input-score">' +
-						'<input name="score" type="radio" value="5" id="star5"><label for="star5" class="icon icon-star"></label>' +
-						'<input name="score" type="radio" value="4" id="star4"><label for="star4" class="icon icon-star"></label>' +
-						'<input name="score" type="radio" value="3" id="star3"><label for="star3" class="icon icon-star"></label>' +
-						'<input name="score" type="radio" value="2" id="star2"><label for="star2" class="icon icon-star"></label>' +
-						'<input name="score" type="radio" value="1" id="star1"><label for="star1" class="icon icon-star"></label>' +
-						'</div>' +
-						'</div>' +
-						'<div class="formGroup"><label class="label" for="tag">请输入标签</label>' +
-						'<input type="text" id="tag" class="input" placeholder="请输入标签" data-validator="tag"/><button id="addTag" class="btn" type="button">添加</button>' +
-						'</div><div class="formGroup"><label class="label" for="tag">请选择标签</label>' +
-						'<div class="tagsArea"></div>' +
-						'</div></form>'
+								'<input type="hidden" id="bookmarkId" name="bookmarkId"/>' +
+								'<div class="formGroup">' +
+									'<label class="label" for="star1">请评分</label>' +
+									'<div class="input-score">' +
+										'<input name="score" type="radio" value="5" id="star5"><label for="star5" class="icon icon-star"></label>' +
+										'<input name="score" type="radio" value="4" id="star4"><label for="star4" class="icon icon-star"></label>' +
+										'<input name="score" type="radio" value="3" id="star3"><label for="star3" class="icon icon-star"></label>' +
+										'<input name="score" type="radio" value="2" id="star2"><label for="star2" class="icon icon-star"></label>' +
+										'<input name="score" type="radio" value="1" id="star1"><label for="star1" class="icon icon-star"></label>' +
+									'</div>' +
+								'</div>' +
+								'<div class="formGroup">' +
+									'<label class="label" for="tag">请输入标签</label>' +
+									'<input type="text" id="tag" class="input" placeholder="请输入标签" data-validator="tag"/><button id="addTag" class="btn" type="button">添加</button>' +
+								'</div>' +
+								'<div class="formGroup">' +
+									'<label class="label" for="tags">请选择标签</label>' +
+									'<div class="tagsArea"></div>' +
+									'<textarea id="tags" class="hidden" name="tags"></textarea>' +
+								'</div>' +
+							'</form>'
 						, button: '<button type="button" id="favorBookmark" class="btn">确定</button>'
 					}])
 					, script: {
@@ -757,7 +764,36 @@ web.get('/data/favorite', function(req, res){
 });
 
 socket.register({
-	reader: function(socket){}
+	reader: function(socket, data){
+		var query = data.query || {}
+			, page
+			, size
+			, handle = {}
+			;
+
+		if( 'page' in query ){
+			page = query.page || 1;
+			size = query.size || 20;
+
+			page = page < 1 ? 1 : page;
+			size = size < 1 ? 20 : size;
+
+			handle.sql = Reader.Model.readerPage;
+			handle.data = [(page -1)*size, page*size];
+		}
+		else{
+			handle.sql = Reader.Model.reader;
+		}
+
+		db.handle( handle ).then(function(rs){
+			rs = rs.result;
+
+			socket.emit('data', {
+				topic: 'reader'
+				, data: rs
+			});
+		});
+	}
 	, 'reader/add': function(socket, data){}
 	, 'reader/feed': function(socket, data){
 		var send = {
@@ -813,9 +849,38 @@ socket.register({
 		//	error( 'E0002' );
 		//}
 	}
-	, 'reader/favorArticle': function(socket, data){}
+	, 'reader/favor': function(socket, data){}
 
-	, 'reader/bookmark': function(socket){}
+	, 'reader/bookmark': function(socket, data){
+		var query = data.query || {}
+			, page
+			, size
+			, handle = {}
+			;
+
+		if( 'page' in query ){
+			page = query.page || 1;
+			size = query.size || 20;
+
+			page = page < 1 ? 1 : page;
+			size = size < 1 ? 20 : size;
+
+			handle.sql = Reader.Model.bookmarkPage;
+			handle.data = [(page -1)*size, page*size];
+		}
+		else{
+			handle.sql = Reader.Model.bookmark;
+		}
+
+		db.handle( handle ).then(function(rs){
+			rs = rs.result;
+
+			socket.emit('data', {
+				topic: 'reader/bookmark'
+				, data: rs
+			});
+		});
+	}
 	, 'reader/bookmark/add': function(socket, data){
 		var send = {
 				topic: 'reader/bookmark/add'
@@ -962,6 +1027,37 @@ socket.register({
 
 			error( 'E0002' );
 		}
+	}
+
+	, 'reader/favorite': function(socket, data){
+		var query = data.query || {}
+			, page
+			, size
+			, handle = {}
+			;
+
+		if( 'page' in query ){
+			page = query.page || 1;
+			size = query.size || 20;
+
+			page = page < 1 ? 1 : page;
+			size = size < 1 ? 20 : size;
+
+			handle.sql = Reader.Model.favoritePage;
+			handle.data = [(page -1)*size, page*size];
+		}
+		else{
+			handle.sql = Reader.Model.favorite;
+		}
+
+		db.handle( handle ).then(function(rs){
+			rs = rs.result;
+
+			socket.emit('data', {
+				topic: 'reader/favorite'
+				, data: rs
+			});
+		});
 	}
 });
 
