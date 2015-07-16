@@ -91,7 +91,7 @@ require(['../config'], function(config){
 				if( value !== '' ){
 					$tag.val('');
 					$favorPopup.find('div.tagsArea').prepend('<span class="tag tag-checked">'+ value +'</div>');
-					$tags.val( tags ? value : tags +',' + value );
+					$tags.val( tags ? tags +',' + value : value);
 				}
 			}).on('click', '.tagsArea .tag', function(){
 				var $that = $(this).toggleClass('tag-checked')
@@ -100,10 +100,10 @@ require(['../config'], function(config){
 					;
 
 				if( $that.hasClass('tag-checked') ){
-					$tags.val( tags ? (','+tags+',').replace(','+ value +',', '').replace(/^,/, '').replace(/,$/, '') : '' );
+					$tags.val( tags ? tags +',' + value : value );
 				}
 				else{
-					$tags.val( tags ? value : tags +',' + value );
+					$tags.val( tags ? (','+tags+',').replace(','+ value +',', '').replace(/^,/, '').replace(/,$/, '') : '' );
 				}
 			})
 			, $url = $('#url')

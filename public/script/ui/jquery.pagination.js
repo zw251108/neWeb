@@ -118,7 +118,7 @@
 			first.show && html.push('<a href="javascript:;" class="page page-first '+ first.extendClass +'" title="'+ first.text +'">'+ first.text +'</a>');
 
             html.push( index===1 ? '<a class="page page-prev" href="javascript:;">上一页</a>' : '<a href="javascript:;" title="上一页" class="page page-prev">上一页</a>' );
-            html.push( left===1 ? '' : '<a class="page" href="javascript:;" title="第1页">1</a>' );
+            html.push( left===1 ? '' : '<a class="page page-first" href="javascript:;" title="第1页">1</a>' );
 			html.push( left>2 ? '<b>...</b>' : '' );
 
             t = page.extendClass || '';
@@ -134,10 +134,10 @@
             }
 
             html.push( pageNum-right>=2 ? '<b>...</b>' : '' );
-            html.push( right===pageNum ? '' : '<a class="page" href="javascript:;" title="第'+pageNum+'页">'+pageNum+'</a>' );
+            html.push( right===pageNum ? '' : '<a class="page page-last" href="javascript:;" title="第'+pageNum+'页">'+pageNum+'</a>' );
             html.push( index===pageNum ? '<a class="page page-next" title="下一页" href="javascript:;">下一页</a>' : '<a title="下一页" href="javascript:;" class="page page-next">下一页</a>' );
 
-			html.push('共'+ pageNum +'页 到第<input type="text" id="jumpPage">页<a class="list_num_btn" href="#">确定</a>');
+			html.push('<label>共'+ pageNum +'页 到第<input type="text" id="jumpPage">页<a class="list_num_btn" href="#">确定</a></label>');
 
 			last.show && html.push('<a href="javascript:;" class="page page-last "'+ last.extendClass +'" title="'+ last.text +'">'+ last.text +'</a>');
 

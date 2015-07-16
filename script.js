@@ -134,6 +134,19 @@ var db = require('mysql').createConnection({
 		});
 	}
 	, url = require('url')
+	, u = 'http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2013/index.html'
+	, reg = /(.*\/).*?\.html$/
+	, gbkExpr = /gbk/i
+	, gb2312Expr = /gb2312/i
+	, charset = 'utf8'
+	, data = []
+	, iconv = require('iconv-lite')
+	, http = require('http')
+	, province = []
+	, cityArr = []
+	, districtArr = []
+	, townArr = []
+	, villageArr = []
 	;
 
 //db.query('select * from bookmark', function(err, rs){
@@ -186,22 +199,228 @@ var db = require('mysql').createConnection({
 //	}
 //})
 
-db.query('select Id,content from document', function(err, rs){
-	var i, j, t;
-	var s = 0;
-	if( !err ){console.log(123)
-		for(i = 0, j = rs.length; i < j; i++){console.log(i)
-			t = rs[i];
-                                console.log(t)
-			t.content = t.content.replace(/<textarea class="brush:(.*)">/g, '<textarea data-code-type="$1">');
-			t.content = t.content.replace(/<span class="code">(.*?)<\/span>/g, '<code class="code">$1</code>');
+//db.query('select Id,content from document', function(err, rs){
+//	var i, j, t;
+//	var s = 0;
+//	if( !err ){console.log(123)
+//		for(i = 0, j = rs.length; i < j; i++){console.log(i)
+//			t = rs[i];
+//                                console.log(t)
+//			t.content = t.content.replace(/<textarea class="brush:(.*)">/g, '<textarea data-code-type="$1">');
+//			t.content = t.content.replace(/<span class="code">(.*?)<\/span>/g, '<code class="code">$1</code>');
+//
+//			db.query('update document set content=? where Id=?', [t.content, t.Id], function(err, rs){
+//				console.log(rs.changedRows);
+//			});
+//		}
+//	}
+//	else{
+//		console.log(err)
+//	}
+//});
 
-			db.query('update document set content=? where Id=?', [t.content, t.Id], function(err, rs){
-				console.log(rs.changedRows);
-			});
+//superAgent.get(u).end(function(err, res){
+//	if( !err ){
+//		var html = res.text
+//			, $
+//			, $meta
+//			, $t
+//			, $list
+//			, i, j
+//			, isGbk
+//			, isGb2312
+//			;
+//		//res.setEncoding('utf8');
+//		//console.log(  )
+//		console.log( iconv.decode(new Buffer( html ), 'gb2312') );
+//		//console.log(arguments)
+//		//console.log('\n')
+//		//console.log(res)
+//		//html = iconv.decode(new Buffer(res.text), 'gb2312').toString();
+//		  //console.log(res.charset, html)
+//		//if( html ){
+//		//	$ = Cheerio.load(html, {decodeEntities: false});
+//		//
+//		//	$meta = $('meta');
+//		//	for(i = 0, j = $meta.length; i < j; i++){
+//		//		$t = $meta.eq(i);
+//		//		if( gb2312Expr.test( $t.attr('content') ) ){
+//		//			isGb2312 = true;
+//		//			charset = 'gb2312';
+//		//		}
+//		//		else if( gbkExpr.test( $t.attr('content') ) ){
+//		//			isGbk = true;
+//		//			charset = 'gbk';
+//		//		}
+//		//	}
+//		//	console.log(isGb2312, isGbk, charset)
+//		//	$list = $('.provincetr a');
+//		//	//console.dir( $list )
+//		//
+//		//
+//		//	console.log( iconv.decode($list.text(), 'gb2312').toString() );
+//		//}
+//		//else{
+//		//	//error( err );
+//		//}
+//		//for(var k in html){
+//		//	console.log(k, ', ', html[k])
+//		//}
+//		//console.dir( html )
+//	}
+//	else{
+//		//error( err );
+//	}
+//})
+function city(u, href, code){
+	var url = u.split('/');
+	url[url.length-1] = href;
+	url = url.join('/')
+	console.log(u, url)
+	http.get(url, function(res){
+		var chunks = [];
+		res.on('data', function(chunkBuffer){
+			chunks.push(chunkBuffer);
+		});
+		res.on('end', function(){
+			var html = iconv.decode(Buffer.concat(chunks), 'gb2312')
+				, $ = Cheerio.load(html, {decodeEntities: false})
+				, $list = $('.citytr a')
+				, i, j, $t
+				;
+			for(i = 0, j = $list.length; i < j; i+=2){
+				$t = $list.eq(i)
+
+				console.log($t.attr('href'), $t.text());
+
+				cityArr.push({
+					code: $t.text()
+					, name: $list.eq(i+1).text()
+					, province: code
+				})
+				district(url, $t.attr('href'), $t.text());
+			}
+			console.log(cityArr)
+		});
+	});
+};
+function district(u, href, code){
+	var url = u.split('/');
+	url[url.length-1] = href;
+	url = url.join('/')
+	console.log(u, url)
+	http.get(url, function(res){
+		var chunks = [];
+		res.on('data', function(chunkBuffer){
+			chunks.push(chunkBuffer);
+		});
+		res.on('end', function(){
+			var html = iconv.decode(Buffer.concat(chunks), 'gb2312')
+				, $ = Cheerio.load(html, {decodeEntities: false})
+				, $list = $('.countytr a')
+				, i, j, $t
+				;
+			for(i = 0, j = $list.length; i < j; i+=2){
+				$t = $list.eq(i)
+
+				console.log($t.attr('href'), $t.text());
+
+				districtArr.push({
+					code: $t.text()
+					, name: $list.eq(i+1).text()
+					, city: code
+				});
+				town(url, $t.attr('href'), $t.text());
+			}
+			console.log(districtArr)
+		});
+	});
+}
+function town(u, href, code){
+	var url = u.split('/');
+	url[url.length-1] = href;
+	url = url.join('/')
+	console.log(u, url)
+	http.get(url, function(res){
+		var chunks = [];
+		res.on('data', function(chunkBuffer){
+			chunks.push(chunkBuffer);
+		});
+		res.on('end', function(){
+			var html = iconv.decode(Buffer.concat(chunks), 'gb2312')
+				, $ = Cheerio.load(html, {decodeEntities: false})
+				, $list = $('.countytr a')
+				, i, j, $t
+				;
+			for(i = 0, j = $list.length; i < j; i+=2){
+				$t = $list.eq(i)
+
+				console.log($t.attr('href'), $t.text());
+
+				townArr.push({
+					code: $t.text()
+					, name: $list.eq(i+1).text()
+					, district: code
+				});
+				village(url, $t.attr('href'), $t.text());
+			}
+			console.log(townArr)
+		});
+	});
+}
+function village(u, href, code){
+	var url = u.split('/');
+	url[url.length-1] = href;
+	url = url.join('/')
+	console.log(u, url)
+	http.get(url, function(res){
+		var chunks = [];
+		res.on('data', function(chunkBuffer){
+			chunks.push(chunkBuffer);
+		});
+		res.on('end', function(){
+			var html = iconv.decode(Buffer.concat(chunks), 'gb2312')
+				, $ = Cheerio.load(html, {decodeEntities: false})
+				, $list = $('.villagetr td')
+				, i, j, $t
+				;
+			for(i = 0, j = $list.length; i < j; i+=3){
+				$t = $list.eq(i)
+
+				console.log($t.attr('href'), $t.text());
+
+				villageArr.push({
+					code: $t.text()
+					, type: $list.eq(i+1).text()
+					, name: $list.eq(i+2).text()
+					, town: code
+				});
+				//town(url, $t.attr('href'));
+			}
+			console.log(villageArr)
+		});
+	});
+}
+http.get(u, function(res){
+	var chunks = [];
+	res.on('data', function(chunkBuffer){
+		chunks.push( chunkBuffer );
+	});
+	res.on('end', function(){
+		var html = iconv.decode(Buffer.concat(chunks), 'gb2312')
+			, $ = Cheerio.load(html, {decodeEntities: false})
+			, $list = $('.provincetr a')
+			, i, j, $t
+			;
+		for(i = 0, j = 1; i < j; i++){
+			$t = $list.eq(i);
+
+			console.log( $t.attr('href'), $t.text() );
+
+			city(u, $t.attr('href') );
 		}
-	}
-	else{
-		console.log(err)
-	}
+		//console.log( $list );
+		//console.log(decodedBody);
+
+	});
 });

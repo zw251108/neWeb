@@ -2,8 +2,11 @@
  * @module
  * */
 require(['module/config'], function(config){
-	require.config(config);
-	require(['jquery', 'global', 'socket', 'template'], function($, g, socket){
+
+	//config.requireConfig.baseUrl = '../script/';
+
+	var r = require.config(config.requireConfig);
+	r(['jquery', 'global', 'socket', 'template'], function($, g, socket){
 		var tableTpl = $.template({
 				template: 'tr>td>button[type=button]{安装}+input[type=hidden value=%name%]^td[title=%name%]{%name%}+td[title=%url%]{%url%}'
 			})
