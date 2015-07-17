@@ -682,6 +682,7 @@ web.get('/data/reader', function(req, res){
 	var query = req.query || {}
 		, page
 		, size
+		, callback = query.callback
 		, handle = {}
 		;
 
@@ -700,9 +701,9 @@ web.get('/data/reader', function(req, res){
 	}
 
 	db.handle( handle ).then(function(rs){
-		rs = rs.result;
+		rs = JSON.stringify( rs.result );
 
-		res.send( JSON.stringify(rs) );
+		res.send( callback ? callback +'('+ rs +')' : rs );
 		res.end();
 	});
 });
@@ -710,6 +711,7 @@ web.get('/data/bookmark', function(req, res){
 	var query = req.query || {}
 		, page
 		, size
+		, callback = query.callback
 		, handle = {}
 		;
 
@@ -728,9 +730,9 @@ web.get('/data/bookmark', function(req, res){
 	}
 
 	db.handle( handle ).then(function(rs){
-		rs = rs.result;
+		rs = JSON.stringify( rs.result );
 
-		res.send( JSON.stringify(rs) );
+		res.send( callback ? callback +'('+ rs +')' : rs );
 		res.end();
 	});
 });
@@ -738,6 +740,7 @@ web.get('/data/favorite', function(req, res){
 	var query = req.query || {}
 		, page
 		, size
+		, callback = query.callback
 		, handle = {}
 		;
 
@@ -758,7 +761,7 @@ web.get('/data/favorite', function(req, res){
 	db.handle( handle ).then(function(rs){
 		rs = rs.result;
 
-		res.send( JSON.stringify(rs) );
+		res.send( callback ? callback +'('+ rs +')' : rs );
 		res.end();
 	});
 });

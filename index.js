@@ -137,6 +137,8 @@ require('./module/tag.js')(     web, db, socket, metro);    // 加载 tag 功能
 
 require('./module/reader.js')(  web, handle, socket, metro);    // 待读文字 模块
 
+require('./module/basedata.js');
+
 //console.log(metro);
 metro.push({
 	id: 'time'

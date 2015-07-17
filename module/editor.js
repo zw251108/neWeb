@@ -290,6 +290,7 @@ web.get('/data/editor', function(req, res){
 	var query = req.query || {}
 		, page
 		, size
+		, callback = query.callback
 		, handle = {}
 		;
 
@@ -308,14 +309,15 @@ web.get('/data/editor', function(req, res){
 	}
 
 	db.handle( handle ).then(function(rs){
-		rs = rs.result;
+		rs = JSON.stringify( rs.result );
 
-		res.send( JSON.stringify(rs) );
+		res.send( callback ? callback +'('+ rs +')' : rs );
 		res.end();
 	});
 });
 web.get('/data/code', function(req, res){
 	var id = req.query.id
+		, callback = req.query.callback
 		;
 
 	if( id ){
@@ -323,9 +325,9 @@ web.get('/data/code', function(req, res){
 			sql: Editor.Model.code
 			, data: [id]
 		}).then(function(rs){
-			rs = rs.result;
+			rs = JSON.stringify( rs.result[0] );
 
-			res.send( JSON.stringify(rs[0]) );
+			res.send( callback ? callback + '('+ rs +')' : rs );
 			res.end();
 		})
 	}

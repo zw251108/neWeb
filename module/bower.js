@@ -321,6 +321,7 @@ web.get('/data/bower', function(req, res){
 	var query = req.query || {}
 		, page
 		, size
+		, callback = query.callback
 		, handle = {}
 		;
 
@@ -339,9 +340,9 @@ web.get('/data/bower', function(req, res){
 	}
 
 	db.handle( handle ).then(function(rs){
-		rs = rs.result;
+		rs = JSON.stringify( rs.result );
 
-		res.send( JSON.stringify(rs) );
+		res.send( callback ? callback +'('+ rs +')' : rs );
 		res.end();
 	});
 });
