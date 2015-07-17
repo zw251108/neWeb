@@ -92,12 +92,16 @@ var db          = require('./db/db.js')
 //});
 
 web.get('data/tag', function(req, res){
+	var query = req.query || {}
+		, callback = query.callback
+		;
+
 	db.handle({
 		sql: Tag.Model.tag
 	}).then(function(rs){
-		rs = rs.result;
+		rs = JSON.stringify( rs.result );
 
-		res.send( JSON.stringify(rs) );
+		res.send( callback ? callback +'('+ rs + ')' : rs );
 		res.end();
 	});
 });
