@@ -1094,35 +1094,35 @@ socket.register({
 		var url = data.query.url;
 
 		if( url ){
-			db.handle({
-				sql: Reader.Model.bookmarkIsExist
-				, data: [url]
-			}).then( Reader.Handle.bookmarkIsExist ).then(function(rs){
-
-				if( rs ){
-					socket.emit('data', {
-						topic: 'reader/bookmark/add'
-						, error: ''
-						, msg: '数据已存在'
-					});
-					throw new Error(url +'，数据已存在');
-				}
-				else{
-					return Reader.crawler( url );
-				}
-			}).then( Reader.Handle.crawlerArticle ).catch(function(err){
-				console.log( err );
-			}).then(function( rs ){
-				return db.handle({
-					sql: Reader.Model.bookmarkAdd
-					, data: []
-				});
-			}).then(function(rs){
-				socket.emit('data', {
-					topic: 'reader/bookmark/add'
-					, info: {}
-				});
-			});
+			//db.handle({
+			//	sql: Reader.Model.bookmarkIsExist
+			//	, data: [url]
+			//}).then( Reader.Handle.bookmarkIsExist ).then(function(rs){
+			//
+			//	if( rs ){
+			//		socket.emit('data', {
+			//			topic: 'reader/bookmark/add'
+			//			, error: ''
+			//			, msg: '数据已存在'
+			//		});
+			//		throw new Error(url +'，数据已存在');
+			//	}
+			//	else{
+			//		return Reader.crawler( url );
+			//	}
+			//}).then( Reader.Handle.crawlerArticle ).catch(function(err){
+			//	console.log( err );
+			//}).then(function( rs ){
+			//	return db.handle({
+			//		sql: Reader.Model.bookmarkAdd
+			//		, data: []
+			//	});
+			//}).then(function(rs){
+			//	socket.emit('data', {
+			//		topic: 'reader/bookmark/add'
+			//		, info: {}
+			//	});
+			//});
 
 			getArticle(url, function(rs){
 
