@@ -55,19 +55,29 @@ require(['../config'], function(config){
 			})
 			, $favorPopup = $('#favorPopup').on('click', '#favorBookmark', function(){
 
-				var tags = $favorPopup.find('span.tag-checked').map(function(){
-					return this.innerHTML;
-				}).get().join();
+				var data = $favorForm.serializeArray()
+					, query = {}
+					;
 
-				if( tags !== '' ){
+				$.each(data, function(i, d){
+					if( d.name in query ){
+						query[d.name] += ','+ d.value;
+					}
+					else{
+						query[d.name] = d.value;
+					}
+				});
+
+				if( query.tags !== '' ){
+					query.id = query.bookmarkId;
+					query.tag_name = query.tags;
+					query.score = +query.score;
+
 					socket.emit('data', {
 						topic: 'reader/bookmark/favor'
-						, query: {
-							id: $bookmarkId.val()
-							, tag_name: tags
-						}
+						, query: query
 					});
-					$bookmark.find('#blogArt'+ $bookmarkId.val()).find('div.tagsArea').html( '<span class="tag tag-checked">'+ tags.split(',').join('</span><span class="tag tag-checked">') +'</span>' )
+					$bookmark.find('#blogArt'+ $bookmarkId.val()).find('div.tagsArea').html( '<span class="tag tag-checked">'+ query.tags.split(',').join('</span><span class="tag tag-checked">') +'</span>' );
 					$favorPopup.trigger('closeDialog').find('form')[0].reset();
 				}
 				else{
@@ -75,17 +85,32 @@ require(['../config'], function(config){
 					alert('请至少添加一个标签，以方便管理！');
 				}
 			}).on('click', '#addTag', function(){
-				var value = $tag.val();
+				var value = $tag.val()
+					, tags = $tags.val()
+					;
 				if( value !== '' ){
 					$tag.val('');
-					$favorPopup.find('div.tagsArea').append('<span class="tag tag-checked">'+ value +'</div>');
+					$favorPopup.find('div.tagsArea').prepend('<span class="tag tag-checked">'+ value +'</div>');
+					$tags.val( tags ? tags +',' + value : value);
 				}
 			}).on('click', '.tagsArea .tag', function(){
-				$(this).toggleClass('tag-checked');
+				var $that = $(this).toggleClass('tag-checked')
+					, value = this.innerHTML
+					, tags = $tags.val()
+					;
+
+				if( $that.hasClass('tag-checked') ){
+					$tags.val( tags ? tags +',' + value : value );
+				}
+				else{
+					$tags.val( tags ? (','+tags+',').replace(','+ value +',', '').replace(/^,/, '').replace(/,$/, '') : '' );
+				}
 			})
 			, $url = $('#url')
-			, $bookmarkId = $('#bookmarkId')
-			, $tag = $('#tag')
+			, $bookmarkId = $favorPopup.find('#bookmarkId')
+			, $favorForm = $favorPopup.find('#favorForm')
+			, $tag = $favorPopup.find('#tag')
+			, $tags = $favorPopup.find('#tags')
 			, tpl = $.template({
 				template: 'article#blogArt%Id%.article[data-id=%Id%]>a[href=%url% title=%url% target=_blank]>h3.article_title{%title%}' +
 				'^hr+a.icon.icon-checkbox%readStatus%[href=read title=%readTitle%]{%readText%}' +

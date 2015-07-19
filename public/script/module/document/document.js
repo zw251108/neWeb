@@ -55,8 +55,7 @@ define(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g, 
 			$curr.toggleClass('icon-right icon-down').next().slideToggle();
 
 			!$curr.data('codeMirror') && $curr.data('codeMirror', true).next().find('textarea').each(function(){
-				var mode = /brush:(.*)(?:\s|$)/.exec(this.className)[1];
-				code(this, mode, true);
+				code(this, 'dataset' in this ? this.dataset.codeType : this.getAttribute('data-code-type'), true);
 			});
 		});
 	})
