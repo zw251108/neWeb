@@ -3,7 +3,7 @@
  * */
 require(['../config'], function(config){
 	var r = require(config.requireConfig);
-	r(['jquery', 'global', 'socket', 'template'], function($, g, socket){
+	r(['jquery', 'global', 'socket', 'tag', config.dataSource.tag, 'template'], function($, g, socket, tag, tagsData){
 		var $bookmark = $('#bookmark').on('click', '.article > .icon-star', function(e){
 				e.preventDefault();
 
@@ -84,28 +84,29 @@ require(['../config'], function(config){
 					// todo 替换为自定义弹窗
 					alert('请至少添加一个标签，以方便管理！');
 				}
-			}).on('click', '#addTag', function(){
-				var value = $tag.val()
-					, tags = $tags.val()
-					;
-				if( value !== '' ){
-					$tag.val('');
-					$favorPopup.find('div.tagsArea').prepend('<span class="tag tag-checked">'+ value +'</div>');
-					$tags.val( tags ? tags +',' + value : value);
-				}
-			}).on('click', '.tagsArea .tag', function(){
-				var $that = $(this).toggleClass('tag-checked')
-					, value = this.innerHTML
-					, tags = $tags.val()
-					;
-
-				if( $that.hasClass('tag-checked') ){
-					$tags.val( tags ? tags +',' + value : value );
-				}
-				else{
-					$tags.val( tags ? (','+tags+',').replace(','+ value +',', '').replace(/^,/, '').replace(/,$/, '') : '' );
-				}
 			})
+			//	.on('click', '#addTag', function(){
+			//	var value = $tag.val()
+			//		, tags = $tags.val()
+			//		;
+			//	if( value !== '' ){
+			//		$tag.val('');
+			//		$favorPopup.find('div.tagsArea').prepend('<span class="tag tag-checked">'+ value +'</div>');
+			//		$tags.val( tags ? tags +',' + value : value);
+			//	}
+			//}).on('click', '.tagsArea .tag', function(){
+			//	var $that = $(this).toggleClass('tag-checked')
+			//		, value = this.innerHTML
+			//		, tags = $tags.val()
+			//		;
+			//
+			//	if( $that.hasClass('tag-checked') ){
+			//		$tags.val( tags ? tags +',' + value : value );
+			//	}
+			//	else{
+			//		$tags.val( tags ? (','+tags+',').replace(','+ value +',', '').replace(/^,/, '').replace(/,$/, '') : '' );
+			//	}
+			//})
 			, $url = $('#url')
 			, $bookmarkId = $favorPopup.find('#bookmarkId')
 			, $favorForm = $favorPopup.find('#favorForm')
@@ -157,6 +158,9 @@ require(['../config'], function(config){
 				}
 			})
 			;
+
+		tag( $.parseJSON( tagsData ) );
+		tag.setAdd( $favorPopup );
 
 		$('#add').on('click', function(){
 			$addPopup.trigger('showDialog');

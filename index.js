@@ -126,18 +126,16 @@ web.get('/', function(req, res){
 });
 
 //----- 加载模块 -----
-//require('./module/blog.js')(    web, db, socket, metro);  // 加载模块 blog
-require('./module/document.js')(web, db, socket, metro);    // 加载模块 document
-require('./module/editor.js')(  web, db, socket, metro);    // 加载模块 editor
-//require('./module/rss.js')(     web, db, socket, metro);    // 加载模块 rss
+require('./module/blog.js');        // 加载模块 blog
+require('./module/document.js');    // 加载模块 document
+require('./module/editor.js');      // 加载模块 editor
 
-require('./module/bower.js')(   web, db, socket, metro);    // 加载模块 bower
+require('./module/bower.js');       // 加载模块 bower
 
-require('./module/tag.js')(     web, db, socket, metro);    // 加载 tag 功能模块
+require('./module/reader.js');      // 加载模块 reader
 
-require('./module/reader.js')(  web, handle, socket, metro);    // 待读文字 模块
-
-require('./module/basedata.js');
+require('./module/tag.js');         // 加载模块 tag 功能
+require('./module/basedata.js');    // 加载模块 基础数据
 
 //console.log(metro);
 metro.push({

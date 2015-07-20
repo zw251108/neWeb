@@ -109,21 +109,21 @@ module.exports = {
 
 		if( typeof topic === 'string' ){
 			if( topic in EVENT_LIST ){
-				console.log(topic, ' 事件已存在！');
+				console.log('web socket: ', topic, ' 事件已存在！');
 				return;
 			}
 
 			EVENT_INDEX_LIST.push( topic );
 			EVENT_LIST[topic] = event;
 
-			console.log(topic, ' 事件已加载！')
+			console.log('web socket: ', topic, ' 事件已加载！')
 		}
 		else if( typeof topic === 'object' ){
 			event = topic;  // 当第一个参数是一个 JSON，放弃第二个参数
 
 			for( topic in event ) if( event.hasOwnProperty(topic) ){
 				if( topic in EVENT_LIST ){
-					console.log(topic, ' 事件已存在！');
+					console.log('web socket: ', topic, ' 事件已存在！');
 				}
 				else{
 					temp = event[topic];
@@ -132,7 +132,7 @@ module.exports = {
 						EVENT_INDEX_LIST.push( topic );
 						EVENT_LIST[topic] = event[topic];
 
-						console.log(topic, ' 事件已加载！');
+						console.log('web socket: ', topic, ' 事件已加载！');
 					}
 					else{
 						console.log(topic, '参数错误，不是一个函数！');

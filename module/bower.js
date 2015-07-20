@@ -392,161 +392,162 @@ socket.register({
 	}
 });
 
-module.exports = function(web, db, socket, metro){
-
-	web.get('/bower/', function(req, res){
-		var index = Bower.index;
-		db.query(index.sql, function(e, rs){
-			if( !e ){
-				res.send(tpl.html('module', {
-					title: '前端组件管理 Bower'
-					, modules: tpl.mainTpl({
-						id: 'bower', size: 'large', title: '前端组件管理 bower'
-						, toolbar: tpl.toolbarTpl([{
-							id: 'switch_dialog', icon: 'search', title: '搜索组件'
-						}]).join('')
-						, content: '<div class="wrap"><table class="lib_table">' +
-									'<thead>' +
-										'<tr>' +
-											'<th>组件名称</th>' +
-											'<th>版本</th>' +
-											'<th>CSS 文件路径</th>' +
-											'<th>JS 文件路径</th>' +
-											'<th>demo 页面</th>' +
-											'<th>组件来源</th>' +
-											'<th>组件主页</th>' +
-											'<th>标签</th>' +
-											'<th>收录时间</th>' +
-										'</tr>' +
-									'</thead>' +
-									'<tbody>'+ bowerTpl(rs).join('') +'</tbody>' +
-								'</table>' +
-							'</div>'
-					}).join('') + tpl.popupTpl([{
-						id: 'result', type: 'popup', size: 'big'
-							, content: '<form action="#" id="bowerSearch">' +
-								'<input class="input" type="text"/>' +
-								'<button class="btn icon icon-search" type="submit" value=""></button>' +
-							'</form>' +
-							'<div class="bower_resultList">' +
-								'<table><thead><tr><th></th><th>组件名称</th><th>组件来源</th></tr></thead><tbody></tbody></table>' +
-							'</div>'}, {
-						id: 'info', type: 'popup', size: 'big'
-					}]).join('')
-					, script: {
-						main: '../script/bower'
-						, src: '../script/lib/require.min.js'
-					}
-				}) );
-			}
-			else{
-				console.log('\n', 'db', '\n', index.sql, '\n', e.message);
-			}
-			res.end();
-		});
-	});
-
-	socket.register({
-		bower: function(socket, query){
-
-		}
-		, 'bower/editor/lib': function(socket){
-			db.query(Bower.index.sql, function(e, rs){
-				if( !e ){
-					socket.emit('data', {
-						topic: 'editor/lib'
-						, data: rs
-					});
-				}
-				else{
-					socket.emit('data', {
-						error: ''
-						, msg: ''
-					});
-					console.log('\n', 'db', '\n', Bower.index.sql, '\n', e.message);
-				}
-			})
-		}
-		, 'bower/search': function(socket, data){
-			bowerMethods.search(data.query.name, socket);
-		}
-		, 'bower/install': function(socket, data){
-			bower.commands.install([data.query.name], {save: true}, {interactive: true}).on('log', function(msg){
-				var data = {}
-					;
-				if( msg.level !== 'conflict' ){
-					data.topic = 'bower/info';
-					data.msg = {
-						level: msg.level
-						, id: msg.id
-						, message: msg.message
-					};
-				}
-				else{
-					data.topic = 'bower/install/prompts';
-					data.info = msg.data.picks.map(function(d, i){
-						var dependants = d.dependants;
-						d = d.endpoint;
-						return {
-							name: d.name
-							, version: d.target
-							, required: dependants.map(function(d, i){
-								var t = d.endpoint;
-								console.log({
-									name: t.name
-									, version: t.target
-								});
-								return {
-									name: t.name
-									, version: t.target
-								};
-							})
-						};
-					});
-				}
-
-				socket.emit('data', data);
-				console.dir(data);
-			}).on('prompt', function(prompts, callback) {
-
-				//socket.emit('data', {
-				//	topic: 'bower/install/prompts'
-				//	, msg: prompts
-				//});
-
-				//pickerCallback = callback;
-
-				console.log(prompts);
-			}).on('error', function(e){
-
-				socket.emit('data', {
-					error: ''
-					, msg: ''
-				});
-				console.log(e);
-			}).on('end', function(installed){
-				var k
-					, t
-					, info = []
-					;
-				for( k in installed ) if( installed.hasOwnProperty( k ) ){
-					t = installed[k].endpoint;
-
-					info.push({
-						name: t.name
-						, version: t.target
-					});
-				}
-
-				socket.emit('data', {
-					topic: 'bower/install/end'
-					, info: info
-				});
-				console.log(installed);
-			});
-		}
-		, 'bower/install/prompt': function(socket, data){
-			var answer = data.query.answer;
-		}
-	});
-};
+module.exports = Bower;
+//	= function(web, db, socket, metro){
+//
+//	web.get('/bower/', function(req, res){
+//		var index = Bower.index;
+//		db.query(index.sql, function(e, rs){
+//			if( !e ){
+//				res.send(tpl.html('module', {
+//					title: '前端组件管理 Bower'
+//					, modules: tpl.mainTpl({
+//						id: 'bower', size: 'large', title: '前端组件管理 bower'
+//						, toolbar: tpl.toolbarTpl([{
+//							id: 'switch_dialog', icon: 'search', title: '搜索组件'
+//						}]).join('')
+//						, content: '<div class="wrap"><table class="lib_table">' +
+//									'<thead>' +
+//										'<tr>' +
+//											'<th>组件名称</th>' +
+//											'<th>版本</th>' +
+//											'<th>CSS 文件路径</th>' +
+//											'<th>JS 文件路径</th>' +
+//											'<th>demo 页面</th>' +
+//											'<th>组件来源</th>' +
+//											'<th>组件主页</th>' +
+//											'<th>标签</th>' +
+//											'<th>收录时间</th>' +
+//										'</tr>' +
+//									'</thead>' +
+//									'<tbody>'+ bowerTpl(rs).join('') +'</tbody>' +
+//								'</table>' +
+//							'</div>'
+//					}).join('') + tpl.popupTpl([{
+//						id: 'result', type: 'popup', size: 'big'
+//							, content: '<form action="#" id="bowerSearch">' +
+//								'<input class="input" type="text"/>' +
+//								'<button class="btn icon icon-search" type="submit" value=""></button>' +
+//							'</form>' +
+//							'<div class="bower_resultList">' +
+//								'<table><thead><tr><th></th><th>组件名称</th><th>组件来源</th></tr></thead><tbody></tbody></table>' +
+//							'</div>'}, {
+//						id: 'info', type: 'popup', size: 'big'
+//					}]).join('')
+//					, script: {
+//						main: '../script/bower'
+//						, src: '../script/lib/require.min.js'
+//					}
+//				}) );
+//			}
+//			else{
+//				console.log('\n', 'db', '\n', index.sql, '\n', e.message);
+//			}
+//			res.end();
+//		});
+//	});
+//
+//	socket.register({
+//		bower: function(socket, query){
+//
+//		}
+//		, 'bower/editor/lib': function(socket){
+//			db.query(Bower.index.sql, function(e, rs){
+//				if( !e ){
+//					socket.emit('data', {
+//						topic: 'editor/lib'
+//						, data: rs
+//					});
+//				}
+//				else{
+//					socket.emit('data', {
+//						error: ''
+//						, msg: ''
+//					});
+//					console.log('\n', 'db', '\n', Bower.index.sql, '\n', e.message);
+//				}
+//			})
+//		}
+//		, 'bower/search': function(socket, data){
+//			bowerMethods.search(data.query.name, socket);
+//		}
+//		, 'bower/install': function(socket, data){
+//			bower.commands.install([data.query.name], {save: true}, {interactive: true}).on('log', function(msg){
+//				var data = {}
+//					;
+//				if( msg.level !== 'conflict' ){
+//					data.topic = 'bower/info';
+//					data.msg = {
+//						level: msg.level
+//						, id: msg.id
+//						, message: msg.message
+//					};
+//				}
+//				else{
+//					data.topic = 'bower/install/prompts';
+//					data.info = msg.data.picks.map(function(d, i){
+//						var dependants = d.dependants;
+//						d = d.endpoint;
+//						return {
+//							name: d.name
+//							, version: d.target
+//							, required: dependants.map(function(d, i){
+//								var t = d.endpoint;
+//								console.log({
+//									name: t.name
+//									, version: t.target
+//								});
+//								return {
+//									name: t.name
+//									, version: t.target
+//								};
+//							})
+//						};
+//					});
+//				}
+//
+//				socket.emit('data', data);
+//				console.dir(data);
+//			}).on('prompt', function(prompts, callback) {
+//
+//				//socket.emit('data', {
+//				//	topic: 'bower/install/prompts'
+//				//	, msg: prompts
+//				//});
+//
+//				//pickerCallback = callback;
+//
+//				console.log(prompts);
+//			}).on('error', function(e){
+//
+//				socket.emit('data', {
+//					error: ''
+//					, msg: ''
+//				});
+//				console.log(e);
+//			}).on('end', function(installed){
+//				var k
+//					, t
+//					, info = []
+//					;
+//				for( k in installed ) if( installed.hasOwnProperty( k ) ){
+//					t = installed[k].endpoint;
+//
+//					info.push({
+//						name: t.name
+//						, version: t.target
+//					});
+//				}
+//
+//				socket.emit('data', {
+//					topic: 'bower/install/end'
+//					, info: info
+//				});
+//				console.log(installed);
+//			});
+//		}
+//		, 'bower/install/prompt': function(socket, data){
+//			var answer = data.query.answer;
+//		}
+//	});
+//};

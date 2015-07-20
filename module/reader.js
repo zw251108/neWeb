@@ -10,6 +10,8 @@ var db          = require('./db/db.js')
 	, tpl       = require('./emmetTpl/tpl.js')
 	, emmetTpl  = require('./emmetTpl/emmetTpl.js').template
 
+	, tag       = require('./tag.js')
+
 	, readerTpl    = emmetTpl({
 		template: 'section#reader_%Id%.reader_section.section>a[href=%html_url% data-feed=%xml_url% data-id=%Id%]>h3.section_title{%name%}>span.icon.icon-plus^^hr+ul.reader_articleList'
 	})
@@ -59,6 +61,8 @@ var db          = require('./db/db.js')
 		}
 	})
 
+	, segment = require('./segment/segment.js')
+
 	, Url = require('url')
 
 	/**
@@ -71,8 +75,6 @@ var db          = require('./db/db.js')
 	 *  解析 HTML 结构
 	 * */
 	, Cheerio = require('cheerio')
-
-	, segment = require('./segment/segment.js')
 
 	, Promise = require('promise')
 
@@ -540,10 +542,10 @@ var db          = require('./db/db.js')
 						id: 'bookmark'
 						, title: '待读文章 bookmark'
 						, toolbar: '<li><a href="./" id="reader" class="icon icon-rss" title="返回订阅列表"></a></li>' +
-						'<li><a href="favorite" id="favorite" class="icon icon-star" title="收藏文章"></a></li>' +
-						tpl.toolbarTpl([{
-							id: 'add', icon: 'plus', title: '添加待读文章'
-						}])
+							'<li><a href="favorite" id="favorite" class="icon icon-star" title="收藏文章"></a></li>' +
+							tpl.toolbarTpl([{
+								id: 'add', icon: 'plus', title: '添加待读文章'
+							}])
 						, content: articleTpl(rs).join('')
 					}).join('') + tpl.popupTpl([{
 						id: 'addPopup', size: 'normal'
@@ -566,15 +568,7 @@ var db          = require('./db/db.js')
 										'<input name="score" type="radio" value="1" id="star1"><label for="star1" class="icon icon-star"></label>' +
 									'</div>' +
 								'</div>' +
-								'<div class="formGroup">' +
-									'<label class="label" for="tag">请输入标签</label>' +
-									'<input type="text" id="tag" class="input" placeholder="请输入标签" data-validator="tag"/><button id="addTag" class="btn" type="button">添加</button>' +
-								'</div>' +
-								'<div class="formGroup">' +
-									'<label class="label" for="tags">请选择标签</label>' +
-									'<div class="tagsArea"></div>' +
-									'<textarea id="tags" class="hidden" name="tags"></textarea>' +
-								'</div>' +
+								tag.View.tagFormGroup() +
 							'</form>'
 						, button: '<button type="button" id="favorBookmark" class="btn">确定</button>'
 					}])
@@ -593,8 +587,8 @@ var db          = require('./db/db.js')
 						id: 'bookmark'
 						, title: '收藏文章 favorite'
 						, toolbar: '<li><a href="./" id="reader" class="icon icon-rss" title="返回订阅列表"></a></li>' +
-						'<li><a href="bookmark" id="favorite" class="icon icon-bookmark" title="待读文章"></a></li>' +
-						tpl.toolbarTpl([{
+							'<li><a href="bookmark" id="favorite" class="icon icon-bookmark" title="待读文章"></a></li>' +
+							tpl.toolbarTpl([{
 							//id: 'add', icon: 'plus', title: '添加待读文章'}, {
 							id: 'filter', icon: 'filter', title: '过滤'
 						}])
@@ -612,7 +606,6 @@ var db          = require('./db/db.js')
 		}
 	}
 	;
-
 
 // 注册首页 metro 模块
 metro.push({
@@ -924,6 +917,8 @@ socket.register({
 					, data: [data.url, data.title, data.source, data.tag_name, data.url]
 				});
 			}).then(function(rs){
+				var data = rs.data;
+
 				rs= rs.result;
 
 				if( rs.insertId ){
@@ -1062,4 +1057,4 @@ socket.register({
 	}
 });
 
-module.exports = function(){};
+module.exports = Reader;

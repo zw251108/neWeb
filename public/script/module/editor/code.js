@@ -3,7 +3,7 @@
  * */
 require(['../config'], function(config){
 	var r = require.config(config.requireConfig);
-	r(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g, socket, codeArea){
+	r(['jquery', 'global', 'socket', 'codeEditor', 'tag', config.dataSource.tag, 'template'], function($, g, socket, codeArea, tag, tagsData){
 		var $editor = $('#editor')
 			, $form = $editor.find('#editorForm')
 			, $toolbar = $editor.find('.toolbar')
@@ -11,6 +11,7 @@ require(['../config'], function(config){
 			, $cssLib = $editor.find('#cssLib')
 			, $jsLib = $editor.find('#jsLib')
 
+			, $editorTitle = $('#editorTitle')
 			, html = $editor.find('#html')
 			, css = $editor.find('#css')
 			, js = $editor.find('#js')
@@ -156,10 +157,13 @@ require(['../config'], function(config){
 						, js: js.getValue()
 						, cssLib: $cssLib.val()
 						, jsLib: $jsLib.val()
+						, tags: $tags.val()
 					}
 				});
+
+				$editorTitle.html( $codeName.val() );
+
 				isEdit = false;
-				$savePopup.addClass('');
 			})
 			, $libPopup = $('#editorLib').on('click', 'dt input:checkbox', function(){
 				$(this).parents('dt').next().find('input:checkbox').prop('checked', this.checked);
@@ -192,7 +196,11 @@ require(['../config'], function(config){
 			, $alert = $('#alert')
 
 			, $codeName = $savePopup.find('#codeName')
+			, $tags = $('#tags')
 			;
+
+		tag( tagsData );
+		tag.setAdd( $savePopup );
 
 		$toolbar.on('click', '#save', function(){
 			$codeName.val( $editor.find('h3').html() );

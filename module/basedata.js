@@ -47,11 +47,12 @@ web.get('/data/province', function(req, res){
 	var query = req.query || {}
 		, callback = query.callback
 		;
+
 	db.handle({
 		sql: BaseData.Model.province
 	}).then(function(rs){
 		rs = JSON.stringify( rs.result );
-		console.log(rs, callback);
+
 		res.send( callback ? callback +'('+ rs +')' : rs );
 		res.end();
 	});
@@ -84,6 +85,7 @@ web.get('/data/district', function(req, res){
 		, city = query.city
 		, callback = query.callback
 		;
+
 	if( city ){
 
 		db.handle({
@@ -106,6 +108,7 @@ web.get('/data/town', function(req, res){
 		, district = query.district
 		, callback = query.callback
 		;
+
 	if( district ){
 
 		db.handle({
@@ -128,6 +131,7 @@ web.get('/data/village', function(req, res){
 		, town = query.town
 		, callback = query.callback
 		;
+
 	if( town ){
 
 		db.handle({
@@ -267,3 +271,5 @@ socket.register({
 		}
 	}
 });
+
+module.exports = BaseData;

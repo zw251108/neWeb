@@ -9,20 +9,29 @@ var db          = require('./db/db.js')
 	, emmetTpl  = require('./emmetTpl/emmetTpl.js').template
 
 	, tagTpl        = emmetTpl({
-		template: 'span.tag[data-tag-id=%tagId%]{tagName}'
+		template: 'span.tag[data-tag-id=%tagId%]{%tagName%}'
 	})
 	, tagAreaTpl    = emmetTpl({
 		template: 'div.tagArea'
 	})
 	, tagFormGroupTpl     = emmetTpl({
 		template: 'div.formGroup' +
-				'>label.label[for=tag]{请输入标签}' +
-				'+input#tag.input[type=text name=tag placeholder=请输入标签 data-validator=tag]' +
+				'>label.label[for=tags]{请设置标签}' +
+				'+div.tagInput' +
+				'>input#tag.input[type=text name=tag placeholder=请输入标签 data-validator=tag]' +
 				'+button#addTag.btn[type=button]{添加}' +
-			'^div.formGroup' +
-				'>label.label[for=tags]{请选择标签}' +
-				'+div.tagsArea' +
-				'textarea#tags.hidden[name=tags]'
+				'^div.tagsArea{%tagSpan%}' +
+				'+textarea#tags.hidden[name=tags]{%tags%}'
+		, filter: {
+			tags: function(d){
+				return d.tags_name || '';
+			}
+			, tagSpan: function(d){
+				return d.tags_name ? d.tags_name.split(',').map(function(d){
+					return '<span class="tag tag-checked">'+ d +'</span>';
+				}).join('') : '';
+			}
+		}
 	})
 
 	//, Event     = require('events').EventEmitter
@@ -57,31 +66,11 @@ var db          = require('./db/db.js')
 		 * @memberof    Tag
 		 * @desc    视图模板集合
 		 * */
-		, View: {}
+		, View: {
+			tagFormGroup: function(rs){
+				rs = rs || {};
 
-		, tag: 'select * from tag'
-		, 'tag/add':{
-			sql: 'insert into tag(name) select ? from dual where not exists (select * from tag where name like ?)'
-			, handle: function(data, rs){
-				var r;
-				if( rs.insertId ){
-					// todo
-				}
-				else{
-					// todo 数据库已存在该数据
-				}
-			}
-		}
-		, 'tag/num': {
-			sql: 'update tag set num=? where name=?'
-			, handle: function(data, rs){
-				var r;
-				if( rs.changedRows ){
-					// todo
-				}
-				else{
-					// todo 数据不存在
-				}
+				return tagFormGroupTpl(rs);
 			}
 		}
 	}
@@ -91,7 +80,7 @@ var db          = require('./db/db.js')
 //
 //});
 
-web.get('data/tag', function(req, res){
+web.get('/data/tag', function(req, res){
 	var query = req.query || {}
 		, callback = query.callback
 		;
@@ -186,15 +175,4 @@ socket.register({
 	}
 });
 
-module.exports = function(){
-	//var editor = Tag;
-	//
-	//socket.register({
-	//    'tag': function(){
-	//
-	//    }
-	//	, 'tag/add': function(){
-	//
-	//	}
-	//});
-};
+module.exports = Tag;

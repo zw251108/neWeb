@@ -135,4 +135,4 @@ socket.register({
 	}
 });
 
-module.exports = function(){};
+module.exports = Document;

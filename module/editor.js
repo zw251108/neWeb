@@ -10,6 +10,8 @@ var db          = require('./db/db.js')
 	, tpl       = require('./emmetTpl/tpl.js')
 	, emmetTpl  = require('./emmetTpl/emmetTpl.js').template
 
+	, tag       = require('./tag.js')
+
 	, codeTpl       = emmetTpl({
 		template: 'a[href=code?id=%Id%]' +
 				'>article.article.editor_article[data-tagsid=%tagsId%]' +
@@ -22,7 +24,7 @@ var db          = require('./db/db.js')
 		}
 	})
 	, codeEditTpl   = emmetTpl({
-		template: 'h3.editor_title{%name%}' +
+		template: 'h3#editorTitle.editor_title{%name%}' +
 			'+form#editorForm.editor_form[action=result method=post target=result]' +
 				'>input#id[type=hidden name=id value=%Id%]' +
 				'+input#cssLib[type=hidden name=css_lib value=%css_lib%]' +
@@ -57,8 +59,8 @@ var db          = require('./db/db.js')
 			, editorCount: 'select count(*) as count from editor where status=1'
 			, editorPage: 'select editor.Id,editor.name,preview,tags_id,tags_name,width,height from editor,image where status=1 and editor.preview=image.src order by editor.Id limit ?,?'
 			, code: 'select Id,name,tags_id,tags_name,css_lib,js_lib,html,css,js from editor where Id=?'
-			, codeEdit: 'update editor set name=?,html=?,css=?,js=?,css_lib=?,js_lib=? where Id=?'
-			, codeSave: 'insert into editor(status,html,css,js,css_lib,js_lib,name,preview,create_time) values(1,?,?,?,?,?,?,\'../image/default/no-pic.png\',now())'
+			, codeEdit: 'update editor set name=?,html=?,css=?,js=?,css_lib=?,js_lib=?,tags_name=? where Id=?'
+			, codeSave: 'insert into editor(status,html,css,js,css_lib,js_lib,name,preview,create_time,tags_name) values(1,?,?,?,?,?,?,\'../image/default/no-pic.png\',now(),?)'
 		}
 
 		/**
@@ -104,6 +106,7 @@ var db          = require('./db/db.js')
 				});
 			}
 			, code: function(rs){
+
 				return tpl.html('module', {
 					title: '前端编辑器 Editor'
 					, modules: tpl.mainTpl({
@@ -120,30 +123,22 @@ var db          = require('./db/db.js')
 						, content: codeEditTpl(rs).join('')
 					}).join('') + tpl.popupTpl([{
 						id: 'editorLib',    size: 'normal'
-						, content: '<dl class="list-tree" id="libList"></dl>'
-						, button: '<button type="button" id="" class="btn">确定</button>'}, {
+							, content: '<dl class="list-tree" id="libList"></dl>'
+							, button: '<button type="button" id="" class="btn">确定</button>'}, {
 						id: 'editorSave',   size: 'normal'
-						, content: '<form id="saveForm">' +
-								'<div class="formGroup">' +
-									'<label class="label" for="codeName">请输入名称</label>' +
-									'<input type="text" id="codeName" class="input" placeholder="请输入标题" value="%name%"  data-validator="title"/>' +
-								'</div>' +
-								'<div class="formGroup">' +
-									'<label class="label" for="tag">请输入标签</label>' +
-									'<input type="text" id="tag" class="input" placeholder="请输入标签" data-validator="tag"/><button id="addTag" class="btn" type="button">添加</button>' +
-								'</div>' +
-								'<div class="formGroup">' +
-									'<label class="label" for="tags">请选择标签</label>' +
-									'<div class="tagsArea"></div>' +
-									'<textarea id="tags" class="hidden" name="tags"></textarea>' +
-								'</div>' +
-								'<div class="formGroup">' +
-									'<label class="label" for="more">更多设置</label>' +
-									'<input type="checkbox" id="more" class="hidden" name="more"/>' +
-									'<span class="icon icon-checkbox">更多设置</span>' +
-								'</div>' +
-							'</form>'
-						, button: '<button type="button" id="codeSave" class="btn">保存</button>'}, {
+							, content: '<form id="saveForm">' +
+									'<div class="formGroup">' +
+										'<label class="label" for="codeName">请输入名称</label>' +
+										'<input type="text" id="codeName" class="input" placeholder="请输入标题" value="%name%"  data-validator="title"/>' +
+									'</div>' +
+									tag.View.tagFormGroup(rs) +
+									'<div class="formGroup">' +
+										'<label class="label" for="more">更多设置</label>' +
+										'<input type="checkbox" id="more" class="hidden" name="more"/>' +
+										'<span class="icon icon-checkbox">更多设置</span>' +
+									'</div>' +
+								'</form>'
+							, button: '<button type="button" id="codeSave" class="btn">保存</button>'}, {
 						id: 'alert',    size: 'small', content: '<div class="msg" id="alertContent"></div>'
 						, button: '<button type="button" id="" class="btn">确定</button>'
 					}]).join('')
@@ -400,7 +395,7 @@ socket.register({
 			, id = query.id || ''
 			;
 
-		handleData.push.call(handleData, query.html, query.css, query.js, query.cssLib, query.jsLib);
+		handleData.push.call(handleData, query.html, query.css, query.js, query.cssLib, query.jsLib, query.tags);
 
 		if( id !== '0' ){
 			handle.sql = Editor.Model.codeEdit;
@@ -431,4 +426,4 @@ socket.register({
 	}
 });
 
-module.exports = function(){};
+module.exports = Editor;

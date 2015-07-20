@@ -28,5 +28,6 @@ define({
 	}
 	, dataSource: {
 		json: 'text!../data/example'
+		, tag: 'text!../data/tag'
 	}
 });
