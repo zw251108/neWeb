@@ -32,36 +32,6 @@ var fs = require('fs')
 	//----- 自定义模块 -----
 	, tpl           = require('./module/emmetTpl/tpl.js') // 模板库
 	, metro         = require('./module/metro.js') // 首页模块
-
-	/**
-	 *@param {object} args
-	 * */
-	, handle = function(args){
-
-		if( args && typeof args === 'object' && args.sql ){
-
-			if( args.db ){
-				db.query(args.sql, args.db, function(e, rs){
-					if( !e ){
-						args.succ && args.succ( rs );
-					}
-					else{
-						args.error ? args.error( e ) : console.log( e );
-					}
-				});
-			}
-			else{
-				db.query(args.sql, function(e, rs){
-					if( !e ){
-						args.succ && args.succ( rs );
-					}
-					else{
-						args.error ? args.error( e ) : console.log(db, '\n', args.sql, '\n', e.message);
-					}
-				});
-			}
-		}
-	}
 	;
 
 //----- 重置 manifest 版本代号 -----
@@ -76,17 +46,17 @@ web.use( cookieParser() );
 web.use( logger('dev') );
 
 // 文件上传路径
-web.use(multer({
+web.use( multer({
 	dest: CONFIG.web.uploadDir
-}));
+}) );
 // session 设置
-web.use(session({
+web.use( session({
 	store:      sessionStore
 	, secret:   CONFIG.web.cookieSecret
 	, key:      CONFIG.web.cookieKey
 	, resave:   true
 	, saveUninitialized: true
-}));
+}) );
 
 //----- 静态资源 重定向 -----
 web.use('/cache.manifest', express.static(__dirname + '/public/cache.manifest') );  // 离线缓存配置文件
@@ -125,19 +95,6 @@ web.get('/', function(req, res){
 	res.end();
 });
 
-//----- 加载模块 -----
-require('./module/blog.js');        // 加载模块 blog
-require('./module/document.js');    // 加载模块 document
-require('./module/editor.js');      // 加载模块 editor
-
-require('./module/bower.js');       // 加载模块 bower
-
-require('./module/reader.js');      // 加载模块 reader
-
-require('./module/tag.js');         // 加载模块 tag 功能
-require('./module/basedata.js');    // 加载模块 基础数据
-
-//console.log(metro);
 metro.push({
 	id: 'time'
 	, type: 'metro'
@@ -162,9 +119,24 @@ metro.push({
 	'</div>'
 });
 
+/**
+ * 加载模块
+ * */
+require('./module/blog.js');        // 加载模块 blog
+require('./module/document.js');    // 加载模块 document
+require('./module/editor.js');      // 加载模块 editor
 
+require('./module/bower.js');       // 加载模块 bower
+
+require('./module/reader.js');      // 加载模块 reader
+
+require('./module/tag.js');         // 加载模块 tag 功能
+require('./module/basedata.js');    // 加载模块 基础数据
+
+//----- 后台管理 -----
 require('./admin/tag.js');
 
+//----- Web 服务器 -----
 webServer = web.listen( CONFIG.web.port );
 console.log('Web Server is listening...');
 

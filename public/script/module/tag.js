@@ -10,21 +10,21 @@ define(['jquery', 'socket', 'template'], function($, socket, tpl){
 			template: 'span.tag[data-tag-id=%Id%]{%name%}'
 		})
 		;
-	socket.emit('data', {
-		topic: 'tag'
-		, receive: 'getTagData'
-	});
+	//socket.emit('data', {
+	//	topic: 'tag'
+	//	, receive: 'getTagData'
+	//});
 
-	socket.on('getTagData', function(data){
-		Tag.data = data;
-	}).on('addTag', function(){
-		socket.emit('addTag', {
-			name: ''
-		});
-	});
+	//socket.on('getTagData', function(data){
+	//	Tag.data = data;
+	//}).on('addTag', function(){
+	//	socket.emit('addTag', {
+	//		name: ''
+	//	});
+	//});
 
 	socket.register({
-		'tag/add': function(socket, data){
+		'tag/add': function(data){
 			var id;
 
 			if( 'error' in data ){
@@ -36,7 +36,7 @@ define(['jquery', 'socket', 'template'], function($, socket, tpl){
 				// todo
 			}
 		}
-		, 'tag/increase': function(socket, data){
+		, 'tag/increase': function(data){
 
 			if( 'error' in data ){
 

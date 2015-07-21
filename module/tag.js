@@ -113,13 +113,13 @@ socket.register({
 				topic: 'tag/add'
 			}
 			, query = data.query || {}
-			, name = query.tagName
+			, name = query.name
 			;
 
 		if( name ){
 			db.handle({
 				sql: Tag.Model.tagAdd
-				, data: [name]
+				, data: [name, name]
 			}).then(function(rs){
 				rs = rs.result;
 

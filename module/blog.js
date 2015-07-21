@@ -1,16 +1,11 @@
 'use strict';
 
-var Blog = {
-		index: {
-			sql: 'select Id,title,datetime,tags_id,tags_name from blog where status=1 order by Id desc'
-		}
-		, detail: {
-			sql: 'select Id,title,content,datetime,tags_id,tags_name from blog where Id=?'
-			, handler: function(rs){
-				return rs[0];
-			}
-		}
-	}
+var db          = require('./db/db.js')
+	, web       = require('./web/web.js')
+	, socket    = require('./socket/socket.js')
+	, error     = require('./error/error.js')
+
+	, metro     = require('./metro.js')
 
 	, tpl           = require('./emmetTpl/tpl.js')
 	, emmetTpl      = require('./emmetTpl/emmetTpl.js').template
@@ -43,24 +38,39 @@ var Blog = {
 
 		}
 	})
-	;
 
-module.exports = function(web, db, socket, metro){
-	var blog = Blog;
+	/**
+	 * @namespace   Blog
+	 * */
+	, Blog = {
+		/**
+		 * @namespace   Model
+		 * @memberof    Blog
+		 * @desc    业务相关 sql 语句集合
+		 * */
+		Model: {
+			blog: 'select Id,title,datetime,tags_id,tags_name from blog where status=1 order by Id desc'
+			, blogPage: 'select Id,title,datetime,tags_id,tags_name from blog where status=1 limit ?,? order by Id desc'
+			, 'blogDetail': 'select Id,title,content,datetime,tags_id,tags_name from blog where Id=?'
+		}
 
-	metro.push({
-		id: 'blog'
-		, type: 'metro'
-		, size: 'small'
-		, title: '博客 blog'
-	});
+		/**
+		 * @namespace   Handler
+		 * @memberof    Blog
+		 * @desc    数据处理方法集合
+		 * */
+		, Handler: {}
 
-	web.get('/blog/', function(req, res){
-		var index = blog.index;
+		/**
+		 * @namespace   View
+		 * @memberof    Blog
+		 * @desc    视图模板集合
+		 * */
+		, View: {
+			blog: function(rs){
+				rs = rs.result;
 
-		db.query(index.sql, function(e, rs){
-			if( !e ){
-				res.send(tpl.html('module', {
+				return tpl.html('module', {
 					title: '博客 Blog'
 					, modules: tpl.mainTpl({
 						id: 'blog'
@@ -71,45 +81,143 @@ module.exports = function(web, db, socket, metro){
 						main: '../script/module/blog/index'
 						, src: '../script/lib/require.min.js'
 					}
-				}) );
+				});
 			}
-			else{
-				console.log('\n', 'db', '\n', index.sql, '\n', e.message);
+			, blogDetail: function(rs){
+				rs = rs.result[0];
+
+				return tpl.html('module', {
+					title: '博客 Blog'
+					, modules: tpl.mainTpl({
+						id: 'blog'
+						, size: 'large'
+						, title: '博客 blog'
+						, content: articleDetailTpl(rs).join('')
+					}).join('')
+					, script: {
+						main: '../script/module/blog/index'
+						, src: '../script/lib/require.min.js'
+					}
+				});
 			}
+		}
+		, index: {
+			sql: 'select Id,title,datetime,tags_id,tags_name from blog where status=1 order by Id desc'
+		}
+		, detail: {
+			sql: 'select Id,title,content,datetime,tags_id,tags_name from blog where Id=?'
+			, handler: function(rs){
+				return rs[0];
+			}
+		}
+	}
+	;
+
+//metro.push({
+//	id: 'blog'
+//	, type: 'metro'
+//	, size: 'small'
+//	, title: '博客 blog'
+//});
+
+web.get('/blog/', function(req, res){
+	var query = req.query || {}
+		, page = query.page || 1
+		, size = query.size || 20
+		;
+
+	page = page < 1 ? 1 : page;
+	size = size < 1 ? 20 : size;
+
+	db.handle({
+		sql: Blog.Model.blogPage
+		, data: [(page -1) * size, page * size]
+	}).then( Blog.View.reader ).then(function(html){
+		res.send( html );
+		res.end();
+	});
+});
+web.get('/blog/detail', function(req, res){
+	var id = req.query.id || ''
+		;
+
+	if( id ){
+		db.handle({
+			sql: Blog.Model.blogDetail
+			, data: [id]
+		}).then( Blog.View.blogDetail ).then(function(html){
+			res.send( html );
 			res.end();
 		});
-	});
-	web.get('/blog/detail', function(req, res){
-		var id = req.query.id || ''
-			, detail = blog.detail
+	}
+	else{
+		res.end();
+	}
+});
+
+socket.register({
+	blog: function(socket, data){
+		var query = data.query || {}
+			, page
+			, size
+			, handle = {}
 			;
+
+		if( 'page' in query ){
+			page = query.page || 1;
+			size = query.size || 20;
+
+			page = page < 1 ? 1 : page;
+			size = size < 1 ? 20 : size;
+
+			handle.sql = Blog.Model.blogPage;
+			handle.data = [(page -1)*size, page*size]
+		}
+		else{
+			handle.sql = Blog.Model.blog;
+		}
+
+		db.handle( handle ).then(function(rs){
+			rs = rs.result;
+
+			socket.emit('data', {
+				topic: 'blog'
+				, data: rs
+			});
+		});
+	}
+	, 'blog/detail': function(socket, data){
+		var send = {
+				topic: 'blog/detail'
+			}
+			, id = data.query.id
+			;
+
 		if( id ){
-			db.query(detail.sql, [id], function(e, rs){
-				if( !e ){
-					res.send(tpl.html('module', {
-						title: '博客 Blog'
-						, modules: tpl.mainTpl({
-							id: 'blog'
-							, size: 'large'
-							, title: '博客 blog'
-							, content: articleDetailTpl(rs).join('')
-						}).join('')
-						, script: {
-							main: '../script/module/blog/index'
-							, src: '../script/lib/require.min.js'
-						}
-					}) );
-				}
-				else{
-					console.log('\n', 'db', '\n', detail.sql, '\n', e.message);
-				}
-				res.end();
+			db.handle({
+				sql: Blog.Model.blogDetail
+				, data: [id]
+			}).then(function(rs){
+				rs = rs.result;
+
+				send.info = rs[0];
+
+				socket.emit('data', send);
 			});
 		}
 		else{
-			res.end();
+			send.error = '';
+			send.msg = '缺少参数';
+
+			socket.emit('data', send);
 		}
-	});
+	}
+});
+
+module.exports = function(web, db, socket, metro){
+	var blog = Blog;
+
+
 
 	socket.register({
 		blog: function(socket){
