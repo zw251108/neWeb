@@ -201,6 +201,7 @@ require(['../config'], function(config){
 
 		tag( tagsData );
 		tag.setAdd( $savePopup );
+		//$savePopup.find('')
 
 		$toolbar.on('click', '#save', function(){
 			$codeName.val( $editor.find('h3').html() );

@@ -131,7 +131,7 @@ var db          = require('./db/db.js')
 										'<label class="label" for="codeName">请输入名称</label>' +
 										'<input type="text" id="codeName" class="input" placeholder="请输入标题" value="%name%"  data-validator="title"/>' +
 									'</div>' +
-									tag.View.tagFormGroup(rs) +
+									tag.View.tagEditor(rs) +
 									'<div class="formGroup">' +
 										'<label class="label" for="more">更多设置</label>' +
 										'<input type="checkbox" id="more" class="hidden" name="more"/>' +

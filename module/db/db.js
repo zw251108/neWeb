@@ -42,6 +42,13 @@ db.handle = function(query){
 			reject( new Error('缺少 SQL 语句') );
 		}
 	});
+	// todo 添加错误回调函数
+
+	//.then(function(rs){
+	//
+	//}, function(err){
+	//	console.log(err);
+	//});
 };
 
 module.exports = db;

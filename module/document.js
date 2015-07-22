@@ -35,6 +35,7 @@ var db          = require('./db/db.js')
 		 * */
 		Model: {
 			document: 'select title,content,section_title from document order by section_id,`order`'
+			, documentSection: 'select title,content,section_title from document where section_id=? order by `order`'
 		}
 
 		/**
@@ -108,6 +109,33 @@ web.get('/document/', function(req, res){
 		res.send( html );
 		res.end();
 	})
+});
+
+web.get('/data/document/', function(req, res){
+	var query = req.query || {}
+		, sectionId
+		, callback = query.callback
+		, handle = {}
+		;
+
+	if( 'sectionId' in query ){
+
+		// todo 按章节获取数据
+		sectionId = query.sectionId;
+
+		handle.sql = Document.Model.documentSection;
+		handle.data = [sectionId];
+	}
+	else{
+		handle.sql = Document.Model.document;
+	}
+
+	db.handle( handle).then( Document.Handler.document ).then(function(rs){
+		rs = JSON.stringify( rs );
+
+		res.send( callback ? callback +'('+ rs +')' : rs );
+		res.end();
+	});
 });
 
 socket.register({

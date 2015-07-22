@@ -1,7 +1,8 @@
 /**
  * @module  tag
+ * @desc    标签 Tag 相关操作
  * */
-//----- 标签数据 Tag -----
+//-----  -----
 define(['jquery', 'socket', 'template'], function($, socket, tpl){
 	var Tag = function(tagsData){
 
@@ -85,6 +86,7 @@ define(['jquery', 'socket', 'template'], function($, socket, tpl){
 			}
 		});
 	};
+	Tag.tagTpl = tagTpl;
 
 	return Tag;
 });

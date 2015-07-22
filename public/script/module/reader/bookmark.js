@@ -43,6 +43,10 @@ require(['../config'], function(config){
 			, $addPopup = $('#addPopup').on('click', '#addBookmark', function(){
 
 				if( $url.val() ){
+					$bookmark.find('.module_content').prepend('<article class="article" data-target="'+ $url.val() +'">' +
+							'<div class="loading loading-chasing"></div>' +
+						'</article>');
+
 					socket.emit('data', {
 						topic: 'reader/bookmark/add'
 						, query: {
@@ -175,7 +179,8 @@ require(['../config'], function(config){
 				else{
 					data = data.info;
 					data.Id = data.id;
-					$bookmark.find('.module_content').prepend( tpl(data) )
+
+					$bookmark.find('.module_content article.article[data-target="'+ data.url +'"]').replaceWith( tpl(data) );
 				}
 			}
 			, 'reader/bookmark/read': function(data){

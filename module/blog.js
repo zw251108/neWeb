@@ -14,28 +14,36 @@ var db          = require('./db/db.js')
 		template:'article#blogArt%Id%.article>a[href=detail?id=%Id%]>h3.article_title{%title%}' +
 		'^hr+time.article_date[pubdate=pubdate datetime=%datetime%]{%datetime%}+div.tagsArea{%tags%}'
 		, filter: {
-			//tags: function(d){
-			//	var data = []
-			//		, tagsId = (d.tags_id || '').split(',')
-			//		, tagsName = (d.tags_name || '').split(',')
-			//		;
-			//
-			//	$.each(tagsId, function(i, d){
-			//		data.push({
-			//			Id: d
-			//			, name: tagsName[i]
-			//		});
-			//	});
-			//
-			//	return tagTpl(data).join('');
-			//}
+			tags: function(d){
+				//var data = []
+				//	, tagsId = (d.tags_id || '').split(',')
+				//	, tagsName = (d.tags_name || '').split(',')
+				//	;
+				//
+				//$.each(tagsId, function(i, d){
+				//	data.push({
+				//		Id: d
+				//		, name: tagsName[i]
+				//	});
+				//});
+				//
+				//return tagTpl(data).join('');
+
+				return d.tags_name ? d.tags_name.split(',').map(function(d){
+					return '<span class="tag">' + d +'</span>';
+				}).join('') : '';
+			}
 		}
 	})
 	, articleDetailTpl = emmetTpl({
 		template: 'article.article>h3.article_title{%title%}+div.article_content{%content%}+hr' +
 		'+time.article_date[pubdate=pubdate datetime=%datetime%]{%datetime%}+div.tagsArea{%tags%}'
 		, filter: {
-
+			tags: function(d){
+				return d.tags_name ? d.tags_name.split(',').map(function(d){
+					return '<span class="tag">' + d +'</span>';
+				}).join('') : '';
+			}
 		}
 	})
 
@@ -50,7 +58,7 @@ var db          = require('./db/db.js')
 		 * */
 		Model: {
 			blog: 'select Id,title,datetime,tags_id,tags_name from blog where status=1 order by Id desc'
-			, blogPage: 'select Id,title,datetime,tags_id,tags_name from blog where status=1 limit ?,? order by Id desc'
+			, blogPage: 'select Id,title,datetime,tags_id,tags_name from blog where status=1 order by Id desc limit ?,?'
 			, 'blogDetail': 'select Id,title,content,datetime,tags_id,tags_name from blog where Id=?'
 		}
 
@@ -101,15 +109,6 @@ var db          = require('./db/db.js')
 				});
 			}
 		}
-		, index: {
-			sql: 'select Id,title,datetime,tags_id,tags_name from blog where status=1 order by Id desc'
-		}
-		, detail: {
-			sql: 'select Id,title,content,datetime,tags_id,tags_name from blog where Id=?'
-			, handler: function(rs){
-				return rs[0];
-			}
-		}
 	}
 	;
 
@@ -128,11 +127,11 @@ web.get('/blog/', function(req, res){
 
 	page = page < 1 ? 1 : page;
 	size = size < 1 ? 20 : size;
-
+	                                  console.log(123123)
 	db.handle({
 		sql: Blog.Model.blogPage
 		, data: [(page -1) * size, page * size]
-	}).then( Blog.View.reader ).then(function(html){
+	}).then( Blog.View.blog ).then(function(html){
 		res.send( html );
 		res.end();
 	});
@@ -214,65 +213,66 @@ socket.register({
 	}
 });
 
-module.exports = function(web, db, socket, metro){
-	var blog = Blog;
-
-
-
-	socket.register({
-		blog: function(socket){
-			var index = blog.index;
-
-			db.query(index.sql, function(e, rs){
-				if( !e ){
-					socket.emit('data', {
-						topic: 'blog'
-						, data: rs
-					});
-				}
-				else{
-					socket.emit('data', {
-						error: ''
-						, msg: ''
-					});
-					console.log('\n', 'db', '\n', index.sql, '\n', e.message);
-				}
-			});
-		}
-		, 'blog/detail': function(socket, data){
-		    var id = data.query.id
-			    , detail = blog.detail
-			    ;
-
-			if( id ){
-				db.query(detail.sql, [id], function(e, rs){
-					if( !e ){
-						rs = detail.handler( rs );
-						socket.emit('data', {
-							topic: 'blog/detail'
-							, info: rs
-						});
-					}
-					else{
-						socket.emit('data', {
-							error: ''
-							, msg: ''
-						});
-						console.log('\n', 'db', '\n', detail.sql, '\n', e.message);
-					}
-				});
-			}
-			else{
-				socket.emit('data', {
-					error: ''
-					, msg: ''
-				});
-				console.log('\n', 'socket blog/detail', '\n', 'no id');
-			}
-		}
-	});
-
-	web.get('/admin/blog', function(req, res){  // 后台管理 blog 模块
-
-	});
-};
+module.exports = Blog;
+//	function(web, db, socket, metro){
+//	var blog = Blog;
+//
+//
+//
+//	socket.register({
+//		blog: function(socket){
+//			var index = blog.index;
+//
+//			db.query(index.sql, function(e, rs){
+//				if( !e ){
+//					socket.emit('data', {
+//						topic: 'blog'
+//						, data: rs
+//					});
+//				}
+//				else{
+//					socket.emit('data', {
+//						error: ''
+//						, msg: ''
+//					});
+//					console.log('\n', 'db', '\n', index.sql, '\n', e.message);
+//				}
+//			});
+//		}
+//		, 'blog/detail': function(socket, data){
+//		    var id = data.query.id
+//			    , detail = blog.detail
+//			    ;
+//
+//			if( id ){
+//				db.query(detail.sql, [id], function(e, rs){
+//					if( !e ){
+//						rs = detail.handler( rs );
+//						socket.emit('data', {
+//							topic: 'blog/detail'
+//							, info: rs
+//						});
+//					}
+//					else{
+//						socket.emit('data', {
+//							error: ''
+//							, msg: ''
+//						});
+//						console.log('\n', 'db', '\n', detail.sql, '\n', e.message);
+//					}
+//				});
+//			}
+//			else{
+//				socket.emit('data', {
+//					error: ''
+//					, msg: ''
+//				});
+//				console.log('\n', 'socket blog/detail', '\n', 'no id');
+//			}
+//		}
+//	});
+//
+//	web.get('/admin/blog', function(req, res){  // 后台管理 blog 模块
+//
+//	});
+//};

@@ -14,7 +14,7 @@ var db          = require('./db/db.js')
 	, tagAreaTpl    = emmetTpl({
 		template: 'div.tagArea'
 	})
-	, tagFormGroupTpl     = emmetTpl({
+	, tagEditorTpl  = emmetTpl({
 		template: 'div.formGroup' +
 				'>label.label[for=tags]{请设置标签}' +
 				'+div.tagInput' +
@@ -47,7 +47,7 @@ var db          = require('./db/db.js')
 		 * @desc    业务相关 sql 语句集合
 		 * */
 		Model: {
-			tag: 'select * from tag'
+			tag: 'select name,num from tag order by num'
 			, tagAdd: 'insert into tag(name) select ? from dual where not exists (select * from tag where name like ?)'
 			, tagIncrease: 'update tag set num=num+? where name=?'
 		}
@@ -67,14 +67,36 @@ var db          = require('./db/db.js')
 		 * @desc    视图模板集合
 		 * */
 		, View: {
-			tagFormGroup: function(rs){
+			tagEditor: function(rs){
 				rs = rs || {};
 
-				return tagFormGroupTpl(rs);
+				return tagEditorTpl(rs);
 			}
 		}
+
+		, data: []
+		, index: {}
 	}
 	;
+
+db.handle({
+	sql: Tag.Model.tag
+}).then(function(rs){
+	rs = rs.result;
+
+	var index = {}
+		;
+
+	rs.forEach(function(d, i){
+		index[d.name] = i;
+	});
+
+	Tag.data = rs;
+	Tag.index = index;
+
+	//console.log(rs)
+	//console.log(index)
+});
 
 //tag.on('data', function(topic, next, args, data){
 //
@@ -84,6 +106,8 @@ web.get('/data/tag', function(req, res){
 	var query = req.query || {}
 		, callback = query.callback
 		;
+
+	// todo 返回 Tag.data ?
 
 	db.handle({
 		sql: Tag.Model.tag
@@ -96,7 +120,10 @@ web.get('/data/tag', function(req, res){
 });
 
 socket.register({
-	tag: function(socket, data){
+	tag: function(socket){
+
+		// todo 返回 Tag.data
+
 		db.handle({
 			sql: Tag.Model.tag
 		}).then(function(rs){
@@ -163,6 +190,11 @@ socket.register({
 					send.info = {
 						name: name
 					};
+				}
+
+				// 标签数量添加
+				if( name in Tag.index ){
+					Tag.data[Tag.index[name]] += 1;
 				}
 			});
 		}

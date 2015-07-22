@@ -380,19 +380,30 @@ var db          = require('./db/db.js')
 					, url = result.url
 					, html = res.text
 					, charset = res.charset
+
+					, urlResult = Url.parse(url)
+					, source = urlResult.protocol + '//' + urlResult.host
+
 					, $ , $main
 					, title , content
+
 					, segmentResult = []
 					, indexCache = {}
 					, filterResult = []
+
 					, prefix = '_' + (+new Date())
-					, urlResult = Url.parse(url)
-					, source = urlResult.protocol + '//' + urlResult.host
-					, charExpr = /^[a-z]$/i
+					, index
+
 					, j, temp, w, p
+
+					, tagsData = tag.data || []
+					, tagsIndex = tag.index || {}
+					, tagsRs
+
 					, rs = null
 					;
-				console.log(charset, html, source);
+				//console.log(tagsData, tagsIndex);
+				//console.log(charset, html, source);
 
 				if( !charset || charset.toUpperCase() !== 'UTF-8' ){
 					// todo 转码：将 GBK 转成 UTF-8
@@ -408,6 +419,7 @@ var db          = require('./db/db.js')
 					// 对标题进行分词
 					segmentResult = segment.doSegment(title);
 
+					// todo 根据不同网站 获取不同内容
 					// 获取页面主内容
 					$main = $('article');
 					content = $main.length ? $main.html() : $('body').html();
@@ -432,50 +444,58 @@ var db          = require('./db/db.js')
 						 *  4096    动词
 						 *  1048576 名词
 						 * */
-						if( !(
-							p === 8 ||
-							p === 16 ||
-							p === 32 ||
-							p === 64 ||
-							p === 128 ||
-							p === 4096 ||
-							p === 1048576) ) continue;
+						if( !(p === 8 || p === 16 || p === 32 || p === 64 || p === 128 || p === 4096 || p === 1048576) ) continue;
 
-						/**
-						 * 将单个字符排除
-						 * */
-						if( charExpr.test(w) ) continue;
+						// 将单个字符排除
+						if( w.length < 2 ) continue;
 
 						/**
 						 * 对分出来的词加个前缀作为 key 存在 indexCache 对象中
 						 *  防止分出来的词存在 toString 一类已存在于对象中的属性的关键字
 						 * */
-						w = prefix + w;
+						index = prefix + w;
 
-						if( w in indexCache ){
-							filterResult[indexCache[w]].n++;
+						//console.log(w);
+						if( index in indexCache ){
+							filterResult[indexCache[index]].n++;
 						}
 						else{
 							filterResult.push({
-								tagName: temp.w
+								tagName: w
+								, rank: (w in tagsIndex && tagsIndex.hasOwnProperty(w) ) ? tagsData[tagsIndex[w]].num : 0
 								, p: p
 								, n: 1
 							});
-							indexCache[w] = filterResult.length - 1;
+
+							indexCache[index] = filterResult.length - 1;
 						}
 					}
 
-					// 排序
+					// 按钮权重排序
 					filterResult.sort(function(a, b){
-						return b.n - a.n;
+						var rs = b.rank - a.rank;
+
+						if( rs === 0 ){
+							rs = b.n - a.n;
+						}
+
+						return rs;
 					});
 
-					console.log('\n', filterResult.slice(0, 20));
+					tagsRs = filterResult.slice(0, 15);
+					console.log( tagsRs );
+
+					// 按分词数量排序
+					tagsRs = tagsRs.concat( filterResult.slice(16).sort(function(a, b){
+						return b.n - a.n;
+					}).slice(0, 5) );
+
+					console.log('\n', tagsRs);
 
 					rs = {
 						url: url
 						, title: title
-						, tag_name: filterResult.slice(0, 20).map(function(d){return d.tagName}).join()
+						, tag_name: tagsRs.map(function(d){return d.tagName;}).join()
 						, source: source
 					};
 				}
@@ -568,7 +588,7 @@ var db          = require('./db/db.js')
 										'<input name="score" type="radio" value="1" id="star1"><label for="star1" class="icon icon-star"></label>' +
 									'</div>' +
 								'</div>' +
-								tag.View.tagFormGroup() +
+								tag.View.tagEditor() +
 							'</form>'
 						, button: '<button type="button" id="favorBookmark" class="btn">确定</button>'
 					}])
