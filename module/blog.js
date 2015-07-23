@@ -17,7 +17,7 @@ var db          = require('./db/db.js')
 			tags: function(d){
 				//var data = []
 				//	, tagsId = (d.tags_id || '').split(',')
-				//	, tagsName = (d.tags_name || '').split(',')
+				//	, tagsName = (d.tags || '').split(',')
 				//	;
 				//
 				//$.each(tagsId, function(i, d){
@@ -29,7 +29,7 @@ var db          = require('./db/db.js')
 				//
 				//return tagTpl(data).join('');
 
-				return d.tags_name ? d.tags_name.split(',').map(function(d){
+				return d.tags ? d.tags.split(',').map(function(d){
 					return '<span class="tag">' + d +'</span>';
 				}).join('') : '';
 			}
@@ -40,7 +40,7 @@ var db          = require('./db/db.js')
 		'+time.article_date[pubdate=pubdate datetime=%datetime%]{%datetime%}+div.tagsArea{%tags%}'
 		, filter: {
 			tags: function(d){
-				return d.tags_name ? d.tags_name.split(',').map(function(d){
+				return d.tags ? d.tags.split(',').map(function(d){
 					return '<span class="tag">' + d +'</span>';
 				}).join('') : '';
 			}
@@ -57,9 +57,9 @@ var db          = require('./db/db.js')
 		 * @desc    业务相关 sql 语句集合
 		 * */
 		Model: {
-			blog: 'select Id,title,datetime,tags_id,tags_name from blog where status=1 order by Id desc'
-			, blogPage: 'select Id,title,datetime,tags_id,tags_name from blog where status=1 order by Id desc limit ?,?'
-			, 'blogDetail': 'select Id,title,content,datetime,tags_id,tags_name from blog where Id=?'
+			blog: 'select Id,title,datetime,tags from blog where status=1 order by Id desc'
+			, blogPage: 'select Id,title,datetime,tags from blog where status=1 order by Id desc limit :page,:size'
+			, 'blogDetail': 'select Id,title,content,datetime,tags from blog where Id=:id'
 		}
 
 		/**
@@ -127,10 +127,13 @@ web.get('/blog/', function(req, res){
 
 	page = page < 1 ? 1 : page;
 	size = size < 1 ? 20 : size;
-	                                  console.log(123123)
+
 	db.handle({
 		sql: Blog.Model.blogPage
-		, data: [(page -1) * size, page * size]
+		, data: {
+			page: (page-1) * size
+			, size: size
+		}
 	}).then( Blog.View.blog ).then(function(html){
 		res.send( html );
 		res.end();
@@ -143,7 +146,9 @@ web.get('/blog/detail', function(req, res){
 	if( id ){
 		db.handle({
 			sql: Blog.Model.blogDetail
-			, data: [id]
+			, data: {
+				id: id
+			}
 		}).then( Blog.View.blogDetail ).then(function(html){
 			res.send( html );
 			res.end();
@@ -170,7 +175,10 @@ socket.register({
 			size = size < 1 ? 20 : size;
 
 			handle.sql = Blog.Model.blogPage;
-			handle.data = [(page -1)*size, page*size]
+			handle.data = {
+				page: (page-1) * size
+				, size: size
+			};
 		}
 		else{
 			handle.sql = Blog.Model.blog;
@@ -195,7 +203,9 @@ socket.register({
 		if( id ){
 			db.handle({
 				sql: Blog.Model.blogDetail
-				, data: [id]
+				, data: {
+					id: id
+				}
 			}).then(function(rs){
 				rs = rs.result;
 

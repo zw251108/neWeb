@@ -308,7 +308,12 @@ th, td{
 	border: 1px solid #c0c0c0;
 	color: #000;
 }
-
+td p{
+	width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
 .lib_table th:first-child, .lib_table td:first-child{
 	position: absolute;
 	left: 10px;

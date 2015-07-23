@@ -21,10 +21,10 @@ var db          = require('./db/db.js')
 		 * */
 		Model: {
 			province:   'select * from basedata_province'
-			, city:     'select * from basedata_city where province=?'
-			, district: 'select * from basedata_district where city=?'
-			, town:     'select * from basedata_town where district=?'
-			, village:  'select * from basedata_village where town=?'
+			, city:     'select * from basedata_city where province=:province'
+			, district: 'select * from basedata_district where city=:city'
+			, town:     'select * from basedata_town where district=:district'
+			, village:  'select * from basedata_village where town=:town'
 		}
 
 		/**
@@ -67,7 +67,9 @@ web.get('/data/city', function(req, res){
 
 		db.handle({
 			sql: BaseData.Model.city
-			, data: [province]
+			, data: {
+				province: province
+			}
 		}).then(function(rs){
 			rs = JSON.stringify( rs.result );
 
@@ -90,7 +92,9 @@ web.get('/data/district', function(req, res){
 
 		db.handle({
 			sql: BaseData.Model.district
-			, data: [city]
+			, data: {
+				city: city
+			}
 		}).then(function(rs){
 			rs = JSON.stringify( rs.result );
 
@@ -113,7 +117,9 @@ web.get('/data/town', function(req, res){
 
 		db.handle({
 			sql: BaseData.Model.town
-			, data: [district]
+			, data: {
+				district: district
+			}
 		}).then(function(rs){
 			rs = JSON.stringify( rs.result );
 
@@ -136,7 +142,9 @@ web.get('/data/village', function(req, res){
 
 		db.handle({
 			sql: BaseData.Model.village
-			, data: [town]
+			, data: {
+				town: town
+			}
 		}).then(function(rs){
 			rs = JSON.stringify( rs.result );
 
@@ -175,7 +183,9 @@ socket.register({
 
 			db.handle({
 				sql: BaseData.Model.city
-				, data: [province]
+				, data: {
+					province: province
+				}
 			}).then(function(rs){
 				rs = rs.result;
 
@@ -201,7 +211,9 @@ socket.register({
 
 			db.handle({
 				sql: BaseData.Model.district
-				, data: [city]
+				, data: {
+					city: city
+				}
 			}).then(function(rs){
 				rs = rs.result;
 
@@ -228,7 +240,9 @@ socket.register({
 
 			db.handle({
 				sql: BaseData.Model.town
-				, data: [district]
+				, data: {
+					district: district
+				}
 			}).then(function(rs){
 				rs = rs.result;
 
@@ -245,7 +259,7 @@ socket.register({
 	}
 	, village: function(socket, data){
 		var send = {
-				topci: 'village'
+				topic: 'village'
 			}
 			, query = data.query || {}
 			, town = query.town
@@ -255,7 +269,9 @@ socket.register({
 
 			db.handle({
 				sql: BaseData.Model.village
-				, data: [town]
+				, data: {
+					town: town
+				}
 			}).then(function(rs){
 				rs = rs.result;
 

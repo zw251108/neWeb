@@ -43,10 +43,10 @@ var db          = require('./db/db.js')
 				return +d.status > 1 ? '已收藏' : '收藏';
 			}
 			, tags: function(d){
-				return d.tag_name ? '<span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">'+ d.tag_name.split(',').join('</span><span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">') +'</span>' : '';
+				return d.tags ? '<span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">'+ d.tags.split(',').join('</span><span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">') +'</span>' : '';
 				//var data = []
 				//	, tagsId = (d.tags_id || '').split(',')
-				//	, tagsName = (d.tags_name || '').split(',')
+				//	, tagsName = (d.tags || '').split(',')
 				//	;
 				//
 				//$.each(tagsId, function(i, d){
@@ -137,7 +137,7 @@ var db          = require('./db/db.js')
 	// * object
 	// * object.url
 	// * object.title
-	// * object.tag_name
+	// * object.tags
 	// * */
 	//, getArticle = function(url, done, error){
 	//	console.log('获取 feed 文章：', url);
@@ -297,20 +297,20 @@ var db          = require('./db/db.js')
 		, Model: {
 			reader: 'select * from reader where status=1'
 			, readerCount: 'select count(*) as count from reader where status=1'
-			, readerPage: 'select * from reader where status=1 limit ?,?'
+			, readerPage: 'select * from reader where status=1 limit :page,:size'
 			, readerIsExist: 'select * from reader where xml_url like ?'
 
-			, bookmark: 'select Id,title,url,status,tag_id,tag_name from bookmark order by status,Id desc'
+			, bookmark: 'select Id,title,url,status,tags from bookmark order by status,Id desc'
 			, bookmarkCount: 'select count(*) as count from bookmark'
-			, bookmarkPage: 'select Id,title,url,status,tag_id,tag_name from bookmark order by status,Id desc limit ?,?'
-			, bookmarkAdd: 'insert into bookmark(url,title,source,tag_name,datetime) select ?,?,?,?,now() from dual where not exists (select * from bookmark where url like ?)'
-			, bookmarkRead: 'update bookmark set status=1 where Id=? and status<1'
-			, bookmarkFavor: 'update bookmark set status=2,tag_name=?,score=score+? where Id=? and status<2'
-			, bookmarkIsExist: 'select * from bookmark where url like ?'
+			, bookmarkPage: 'select Id,title,url,status,tags from bookmark order by status,Id desc limit :page,:size'
+			, bookmarkAdd: 'insert into bookmark(url,title,source,tags,datetime) select :url,:title,:source,:tags,now() from dual where not exists (select * from bookmark where url like :url)'
+			, bookmarkRead: 'update bookmark set status=1 where Id=:id and status<1'
+			, bookmarkFavor: 'update bookmark set status=2,tags=:tags,score=score+:score where Id=:id and status<2'
+			, bookmarkIsExist: 'select * from bookmark where url like :url'
 
 			, favorite: 'select * from bookmark where status=2 order by datetime desc'
 			, favoriteCount: 'select count(*) as count from bookmark where status=2'
-			, favoritePage: 'select * from bookmark where status=2 order by datetime desc limit ?,?'
+			, favoritePage: 'select * from bookmark where status=2 order by datetime desc limit :page,:size'
 		}
 
 		/**
@@ -483,21 +483,21 @@ var db          = require('./db/db.js')
 					});
 
 					tagsRs = filterResult.slice(0, 15);
-					console.log( tagsRs );
 
 					// 按分词数量排序
 					tagsRs = tagsRs.concat( filterResult.slice(16).sort(function(a, b){
 						return b.n - a.n;
 					}).slice(0, 5) );
 
-					console.log('\n', tagsRs);
+					//console.log('\n', tagsRs);
 
 					rs = {
 						url: url
 						, title: title
-						, tag_name: tagsRs.map(function(d){return d.tagName;}).join()
+						, tags: tagsRs.map(function(d){return d.tagName;}).join()
 						, source: source
 					};
+					console.log(rs);
 				}
 
 				return rs;
@@ -646,7 +646,10 @@ web.get('/reader/', function(req, res){
 
 	db.handle({
 		sql: Reader.Model.readerPage
-		, data: [(page-1) * size, page * size]
+		, data: {
+			page: (page-1) * size
+			, size: size
+		}
 	}).then( Reader.View.reader ).then(function(html){
 		res.send( html );
 		res.end();
@@ -664,7 +667,10 @@ web.get('/reader/bookmark', function(req, res){
 
 	db.handle({
 		sql: Reader.Model.bookmarkPage
-		, data: [(page-1) * size, page * size]
+		, data:{
+			page: (page-1) * size
+			, size: size
+		}
 	}).then( Reader.View.bookmark ).then(function(html){
 		res.send( html );
 		res.end();
@@ -681,7 +687,10 @@ web.get('/reader/favorite', function(req, res){
 
 	db.handle({
 		sql: Reader.Model.favoritePage
-		, data: [(page-1) * size, page * size]
+		, data: {
+			page: (page-1) * size
+			, size: size
+		}
 	}).then( Reader.View.favorite ).then(function(html){
 		res.send( html );
 		res.end();
@@ -707,7 +716,10 @@ web.get('/data/reader', function(req, res){
 		size = size < 1 ? 20 : size;
 
 		handle.sql = Reader.Model.readerPage;
-		handle.data = [(page -1)*size, page*size];
+		handle.data = {
+			page: (page-1) * size
+			, size: size
+		};
 	}
 	else{
 		handle.sql = Reader.Model.reader;
@@ -736,7 +748,10 @@ web.get('/data/bookmark', function(req, res){
 		size = size < 1 ? 20 : size;
 
 		handle.sql = Reader.Model.bookmarkPage;
-		handle.data = [(page -1)*size, page*size];
+		handle.data = {
+			page: (page-1) * size
+			, size: size
+		};
 	}
 	else{
 		handle.sql = Reader.Model.bookmark;
@@ -765,7 +780,10 @@ web.get('/data/favorite', function(req, res){
 		size = size < 1 ? 20 : size;
 
 		handle.sql = Reader.Model.favoritePage;
-		handle.data = [(page -1)*size, page*size];
+		handle.data = {
+			page: (page-1) * size
+			, size: size
+		};
 	}
 	else{
 		handle.sql = Reader.Model.favorite;
@@ -795,7 +813,10 @@ socket.register({
 			size = size < 1 ? 20 : size;
 
 			handle.sql = Reader.Model.readerPage;
-			handle.data = [(page -1)*size, page*size];
+			handle.data = {
+				page: (page-1) * size
+				, size: size
+			};
 		}
 		else{
 			handle.sql = Reader.Model.reader;
@@ -882,7 +903,10 @@ socket.register({
 			size = size < 1 ? 20 : size;
 
 			handle.sql = Reader.Model.bookmarkPage;
-			handle.data = [(page -1)*size, page*size];
+			handle.data = {
+				page: (page-1) * size
+				, size: size
+			};
 		}
 		else{
 			handle.sql = Reader.Model.bookmark;
@@ -908,7 +932,9 @@ socket.register({
 
 			db.handle({
 				sql: Reader.Model.bookmarkIsExist
-				, data: [url]
+				, data: {
+					url: '%'+ url +'%'
+				}
 			}).then( Reader.Handler.bookmarkIsExist ).then(function(rs){
 
 				if( rs ){
@@ -934,7 +960,7 @@ socket.register({
 
 				return db.handle({
 					sql: Reader.Model.bookmarkAdd
-					, data: [data.url, data.title, data.source, data.tag_name, data.url]
+					, data: data
 				});
 			}).then(function(rs){
 				var data = rs.data;
@@ -942,13 +968,10 @@ socket.register({
 				rs= rs.result;
 
 				if( rs.insertId ){
-					send.info = {
-						id: rs.insertId
-						, url: data[0]
-						, title: data[1]
-						, tag_name: data[3]
-						, status: 0
-					}
+					data.id = rs.insertId;
+					data.statsu = 0;
+
+					send.info = data;
 				}
 				else{
 					send.error = '';
@@ -979,7 +1002,9 @@ socket.register({
 		if( id ){
 			db.handle({
 				sql: Reader.Model.bookmarkRead
-				, data: [id]
+				, data: {
+					id: id
+				}
 			}).then(function(rs){
 				rs = rs.result;
 
@@ -1011,14 +1036,18 @@ socket.register({
 			}
 			, query = data.query
 			, id = query.id
-			, tag_name = query.tag_name || ''
+			, tags = query.tags || ''
 			, score = query.score || 0
 			;
 
 		if( id ){
 			db.handle({
 				sql: Reader.Model.bookmarkFavor
-				, data: [tag_name, score, id]
+				, data: {
+					id: id
+					, score: score
+					, tags: tags
+				}
 			}).then(function(rs){
 				rs = rs.result;
 
@@ -1060,7 +1089,10 @@ socket.register({
 			size = size < 1 ? 20 : size;
 
 			handle.sql = Reader.Model.favoritePage;
-			handle.data = [(page -1)*size, page*size];
+			handle.data = {
+				page: (page-1) * size
+				, size: size
+			};
 		}
 		else{
 			handle.sql = Reader.Model.favorite;

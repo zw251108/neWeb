@@ -33,7 +33,7 @@ define(['jquery', 'global', 'socket', 'tag', 'template'], function($, g, socket,
 				, tags: function(d){
 					var data = []
 						, tagsId = (d.tags_id || '').split(',')
-						, tagsName = (d.tags_name || '').split(',')
+						, tagsName = (d.tags || '').split(',')
 						;
 
 					$.each(tagsId, function(i, d){

@@ -9,10 +9,10 @@ var db          = require('./db/db.js')
 	, emmetTpl  = require('./emmetTpl/emmetTpl.js').template
 
 	, tagTpl        = emmetTpl({
-		template: 'span.tag[data-tag-id=%tagId%]{%tagName%}'
+		template: 'span.tag{%tagName%}'
 	})
 	, tagAreaTpl    = emmetTpl({
-		template: 'div.tagArea'
+		template: 'div.tagsArea'
 	})
 	, tagEditorTpl  = emmetTpl({
 		template: 'div.formGroup' +
@@ -24,10 +24,10 @@ var db          = require('./db/db.js')
 				'+textarea#tags.hidden[name=tags]{%tags%}'
 		, filter: {
 			tags: function(d){
-				return d.tags_name || '';
+				return d.tags || '';
 			}
 			, tagSpan: function(d){
-				return d.tags_name ? d.tags_name.split(',').map(function(d){
+				return d.tags ? d.tags.split(',').map(function(d){
 					return '<span class="tag tag-checked">'+ d +'</span>';
 				}).join('') : '';
 			}
@@ -48,8 +48,9 @@ var db          = require('./db/db.js')
 		 * */
 		Model: {
 			tag: 'select name,num from tag order by num'
-			, tagAdd: 'insert into tag(name) select ? from dual where not exists (select * from tag where name like ?)'
-			, tagIncrease: 'update tag set num=num+? where name=?'
+			, tagAdd: 'insert into tag(name) select :name from dual where not exists (select * from tag where name like :name)'
+			, tagIncrease: 'update tag set num=num+:increase where name=:name'
+			, tagIsExist: 'select * from tag where name=:name'
 		}
 
 		/**
@@ -58,7 +59,11 @@ var db          = require('./db/db.js')
 		 * @desc    数据处理方法集合
 		 * */
 		, Handler: {
+			tagIsExist: function(rs){
+				rs = rs.result;
 
+				return !!(rs && rs.length);
+			}
 		}
 
 		/**
@@ -72,6 +77,31 @@ var db          = require('./db/db.js')
 
 				return tagEditorTpl(rs);
 			}
+		}
+
+		, tagIncrease: function(name, num){
+			db.handle({
+				sql: Tag.Model.tagIsExist
+				, name: name
+			}).then( Tag.Handler.tagIsExist ).then(function(rs){
+				var handle = {};
+
+				if( rs ){
+					handle.sql = Tag.Model.tagIncrease;
+					handle.data = {
+						name: name
+						, num: 1
+					}
+				}
+				else{
+					handle.sql = Tag.Model.tagAdd;
+					handle.data = {
+						name: name
+					};
+				}
+
+				db.handle( handle )
+			});
 		}
 
 		, data: []
@@ -146,7 +176,9 @@ socket.register({
 		if( name ){
 			db.handle({
 				sql: Tag.Model.tagAdd
-				, data: [name, name]
+				, data: {
+					name: name
+				}
 			}).then(function(rs){
 				rs = rs.result;
 
@@ -158,7 +190,7 @@ socket.register({
 				}
 				else{
 					send.error = '';
-					send.msg = '缺少参数'
+					send.msg = '该标签已存在';
 				}
 
 				socket.emit('data', send);
@@ -182,7 +214,10 @@ socket.register({
 		if( name ){
 			db.handle({
 				sql: Tag.Model.tagIncrease
-				, data: [1, name]
+				, data: {
+					name: name
+					, increase: 1
+				}
 			}).then(function(rs){
 				rs = rs.result;
 

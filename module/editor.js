@@ -55,12 +55,12 @@ var db          = require('./db/db.js')
 		 * @desc    业务相关 sql 语句集合
 		 * */
 		Model: {
-			editor: 'select editor.Id,editor.name,preview,tags_id,tags_name,width,height from editor,image where status=1 and editor.preview=image.src order by editor.Id'
+			editor: 'select editor.Id,editor.name,preview,tags,width,height from editor,image where status=1 and editor.preview=image.src order by editor.Id'
 			, editorCount: 'select count(*) as count from editor where status=1'
-			, editorPage: 'select editor.Id,editor.name,preview,tags_id,tags_name,width,height from editor,image where status=1 and editor.preview=image.src order by editor.Id limit ?,?'
-			, code: 'select Id,name,tags_id,tags_name,css_lib,js_lib,html,css,js from editor where Id=?'
-			, codeEdit: 'update editor set name=?,html=?,css=?,js=?,css_lib=?,js_lib=?,tags_name=? where Id=?'
-			, codeSave: 'insert into editor(status,html,css,js,css_lib,js_lib,name,preview,create_time,tags_name) values(1,?,?,?,?,?,?,\'../image/default/no-pic.png\',now(),?)'
+			, editorPage: 'select editor.Id,editor.name,preview,tags,width,height from editor,image where status=1 and editor.preview=image.src order by editor.Id limit :page,:size'
+			, code: 'select Id,name,tags,css_lib,js_lib,html,css,js from editor where Id=:id'
+			, codeEdit: 'update editor set name=:name,html=:html,css=:css,js=:js,css_lib=:cssLib,js_lib=:jsLib,tags=:tags where Id=:id'
+			, codeSave: 'insert into editor(status,html,css,js,css_lib,js_lib,name,preview,create_time,tags) values(1,:html,:css,:js,:cssLib,:jsLib,:name,:preview,now(),?)'
 		}
 
 		/**
@@ -171,7 +171,10 @@ web.get('/editor/', function(req, res){
 
 	db.handle({
 		sql: Editor.Model.editorPage
-		, data: [(page-1) * size, page * size]
+		, data: {
+			page: (page-1) * size
+			, size: size
+		}
 	}).then( Editor.View.editor ).then(function(html){
 		res.send( html );
 		res.end();
@@ -185,7 +188,9 @@ web.get('/editor/code', function(req, res){
 
 		db.handle({
 			sql: Editor.Model.code
-			, data: [id]
+			, data: {
+				id: id
+			}
 		}).then( Editor.Handler.code ).then( Editor.View.code ).then(function(html){
 			res.send( html );
 			res.end();
@@ -297,7 +302,10 @@ web.get('/data/editor', function(req, res){
 		size = size < 1 ? 20 : size;
 
 		handle.sql = Editor.Model.editorPage;
-		handle.data = [(page -1)*size, page*size];
+		handle.data = {
+			page: (page-1) * size
+			, size: size
+		};
 	}
 	else{
 		handle.sql = Editor.Model.editor;
@@ -318,7 +326,9 @@ web.get('/data/code', function(req, res){
 	if( id ){
 		db.handle({
 			sql: Editor.Model.code
-			, data: [id]
+			, data: {
+				id: id
+			}
 		}).then(function(rs){
 			rs = JSON.stringify( rs.result[0] );
 
@@ -347,7 +357,10 @@ socket.register({
 			size = size < 1 ? 20 : size;
 
 			handle.sql = Editor.Model.editorPage;
-			handle.data = [(page -1)*size, page*size];
+			handle.data = {
+				page: (page-1) * size
+				, size: size
+			};
 		}
 		else{
 			handle.sql = Editor.Model.editor;
@@ -372,7 +385,9 @@ socket.register({
 		if( id ){
 			db.handle({
 				sql: Editor.Model.code
-				, data: [id]
+				, data: {
+					id: id
+				}
 			}).then(function(rs){
 				rs = rs.result;
 
@@ -390,28 +405,32 @@ socket.register({
 	}
 	, 'editor/code/save': function(socket, data){
 		var handle = {}
-			, handleData = []
+			, handleData
 			, query = data.query
 			, id = query.id || ''
 			;
 
-		handleData.push.call(handleData, query.html, query.css, query.js, query.cssLib, query.jsLib, query.tags);
+		handleData = {
+			name:       query.codeName
+			, html:     query.html
+			, css:      query.css
+			, js:       query.js
+			, cssLib:   query.cssLib
+			, jsLib:    query.jsLib
+			, tags:     query.tags
+			, preview:  query.preview || '../image/default/no-pic.png'
+		};
 
 		if( id !== '0' ){
 			handle.sql = Editor.Model.codeEdit;
 
-			handleData.unshift( query.codeName );
-			handleData.push( id );
-
-			handle.data = handleData;
+			handleData.id = id;
 		}
-		else if( id === '0' ){
+		else{
 			handle.sql = Editor.Model.codeSave;
-
-			handleData.push( query.codeName );
-
-			handle.data = handleData;
 		}
+
+		handle.data = handleData;
 
 		db.handle( handle ).then(function(rs){
 			var send = {

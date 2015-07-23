@@ -9,6 +9,15 @@ var mysql = require('mysql')
 	, Promise = require('promise')
 	;
 
+// 自定义参数格式
+db.config.queryFormat = function(sql, values){
+	if( !values ) return sql;
+
+	return sql.replace(/\:(\w+)/g, function(txt, key){
+		return  values.hasOwnProperty(key) ? this.escape( values[key] ) : txt;
+	}.bind(this));
+};
+
 /**
  * @method  handle
  * @param   {object}    query

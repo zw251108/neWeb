@@ -12,10 +12,10 @@ require(['../config'], function(config){
 				'+time.article_date[pubdate=pubdate datetime=%datetime%]{%datetime%}+div.tagsArea{%tags%}'
 				, filter:{
 					tags: function(d){
-						return d.tag ? '<span class="tag">'+ d.tags.split(',').join('</span><span class="tag">') +'</span>' : '';
+						return d.tags ? '<span class="tag">'+ d.tags.split(',').join('</span><span class="tag">') +'</span>' : '';
 						//var data = []
 						//	, tagsId = (d.tags_id || '').split(',')
-						//	, tagsName = (d.tags_name || '').split(',')
+						//	, tagsName = (d.tags || '').split(',')
 						//	;
 						//
 						//$.each(tagsId, function(i, d){

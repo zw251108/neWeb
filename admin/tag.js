@@ -17,7 +17,7 @@ web.get('/admin/tag', function(req, res){
 	}).then(function(rs){
 		rs = rs.result;
 
-		res.send( tagHTML.replace('/*=tag_data*/', ' ='+ rs) );
+		res.send( tagHTML.replace('/*=tag_data*/', ' ='+ JSON.stringify(rs) ) );
 		res.end();
 	});
 });

@@ -9,12 +9,45 @@ var error = {
 	, E0003: ''
 	, E0004: '缺少参数'
 };
-module.exports = function(e, msg){
-	if( typeof e === 'string' ){
-		console.log(e, ': ', error[e]);
-		msg && console.log(msg);
+var ERROR = {};
+
+
+module.exports = {
+	register: function(errCode, errMsg){
+		var type = typeof errCode
+			, key
+			, t
+			;
+		if( type === 'string' ){
+			if( errCode in ERROR ){
+				console.log(errCode, ' 已存在，错误信息：', ERROR[errCode]);
+			}
+			else{
+				ERROR[errCode] = errMsg;
+			}
+		}
+		else if( type === 'object' ){
+			for( key in errCode ) if( errCode.hasOwnProperty(key) ){
+
+				if( key in ERROR ){
+					console.log(key, ' 已存在，错误信息：', ERROR[key]);
+				}
+				else{
+					ERROR[key] = errCode[key];
+				}
+			}
+		}
+		else{
+			console.log('errCode 未知的参数类型');
+		}
 	}
-	else{
-		console.log(e);
+	, log: function(e){
+
+		if( typeof e === 'string' ){
+			console.log(e, ': ', ERROR[e]);
+		}
+		else{
+			console.log(e.message);
+		}
 	}
 };

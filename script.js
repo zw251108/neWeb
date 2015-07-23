@@ -431,38 +431,97 @@ function village(u, href, code){
 		});
 	});
 }
-db.query('select * from basedata_province', function(err, rs){
-	var i, j = rs.length;
-	if( !err ){
+//db.query('select * from basedata_province', function(err, rs){
+//	var i, j = rs.length;
+//	if( !err ){
+//
+//		while( j-- ){
+//			province[rs[j].name] = rs[j].code;
+//		}
+//
+//		console.log('province', province);
+//		http.get(u, function(res){
+//			var chunks = [];
+//
+//			res.on('data', function(chunkBuffer){
+//				chunks.push( chunkBuffer );
+//			});
+//			res.on('end', function(){
+//				var html = iconv.decode(Buffer.concat(chunks), 'gb2312')
+//					, $ = Cheerio.load(html, {decodeEntities: false})
+//					, $list = $('.provincetr a')
+//					, i, j, $t
+//					;
+//				for(i = 31, j = 32; i < j; i++){
+//					$t = $list.eq(i);
+//
+//					console.log( $t.attr('href'), $t.text() );
+//
+//					city(u, $t.attr('href'), province[$t.text()]);
+//				}
+//				//console.log( $list );
+//				//console.log(decodedBody);
+//
+//			});
+//		});
+//	}
+//});
 
-		while( j-- ){
-			province[rs[j].name] = rs[j].code;
+//db.query('insert into tag(name) select :name from dual where not exists (select * from tag where name like :name)', {
+//	name: 'jQuery'
+//}, function(err, rs){
+//	console.log(rs);
+//})
+//console.log( db.format('insert into tag(name) select :name from dual where not exists (select * from tag where name like :name)', {name: 'jQuery'}) )
+var tags = {};
+function saveOrUpdate(name, num){
+	db.query('select * from tag where name=?', [name], function(err, rs){
+		if( !err ){
+			if( rs && rs.length ){
+				db.query('update tag set num=? where name=?', [num, name], function(){console.log(1)});
+			}
+			else{
+				db.query('insert into tag(name,num) value(?,?)', [name, num], function(){console.log(2)});
+			}
 		}
-
-		console.log('province', province);
-		http.get(u, function(res){
-			var chunks = [];
-
-			res.on('data', function(chunkBuffer){
-				chunks.push( chunkBuffer );
-			});
-			res.on('end', function(){
-				var html = iconv.decode(Buffer.concat(chunks), 'gb2312')
-					, $ = Cheerio.load(html, {decodeEntities: false})
-					, $list = $('.provincetr a')
-					, i, j, $t
-					;
-				for(i = 31, j = 32; i < j; i++){
-					$t = $list.eq(i);
-
-					console.log( $t.attr('href'), $t.text() );
-
-					city(u, $t.attr('href'), province[$t.text()]);
-				}
-				//console.log( $list );
-				//console.log(decodedBody);
-
-			});
-		});
-	}
-});
+	});
+}
+//db.query('(select tags from blog) union (select tags from blog) union (select tags from bookmark where status=2) union (select tags from editor) union (select tags from reader) union (select tags from ui_lib)', function(err, rs){
+//	var i, t
+//		, m, k
+//		;
+//	if( !err ){
+//		//console.log( rs );
+//		i = rs.length;
+//
+//		while( i-- ){
+//			t = rs[i].tags;
+//
+//			if( t ){
+//				t = t.split(',');
+//			}
+//			else{
+//				continue;
+//			}
+//
+//			m = t.length;
+//
+//			while( m-- ){
+//				k = t[m];
+//
+//				if( k in tags ){
+//					tags[k]++;
+//				}
+//				else{
+//					tags[k] = 1;
+//				}
+//			}
+//		}
+//
+//		console.log(tags)
+//
+//		for( k in tags ) if( tags.hasOwnProperty(k) ){
+//			saveOrUpdate( k, tags[k] );
+//		}
+//	}
+//});

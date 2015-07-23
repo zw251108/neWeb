@@ -74,7 +74,7 @@ require(['../config'], function(config){
 
 				if( query.tags !== '' ){
 					query.id = query.bookmarkId;
-					query.tag_name = query.tags;
+					query.tags = query.tags;
 					query.score = +query.score;
 
 					socket.emit('data', {
@@ -144,10 +144,10 @@ require(['../config'], function(config){
 						return +d.status > 1 ? '已收藏' : '收藏';
 					}
 					, tags: function(d){
-						return d.tag_name ? '<span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">'+ d.tag_name.split(',').join('</span><span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">') +'</span>' : '';
+						return d.tags ? '<span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">'+ d.tags.split(',').join('</span><span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">') +'</span>' : '';
 						//var data = []
 						//	, tagsId = (d.tags_id || '').split(',')
-						//	, tagsName = (d.tags_name || '').split(',')
+						//	, tagsName = (d.tags || '').split(',')
 						//	;
 						//
 						//$.each(tagsId, function(i, d){

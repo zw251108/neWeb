@@ -35,7 +35,7 @@ var db          = require('./db/db.js')
 		 * */
 		Model: {
 			document: 'select title,content,section_title from document order by section_id,`order`'
-			, documentSection: 'select title,content,section_title from document where section_id=? order by `order`'
+			, documentSection: 'select title,content,section_title from document where section_id=:sectionId order by `order`'
 		}
 
 		/**
@@ -53,6 +53,7 @@ var db          = require('./db/db.js')
 					;
 
 				for(i = 0, j = data.length; i < j; i++){
+
 					if( data[i].section_title !== tempTitle ){
 						tempTitle = data[i].section_title;
 						tempArray = [];
@@ -105,7 +106,7 @@ web.get('/document/', function(req, res){
 
 	db.handle({
 		sql: Document.Model.document
-	}).then( Document.Handler.document).then( Document.View.document).then(function(html){
+	}).then( Document.Handler.document ).then( Document.View.document ).then(function(html){
 		res.send( html );
 		res.end();
 	})
@@ -124,13 +125,15 @@ web.get('/data/document/', function(req, res){
 		sectionId = query.sectionId;
 
 		handle.sql = Document.Model.documentSection;
-		handle.data = [sectionId];
+		handle.data = {
+			sectionId: sectionId
+		};
 	}
 	else{
 		handle.sql = Document.Model.document;
 	}
 
-	db.handle( handle).then( Document.Handler.document ).then(function(rs){
+	db.handle( handle ).then( Document.Handler.document ).then(function(rs){
 		rs = JSON.stringify( rs );
 
 		res.send( callback ? callback +'('+ rs +')' : rs );
@@ -139,27 +142,33 @@ web.get('/data/document/', function(req, res){
 });
 
 socket.register({
-	document: function(socket){
-		//todo
+	document: function(socket, data){
+		var query = data.query || {}
+			, sectionId
+			, handle = {}
+			;
 
-		//var index = document.index;
-		//db.query(index.sql, function(e, rs){
-		//	if( !e ){
-		//		rs = index.handler( rs );
-		//
-		//		socket.emit('data', {
-		//			topic: 'document'
-		//			, data: rs
-		//		});
-		//	}
-		//	else{
-		//		socket.emit('data', {
-		//			error: ''
-		//			, msg: ''
-		//		});
-		//		console.log('\n', 'DB', '\n', index.sql, '\n', e.message);
-		//	}
-		//});
+		if( 'sectionId' in query ){
+			// todo 按章节获取数据
+			sectionId = query.sectionId;
+
+			handle.sql = Document.Model.documentSection;
+			handle.data = {
+				sectionId: sectionId
+			};
+		}
+		else{
+			handle.sql = Document.Model.document;
+		}
+
+		db.handle( handle ).then( Document.Handler.document ).then(function(rs){
+			rs = JSON.stringify( rs );
+
+			socket.emit('data', {
+				topic: 'document'
+				, data: rs
+			});
+		});
 	}
 });
 
