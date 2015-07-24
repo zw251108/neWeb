@@ -19,32 +19,18 @@ define('code', [
 
 define(['jquery', 'global', 'socket', 'tag', 'template'], function($, g, socket, tag){
 	var $editor = g.mod('$editor') || $('#editor')
-		, tagTmpl = tag.tagTmpl
-		, editorTmpl = $.template({
+		, editorTpl = $.template({
 			template:
 				'article.article.editor_article[data-tagsid=%tagsId%]' +
 				'>a[href=editor/code?id=%Id%]' +
 				'>h3.article_title{%name%}' +
-				'^img.article_preview[src=%preview% width=%width% height=%height% alt=%alt%]+div.tagsArea{%tags%}',
+				'+img.article_preview[src=%preview% width=%width% height=%height% alt=%alt%]' +
+				'+div.tagsArea{%tags%}',
 			filter:{
 				alt:function(data, index){
 					return data.preview ? data.name : '没有预览图片';
 				}
-				, tags: function(d){
-					var data = []
-						, tagsId = (d.tags_id || '').split(',')
-						, tagsName = (d.tags || '').split(',')
-						;
-
-					$.each(tagsId, function(i, d){
-						data.push({
-							Id: d
-							, name: tagsName[i]
-						});
-					});
-
-					return tagTmpl(data).join('');
-				}
+				, tags: tag.tagTpl
 			}
 		})
 		, $container = g.$container
@@ -54,7 +40,7 @@ define(['jquery', 'global', 'socket', 'tag', 'template'], function($, g, socket,
 
 	socket.register({
 		editor: function(data){
-			$editor.data('data', true).find('.module_content').append( editorTmpl(data.data, page, pageSize).join('') );
+			$editor.data('data', true).find('.module_content').append( editorTpl(data.data, page, pageSize).join('') );
 
 			$container.triggerHandler('dataReady');
 		}

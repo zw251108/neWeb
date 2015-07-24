@@ -78,6 +78,18 @@
 			page: function(index){
 				this.triggerHandler('')
 			}
+			, setFirst: function(first, left, right, index){
+
+			}
+			, setLast: function(){
+
+			}
+			, setLeftPart: function(){
+
+			}
+			, setRightPart: function(){
+
+			}
 		}
 		, setPageEvent = function(e, index, size, count){
 			var opts = e.data
@@ -213,7 +225,7 @@
 		, pageSize: 1
 		, pageIndex: 1
 		, pageNum: 0
-		, pageShow: 10
+		, pageShow: 10  // 默认显示页面数量
 		, error: null
 		, styleConfig: {
 		}

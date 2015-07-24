@@ -1,7 +1,7 @@
 @import "../lib/function.less";
 
 @-webkit-keyframes fadeIn{
-	from{
+	0%{
 		opacity: 0;
 	}
 	to{
@@ -9,7 +9,7 @@
 	}
 }
 @-moz-keyframes fadeIn{
-	from{
+	0%{
 		opacity: 0;
 	}
 	to{
@@ -17,7 +17,7 @@
 	}
 }
 @-ms-keyframes fadeIn{
-	from{
+	0%{
 		opacity: 0;
 	}
 	to{
@@ -25,19 +25,16 @@
 	}
 }
 @keyframes fadeIn{
-	from{
+	0%{
 		opacity: 0;
 	}
 	to{
 		opacity: 1;
 	}
 }
-.fadeIn{
-	.animation-name(fadeIn);
-}
 
 @-webkit-keyframes fadeOut{
-	from{
+	0%{
 		opacity: 1;
 	}
 	to{
@@ -45,7 +42,7 @@
 	}
 }
 @-moz-keyframes fadeOut{
-	from{
+	0%{
 		opacity: 1;
 	}
 	to{
@@ -53,7 +50,7 @@
 	}
 }
 @-ms-keyframes fadeOut{
-	from{
+	0%{
 		opacity: 1;
 	}
 	to{
@@ -61,13 +58,18 @@
 	}
 }
 @keyframes fadeOut{
-	from{
+	0%{
 		opacity: 1;
 	}
 	to{
 		opacity: 0;
 	}
 }
+
+.fadeIn{
+	.animation-name(fadeIn);
+}
+
 .fadeOut{
 	.animation-name(fadeOut);
 }

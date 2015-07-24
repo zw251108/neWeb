@@ -1,3 +1,4 @@
+@import "../lib/function.less";
 
 .loading{
 	position: relative;
@@ -11,8 +12,7 @@
 
 	text-align: center;
 
-	-webkit-animation: rotate 2.0s infinite linear;
-	animation: rotate 2.0s infinite linear;
+	.animation(rotate 2s infinite linear);
 
 
 	&:before,
@@ -27,26 +27,12 @@
 
 		content: "";
 
-		-webkit-animation: bounce 2.0s infinite ease-in-out;
-		animation: bounce 2.0s infinite ease-in-out;
+		.animation(bounce 2s infinite ease-in-out);
 	}
 	&:after{
 		top: auto;
 		bottom: 0;
-		-webkit-animation-delay: -1.0s;
-		animation-delay: -1.0s;
-	}
-}
 
-
-@-webkit-keyframes rotate{
-	100%{
-		-webkit-transform: rotate(360deg)
-	}
-}
-@keyframes rotate{
-	100%{
-		transform: rotate(360deg);
-		-webkit-transform: rotate(360deg);
+		.animation-delay(-1s);
 	}
 }

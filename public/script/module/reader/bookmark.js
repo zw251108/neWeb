@@ -175,6 +175,8 @@ require(['../config'], function(config){
 
 				if( 'error' in data ){
 					alert( data.msg );
+
+					$bookmark.find('.module_content article.article[data-target="'+ data.url +'"]').remove();
 				}
 				else{
 					data = data.info;

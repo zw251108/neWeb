@@ -8,9 +8,9 @@ var db          = require('./db/db.js')
 	, tpl       = require('./emmetTpl/tpl.js')
 	, emmetTpl  = require('./emmetTpl/emmetTpl.js').template
 
-	, tagTpl        = emmetTpl({
-		template: 'span.tag{%tagName%}'
-	})
+	, tagTpl        = function(d){
+		return d.tags ? '<span class="tag tag-checked">'+ d.tags.split(',').join('</span><span class="tag tag-checked">') +'</span>' : '';
+	}
 	, tagAreaTpl    = emmetTpl({
 		template: 'div.tagsArea'
 	})

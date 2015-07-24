@@ -7,9 +7,9 @@ define(['jquery', 'socket', 'template'], function($, socket, tpl){
 	var Tag = function(tagsData){
 
 		}
-		, tagTpl =$.template({
-			template: 'span.tag[data-tag-id=%Id%]{%name%}'
-		})
+		, tagTpl = function(d){
+			return d.tags ? '<span class="tag tag-checked">'+ d.tags.split(',').join('</span><span class="tag tag-checked">') +'</span>' : '';
+		}
 		;
 	//socket.emit('data', {
 	//	topic: 'tag'

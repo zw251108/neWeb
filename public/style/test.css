@@ -1,76 +1,4 @@
 
-/*----- 公用类 -----*/
-.hidden{
-	display:none;
-}
-
-/*----- 动画 -----*/
-@-webkit-keyframes fadeOut{
-	0% {
-		opacity: 1;
-	}
-	100% {
-		opacity: 0;
-	}
-}
-@-moz-keyframes fadeOut{
-	0% {
-		opacity: 1;
-	}
-	100% {
-		opacity: 0;
-	}
-}
-@-ms-keyframes fadeOut{
-	0% {
-		opacity: 1;
-	}
-	100% {
-		opacity: 0;
-	}
-}
-@keyframes fadeOut{
-	0% {
-		opacity: 1;
-	}
-	100% {
-		opacity: 0;
-	}
-}
-
-@-webkit-keyframes fadeIn{
-	0% {
-		opacity: 0;
-	}
-	100% {
-		opacity: 1;
-	}
-}
-@-moz-keyframes fadeIn{
-	0% {
-		opacity: 0;
-	}
-	100% {
-		opacity: 1;
-	}
-}
-@-ms-keyframes fadeIn{
-	0% {
-		opacity: 0;
-	}
-	100% {
-		opacity: 1;
-	}
-}
-@keyframes fadeIn{
-	0% {
-		opacity: 0;
-	}
-	100% {
-		opacity: 1;
-	}
-}
-
 /*----- 组件 -----*/
 .logo{
 	float: left;
@@ -94,18 +22,7 @@
 	-ms-animation: 1s both;
 	animation: 1s both;
 }
-.fadeOut{
-	-webkit-animation-name: fadeOut;
-	-moz-animation-name: fadeOut;
-	-ms-animation-name: fadeOut;
-	animation-name: fadeOut;
-}
-.fadeIn{
-	-webkit-animation-name: fadeIn;
-	-moz-animation-name: fadeIn;
-	-ms-animation-name: fadeIn;
-	animation-name: fadeIn;
-}
+
 .hideMetro .module-metro{
 	display: none;
 }

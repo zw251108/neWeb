@@ -14,12 +14,16 @@ var db          = require('./db/db.js')
 
 	, codeTpl       = emmetTpl({
 		template: 'a[href=code?id=%Id%]' +
-				'>article.article.editor_article[data-tagsid=%tagsId%]' +
+				'>article.article.editor_article' +
 				'>h3.article_title{%name%}' +
-				'+img.article_preview[src=%preview% width=%width% height=%height% alt=%alt%]',
-		filter:{
+				'+img.article_preview[src=%preview% width=%width% height=%height% alt=%alt%]' +
+				'+div.tagsArea{%tags%}'
+		, filter:{
 			alt:function(data, index){
 				return data.preview ? data.name : '没有预览图片';
+			}
+			, tags: function(d){
+				return d.tags ? '<span class="tag tag-checked">' + d.tags.split(',').join('</span><span class="tag tag-checked">') + '</span>' : '';
 			}
 		}
 	})
@@ -93,10 +97,10 @@ var db          = require('./db/db.js')
 					, modules: tpl.mainTpl({
 						id: 'editor'
 						, title: '前端编辑器 editor'
-						, toolbar: tpl.toolbarTpl([{
-							id: 'newCode',  icon: 'file-code',  title: '新建代码'}, {
-							id: 'filter',   icon: 'filter',     title: '过滤'
-						}]).join('')
+						, toolbar: '<li><a href="code?id=0" id="newCode" class="icon icon-file-code" title="新建代码"></a></li>' +
+							tpl.toolbarTpl([{
+								id: 'filter',   icon: 'filter',     title: '过滤'
+							}]).join('')
 						, content: codeTpl(rs).join('')
 					}).join('')
 					, script: {
@@ -140,7 +144,7 @@ var db          = require('./db/db.js')
 								'</form>'
 							, button: '<button type="button" id="codeSave" class="btn">保存</button>'}, {
 						id: 'alert',    size: 'small', content: '<div class="msg" id="alertContent"></div>'
-						, button: '<button type="button" id="" class="btn">确定</button>'
+						, button: '<button type="button" id="" class="btn module_close">确定</button>'
 					}]).join('')
 					, script: {
 						main: '../script/module/editor/code'

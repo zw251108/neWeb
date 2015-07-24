@@ -43,7 +43,7 @@ require(['../config'], function(config){
 				$that.nextAll('.reader_articleList').slideToggle();
 			}
 			else{
-				$that.nextAll('.reader_articleList').html('<li><div class="spinner chasing"><div class="dot1"></div><div class="dot2"></div></div></li>')
+				$that.nextAll('.reader_articleList').html('<li><div class="loading loading-chasing"></div></li>');
 				socket.emit('data', {
 					topic: 'reader/feed'
 					, query: {
