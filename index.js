@@ -21,7 +21,7 @@ var fs = require('fs')
 	, bodyParser    = require('body-parser')
 	, cookie        = require('cookie')
 	, cookieParser  = require('cookie-parser')
-	, multer        = require('multer')
+	//, multer        = require('multer')
 	, logger        = require('morgan')
 	, session       = require('express-session')
 	, sessionStore  = new session.MemoryStore()
@@ -45,10 +45,34 @@ web.use( bodyParser.urlencoded({extended: true}) );
 web.use( cookieParser() );
 web.use( logger('dev') );
 
-// 文件上传路径
-web.use( multer({
-	dest: CONFIG.web.uploadDir
-}) );
+//// 文件上传路径
+//web.use( multer({
+//	//dest: CONFIG.web.uploadDir
+//	storage: multer.diskStorage({
+//		destination: function(req, file, cb){
+//			var body = req.body || {}
+//				, type = body.type
+//				, path
+//				;
+//			switch( type ){
+//				case 'demo':
+//					path = CONFIG.web.uploadDir +'demo/';
+//					break;
+//				default:
+//					path = CONFIG.web.uploadDir +'upload/';
+//					break;
+//			}
+//
+//			cb(null, path);
+//		}
+//		, filename: function(req, file, cb){
+//			cb(null, file.filename);
+//		}
+//	})
+//	//, rename: function (fieldname, filename){
+//	//	return filename;
+//	//}
+//}) );
 // session 设置
 web.use( session({
 	store:      sessionStore
@@ -131,10 +155,14 @@ require('./module/bower.js');       // 加载模块 bower
 require('./module/reader.js');      // 加载模块 reader
 
 require('./module/tag.js');         // 加载模块 tag 功能
+
+require('./module/image.js');       // 加载模块 image
+
 require('./module/basedata.js');    // 加载模块 基础数据
 
 //----- 后台管理 -----
-require('./admin/tag.js');
+require('./admin/index.js');
+
 
 //----- Web 服务器 -----
 webServer = web.listen( CONFIG.web.port );

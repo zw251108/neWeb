@@ -308,6 +308,109 @@
 		&:focus{
 			outline: 0;
 		}
+
+		&[type="file"]{
+			position: relative;
+			top: 13px;
+			//left: 1em;
+			padding-left: 1em;
+			text-indent: 0;
+		}
+	}
+
+	/**
+	 * code
+	 *  ui 组件库
+	 */
+	.list-tree{
+	/*overflow: auto;*/
+		height: 20em;
+		margin: 10px 10px 0;
+
+		dt{
+			height: 2em;
+			border-top: 1px solid #c0c0c0;
+
+			line-height: 2;
+
+			-webkit-box-sizing: border-box;
+			-moz-box-sizing: border-box;
+			box-sizing: border-box;
+		}
+		dd{
+			margin: 0 10px;
+			padding-left: 10px;
+		}
+		div{
+			height: 2em;
+			border-top: 1px dashed #c0c0c0;
+
+			line-height: 2;
+
+			-webkit-box-sizing: border-box;
+			-moz-box-sizing: border-box;
+			box-sizing: border-box;
+		}
+		.icon:before{
+			margin-right: 5px;
+			color: #888;
+		}
+		.right{
+			float: right;
+		}
+	}
+
+	/**
+	 * code
+	 *  素材图片库
+	 */
+	.list-img{
+		overflow: hidden;
+		margin: 0 5px 5px;
+		li{
+			float: left;
+			position: relative;
+			height: 165px;
+			width: 110px;
+			margin: 5px;
+			outline: 1px solid #c0c0c0;
+
+			background: #fafafa;
+		}
+		.img{
+			position: relative;
+			height: 100px;
+			width: 100px;
+			margin: 5px;
+		}
+		img{
+			position: absolute;
+			bottom: 0;
+			top: 0;
+			left: 0;
+			right: 0;
+			max-height: 100px;
+			max-width: 100px;
+			margin: auto;
+		}
+		.src,
+		.desc{
+			background: #c0c0c0;
+			color: #fff;
+			line-height: 30px;
+			text-align: center;
+		}
+		.src{
+			line-height: 25px;
+			input{
+				height: 25px;
+				width: 100%;
+				border-width: 1px 0;
+				-webkit-box-sizing: border-box;
+				-moz-box-sizing: border-box;
+				box-sizing: border-box;
+			}
+		}
 	}
 }
 

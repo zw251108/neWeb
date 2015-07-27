@@ -48,6 +48,7 @@ var db          = require('./db/db.js')
 		 * */
 		Model: {
 			tag: 'select name,num from tag order by num'
+			, tagLink: 'select * from tag'
 			, tagAdd: 'insert into tag(name) select :name from dual where not exists (select * from tag where name like :name)'
 			, tagIncrease: 'update tag set num=num+:increase where name=:name'
 			, tagIsExist: 'select * from tag where name=:name'
@@ -240,6 +241,21 @@ socket.register({
 			socket.emit('data', send);
 		}
 	}
+});
+
+var fs    = require('fs')
+	, tagHTML = fs.readFileSync(__dirname + '/../tpl/tag.html').toString()
+	;
+web.get('/admin/tag', function(req, res){
+
+	db.handle({
+		sql: Tag.Model.tagLink
+	}).then(function(rs){
+		rs = rs.result;
+
+		res.send( tagHTML.replace('/*=tag_data*/', '='+ JSON.stringify(rs)) );
+		res.end();
+	});
 });
 
 module.exports = Tag;

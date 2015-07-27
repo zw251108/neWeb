@@ -63,6 +63,47 @@
 	.CodeMirror-focused + label{
 		display: none;
 	}
+
+	.list{
+		overflow: auto;
+		position: absolute;
+		top: 35px;
+		right: 0;
+		max-height: 16em;
+		outline: 1px solid #fff;
+		background: #888;
+		margin-bottom: -1px;
+		font-size: 14px;
+	}
+	.list li{
+		overflow: hidden;
+		position: relative;
+		height: 2em;
+		max-width: 10em;
+		border-bottom: 1px solid #fff;
+		padding: 0 1em;
+		background: #888;
+
+		color: #fff;
+
+		line-height: 2em;
+		white-space: nowrap;
+
+		cursor: pointer;
+
+		-ms-text-overflow: ellipsis;
+		text-overflow: ellipsis;
+
+		-webkit-box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		box-sizing: border-box;
+	}
+	.list .on{
+		border: 1px solid #fff;
+	}
+	.list li:hover{
+		background: #444;
+	}
 }
 
 /*----- editor -----*/

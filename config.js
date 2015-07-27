@@ -6,7 +6,7 @@
 var CONFIG = {
 	web: {
 		port: 9001
-		, uploadDir: './public/upload/'
+		, uploadDir: './public/image/'
 		, cookieSecret: 'secret'
 		, cookieKey: 'express.sid'
 	}

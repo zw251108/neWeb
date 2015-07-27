@@ -11,6 +11,7 @@ var db          = require('./db/db.js')
 	, emmetTpl  = require('./emmetTpl/emmetTpl.js').template
 
 	, tag       = require('./tag.js')
+	, image     = require('./image.js')
 
 	, codeTpl       = emmetTpl({
 		template: 'a[href=code?id=%Id%]' +
@@ -119,32 +120,53 @@ var db          = require('./db/db.js')
 						, toolbar: tpl.toolbarTpl([{
 							id: 'changeSkin',   icon: 'skin',   title: '更改皮肤'}, {
 							id: 'changeLayout', icon: 'layout', title: '更改布局'}, {
-							id: 'lib',          icon: 'lib',    title: '引用组件'}, {
+							id: 'getDemoImg',       icon: 'picture',title: '素材'}, {
+							id: 'getUiLib',        icon: 'lib',    title: '引用组件'}, {
 							id: 'newWin',       icon: 'window', title: '在新窗口浏览'}, {
 							id: 'run',          icon: 'play',   title: '运行'}, {
 							id: 'save',         icon: 'save',   title: '保存'
 						}]).join('')
 						, content: codeEditTpl(rs).join('')
 					}).join('') + tpl.popupTpl([{
-						id: 'editorLib',    size: 'normal'
-							, content: '<dl class="list-tree" id="libList"></dl>'
-							, button: '<button type="button" id="" class="btn">确定</button>'}, {
+						id: 'alert',    size: 'small', content: '<div class="msg" id="alertContent"></div>'
+							, button: '<button type="button" id="" class="btn module_close">确定</button>'}, {
 						id: 'editorSave',   size: 'normal'
-							, content: '<form id="saveForm">' +
+							, content: '<form id="saveForm" method="post" action="save" target="editorSave" enctype="multipart/form-data">' +
 									'<div class="formGroup">' +
 										'<label class="label" for="codeName">请输入名称</label>' +
 										'<input type="text" id="codeName" class="input" placeholder="请输入标题" value="%name%"  data-validator="title"/>' +
 									'</div>' +
-									tag.View.tagEditor(rs) +
 									'<div class="formGroup">' +
-										'<label class="label" for="more">更多设置</label>' +
-										'<input type="checkbox" id="more" class="hidden" name="more"/>' +
-										'<span class="icon icon-checkbox">更多设置</span>' +
+										'<label class="label" for="preview">请添加预览图片</label>' +
+										'<input type="hidden" name="type" value="preview"/>' +
+										'<input type="file" id="preview" class="input" name="preview"/>' +
 									'</div>' +
-								'</form>'
-							, button: '<button type="button" id="codeSave" class="btn">保存</button>'}, {
-						id: 'alert',    size: 'small', content: '<div class="msg" id="alertContent"></div>'
-						, button: '<button type="button" id="" class="btn module_close">确定</button>'
+									tag.View.tagEditor(rs) +
+									'<button type="button" class="btn btn-link">更多设置</button>' +
+									//'<div class="formGroup">' +
+									//	'<label class="label" for="more">更多设置</label>' +
+									//	'<input type="checkbox" id="more" class="hidden" name="more"/>' +
+									//	'<span class="icon icon-checkbox">更多设置</span>' +
+									//'</div>' +
+								'</form>' +
+								'<iframe name="editorSave" id="editorSave" class="hidden"></iframe>'
+						, button: '<button type="button" id="codeSave" class="btn">保存</button>'}, {
+						id: 'uiLib',    size: 'normal'
+							, content: '<dl class="list-tree" id="uiLibList"></dl>'
+							, button: '<button type="button" id="" class="btn">确定</button>'}, {
+						id: 'demoImgLib',   size: 'large'
+							, content: '<form id="demoImgUploadForm" method="post" action="demoImgUpload" target="demoImgUpload" enctype="multipart/form-data">' +
+									'<div class="formGroup">' +
+										'<label class="label" for="image">添加素材</label>' +
+										'<input type="hidden" name="type" value="demo"/>' +
+										'<input type="file" id="image" class="input" name="image"/>' +
+										'<button class="btn btn-submit" type="submit">上传</button>' +
+									'</div>' +
+								'</form>' +
+								'<iframe name="demoImgUpload" id="demoImgUpload" class="hidden"></iframe>' +
+								'<ul class="list-img" id="demoImgList">' +
+									'<li class="list_item block"><div class="loading loading-chasing"></div></li>' +
+								'</ul>'
 					}]).join('')
 					, script: {
 						main: '../script/module/editor/code'
@@ -254,6 +276,39 @@ web.get('/editor/result', function(req, res){
 	//}
 
 	res.end();
+});
+
+web.post('/editor/save', image.uploadMiddle.single('preview'), function(req, res){
+	var body = req.body || {}
+		, type = body.type
+		;
+});
+
+web.post('/editor/demoImgUpload', image.uploadMiddle.single('image'), function(req, res){
+	var body = req.body || {}
+		, type = body.type
+		, file = req.file
+		, size = image.sizeOf( req.file.path )
+		;
+
+	db.handle({
+		sql: image.Model.imageAdd
+		, data: {
+			height: size.height
+			, width: size.width
+			, src: file.path.replace(/\\/g, '/').replace('public', '..')
+			, type: type === 'demo' ? 5 : 1
+		}
+	}).then(function(rs){
+		var data = rs.data;
+
+		rs = rs.result;
+
+		data.Id = rs.insertId;
+
+		res.send( JSON.stringify(data) );
+		res.end();
+	})
 });
 
 //// 编辑器 提交运行代码

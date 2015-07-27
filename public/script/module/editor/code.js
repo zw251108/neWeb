@@ -32,11 +32,14 @@ require(['../config'], function(config){
 
 			, $skinLink = $('<link />', {rel: 'stylesheet'}).appendTo('head')
 
+			// 素材图片大小
+			, DEMO_IMG_SIZE = 100
+
 			// 各个模板引擎
 			, listTpl = $.template({
 				template: 'li[title=%name% data-type=%type%]{%name%}'
 			})
-			, libTpl = $.template({
+			, uiLibTpl = $.template({
 				template: 'dt>label>input[type=checkbox]+span.left.icon.icon-checkbox{%name%}^span.right{%version%}^dd{%paths%}'
 				, filter: {
 					paths: function(d){
@@ -51,6 +54,45 @@ require(['../config'], function(config){
 						}) : [];
 
 						return pathTpl( css.concat(js) ).join('');
+					}
+				}
+			})
+			, demoImgLibTpl = $.template({
+				template: 'li>div.img>img[src=%src% width=%showWidth% height=%showHeight%]^div.src>input[value=%src%]^div.desc{%width% * %height%}'
+				, filter: {
+					showWidth: function(d){
+						var w = d.width
+							, h = d.height
+							, rs
+							;
+						if( w <= DEMO_IMG_SIZE && h <= DEMO_IMG_SIZE ){
+							rs = w;
+						}
+						else if( w >= h ){
+							rs = DEMO_IMG_SIZE;
+						}
+						else{
+							rs = Math.floor( DEMO_IMG_SIZE/h * w );
+						}
+
+						return rs;
+					}
+					, showHeight: function(d){
+						var w = d.width
+							, h = d.height
+							, rs
+							;
+						if( w <= DEMO_IMG_SIZE && h <= DEMO_IMG_SIZE ){
+							rs = h;
+						}
+						else if( h >= w ){
+							rs = DEMO_IMG_SIZE;
+						}
+						else{
+							rs = Math.floor( DEMO_IMG_SIZE/w * h );
+						}
+
+						return rs;
 					}
 				}
 			})
@@ -165,7 +207,7 @@ require(['../config'], function(config){
 
 				isEdit = false;
 			})
-			, $libPopup = $('#editorLib').on('click', 'dt input:checkbox', function(){
+			, $libPopup = $('#uiLib').on('click', 'dt input:checkbox', function(){
 				$(this).parents('dt').next().find('input:checkbox').prop('checked', this.checked);
 			}).on('click', 'dd input:checkbox', function(){
 				var $parent = $(this).parents('dd')
@@ -192,6 +234,11 @@ require(['../config'], function(config){
 
 				$jsLib.val( jsLib.join() );
 				$cssLib.val( cssLib.join() );
+			})
+			, $demoImgLibPopup = $('#demoImgLib').on('submit', '#demoImgUploadForm', function(e){
+				if( !$(this).find(':file').val() ){
+					e.preventDefault();
+				}
 			})
 			, $alert = $('#alert')
 
@@ -229,9 +276,13 @@ require(['../config'], function(config){
 			newWin.open();
 			newWin.write( runCode(html.getValue(), css.getValue(), js.getValue(), cssLib, jsLib) );
 			newWin.close();
-		}).on('click', '#lib', function(){
+		}).on('click', '#getUiLib', function(){
 			$libPopup.data('data') ? $libPopup.trigger('showDialog') : socket.emit('data', {
 				topic: 'bower/editor/lib'
+			});
+		}).on('click', '#getDemoImg', function(){
+			$demoImgLibPopup.data('data') ? $demoImgLibPopup.trigger('showDialog') : socket.emit('data', {
+				topic: 'image/demoImgLib'
 			});
 		});
 
@@ -254,6 +305,14 @@ require(['../config'], function(config){
 		$toolbar.find('#run').trigger('click');
 
 		$editor.find('label').removeClass('hidden');
+
+		$('#demoImgUpload').on('load', function(){
+			var res = this.contentDocument.body.innerHTML;
+
+			res = $.parseJSON( res );
+
+			$demoImgLibPopup.find('#demoImgList').prepend( demoImgLibTpl(res) );
+		});
 
 		$(window).bind('beforeunload', function(){
 			if( isEdit ){
@@ -287,13 +346,16 @@ require(['../config'], function(config){
 				jsLib = jsLib ? jsLib.split(',') : [];
 				//con
 				$libPopup.data('data', true)
-					.find('#libList').html( libTpl(data.data).join('')).find('dd input:checkbox').each(function(){
+					.find('#uiLibList').html( uiLibTpl(data.data).join('')).find('dd input:checkbox').each(function(){
 						var v = this.value;
 
 						if( $.inArray(v, jsLib) !== -1 || $.inArray(v, cssLib) !== -1 ){
 							$(this).trigger('click');
 						}
 					}).end().trigger('showDialog');
+			}
+			, 'editor/demoImgLib': function(data){
+				$demoImgLibPopup.data('data', true).find('#demoImgList').html( demoImgLibTpl(data.data).join('') ).end().trigger('showDialog');
 			}
 		});
 	});
