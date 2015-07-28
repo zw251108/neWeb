@@ -61,6 +61,53 @@ var db          = require('./db/db.js')
 		}
 	})
 
+	, bookmarkAddFormTpl    = emmetTpl({
+		template: 'form' +
+			'>div.formGroup' +
+				'>label.label[for=url]{请输入链接}' +
+				'+input#url.input[type=text placeholder=请输入链接 data-validator=url]'
+		//+
+		//'<form>' +
+		//	'<div class="formGroup">' +
+		//		'<label class="label" for="url">请输入链接</label>' +
+		//		'<input type="text" id="url" class="input" placeholder="请输入链接" data-validator="url"/>' +
+		//	'</div>' +
+		//'</form>'
+	})
+	, bookmarkFavorFormTpl  = emmetTpl({
+		template: 'form#favorForm' +
+			'>input#bookmarkId[type=hidden name=bookmarkId]' +
+			'+div.formGroup' +
+				'>label.label[for=star1]{请评分}' +
+				'+div.input-score' +
+					'>input#star5[type=radio name=score value=5]' +
+					'+label.icon.icon-star[for=star5]' +
+					'+input#star4[type=radio name=score value=4]' +
+					'+label.icon.icon-star[for=star4]' +
+					'+input#star3[type=radio name=score value=3]' +
+					'+label.icon.icon-star[for=star3]' +
+					'+input#star2[type=radio name=score value=2]' +
+					'+label.icon.icon-star[for=star2]' +
+					'+input#star1[type=radio name=score value=1]' +
+					'+label.icon.icon-star[for=star1]' +
+			'^^' + tag.tagEditorEmmet
+		//+
+		//'<form id="favorForm">' +
+		//	'<input type="hidden" id="bookmarkId" name="bookmarkId"/>' +
+		//	'<div class="formGroup">' +
+		//		'<label class="label" for="star1">请评分</label>' +
+		//		'<div class="input-score">' +
+		//			'<input name="score" type="radio" value="5" id="star5"/><label for="star5" class="icon icon-star"></label>' +
+		//			'<input name="score" type="radio" value="4" id="star4"/><label for="star4" class="icon icon-star"></label>' +
+		//			'<input name="score" type="radio" value="3" id="star3"/><label for="star3" class="icon icon-star"></label>' +
+		//			'<input name="score" type="radio" value="2" id="star2"/><label for="star2" class="icon icon-star"></label>' +
+		//			'<input name="score" type="radio" value="1" id="star1"/><label for="star1" class="icon icon-star"></label>' +
+		//		'</div>' +
+		//	'</div>' +
+		//tag.View.tagEditor() +
+		//'</form>'
+	})
+
 	, segment = require('./segment/segment.js')
 
 	, Url = require('url')
@@ -569,27 +616,11 @@ var db          = require('./db/db.js')
 						, content: articleTpl(rs).join('')
 					}).join('') + tpl.popupTpl([{
 						id: 'addPopup', size: 'normal'
-						, content: '<form><div class="formGroup">' +
-						'<label class="label" for="url">请输入链接</label>' +
-						'<input type="text" id="url" class="input" placeholder="请输入链接" data-validator="url"/>' +
-						'</div></form>'
-						, button: '<button type="button" id="addBookmark" class="btn">确定</button>'
+							, content: bookmarkAddFormTpl({})
+							, button: '<button type="button" id="addBookmark" class="btn">确定</button>'
 					}, {
 						id: 'favorPopup', size: 'normal'
-						, content: '<form id="favorForm">' +
-								'<input type="hidden" id="bookmarkId" name="bookmarkId"/>' +
-								'<div class="formGroup">' +
-									'<label class="label" for="star1">请评分</label>' +
-									'<div class="input-score">' +
-										'<input name="score" type="radio" value="5" id="star5"><label for="star5" class="icon icon-star"></label>' +
-										'<input name="score" type="radio" value="4" id="star4"><label for="star4" class="icon icon-star"></label>' +
-										'<input name="score" type="radio" value="3" id="star3"><label for="star3" class="icon icon-star"></label>' +
-										'<input name="score" type="radio" value="2" id="star2"><label for="star2" class="icon icon-star"></label>' +
-										'<input name="score" type="radio" value="1" id="star1"><label for="star1" class="icon icon-star"></label>' +
-									'</div>' +
-								'</div>' +
-								tag.View.tagEditor() +
-							'</form>'
+						, content: bookmarkFavorFormTpl({})
 						, button: '<button type="button" id="favorBookmark" class="btn">确定</button>'
 					}])
 					, script: {
@@ -605,21 +636,18 @@ var db          = require('./db/db.js')
 					title: '收藏文章 favorite'
 					, modules: tpl.mainTpl({
 						id: 'bookmark'
-						, title: '收藏文章 favorite'
-						, toolbar: '<li><a href="./" id="reader" class="icon icon-rss" title="返回订阅列表"></a></li>' +
-							'<li><a href="bookmark" id="favorite" class="icon icon-bookmark" title="待读文章"></a></li>' +
-							tpl.toolbarTpl([{
-							//id: 'add', icon: 'plus', title: '添加待读文章'}, {
-							id: 'filter', icon: 'filter', title: '过滤'
-						}])
-						, content: articleTpl(rs).join('')
+							, title: '收藏文章 favorite'
+							, toolbar: '<li><a href="./" id="reader" class="icon icon-rss" title="返回订阅列表"></a></li>' +
+								'<li><a href="bookmark" id="favorite" class="icon icon-bookmark" title="待读文章"></a></li>' +
+								tpl.toolbarTpl([{
+								//id: 'add', icon: 'plus', title: '添加待读文章'}, {
+									id: 'filter', icon: 'filter', title: '过滤'
+							}])
+							, content: articleTpl(rs).join('')
 					}).join('') + tpl.popupTpl([{
 						id: 'addPopup', size: 'normal'
-						, content: '<form><div class="formGroup">' +
-						'<label for="url">请输入链接</label>' +
-						'<input type="text" id="url" class="input" placeholder="请输入链接" data-validator="url">' +
-						'</div></form>'
-						, button: '<button type="button" id="addBookmark" class="btn">确定</button>'
+							, content: bookmarkAddFormTpl({})
+							, button: '<button type="button" id="addBookmark" class="btn">确定</button>'
 					}])
 				});
 			}

@@ -39,7 +39,7 @@ sio.on('connection', function(socket){
 			EVENT_LIST[topic](socket, query);
 		}
 		else{
-			error('E0001', topic);
+			error.register('E0001', topic);
 
 			// todo 发送错误信息
 			socket.emit('data', {

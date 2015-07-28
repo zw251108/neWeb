@@ -8,6 +8,24 @@ var db          = require('./db/db.js')
 	, tpl       = require('./emmetTpl/tpl.js')
 	, emmetTpl  = require('./emmetTpl/emmetTpl.js').template
 
+	, tagEditorEmmet = 'div.formGroup' +
+			'>label.label[for=tags]{请设置标签}' +
+			'+div.tagInput' +
+				'>input#tag.input[type=text name=tag placeholder=请输入标签 data-validator=tag]' +
+				'+button#addTag.btn[type=button]{添加}' +
+			'^div.tagsArea{%tagSpan%}' +
+			'+textarea#tags.hidden[name=tags]{%tags%}'
+	, tagEditorFilter = {
+		tag: function(d){
+			return d.tags || ''
+		}
+		, tagSpan: function(d){
+			return d.tags ? d.tags.split(',').map(function(d){
+				return '<span class="tag tag-checked">'+ d +'</span>';
+			}).join('') : '';
+		}
+	}
+
 	, tagTpl        = function(d){
 		return d.tags ? '<span class="tag tag-checked">'+ d.tags.split(',').join('</span><span class="tag tag-checked">') +'</span>' : '';
 	}
@@ -15,23 +33,8 @@ var db          = require('./db/db.js')
 		template: 'div.tagsArea'
 	})
 	, tagEditorTpl  = emmetTpl({
-		template: 'div.formGroup' +
-				'>label.label[for=tags]{请设置标签}' +
-				'+div.tagInput' +
-				'>input#tag.input[type=text name=tag placeholder=请输入标签 data-validator=tag]' +
-				'+button#addTag.btn[type=button]{添加}' +
-				'^div.tagsArea{%tagSpan%}' +
-				'+textarea#tags.hidden[name=tags]{%tags%}'
-		, filter: {
-			tags: function(d){
-				return d.tags || '';
-			}
-			, tagSpan: function(d){
-				return d.tags ? d.tags.split(',').map(function(d){
-					return '<span class="tag tag-checked">'+ d +'</span>';
-				}).join('') : '';
-			}
-		}
+		template: tagEditorEmmet
+		, filter: tagEditorFilter
 	})
 
 	//, Event     = require('events').EventEmitter
@@ -104,6 +107,9 @@ var db          = require('./db/db.js')
 				db.handle( handle )
 			});
 		}
+
+		, tagEditorEmmet: tagEditorEmmet
+		, tagEditorFilter: tagEditorFilter
 
 		, data: []
 		, index: {}

@@ -431,13 +431,13 @@ function village(u, href, code){
 		});
 	});
 }
-//db.query('select * from basedata_province', function(err, rs){
-//	var i, j = rs.length;
-//	if( !err ){
-//
-//		while( j-- ){
-//			province[rs[j].name] = rs[j].code;
-//		}
+db.query('select * from basedata_province', function(err, rs){
+	var i, j = rs.length;
+	if( !err ){
+
+		while( j-- ){
+			province[rs[j].name] = rs[j].code;
+		}
 //
 //		console.log('province', province);
 //		http.get(u, function(res){
@@ -464,8 +464,27 @@ function village(u, href, code){
 //
 //			});
 //		});
-//	}
-//});
+
+		//console.log(province);
+
+		//var all_univ = allUnivList[0].provs
+		//	, t, m, n, s, code;
+		//for( i = 1, j = all_univ.length
+		//	; i < j; i++ ){
+		//	t = all_univ[i];console.log(t.name);
+		//	code = province[t.name];
+		//	t = t.univs
+		//	for( m = 0, n = t.length; m < n; m++){
+		//		s = t[m];
+		//		db.query('insert into basedata_university(name,province,code) values(?,?,?)', [s.name, code, s.id], function(err, rs){
+		//			if( !err ){
+		//				console.log(rs.insertId);
+		//			}
+		//		});
+		//	}
+		//}
+	}
+});
 
 //db.query('insert into tag(name) select :name from dual where not exists (select * from tag where name like :name)', {
 //	name: 'jQuery'

@@ -47,6 +47,73 @@ var db          = require('./db/db.js')
 					'>iframe#result.editor_rs[name=result src=result]' +
 					'+label.hidden{Result}'
 	})
+	, demoImgUploadFormTpl  = emmetTpl({
+		template: 'form#demoImgUploadForm[method=post action=demoImgUpload target=demoImgUploadRs enctype=multipart/form-data]' +
+			'>div.formGroup' +
+				'>label.label[for=image]{添加素材}' +
+				'+input[type=hidden name=type value=demo]' +
+				'+input#image.input[type=file name=image]' +
+				'+button.btn.btn-submit[type=submit]{上传}' +
+		'^^iframe#demoImgUploadRs.hidden[name=demoImgUploadRs]' +
+		'+ul#demoImgList.list-img' +
+			'>li.list_item.block' +
+				'>div.loading.loading-chasing'
+		//+
+		//'<form id="demoImgUploadForm" method="post" action="demoImgUpload" target="demoImgUploadRs" enctype="multipart/form-data">' +
+		//	'<div class="formGroup">' +
+		//		'<label class="label" for="image">添加素材</label>' +
+		//		'<input type="hidden" name="type" value="demo"/>' +
+		//		'<input type="file" id="image" class="input" name="image"/>' +
+		//		'<button class="btn btn-submit" type="submit">上传</button>' +
+		//	'</div>' +
+		//'</form>' +
+		//'<iframe name="demoImgUploadRs" id="demoImgUploadRs" class="hidden"></iframe>' +
+		//'<ul class="list-img" id="demoImgList">' +
+		//	'<li class="list_item block"><div class="loading loading-chasing"></div></li>' +
+		//'</ul>'
+	})
+	, codeSaveFormTpl   = emmetTpl({
+		template: 'form#saveForm[method=post action=save target=editorSaveRs enctype=multipart/form-data]' +
+			'>div.formGroup' +
+				'>label.label[for=codeName]{请输入名称}' +
+				'+input#codeName.input[type=codeName name=codeName value=%name% placeholder=请输入标题 data-validator=title]' +
+			'^div.formGroup' +
+				'>label.label[for=preview]{请添加预览图片}' +
+				'+input[type=hidden name=type value=preview]' +
+				'+input#preview.input[type=file name=preview]' +
+			'^' + tag.tagEditorEmmet +
+		    '^button.btn.btn-link[type=button]{更多设置}' +
+			'+fieldset.hidden' +
+				'>legend{设置为 UI 组件}' +
+				'+input[type=hidden name=setUI value=1]' +
+				'+div.formGroup' +
+					'>label.label[for=uiName]{请设置 UI 组件名称}' +
+					'+input#uiName.input[type=text name=uiName placeholder=请设置 UI 组件名称 data-validator=uiName]' +
+			'^^^iframe#editorSaveRs.hidden[name=editorSaveRs]'
+			//'<form id="saveForm" method="post" action="save" target="editorSaveRs" enctype="multipart/form-data">' +
+			//	'<div class="formGroup">' +
+			//		'<label class="label" for="codeName">请输入名称</label>' +
+			//		'<input type="text" id="codeName" class="input" placeholder="请输入标题" value="%name%"  data-validator="title"/>' +
+			//	'</div>' +
+			//	'<div class="formGroup">' +
+			//		'<label class="label" for="preview">请添加预览图片</label>' +
+			//		'<input type="hidden" name="type" value="preview"/>' +
+			//		'<input type="file" id="preview" class="input" name="preview"/>' +
+			//	'</div>' +
+			//	tag.View.tagEditor(rs) +
+			//	'<button type="button" class="btn btn-link">更多设置</button>' +
+			//	'<fieldset>' +
+			//		'<legend>设置为 UI 组件</legend>' +
+			//		'<input type="hidden" name="setUI" value="1"/>' +
+			//		'<div class="formGroup">' +
+			//			'<label class="label" for="uiName">UI 组件名称</label>' +
+			//			'<input type="text" id="uiName" class="input" name="uiName" data-validator="uiName"/>' +
+			//		'</div>' +
+			//	'</fieldset>' +
+			//'</form>' +
+			//'<iframe name="editorSaveRs" id="editorSaveRs" class="hidden"></iframe>'
+		, filter: tag.tagEditorFilter
+	})
 
 	, Promise = require('promise')
 
@@ -120,8 +187,8 @@ var db          = require('./db/db.js')
 						, toolbar: tpl.toolbarTpl([{
 							id: 'changeSkin',   icon: 'skin',   title: '更改皮肤'}, {
 							id: 'changeLayout', icon: 'layout', title: '更改布局'}, {
-							id: 'getDemoImg',       icon: 'picture',title: '素材'}, {
-							id: 'getUiLib',        icon: 'lib',    title: '引用组件'}, {
+							id: 'getDemoImg',   icon: 'picture',title: '素材'}, {
+							id: 'getUiLib',     icon: 'lib',    title: '引用组件'}, {
 							id: 'newWin',       icon: 'window', title: '在新窗口浏览'}, {
 							id: 'run',          icon: 'play',   title: '运行'}, {
 							id: 'save',         icon: 'save',   title: '保存'
@@ -131,42 +198,25 @@ var db          = require('./db/db.js')
 						id: 'alert',    size: 'small', content: '<div class="msg" id="alertContent"></div>'
 							, button: '<button type="button" id="" class="btn module_close">确定</button>'}, {
 						id: 'editorSave',   size: 'normal'
-							, content: '<form id="saveForm" method="post" action="save" target="editorSave" enctype="multipart/form-data">' +
-									'<div class="formGroup">' +
-										'<label class="label" for="codeName">请输入名称</label>' +
-										'<input type="text" id="codeName" class="input" placeholder="请输入标题" value="%name%"  data-validator="title"/>' +
-									'</div>' +
-									'<div class="formGroup">' +
-										'<label class="label" for="preview">请添加预览图片</label>' +
-										'<input type="hidden" name="type" value="preview"/>' +
-										'<input type="file" id="preview" class="input" name="preview"/>' +
-									'</div>' +
-									tag.View.tagEditor(rs) +
-									'<button type="button" class="btn btn-link">更多设置</button>' +
-									//'<div class="formGroup">' +
-									//	'<label class="label" for="more">更多设置</label>' +
-									//	'<input type="checkbox" id="more" class="hidden" name="more"/>' +
-									//	'<span class="icon icon-checkbox">更多设置</span>' +
-									//'</div>' +
-								'</form>' +
-								'<iframe name="editorSave" id="editorSave" class="hidden"></iframe>'
-						, button: '<button type="button" id="codeSave" class="btn">保存</button>'}, {
+							, content: codeSaveFormTpl(rs)
+							, button: '<button type="button" id="codeSave" class="btn">保存</button>'}, {
 						id: 'uiLib',    size: 'normal'
 							, content: '<dl class="list-tree" id="uiLibList"></dl>'
 							, button: '<button type="button" id="" class="btn">确定</button>'}, {
 						id: 'demoImgLib',   size: 'large'
-							, content: '<form id="demoImgUploadForm" method="post" action="demoImgUpload" target="demoImgUpload" enctype="multipart/form-data">' +
-									'<div class="formGroup">' +
-										'<label class="label" for="image">添加素材</label>' +
-										'<input type="hidden" name="type" value="demo"/>' +
-										'<input type="file" id="image" class="input" name="image"/>' +
-										'<button class="btn btn-submit" type="submit">上传</button>' +
-									'</div>' +
-								'</form>' +
-								'<iframe name="demoImgUpload" id="demoImgUpload" class="hidden"></iframe>' +
-								'<ul class="list-img" id="demoImgList">' +
-									'<li class="list_item block"><div class="loading loading-chasing"></div></li>' +
-								'</ul>'
+							, content: demoImgUploadFormTpl({})
+						//'<form id="demoImgUploadForm" method="post" action="demoImgUpload" target="demoImgUploadRs" enctype="multipart/form-data">' +
+						//			'<div class="formGroup">' +
+						//				'<label class="label" for="image">添加素材</label>' +
+						//				'<input type="hidden" name="type" value="demo"/>' +
+						//				'<input type="file" id="image" class="input" name="image"/>' +
+						//				'<button class="btn btn-submit" type="submit">上传</button>' +
+						//			'</div>' +
+						//		'</form>' +
+						//		'<iframe name="demoImgUploadRs" id="demoImgUploadRs" class="hidden"></iframe>' +
+						//		'<ul class="list-img" id="demoImgList">' +
+						//			'<li class="list_item block"><div class="loading loading-chasing"></div></li>' +
+						//		'</ul>'
 					}]).join('')
 					, script: {
 						main: '../script/module/editor/code'
@@ -282,6 +332,48 @@ web.post('/editor/save', image.uploadMiddle.single('preview'), function(req, res
 	var body = req.body || {}
 		, type = body.type
 		;
+
+	var handle = {}
+		, handleData
+		, query = data.query
+		, id = query.id || ''
+		;
+
+	handleData = {
+		name:       query.codeName
+		, html:     query.html
+		, css:      query.css
+		, js:       query.js
+		, cssLib:   query.cssLib
+		, jsLib:    query.jsLib
+		, tags:     query.tags
+		, preview:  query.preview || '../image/default/no-pic.png'
+	};
+
+	if( id !== '0' ){
+		handle.sql = Editor.Model.codeEdit;
+
+		handleData.id = id;
+	}
+	else{
+		handle.sql = Editor.Model.codeSave;
+	}
+
+	handle.data = handleData;
+
+	db.handle( handle ).then(function(rs){
+		rs = rs.result;
+
+		res.send( JSON.stringify({
+			Id: rs.insertId || id
+		}) );
+		//socket.emit('data', {
+		//	topic: 'editor/code/save'
+		//	, info: {
+		//		id: rs.insertId || id
+		//	}
+		//});
+	});
 });
 
 web.post('/editor/demoImgUpload', image.uploadMiddle.single('image'), function(req, res){
@@ -492,14 +584,31 @@ socket.register({
 		handle.data = handleData;
 
 		db.handle( handle ).then(function(rs){
-			var send = {
+			rs = rs.result;
+
+			socket.emit('data', {
 				topic: 'editor/code/save'
 				, info: {
 					id: rs.insertId || id
 				}
-			};
+			});
+		});
+	}
+	, 'editor/demoImgLib': function(socket, data){
+		var query = data.query || {}
+			;
 
-			socket.emit('data', send);
+		db.handle({
+			sql: image.Model.imageByAlbum
+			, data: {
+				albumId: 5
+			}
+		}).then(function(rs){
+
+			socket.emit('data', {
+				topic: 'editor/demoImgLib'
+				, data: rs.result
+			});
 		});
 	}
 });

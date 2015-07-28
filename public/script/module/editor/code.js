@@ -282,7 +282,7 @@ require(['../config'], function(config){
 			});
 		}).on('click', '#getDemoImg', function(){
 			$demoImgLibPopup.data('data') ? $demoImgLibPopup.trigger('showDialog') : socket.emit('data', {
-				topic: 'image/demoImgLib'
+				topic: 'editor/demoImgLib'
 			});
 		});
 
@@ -306,12 +306,20 @@ require(['../config'], function(config){
 
 		$editor.find('label').removeClass('hidden');
 
-		$('#demoImgUpload').on('load', function(){
+		// 素材图片上传结果
+		$('#demoImgUploadRs').on('load', function(){
 			var res = this.contentDocument.body.innerHTML;
 
 			res = $.parseJSON( res );
 
 			$demoImgLibPopup.find('#demoImgList').prepend( demoImgLibTpl(res) );
+		});
+		$('#editorSaveRs').on('load', function(){
+			var res = this.contentDocument.body.innerHTML;
+
+			res = $.parseJSON( res );
+
+
 		});
 
 		$(window).bind('beforeunload', function(){
