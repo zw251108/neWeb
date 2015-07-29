@@ -438,8 +438,8 @@ db.query('select * from basedata_province', function(err, rs){
 		while( j-- ){
 			province[rs[j].name] = rs[j].code;
 		}
-//
-//		console.log('province', province);
+
+		console.log('province', province);
 //		http.get(u, function(res){
 //			var chunks = [];
 //
@@ -473,7 +473,7 @@ db.query('select * from basedata_province', function(err, rs){
 		//	; i < j; i++ ){
 		//	t = all_univ[i];console.log(t.name);
 		//	code = province[t.name];
-		//	t = t.univs
+		//	t = t.univs;
 		//	for( m = 0, n = t.length; m < n; m++){
 		//		s = t[m];
 		//		db.query('insert into basedata_university(name,province,code) values(?,?,?)', [s.name, code, s.id], function(err, rs){

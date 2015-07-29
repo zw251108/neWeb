@@ -10,26 +10,27 @@ var db          = require('./db/db.js')
 	, tpl       = require('./emmetTpl/tpl.js')
 	, emmetTpl  = require('./emmetTpl/emmetTpl.js').template
 
+	, bower     = require('./bower.js')
 	, tag       = require('./tag.js')
 	, image     = require('./image.js')
 
 	, codeTpl       = emmetTpl({
 		template: 'a[href=code?id=%Id%]' +
-				'>article.article.editor_article' +
+			'>article.article.editor_article' +
 				'>h3.article_title{%name%}' +
 				'+img.article_preview[src=%preview% width=%width% height=%height% alt=%alt%]' +
-				'+div.tagsArea{%tags%}'
+				'+div.tagsArea{%tagsArea%}'
 		, filter:{
 			alt:function(data, index){
 				return data.preview ? data.name : '没有预览图片';
 			}
-			, tags: function(d){
-				return d.tags ? '<span class="tag tag-checked">' + d.tags.split(',').join('</span><span class="tag tag-checked">') + '</span>' : '';
-			}
+			, tagsArea: tag.tagEditorFilter.tagsArea
 		}
 	})
 	, codeEditTpl   = emmetTpl({
-		template: 'h3#editorTitle.editor_title{%name%}' +
+		template: 'button#save.icon.icon-save.editor_op[type=submit title=保存]' +
+			'+button#run.icon.icon-play.editor_op[type=button title=运行]' +
+			'+h3#editorTitle.editor_title{%name%}' +
 			'+form#editorForm.editor_form[action=result method=post target=result]' +
 				'>input#id[type=hidden name=id value=%Id%]' +
 				'+input#cssLib[type=hidden name=css_lib value=%css_lib%]' +
@@ -74,7 +75,11 @@ var db          = require('./db/db.js')
 	})
 	, codeSaveFormTpl   = emmetTpl({
 		template: 'form#saveForm[method=post action=save target=editorSaveRs enctype=multipart/form-data]' +
-			'>div.formGroup' +
+			'>input#codeId[type=hidden]' +
+			'+textarea#htmlCode.hidden[name=htmlCode]' +
+			'+textarea#cssCode.hidden[name=cssCode]' +
+			'+textarea#jsCode.hidden[name=jsCode]' +
+			'+div.formGroup' +
 				'>label.label[for=codeName]{请输入名称}' +
 				'+input#codeName.input[type=codeName name=codeName value=%name% placeholder=请输入标题 data-validator=title]' +
 			'^div.formGroup' +
@@ -82,8 +87,10 @@ var db          = require('./db/db.js')
 				'+input[type=hidden name=type value=preview]' +
 				'+input#preview.input[type=file name=preview]' +
 			'^' + tag.tagEditorEmmet +
-		    '^button.btn.btn-link[type=button]{更多设置}' +
-			'+fieldset.hidden' +
+		    '^label' +
+				'>input[type=checkbox name=setUI value=1]' +
+				'+span{更多设置}' +
+			'^fieldset.hidden' +
 				'>legend{设置为 UI 组件}' +
 				'+input[type=hidden name=setUI value=1]' +
 				'+div.formGroup' +
@@ -116,6 +123,9 @@ var db          = require('./db/db.js')
 	})
 
 	, Promise = require('promise')
+
+	//, htmlTag = 'DOCTYPE,a,abbr,acronym,address,applet,area,article,aside,audio,b,base,basefont,bdi,bdo,big,blockquote,body,br,button,canvas,caption,center,cite,code,col,colgroup,command,datalist,dd,del,details,dir,div,dfn,dialog,dl,dt,em,embed,fieldset,figcaption,figure,font,footer,form,frame,frameset,h1,h2,h3,h4,h5,h6,head,header,hr,html,i,iframe,img,input,ins,isindex,kbd,keygen,label,legend,li,link,map,mark,menu,menuitem,meta,meter,nav,noframes,noscript,object,ol,optgroup,option,output,p,param,pre,progress,q,rp,rt,tuby,s,samp,script,section,select,small,source,span,strike,strong,style,sub,summary,sup,table,tbody,td,textarea,tfoot,th,thead,time,title,tr,track,tt,u,ul,var,video,wbr,xmp'
+
 
 	/**
 	 * @namespace   Editor
@@ -190,13 +200,11 @@ var db          = require('./db/db.js')
 							id: 'getDemoImg',   icon: 'picture',title: '素材'}, {
 							id: 'getUiLib',     icon: 'lib',    title: '引用组件'}, {
 							id: 'newWin',       icon: 'window', title: '在新窗口浏览'}, {
-							id: 'run',          icon: 'play',   title: '运行'}, {
-							id: 'save',         icon: 'save',   title: '保存'
+							id: 'set',          icon: 'set',    title: '更多设置'
 						}]).join('')
 						, content: codeEditTpl(rs).join('')
 					}).join('') + tpl.popupTpl([{
-						id: 'alert',    size: 'small', content: '<div class="msg" id="alertContent"></div>'
-							, button: '<button type="button" id="" class="btn module_close">确定</button>'}, {
+						id: 'alert',    size: 'small', content: '<div class="msg" id="alertContent"></div>'}, {
 						id: 'editorSave',   size: 'normal'
 							, content: codeSaveFormTpl(rs)
 							, button: '<button type="button" id="codeSave" class="btn">保存</button>'}, {
@@ -205,18 +213,6 @@ var db          = require('./db/db.js')
 							, button: '<button type="button" id="" class="btn">确定</button>'}, {
 						id: 'demoImgLib',   size: 'large'
 							, content: demoImgUploadFormTpl({})
-						//'<form id="demoImgUploadForm" method="post" action="demoImgUpload" target="demoImgUploadRs" enctype="multipart/form-data">' +
-						//			'<div class="formGroup">' +
-						//				'<label class="label" for="image">添加素材</label>' +
-						//				'<input type="hidden" name="type" value="demo"/>' +
-						//				'<input type="file" id="image" class="input" name="image"/>' +
-						//				'<button class="btn btn-submit" type="submit">上传</button>' +
-						//			'</div>' +
-						//		'</form>' +
-						//		'<iframe name="demoImgUploadRs" id="demoImgUploadRs" class="hidden"></iframe>' +
-						//		'<ul class="list-img" id="demoImgList">' +
-						//			'<li class="list_item block"><div class="loading loading-chasing"></div></li>' +
-						//		'</ul>'
 					}]).join('')
 					, script: {
 						main: '../script/module/editor/code'
@@ -275,6 +271,7 @@ web.get('/editor/code', function(req, res){
 	else{
 		res.send( Editor.View.code({
 			Id: 0
+			, name: '新建前端代码'
 			, js_lib: 'jquery/dist/jquery.min.js'
 		}) );
 		res.end();
@@ -554,43 +551,55 @@ socket.register({
 			socket.emit('data', send);
 		}
 	}
-	, 'editor/code/save': function(socket, data){
-		var handle = {}
-			, handleData
-			, query = data.query
-			, id = query.id || ''
-			;
-
-		handleData = {
-			name:       query.codeName
-			, html:     query.html
-			, css:      query.css
-			, js:       query.js
-			, cssLib:   query.cssLib
-			, jsLib:    query.jsLib
-			, tags:     query.tags
-			, preview:  query.preview || '../image/default/no-pic.png'
-		};
-
-		if( id !== '0' ){
-			handle.sql = Editor.Model.codeEdit;
-
-			handleData.id = id;
-		}
-		else{
-			handle.sql = Editor.Model.codeSave;
-		}
-
-		handle.data = handleData;
-
-		db.handle( handle ).then(function(rs){
+	//, 'editor/code/save': function(socket, data){
+	//	var handle = {}
+	//		, handleData
+	//		, query = data.query
+	//		, id = query.id || ''
+	//		;
+	//
+	//	handleData = {
+	//		name:       query.codeName
+	//		, html:     query.html
+	//		, css:      query.css
+	//		, js:       query.js
+	//		, cssLib:   query.cssLib
+	//		, jsLib:    query.jsLib
+	//		, tags:     query.tags
+	//		, preview:  query.preview || '../image/default/no-pic.png'
+	//	};
+	//
+	//	if( id !== '0' ){
+	//		handle.sql = Editor.Model.codeEdit;
+	//
+	//		handleData.id = id;
+	//	}
+	//	else{
+	//		handle.sql = Editor.Model.codeSave;
+	//	}
+	//
+	//	handle.data = handleData;
+	//
+	//	db.handle( handle ).then(function(rs){
+	//		rs = rs.result;
+	//
+	//		socket.emit('data', {
+	//			topic: 'editor/code/save'
+	//			, info: {
+	//				id: rs.insertId || id
+	//			}
+	//		});
+	//	});
+	//}
+	, 'editor/lib': function(socket, data){
+		db.handle({
+			sql: bower.Model.bower
+		}).then(function(rs){
 			rs = rs.result;
 
 			socket.emit('data', {
-				topic: 'editor/code/save'
-				, info: {
-					id: rs.insertId || id
-				}
+				topic: 'editor/lib'
+				, data: rs
 			});
 		});
 	}

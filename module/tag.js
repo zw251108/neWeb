@@ -9,17 +9,17 @@ var db          = require('./db/db.js')
 	, emmetTpl  = require('./emmetTpl/emmetTpl.js').template
 
 	, tagEditorEmmet = 'div.formGroup' +
-			'>label.label[for=tags]{请设置标签}' +
-			'+div.tagInput' +
-				'>input#tag.input[type=text name=tag placeholder=请输入标签 data-validator=tag]' +
-				'+button#addTag.btn[type=button]{添加}' +
-			'^div.tagsArea{%tagSpan%}' +
-			'+textarea#tags.hidden[name=tags]{%tags%}'
+		'>label.label[for=tags]{请设置标签}' +
+		'+div.tagInput' +
+			'>input#tag.input[type=text name=tag placeholder=请输入标签 data-validator=tag]' +
+			'+button#addTag.btn[type=button]{添加}' +
+		'^div.tagsArea{%tagsArea%}' +
+		'+textarea#tags.hidden[name=tags]{%tags%}'
 	, tagEditorFilter = {
-		tag: function(d){
+		tags: function(d){
 			return d.tags || ''
 		}
-		, tagSpan: function(d){
+		, tagsArea: function(d){
 			return d.tags ? d.tags.split(',').map(function(d){
 				return '<span class="tag tag-checked">'+ d +'</span>';
 			}).join('') : '';

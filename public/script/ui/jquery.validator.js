@@ -163,7 +163,7 @@
 		$form = (typeof $form === 'object' && $form.jQuery) ? $form : $($form);
 
 		$form.on({
-			'submit::validator': function(e){
+			'submit.validator': function(e){
 
 				var rs = $form.valid();
 
@@ -269,7 +269,7 @@
 
 				return result;
 			}
-		}).on('focus:validator', '[data-validator]', function(){
+		}).on('focus.validator', '[data-validator]', function(){
 
 			var $self = $form.formItems.filter(this)
 				, type = $self.data('validator')
@@ -287,11 +287,11 @@
 		});
 
 		for( k in validEvent ) if( validEvent.hasOwnProperty(k) ){
-			$form.on(validEvent[k] +':validator', k +'[data-validator]', validTrigger);
+			$form.on(validEvent[k] +'.validator', k +'[data-validator]', validTrigger);
 		}
 
 		$form.validOpts = opts;
-		$form.formItems = $($form[0].item).filter('[data-validator]');
+		$form.formItems = $form.find('[data-validator]');
 		$.extend($form, methods);
 
 		return $form;

@@ -187,27 +187,36 @@ require(['../config'], function(config){
 				js.refresh();
 			})
 
+			, $saveForm = $('#saveForm')
+			, $saveCodeId = $saveForm.find('#codeId')
+			, $saveHtml = $saveForm.find('#htmlCode')
+			, $saveCss = $saveForm.find('#cssCode')
+
 			// 各个弹窗
 			, $savePopup = $('#editorSave').on('click', '#codeSave', function(){
-				socket.emit('data', {
-					topic: 'editor/code/save'
-					, query: {
-						id: $id.val()
-						, codeName: $codeName.val()
-						, html: html.getValue()
-						, css: css.getValue()
-						, js: js.getValue()
-						, cssLib: $cssLib.val()
-						, jsLib: $jsLib.val()
-						, tags: $tags.val()
-					}
-				});
+				//socket.emit('data', {
+				//	topic: 'editor/code/save'
+				//	, query: {
+				//		id: $id.val()
+				//		, codeName: $codeName.val()
+				//		, html: html.getValue()
+				//		, css: css.getValue()
+				//		, js: js.getValue()
+				//		, cssLib: $cssLib.val()
+				//		, jsLib: $jsLib.val()
+				//		, tags: $tags.val()
+				//	}
+				//});
+
+				$saveForm.find('#codeId')
 
 				$editorTitle.html( $codeName.val() );
 
+
+
 				isEdit = false;
 			})
-			, $libPopup = $('#uiLib').on('click', 'dt input:checkbox', function(){
+			, $uiLibPopup = $('#uiLib').on('click', 'dt input:checkbox', function(){
 				$(this).parents('dt').next().find('input:checkbox').prop('checked', this.checked);
 			}).on('click', 'dd input:checkbox', function(){
 				var $parent = $(this).parents('dd')
@@ -216,11 +225,11 @@ require(['../config'], function(config){
 					;
 				$parent.prev().find('input:checkbox').prop('checked', lChecked === $checkbox.length);
 			}).on('click', 'button.btn', function(){
-				var $checked = $libPopup.find('input:checkbox:checked')
+				var $checked = $uiLibPopup.find('input:checkbox:checked')
 					, jsLib = []
 					, cssLib = [];
 
-				$libPopup.trigger('closeDialog');
+				$uiLibPopup.trigger('closeDialog');
 				$checked.each(function(){
 					var val = this.value;
 
@@ -253,20 +262,6 @@ require(['../config'], function(config){
 		$toolbar.on('click', '#save', function(){
 			$codeName.val( $editor.find('h3').html() );
 			$savePopup.trigger('showDialog');
-		}).on('click', '#run', function(){
-			var frame = $rs[0]
-				, cssLib = $cssLib.val()
-				, jsLib = $jsLib.val()
-				;
-
-			html.save();
-			css.save();
-			js.save();
-
-			frame = frame.contentDocument || frame.contentWindow.document;
-			frame.open();
-			frame.write( runCode(html.getValue(), css.getValue(), js.getValue(), cssLib, jsLib) );
-			frame.close();
 		}).on('click', '#newWin', function(){
 			var  newWin = window.open('').document
 				, cssLib = $cssLib.val()
@@ -277,8 +272,8 @@ require(['../config'], function(config){
 			newWin.write( runCode(html.getValue(), css.getValue(), js.getValue(), cssLib, jsLib) );
 			newWin.close();
 		}).on('click', '#getUiLib', function(){
-			$libPopup.data('data') ? $libPopup.trigger('showDialog') : socket.emit('data', {
-				topic: 'bower/editor/lib'
+			$uiLibPopup.data('data') ? $uiLibPopup.trigger('showDialog') : socket.emit('data', {
+				topic: 'editor/lib'
 			});
 		}).on('click', '#getDemoImg', function(){
 			$demoImgLibPopup.data('data') ? $demoImgLibPopup.trigger('showDialog') : socket.emit('data', {
@@ -302,7 +297,23 @@ require(['../config'], function(config){
 			isEdit = true;
 		});
 
-		$toolbar.find('#run').trigger('click');
+		//$toolbar.find('#run').trigger('click');
+
+		$('#run').on('click', function(){
+			var frame = $rs[0]
+				, cssLib = $cssLib.val()
+				, jsLib = $jsLib.val()
+				;
+
+			html.save();
+			css.save();
+			js.save();
+
+			frame = frame.contentDocument || frame.contentWindow.document;
+			frame.open();
+			frame.write( runCode(html.getValue(), css.getValue(), js.getValue(), cssLib, jsLib) );
+			frame.close();
+		}).trigger('click');
 
 		$editor.find('label').removeClass('hidden');
 
@@ -319,7 +330,9 @@ require(['../config'], function(config){
 
 			res = $.parseJSON( res );
 
-
+			if( location.search !== '?id=' + res.Id ){
+				location.search = '?id=' + res.Id
+			}
 		});
 
 		$(window).bind('beforeunload', function(){
@@ -329,31 +342,32 @@ require(['../config'], function(config){
 		});
 
 		socket.register({
-			'editor/code/save': function(data){
-				$savePopup.trigger('closeDialog');
-
-				if( 'error' in data ){
-					$alert.find('#alertConternt').html('保存失败' + data.msg)
-						.end().trigger('showDialog');
-				}
-				else{
-					if( data.msg === 'success' && location.search !== '?id='+ data.id ){
-						location.search = '?id='+ data.id;
-					}
-					else{
-						$alert.find('#alertContent').html('保存成功')
-							.end().trigger('showDialog');
-					}
-				}
-			}
-			, 'editor/lib': function(data){
+			//'editor/code/save': function(data){
+			//	$savePopup.trigger('closeDialog');
+			//
+			//	if( 'error' in data ){
+			//		$alert.find('#alertConternt').html('保存失败' + data.msg)
+			//			.end().trigger('showDialog');
+			//	}
+			//	else{
+			//		if( data.msg === 'success' && location.search !== '?id='+ data.id ){
+			//			location.search = '?id='+ data.id;
+			//		}
+			//		else{
+			//			$alert.find('#alertContent').html('保存成功')
+			//				.end().trigger('showDialog');
+			//		}
+			//	}
+			//}
+			//,
+			'editor/lib': function(data){
 				var cssLib = $cssLib.val()
 					, jsLib = $jsLib.val()
 					;
 				cssLib = cssLib ? cssLib.split(',') : [];
 				jsLib = jsLib ? jsLib.split(',') : [];
 				//con
-				$libPopup.data('data', true)
+				$uiLibPopup.data('data', true)
 					.find('#uiLibList').html( uiLibTpl(data.data).join('')).find('dd input:checkbox').each(function(){
 						var v = this.value;
 

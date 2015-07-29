@@ -25,6 +25,8 @@ var db          = require('./db/db.js')
 			, district: 'select * from basedata_district where city=:city'
 			, town:     'select * from basedata_town where district=:district'
 			, village:  'select * from basedata_village where town=:town'
+
+			, university: 'select * from basedata_university where province=:province'
 		}
 
 		/**
@@ -43,6 +45,11 @@ var db          = require('./db/db.js')
 	}
 	;
 
+/**
+ * 数据接口
+ *  支持 jsonp 格式
+ * */
+// 地区数据
 web.get('/data/province', function(req, res){
 	var query = req.query || {}
 		, callback = query.callback
@@ -144,6 +151,33 @@ web.get('/data/village', function(req, res){
 			sql: BaseData.Model.village
 			, data: {
 				town: town
+			}
+		}).then(function(rs){
+			rs = JSON.stringify( rs.result );
+
+			res.send( callback ? callback +'('+ rs +')' : rs );
+			res.end();
+		});
+	}
+	else{
+		res.send('[]');
+		res.end();
+	}
+});
+
+// 大学数据
+web.get('/data/university', function(req, res){
+	var query = req.query || {}
+		, province = query.province
+		, callback = query.callback
+		;
+
+	if( province ){
+
+		db.handle({
+			sql: BaseData.Model.university
+			, data: {
+				province: province
 			}
 		}).then(function(rs){
 			rs = JSON.stringify( rs.result );
@@ -271,6 +305,36 @@ socket.register({
 				sql: BaseData.Model.village
 				, data: {
 					town: town
+				}
+			}).then(function(rs){
+				rs = rs.result;
+
+				send.data = rs;
+				socket.emit('data', send);
+			});
+		}
+		else{
+			send.error = '';
+			send.msg = '缺少参数';
+
+			socket.emit('data', send);
+		}
+	}
+
+	, university: function(socket, data){
+		var send = {
+				topic: 'university'
+			}
+			, query = data.query || {}
+			, province = query.province
+			;
+
+		if( province ){
+
+			db.handle({
+				sql: BaseData.Model.university
+				, data: {
+					province: province
 				}
 			}).then(function(rs){
 				rs = rs.result;

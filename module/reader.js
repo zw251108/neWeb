@@ -13,13 +13,22 @@ var db          = require('./db/db.js')
 	, tag       = require('./tag.js')
 
 	, readerTpl    = emmetTpl({
-		template: 'section#reader_%Id%.reader_section.section>a[href=%html_url% data-feed=%xml_url% data-id=%Id%]>h3.section_title{%name%}>span.icon.icon-plus^^hr+ul.reader_articleList'
+		template: 'section#reader_%Id%.reader_section.section' +
+			'>a[href=%html_url% data-feed=%xml_url% data-id=%Id%]' +
+				'>h3.section_title{%name%}' +
+					'>span.icon.icon-plus' +
+				'^^hr' +
+				'+ul.reader_articleList'
 	})
 	, articleTpl   = emmetTpl({
-		template:'article#blogArt%Id%.article[data-id=%Id%]>a[href=%url% title=%url% target=_blank]>h3.article_title{%title%}' +
-		'^hr+a.icon.icon-checkbox%readStatus%[href=reader/read title=%readTitle%]{%readText%}' +
-		'+a.icon.icon-star%favorStatus%[href=reader/favor title=%favorTitle%]{%favorText%}' +
-		'+time.article_date[pubdate=pubdate datetime=%datetime%]{%datetime%}+div.tagsArea{%tags%}'
+		template:'article#blogArt%Id%.article[data-id=%Id%]' +
+			'>a[href=%url% title=%url% target=_blank]' +
+				'>h3.article_title{%title%}' +
+			'^hr' +
+			'+a.icon.icon-checkbox%readStatus%[href=reader/read title=%readTitle%]{%readText%}' +
+			'+a.icon.icon-star%favorStatus%[href=reader/favor title=%favorTitle%]{%favorText%}' +
+			'+time.article_date[pubdate=pubdate datetime=%datetime%]{%datetime%}' +
+			'+div.tagsArea{%tagsArea%}'
 		, filter: {
 			title: function(d){
 				return d.title || d.url;
@@ -42,22 +51,7 @@ var db          = require('./db/db.js')
 			, favorText: function(d){
 				return +d.status > 1 ? '已收藏' : '收藏';
 			}
-			, tags: function(d){
-				return d.tags ? '<span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">'+ d.tags.split(',').join('</span><span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">') +'</span>' : '';
-				//var data = []
-				//	, tagsId = (d.tags_id || '').split(',')
-				//	, tagsName = (d.tags || '').split(',')
-				//	;
-				//
-				//$.each(tagsId, function(i, d){
-				//	data.push({
-				//		Id: d
-				//		, name: tagsName[i]
-				//	});
-				//});
-				//
-				//return tagTmpl(data).join('');
-			}
+			, tagsArea: tag.tagEditorFilter.tagsArea
 		}
 	})
 

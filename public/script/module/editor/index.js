@@ -24,7 +24,7 @@ require(['../config'], function(config){
 			, body = document.body
 			, HEIGHT = doc.clientHeight
 			, socketTimeout = null
-			, page = 0
+			, page = 1
 			, PAGE_SIZE = 20
 			, moreData = false
 			;
