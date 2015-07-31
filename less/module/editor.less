@@ -109,8 +109,29 @@
 /*----- editor -----*/
 .editor_op{
 	float: right;
-	height: 28px;
+	height: 40px;
+	width: 40px;
 	margin: 0 0 10px 10px;
+}
+.editor_title{
+	height: 40px;
+
+	margin-bottom: 10px;
+	margin-right: 100px;
+
+	line-height: 40px;
+
+	.input{
+		width: 100%;
+		border: 1px solid transparent;
+		font-size: 24px;
+		line-height: 1.5;
+		text-indent: 0.5em;
+
+		&:hover,&:focus{
+			border-color: #c0c0c0;
+		}
+	}
 }
 .editor_area{
 	display: inline-block;

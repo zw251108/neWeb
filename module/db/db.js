@@ -13,9 +13,13 @@ var mysql = require('mysql')
 db.config.queryFormat = function(sql, values){
 	if( !values ) return sql;
 
-	return sql.replace(/\:(\w+)/g, function(txt, key){
+	sql = sql.replace(/\:(\w+)/g, function(txt, key){
 		return  values.hasOwnProperty(key) ? this.escape( values[key] ) : txt;
 	}.bind(this));
+
+	console.log('db 执行 sql: ', sql);
+
+	return sql;
 };
 
 /**

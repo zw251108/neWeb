@@ -51,7 +51,9 @@ var db          = require('./db/db.js')
 			, favorText: function(d){
 				return +d.status > 1 ? '已收藏' : '收藏';
 			}
-			, tagsArea: tag.tagEditorFilter.tagsArea
+			, tagsArea: function(d){
+				return d.tags ? '<span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">'+ d.tags.split(',').join('</span><span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">') +'</span>' : '';
+			}
 		}
 	})
 

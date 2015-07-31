@@ -28,14 +28,15 @@ var db          = require('./db/db.js')
 		}
 	})
 	, codeEditTpl   = emmetTpl({
-		template: 'button#save.icon.icon-save.editor_op[type=submit title=保存]' +
-			'+button#run.icon.icon-play.editor_op[type=button title=运行]' +
-			'+h3#editorTitle.editor_title{%name%}' +
-			'+form#editorForm.editor_form[action=result method=post target=result]' +
-				'>input#id[type=hidden name=id value=%Id%]' +
-				'+input#cssLib[type=hidden name=css_lib value=%css_lib%]' +
-				'+input#jsLib[type=hidden name=js_lib value=%js_lib%]' +
-				'+div.editor_area.editor_area-html' +
+		template:
+			'form#editorForm.editor_form[action=result method=post target=result]' +
+				'>button#save.icon.icon-save.editor_op[type=submit title=保存]' +
+				'+button#run.icon.icon-play.editor_op[type=button title=运行]' +
+				'+input#id[type=hidden name=id value=%Id%]' +
+				'+input#cssLib[type=hidden name=cssLib value=%css_lib%]' +
+				'+input#jsLib[type=hidden name=jsLib value=%js_lib%]' +
+				'+h3#editorTitle.editor_title>input#name.input[type=text name=name value=%name% placeholder=新建前端代码]' +
+				'^div.editor_area.editor_area-html' +
 					'>textarea#html.hidden[name=html placeholder=body&nbsp;之间的&nbsp;HTML&nbsp;代码]{%html%}' +
 					'+label.hidden[for=html]{HTML}' +
 				'^div.editor_area.editor_area-css' +
@@ -73,15 +74,12 @@ var db          = require('./db/db.js')
 		//	'<li class="list_item block"><div class="loading loading-chasing"></div></li>' +
 		//'</ul>'
 	})
-	, codeSaveFormTpl   = emmetTpl({
-		template: 'form#saveForm[method=post action=save target=editorSaveRs enctype=multipart/form-data]' +
-			'>input#codeId[type=hidden]' +
-			'+textarea#htmlCode.hidden[name=htmlCode]' +
-			'+textarea#cssCode.hidden[name=cssCode]' +
-			'+textarea#jsCode.hidden[name=jsCode]' +
+	, codeSetMoreFormTpl   = emmetTpl({
+		template: 'form#setMoreForm[method=post action=setMore target=editorSetMoreRs enctype=multipart/form-data]' +
+			'>input#codeId[type=hidden name=id value=%Id%]' +
 			'+div.formGroup' +
 				'>label.label[for=codeName]{请输入名称}' +
-				'+input#codeName.input[type=codeName name=codeName value=%name% placeholder=请输入标题 data-validator=title]' +
+				'+input#codeName.input[type=text name=name value=%name% placeholder=请输入名称 data-validator=title]' +
 			'^div.formGroup' +
 				'>label.label[for=preview]{请添加预览图片}' +
 				'+input[type=hidden name=type value=preview]' +
@@ -96,7 +94,7 @@ var db          = require('./db/db.js')
 				'+div.formGroup' +
 					'>label.label[for=uiName]{请设置 UI 组件名称}' +
 					'+input#uiName.input[type=text name=uiName placeholder=请设置 UI 组件名称 data-validator=uiName]' +
-			'^^^iframe#editorSaveRs.hidden[name=editorSaveRs]'
+			'^^^iframe#editorSetMoreRs.hidden[name=editorSetMoreRs]'
 			//'<form id="saveForm" method="post" action="save" target="editorSaveRs" enctype="multipart/form-data">' +
 			//	'<div class="formGroup">' +
 			//		'<label class="label" for="codeName">请输入名称</label>' +
@@ -141,8 +139,9 @@ var db          = require('./db/db.js')
 			, editorCount: 'select count(*) as count from editor where status=1'
 			, editorPage: 'select editor.Id,editor.name,preview,tags,width,height from editor,image where status=1 and editor.preview=image.src order by editor.Id limit :page,:size'
 			, code: 'select Id,name,tags,css_lib,js_lib,html,css,js from editor where Id=:id'
-			, codeEdit: 'update editor set name=:name,html=:html,css=:css,js=:js,css_lib=:cssLib,js_lib=:jsLib,tags=:tags where Id=:id'
-			, codeSave: 'insert into editor(status,html,css,js,css_lib,js_lib,name,preview,create_time,tags) values(1,:html,:css,:js,:cssLib,:jsLib,:name,:preview,now(),?)'
+			, codeSave: 'insert into editor(status,html,css,js,css_lib,js_lib,name,preview,create_time) values(1,:html,:css,:js,:cssLib,:jsLib,:name,:preview,now())'
+			, codeEdit: 'update editor set name=:name,html=:html,css=:css,js=:js,css_lib=:cssLib,js_lib=:jsLib where Id=:id'
+			, codeSetMore: 'update editor set name=:name,tags=:tags,preview=:preview where Id=:id'
 		}
 
 		/**
@@ -200,13 +199,13 @@ var db          = require('./db/db.js')
 							id: 'getDemoImg',   icon: 'picture',title: '素材'}, {
 							id: 'getUiLib',     icon: 'lib',    title: '引用组件'}, {
 							id: 'newWin',       icon: 'window', title: '在新窗口浏览'}, {
-							id: 'set',          icon: 'set',    title: '更多设置'
+							id: 'set',          icon: 'settle', title: '更多设置'
 						}]).join('')
 						, content: codeEditTpl(rs).join('')
 					}).join('') + tpl.popupTpl([{
 						id: 'alert',    size: 'small', content: '<div class="msg" id="alertContent"></div>'}, {
-						id: 'editorSave',   size: 'normal'
-							, content: codeSaveFormTpl(rs)
+						id: 'setMore',   size: 'normal'
+							, content: codeSetMoreFormTpl(rs)
 							, button: '<button type="button" id="codeSave" class="btn">保存</button>'}, {
 						id: 'uiLib',    size: 'normal'
 							, content: '<dl class="list-tree" id="uiLibList"></dl>'
@@ -271,7 +270,6 @@ web.get('/editor/code', function(req, res){
 	else{
 		res.send( Editor.View.code({
 			Id: 0
-			, name: '新建前端代码'
 			, js_lib: 'jquery/dist/jquery.min.js'
 		}) );
 		res.end();
@@ -325,7 +323,7 @@ web.get('/editor/result', function(req, res){
 	res.end();
 });
 
-web.post('/editor/save', image.uploadMiddle.single('preview'), function(req, res){
+web.post('/editor/setMore', image.uploadMiddle.single('preview'), function(req, res){
 	var body = req.body || {}
 		, type = body.type
 		;
@@ -551,46 +549,38 @@ socket.register({
 			socket.emit('data', send);
 		}
 	}
-	//, 'editor/code/save': function(socket, data){
-	//	var handle = {}
-	//		, handleData
-	//		, query = data.query
-	//		, id = query.id || ''
-	//		;
-	//
-	//	handleData = {
-	//		name:       query.codeName
-	//		, html:     query.html
-	//		, css:      query.css
-	//		, js:       query.js
-	//		, cssLib:   query.cssLib
-	//		, jsLib:    query.jsLib
-	//		, tags:     query.tags
-	//		, preview:  query.preview || '../image/default/no-pic.png'
-	//	};
-	//
-	//	if( id !== '0' ){
-	//		handle.sql = Editor.Model.codeEdit;
-	//
-	//		handleData.id = id;
-	//	}
-	//	else{
-	//		handle.sql = Editor.Model.codeSave;
-	//	}
-	//
-	//	handle.data = handleData;
-	//
-	//	db.handle( handle ).then(function(rs){
-	//		rs = rs.result;
-	//
-	//		socket.emit('data', {
-	//			topic: 'editor/code/save'
-	//			, info: {
-	//				id: rs.insertId || id
-	//			}
-	//		});
-	//	});
-	//}
+	, 'editor/code/save': function(socket, data){
+		var handle = {}
+			, handleData
+			, query = data.query
+			, id = query.id || ''
+			;
+
+		handleData = query;
+
+		if( id !== '0' ){
+			handle.sql = Editor.Model.codeEdit;
+
+			handleData.id = id;
+		}
+		else{
+			handle.sql = Editor.Model.codeSave;
+			handleData.preview = handleData.preview || '../image/default/no-pic.png';
+		}
+
+		handle.data = handleData;
+
+		db.handle( handle ).then(function(rs){
+			rs = rs.result;
+
+			socket.emit('data', {
+				topic: 'editor/code/save'
+				, info: {
+					id: rs.insertId || id
+				}
+			});
+		});
+	}
 	, 'editor/lib': function(socket, data){
 		db.handle({
 			sql: bower.Model.bower
