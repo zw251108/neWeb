@@ -25,7 +25,8 @@
 
 	.CodeMirror{
 		height: 100%;
-		outline: 1px solid #ddd;
+		border: 1px solid #ddd;
+		//outline: 1px solid #ddd;
 		font-family: inherit;
 		font-size: 13px;
 		line-height: 1em;
@@ -54,7 +55,8 @@
 //	}
 //	.CodeMirror-empty
 	.CodeMirror-focused{
-		outline: 1px solid #888;
+		border: 1px solid #888;
+		//outline: 1px solid #888;
 	}
 	.CodeMirror pre.CodeMirror-placeholder{
 		color: #999;
@@ -128,8 +130,11 @@
 		line-height: 1.5;
 		text-indent: 0.5em;
 
-		&:hover,&:focus{
-			border-color: #c0c0c0;
+		&:hover{
+			border-color: #ddd;
+		}
+		&:focus{
+			border-color: #888;
 		}
 	}
 }
@@ -166,21 +171,27 @@
 	}
 }
 .editor_area-html{
-	width: 33%;
+	float: left;
+	width: 30%;
 	padding-right: 5px;
 }
 .editor_area-css{
-	width: 34%;
+	display: block;
+	width: 30%;
+	margin: 0 40% 0 30%;
 	padding: 0 5px;
 }
 .editor_area-js{
-	width: 33%;
+	float: right;
+	width: 40%;
+	//width: 33%;
 	padding-left: 5px;
 }
 .editor_area-rs{
 	display: block;
 	min-height: 500px;
 	width: 100%;
+	margin-top: 10px;
 
 	.boxSizing( content-box );
 }
@@ -188,9 +199,9 @@
 //	display: block;
 	height: 100%;
 	width: 100%;
-	border: 0;
-//	border: 1px solid #ddd;
-	outline: 1px solid #ddd;
+	//border: 0;
+	border: 1px solid #888;
+	//outline: 1px solid #ddd;
 
 	background: #fff;
 

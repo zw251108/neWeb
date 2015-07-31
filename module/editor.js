@@ -39,12 +39,12 @@ var db          = require('./db/db.js')
 				'^div.editor_area.editor_area-html' +
 					'>textarea#html.hidden[name=html placeholder=body&nbsp;之间的&nbsp;HTML&nbsp;代码]{%html%}' +
 					'+label.hidden[for=html]{HTML}' +
-				'^div.editor_area.editor_area-css' +
-					'>textarea#css.hidden[name=css placeholder=CSS&nbsp;代码]{%css%}' +
-					'+label.hidden[for=css]{CSS}' +
 				'^div.editor_area.editor_area-js' +
 					'>textarea#js.hidden[name=js placeholder=JavaScript&nbsp;代码]{%js%}' +
 					'+label.hidden[for=js]{JavaScript}' +
+				'^div.editor_area.editor_area-css' +
+					'>textarea#css.hidden[name=css placeholder=CSS&nbsp;代码]{%css%}' +
+					'+label.hidden[for=css]{CSS}' +
 				'^div.editor_area.editor_area-rs' +
 					'>iframe#result.editor_rs[name=result src=result]' +
 					'+label.hidden{Result}'

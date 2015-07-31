@@ -1,6 +1,20 @@
 /**
  *
  * */
+
+define('editorUISet', ['jqueru', 'socket', 'template'], function($, socket){
+
+});
+define('setMorePopup', ['jquery', 'socket', 'template'], function($, socket){
+
+});
+define('uiLibPopup', ['jquery', 'socket', 'template'], function($, socket){
+
+});
+define('demoImgLibPopup', ['jquery', 'scoket'], function($, socket){
+
+});
+
 require(['../config'], function(config){
 	var r = require.config(config.requireConfig);
 	r(['jquery', 'global', 'socket', 'codeEditor', 'tag', config.dataSource.tag, 'template'], function($, g, socket, codeArea, tag, tagsData){
@@ -233,7 +247,7 @@ require(['../config'], function(config){
 			// 各个弹窗
 			, $setMorePopup = $('#setMore').on('click', '#codeSave', function(){
 
-				$saveForm.find('#codeId');
+				$setMoreForm.find('#codeId');
 
 				$editorTitle.html( $codeName.val() );
 
