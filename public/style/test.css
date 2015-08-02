@@ -140,13 +140,17 @@
 }
 table{
 	table-layout: fixed;
+	margin-bottom: 10px;
 }
 
 th, td{
-	height: 100px;
+	/*height: 100px;*/
 	min-width: 100px;
 	border: 1px solid #c0c0c0;
+	padding: 10px 0;
 	color: #000;
+	line-height: 2;
+	text-indent: .5em;
 }
 td p{
 	width: 100%;
