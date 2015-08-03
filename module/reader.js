@@ -21,12 +21,11 @@ var db          = require('./db/db.js')
 				'+ul.reader_articleList'
 	})
 	, articleTpl   = emmetTpl({
-		template:'article#blogArt%Id%.article[data-id=%Id%]' +
+		template:'article#readerArt%Id%.article[data-id=%Id%]' +
 			'>a[href=%url% title=%url% target=_blank]' +
 				'>h3.article_title{%title%}' +
 			'^hr' +
 			'+a.icon.icon-checkbox%readStatus%[href=reader/read title=%readTitle%]{%readText%}' +
-			'+a.icon.icon-star%favorStatus%[href=reader/favor title=%favorTitle%]{%favorText%}' +
 			'+time.article_date[pubdate=pubdate datetime=%datetime%]{%datetime%}' +
 			'+div.tagsArea{%tagsArea%}'
 		, filter: {
@@ -34,22 +33,13 @@ var db          = require('./db/db.js')
 				return d.title || d.url;
 			}
 			, readStatus: function(d){
-				return +d.status > 0 ? '-checked' : '';
+				return +d.status > 1 ? '-checked' : '';
 			}
 			, readTitle: function(d){
-				return +d.status > 0 ? '已读' : '未读';
+				return +d.status > 1 ? '已读' : '未读';
 			}
 			, readText: function(d){
-				return +d.status > 0 ? '已读过' : '读过';
-			}
-			, favorStatus: function(d){
-				return +d.status > 1 ? '-full' : '';
-			}
-			, favorTitle: function(d){
-				return +d.status > 1 ? '已收藏' : '未收藏';
-			}
-			, favorText: function(d){
-				return +d.status > 1 ? '已收藏' : '收藏';
+				return +d.status > 1 ? '已读过' : '读过';
 			}
 			, tagsArea: function(d){
 				return d.tags ? '<span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">'+ d.tags.split(',').join('</span><span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">') +'</span>' : '';
@@ -62,16 +52,9 @@ var db          = require('./db/db.js')
 			'>div.formGroup' +
 				'>label.label[for=url]{请输入链接}' +
 				'+input#url.input[type=text placeholder=请输入链接 data-validator=url]'
-		//+
-		//'<form>' +
-		//	'<div class="formGroup">' +
-		//		'<label class="label" for="url">请输入链接</label>' +
-		//		'<input type="text" id="url" class="input" placeholder="请输入链接" data-validator="url"/>' +
-		//	'</div>' +
-		//'</form>'
 	})
-	, bookmarkFavorFormTpl  = emmetTpl({
-		template: 'form#favorForm' +
+	, bookmarkReadFormTpl  = emmetTpl({
+		template: 'form#readForm' +
 			'>input#bookmarkId[type=hidden name=bookmarkId]' +
 			'+div.formGroup' +
 				'>label.label[for=star1]{请评分}' +
@@ -87,21 +70,6 @@ var db          = require('./db/db.js')
 					'+input#star1[type=radio name=score value=1]' +
 					'+label.icon.icon-star[for=star1]' +
 			'^^' + tag.tagEditorEmmet
-		//+
-		//'<form id="favorForm">' +
-		//	'<input type="hidden" id="bookmarkId" name="bookmarkId"/>' +
-		//	'<div class="formGroup">' +
-		//		'<label class="label" for="star1">请评分</label>' +
-		//		'<div class="input-score">' +
-		//			'<input name="score" type="radio" value="5" id="star5"/><label for="star5" class="icon icon-star"></label>' +
-		//			'<input name="score" type="radio" value="4" id="star4"/><label for="star4" class="icon icon-star"></label>' +
-		//			'<input name="score" type="radio" value="3" id="star3"/><label for="star3" class="icon icon-star"></label>' +
-		//			'<input name="score" type="radio" value="2" id="star2"/><label for="star2" class="icon icon-star"></label>' +
-		//			'<input name="score" type="radio" value="1" id="star1"/><label for="star1" class="icon icon-star"></label>' +
-		//		'</div>' +
-		//	'</div>' +
-		//tag.View.tagEditor() +
-		//'</form>'
 	})
 
 	, segment = require('./segment/segment.js')
@@ -120,185 +88,6 @@ var db          = require('./db/db.js')
 	, Cheerio = require('cheerio')
 
 	, Promise = require('promise')
-
-	///**
-	// * 获取订阅 rss
-	// * */
-	//, getFeedList = function(feed, done, error){
-	//	console.log('获取 rss 订阅源：', feed);
-	//
-	//	superAgent.get(feed).buffer(true).end(function(err, res){
-	//
-	//		if( !err ){
-	//			var rss = res.text
-	//				, charset = res.charset
-	//				, $
-	//				, $item
-	//				, i, j, temp, $t
-	//				, rs = []
-	//				;
-	//
-	//			//if( charset !== 'utf8' ){
-	//			//	rss = iconv.decode(rss, charset);
-	//			//}
-	//
-	//			if( rss ){
-	//				$ = Cheerio.load(rss, {xmlMode: true});
-	//				$item = $('item');
-	//
-	//				for(i = 0, j = $item.length; i < j; i++){
-	//					temp = {};
-	//					$t = $item.eq(i);
-	//
-	//					temp.title = $t.find('title').text();
-	//					temp.url = $t.find('link').text();
-	//					temp.content = $t.find('description').text();
-	//					temp.author = $t.find('author').text();
-	//					!temp.author && (temp.author = $t.find('dc\\:creator').text());
-	//					temp.tags = $t.find('category').map(function(){
-	//						return $(this).text();
-	//					}).get().join();
-	//					temp.datetime = $t.find('pubDate').text();
-	//
-	//					rs.push(temp);
-	//				}
-	//
-	//				console.log(rs);
-	//				done(rs);
-	//			}
-	//			else{
-	//				error( err );
-	//			}
-	//		}
-	//		else{
-	//			error( err );
-	//		}
-	//	});
-	//}
-	///**
-	// * 获取订阅文章 并分解截取
-	// * object
-	// * object.url
-	// * object.title
-	// * object.tags
-	// * */
-	//, getArticle = function(url, done, error){
-	//	console.log('获取 feed 文章：', url);
-	//
-	//	superAgent.get(url).end(function(err, res){
-	//		if( !err ){
-	//			var html = res.text
-	//				, charset = res.charset
-	//				, $
-	//				, $main
-	//				, content
-	//				, rs
-	//				, obj = {}
-	//				, filterRs = []
-	//				, j
-	//				, prefix = '_' + (+new Date())
-	//				, temp
-	//				, title
-	//				, w, p
-	//				, urlResult = Url.parse(url)
-	//				, source = urlResult.protocol + '//' + urlResult.host
-	//				, charExpr = /^[a-z]$/i
-	//				;
-	//			console.log(charset, html, source);
-	//
-	//			if( !charset || charset.toUpperCase() !== 'UTF-8' ){
-	//				// todo 转码：将 GBK 转成 UTF-8
-	//			}
-	//
-	//			if( html ){
-	//				$ = Cheerio.load(html, {decodeEntities: false});
-	//
-	//				// todo 删除代码片段 script style
-	//
-	//				title = $('title').text();
-	//				rs = segment.doSegment( title );
-	//
-	//				$main = $('article');
-	//				content = $main.length ? $main.html() : $('body').html();
-	//
-	//				//console.log(content);
-	//
-	//				rs = rs.concat( segment.doSegment( content ) );
-	//				//console.log(rs);
-	//
-	//				// 统计
-	//				j = rs.length;
-	//				while( j-- ){
-	//					temp = rs[j];
-	//					p = temp.p;
-	//					w = temp.w;
-	//
-	//					/**
-	//					 * 过滤，只统计
-	//					 *  8       专有名词
-	//					 *  16      外文字符
-	//					 *  32      机构团体
-	//					 *  64      地名
-	//					 *  128     人名
-	//					 *  4096    动词
-	//					 *  1048576 名词
-	//					 * */
-	//					if( !(p === 8 ||
-	//						p === 16 ||
-	//						p === 32 ||
-	//						p === 64 ||
-	//						p === 128 ||
-	//						p === 4096 ||
-	//						p === 1048576) ) continue;
-	//
-	//					/**
-	//					 * 将单个字符排除
-	//					 * */
-	//					if( charExpr.test( w ) ) continue;
-	//
-	//					/**
-	//					 * 对分出来的词加个前缀作为 key 存在 obj 对象中
-	//					 *  防止分出来的词存在 toString 一类已存在于对象中的属性的关键字
-	//					 * */
-	//					w = prefix + w;
-	//
-	//					if( w in obj ){
-	//						filterRs[obj[w]].n++;
-	//					}
-	//					else{
-	//						filterRs.push({
-	//							tagName: temp.w
-	//							, p: p
-	//							, n: 1
-	//						});
-	//						obj[w] = filterRs.length - 1;
-	//					}
-	//				}
-	//
-	//				// 排序
-	//				filterRs.sort(function(a, b){
-	//					return b.n - a.n;
-	//				});
-	//
-	//				console.log('\n', filterRs.slice(0, 20));
-	//
-	//				done({
-	//					url: url
-	//					, title: title
-	//					, tags: filterRs.slice(0, 20)
-	//					, source: source
-	//				});
-	//				//done(url, title, filterRs.slice(0, 20) );
-	//			}
-	//			else{
-	//				error( err );
-	//			}
-	//		}
-	//		else{
-	//			error( err );
-	//		}
-	//	});
-	//}
 
 	/**
 	 * @namespace   Reader
@@ -347,8 +136,7 @@ var db          = require('./db/db.js')
 			, bookmarkCount: 'select count(*) as count from bookmark'
 			, bookmarkPage: 'select Id,title,url,status,tags from bookmark order by status,Id desc limit :page,:size'
 			, bookmarkAdd: 'insert into bookmark(url,title,source,tags,datetime) select :url,:title,:source,:tags,now() from dual where not exists (select * from bookmark where url like :url)'
-			, bookmarkRead: 'update bookmark set status=1 where Id=:id and status<1'
-			, bookmarkFavor: 'update bookmark set status=2,tags=:tags,score=score+:score where Id=:id and status<2'
+			, bookmarkRead: 'update bookmark set status=2,tags=:tags,score=score+:score where Id=:id and status<2'
 			, bookmarkIsExist: 'select * from bookmark where url like :url'
 
 			, favorite: 'select * from bookmark where status=2 order by datetime desc'
@@ -402,7 +190,6 @@ var db          = require('./db/db.js')
 					}
 
 					console.log(rs);
-					//done(rs);
 				}
 				else{
 					rs = null;
@@ -615,10 +402,10 @@ var db          = require('./db/db.js')
 							, content: bookmarkAddFormTpl({})
 							, button: '<button type="button" id="addBookmark" class="btn">确定</button>'
 					}, {
-						id: 'favorPopup', size: 'normal'
-						, content: bookmarkFavorFormTpl({})
-						, button: '<button type="button" id="favorBookmark" class="btn">确定</button>'
-					}])
+						id: 'readPopup', size: 'normal'
+						, content: bookmarkReadFormTpl({})
+						, button: '<button type="button" id="readBookmark" class="btn">确定</button>'
+					}]).join('')
 					, script: {
 						main: '../script/module/reader/bookmark'
 						, src: '../script/lib/require.min.js'
@@ -1020,44 +807,6 @@ socket.register({
 		var send = {
 				topic: 'reader/bookmark/read'
 			}
-			, id = data.query.id
-			;
-
-		if( id ){
-			db.handle({
-				sql: Reader.Model.bookmarkRead
-				, data: {
-					id: id
-				}
-			}).then(function(rs){
-				rs = rs.result;
-
-				if( rs.changedRows ){
-					send.info = {
-						id: id
-					};
-				}
-				else{
-					send.error = '';
-					send.msg = '该文章已被读过' ;
-				}
-
-				socket.emit('data', send);
-			});
-		}
-		else{
-			send.error = '';
-			send.msg = '缺少参数';
-
-			socket.emit('data', send);
-
-			error( 'E0002' );
-		}
-	}
-	, 'reader/bookmark/favor': function(socket, data){
-		var send = {
-				topic: 'reader/bookmark/favor'
-			}
 			, query = data.query
 			, id = query.id
 			, tags = query.tags || ''
@@ -1066,7 +815,7 @@ socket.register({
 
 		if( id ){
 			db.handle({
-				sql: Reader.Model.bookmarkFavor
+				sql: Reader.Model.bookmarkRead
 				, data: {
 					id: id
 					, score: score
@@ -1082,7 +831,7 @@ socket.register({
 				}
 				else{
 					send.error = '';
-					send.msg = '该文章已被收藏' ;
+					send.msg = '该文章已被读过' ;
 				}
 
 				socket.emit('data', send);

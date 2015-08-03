@@ -66,6 +66,33 @@
 		display: none;
 	}
 
+	/* toolbar 子菜单 */
+	.arrow{
+		position: absolute;
+		z-index: 10;
+		bottom: -5px;
+		right: 9px;
+
+		height: 0;
+		width: 0;
+
+		border: 5px solid transparent;
+		border-bottom-color: #fff;
+
+		&:before{
+			position: absolute;
+			top: -4px;
+			left: -5px;
+
+			height: 0;
+			width: 0;
+
+			border: 5px solid transparent;
+			border-bottom-color: #888;
+
+			content: "";
+		}
+	}
 	.list{
 		overflow: auto;
 		position: absolute;
@@ -286,14 +313,18 @@
 		right: 0;
 	}
 }
-.editor-rsFS{
-	.editor_area-rs{
-		z-index: 120;
-		top: 0;
-		bottom: 0;
-		left: 0;
-		right: 0;
-	}
+.FS(){
+	z-index: 120;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+}
+.editor-htmlFS .editor_area-html,
+.editor-cssFS .editor_area-css,
+.editor-jsFS .editor_area-js,
+.editor-rsFS .editor_area-rs{
+	.FS();
 }
 
 .Container-eFS{
@@ -317,6 +348,20 @@
 		height: auto;
 		width: auto;
 		margin: 0;
+
+		label{
+			display: none;
+		}
+	}
+	.editor_op{
+		position: absolute;
+		z-index: 130;
+		top: 10px;
+		right: 10px;
+
+		&.icon-save{
+			right: 60px;
+		}
 	}
 	.editor_area{
 		position: fixed;
@@ -328,8 +373,5 @@
 	}
 	.editor_area-rs{
 		min-height: 0;
-	}
-	label{
-		display: none;
 	}
 }

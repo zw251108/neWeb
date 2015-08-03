@@ -18,6 +18,12 @@
 		cursor: pointer;
 		line-height: 40px;
 //		text-indent: 1em;
+
+		&.icon:before{
+			margin: 0 5px 0 0;
+			font-size: 1em;
+			text-indent: 0;
+		}
 	}
 	dd{
 		display: none;
@@ -35,11 +41,6 @@
 		font-size: 14px;
 		text-indent: 2em;
 	}
-	dt.icon:before{
-		margin: 0 5px 0 0;
-		font-size: 1em;
-		text-indent: 0;
-	}
 
 	ul,
 	ol{
@@ -52,6 +53,28 @@
 	li{
 		text-indent: 0;
 	}
+
+	table{
+		margin-bottom: 10px;
+	}
+	th,
+	td{
+		height: auto;
+		min-width: 100px;
+		border: 1px solid #c0c0c0;
+		padding: 10px 5px;
+		color: #000;
+		line-height: 2;
+		text-indent: 0;
+	}
+
+	/**
+	 * @extend  ../component/code.less
+	 */
+	.code{
+		white-space: nowrap;
+	}
+
 //	.icon{
 //		padding: 0;
 //		background-position: 10px 10px;
@@ -59,43 +82,10 @@
 //    p{
 //        margin:0;
 //    }
-//	ol{
-//		text-indent: 0;
-//	}
-//	/**
-//	 * @extend  ../component/code.less
-//	 */
-//	span.code{
-//		display: inline-block;
-//		text-indent: 0;
-//		line-height: 150%;
-//	}
-//
-//    table{
-//        width: 100%;
-//    }
-//    th,
-//    td{
-//        border: 1px solid @border-color;
-//	    padding: 0 5px;
-//
-//        text-align: center;
-//		text-indent: 0;
-//    }
-//
-//    .syntaxhighlighter{
-//        width: auto !important;
-//
-//        border: 1px solid @border-color;
-//        margin: 0 !important;
-//        padding: 5px 0;
-//
-//        text-indent:0;
-//    }
 
 	.CodeMirror{
 		height: auto;
-		outline: 1px solid #ddd;
+		border: 1px solid #ddd;
 		font-family: inherit;
 		font-size: 13px;
 		line-height: 1em;
