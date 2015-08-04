@@ -431,60 +431,60 @@ function village(u, href, code){
 		});
 	});
 }
-db.query('select * from basedata_province', function(err, rs){
-	var i, j = rs.length;
-	if( !err ){
-
-		while( j-- ){
-			province[rs[j].name] = rs[j].code;
-		}
-
-		console.log('province', province);
-//		http.get(u, function(res){
-//			var chunks = [];
+//db.query('select * from basedata_province', function(err, rs){
+//	var i, j = rs.length;
+//	if( !err ){
 //
-//			res.on('data', function(chunkBuffer){
-//				chunks.push( chunkBuffer );
-//			});
-//			res.on('end', function(){
-//				var html = iconv.decode(Buffer.concat(chunks), 'gb2312')
-//					, $ = Cheerio.load(html, {decodeEntities: false})
-//					, $list = $('.provincetr a')
-//					, i, j, $t
-//					;
-//				for(i = 31, j = 32; i < j; i++){
-//					$t = $list.eq(i);
+//		while( j-- ){
+//			province[rs[j].name] = rs[j].code;
+//		}
 //
-//					console.log( $t.attr('href'), $t.text() );
+//		console.log('province', province);
+////		http.get(u, function(res){
+////			var chunks = [];
+////
+////			res.on('data', function(chunkBuffer){
+////				chunks.push( chunkBuffer );
+////			});
+////			res.on('end', function(){
+////				var html = iconv.decode(Buffer.concat(chunks), 'gb2312')
+////					, $ = Cheerio.load(html, {decodeEntities: false})
+////					, $list = $('.provincetr a')
+////					, i, j, $t
+////					;
+////				for(i = 31, j = 32; i < j; i++){
+////					$t = $list.eq(i);
+////
+////					console.log( $t.attr('href'), $t.text() );
+////
+////					city(u, $t.attr('href'), province[$t.text()]);
+////				}
+////				//console.log( $list );
+////				//console.log(decodedBody);
+////
+////			});
+////		});
 //
-//					city(u, $t.attr('href'), province[$t.text()]);
-//				}
-//				//console.log( $list );
-//				//console.log(decodedBody);
+//		//console.log(province);
 //
-//			});
-//		});
-
-		//console.log(province);
-
-		//var all_univ = allUnivList[0].provs
-		//	, t, m, n, s, code;
-		//for( i = 1, j = all_univ.length
-		//	; i < j; i++ ){
-		//	t = all_univ[i];console.log(t.name);
-		//	code = province[t.name];
-		//	t = t.univs;
-		//	for( m = 0, n = t.length; m < n; m++){
-		//		s = t[m];
-		//		db.query('insert into basedata_university(name,province,code) values(?,?,?)', [s.name, code, s.id], function(err, rs){
-		//			if( !err ){
-		//				console.log(rs.insertId);
-		//			}
-		//		});
-		//	}
-		//}
-	}
-});
+//		//var all_univ = allUnivList[0].provs
+//		//	, t, m, n, s, code;
+//		//for( i = 1, j = all_univ.length
+//		//	; i < j; i++ ){
+//		//	t = all_univ[i];console.log(t.name);
+//		//	code = province[t.name];
+//		//	t = t.univs;
+//		//	for( m = 0, n = t.length; m < n; m++){
+//		//		s = t[m];
+//		//		db.query('insert into basedata_university(name,province,code) values(?,?,?)', [s.name, code, s.id], function(err, rs){
+//		//			if( !err ){
+//		//				console.log(rs.insertId);
+//		//			}
+//		//		});
+//		//	}
+//		//}
+//	}
+//});
 
 //db.query('insert into tag(name) select :name from dual where not exists (select * from tag where name like :name)', {
 //	name: 'jQuery'
@@ -544,3 +544,154 @@ function saveOrUpdate(name, num){
 //		}
 //	}
 //});
+
+//var func = function(str){
+//	var p = new Promise();
+//
+//	setTimeout(function(){
+//		p.resolve('123,'+str);
+//	}, 1000)
+//};
+//func('hello').then(function(str){
+//	console.log(str);
+//});
+
+var createEmmet = function(html){
+	var $html = Cheerio.load('<template>'+ html +'</template>')
+		, $children = $html('template').children()
+		, k, i, j, t, $t
+		, attribs, attr
+		, index, $node
+		, cache = [{
+			$node: $children
+			, index: 0
+		}]
+		, emmet = ''
+		;
+
+	while( cache.length ){
+
+		index = cache.pop();
+		$node = index.$node;
+
+		i = index.index;
+		j = $node.length;
+
+		if( i > 0 ){
+			if( cache.length || i !== j ){
+				emmet += '^';
+			}
+		}
+
+		for(; i < j; i++ ){
+			$t = $node.eq(i);
+
+			if( $t[0].type == 'tag' ){
+
+				t = $t[0];
+				attribs = t.attribs;
+
+				emmet += t.name;
+
+				if( 'id' in attribs ){
+					emmet += '#'+ attribs['id'];
+				}
+				if( 'class' in attribs ){
+					emmet += '.'+ attribs['class'].split(' ').join('.');
+				}
+
+				attr = [];
+				for(k in attribs) if( attribs.hasOwnProperty(k) && k !== 'id' && k !== 'class' ){
+					attr.push( k +(attribs[k] ? '='+ attribs[k] : '') );
+				}
+
+				emmet += attr.length ? '['+ attr.join(' ') +']' : '';
+
+				if( $t.children().length ){
+
+					emmet += '>';
+
+					cache.push({
+						$node: $node
+						, index: i+1
+					}, {
+						$node: $t.children()
+						, index: 0
+					});
+
+					break;
+				}
+				else{
+					if( i !== j -1 ) emmet += '+';
+				}
+			}
+		}
+	}
+
+	return emmet;
+};
+
+var node = function($node){
+	var $t, t
+		, attribs
+		, attr
+		, k, i, j
+		, emmet = ''
+		;
+
+	for(i = 0, j = $node.length; i < j; i++){
+		$t = $node.eq(i);
+
+		if( $t[0].type == 'tag' ){
+
+			t = $t[0];
+			attribs = t.attribs;
+
+			emmet += t.name;
+
+			if( 'id' in attribs ){
+				emmet += '#'+ attribs['id'];
+			}
+			if( 'class' in attribs ){
+				emmet += '.'+ attribs['class'].split(' ').join('.');
+			}
+
+			attr = [];
+			for(k in attribs) if( attribs.hasOwnProperty(k) && k !== 'id' && k !== 'class' ){
+				attr.push( k +(attribs[k] ? '='+ attribs[k] : '') );
+			}
+
+			emmet += attr.length ? '['+ attr.join(' ') +']' : '';
+
+			if( $t.children().length ){
+
+				emmet += '>' +node( $t.children() );
+			}
+			else{
+				emmet += '+';
+			}
+		}
+	}
+
+	return emmet;
+}
+
+createEmmet('<head>\
+		<meta charset="UTF-8"/>\
+		<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>\
+		<title>前端代码运行结果</title>\
+	</head>\
+	<body id="body" class="body body-ca" data-id="page" data-page="js" data-code-type="css" disabled>\
+		<header><h1>标题 <span class="icon"></span></h1></header>\
+		<main>\
+			<div class="left"></div>\
+			<div class="right"></div>\
+		</main>\
+		<footer>\
+			<div class="copyright"></div>\
+			<ul class="list">\
+				<li></li>\
+				<li></li>\
+			</ul>\
+		</footer>\
+	</body>');

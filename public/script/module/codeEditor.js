@@ -54,7 +54,7 @@ define(['plugin/codeMirror/lib/codemirror'
 				options.mode = 'javascript';
 				readOnly && (options.extraKeys = {
 					Enter:'newlineAndIndentContinueComment'
-					, 'Ctrl-/': 'toggleComment'
+					//, 'Ctrl-/': 'toggleComment'
 				});
 				break;
 		}

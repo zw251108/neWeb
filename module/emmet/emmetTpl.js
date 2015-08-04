@@ -1,36 +1,20 @@
 /**
- * @file    HTML 模板引擎
- * @author  ZwB
- * @version 0.9
- * @method  $.template
- * @param   {object}    options
- * @param   {string}    options.template    模板字符串   符合 emmet 编写规则 其中 %key% 为动态插入数据
- * @param   {object}    options.filter      构造模板 HTML 代码函数
- * @return  {function}  构造模板 HTML 代码函数
- * @require jquery
- * @desc    基于 Emmet 的模板引擎
- * @example
- var html = $.template({
-        template: 'span{%sex%}',
-        filter:{
-            sex: function(data, i){
-                return data[key] === 1?'男':'女';
-            }
-        }
-    });
- html([{sex:1}]); // <span>男</span>
- */
-;(function(factory, jqPath){
+ *
+ * */
+;(function(factory, jqPath, namespace){
 	// 后端
 	if( typeof exports === 'object' && typeof module === 'object' ){
-		factory(exports);
+
 	}
 	// 前端
 	else if( typeof define === 'function' && define.amd ){
-		define([ jqPath || 'jquery' ], factory);
+		define(function(){
+			var $ = require(jqPath || 'jquery');
+			return factory($);
+		});
 	}
 	else{
-		(jQuery || this).template = factory();
+		(jQuery || this)[namespace] = factory((jQuery || this), namespace);
 	}
 })(function($){
 	'use strict';
@@ -50,7 +34,7 @@
 		, isArray = $.isArray || Array.isArray
 		, defaults = {
 			template: ''
-			, filter: {}
+			, handler: {}
 		}
 		;
 
@@ -67,7 +51,7 @@
 			, checked: 'checked'
 
 		}
-		, createElement: function(rs, front, end){   // 构建元素
+		, createHTML: function(rs, front, end){   // 构建元素
 			var html = []
 				, temp
 				, tag = rs[1] || ''
@@ -198,7 +182,7 @@
 			rs = elemExpr.exec(template);
 
 			if( rs.join('') !== '' ){
-				methods.createElement(rs, front, end);
+				methods.createHTML(rs, front, end);
 				template = template.replace(rs[0], '');
 			}
 			template = methods.operator(template, front, end);
@@ -228,4 +212,5 @@
 	$.template = template;
 
 	return template;
-}, '');
+
+}, '', 'emmetTpl');

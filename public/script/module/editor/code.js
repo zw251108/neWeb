@@ -7,7 +7,12 @@
  * */
 define('editorUISet', ['jquery', 'global', 'template'], function($, g){
 	var listTpl = $.template({
-			template: 'li[title=%name% data-type=%type%]{%name%}'
+			template: 'li.%on%[title=%name% data-type=%type%]{%name%}'
+			, filter: {
+				on: function(d){
+					return d.on ? 'on' : '';
+				}
+			}
 		})
 
 		, $skinLink = $('<link />', {rel: 'stylesheet'}).appendTo('head')
@@ -15,7 +20,7 @@ define('editorUISet', ['jquery', 'global', 'template'], function($, g){
 			$layoutList.slideUp().prev().hide();
 			$skinList.slideToggle().prev().toggle();
 		}).after('<span class="arrow hidden"></span><ul class="list skinList hidden"></ul>').nextAll('ul').append(listTpl([{
-			name: 'default'}, {
+			name: 'default', on: true}, {
 			name: '3024-day'}, {
 			name: '3024-night'}, {
 			name: 'ambiance'}, {
@@ -51,6 +56,8 @@ define('editorUISet', ['jquery', 'global', 'template'], function($, g){
 
 			var skin = this.innerHTML;
 
+			$(this).addClass('on').siblings('.on').removeClass('on');
+
 			$layoutList.slideUp().prev().hide();
 			$skinLink.attr('href', skin !== 'default' ? '../script/plugin/codeMirror/theme/'+ skin +'.css' : '');
 
@@ -71,11 +78,13 @@ define('editorUISet', ['jquery', 'global', 'template'], function($, g){
 			name: '全屏 CSS', type: '5'}, {
 			name: '全屏 JS', type: '6'}, {
 			name: '全屏结果', type: '7'}, {
-			name: '回到默认', type: '0'
+			name: '回到默认', type: '0', on: true
 		}]).join('')).on('click', 'li', function(){
 			var $that = $(this)
 				, type = $that.data('type')
 				;
+
+			$that.addClass('on').siblings('.on').removeClass('on');
 
 			$skinList.slideUp().prev().hide();
 			g.$container.addClass('Container-eFS');
@@ -342,7 +351,8 @@ require(['../config'], function(config){
 				//$editorTitle.html( $codeName.val() );
 				$name.val( $codeName.val() );
 
-				isEdit = false;
+				//isEdit = false;
+				// todo 如果 isEdit === true 将代码提交
 			})
 			, $alert = $('#alert')
 
@@ -448,6 +458,8 @@ require(['../config'], function(config){
 				else{
 					$alert.find('#alertContent').html('保存成功')
 						.end().trigger('showDialog');
+
+					isEdit = false;
 				}
 			}
 		});
