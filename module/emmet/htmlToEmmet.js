@@ -76,7 +76,7 @@ var createEmmet = function(html){
 		}
 	}
 
-	return emmet;
+	return emmet.replace(/([^\^])(\^*)$/, '$1');
 };
 
 module.exports = createEmmet;

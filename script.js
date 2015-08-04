@@ -628,55 +628,10 @@ var createEmmet = function(html){
 		}
 	}
 
-	return emmet;
+	return emmet.replace(/([^\^])(\^*)$/, '$1');
 };
 
-var node = function($node){
-	var $t, t
-		, attribs
-		, attr
-		, k, i, j
-		, emmet = ''
-		;
-
-	for(i = 0, j = $node.length; i < j; i++){
-		$t = $node.eq(i);
-
-		if( $t[0].type == 'tag' ){
-
-			t = $t[0];
-			attribs = t.attribs;
-
-			emmet += t.name;
-
-			if( 'id' in attribs ){
-				emmet += '#'+ attribs['id'];
-			}
-			if( 'class' in attribs ){
-				emmet += '.'+ attribs['class'].split(' ').join('.');
-			}
-
-			attr = [];
-			for(k in attribs) if( attribs.hasOwnProperty(k) && k !== 'id' && k !== 'class' ){
-				attr.push( k +(attribs[k] ? '='+ attribs[k] : '') );
-			}
-
-			emmet += attr.length ? '['+ attr.join(' ') +']' : '';
-
-			if( $t.children().length ){
-
-				emmet += '>' +node( $t.children() );
-			}
-			else{
-				emmet += '+';
-			}
-		}
-	}
-
-	return emmet;
-}
-
-createEmmet('<head>\
+console.log( createEmmet('<head>\
 		<meta charset="UTF-8"/>\
 		<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>\
 		<title>前端代码运行结果</title>\
@@ -694,4 +649,4 @@ createEmmet('<head>\
 				<li></li>\
 			</ul>\
 		</footer>\
-	</body>');
+	</body>') );
