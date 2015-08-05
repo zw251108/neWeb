@@ -254,7 +254,7 @@
 
 		border: 1px solid #c0c0c0;
 		border-radius: 10px;
-		margin: 30px 10px;
+		margin: 30px 10px 0;
 
 		.label{
 			position: absolute;
@@ -411,6 +411,46 @@
 				box-sizing: border-box;
 			}
 		}
+	}
+
+	label{
+
+		color: #c0c0c0;
+		
+		span{
+			&:hover{
+				text-decoration: underline;
+				color: #d35400;
+			}
+		}
+	}
+	fieldset{
+		position: relative;
+
+		border: 0;
+		margin: 30px 0 30px;
+		padding: 0;
+
+		.group{
+			border: 1px solid #c0c0c0;
+			border-radius: 10px;
+			margin: 0 10px;
+			padding: 10px 0 0;
+		}
+
+		.formGroup{
+			margin-bottom: 30px;
+			border-radius: 0;
+			border-top-color: #efefef;
+			border-width: 1px 0;
+		}
+	}
+	legend{
+		position: absolute;
+		top: -1em;
+		left: 20px;
+		background: #fff;
+		color: #888;
 	}
 }
 

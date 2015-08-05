@@ -556,97 +556,85 @@ function saveOrUpdate(name, num){
 //	console.log(str);
 //});
 
-var createEmmet = function(html){
-	var $html = Cheerio.load('<template>'+ html +'</template>')
-		, $children = $html('template').children()
-		, k, i, j, t, $t
-		, attribs, attr
-		, index, $node
-		, cache = [{
-			$node: $children
-			, index: 0
-		}]
-		, emmet = ''
-		;
+//	= function(html){
+//	var $html = Cheerio.load('<template>'+ html +'</template>')
+//		, $children = $html('template').children()
+//		, k, i, j, t, $t
+//		, attribs, attr
+//		, index, $node
+//		, cache = [{
+//			$node: $children
+//			, index: 0
+//		}]
+//		, emmet = ''
+//		;
+//
+//	while( cache.length ){
+//
+//		index = cache.pop();
+//		$node = index.$node;
+//
+//		i = index.index;
+//		j = $node.length;
+//
+//		if( i > 0 ){
+//			if( cache.length || i !== j ){
+//				emmet += '^';
+//			}
+//		}
+//
+//		for(; i < j; i++ ){
+//			$t = $node.eq(i);
+//
+//			if( $t[0].type == 'tag' ){
+//
+//				t = $t[0];
+//				attribs = t.attribs;
+//
+//				emmet += t.name;
+//
+//				if( 'id' in attribs ){
+//					emmet += '#'+ attribs['id'];
+//				}
+//				if( 'class' in attribs ){
+//					emmet += '.'+ attribs['class'].split(' ').join('.');
+//				}
+//
+//				attr = [];
+//				for(k in attribs) if( attribs.hasOwnProperty(k) && k !== 'id' && k !== 'class' ){
+//					attr.push( k +(attribs[k] ? '='+ attribs[k] : '') );
+//				}
+//
+//				emmet += attr.length ? '['+ attr.join(' ') +']' : '';
+//
+//				if( $t.children().length ){
+//
+//					emmet += '>';
+//
+//					cache.push({
+//						$node: $node
+//						, index: i+1
+//					}, {
+//						$node: $t.children()
+//						, index: 0
+//					});
+//
+//					break;
+//				}
+//				else{
+//					if( i !== j -1 ) emmet += '+';
+//				}
+//			}
+//		}
+//	}
+//
+//	return emmet.replace(/([^\^])(\^*)$/, '$1');
+//};
 
-	while( cache.length ){
-
-		index = cache.pop();
-		$node = index.$node;
-
-		i = index.index;
-		j = $node.length;
-
-		if( i > 0 ){
-			if( cache.length || i !== j ){
-				emmet += '^';
-			}
-		}
-
-		for(; i < j; i++ ){
-			$t = $node.eq(i);
-
-			if( $t[0].type == 'tag' ){
-
-				t = $t[0];
-				attribs = t.attribs;
-
-				emmet += t.name;
-
-				if( 'id' in attribs ){
-					emmet += '#'+ attribs['id'];
-				}
-				if( 'class' in attribs ){
-					emmet += '.'+ attribs['class'].split(' ').join('.');
-				}
-
-				attr = [];
-				for(k in attribs) if( attribs.hasOwnProperty(k) && k !== 'id' && k !== 'class' ){
-					attr.push( k +(attribs[k] ? '='+ attribs[k] : '') );
-				}
-
-				emmet += attr.length ? '['+ attr.join(' ') +']' : '';
-
-				if( $t.children().length ){
-
-					emmet += '>';
-
-					cache.push({
-						$node: $node
-						, index: i+1
-					}, {
-						$node: $t.children()
-						, index: 0
-					});
-
-					break;
-				}
-				else{
-					if( i !== j -1 ) emmet += '+';
-				}
-			}
-		}
-	}
-
-	return emmet.replace(/([^\^])(\^*)$/, '$1');
-};
-
-console.log( createEmmet('<head>\
-		<meta charset="UTF-8"/>\
-		<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>\
-		<title>前端代码运行结果</title>\
-	</head>\
-	<body id="body" class="body body-ca" data-id="page" data-page="js" data-code-type="css" disabled>\
-		<header><h1>标题 <span class="icon"></span></h1></header>\
-		<main>\
-			<div class="left"></div>\
-			<div class="right"></div>\
-		</main>\
-		<footer>\
-			<div class="copyright"></div>\
-			<ul class="list">\
-				<li></li>\
-				<li></li>\
-			</ul>\
-		</footer>\
-	</body>') );
+//var fs = require('fs')
+//	, html = fs.readFileSync(__dirname + '/tpl/index.html').toString()
+//	;
+//
+//var createEmmet = require('./module/emmet/htmlToEmmet.js');
+//
+//console.log( createEmmet( html ) );

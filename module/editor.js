@@ -85,13 +85,18 @@ var db          = require('./db/db.js')
 				'+input[type=hidden name=type value=preview]' +
 				'+input#preview.input[type=file name=preview]' +
 			'^' + tag.tagEditorEmmet +
-		    '^label' +
-				'>input[type=checkbox name=setUI value=1]' +
-				'+span{更多设置}' +
-			'^fieldset.hidden' +
-				'>legend{设置为 UI 组件}' +
-				'+input[type=hidden name=setUI value=1]' +
+		    '^fieldset' +
+				'>legend' +
+					'>label' +
+						'>input[type=checkbox name=setUI value=1]' +
+						'+span#setM{更多设置}' +
+
+				'^^div.group.hidden' +
+				'>input[type=hidden name=setUI value=1]' +
 				'+div.formGroup' +
+					'>label.label[for=uiName]{请设置 UI 组件名称}' +
+					'+input#uiName.input[type=text name=uiName placeholder=请设置 UI 组件名称 data-validator=uiName]' +
+				'^div.formGroup' +
 					'>label.label[for=uiName]{请设置 UI 组件名称}' +
 					'+input#uiName.input[type=text name=uiName placeholder=请设置 UI 组件名称 data-validator=uiName]' +
 			'^^^iframe#editorSetMoreRs.hidden[name=editorSetMoreRs]'

@@ -290,7 +290,9 @@ define('demoImgLibPopup', ['jquery', 'socket', 'template'], function($, socket){
 	});
 });
 define('setMorePopup', ['jquery', 'socket', 'template'], function($, socket){
-
+	var $setM = $('#setM').on('click', function(){
+		$setM.parents('legend').next().slideToggle();
+	});
 });
 
 
@@ -301,8 +303,9 @@ require(['../config'], function(config){
 		, 'editorUISet'
 		, 'uiLibPopup'
 		, 'demoImgLibPopup'
+		, 'setMorePopup'
 		, 'tag', config.dataSource.tag
-		, 'template'], function($, g, socket, codeArea, initUI, initUiLib, demoImg, tag, tagsData){
+		, 'template'], function($, g, socket, codeArea, initUI, initUiLib, demoImg, setMore, tag, tagsData){
 		var $editor = $('#editor')
 			, $form = $editor.find('#editorForm')
 			, $toolbar = $editor.find('.toolbar')

@@ -5,11 +5,15 @@ var Cheerio = require('cheerio')
 	;
 
 var createEmmet = function(html){
+
+	// 清除换号 制表符
+	html = html.replace(/\t|\r|\n/g, '');
+
 	var $html = Cheerio.load('<template>'+ html +'</template>')
 		, $children = $html('template').children()
 		, k, i, j, t, $t
-		, attribs, attr
-		, index, $node
+		, attribs, attr, text
+		, index, $node, $temp
 		, cache = [{
 			$node: $children
 			, index: 0
@@ -29,12 +33,19 @@ var createEmmet = function(html){
 			if( cache.length || i !== j ){
 				emmet += '^';
 			}
+			else if( i === j ){
+				t = $node.eq( j -1 )[0].next;
+
+				if( t && t.type === 'text' ){
+					emmet += '{'+ t.data +'}';
+				}
+			}
 		}
 
 		for(; i < j; i++ ){
 			$t = $node.eq(i);
 
-			if( $t[0].type == 'tag' ){
+			if( $t[0].type === 'tag' ){
 
 				t = $t[0];
 				attribs = t.attribs;
@@ -57,6 +68,12 @@ var createEmmet = function(html){
 
 				if( $t.children().length ){
 
+					t = $t.children()[0].prev;
+
+					if( t && t.type === 'text' ){
+						emmet += '{'+ t.data +'}';
+					}
+
 					emmet += '>';
 
 					cache.push({
@@ -70,13 +87,26 @@ var createEmmet = function(html){
 					break;
 				}
 				else{
-					if( i !== j -1 ) emmet += '+';
+					text = $t.text();
+					emmet += text ? '{'+ text +'}' : '';
+
+					emmet += '+';
+
+					if( t.next && t.next.type === 'text' ){
+
+						emmet += '{'+ t.next.data +'}';
+
+						if( i !== j -1 ){
+							emmet += '+';
+
+						}
+					}
 				}
 			}
 		}
 	}
 
-	return emmet.replace(/([^\^])(\^*)$/, '$1');
+	return emmet.replace(/([^\^\+])(\+*)(\^*)$/, '$1');
 };
 
 module.exports = createEmmet;

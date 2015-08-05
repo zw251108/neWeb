@@ -85,6 +85,8 @@ web.use( session({
 //----- 静态资源 重定向 -----
 web.use('/cache.manifest', express.static(__dirname + '/public/cache.manifest') );  // 离线缓存配置文件
 
+web.use('/favicon.ico', express.static(__dirname + '/public/image/favicon.ico'));
+
 web.use('/script',  express.static(__dirname + '/public/script') ); // 前端 js 静态资源
 web.use('/script/ui/jquery.emmetTpl.js', express.static(__dirname + '/module/emmetTpl/emmetTpl.js') );  // 前后端通用模板引擎
 

@@ -46,10 +46,9 @@
 			, hr: ''
 			, link: ''
 		}
-		, attrDefault: {    // 属性默认值
+		, specialAttr: {    // 特殊属性
 			disabled: 'disabled'
 			, checked: 'checked'
-
 		}
 		, createHTML: function(rs, front, end){   // 构建元素
 			var html = []
@@ -85,7 +84,7 @@
 						t = temp[i];
 
 						if( t.indexOf('=') === -1 ){
-							html.push(t in this.attrDefault ? ' ' + t + '="' + this.attrDefault[t] : t);
+							html.push(' ' + t + '="' + (t in this.specialAttr ? this.specialAttr[t] : '') +'"');
 						}
 						else{
 							html.push(' ' + t.replace(/=(.*)$/g, '="$1"'));
