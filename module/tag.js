@@ -1,9 +1,9 @@
 'use strict';
 
-var db          = require('./db/db.js')
-	, web       = require('./web/web.js')
-	, socket    = require('./socket/socket.js')
-	, error     = require('./error/error.js')
+var db          = require('./db.js')
+	, web       = require('./web.js')
+	, socket    = require('./socket.js')
+	, error     = require('./error.js')
 
 	, tpl       = require('./emmetTpl/tpl.js')
 	, emmetTpl  = require('./emmetTpl/emmetTpl.js').template
@@ -50,7 +50,7 @@ var db          = require('./db/db.js')
 		 * @desc    业务相关 sql 语句集合
 		 * */
 		Model: {
-			tag: 'select name,num from tag order by num'
+			tag: 'select * from tag'
 			, tagLink: 'select * from tag'
 			, tagAdd: 'insert into tag(name) select :name from dual where not exists (select * from tag where name like :name)'
 			, tagIncrease: 'update tag set num=num+:increase where name=:name'
@@ -149,7 +149,7 @@ web.get('/data/tag', function(req, res){
 	db.handle({
 		sql: Tag.Model.tag
 	}).then(function(rs){
-		rs = JSON.stringify( rs.result );
+		rs = JSON.stringify( rs );//.result );
 
 		res.send( callback ? callback +'('+ rs + ')' : rs );
 		res.end();
@@ -249,19 +249,24 @@ socket.register({
 	}
 });
 
-var fs    = require('fs')
-	, tagHTML = fs.readFileSync(__dirname + '/../tpl/tag.html').toString()
-	;
+var config = require('../config.js')
+	, admin = require('./tag/admin.view.js');
+
 web.get('/admin/tag', function(req, res){
 
-	db.handle({
-		sql: Tag.Model.tagLink
-	}).then(function(rs){
-		rs = rs.result;
-
-		res.send( tagHTML.replace('/*=tag_data*/', '='+ JSON.stringify(rs)) );
+	admin.tag().then(function( html ){
+		res.send( config.docType.html5 + html );
 		res.end();
 	});
+
+	//db.handle({
+	//	sql: Tag.Model.tagLink
+	//}).then(function(rs){
+	//	rs = rs.result;
+	//
+	//	res.send( tagHTML.replace('/*=tag_data*/', '='+ JSON.stringify(rs)) );
+	//	res.end();
+	//});
 });
 
 module.exports = Tag;

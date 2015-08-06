@@ -1,9 +1,9 @@
 'use strict';
 
-var db          = require('./db/db.js')
-	, web       = require('./web/web.js')
-	, socket    = require('./socket/socket.js')
-	, error     = require('./error/error.js')
+var db          = require('./db.js')
+	, web       = require('./web.js')
+	, socket    = require('./socket.js')
+	, error     = require('./error.js')
 
 	, tpl       = require('./emmetTpl/tpl.js')
 	, emmetTpl  = require('./emmetTpl/emmetTpl.js').template
@@ -86,9 +86,9 @@ web.post('/image/imageUpload', upload.single('image'), function(req, res){
 		sql: Image.Model.imageAdd
 		, data: {}
 	}).then(function(rs){
-		var data = rs.data;
+		var data = {};//rs.data;
 
-		rs = rs.result;
+		//rs = rs.result;
 
 		data.Id = rs.insertId;
 

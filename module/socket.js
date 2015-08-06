@@ -4,7 +4,7 @@
  * Web Socket 服务器
  * */
 var sio = require('socket.io')()
-	, error = require('../error/error.js')
+	, error = require('./error.js')
 
 	, CLIENT_LIST       = {}
 	, CLIENT_INDEX_LIST = []

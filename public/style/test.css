@@ -4,8 +4,8 @@
 	float: left;
 	width: 38px;
 	height: 40px;
-	border: solid #fff;
-	border-width: 0 1px;
+	/*border: solid #fff;*/
+	/*border-width: 0 1px;*/
 	padding: 0 !important;
 	background: url("../image/logo.png") no-repeat center;
 }

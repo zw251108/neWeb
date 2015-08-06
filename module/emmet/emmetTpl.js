@@ -45,6 +45,7 @@
 			, br: ''
 			, hr: ''
 			, link: ''
+			, meta: ''
 		}
 		, specialAttr: {    // 特殊属性
 			disabled: 'disabled'

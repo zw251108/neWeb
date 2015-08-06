@@ -6,7 +6,7 @@
 var mysql = require('mysql')
 	, Promise = require('promise')
 
-	, config = require('./config.js')
+	, config = require('../config.js')
 	, error = require('./error.js')
 
 	, db = mysql.createConnection( config.db )
@@ -57,15 +57,9 @@ db.handle = function(query){
 	}).then(function(rs){
 		return rs;
 	}, function(err){
-
+		console.log(err);
+		return err;
 	});
-	// todo 添加错误回调函数
-
-	//.then(function(rs){
-	//
-	//}, function(err){
-	//	console.log(err);
-	//});
 };
 
 module.exports = db;

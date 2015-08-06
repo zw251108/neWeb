@@ -1,0 +1,14 @@
+<form action="demoImgUpload" id="demoImgUploadForm" method="post" target="demoImgUploadRs" enctype="multipart/form-data">
+	<div class="formGroup">
+		<label for="image" class="label">添加素材</label>
+		<input type="hidden" name="type" value="demo"/>
+		<input type="file" id="image" class="input" name="image"/>
+		<button class="btn btn-submit" type="submit">上传</button>
+	</div>
+</form>
+<iframe src="" frameborder="0" id="demoImgUploadRs" class="hidden" name="demoImgUploadRs"></iframe>
+<ul id="demoImgList" class="list-img">
+	<li class="list_item block">
+		<div class="loading loading-chasing"></div>
+	</li>
+</ul>

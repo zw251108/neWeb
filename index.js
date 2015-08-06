@@ -10,11 +10,11 @@ var fs = require('fs')
 
 	//----- Web Server -----
 	, express       = require('express')
-	, web           = require('./module/web/web.js')
+	, web           = require('./module/web.js')
 	, webServer
 
 	//----- Web Socket -----
-	, socket        = require('./module/socket/socket.js')
+	, socket        = require('./module/socket.js')
 	, socketServer
 
 	//----- Web 服务器及相关组件 -----
@@ -27,7 +27,7 @@ var fs = require('fs')
 	, sessionStore  = new session.MemoryStore()
 
 	// 数据库操作
-	, db     = require('./module/db/db.js')
+	, db     = require('./module/db.js')
 
 	//----- 自定义模块 -----
 	, tpl           = require('./module/emmetTpl/tpl.js') // 模板库
@@ -160,7 +160,8 @@ require('./module/tag.js');         // 加载模块 tag 功能
 
 require('./module/image.js');       // 加载模块 image
 
-require('./module/basedata.js');    // 加载模块 基础数据
+//require('./module/basedata.js');    // 加载模块 基础数据
+require('./module/basedata/controller.js'); // 加载模块 基础数据
 
 //----- 后台管理 -----
 require('./admin/index.js');

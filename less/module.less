@@ -43,13 +43,16 @@
 /*section,dialog*/.module{
 	float:left;
 	position: relative;
+
+	border-radius: 10px;
+
 	margin: @grid-space;
 
 	background-color: @module-bg;
 	background-repeat: no-repeat;
 
 	background-image: -webkit-linear-gradient(top,#eee,#888);
-	outline: 1px solid #888;
+	//outline: 1px solid #888;
 }
 
 //----- 模块标题 建议标签 h2 -----
@@ -119,10 +122,10 @@
 		//background-color: @a-hover;
 		//color: @metro-hover_c;
 
-		background-color: #d35400;
+		//outline: 1px solid #d35400;
+
+		background: #d35400 -webkit-linear-gradient(top,#f88,#d35400);
 		color: #fff;
-		background-image: -webkit-linear-gradient(top,#f88,#d35400);
-		outline: 1px solid #d35400;
 	}
 
 	> .module_title{
@@ -172,18 +175,23 @@
 			height: 30px;
 			//border-width: 0 0 1px 1px;
 			background: #888;
+
+			&:before{
+				margin: 5px;
+			}
 		}
-		.icon:before{
-			margin: 0;
-		}
-		a.icon:before{
-			margin: 4px;
-		}
+		//.icon:before{
+		//	margin: 0;
+		//}
+		//a.icon:before{
+		//	margin: 4px;
+		//}
 		.btn{
 			outline: 0;
-		}
-		.btn:active{
-			background: #999;
+
+			&:active{
+				background: #999;
+			}
 		}
 	}
 }
@@ -228,16 +236,24 @@
 			height: 30px;
 			//border-width: 0 0 1px 1px;
 			background: #888;
+
+			&:before{
+				margin: 0;
+			}
 		}
-		.icon:before{
-			margin: 0;
-		}
+		//.icon:before{
+		//	margin: 0;
+		//}
 		.btn{
 			outline: 0;
+
+			&:active{
+				background: #999;
+			}
 		}
-		.btn:active{
-			background: #999;
-		}
+		//.btn:active{
+		//	background: #999;
+		//}
 	}
 
 	> .module_content{
@@ -413,17 +429,6 @@
 		}
 	}
 
-	label{
-
-		color: #c0c0c0;
-		
-		span{
-			&:hover{
-				text-decoration: underline;
-				color: #d35400;
-			}
-		}
-	}
 	fieldset{
 		position: relative;
 
@@ -451,6 +456,16 @@
 		left: 20px;
 		background: #fff;
 		color: #888;
+
+		label{
+			color: #c0c0c0;
+		}
+		span{
+			&:hover{
+				text-decoration: underline;
+				color: #d35400;
+			}
+		}
 	}
 }
 

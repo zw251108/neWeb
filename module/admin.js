@@ -1,5 +1,5 @@
 'use strict';
 
-var Admin = {};
+var Admin = [];
 
 module.exports = Admin;

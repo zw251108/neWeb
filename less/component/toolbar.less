@@ -9,19 +9,37 @@
 	}
 	.icon{
 		float: left;
-		width: 40px;
-		height: 40px;
+		//height: 40px;
+		//width: 40px;
+		height: 30px;
+		width: 30px;
 		//border: solid #fff;
 		//border-width: 0 1px;
-		border: 0;
+		//border: 0;
+		border: 1px solid #fff;
+		border-radius: 10px;
+		margin: 5px;
 		padding: 0;
-		outline: 1px solid #fff;
+		//outline: 1px solid #fff;
 //		background-position: center center;
 //		background-repeat: no-repeat;
 		color: #fff;
-	}
-	.icon:before{
-		margin: 10px;
-		font-size: 20px;
+
+		-webkit-box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		box-sizing: border-box;
+
+		&:hover{
+			border-color: #d35400;
+			background: #d35400 -webkit-linear-gradient(top,#f88,#d35400);
+		}
+		
+		&:before{
+			//margin: 10px;
+			margin: 5px;
+
+			font-size: 20px;
+			text-indent: -2px;
+		}
 	}
 }

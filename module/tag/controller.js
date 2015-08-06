@@ -2,7 +2,9 @@ var web         = require('../web.js')
 	, socket    = require('../socket.js')
 	, error     = require('../error.js')
 
-	, Model = require('./Model.js')
+	, Model = require('./model.js')
+	, View  = require('./view.js')
+	, Admin = require('./admin.view.js')
 	;
 
 /**
@@ -13,7 +15,7 @@ web.get('/tag/data', function(req, res){
 		, callback = query.callback
 		;
 
-	Model.tag().then(function(rs){
+	Model.getAll().then(function(rs){
 		rs = JSON.stringify( rs );
 
 		res.send( callback ? callback +'('+ rs +')' : rs );
@@ -22,6 +24,16 @@ web.get('/tag/data', function(req, res){
 });
 web.get('/tag/increase', function(){
 	res.end();
+});
+
+/**
+ * 后台管理
+ * */
+web.get('/admin/tag', function(req, res){
+	Admin.tag().then(function( html ){
+		res.send( config.docType.html5 + html );
+		res.end();
+	});
 });
 
 /**

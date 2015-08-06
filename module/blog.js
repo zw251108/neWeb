@@ -1,9 +1,9 @@
 'use strict';
 
-var db          = require('./db/db.js')
-	, web       = require('./web/web.js')
-	, socket    = require('./socket/socket.js')
-	, error     = require('./error/error.js')
+var db          = require('./db.js')
+	, web       = require('./web.js')
+	, socket    = require('./socket.js')
+	, error     = require('./error.js')
 
 	, metro     = require('./metro.js')
 

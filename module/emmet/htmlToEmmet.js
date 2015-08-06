@@ -1,15 +1,28 @@
-'use strict';
+/**
+ * @param   {object}    $
+ * @param   {string}    html
+ * @return  {string}    html 代码转换成 emmet 的结果
+ * */
+;(function(factory, namespace){
+	// 后端
+	if( typeof exports === 'object' && typeof module === 'object' ){
+		module.exports = factory;
+	}
+	// 前端
+	else if( typeof define === 'function' && define.amd ){
+		define(factory);
+	}
+	else{
+		(jQuery || this)[namespace] = factory;
+	}
 
-var Cheerio = require('cheerio')
-	, fs = require('fs')
-	;
-
-var createEmmet = function(html){
+})(function($, html){
+	'use strict';
 
 	// 清除换号 制表符
 	html = html.replace(/\t|\r|\n/g, '');
 
-	var $html = Cheerio.load('<template>'+ html +'</template>')
+	var $html = $('<template>'+ html +'</template>')
 		, $children = $html('template').children()
 		, k, i, j, t, $t
 		, attribs, attr, text
@@ -44,10 +57,10 @@ var createEmmet = function(html){
 
 		for(; i < j; i++ ){
 			$t = $node.eq(i);
+			t = $t[0];
 
-			if( $t[0].type === 'tag' ){
+			if( t.type === 'tag' || t.type === 'script' || t.type === 'style' ){
 
-				t = $t[0];
 				attribs = t.attribs;
 
 				emmet += t.name;
@@ -93,7 +106,6 @@ var createEmmet = function(html){
 					emmet += '+';
 
 					if( t.next && t.next.type === 'text' ){
-
 						emmet += '{'+ t.next.data +'}';
 
 						if( i !== j -1 ){
@@ -107,6 +119,4 @@ var createEmmet = function(html){
 	}
 
 	return emmet.replace(/([^\^\+])(\+*)(\^*)$/, '$1');
-};
-
-module.exports = createEmmet;
+}, 'htmlToEmmet');

@@ -455,7 +455,7 @@ require(['../config'], function(config){
 				$alert.find('#alertConternt').html('保存失败' + data.msg).end().trigger('showDialog');
 			}
 			else{
-				if( data.msg === 'success' && location.search !== '?id='+ data.id ){
+				if( location.search !== '?id='+ data.id ){
 					location.search = '?id='+ data.id;
 				}
 				else{

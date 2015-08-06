@@ -1,0 +1,22 @@
+<form id="readForm">
+	<input type="hidden" id="bookmarkId" name="bookmarkId"/>
+
+	<div class="formGroup">
+		<label for="star1" class="label">请评分</label>
+
+		<div class="input-score">
+			<input type="radio" id="star5" name="score" value="5"/>
+			<label for="star5" class="icon icon-star"></label>
+			<input type="radio" id="star4" name="score" value="4"/>
+			<label for="star4" class="icon icon-star"></label>
+			<input type="radio" id="star3" name="score" value="3"/>
+			<label for="star3" class="icon icon-star"></label>
+			<input type="radio" id="star2" name="score" value="2"/>
+			<label for="star2" class="icon icon-star"></label>
+			<input type="radio" id="star1" name="score" value="1"/>
+			<label for="star1" class="icon icon-star"></label>
+		</div>
+	</div>
+	<component data-name="tagEditor"></component>
+	%tagEditor%
+</form>

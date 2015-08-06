@@ -1,9 +1,9 @@
 'use strict';
 
-var db          = require('./db/db.js')
-	, web       = require('./web/web.js')
-	, socket    = require('./socket/socket.js')
-	, error     = require('./error/error.js')
+var db          = require('./db.js')
+	, web       = require('./web.js')
+	, socket    = require('./socket.js')
+	, error     = require('./error.js')
 
 	, metro     = require('./metro.js')
 
@@ -156,7 +156,7 @@ var db          = require('./db/db.js')
 		 * */
 		, Handler: {
 			code: function(rs){
-				rs = rs.result;
+				//rs = rs.result;
 
 				rs = rs[0];
 				rs.html = rs.html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -172,7 +172,7 @@ var db          = require('./db/db.js')
 		 * */
 		, View: {
 			editor: function(rs){
-				rs = rs.result;
+				//rs = rs.result;
 
 				return tpl.html('module', {
 					title: '前端编辑器 Editor'
@@ -362,7 +362,7 @@ web.post('/editor/setMore', image.uploadMiddle.single('preview'), function(req, 
 	handle.data = handleData;
 
 	db.handle( handle ).then(function(rs){
-		rs = rs.result;
+		//rs = rs.result;
 
 		res.send( JSON.stringify({
 			Id: rs.insertId || id
@@ -381,20 +381,21 @@ web.post('/editor/demoImgUpload', image.uploadMiddle.single('image'), function(r
 		, type = body.type
 		, file = req.file
 		, size = image.sizeOf( req.file.path )
-		;
-
-	db.handle({
-		sql: image.Model.imageAdd
-		, data: {
+		, data = {
 			height: size.height
 			, width: size.width
 			, src: file.path.replace(/\\/g, '/').replace('public', '..')
 			, type: type === 'demo' ? 5 : 1
 		}
-	}).then(function(rs){
-		var data = rs.data;
+		;
 
-		rs = rs.result;
+	db.handle({
+		sql: image.Model.imageAdd
+		, data: data
+	}).then(function(rs){
+		//var data = rs.data;
+
+		//rs = rs.result;
 
 		data.Id = rs.insertId;
 
@@ -518,7 +519,7 @@ socket.register({
 		}
 
 		db.handle( handle ).then(function(rs){
-			rs = rs.result;
+			//rs = rs.result;
 
 			socket.emit('data', {
 				topic: 'editor'
@@ -540,7 +541,7 @@ socket.register({
 					id: id
 				}
 			}).then(function(rs){
-				rs = rs.result;
+				//rs = rs.result;
 
 				send.info = rs[0];
 
@@ -576,7 +577,7 @@ socket.register({
 		handle.data = handleData;
 
 		db.handle( handle ).then(function(rs){
-			rs = rs.result;
+			//rs = rs.result;
 
 			socket.emit('data', {
 				topic: 'editor/code/save'
@@ -590,7 +591,7 @@ socket.register({
 		db.handle({
 			sql: bower.Model.bower
 		}).then(function(rs){
-			rs = rs.result;
+			//rs = rs.result;
 
 			socket.emit('data', {
 				topic: 'editor/lib'
@@ -611,7 +612,7 @@ socket.register({
 
 			socket.emit('data', {
 				topic: 'editor/demoImgLib'
-				, data: rs.result
+				, data: rs//.result
 			});
 		});
 	}

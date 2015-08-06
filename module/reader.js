@@ -1,9 +1,9 @@
 'use strict';
 
-var db          = require('./db/db.js')
-	, web       = require('./web/web.js')
-	, socket    = require('./socket/socket.js')
-	, error     = require('./error/error.js')
+var db          = require('./db.js')
+	, web       = require('./web.js')
+	, socket    = require('./socket.js')
+	, error     = require('./error.js')
 
 	, metro     = require('./metro.js')
 
@@ -21,13 +21,13 @@ var db          = require('./db/db.js')
 				'+ul.reader_articleList'
 	})
 	, articleTpl   = emmetTpl({
-		template:'article#readerArt%Id%.article[data-id=%Id%]' +
+		template: 'article#readerArt%Id%.article[data-id=%Id%]' +
 			'>a[href=%url% title=%url% target=_blank]' +
 				'>h3.article_title{%title%}' +
 			'^hr' +
 			'+a.icon.icon-checkbox%readStatus%[href=reader/read title=%readTitle%]{%readText%}' +
 			'+time.article_date[pubdate=pubdate datetime=%datetime%]{%datetime%}' +
-			'+div.tagsArea{%tagsArea%}'
+			'+div.tagsArea{%tags%}'
 		, filter: {
 			title: function(d){
 				return d.title || d.url;
@@ -41,7 +41,7 @@ var db          = require('./db/db.js')
 			, readText: function(d){
 				return +d.status > 1 ? '已读过' : '读过';
 			}
-			, tagsArea: function(d){
+			, tags: function(d){
 				return d.tags ? '<span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">'+ d.tags.split(',').join('</span><span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">') +'</span>' : '';
 			}
 		}
@@ -339,7 +339,7 @@ var db          = require('./db/db.js')
 			 * @return  {boolean}   该数据是否存在
 			 * */
 			, readerIsExist: function(rs){
-				rs = rs.result;
+				//rs = rs.result;
 				
 				return !!(rs && rs.length);
 			}
@@ -350,7 +350,7 @@ var db          = require('./db/db.js')
 			 * @return  {boolean}   该数据是否存在
 			 * */
 			, bookmarkIsExist: function(rs){
-				rs = rs.result;
+				//rs = rs.result;
 
 				return !!(rs && rs.length);
 			}
@@ -363,7 +363,7 @@ var db          = require('./db/db.js')
 		 * */
 		, View: {
 			reader: function(rs){
-				rs = rs.result;
+				//rs = rs.result;
 
 				return tpl.html('module', {
 					title: '阅读 reader'
@@ -384,7 +384,7 @@ var db          = require('./db/db.js')
 				});
 			}
 			, bookmark: function(rs){
-				rs = rs.result;
+				//rs = rs.result;
 
 				return tpl.html('module', {
 					title: '书签 bookmark'
@@ -413,7 +413,7 @@ var db          = require('./db/db.js')
 				});
 			}
 			, favorite: function(rs){
-				rs = rs.result;
+				//rs = rs.result;
 
 				return tpl.html('module', {
 					title: '收藏文章 favorite'
@@ -482,7 +482,7 @@ web.get('/reader/bookmark', function(req, res){
 			page: (page-1) * size
 			, size: size
 		}
-	}).then( Reader.View.bookmark ).then(function(html){
+	}).then( Reader.View.bookmark ).then(function(html){console.log(html)
 		res.send( html );
 		res.end();
 	});
@@ -537,7 +537,7 @@ web.get('/data/reader', function(req, res){
 	}
 
 	db.handle( handle ).then(function(rs){
-		rs = JSON.stringify( rs.result );
+		rs = JSON.stringify( rs )//.result );
 
 		res.send( callback ? callback +'('+ rs +')' : rs );
 		res.end();
@@ -569,7 +569,7 @@ web.get('/data/bookmark', function(req, res){
 	}
 
 	db.handle( handle ).then(function(rs){
-		rs = JSON.stringify( rs.result );
+		rs = JSON.stringify( rs )//.result );
 
 		res.send( callback ? callback +'('+ rs +')' : rs );
 		res.end();
@@ -601,7 +601,7 @@ web.get('/data/favorite', function(req, res){
 	}
 
 	db.handle( handle ).then(function(rs){
-		rs = rs.result;
+		//rs = rs.result;
 
 		res.send( callback ? callback +'('+ rs +')' : rs );
 		res.end();
@@ -634,7 +634,7 @@ socket.register({
 		}
 
 		db.handle( handle ).then(function(rs){
-			rs = rs.result;
+			//rs = rs.result;
 
 			socket.emit('data', {
 				topic: 'reader'
@@ -724,7 +724,7 @@ socket.register({
 		}
 
 		db.handle( handle ).then(function(rs){
-			rs = rs.result;
+			//rs = rs.result;
 
 			socket.emit('data', {
 				topic: 'reader/bookmark'
@@ -737,6 +737,7 @@ socket.register({
 				topic: 'reader/bookmark/add'
 			}
 			, url = data.query.url
+			, dataAll
 			;
 
 		if( url ){
@@ -768,21 +769,21 @@ socket.register({
 
 					throw new Error('抓取数据失败');
 				}
-
+				dataAll = data;
 				return db.handle({
 					sql: Reader.Model.bookmarkAdd
 					, data: data
 				});
 			}).then(function(rs){
-				var data = rs.data;
+				//var data = rs.data;
 
-				rs= rs.result;
+				//rs= rs.result;
 
 				if( rs.insertId ){
 					data.id = rs.insertId;
 					data.statsu = 0;
 
-					send.info = data;
+					send.info = dataAll;//data;
 				}
 				else{
 					send.error = '';
@@ -822,7 +823,7 @@ socket.register({
 					, tags: tags
 				}
 			}).then(function(rs){
-				rs = rs.result;
+				//rs = rs.result;
 
 				if( rs.changedRows ){
 					send.info = {
@@ -872,7 +873,7 @@ socket.register({
 		}
 
 		db.handle( handle ).then(function(rs){
-			rs = rs.result;
+			//rs = rs.result;
 
 			socket.emit('data', {
 				topic: 'reader/favorite'

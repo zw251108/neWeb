@@ -18,5 +18,9 @@ var CONFIG = {
 		, database: 'destiny'
 		, dateStrings: true
 	}
+	, docType: {
+		html5: '<!DOCTYPE html>'
+	}
+	, baseUrl: '../'
 };
 module.exports = CONFIG;

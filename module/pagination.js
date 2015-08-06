@@ -1,6 +1,6 @@
 'use strict';
 
-var error       = require('./error/error.js')
+var error       = require('./error.js')
 	, tpl       = require('./emmetTpl/tpl.js')
 	, emmetTpl  = require('./emmetTpl/emmetTpl.js')
 

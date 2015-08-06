@@ -556,8 +556,9 @@ function saveOrUpdate(name, num){
 //	console.log(str);
 //});
 
-//	= function(html){
-//	var $html = Cheerio.load('<template>'+ html +'</template>')
+//var createEmmet = function(html){
+//	var $ = Cheerio.load;
+//	var $html = $('<template>'+ html +'</template>')
 //		, $children = $html('template').children()
 //		, k, i, j, t, $t
 //		, attribs, attr
@@ -585,10 +586,10 @@ function saveOrUpdate(name, num){
 //
 //		for(; i < j; i++ ){
 //			$t = $node.eq(i);
+//			t = $t[0];
 //
-//			if( $t[0].type == 'tag' ){
+//			if( t.type == 'tag' || t.type === 'script' || t.type === 'style' ){
 //
-//				t = $t[0];
 //				attribs = t.attribs;
 //
 //				emmet += t.name;
@@ -630,11 +631,21 @@ function saveOrUpdate(name, num){
 //
 //	return emmet.replace(/([^\^])(\^*)$/, '$1');
 //};
+//
+var fs = require('fs')
+	, html = fs.readFileSync(__dirname + '/tpl/page.html').toString()
+	;
 
-//var fs = require('fs')
-//	, html = fs.readFileSync(__dirname + '/tpl/index.html').toString()
-//	;
-//
-//var createEmmet = require('./module/emmet/htmlToEmmet.js');
-//
-//console.log( createEmmet( html ) );
+var createEmmet = require('./module/emmet/htmlToEmmet.js');
+
+console.log(1, createEmmet(
+	Cheerio.load, html
+ //'<style>' +
+	//'%script%' +
+	//'</style>'
+) );
+
+//var st = Cheerio.load('<script>' +
+//	'%script%' +
+//	'</script>');
+//console.log(st('script'))

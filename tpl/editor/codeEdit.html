@@ -1,0 +1,27 @@
+<form action="result" id="editorForm" class="editor_form" method="post" target="result">
+	<button id="save" class="icon icon-save editor_op" type="submit" title="保存"></button>
+	<button id="run" class="icon icon-play editor_op" type="button" title="运行"></button>
+	<input type="hidden" id="id" name="id" value="%Id%"/>
+	<input type="hidden" id="cssLib" name="cssLib" value="%css_lib%"/>
+	<input type="hidden" id="jsLib" name="jsLib" value="%js_lib%"/>
+
+	<h3 id="editorTitle" class="editor_title">
+		<input type="text" id="name" class="input" name="name" value="%name%" placeholder="新建前端代码"/>
+	</h3>
+
+	<div class="editor_area editor_area-html">
+		<textarea name="html" id="html" class="hidden" placeholder="body&nbsp;之间的&nbsp;HTML&nbsp;代码">%html%</textarea>
+		<label for="html" class="hidden">HTML</label>
+	</div>
+	<div class="editor_area editor_area-js">
+		<textarea name="js" id="js" class="hidden" placeholder="JavaScript&nbsp;代码">%js%</textarea>
+		<label for="js" class="hidden">JavaScript</label>
+	</div>
+	<div class="editor_area editor_area-css">
+		<textarea name="css" id="css" class="hidden" placeholder="CSS&nbsp;代码">%css%</textarea>
+		<label for="css" class="hidden">CSS</label>
+	</div>
+	<div class="editor_area editor_area-rs">
+		<iframe src="result" frameborder="0" id="result" class="editor_rs" name="result"></iframe>
+		<label class="hidden">Result</label></div>
+</form>
