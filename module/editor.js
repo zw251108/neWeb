@@ -95,10 +95,10 @@ var db          = require('./db.js')
 				'>input[type=hidden name=setUI value=1]' +
 				'+div.formGroup' +
 					'>label.label[for=uiName]{请设置 UI 组件名称}' +
-					'+input#uiName.input[type=text name=uiName placeholder=请设置 UI 组件名称 data-validator=uiName]' +
+					'+input#uiName.input[type=text name=uiName placeholder=请设置UI组件名称 data-validator=uiName]' +
 				'^div.formGroup' +
 					'>label.label[for=uiName]{请设置 UI 组件名称}' +
-					'+input#uiName.input[type=text name=uiName placeholder=请设置 UI 组件名称 data-validator=uiName]' +
+					'+input#uiName.input[type=text name=uiName placeholder=请设置UI组件名称 data-validator=uiName]' +
 			'^^^iframe#editorSetMoreRs.hidden[name=editorSetMoreRs]'
 			//'<form id="saveForm" method="post" action="save" target="editorSaveRs" enctype="multipart/form-data">' +
 			//	'<div class="formGroup">' +
@@ -214,7 +214,7 @@ var db          = require('./db.js')
 							, button: '<button type="button" id="codeSave" class="btn">保存</button>'}, {
 						id: 'uiLib',    size: 'normal'
 							, content: '<dl class="list-tree" id="uiLibList"></dl>'
-							, button: '<button type="button" id="" class="btn">确定</button>'}, {
+							, button: '<button type="button" id="sure" class="btn">确定</button>'}, {
 						id: 'demoImgLib',   size: 'large'
 							, content: demoImgUploadFormTpl({})
 					}]).join('')

@@ -119,7 +119,7 @@ var db          = require('./db.js')
 db.handle({
 	sql: Tag.Model.tag
 }).then(function(rs){
-	rs = rs.result;
+	//rs = rs.result;
 
 	var index = {}
 		;

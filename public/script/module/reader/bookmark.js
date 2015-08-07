@@ -89,9 +89,26 @@ require(['../config'], function(config){
 					, tags: function(d){
 						return d.tags ? '<span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">'+ d.tags.split(',').join('</span><span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">') +'</span>' : '';
 					}
+					, datetime: function(){
+						return datetime;
+					}
 				}
 			})
+			, today = new Date()
+			, y = today.getFullYear()
+			, m = today.getMonth() +1
+			, d = today.getDate()
+			, h = today.getHours()
+			, mm = today.getMinutes()
+			, s = today.getSeconds()
+			, datetime
 			;
+		m = m > 10 ? '0' + m : m;
+		d = d > 10 ? '0' + d : d;
+		h = h > 10 ? '0' + h : h;
+		mm = mm > 10 ? '0' + mm : mm;
+		s = s > 10 ? '0' + s : s;
+		datetime = y +'-'+ m +'-'+ d +' '+ h +':'+ mm +':'+ s;
 
 		tag( $.parseJSON( tagsData ) );
 		tag.setAdd( $readPopup );

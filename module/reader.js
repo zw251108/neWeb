@@ -132,14 +132,14 @@ var db          = require('./db.js')
 			, readerPage: 'select * from reader where status=1 limit :page,:size'
 			, readerIsExist: 'select * from reader where xml_url like ?'
 
-			, bookmark: 'select Id,title,url,status,tags from bookmark order by status,Id desc'
+			, bookmark: 'select Id,title,url,status,tags,datetime from bookmark order by status,Id desc'
 			, bookmarkCount: 'select count(*) as count from bookmark'
-			, bookmarkPage: 'select Id,title,url,status,tags from bookmark order by status,Id desc limit :page,:size'
+			, bookmarkPage: 'select Id,title,url,status,tags,datetime from bookmark order by status,Id desc limit :page,:size'
 			, bookmarkAdd: 'insert into bookmark(url,title,source,tags,datetime) select :url,:title,:source,:tags,now() from dual where not exists (select * from bookmark where url like :url)'
 			, bookmarkRead: 'update bookmark set status=2,tags=:tags,score=score+:score where Id=:id and status<2'
 			, bookmarkIsExist: 'select * from bookmark where url like :url'
 
-			, favorite: 'select * from bookmark where status=2 order by datetime desc'
+			, favorite: 'select * from bookmark where status=2 order by score desc,datetime desc'
 			, favoriteCount: 'select count(*) as count from bookmark where status=2'
 			, favoritePage: 'select * from bookmark where status=2 order by datetime desc limit :page,:size'
 		}
@@ -232,6 +232,7 @@ var db          = require('./db.js')
 
 					, rs = null
 					;
+				console.log(tagsData);
 				//console.log(tagsData, tagsIndex);
 				//console.log(charset, html, source);
 
@@ -482,7 +483,7 @@ web.get('/reader/bookmark', function(req, res){
 			page: (page-1) * size
 			, size: size
 		}
-	}).then( Reader.View.bookmark ).then(function(html){console.log(html)
+	}).then( Reader.View.bookmark ).then(function(html){
 		res.send( html );
 		res.end();
 	});

@@ -5,49 +5,13 @@ var fs = require('fs')
 
 	, config        = require('../../config.js')
 	, db            = require('../db.js')
-
 	, admin         = require('../admin.js')
-	, htmlToEmmet   = require('../emmet/htmlToEmmet')
-	, emmetTpl      = require('../emmetTpl/emmetTpl').template
+	, tpl           = require('../emmet/tpl.js')
 
-	, model = require('./model.js')
+	, code          = require('../editor/model.js')
 
-	, code  = require('../editor/model.js')
+	, model         = require('./model.js')
 
-	, getEmmet = function( dir ){
-		return htmlToEmmet(Cheerio.load, fs.readFileSync(__dirname +'/../../tpl/'+ dir).toString());
-	}
-	, page          = getEmmet('page.html')
-	, stylesheet    = emmetTpl({
-		template: getEmmet('stylesheet.html')
-	})
-	, style         = emmetTpl({
-		template: getEmmet('style.html')
-	})
-	, script        = emmetTpl({
-		template: getEmmet('script.html')
-	})
-	, scriptCode    = emmetTpl({
-		template: getEmmet('scriptCode.html')
-	})
-
-	, html = emmetTpl({
-		template: page
-		, filter: {
-			stylesheet: function(d){
-				return stylesheet(d.stylesheet).join('');
-			}
-			, style: function(d){
-				return style(d.style);
-			}
-			, script: function(d){
-				return script(d.script).join('');
-			}
-			, scriptCode: function(d){
-				return scriptCode(d.scriptCode);
-			}
-		}
-	})
 	, View = {
 		tag: function(){
 			return code.codeByName('admin/tag').then(function(rs){
@@ -78,7 +42,7 @@ var fs = require('fs')
 
 				return code;
 			}).then(function(code){
-				return html( code );
+				return tpl( code );
 			});
 		}
 	}

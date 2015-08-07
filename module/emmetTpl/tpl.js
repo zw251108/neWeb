@@ -98,8 +98,7 @@ module.exports = {
 	, metroTpl: emmetTpl({
 		template: 'a[href=%id%/]>section#%id%.module.module-metro.module-%id%.%size%' +
 			'>h2.module_title.icon.icon-%id%{%title%}' +
-			'+ul.toolbar>li>button.icon.icon-cancel.module_close' +
-			'^^div.m_info{%info%}' +
+			'+div.m_info{%info%}' +
 			'+div.module_content'
 	})
 	, popupTpl: emmetTpl({

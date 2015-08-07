@@ -1,3 +1,5 @@
+'use strict';
+
 var web         = require('../web.js')
 	, socket    = require('../socket.js')
 	, error     = require('../error.js')
@@ -5,7 +7,20 @@ var web         = require('../web.js')
 	, Model = require('./model.js')
 	, View  = require('./view.js')
 	, Admin = require('./admin.view.js')
+
+	, TAG_INDEX = {}
+	, TAG_CACHE = []
 	;
+
+/**
+ * 后台管理
+ * */
+web.get('/admin/tag', function(req, res){
+	Admin.tag().then(function( html ){
+		res.send( config.docType.html5 + html );
+		res.end();
+	});
+});
 
 /**
  * Web 数据接口 支持 jsonp 格式
@@ -27,22 +42,12 @@ web.get('/tag/increase', function(){
 });
 
 /**
- * 后台管理
- * */
-web.get('/admin/tag', function(req, res){
-	Admin.tag().then(function( html ){
-		res.send( config.docType.html5 + html );
-		res.end();
-	});
-});
-
-/**
  * Web Socket 数据接口
  * */
 socket.register({
 	tag: function(socket){
 
-		Model.tag().then(function(rs){
+		Model.getAll().then(function(rs){
 
 			socket.emit('data', {
 				topic: 'tag'
@@ -59,7 +64,8 @@ socket.register({
 			;
 
 		if( name ){
-			Model.tagAdd( name ).then(function(rs){
+
+			Model.add( name ).then(function(rs){
 
 				if( !rs.insertId ){
 					send.info = {
@@ -92,7 +98,7 @@ socket.register({
 			;
 
 		if( name ){
-			Model.tagIncrease(name, num).then(function(rs){
+			Model.increaseByName(name, num).then(function(rs){
 				rs = rs.result;
 
 				if( rs.changedRows ){
@@ -102,8 +108,8 @@ socket.register({
 				}
 
 				// 标签数量添加
-				if( name in Tag.index ){
-					Tag.data[Tag.index[name]] += 1;
+				if( name in TAG_INDEX ){
+					TAG_CACHE[TAG_INDEX[name]] += 1;
 				}
 			});
 		}

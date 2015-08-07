@@ -3,7 +3,8 @@
 
 @import "lib/function";
 
-@module-bg: #888;
+@module-bg: #555;
+@module-start-bg: #eee;
 
 /**
  *---------- Module 模块 汇总 ----------
@@ -51,7 +52,7 @@
 	background-color: @module-bg;
 	background-repeat: no-repeat;
 
-	background-image: -webkit-linear-gradient(top,#eee,#888);
+	background-image: -webkit-linear-gradient(top, @module-start-bg, @module-bg);
 	//outline: 1px solid #888;
 }
 
@@ -93,7 +94,7 @@
 //----- Main 主内容模块 ------
 /*section*/.module-main{
 	overflow: hidden;
-	background-image: none;
+	//background-image: none;
 
 	> .module_title,
 	> .module_info{
@@ -176,9 +177,9 @@
 			//border-width: 0 0 1px 1px;
 			background: #888;
 
-			&:before{
-				margin: 5px;
-			}
+			//&:before{
+			//	//margin: 5px;
+			//}
 		}
 		//.icon:before{
 		//	margin: 0;
@@ -197,15 +198,17 @@
 }
 
 /*dialog*/.module-popup{
-	overflow: hidden;
+	overflow: auto;
 //	position: absolute;
 	position: fixed;
 	z-index: 130;
-	top: 70px;
+	top: 50%;
+
 	left: 0;
 	right: 0;
-	min-height: 300px;
-	max-height: 500px;
+
+	//min-height: 300px;
+	//max-height: 500px;
 
 	border: 1px solid #888;
 
@@ -215,6 +218,8 @@
 	outline: 100em solid rgba(0, 0, 0, .5);
 
 	.boxShadow(~"2px 2px 5px #c0c0c0,2px -2px 5px #c0c0c0,-2px 2px 5px #c0c0c0,-2px -2px 5px #c0c0c0");
+
+	.transform(translateY(-50%));
 
 	opacity: 1;
 
@@ -258,7 +263,9 @@
 
 	> .module_content{
 		overflow: auto;
-		height: 20em;
+		max-height: 500px;
+		min-height: 4em;
+		//height: 20em;
 		margin: 40px 0 0;
 		padding: 0;
 		background-color: #fff;
@@ -270,7 +277,7 @@
 
 		border: 1px solid #c0c0c0;
 		border-radius: 10px;
-		margin: 30px 10px 0;
+		margin: 30px 10px;
 
 		.label{
 			position: absolute;

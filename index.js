@@ -160,7 +160,6 @@ require('./module/tag.js');         // 加载模块 tag 功能
 
 require('./module/image.js');       // 加载模块 image
 
-//require('./module/basedata.js');    // 加载模块 基础数据
 require('./module/basedata/controller.js'); // 加载模块 基础数据
 
 //----- 后台管理 -----

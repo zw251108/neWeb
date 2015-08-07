@@ -4,8 +4,15 @@ var web         = require('../web.js')
 	, socket    = require('../socket.js')
 	, error     = require('../error.js')
 
-	, Model = require('./Model.js')
+	, Model = require('./model.js')
+	, Admin = require('./admin.view.js')
 	;
+
+web.get('/admin/province', function(req, res){
+	Admin.province().then(function(html){
+		res.send()
+	});
+});
 
 /**
  * Web 数据接口 支持 jsonp 格式
