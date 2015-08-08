@@ -22,7 +22,6 @@
 		text-align: center;
 	}
 
-
 	.CodeMirror{
 		height: 100%;
 		border: 1px solid #ddd;
@@ -103,33 +102,53 @@
 		background: #888;
 		margin-bottom: -1px;
 		font-size: 14px;
-	}
-	.list li{
-		overflow: hidden;
-		position: relative;
-		height: 2em;
-		max-width: 10em;
-		border-bottom: 1px solid #fff;
-		padding: 0 1em;
-		background: #888;
 
-		color: #fff;
+		&::-webkit-scrollbar {
+			width: 5px;
+		}
+		&::-webkit-scrollbar-thumb{
+			height: 50px;
+			border-radius: 20px;
+			background: #c0c0c0;
+		}
+		&::-webkit-scrollbar-track-piece{
+			background: #fff;
+		}
 
-		line-height: 2em;
-		white-space: nowrap;
+		li{
+			overflow: hidden;
+			position: relative;
+			height: 2em;
+			max-width: 10em;
+			border-bottom: 1px solid #fff;
+			padding: 0 1em;
+			background: #888;
 
-		cursor: pointer;
+			color: #fff;
 
-		-ms-text-overflow: ellipsis;
-		text-overflow: ellipsis;
+			line-height: 2em;
+			white-space: nowrap;
 
-		-webkit-box-sizing: border-box;
-		-moz-box-sizing: border-box;
-		box-sizing: border-box;
-	}
-	.list .on,
-	.list li:hover{
-		background: #444;
+			cursor: pointer;
+
+			-ms-text-overflow: ellipsis;
+			text-overflow: ellipsis;
+
+			-webkit-box-sizing: border-box;
+			-moz-box-sizing: border-box;
+			box-sizing: border-box;
+
+			&:hover{
+				background: #444;
+			}
+			&:last-child{
+				border: 0;
+			}
+		}
+
+		.on{
+			background: #444;
+		}
 	}
 }
 
@@ -238,25 +257,25 @@
 		top: 0;
 		bottom: 75%;
 		left: 0;
-		right: 0;
+		right: 40px;
 	}
 	.editor_area-css{
         top: 25%;
         bottom: 50%;
         left: 0;
-        right: 0;
+        right: 40px;
     }
 	.editor_area-js{
 		top: 50%;
 		bottom: 25%;
 		left: 0;
-		right: 0;
+		right: 40px;
 	}
 	.editor_area-rs{
 		top: 75%;
 		bottom: 0;
 		left: 0;
-		right: 0;
+		right: 40px;
 	}
 }
 .editor-4col{
@@ -264,25 +283,38 @@
 		top: 0;
 		bottom: 0;
 		left: 0;
-		right: 75%;
+		width: calc(25% - 10px);
+		//right: calc(75% + 10px);
+		.boxSizing(border-box);
 	}
 	.editor_area-css{
 		top: 0;
 		bottom: 0;
 		left: 25%;
-		right: 50%;
+		width: calc(25% - 10px);
+		margin-left: -10px;
+		//left: calc(25% - 10px);
+		//right: calc(50% + 10px);
+		.boxSizing(border-box);
 	}
 	.editor_area-js{
 		top: 0;
 		bottom: 0;
 		left: 50%;
-		right: 25%;
+		width: calc(25% - 10px);
+		margin-left: -20px;
+		//left: calc(50% - 10px);
+		//right: calc(25% + 10px);
+		.boxSizing(border-box);
 	}
 	.editor_area-rs{
 		top: 0;
 		bottom: 0;
 		left: 75%;
-		right: 0;
+		width: calc(25% - 20px);
+		margin-left: -30px;
+		//left: calc(75% - 10px);
+		//right: 40px;
 	}
 }
 .editor-4cor{
@@ -296,7 +328,7 @@
 		top: 0;
 		bottom: 60%;
 		left: 50%;
-		right: 0;
+		right: 40px;
 	}
 	.editor_area-js{
 		top: 40%;
@@ -308,21 +340,23 @@
 		top: 40%;
 		bottom: 0;
 		left: 50%;
-		right: 0;
+		right: 40px;
 	}
 }
-.FS(){
-	z-index: 120;
+.editor-htmlFS .editor_area,
+.editor-cssFS .editor_area,
+.editor-jsFS .editor_area,
+.editor-rsFS .editor_area{
 	top: 0;
 	bottom: 0;
 	left: 0;
-	right: 0;
+	right: 40px;
 }
 .editor-htmlFS .editor_area-html,
 .editor-cssFS .editor_area-css,
 .editor-jsFS .editor_area-js,
 .editor-rsFS .editor_area-rs{
-	.FS();
+	z-index: 120;
 }
 
 .Container-eFS{
@@ -347,18 +381,49 @@
 		width: auto;
 		margin: 0;
 
+		.module_content{
+			background: transparent;
+		}
+
+		.toolbar{
+			top: 85px;
+			right: 1px;
+			width: 40px;
+		}
+		.list{
+			right: 40px;
+			top: 5px;
+		}
+		.arrow{
+			top: 15px;
+			right: 30px;
+			border-color: transparent transparent transparent #fff;
+
+			&:before{
+				top: -5px;
+				left: -6px;
+				border-color: transparent transparent transparent #888;
+			}
+		}
+
 		label{
 			display: none;
 		}
 	}
 	.editor_op{
-		position: absolute;
+		//position: absolute;
+		position: fixed;
 		z-index: 130;
-		top: 10px;
-		right: 10px;
+		//top: 10px;
+		//right: 10px;
+		right: 1px;
 
 		&.icon-play{
-			right: 60px;
+			//right: 60px;
+			top: 0;
+		}
+		&.icon-save{
+			top: 45px;
 		}
 	}
 	.editor_area{
