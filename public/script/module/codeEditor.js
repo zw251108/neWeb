@@ -46,6 +46,11 @@ define(['plugin/codeMirror/lib/codemirror'
 			case 'html':
 				options.mode = 'text/html';
 				readOnly && (options.profile = 'xhtml');
+				//options.name = 'htmlmixed';
+				//options.scriptTypes = [{
+				//	matches: /text\/jsx/i
+				//	, mode: null//'text/javascript'
+				//}];
 				break;
 			case 'css':
 				options.mode = 'text/css';

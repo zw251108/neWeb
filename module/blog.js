@@ -5,7 +5,7 @@ var db          = require('./db.js')
 	, socket    = require('./socket.js')
 	, error     = require('./error.js')
 
-	, metro     = require('./metro.js')
+	, index     = require('./index.js')
 
 	, tpl           = require('./emmetTpl/tpl.js')
 	, emmetTpl      = require('./emmetTpl/emmetTpl.js').template

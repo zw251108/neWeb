@@ -1,19 +1,10 @@
 'use strict';
 
-var fs = require('fs')
-	, Cheerio = require('cheerio')
+var admin         = require('../admin.js')
 
-	, config        = require('../../config.js')
-	, db            = require('../db.js')
-
-	, admin         = require('../admin.js')
-	, htmlToEmmet   = require('./htmlToEmmet.js')
+	, getEmmet      = require('./getEmmet.js')
 	, emmetTpl      = require('../emmetTpl/emmetTpl.js').template
 
-	, getEmmet  = function( dir ){
-		console.log('read file: tpl/', dir);
-		return htmlToEmmet( Cheerio.load, fs.readFileSync(__dirname +'/../../tpl/'+ dir).toString() );
-	}
 	, stylesheet    = emmetTpl({
 		template: getEmmet('stylesheet.html')
 	})
@@ -25,7 +16,24 @@ var fs = require('fs')
 		template: getEmmet('header.html')
 	})
 
-	, main      // todo
+	, main          = emmetTpl({
+		template: getEmmet('main.html')
+		, filter: {
+			moduleMain: function(d){
+				return d.moduleMain ? moduleMain(d.moduleMain) : '';
+			}
+			, modulePopup: function(d){
+				return d.modulePopup ? modulePopup(d.modulePopup) : '';
+			}
+		}
+	})
+	, moduleMain    = emmetTpl({
+		template: getEmmet('module-main.html')
+	})
+	, modulePopup   = emmetTpl({
+		template: getEmmet('module-popup.html')
+	})
+
 	, footer    // todo
 
 	, script        = emmetTpl({
@@ -35,23 +43,56 @@ var fs = require('fs')
 		template: getEmmet('scriptCode.html')
 	})
 
-	, page  = emmetTpl({
+	, defaults  = {
+		title: ''
+		, stylesheet: [{
+			path: '../style/style.css'}, {
+			path: '../style/test.css'
+		}]
+		, style: ''
+		, header: {}
+		, main: ''
+		, script: ''
+		, scriptCode: ''
+	}
+
+	, pageTpl  = emmetTpl({
 		template: getEmmet('page.html')
 		, filter: {
 			stylesheet: function(d){
-				return stylesheet(d.stylesheet).join('');
+				return d.stylesheet ? stylesheet(d.stylesheet).join('') : '';
 			}
 			, style: function(d){
-				return style(d.style);
+				return d.style ? style(d.style) : '';
+			}
+			, header: function(d){
+				return d.header ? header(d.header) : '';
+			}
+			, main: function(d){
+				return d.main ? (typeof d.main === 'object' ? main(d.main) : d.main) : '';
 			}
 			, script: function(d){
-				return script(d.script).join('');
+				return d.script ? script(d.script).join('') : '';
 			}
 			, scriptCode: function(d){
-				return scriptCode(d.scriptCode);
+				return d.scriptCode ? scriptCode(d.scriptCode) : '';
 			}
 		}
 	})
+	, extend = function(options){
+		var k;
+
+		for( k in defaults ) if( defaults.hasOwnProperty(k) ){
+			options[k] = k in options ? options[k] : defaults[k];
+		}
+
+		return options;
+	}
+	, page  = function(page){console.log(page.title)
+		page = extend( page );
+
+		return pageTpl(page).join('');
+	}
 	;
 
 module.exports = page;

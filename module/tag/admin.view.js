@@ -1,20 +1,15 @@
 'use strict';
 
-var fs = require('fs')
-	, Cheerio = require('cheerio')
+var config  = require('../../config.js')
+	, db    = require('../db.js')
 
-	, config        = require('../../config.js')
-	, db            = require('../db.js')
-	, admin         = require('../admin.js')
-	, tpl           = require('../emmet/tpl.js')
+	, tpl   = require('../emmet/tpl.js')
 
-	, code          = require('../editor/model.js')
-
-	, model         = require('./model.js')
+	, CodeModel  = require('../editor/model.js')
 
 	, View = {
 		tag: function(){
-			return code.codeByName('admin/tag').then(function(rs){
+			return CodeModel.codeByName('admin/tag').then(function(rs){
 				var code = {};
 
 				code.title = rs.name;
@@ -23,22 +18,25 @@ var fs = require('fs')
 					return {
 						path: '../lib/'+ d
 					};
-				}) : [];
+				}) : '';
+				code.style = rs.css ? {
+					style: rs.css
+				} : '';
+
+				code.header = '';
+				code.main = rs.html ? {
+					content: rs.html
+				} : '';
 
 				code.script = rs.js_lib ? rs.js_lib.split(',').map(function(d){
 					return {
 						main: ''
 						, src: '../lib/'+ d
 					};
-				}) : [];
-
+				}) : '';
 				code.scriptCode = rs.js ? {
 					scriptCode: rs.js
-				} : {};
-				code.style = rs.css ? {
-					style: rs.css
-				} : {};
-				code.main = rs.html;
+				} : '';
 
 				return code;
 			}).then(function(code){

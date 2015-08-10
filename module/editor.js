@@ -5,13 +5,15 @@ var db          = require('./db.js')
 	, socket    = require('./socket.js')
 	, error     = require('./error.js')
 
-	, metro     = require('./metro.js')
+	, index     = require('./index.js')
 
 	, tpl       = require('./emmetTpl/tpl.js')
 	, emmetTpl  = require('./emmetTpl/emmetTpl.js').template
 
 	, bower     = require('./bower.js')
-	, tag       = require('./tag.js')
+
+	//, tag       = require('./tag.js')
+	, tagView   = require('./tag/view.js')
 	, image     = require('./image.js')
 
 	, codeTpl       = emmetTpl({
@@ -24,7 +26,7 @@ var db          = require('./db.js')
 			alt:function(data, index){
 				return data.preview ? data.name : '没有预览图片';
 			}
-			, tagsArea: tag.tagEditorFilter.tagsArea
+			, tagsArea: tagView.tagEditorFilter.tagsArea
 		}
 	})
 	, codeEditTpl   = emmetTpl({
@@ -84,7 +86,7 @@ var db          = require('./db.js')
 				'>label.label[for=preview]{请添加预览图片}' +
 				'+input[type=hidden name=type value=preview]' +
 				'+input#preview.input[type=file name=preview]' +
-			'^' + tag.tagEditorEmmet +
+			'^' + tagView.tagEditorEmmet +
 		    '^fieldset' +
 				'>legend' +
 					'>label' +
@@ -100,29 +102,7 @@ var db          = require('./db.js')
 					'>label.label[for=uiName]{请设置 UI 组件名称}' +
 					'+input#uiName.input[type=text name=uiName placeholder=请设置UI组件名称 data-validator=uiName]' +
 			'^^^iframe#editorSetMoreRs.hidden[name=editorSetMoreRs]'
-			//'<form id="saveForm" method="post" action="save" target="editorSaveRs" enctype="multipart/form-data">' +
-			//	'<div class="formGroup">' +
-			//		'<label class="label" for="codeName">请输入名称</label>' +
-			//		'<input type="text" id="codeName" class="input" placeholder="请输入标题" value="%name%"  data-validator="title"/>' +
-			//	'</div>' +
-			//	'<div class="formGroup">' +
-			//		'<label class="label" for="preview">请添加预览图片</label>' +
-			//		'<input type="hidden" name="type" value="preview"/>' +
-			//		'<input type="file" id="preview" class="input" name="preview"/>' +
-			//	'</div>' +
-			//	tag.View.tagEditor(rs) +
-			//	'<button type="button" class="btn btn-link">更多设置</button>' +
-			//	'<fieldset>' +
-			//		'<legend>设置为 UI 组件</legend>' +
-			//		'<input type="hidden" name="setUI" value="1"/>' +
-			//		'<div class="formGroup">' +
-			//			'<label class="label" for="uiName">UI 组件名称</label>' +
-			//			'<input type="text" id="uiName" class="input" name="uiName" data-validator="uiName"/>' +
-			//		'</div>' +
-			//	'</fieldset>' +
-			//'</form>' +
-			//'<iframe name="editorSaveRs" id="editorSaveRs" class="hidden"></iframe>'
-		, filter: tag.tagEditorFilter
+		, filter: tagView.tagEditorFilter
 	})
 
 	, Promise = require('promise')
@@ -229,7 +209,7 @@ var db          = require('./db.js')
 	;
 
 // 注册首页 metro 模块
-metro.push({
+index.push({
 	id: 'editor'
 	, type: 'metro'
 	, size: 'normal'

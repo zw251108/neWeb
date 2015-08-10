@@ -455,14 +455,14 @@ require(['../config'], function(config){
 				$alert.find('#alertConternt').html('保存失败' + data.msg).end().trigger('showDialog');
 			}
 			else{
+				isEdit = false;
+
 				if( location.search !== '?id='+ data.info.id ){
 					location.search = '?id='+ data.info.id;
 				}
 				else{
 					$alert.find('#alertContent').html('保存成功')
 						.end().trigger('showDialog');
-
-					isEdit = false;
 				}
 			}
 		});

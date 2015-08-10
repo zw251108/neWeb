@@ -103,15 +103,16 @@
 					text = $t.text();
 					emmet += text ? '{'+ text +'}' : '';
 
-					emmet += '+';
-
 					if( t.next && t.next.type === 'text' ){
-						emmet += '{'+ t.next.data +'}';
+						emmet += '+{'+ t.next.data +'}';
 
 						if( i !== j -1 ){
 							emmet += '+';
 
 						}
+					}
+					else if( t.next && t.next.type === 'tag' ){
+						emmet += '+';
 					}
 				}
 			}

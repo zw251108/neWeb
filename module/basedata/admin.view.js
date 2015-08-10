@@ -1,20 +1,19 @@
 'use strict';
 
-var fs = require('fs')
-	, Cheerio = require('cheerio')
-	, Promise = require('promise')
+var Promise = require('promise')
 
-	, config        = require('../../config.js')
-	, db            = require('../db.js')
-	, admin         = require('../admin.js')
-	, tpl           = require('../emmet/tpl.js')
-	, code          = require('../editor/model.js')
+	, config    = require('../../config.js')
+	, db        = require('../db.js')
+	, admin     = require('../admin.js')
+	, tpl       = require('../emmet/tpl.js')
 
-	, model         = require('./model.js')
+	, CodeModel = require('../editor/model.js')
+
+	, Model         = require('./model.js')
 
 	, View = {
 		province: function(){
-			return model.province().then(function(rs){
+			return Model.province().then(function(rs){
 
 			});
 		}
@@ -22,7 +21,7 @@ var fs = require('fs')
 			var rs;
 
 			if( province ){
-				rs = model.city( province ).then(function(rs){
+				rs = Model.city( province ).then(function(rs){
 
 				});
 			}

@@ -5,12 +5,14 @@ var db          = require('./db.js')
 	, socket    = require('./socket.js')
 	, error     = require('./error.js')
 
-	, metro     = require('./metro.js')
+	, index     = require('./index.js')
 
 	, tpl       = require('./emmetTpl/tpl.js')
 	, emmetTpl  = require('./emmetTpl/emmetTpl.js').template
 
-	, tag       = require('./tag.js')
+	//, tag       = require('./tag.js')
+	, tagModel  = require('./tag/model.js')
+	, tagView   = require('./tag/view.js')
 
 	, readerTpl    = emmetTpl({
 		template: 'section#reader_%Id%.reader_section.section' +
@@ -69,7 +71,7 @@ var db          = require('./db.js')
 					'+label.icon.icon-star[for=star2]' +
 					'+input#star1[type=radio name=score value=1]' +
 					'+label.icon.icon-star[for=star1]' +
-			'^^' + tag.tagEditorEmmet
+			'^^' + tagView.tagEditorEmmet
 	})
 
 	, segment = require('./segment/segment.js')
@@ -88,6 +90,9 @@ var db          = require('./db.js')
 	, Cheerio = require('cheerio')
 
 	, Promise = require('promise')
+
+	, TAG_CACHE
+	, TAG_INDEX
 
 	/**
 	 * @namespace   Reader
@@ -226,14 +231,17 @@ var db          = require('./db.js')
 
 					, j, temp, w, p
 
-					, tagsData = tag.data || []
-					, tagsIndex = tag.index || {}
+					, tagsData = TAG_CACHE || tagModel.TAG_CACHE || []
+					, tagsIndex = TAG_INDEX || tagModel.TAG_INDEX || {}
 					, tagsRs
 
 					, rs = null
 					;
+
+				TAG_CACHE = tagsData;
+				TAG_INDEX = tagsIndex;
+
 				console.log(tagsData);
-				//console.log(tagsData, tagsIndex);
 				//console.log(charset, html, source);
 
 				if( !charset || charset.toUpperCase() !== 'UTF-8' ){
@@ -440,7 +448,7 @@ var db          = require('./db.js')
 	;
 
 // 注册首页 metro 模块
-metro.push({
+index.push({
 	id: 'reader'
 	, type: 'metro'
 	, size: 'tiny'

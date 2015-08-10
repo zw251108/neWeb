@@ -13,7 +13,7 @@ var db      = require('../db.js')
 	, Model = {
 		getAll: function(){
 			return db.handle({
-				sql: SQL.tag
+				sql: SQL.tagAll
 			});
 		}
 		, add: function(name){
@@ -45,5 +45,19 @@ var db      = require('../db.js')
 		}
 	}
 	;
+
+db.handle({
+	sql: SQL.tagAll
+}).then(function(rs){
+	var index = {}
+		;
+
+	rs.forEach(function(d, i){
+		return index[d.name] = i;
+	});
+
+	Model.TAG_CACHE = rs;
+	Model.TAG_INDEX = index;
+});
 
 module.exports = Model;

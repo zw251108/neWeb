@@ -4,6 +4,11 @@ var web         = require('../web.js')
 	, socket    = require('../socket.js')
 	, error     = require('../error.js')
 
+	, config    = require('../../config.js')
+
+	, admin     = require('../admin.js')
+	, data      = require('../data.js')
+
 	, Model = require('./model.js')
 	, View  = require('./view.js')
 	, Admin = require('./admin.view.js')
@@ -21,19 +26,38 @@ web.get('/admin/tag', function(req, res){
 		res.end();
 	});
 });
+admin.push('tag');
 
 /**
- * Web 数据接口 支持 jsonp 格式
+ * 全局 Web 数据接口 只支持 jsonp 格式，回调函数名为 callback
  * */
-web.get('/tag/data', function(req, res){
+web.get('/data/tag', function(req, res){
 	var query = req.query || {}
 		, callback = query.callback
 		;
+	if( callback ){
+		Model.getAll().then(function(rs){
+			rs = JSON.stringify( rs );
+
+			res.send( callback +'('+ rs +')' );
+			res.end();
+		});
+	}
+	else{
+		res.end();
+	}
+});
+data.push('tag');
+
+/**
+ * Web 数据接口
+ * */
+web.get('/tag/data', function(req, res){
 
 	Model.getAll().then(function(rs){
 		rs = JSON.stringify( rs );
 
-		res.send( callback ? callback +'('+ rs +')' : rs );
+		res.send( rs );
 		res.end();
 	});
 });

@@ -31,7 +31,7 @@ var fs = require('fs')
 
 	//----- 自定义模块 -----
 	, tpl           = require('./module/emmetTpl/tpl.js') // 模板库
-	, metro         = require('./module/metro.js') // 首页模块
+	, index         = require('./module/index.js') // 首页模块
 	;
 
 //----- 重置 manifest 版本代号 -----
@@ -112,7 +112,7 @@ web.get('/', function(req, res){
 
 	res.send( tpl.html('index', {
 		title: '个人小站（开发测试中...）'
-		, modules: tpl.metroTpl(metro).join('')
+		, modules: tpl.metroTpl(index).join('')
 		, script: {
 			main: 'script/index'
 			, src: 'script/lib/require.min.js'
@@ -121,27 +121,27 @@ web.get('/', function(req, res){
 	res.end();
 });
 
-metro.push({
+index.push({
 	id: 'time'
 	, type: 'metro'
 	, size: 'tiny'
 	, title: '时间 time'
 	, info: '<div class="watch_wrap hidden" id="watch">' +
-	'<span class="watch_hourHand" id="hourHand"></span>' +
-	'<span class="watch_minuteHand" id="minuteHand"></span>' +
-	'<span class="watch_secondHand" id="secondHand"></span>' +
-	'<span class="watch_mark watch_mark-1"></span>' +
-	'<span class="watch_mark watch_mark-2"></span>' +
-	'<span class="watch_mark watch_mark-3"></span>' +
-	'<span class="watch_mark watch_mark-4"></span>' +
-	'<span class="watch_mark watch_mark-5"></span>' +
-	'<span class="watch_mark watch_mark-6"></span>' +
-	'<span class="watch_mark watch_mark-7"></span>' +
-	'<span class="watch_mark watch_mark-8"></span>' +
-	'<span class="watch_mark watch_mark-9"></span>' +
-	'<span class="watch_mark watch_mark-10"></span>' +
-	'<span class="watch_mark watch_mark-11"></span>' +
-	'<span class="watch_mark watch_mark-12"></span>' +
+		'<span class="watch_hourHand" id="hourHand"></span>' +
+		'<span class="watch_minuteHand" id="minuteHand"></span>' +
+		'<span class="watch_secondHand" id="secondHand"></span>' +
+		'<span class="watch_mark watch_mark-1"></span>' +
+		'<span class="watch_mark watch_mark-2"></span>' +
+		'<span class="watch_mark watch_mark-3"></span>' +
+		'<span class="watch_mark watch_mark-4"></span>' +
+		'<span class="watch_mark watch_mark-5"></span>' +
+		'<span class="watch_mark watch_mark-6"></span>' +
+		'<span class="watch_mark watch_mark-7"></span>' +
+		'<span class="watch_mark watch_mark-8"></span>' +
+		'<span class="watch_mark watch_mark-9"></span>' +
+		'<span class="watch_mark watch_mark-10"></span>' +
+		'<span class="watch_mark watch_mark-11"></span>' +
+		'<span class="watch_mark watch_mark-12"></span>' +
 	'</div>'
 });
 
@@ -149,14 +149,18 @@ metro.push({
  * 加载模块
  * */
 require('./module/blog.js');        // 加载模块 blog
-require('./module/document.js');    // 加载模块 document
+
+//require('./module/document.js');    // 加载模块 document
+require('./module/document/controller.js'); // 加载模块 document
+
 require('./module/editor.js');      // 加载模块 editor
 
 require('./module/bower.js');       // 加载模块 bower
 
 require('./module/reader.js');      // 加载模块 reader
 
-require('./module/tag.js');         // 加载模块 tag 功能
+//require('./module/tag.js');         // 加载模块 tag 功能
+require('./module/tag/controller.js');  // 加载模块 tag 功能
 
 require('./module/image.js');       // 加载模块 image
 

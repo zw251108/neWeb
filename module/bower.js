@@ -5,7 +5,7 @@ var db          = require('./db.js')
 	, socket    = require('./socket.js')
 	, error     = require('./error.js')
 
-	, metro     = require('./metro.js')
+	, index     = require('./index.js')
 
 	, tpl       = require('./emmetTpl/tpl.js')
 	, emmetTpl  = require('./emmetTpl/emmetTpl.js').template
@@ -394,7 +394,7 @@ var db          = require('./db.js')
 //	});
 
 // 注册首页 metro 模块
-metro.push({
+index.push({
 	id: 'bower'
 	, type: 'metro'
 	, size: 'normal'
