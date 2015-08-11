@@ -64,7 +64,53 @@ require(['module/config'], function(config){
 			})
 			, $infoDialog = $('#info')
 			, $infoContent = $infoDialog.find('.module_content')
-			, $infoList = $infoDialog.find('#infoList')
+			, $infoList = $infoDialog.find('#infoList').on('click', '[name="pickId"]', function(){
+				var $form = $(this).parents('form')
+					, values = $form.serializeArray()
+					, val = {}
+					;
+
+				if( !$form.data('submit') ){
+					$.each(values, function(i, d){
+						if( d.name in val ){
+							val[d.name] += ','+ d.value;
+						}
+						else{
+							val[d.name] = d.value;
+						}
+					});
+
+					socket.emit('data', {
+						topic: 'bower/install/prompts'
+						, query: val
+					});
+					$form.data('submit', true);
+				}
+			}).on('click', '[name="choose"]', function(){
+				var $form = $(this).parents('form')
+					, values = $form.serializeArray()
+					, val = {}
+					;
+
+				if( !$form.data('submit') ){
+					$.each(values, function(i, d){
+						if( d.name in val ){
+							val[d.name] += ','+ d.value;
+						}
+						else{
+							val[d.name] = d.value;
+						}
+					});
+
+					socket.emit('data', {
+						topic: 'bower/install/endChoose'
+						, query: {
+							choose: END_CHOOSE_CACHE[END_CHOOSE_INDEX[val.index]][val.choose]
+						}
+					});
+					$form.data('submit', true);
+				}
+			})
 			, infoLoading = false
 			, today = new Date()
 			, y = today.getFullYear()
@@ -74,6 +120,9 @@ require(['module/config'], function(config){
 			, mm = today.getMinutes()
 			, s = today.getSeconds()
 			, datetime
+
+			, END_CHOOSE_CACHE = []
+			, END_CHOOSE_INDEX = {}
 			;
 		m = m > 10 ? '0' + m : m;
 		d = d > 10 ? '0' + d : d;
@@ -113,19 +162,22 @@ require(['module/config'], function(config){
 			, 'bower/install/prompts': function(data){console.log(data);
 				var info = data.info;
 
-				$infoList.append('<li>' +
-						$.map(info, function(d){
-							return '<div class="formGroup">' +
+				$infoList.find('li:last').before('<li>请选择版本：<form>' +
+					'<input type="hidden" name="cbId" value="'+ info.cbId+'"/><ul>' +
+						$.map(info.pick, function(d, i){
+							return '<li>' +
 								'<label>' +
-									'<input type="radio" name="pick" />' +
-									d.name + ' ' + d.version +
-								'</label> required by' +
+									'<input type="radio" name="pickId" value="'+ i +'" />' +
+									'<span class="icon icon-radio">'+ d.name + ' ' + d.version +'</span>' +
+								'</label> required by ' +
 								$.map(d.required, function(d){
-								return d.name + ' ' + d.version;
-							}).join() +
-							'</div>';
+									return d.name + ' ' + d.version;
+								}).join() +
+							'</li>';
 						}).join('') +
-					'</li>');
+					'</ul></form></li>');
+
+				$infoContent.scrollTop( $infoContent[0].scrollHeight );
 			}
 			, 'bower/install/end': function(data){console.log(data)
 				var info = data.info;
@@ -136,6 +188,29 @@ require(['module/config'], function(config){
 						'<span class="bower_message">安装完成</span>' +
 					'</li>');
 
+				$infoContent.scrollTop( $infoContent[0].scrollHeight );
+			}
+			, 'bower/install/endChoose': function(data){console.log(data)
+				var choose = data.data
+					, index = +new Date()
+					;
+
+				END_CHOOSE_CACHE.push( choose );
+				END_CHOOSE_INDEX[index] = END_CHOOSE_CACHE.length -1;
+
+				$infoList.find('li:last').before('<li>请选择要保存组件：<form>' +
+					'<input type="hidden" name="index" value="'+ index +'"/>' +
+					$.map(choose, function(d, i){
+						return '<li>' +
+								'<label>' +
+									'<input type="radio" name="choose" value="'+ i +'" />' +
+									'<span class="icon icon-radio">'+ d.name + ' ' + d.version +'</span>' +
+								'</label>' +
+							'</li>';
+					}).join('') +
+					'</ul></form></li>');
+
+				$infoContent.scrollTop( $infoContent[0].scrollHeight );
 			}
 		});
 	});

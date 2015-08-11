@@ -12,6 +12,8 @@ require(['../config'], function(config){
 					;
 
 				$bookmarkId.val( $parent.data('id') );
+				$bookmarkTitle.val( $parent.find('h3.article_title').html() );
+
 				$readPopup.find('div.tagsArea').html( $parent.find('div.tagsArea').html() );
 				$readPopup.trigger('showDialog');
 			}).on('click', '.icon-remove', function(e){
@@ -57,7 +59,10 @@ require(['../config'], function(config){
 						topic: 'reader/bookmark/read'
 						, query: query
 					});
-					$bookmark.find('#readerArt'+ $bookmarkId.val()).find('div.tagsArea').html( '<span class="tag tag-checked">'+ query.tags.split(',').join('</span><span class="tag tag-checked">') +'</span>' );
+					$bookmark
+						.find('#readerArt'+ $bookmarkId.val())
+							.find('div.tagsArea').html( '<span class="tag tag-checked">'+ query.tags.split(',').join('</span><span class="tag tag-checked">') +'</span>')
+						.end().find('h3.article_title').html( $bookmarkTitle.val() );
 					$readPopup.trigger('closeDialog').find('form')[0].reset();
 				}
 				else{
@@ -68,6 +73,7 @@ require(['../config'], function(config){
 
 			, $url = $('#url')
 			, $bookmarkId = $readPopup.find('#bookmarkId')
+			, $bookmarkTitle = $readPopup.find('#bookmarkTitle')
 			, $readForm = $readPopup.find('#readForm')
 			, $tag = $readPopup.find('#tag')
 			, $tags = $readPopup.find('#tags')

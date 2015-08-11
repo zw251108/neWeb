@@ -220,6 +220,9 @@
 	float: left;
 	margin: 0 0 0 20px;
 }
+#info ul{
+	margin: 0 10px;
+}
 
 .module-popup th,
 .module-popup td{

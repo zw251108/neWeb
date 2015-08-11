@@ -31,117 +31,119 @@ var db          = require('./db.js')
 
 	, Promise = require('promise')
 
-	, bowerMethods = {
-		search: function(name, socket){
-			bower.commands.search(name, {}).on('end', function (results) {
-				socket.emit('data', {
-					topic: 'bower/search'
-					, data: results
-				});
-			});
-		}
-		, install: function(name, socket, db){
-			bower.commands.install([name], {save: true}, {interactive: true}).on('log', function(msg){
-				var data = {}
-					;
-				if( msg.level !== 'conflict' ){
-					data.topic = 'bower/info';
-					data.msg = {
-						level: msg.level
-						, id: msg.id
-						, message: msg.message
-					};
-				}
-				else{
-					data.topic = 'bower/install/prompts';
-					data.info = msg.data.picks.map(function(d, i){
-						var dependants = d.dependants;
-						d = d.endpoint;
-						return {
-							name: d.name
-							, version: d.target
-							, required: dependants.map(function(d, i){
-								var t = d.endpoint;
-								console.log({
-									name: t.name
-									, version: t.target
-								});
-								return {
-									name: t.name
-									, version: t.target
-								};
-							})
-						};
-					});
-				}
-
-				socket.emit('data', data);
-			}).on('prompt', function(prompts, callback) {
-
-				//socket.emit('data', {
-				//	topic: 'bower/install/prompts'
-				//	, msg: prompts
-				//});
-
-				//pickerCallback = callback;
-
-				console.log(prompts);
-			}).on('error', function(e){
-
-				socket.emit('data', {
-					error: ''
-					, msg: ''
-				});
-				console.log(e);
-			}).on('end', function(installed){
-				var k
-					, t
-					, info = []
-					, js = ''
-					, css = ''
-					, temp
-					;
-				for( k in installed ) if( installed.hasOwnProperty(k) ){
-					//t = installed[k].endpoint;
-					t = installed[k].pkgMeta;
-
-					info.push({
-						name: t.name
-						, version: '~'+ t.target
-					});
-
-					temp = t.main;
-					if( typeof temp === 'string' ){
-						if( /\.js$/.test(temp) ){
-							js = temp;
-						}
-						else if( /\.css$/.test(temp) ){
-							css = temp;
-						}
-					}
-					else if( Array.isArray(temp) ){
-						js = temp.filter(function(d){
-							return /\.js$/.test(d);
-						}).join(',');
-						css = temp.filter(function(d){
-							return /\.css$/.test(d);
-						}).join('');
-					}
-
-					db.query(Bower.save.sql, [t.name, '~'+ t.version, css, js, t._source, t.homepage], function(e){
-
-					});
-				}
-
-				socket.emit('data', {
-					topic: 'bower/install/end'
-					, info: info
-				});
-
-				console.log(installed);
-			});
-		}
-	}
+	//, bowerMethods = {
+	//	search: function(name, socket){
+	//		bower.commands.search(name, {}).on('end', function (results) {
+	//			socket.emit('data', {
+	//				topic: 'bower/search'
+	//				, data: results
+	//			});
+	//		});
+	//	}
+	//	, install: function(name, socket, db){
+	//		var index;
+	//
+	//		bower.commands.install([name], {save: true}, {interactive: true}).on('log', function(msg){
+	//			var data = {}
+	//				;
+	//			if( msg.level !== 'conflict' ){
+	//				data.topic = 'bower/info';
+	//				data.msg = {
+	//					level: msg.level
+	//					, id: msg.id
+	//					, message: msg.message
+	//				};
+	//			}
+	//			else{
+	//				index = +new Date();
+	//
+	//				data.topic = 'bower/install/prompts';
+	//				data.info = msg.data.picks.map(function(d, i){
+	//					var dependants = d.dependants;
+	//					d = d.endpoint;
+	//
+	//					return {
+	//						name: d.name
+	//						, version: d.target
+	//						, required: dependants.map(function(d, i){
+	//							var t = d.endpoint;
+	//
+	//							return {
+	//								name: t.name
+	//								, version: t.target
+	//							};
+	//						})
+	//					};
+	//				});
+	//				data.info.cbId = index;
+	//			}
+	//
+	//			socket.emit('data', data);
+	//		}).on('prompt', function(prompts, callback) {
+	//
+	//			//socket.emit('data', {
+	//			//	topic: 'bower/install/prompts'
+	//			//	, msg: prompts
+	//			//});
+	//
+	//			//pickerCallback = callback;
+	//
+	//		}).on('error', function(e){
+	//
+	//			socket.emit('data', {
+	//				error: ''
+	//				, msg: ''
+	//			});
+	//
+	//		}).on('end', function(installed){
+	//			var k
+	//				, t
+	//				, info = []
+	//				, js = ''
+	//				, css = ''
+	//				, temp
+	//				;
+	//			for( k in installed ) if( installed.hasOwnProperty(k) ){
+	//				//t = installed[k].endpoint;
+	//				t = installed[k].pkgMeta;
+	//
+	//				info.push({
+	//					name: t.name
+	//					, version: '~'+ t.target
+	//				});
+	//
+	//				temp = t.main;
+	//				if( typeof temp === 'string' ){
+	//					if( /\.js$/.test(temp) ){
+	//						js = temp;
+	//					}
+	//					else if( /\.css$/.test(temp) ){
+	//						css = temp;
+	//					}
+	//				}
+	//				else if( Array.isArray(temp) ){
+	//					js = temp.filter(function(d){
+	//						return /\.js$/.test(d);
+	//					}).join(',');
+	//					css = temp.filter(function(d){
+	//						return /\.css$/.test(d);
+	//					}).join('');
+	//				}
+	//
+	//				db.query(Bower.save.sql, [t.name, '~'+ t.version, css, js, t._source, t.homepage], function(e){
+	//
+	//				});
+	//			}
+	//
+	//			socket.emit('data', {
+	//				topic: 'bower/install/end'
+	//				, info: info
+	//			});
+	//
+	//			console.log(installed);
+	//		});
+	//	}
+	//}
 
 	/**
 	 * @namespace   Bower
@@ -158,7 +160,7 @@ var db          = require('./db.js')
 				});
 			});
 		}
-		, install: function(name, log, prompts){
+		, install: function(name, log, promptCB){
 			return new Promise(function(resolve, reject){
 				bower.commands.install([name], {save: true}, {interactive: true}).on('log', function(msg){  // 记录
 					var info = {}
@@ -187,10 +189,7 @@ var db          = require('./db.js')
 								, version: d.target
 								, required: dependants.map(function(d, i){
 									var t = d.endpoint;
-									console.log({
-										name: t.name
-										, version: t.target
-									});
+
 									return {
 										name: t.name
 										, version: t.target
@@ -203,6 +202,8 @@ var db          = require('./db.js')
 					log(type, info);
 				}).on('prompt', function(prompts, callback){
 					// todo 分支选择
+
+					promptCB(prompts, callback);
 				}).on('error', function(e){
 					reject( e );
 				}).on('end', function(installed){
@@ -214,11 +215,11 @@ var db          = require('./db.js')
 					for( k in installed ) if( installed.hasOwnProperty(k) ){
 
 						t = installed[k].pkgMeta;
-						name = t.name;
+						name = k;
 
 						obj = {
 							name: name
-							, version: '~'+ t.version
+							, version: '~'+ (t.version || '1.0.0')
 							, source: t._source
 							, homepage: t.homepage
 							, tags: ''
@@ -227,7 +228,7 @@ var db          = require('./db.js')
 						};
 
 						temp = t.main;
-						console.log(temp)
+
 						if( typeof temp === 'string' ){
 							if( /\.js$/.test(temp) ){
 								obj.js_path = name +'/'+ temp;
@@ -319,7 +320,7 @@ var db          = require('./db.js')
 								'<div class="bower_resultList">' +
 									'<table><thead><tr><th></th><th>组件名称</th><th>组件来源</th></tr></thead><tbody></tbody></table>' +
 								'</div>'}, {
-						id: 'info', type: 'popup', size: 'big'
+						id: 'info', type: 'popup', size: 'large'
 							, content: '<ul id="infoList"></ul>'
 					}]).join('')
 					, script: {
@@ -337,6 +338,9 @@ var db          = require('./db.js')
 			sql: 'insert into ui_lib(name,version,css_path,js_path,source,homepage,receipt_time) values(?,?,?,?,?,now())'
 		}
 	}
+
+	, PROMPT_CALLBACK_CACHE = []
+	, PROMPT_CALLBACK_INDEX = {}
 
 //, inquirer =  require('inquirer')
 	;
@@ -524,53 +528,102 @@ socket.register({
 			}
 			, query = data.query || {}
 			, name = query.name
+			, index
 			;
 		if( name ){
 			Bower.install(name, function(type, info){  // 记录
-				var data = {};
-
-				data.info = info;
+				var data = {
+					info: {}
+				};
 
 				if( type === 'info' ){
+					data.info = info;
 					data.topic = 'bower/info';
 				}
 				else if( type === 'conflict' ){
+					index = +new Date();
+
 					data.topic = 'bower/install/prompts';
+					data.info.pick = info;
+					data.info.cbId = index;
 				}
 
 				socket.emit('data', data);
 			}, function(prompts, callback){
 				// todo 分支选择
+
+				PROMPT_CALLBACK_CACHE.push( callback );
+				PROMPT_CALLBACK_INDEX[index] = PROMPT_CALLBACK_CACHE.length -1;
+
+				console.log( PROMPT_CALLBACK_INDEX, typeof PROMPT_CALLBACK_CACHE[0] );
 			}).then(function(info){
+				var l = info.length
+					, rs
+					;
 
-				// db 保存
-				send.info = info[0];
+				if( l === 1 ){
+					// db 保存
+					send.info = info[0];
 
-				if( info.length > 1 ){
-					console.log('安装多个组件')
-				}
+					db.handle({
+						sql: Bower.Model.save
+						, data: info[0]
+					}).then(function(rs){
 
-				return db.handle({
-					sql: Bower.Model.save
-					, data: info[0]
-				});
-			}).then(function(rs){
+						send.info.id = rs.insertId;
 
-				if( send.info ){
-					send.info.id = rs.insertId;
+						socket.emit('data', send);
+					});
 				}
 				else{
-					send.info = {
-						id: rs.insertId
-					};
-				}
+					console.log('安装多个组件');
 
-				socket.emit('data', send);
+					// 安装了多个组件，包哪个由用户选择
+					socket.emit('data', {
+						topic: 'bower/install/endChoose'
+						, data: info
+					});
+				}
 			});
 		}
 	}
-	, 'bower/install/prompt': function(socket, data){
+	, 'bower/install/endChoose': function(socket, data){
+		var query = data.query || {}
+			, save = query.choose
+			, send = {
+				topic: 'bower/install/end'
+				, info: save || {}
+			}
+			;
 
+		db.handle({
+			sql: Bower.Model.save
+			, data: save
+		}).then(function(rs){
+
+			send.info.id = rs.insertId;
+
+			socket.emit('data', send);
+		})
+	}
+	, 'bower/install/prompts': function(socket, data){
+		var query = data.query || {}
+			, cbId = query.cbId
+			, pickId = query.pickId
+			, t = PROMPT_CALLBACK_CACHE[PROMPT_CALLBACK_INDEX[cbId]]
+			;
+
+		if( t ){
+			t({prompt: pickId +1});
+		}
+		else{
+			socket.emit('data', {
+				topic: 'bower/info'
+				, error: ''
+				, msg: '操作超时'
+				, info: {}
+			});
+		}
 	}
 });
 

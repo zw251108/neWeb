@@ -59,6 +59,9 @@ var db          = require('./db.js')
 		template: 'form#readForm' +
 			'>input#bookmarkId[type=hidden name=bookmarkId]' +
 			'+div.formGroup' +
+				'>label.label[for=bookmarkTitle]{请设置标题}' +
+				'+input#bookmarkTitle.input[type=text placeholder="重新设置标题" data-validator=title]' +
+			'^div.formGroup' +
 				'>label.label[for=star1]{请评分}' +
 				'+div.input-score' +
 					'>input#star5[type=radio name=score value=5]' +
@@ -141,7 +144,7 @@ var db          = require('./db.js')
 			, bookmarkCount: 'select count(*) as count from bookmark'
 			, bookmarkPage: 'select Id,title,url,status,tags,datetime from bookmark order by status,Id desc limit :page,:size'
 			, bookmarkAdd: 'insert into bookmark(url,title,source,tags,datetime) select :url,:title,:source,:tags,now() from dual where not exists (select * from bookmark where url like :url)'
-			, bookmarkRead: 'update bookmark set status=2,tags=:tags,score=score+:score where Id=:id and status<2'
+			, bookmarkRead: 'update bookmark set status=2,title=:title,tags=:tags,score=score+:score where Id=:id and status<2'
 			, bookmarkIsExist: 'select * from bookmark where url like :url'
 
 			, favorite: 'select * from bookmark where status=2 order by score desc,datetime desc'
@@ -821,6 +824,7 @@ socket.register({
 			, id = query.id
 			, tags = query.tags || ''
 			, score = query.score || 0
+			, title = query.title || ''
 			;
 
 		if( id ){
@@ -828,6 +832,7 @@ socket.register({
 				sql: Reader.Model.bookmarkRead
 				, data: {
 					id: id
+					, title: title
 					, score: score
 					, tags: tags
 				}
