@@ -103,6 +103,7 @@ web.use('/lib/zui/jquery.emmetTpl.js', express.static(__dirname + '/module/emmet
 web.use('/doc',     express.static(__dirname + '/doc'));
 web.use('/requirement',     express.static(__dirname + '/requirement'));
 
+web.use('/test.html',    express.static(__dirname + '/test.html') );  //
 
 /**
  * 访问主页	/

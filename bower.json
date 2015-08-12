@@ -27,12 +27,10 @@
     "require-css": "~0.1.8",
     "jcrop": "~0.9.12",
     "cropzoom": "*",
-    "jquery-mobile": "~1.4.5",
     "cropper": "~0.9.0",
     "art-dialog": "~6.0.4",
     "font-awsome": "~4.3.0",
     "requirejs-text": "~2.0.14",
-    "artTemplate": "~3.0.1",
     "react": "~0.13.3",
     "highcharts": "~4.1.7",
     "angular": "~1.4.3",
@@ -48,6 +46,17 @@
     "PhysicsJS": "~0.7.0",
     "kiwijs": "~1.2.1",
     "verlet": "*",
-    "threejs": "*"
+    "threejs": "*",
+    "masonry": "~3.3.1",
+    "xhEditor": "~1.0.0",
+    "zTree": "~3.5.18",
+    "jquery-ui": "~1.11.4",
+    "jquery-mobile-bower": "~1.4.5",
+    "knockout": "~3.3.0",
+    "ember": "~1.13.7",
+    "ember-data": "~1.13.8",
+    "artTemplate": "~3.0.1",
+    "handlebars": "~3.0.3",
+    "ember-localstorage-adapter": "~0.5.4"
   }
 }

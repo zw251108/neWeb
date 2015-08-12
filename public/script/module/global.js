@@ -142,14 +142,16 @@ define(function(require){
 				, $that = $(this)
 				;
 
-			if( delta < 0 ){
-				if( $that[0].scrollTop + $that.height() >= $that[0].scrollHeight ){
-					return false;
+			if( $that.height() !== $that[0].scrollHeight ){
+				if( delta < 0 ){
+					if( $that[0].scrollTop + $that.height() >= $that[0].scrollHeight ){
+						return false;
+					}
 				}
-			}
-			else{
-				if( $that[0].scrollTop === 0 ){
-					return false;
+				else{
+					if( $that[0].scrollTop === 0 ){
+						return false;
+					}
 				}
 			}
 		}).on('click', '.module-main .module_close', function(e){

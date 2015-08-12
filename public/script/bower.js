@@ -61,6 +61,21 @@ require(['module/config'], function(config){
 				$infoList.html('<li><div class="loading loading-chasing"></div></li>').end().trigger('showDialog');
 
 				console.log( name );
+			}).on('mousewheel DOMMouseScroll', '.bower_resultList', function(e){
+				var delta = e.originalEvent.wheelDelta || -e.originalEvent.detail
+					, $that = $(this)
+					;
+
+				if( delta < 0 ){
+					if( $that[0].scrollTop + $that.height() >= $that[0].scrollHeight ){
+						return false;
+					}
+				}
+				else{
+					if( $that[0].scrollTop === 0 ){
+						return false;
+					}
+				}
 			})
 			, $infoDialog = $('#info')
 			, $infoContent = $infoDialog.find('.module_content')

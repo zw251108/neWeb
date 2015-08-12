@@ -123,8 +123,8 @@ var db          = require('./db.js')
 			editor: 'select editor.Id,editor.name,preview,tags,width,height from editor,image where status=1 and editor.preview=image.src order by editor.Id'
 			, editorCount: 'select count(*) as count from editor where status=1'
 			, editorPage: 'select editor.Id,editor.name,preview,tags,width,height from editor,image where ' +
-			//'status=1 and ' +
-			'editor.preview=image.src order by editor.Id limit :page,:size'
+				'status=1 and ' +
+				'editor.preview=image.src order by editor.Id limit :page,:size'
 			, code: 'select Id,name,tags,css_lib,js_lib,html,css,js from editor where Id=:id'
 			, codeSave: 'insert into editor(status,html,css,js,css_lib,js_lib,name,preview,create_time) values(1,:html,:css,:js,:cssLib,:jsLib,:name,:preview,now())'
 			, codeEdit: 'update editor set status=1,name=:name,html=:html,css=:css,js=:js,css_lib=:cssLib,js_lib=:jsLib where Id=:id'
