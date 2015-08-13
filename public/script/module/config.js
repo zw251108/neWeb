@@ -18,6 +18,7 @@ define({
 			, codeEditor: 'module/codeEditor'
 
 			, template: 'ui/jquery.emmetTpl'
+			, layout: 'ui/jquery.layout'
 
 			, blog: 'module/blog/blog'
 			, document: 'module/document/document'

@@ -10,14 +10,19 @@
 	.article{
 //		display: inline-block;
 		float: left;
-		height: 300px;
-		margin-right: 10px;
+		//height: 300px;
+		width: 275px;
+
+		.boxSizing(border-box);
 	}
 	.article-block{
-		clear: both;
-		float: none;
-		display: block;
+		position: absolute;
+		bottom: 0;
+		left: 10px;
+		right: 10px;
+
 		height: auto;
+		width: auto;
 		margin-right: 0;
 		text-align: center;
 	}
@@ -32,38 +37,60 @@
 		text-indent: 0;
 
 		.boxSizing( border-box );
-	}
-	.CodeMirror-scroll{
-		overflow: scroll !important;
-		/*max-height: 200px;*/
-	}
-	.CodeMirror pre{
-		padding-left: 7px;
-		line-height: 1.25;
-	}
-	.CodeMirror-gutters{
-		padding-bottom: 0;
-	}
-	.CodeMirror-gutter{
-		margin-bottom: -30px;
-		padding-bottom: 0;
-	}
 
-//	.CodeMirror-empty{
-////		outline: 1px solid #c22;
-//	}
-//	.CodeMirror-empty
-	.CodeMirror-focused{
-		border: 1px solid #888;
-		//outline: 1px solid #888;
-	}
-	.CodeMirror pre.CodeMirror-placeholder{
-		color: #999;
-	}
+		&-scroll{
+			overflow: scroll !important;
+			/*max-height: 200px;*/
+		}
+		pre{
+			padding-left: 7px;
+			line-height: 1.25;
 
-	.CodeMirror-focused + label{
-		display: none;
+			&.CodeMirror-placeholder{
+				color: #999;
+			}
+		}
+		&-gutters{
+			padding-bottom: 0;
+		}
+		&-gutter{
+			margin-bottom: -30px;
+			padding-bottom: 0;
+		}
+		&-focused{
+			border: 1px solid #888;
+			//outline: 1px solid #888;
+		}
+		&-focused + label{
+			display: none;
+		}
 	}
+	//.CodeMirror-scroll{
+	//	overflow: scroll !important;
+	//	/*max-height: 200px;*/
+	//}
+	//.CodeMirror pre{
+	//	padding-left: 7px;
+	//	line-height: 1.25;
+	//}
+	//.CodeMirror-gutters{
+	//	padding-bottom: 0;
+	//}
+	//.CodeMirror-gutter{
+	//	margin-bottom: -30px;
+	//	padding-bottom: 0;
+	//}
+	//.CodeMirror-focused{
+	//	border: 1px solid #888;
+	//	//outline: 1px solid #888;
+	//}
+	//.CodeMirror pre.CodeMirror-placeholder{
+	//	color: #999;
+	//}
+	//
+	//.CodeMirror-focused + label{
+	//	display: none;
+	//}
 
 	/* toolbar 子菜单 */
 	.arrow{
@@ -149,6 +176,9 @@
 		.on{
 			background: #444;
 		}
+	}
+	.showSp{
+		display: none;
 	}
 }
 
@@ -437,5 +467,12 @@
 	}
 	.editor_area-rs{
 		min-height: 0;
+	}
+
+	.sp{
+		display: none;
+	}
+	.showSp{
+		display: inline-block;
 	}
 }

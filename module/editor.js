@@ -181,8 +181,8 @@ var db          = require('./db.js')
 						id: 'editor'
 						, title: '前端编辑器 editor'
 						, toolbar: tpl.toolbarTpl([{
-							id: 'changeSkin',   icon: 'skin',   title: '更改皮肤'}, {
 							id: 'changeLayout', icon: 'layout', title: '更改布局'}, {
+							id: 'changeSkin',   icon: 'skin',   title: '更改皮肤'}, {
 							id: 'getDemoImg',   icon: 'picture',title: '素材'}, {
 							id: 'getUiLib',     icon: 'lib',    title: '引用组件'}, {
 							id: 'newWin',       icon: 'window', title: '在新窗口浏览'}, {

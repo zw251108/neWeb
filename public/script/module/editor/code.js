@@ -7,12 +7,7 @@
  * */
 define('editorUISet', ['jquery', 'global', 'template'], function($, g){
 	var listTpl = $.template({
-			template: 'li.%on%[title=%name% data-type=%type%]{%name%}'
-			, filter: {
-				on: function(d){
-					return d.on ? 'on' : '';
-				}
-			}
+			template: 'li.%on%.%sp%[title=%name% data-type=%type%]{%name%}'
 		})
 
 		, $skinLink = $('<link />', {rel: 'stylesheet'}).appendTo('head')
@@ -70,16 +65,19 @@ define('editorUISet', ['jquery', 'global', 'template'], function($, g){
 		, $layoutList = $('#changeLayout').on('click', function(){
 			$skinList.slideUp().prev().hide();
 			$layoutList.slideToggle().prev().toggle();
-		}).after('<span class="arrow hidden"></span><ul class="list layoutList hidden"></ul>').nextAll('ul').append(listTpl([{
+		}).after('<button id="htmlShow" class="icon showSp" title="更改布局">html</button>' +
+			'<button id="cssShow" class="icon showSp" title="更改布局">css</button>' +
+			'<button id="jsShow" class="icon showSp" title="更改布局">js</button>' +
+			'<button id="rsShow" class="icon showSp" title="更改布局">结果</button>' +
+			'<span class="arrow hidden"></span><ul class="list layoutList hidden"></ul>').nextAll('ul').append(listTpl([{
+			name: '默认布局', type: '0', on: 'on'}, {
 			name: '四行布局', type: '1'}, {
 			name: '四列布局', type: '2'}, {
 			name: '四角布局', type: '3'}, {
-			name: '全屏 HTML', type: '4'}, {
-			name: '全屏 CSS', type: '5'}, {
-			name: '全屏 JS', type: '6'}, {
-			name: '全屏结果', type: '7'}, {
-			name: '回到默认', type: '0', on: true
-		}]).join('')).on('click', 'li', function(){
+			name: '全屏 HTML', type: '4', sp: 'sp'}, {
+			name: '全屏 CSS', type: '5', sp: 'sp'}, {
+			name: '全屏 JS', type: '6', sp: 'sp'}, {
+			name: '全屏结果', type: '7', sp: 'sp'}]).join('')).on('click', 'li', function(){
 			var $that = $(this)
 				, type = $that.data('type')
 				;
@@ -127,7 +125,30 @@ define('editorUISet', ['jquery', 'global', 'template'], function($, g){
 		, $editor
 		, html
 		, css
-		, js;
+		, js
+		;
+
+	$layoutList.parent().on('click', '#htmlShow', function(){
+		$editor.removeClass('editor-cssFS editor-jsFS editor-rsFS').addClass('editor-htmlFS');
+
+		html.refresh();
+	}).on('click', '#cssShow', function(){
+		$editor.removeClass('editor-htmlFS editor-jsFS editor-rsFS').addClass('editor-cssFS');
+
+		css.refresh();
+	}).on('click', '#jsShow', function(){
+		$editor.removeClass('editor-htmlFS editor-cssFS editor-rsFS').addClass('editor-jsFS');
+
+		js.refresh();
+	}).on('click', '#rsShow', function(){
+		$editor.removeClass('editor-htmlFS editor-cssFS editor-jsFS').addClass('editor-rsFS');
+	}).on('click', '.showSp', function(){
+		var $that = $(this);
+
+		if( !$that.hasClass('on') ){
+			$that.addClass('on').siblings('.showSp.on').removeClass('on');
+		}
+	});
 
 	return function($e, h, c, j){
 		$editor = $e;
@@ -139,7 +160,7 @@ define('editorUISet', ['jquery', 'global', 'template'], function($, g){
 define('uiLibPopup', ['jquery', 'socket', 'template'], function($, socket){
 	var // UI 库
 		pathTpl = $.template({
-			template: 'div>label>input[type=checkbox value=%path%]+span.left.icon.icon-checkbox{%path%}'
+			template: 'div>label>input[type=checkbox value=%path%]+span.left.icon.icon-checkbox[title=%path%]{%path%}'
 		})
 		, uiLibTpl = $.template({
 			template: 'dt>label>input[type=checkbox]+span.left.icon.icon-checkbox{%name%}^span.right{%version%}^dd{%paths%}'

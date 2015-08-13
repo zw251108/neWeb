@@ -3,7 +3,7 @@
  */
 require(['../config'], function(config){
 	var r = require.config(config.requireConfig);
-	r(['jquery', 'global', 'socket', 'tag', config.dataSource.tag, 'template'], function($, g, socket, tag, tagData){
+	r(['jquery', 'global', 'socket', 'tag', config.dataSource.tag, 'template',  'layout'], function($, g, socket, tag, tagData){
 		var $editor = $('#editor')
 			, $editorContainer = $editor.find('.module_content')
 			, editorTpl = $.template({
@@ -27,11 +27,31 @@ require(['../config'], function(config){
 			, page = 1
 			, PAGE_SIZE = 20
 			, moreData = false
+			, space = 10
+			, loading = function(){
+				$editorContainer.height( $editorContainer.height() + 182 );
+				$editorContainer.append('<article class="article article-block"><div class="loading loading-chasing"></div></article>');
+			}
+			, layout = function(){
+				$.layout({
+					container: $editorContainer,
+					items: 'article',
+					left: 10,
+					right: -20,
+					top: 10,
+					colSpace: 10,
+					rowSpace: 10
+				});
+			}
 			;
+
+		layout();
 
 		$(window).on({
 			resize: function(){
 				HEIGHT = doc.clientHeight;
+
+				layout();
 			}
 			, scroll: function(){
 				var scrollTop = doc.scrollTop || body.scrollTop
@@ -46,7 +66,8 @@ require(['../config'], function(config){
 						clearTimeout(socketTimeout);
 					}
 					else{
-						$editorContainer.append('<article class="article article-block"><div class="loading loading-chasing"></div></article>')
+						//$editorContainer.append('<article class="article article-block"><div class="loading loading-chasing"></div></article>');
+						loading();
 					}
 
 					socketTimeout = setTimeout(function(){
@@ -78,6 +99,13 @@ require(['../config'], function(config){
 				}
 
 				$editorContainer.find('article.article-block').remove().end().append( content );
+
+				if( data.length ){
+					layout();
+				}
+				else{
+					$editorContainer.height( $editorContainer.height() -128);
+				}
 			}
 		});
 

@@ -103,9 +103,13 @@
 }
 
 .article{
-	border: 1px #c0c0c0 solid;
+	border-radius: 10px;
+
+	/*border: 1px #c0c0c0 solid;*/
 	margin-bottom: 10px;
 	padding: 10px;
+
+	background: #fafafa;
 }
 .article_title{
 	/*border-bottom: 1px dotted #c0c0c0;*/

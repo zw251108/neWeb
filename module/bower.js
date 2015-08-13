@@ -165,7 +165,7 @@ var db          = require('./db.js')
 					var info = {}
 						, type = ''
 						;
-					console.log(msg)
+					console.log(msg);
 					if( msg.level !== 'conflict' ){
 						type = 'info';
 
@@ -179,16 +179,20 @@ var db          = require('./db.js')
 						type = 'conflict';
 
 						info = msg.data.picks.map(function(d, i){
+							console.log('pick')
+							console.log(d)
 							var dependants = d.dependants;
-
+							console.log('dependants')
+							console.log( dependants);
 							d = d.endpoint;
-
+							console.log('endpoint')
+							console.log(d);
 							return {
 								name: d.name
 								, version: d.target
 								, required: dependants.map(function(d, i){
 									var t = d.endpoint;
-
+									console.log(t);
 									return {
 										name: t.name
 										, version: t.target
@@ -528,6 +532,7 @@ socket.register({
 			, name = query.name
 			, index
 			;
+
 		if( name ){
 			Bower.install(name, function(type, info){  // 记录
 				var data = {

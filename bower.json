@@ -17,19 +17,14 @@
   ],
   "dependencies": {
     "SyntaxHighlighter": "~3.0.83",
-    "d3": "~3.4.13",
-    "codemirror-emmet": "~1.1.0",
     "impress.js": "~0.5.3",
     "animate.css": "~3.2.0",
     "less": "~2.4.0",
-    "requirejs": "~2.1.16",
-    "codemirror": "~5.0.0",
     "require-css": "~0.1.8",
     "jcrop": "~0.9.12",
     "cropzoom": "*",
     "cropper": "~0.9.0",
     "art-dialog": "~6.0.4",
-    "font-awsome": "~4.3.0",
     "requirejs-text": "~2.0.14",
     "react": "~0.13.3",
     "highcharts": "~4.1.7",
@@ -57,6 +52,13 @@
     "ember-data": "~1.13.8",
     "artTemplate": "~3.0.1",
     "handlebars": "~3.0.3",
-    "ember-localstorage-adapter": "~0.5.4"
+    "ember-localstorage-adapter": "~0.5.4",
+    "jquery-transform": "*",
+    "jqgrid": "~5.0.0",
+    "requirejs": "~2.1.20",
+    "d3": "~3.5.6",
+    "codemirror": "~5.5.0",
+    "codemirror-emmet": "~1.1.0",
+    "font-awsome": "~4.4.0"
   }
 }
