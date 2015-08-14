@@ -30,6 +30,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 				, main: {
 					moduleMain: {
 						id: 'document'
+						, title: '前端文档 document'
 						, size: 'large'
 						, content: sectionTpl( rs).join('')
 					}

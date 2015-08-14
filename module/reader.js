@@ -24,7 +24,7 @@ var db          = require('./db.js')
 	})
 	, articleTpl   = emmetTpl({
 		template: 'article#readerArt%Id%.article[data-id=%Id%]' +
-			'>a[href=%url% title=%url% target=_blank]' +
+			'>a[href=%url% title=%title% target=_blank]' +
 				'>h3.article_title{%title%}' +
 			'^hr' +
 			'+a.icon.icon-checkbox%readStatus%[href=reader/read title=%readTitle%]{%readText%}' +
@@ -60,7 +60,7 @@ var db          = require('./db.js')
 			'>input#bookmarkId[type=hidden name=bookmarkId]' +
 			'+div.formGroup' +
 				'>label.label[for=bookmarkTitle]{请设置标题}' +
-				'+input#bookmarkTitle.input[type=text placeholder="重新设置标题" data-validator=title]' +
+				'+input#bookmarkTitle.input[type=text name=title placeholder="重新设置标题" data-validator=title]' +
 			'^div.formGroup' +
 				'>label.label[for=star1]{请评分}' +
 				'+div.input-score' +
@@ -138,7 +138,7 @@ var db          = require('./db.js')
 			reader: 'select * from reader where status=1'
 			, readerCount: 'select count(*) as count from reader where status=1'
 			, readerPage: 'select * from reader where status=1 limit :page,:size'
-			, readerIsExist: 'select * from reader where xml_url like ?'
+			, readerIsExist: 'select * from reader where xml_url like :xmlUrl'
 
 			, bookmark: 'select Id,title,url,status,tags,datetime from bookmark order by status,Id desc'
 			, bookmarkCount: 'select count(*) as count from bookmark'
@@ -792,8 +792,8 @@ socket.register({
 				//rs= rs.result;
 
 				if( rs.insertId ){
-					data.id = rs.insertId;
-					data.statsu = 0;
+					dataAll.id = rs.insertId;
+					dataAll.statsu = 0;
 
 					send.info = dataAll;//data;
 				}

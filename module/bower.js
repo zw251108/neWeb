@@ -268,6 +268,7 @@ var db          = require('./db.js')
 		, Model: {
 			bower: 'select * from ui_lib'
 			, bowerPage: 'select * from ui_lib limit :page,:size'
+			, bowerIsExist: 'select * from ui_lib where name like :name'
 			, save: 'insert into ui_lib(name,version,css_path,js_path,source,homepage,tags,receipt_time) values(:name,:version,:css_path,:js_path,:source,:homepage,:tags,now())'
 		}
 
@@ -346,58 +347,6 @@ var db          = require('./db.js')
 	, PROMPT_CALLBACK_INDEX = {}
 
 	;
-
-//bower.commands.install(['ember-data'], {save: true}, {interactive: true})
-//	.on('data', function(msg){
-//		console.log('data\n', msg);
-//	}).on('log', function(msg){
-//		console.log('['+ msg.level+']', msg.id, msg.message);
-//		if( msg.level === 'conflict' ){
-//			console.dir(msg);
-//			msg.data.picks.forEach(function(d, i){
-//				console.log('pick');
-//				console.dir(d);
-//
-//				var temp = d.endpoint;
-//				console.log( (i+1) + ') ' + temp.name + ' version: ' + temp.target );
-//
-//				temp = d.dependants;
-//				console.log(temp);
-//				//temp = temp[0].dependencies
-//				//console.log(temp);
-//			});
-//
-//			console.log(
-//				msg.data.picks.map(function(d, i){
-//					var endpoint = d.endpoint
-//						, dependants = d.dependants
-//						;
-//					d = d.endpoint;
-//					return {
-//						name: d.name
-//						, version: d.target
-//						, required: dependants.map(function(d, i){
-//							var t = d.endpoint;
-//							return {
-//								name: t.name
-//								, version: t.target
-//							};
-//						})
-//					};
-//				//return (i+1) + ') ' + temp.name + ' version: ' + temp.target;
-//			}).join('\n')
-//			);
-//		}
-//	}).on('prompt', function(prompts, callback) {
-//		console.log('prompt\n', prompts);
-//		//callback({prompt: '2'});
-//		inquirer.prompt(prompts, callback);
-//	}).on('error', function(e){
-//		console.log(e);
-//	}).on('end', function(installed){
-//		//var name = installed
-//		console.dir(installed);
-//	});
 
 // 注册首页 metro 模块
 index.push({
@@ -534,31 +483,54 @@ socket.register({
 			;
 
 		if( name ){
-			Bower.install(name, function(type, info){  // 记录
-				var data = {
-					info: {}
-				};
-
-				if( type === 'info' ){
-					data.info = info;
-					data.topic = 'bower/info';
+			db.handle({
+				sql: Bower.Model.bowerIsExist
+				, data: {
+					name: name
 				}
-				else if( type === 'conflict' ){
-					index = +new Date();
+			}).then(function(rs){
+				return !!(rs && rs.length);
+			}).then(function(isExist){
 
-					data.topic = 'bower/install/prompts';
-					data.info.pick = info;
-					data.info.cbId = index;
+				if( isExist ){
+					socket.emit('data', {
+						topic: 'bower/install/end'
+						, error: ''
+						, msg: '该 UI 组件：'+ name +' 已存在！'
+						, info: {
+							name: name
+						}
+					});
+
+					throw new Error('该 UI 组件：'+ name +' 已存在！');
 				}
 
-				socket.emit('data', data);
-			}, function(prompts, callback){
-				// todo 分支选择
+				return Bower.install(name, function(type, info){  // 记录
+					var data = {
+						info: {}
+					};
 
-				PROMPT_CALLBACK_CACHE.push( callback );
-				PROMPT_CALLBACK_INDEX[index] = PROMPT_CALLBACK_CACHE.length -1;
+					if( type === 'info' ){
+						data.info = info;
+						data.topic = 'bower/info';
+					}
+					else if( type === 'conflict' ){
+						index = +new Date();
 
-				console.log( PROMPT_CALLBACK_INDEX, typeof PROMPT_CALLBACK_CACHE[0] );
+						data.topic = 'bower/install/prompts';
+						data.info.pick = info;
+						data.info.cbId = index;
+					}
+
+					socket.emit('data', data);
+				}, function(prompts, callback){
+					// todo 分支选择
+
+					PROMPT_CALLBACK_CACHE.push( callback );
+					PROMPT_CALLBACK_INDEX[index] = PROMPT_CALLBACK_CACHE.length -1;
+
+					console.log( PROMPT_CALLBACK_INDEX, typeof PROMPT_CALLBACK_CACHE[0] );
+				});
 			}).then(function(info){
 				var l = info.length
 					, rs
@@ -587,6 +559,8 @@ socket.register({
 						, data: info
 					});
 				}
+			}).catch(function(err){
+	             console.log(err);
 			});
 		}
 	}
@@ -595,19 +569,23 @@ socket.register({
 			, save = query.choose
 			, send = {
 				topic: 'bower/install/end'
-				, info: save || {}
 			}
 			;
 
-		db.handle({
-			sql: Bower.Model.save
-			, data: save
-		}).then(function(rs){
+		Promise.all( save.map(function(d){
+			return db.handle({
+				sql: Bower.Model.save
+				, data: d
+			}).then(function(rs){
+				d.id = rs.insertId;
 
-			send.info.id = rs.insertId;
+				return d;
+			});
+		}) ).then(function(info){
+			send.info = info;
 
-			socket.emit('data', send);
-		})
+			socket.emit('data', send)
+		});
 	}
 	, 'bower/install/prompts': function(socket, data){
 		var query = data.query || {}

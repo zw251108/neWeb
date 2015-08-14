@@ -1,3 +1,21 @@
+define('formValue', ['jquery'], function($){
+	return function(serializeArray){
+		var val = {};
+
+		$.each(serializeArray, function(i, d){
+			if( d.name in val ){
+				val[d.name] += ','+ d.value;
+			}
+			else{
+				val[d.name] = d.value;
+			}
+		});
+
+		return val;
+	}
+});
+
+
 /**
  * @module
  * */
@@ -6,7 +24,7 @@ require(['module/config'], function(config){
 	//config.requireConfig.baseUrl = '../script/';
 
 	var r = require.config(config.requireConfig);
-	r(['jquery', 'global', 'socket', 'template'], function($, g, socket){
+	r(['jquery', 'global', 'socket', 'formValue', 'template'], function($, g, socket, formValue){
 		var tableTpl = $.template({
 				template: 'tr>td>button[type=button]{安装}+input[type=hidden value=%name%]^td[title=%name%]{%name%}+td[title=%url%]{%url%}'
 			})
@@ -82,48 +100,49 @@ require(['module/config'], function(config){
 			, $infoList = $infoDialog.find('#infoList').on('click', '[name="pickId"]', function(){
 				var $form = $(this).parents('form')
 					, values = $form.serializeArray()
-					, val = {}
+					, val
 					;
 
-				if( !$form.data('submit') ){
-					$.each(values, function(i, d){
-						if( d.name in val ){
-							val[d.name] += ','+ d.value;
-						}
-						else{
-							val[d.name] = d.value;
-						}
-					});
+				if( !$form.hasClass('form-disabled') ){
+
+					val = formValue( values );
 
 					socket.emit('data', {
 						topic: 'bower/install/prompts'
 						, query: val
 					});
-					$form.data('submit', true);
+					$form.addClass('form-disabled');
 				}
-			}).on('click', '[name="choose"]', function(){
-				var $form = $(this).parents('form')
+			}).on('click', ':submit', function(e){
+				e.preventDefault();
+
+				var $that = $(this)
+					, $form = $that.parents('form')
 					, values = $form.serializeArray()
-					, val = {}
+					, val
+					, choose
 					;
 
-				if( !$form.data('submit') ){
-					$.each(values, function(i, d){
-						if( d.name in val ){
-							val[d.name] += ','+ d.value;
-						}
-						else{
-							val[d.name] = d.value;
-						}
-					});
+				if( !$form.hasClass('form-disabled') ){
 
-					socket.emit('data', {
-						topic: 'bower/install/endChoose'
-						, query: {
-							choose: END_CHOOSE_CACHE[END_CHOOSE_INDEX[val.index]][val.choose]
-						}
-					});
-					$form.data('submit', true);
+					val = formValue( values );
+
+					if( val.choose ){
+						choose = $.map(val.choose.split(','), function(d){
+							return END_CHOOSE_CACHE[END_CHOOSE_INDEX[val.index]][d];
+						});
+
+						$that.attr('disabled', 'disabled');
+
+						socket.emit('data', {
+							topic: 'bower/install/endChoose'
+							, query: {
+								choose: choose
+							}
+						});
+
+						$form.addClass('form-disabled');
+					}
 				}
 			})
 			, infoLoading = false
@@ -195,13 +214,27 @@ require(['module/config'], function(config){
 				$infoContent.scrollTop( $infoContent[0].scrollHeight );
 			}
 			, 'bower/install/end': function(data){console.log(data)
-				var info = data.info;
+				var info = data.info
+					, msg
+					;
 
-				$infoList.find('li:last').replaceWith('<li>' +
+				if( 'error' in data ){
+					msg = '<li>' +
 						'<span class="bower_level">end</span>' +
-						'<span class="bower_id">' + info.name + ' ' + info.version + '</span>' +
-						'<span class="bower_message">安装完成</span>' +
-					'</li>');
+						'<span class="bower_id">' + info.name + '</span>' +
+						'<span class="bower_message">'+ data.msg +'</span>' +
+					'</li>';
+				}
+				else{
+					msg = $.map(info, function(d){
+						return '<li>' +
+								'<span class="bower_level">end</span>' +
+								'<span class="bower_id">' + d.name + ' ' + d.version + '</span>' +
+								'<span class="bower_message">安装完成</span>' +
+							'</li>';
+					});
+				}
+				$infoList.find('li:last').replaceWith( msg );
 
 				$infoContent.scrollTop( $infoContent[0].scrollHeight );
 			}
@@ -218,12 +251,12 @@ require(['module/config'], function(config){
 					$.map(choose, function(d, i){
 						return '<li>' +
 								'<label>' +
-									'<input type="radio" name="choose" value="'+ i +'" />' +
-									'<span class="icon icon-radio">'+ d.name + ' ' + d.version +'</span>' +
+									'<input type="checkbox" name="choose" value="'+ i +'" />' +
+									'<span class="icon icon-checkbox">'+ d.name + ' ' + d.version +'</span>' +
 								'</label>' +
 							'</li>';
 					}).join('') +
-					'</ul></form></li>');
+					'<li><input type="submit" class="btn" value="确定"/></li></ul></form></li>');
 
 				$infoContent.scrollTop( $infoContent[0].scrollHeight );
 			}

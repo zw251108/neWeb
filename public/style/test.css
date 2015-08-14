@@ -1,17 +1,6 @@
 
 /*----- 组件 -----*/
-.logo{
-	float: left;
-	width: 38px;
-	height: 40px;
-	/*border: solid #fff;*/
-	/*border-width: 0 1px;*/
-	padding: 0 !important;
-	background: url("../image/logo.png") no-repeat center;
-}
-.logo:hover{
-	background-color: #d35400;
-}
+
 
 .Container{
 	/** 进入硬件加速 **/
@@ -226,6 +215,15 @@
 }
 #info ul{
 	margin: 0 10px;
+}
+#info .icon-checkbox,
+#info .icon-radio{
+	margin-right: 10px;
+}
+#info .btn:disabled,
+#info .btn[disabled="disabled"]{
+	border-color: #aaa;
+	background: #ccc;
 }
 
 .module-popup th,

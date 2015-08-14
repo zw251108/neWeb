@@ -65,10 +65,10 @@ define('editorUISet', ['jquery', 'global', 'template'], function($, g){
 		, $layoutList = $('#changeLayout').on('click', function(){
 			$skinList.slideUp().prev().hide();
 			$layoutList.slideToggle().prev().toggle();
-		}).after('<button id="htmlShow" class="icon showSp" title="更改布局">html</button>' +
-			'<button id="cssShow" class="icon showSp" title="更改布局">css</button>' +
-			'<button id="jsShow" class="icon showSp" title="更改布局">js</button>' +
-			'<button id="rsShow" class="icon showSp" title="更改布局">结果</button>' +
+		}).after('<button id="showHTML" class="icon showSp" title="更改布局">html</button>' +
+			'<button id="showCSS" class="icon showSp" title="更改布局">css</button>' +
+			'<button id="showJS" class="icon showSp" title="更改布局">js</button>' +
+			'<button id="showRS" class="icon showSp" title="更改布局">结果</button>' +
 			'<span class="arrow hidden"></span><ul class="list layoutList hidden"></ul>').nextAll('ul').append(listTpl([{
 			name: '默认布局', type: '0', on: 'on'}, {
 			name: '四行布局', type: '1'}, {
@@ -98,15 +98,19 @@ define('editorUISet', ['jquery', 'global', 'template'], function($, g){
 					$editor.removeClass('editor-4row editor-4col editor-htmlFS editor-cssFS editor-jsFS editor-rsFS').addClass('editor-4cor');
 					break;
 				case 4:
+					$currentShow = $showHTML.addClass('on');
 					$editor.removeClass('editor-4row editor-4col editor-4cor editor-cssFS editor-jsFS editor-rsFS').addClass('editor-htmlFS');
 					break;
 				case 5:
+					$currentShow = $showCSS.addClass('on');
 					$editor.removeClass('editor-4row editor-4col editor-4cor editor-htmlFS editor-jsFS editor-rsFS').addClass('editor-cssFS');
 					break;
 				case 6:
+					$currentShow = $showJS.addClass('on');
 					$editor.removeClass('editor-4row editor-4col editor-4cor editor-htmlFS editor-cssFS editor-rsFS').addClass('editor-jsFS');
 					break;
 				case 7:
+					$currentShow = $showRS.addClass('on');
 					$editor.removeClass('editor-4row editor-4col editor-4cor editor-htmlFS editor-cssFS editor-jsFS').addClass('editor-rsFS');
 					break;
 				case 0:
@@ -120,6 +124,50 @@ define('editorUISet', ['jquery', 'global', 'template'], function($, g){
 			html.refresh();
 			css.refresh();
 			js.refresh();
+		})
+
+		, $currentShow
+		, $showHTML = $('#showHTML').on('click', function(){
+			if( $currentShow !== $showHTML ){
+				$editor.removeClass('editor-cssFS editor-jsFS editor-rsFS').addClass('editor-htmlFS');
+
+				$currentShow.removeClass('on');
+				$showHTML.addClass('on');
+				$currentShow = $showHTML;
+
+				html.refresh();
+			}
+		})
+		, $showCSS = $('#showCSS').on('click', function(){
+			if( $currentShow !== $showCSS ){
+				$editor.removeClass('editor-htmlFS editor-jsFS editor-rsFS').addClass('editor-cssFS');
+
+				$currentShow.removeClass('on');
+				$showCSS.addClass('on');
+				$currentShow = $showCSS;
+
+				css.refresh();
+			}
+		})
+		, $showJS = $('#showJS').on('click', function(){
+			if( $currentShow !== $showJS ){
+				$editor.removeClass('editor-htmlFS editor-cssFS editor-rsFS').addClass('editor-jsFS');
+
+				$currentShow.removeClass('on');
+				$showJS.addClass('on');
+				$currentShow = $showJS;
+
+				js.refresh();
+			}
+		})
+		, $showRS = $('#showRS').on('click', function(){
+			if( $currentShow !== $showRS ){
+				$editor.removeClass('editor-htmlFS editor-cssFS editor-jsFS').addClass('editor-rsFS');
+
+				$currentShow.removeClass('on');
+				$showRS.addClass('on');
+				$currentShow = $showRS;
+			}
 		})
 
 		, $editor
@@ -143,11 +191,7 @@ define('editorUISet', ['jquery', 'global', 'template'], function($, g){
 	}).on('click', '#rsShow', function(){
 		$editor.removeClass('editor-htmlFS editor-cssFS editor-jsFS').addClass('editor-rsFS');
 	}).on('click', '.showSp', function(){
-		var $that = $(this);
 
-		if( !$that.hasClass('on') ){
-			$that.addClass('on').siblings('.showSp.on').removeClass('on');
-		}
 	});
 
 	return function($e, h, c, j){
@@ -163,7 +207,7 @@ define('uiLibPopup', ['jquery', 'socket', 'template'], function($, socket){
 			template: 'div>label>input[type=checkbox value=%path%]+span.left.icon.icon-checkbox[title=%path%]{%path%}'
 		})
 		, uiLibTpl = $.template({
-			template: 'dt>label>input[type=checkbox]+span.left.icon.icon-checkbox{%name%}^span.right{%version%}^dd{%paths%}'
+			template: 'dt>label>input[type=checkbox]+span.left.icon.icon-checkbox{%name%}^span.right.icon.icon-down{%version%}^dd.hidden{%paths%}'
 			, filter: {
 				paths: function(d){
 					var css = d.css_path
@@ -183,6 +227,8 @@ define('uiLibPopup', ['jquery', 'socket', 'template'], function($, socket){
 
 		, $uiLibPopup = $('#uiLib').on('click', 'dt input:checkbox', function(){
 			$(this).parents('dt').next().find('input:checkbox').prop('checked', this.checked);
+		}).on('click', '.right', function(){
+			$(this).toggleClass('icon-down icon-up').parents('dt').next().slideToggle();
 		}).on('click', 'dd input:checkbox', function(){
 			var $parent = $(this).parents('dd')
 				, $checkbox = $parent.find('input:checkbox')

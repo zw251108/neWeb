@@ -385,6 +385,13 @@
 		}
 		.right{
 			float: right;
+			line-height: 1.8;
+
+			&:before{
+				float: right;
+				margin-left: 10px;
+				line-height: 1.8;
+			}
 		}
 	}
 
@@ -477,6 +484,13 @@
 				text-decoration: underline;
 				color: #d35400;
 			}
+		}
+	}
+
+	.form-disabled{
+		.icon-checkbox:before,
+		.icon-radio:before{
+			color: #ccc;
 		}
 	}
 }
