@@ -60,6 +60,12 @@
     "codemirror": "~5.5.0",
     "codemirror-emmet": "~1.1.0",
     "font-awsome": "~4.4.0",
-    "handsontable": "~0.16.1"
+    "handsontable": "~0.16.1",
+    "farbtastic": "~2.0.0-alpha.1",
+    "jRating": "*",
+    "qunit": "~1.18.0",
+    "jquery.flip": "*",
+    "chardin.js": "~0.1.3",
+    "angular-route": "~1.4.4"
   }
 }

@@ -45,35 +45,6 @@ web.use( bodyParser.urlencoded({extended: true}) );
 web.use( cookieParser() );
 web.use( logger('dev') );
 
-//// 文件上传路径
-//web.use( multer({
-//	//dest: CONFIG.web.uploadDir
-//	storage: multer.diskStorage({
-//		destination: function(req, file, cb){
-//			var body = req.body || {}
-//				, type = body.type
-//				, path
-//				;
-//			switch( type ){
-//				case 'demo':
-//					path = CONFIG.web.uploadDir +'demo/';
-//					break;
-//				default:
-//					path = CONFIG.web.uploadDir +'upload/';
-//					break;
-//			}
-//
-//			cb(null, path);
-//		}
-//		, filename: function(req, file, cb){
-//			cb(null, file.filename);
-//		}
-//	})
-//	//, rename: function (fieldname, filename){
-//	//	return filename;
-//	//}
-//}) );
-// session 设置
 web.use( session({
 	store:      sessionStore
 	, secret:   CONFIG.web.cookieSecret

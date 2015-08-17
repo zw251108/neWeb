@@ -92,9 +92,9 @@
 }
 
 .article{
+	border: 1px solid #c0c0c0;
 	border-radius: 10px;
 
-	/*border: 1px #c0c0c0 solid;*/
 	margin-bottom: 10px;
 	padding: 10px;
 

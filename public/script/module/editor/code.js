@@ -131,7 +131,7 @@ define('editorUISet', ['jquery', 'global', 'template'], function($, g){
 			if( $currentShow !== $showHTML ){
 				$editor.removeClass('editor-cssFS editor-jsFS editor-rsFS').addClass('editor-htmlFS');
 
-				$currentShow.removeClass('on');
+				$currentShow && $currentShow.removeClass('on');
 				$showHTML.addClass('on');
 				$currentShow = $showHTML;
 
@@ -142,7 +142,7 @@ define('editorUISet', ['jquery', 'global', 'template'], function($, g){
 			if( $currentShow !== $showCSS ){
 				$editor.removeClass('editor-htmlFS editor-jsFS editor-rsFS').addClass('editor-cssFS');
 
-				$currentShow.removeClass('on');
+				$currentShow && $currentShow.removeClass('on');
 				$showCSS.addClass('on');
 				$currentShow = $showCSS;
 
@@ -153,7 +153,7 @@ define('editorUISet', ['jquery', 'global', 'template'], function($, g){
 			if( $currentShow !== $showJS ){
 				$editor.removeClass('editor-htmlFS editor-cssFS editor-rsFS').addClass('editor-jsFS');
 
-				$currentShow.removeClass('on');
+				$currentShow && $currentShow.removeClass('on');
 				$showJS.addClass('on');
 				$currentShow = $showJS;
 

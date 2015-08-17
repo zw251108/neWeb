@@ -632,20 +632,25 @@ function saveOrUpdate(name, num){
 //	return emmet.replace(/([^\^])(\^*)$/, '$1');
 //};
 //
-var fs = require('fs')
-	, html = fs.readFileSync(__dirname + '/tpl/page.html').toString()
-	;
-
-var createEmmet = require('./module/emmet/htmlToEmmet.js');
-
-console.log(1, createEmmet(
-	Cheerio.load, html
- //'<style>' +
-	//'%script%' +
-	//'</style>'
-) );
+//var fs = require('fs')
+//	, html = fs.readFileSync(__dirname + '/tpl/page.html').toString()
+//	;
+//
+//var createEmmet = require('./module/emmet/htmlToEmmet.js');
+//
+//console.log(1, createEmmet(
+//	Cheerio.load, html
+// //'<style>' +
+//	//'%script%' +
+//	//'</style>'
+//) );
 
 //var st = Cheerio.load('<script>' +
 //	'%script%' +
 //	'</script>');
 //console.log(st('script'))
+
+//var arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+//var c = [{i: 0}, {i: 1}, {i: 2}, {i: 3}, {i: 4}, {i: 5}, {i: 6}, {i: 7}, {i: 8}, {i: 9}, {i: 10}, {i: 11}]
+//console.log(arr.map(function(d, i){console.log(d, i);return d}));
+//console.log(c.map(function(d, i){console.log(d.i, i);return d}));

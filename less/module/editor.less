@@ -7,18 +7,28 @@
 //---------- Editor 前端编辑器 ----------
 .module-editor{
 
+	//.module_content{
+	//	margin-left: -5px;
+	//	margin-right: -5px;
+	//	padding-left: 5px;
+	//	padding-right: 5px;
+	//	background: transparent;
+	//}
 	.article{
 //		display: inline-block;
 		float: left;
 		//height: 300px;
-		width: 275px;
+		width: 310px;
+
+		margin: 0 5px 10px;
+		//background: transparent;
 
 		.boxSizing(border-box);
 	}
 	.article-block{
 		position: absolute;
 		bottom: 0;
-		left: 10px;
+		left: 5px;
 		right: 10px;
 
 		height: auto;
@@ -227,7 +237,8 @@
 		right: 25px;
 		min-width: 100px;
 		border: solid #ddd;
-		border-width: 0 1px 1px;
+		border-width: 1px;
+		border-top-color: #fff;
 		border-radius: 0 0 10px 10px;
 //		background: #efefef;
 //		background: #fff;
@@ -238,6 +249,31 @@
 		line-height: 2em;
 		text-align: center;
 //		opacity: .6;
+
+		&:before{
+			position: absolute;
+			top: -2px;
+			left: -11px;
+			height: 12px;
+			width: 12px;
+			background-image: -webkit-radial-gradient(bottom left, transparent 9px, #ddd 10px, #fff 11px);
+			background-image: -moz-radial-gradient(bottom left, transparent 9px, #ddd 10px, #fff 11px);
+			background-image: -ms-radial-gradient(bottom left, transparent 9px, #ddd 10px, #fff 11px);
+			background-image: radial-gradient(bottom left, transparent 9px, #ddd 10px, #fff 11px);
+			content: "";
+		}
+		&:after{
+			position: absolute;
+			top: -2px;
+			right: -11px;
+			height: 12px;
+			width: 12px;
+			background-image: -webkit-radial-gradient(bottom right, transparent 9px, #ddd 10px, #fff 11px);
+			background-image: -moz-radial-gradient(bottom right, transparent 9px, #ddd 10px, #fff 11px);
+			background-image: -ms-radial-gradient(bottom right, transparent 9px, #ddd 10px, #fff 11px);
+			background-image: radial-gradient(bottom right, transparent 9px, #ddd 10px, #fff 11px);
+			content: "";
+		}
 	}
 
 	&:hover label{
@@ -268,6 +304,22 @@
 	margin-top: 10px;
 
 	.boxSizing( content-box );
+
+	label{
+		border-color: #fff #888 #888;
+		&:before{
+			background-image: -webkit-radial-gradient(bottom left, transparent 9px, #888 10px, #ffffff 11px);
+			background-image: -moz-radial-gradient(bottom left, transparent 9px, #888 10px, #ffffff 11px);
+			background-image: -ms-radial-gradient(bottom left, transparent 9px, #888 10px, #ffffff 11px);
+			background-image: radial-gradient(bottom left, transparent 9px, #888 10px, #ffffff 11px);
+		}
+		&:after{
+			background-image: -webkit-radial-gradient(bottom right, transparent 9px, #888 10px, #ffffff 11px);
+			background-image: -moz-radial-gradient(bottom right, transparent 9px, #888 10px, #ffffff 11px);
+			background-image: -ms-radial-gradient(bottom right, transparent 9px, #888 10px, #ffffff 11px);
+			background-image: radial-gradient(bottom right, transparent 9px, #888 10px, #ffffff 11px);
+		}
+	}
 }
 .editor_rs{
 //	display: block;
