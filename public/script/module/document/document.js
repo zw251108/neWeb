@@ -9,7 +9,7 @@ define(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g, 
 			template: 'dt.icon.icon-right{%title%}+dd{%content%}'
 		})
 		, sectionTmpl = $.template({
-			template: 'section.document_section.section>h3.section_title{%section_title%}>span.icon.icon-minus^dl{%dl%}'
+			template: 'section.document_section.section>h3.section_title{%section_title%}>span.icon.icon-down^dl{%dl%}'
 			, filter: {
 				dl: function(d){
 					return dlTmpl(d.dl).join('');
@@ -33,7 +33,7 @@ define(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g, 
 		// todo 保存未保存的数据
 	}).on('click', '.section_title', function(){
 			$temp.add(this)
-				.find('.icon').toggleClass('icon-plus icon-minus').end()
+				.find('.icon').toggleClass('icon-up icon-down').end()
 				.next('dl').slideToggle();
 	}).on('click', 'dt', function(){
 		if( $curr ){

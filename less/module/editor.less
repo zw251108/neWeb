@@ -72,7 +72,9 @@
 			//outline: 1px solid #888;
 		}
 		&-focused + label{
-			display: none;
+			//display: none;
+			top: -25px;
+			border-bottom-color: #888;
 		}
 	}
 	//.CodeMirror-scroll{
@@ -223,6 +225,7 @@
 	}
 }
 .editor_area{
+	overflow: hidden;
 	display: inline-block;
 	position: relative;
 	height: 200px;
@@ -241,14 +244,16 @@
 		border-top-color: #fff;
 		border-radius: 0 0 10px 10px;
 //		background: #efefef;
-//		background: #fff;
-		background: rgba(255, 255, 255, .5);
+		background: #fff;
+//		background: rgba(255, 255, 255, .5);
 
 		color: #333;
 		font-size: 12px;
 		line-height: 2em;
 		text-align: center;
 //		opacity: .6;
+
+		.transition(top .5s ease-in-out);
 
 		&:before{
 			position: absolute;
@@ -277,7 +282,8 @@
 	}
 
 	&:hover label{
-		display: none;
+		//display: none;
+		top: -25px;
 	}
 }
 .editor_area-html{

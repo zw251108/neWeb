@@ -64,23 +64,29 @@ var db          = require('./db.js')
 					}
 					else{
 						type = 'conflict';
-						console.log('msg.data.picks')
-						console.log(msg.data.picks)
+						console.log('msg.data.picks');
+						console.log(msg.data.picks);
+
 						info = msg.data.picks.map(function(d, i){
-							console.log('msg.data.picks', i)
-							console.log(d)
-							var dependants = d.dependants;
-							console.log('dependants')
-							console.log( dependants);
-							d = d.endpoint;
-							console.log('endpoint')
+
+							console.log('msg.data.picks', i);
 							console.log(d);
+
+							var dependants = d.dependants;
+							console.log('dependants');
+							console.log( dependants);
+
+							d = d.endpoint;
+							console.log('endpoint');
+							console.log(d);
+
 							return {
 								name: d.name
 								, version: d.target
 								, required: dependants.map(function(d, i){
 									var t = d.endpoint;
 									console.log(t);
+
 									return {
 										name: t.name
 										, version: t.target
@@ -481,7 +487,7 @@ socket.register({
 			, pickId = query.pickId
 			, t = PROMPT_CALLBACK_CACHE[PROMPT_CALLBACK_INDEX[cbId]]
 			;
-		console.log('query', query)
+		console.log('query', query);
 		console.log('bower/install/prompts: ', pickId);
 		if( t ){
 			t({prompt: pickId});

@@ -20,18 +20,61 @@ var admin         = require('../admin.js')
 		template: getEmmet('main.html')
 		, filter: {
 			moduleMain: function(d){
-				return d.moduleMain ? moduleMain(d.moduleMain) : '';
+				return d.moduleMain ? moduleMain(d.moduleMain).join('') : '';
 			}
 			, modulePopup: function(d){
-				return d.modulePopup ? modulePopup(d.modulePopup) : '';
+				return d.modulePopup ? modulePopup(d.modulePopup).join('') : '';
 			}
 		}
 	})
 	, moduleMain    = emmetTpl({
 		template: getEmmet('module-main.html')
+		, filter: {
+			toolbar: function(d){
+				return  d.toolbar ? d.toolbar.map(function(t){
+					var html = '';
+					if( t.type === 'button' ){
+						html = toolbarBtn(t).join('');
+					}
+					else{
+						html = toolbarLink(t).join('');
+					}
+
+					return html;
+				}).join('') : '';
+			}
+		}
 	})
 	, modulePopup   = emmetTpl({
 		template: getEmmet('module-popup.html')
+		, filter: {
+			toolbar: function(d){
+				var temp = d.toolbar ? d.toolbar.map(function(t){
+					var html = '';
+					if( t.type === 'button' ){
+						html = toolbarBtn(t).join('');
+					}
+					else{
+						html = toolbarLink(t).join('');
+					}
+
+					return html;
+				}).join('') : '';
+
+				return temp + toolbarBtn({
+					id: d.id ? (d.id + 'Close') : ''
+					, icon: 'cancel module_close'
+					, title: '关闭'
+				}).join('');
+			}
+		}
+	})
+
+	, toolbarBtn    = emmetTpl({
+		template: getEmmet('toolbar.html')
+	})
+	, toolbarLink   = emmetTpl({
+		template: getEmmet('toolbar-link.html')
 	})
 
 	, footer    // todo
@@ -88,7 +131,7 @@ var admin         = require('../admin.js')
 
 		return options;
 	}
-	, page  = function(page){console.log(page.title)
+	, page  = function(page){
 		page = extend( page );
 
 		return pageTpl(page).join('');
