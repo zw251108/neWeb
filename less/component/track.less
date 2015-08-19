@@ -1,0 +1,68 @@
+@track:          #c0c0c0;   // 分步操作背景颜色
+@track-on:       #d35400;   // 分步操作 当前操作背景颜色
+
+@track-height:       40px;   // 分步操作高度
+@track-min-width:    100px;  // 分步操作最小宽度
+@track-border:       20px;   // 分步操作箭头宽度
+@track-arrow:        @track-border 0 @track-border @track-border;   // 分步操作箭头边框宽度
+@track-margin-left:  @track-border + 10px;  // 分步操作间距
+
+.track{
+	float:left;
+	position: relative;
+
+	height: @track-height;
+	min-width: @track-min-width;
+
+	margin-left: @track-margin-left;
+
+	background: @track;
+
+	text-align:center;
+	line-height: 40px;
+
+	&:before,
+	&:after{
+		position:absolute;
+
+		width:0;
+		height: 0;
+
+		border-style: solid;
+
+		content: "";
+	}
+}
+.track-first{
+	margin-left: 0;
+}
+.track-first:before,
+.track-last:after{
+	display: none;
+}
+.track:before,
+.track-last:before{
+	left: -@track-border;
+	border-width: @track-arrow;
+	border-color: @track transparent;
+}
+.track:after,
+.track-first:after{
+	right: -@track-border;
+	border-width: @track-arrow;
+	border-color: transparent @track;
+}
+
+.track-done{
+
+}
+.track-on{
+	background: @track-on;
+
+	&:before{
+		border-color: @track-on transparent;
+	}
+	&:after{
+		border-color: transparent @track-on;
+	}
+}

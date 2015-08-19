@@ -1,5 +1,5 @@
 /**
- * @param   {object}    $
+ * @param   {object}    $   html 代码解析
  * @param   {string}    html
  * @return  {string}    html 代码转换成 emmet 的结果
  * */
@@ -15,7 +15,6 @@
 	else{
 		(jQuery || this)[namespace] = factory;
 	}
-
 })(function($, html){
 	'use strict';
 

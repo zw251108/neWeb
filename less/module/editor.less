@@ -195,6 +195,9 @@
 }
 
 /*----- editor -----*/
+.editor_form{
+	margin: 10px;
+}
 .editor_op{
 	float: right;
 	height: 40px;
@@ -232,6 +235,49 @@
 	margin: 0 0 10px;
 
 	.boxSizing( border-box );
+
+
+	&-html{
+		float: left;
+		width: 30%;
+		padding-right: 5px;
+	}
+	&-css{
+		display: block;
+		width: 30%;
+		margin: 0 40% 0 30%;
+		padding: 0 5px;
+	}
+	&-js{
+		float: right;
+		width: 40%;
+		//width: 33%;
+		padding-left: 5px;
+	}
+	&-rs{
+		display: block;
+		min-height: 500px;
+		width: 100%;
+		margin-top: 10px;
+
+		.boxSizing( content-box );
+
+		label{
+			border-color: #fff #888 #888;
+			&:before{
+				background-image: -webkit-radial-gradient(bottom left, transparent 9px, #888 10px, #ffffff 11px);
+				background-image: -moz-radial-gradient(bottom left, transparent 9px, #888 10px, #ffffff 11px);
+				background-image: -ms-radial-gradient(bottom left, transparent 9px, #888 10px, #ffffff 11px);
+				background-image: radial-gradient(bottom left, transparent 9px, #888 10px, #ffffff 11px);
+			}
+			&:after{
+				background-image: -webkit-radial-gradient(bottom right, transparent 9px, #888 10px, #ffffff 11px);
+				background-image: -moz-radial-gradient(bottom right, transparent 9px, #888 10px, #ffffff 11px);
+				background-image: -ms-radial-gradient(bottom right, transparent 9px, #888 10px, #ffffff 11px);
+				background-image: radial-gradient(bottom right, transparent 9px, #888 10px, #ffffff 11px);
+			}
+		}
+	}
 
 	label{
 		position: absolute;
@@ -284,47 +330,6 @@
 	&:hover label{
 		//display: none;
 		top: -25px;
-	}
-}
-.editor_area-html{
-	float: left;
-	width: 30%;
-	padding-right: 5px;
-}
-.editor_area-css{
-	display: block;
-	width: 30%;
-	margin: 0 40% 0 30%;
-	padding: 0 5px;
-}
-.editor_area-js{
-	float: right;
-	width: 40%;
-	//width: 33%;
-	padding-left: 5px;
-}
-.editor_area-rs{
-	display: block;
-	min-height: 500px;
-	width: 100%;
-	margin-top: 10px;
-
-	.boxSizing( content-box );
-
-	label{
-		border-color: #fff #888 #888;
-		&:before{
-			background-image: -webkit-radial-gradient(bottom left, transparent 9px, #888 10px, #ffffff 11px);
-			background-image: -moz-radial-gradient(bottom left, transparent 9px, #888 10px, #ffffff 11px);
-			background-image: -ms-radial-gradient(bottom left, transparent 9px, #888 10px, #ffffff 11px);
-			background-image: radial-gradient(bottom left, transparent 9px, #888 10px, #ffffff 11px);
-		}
-		&:after{
-			background-image: -webkit-radial-gradient(bottom right, transparent 9px, #888 10px, #ffffff 11px);
-			background-image: -moz-radial-gradient(bottom right, transparent 9px, #888 10px, #ffffff 11px);
-			background-image: -ms-radial-gradient(bottom right, transparent 9px, #888 10px, #ffffff 11px);
-			background-image: radial-gradient(bottom right, transparent 9px, #888 10px, #ffffff 11px);
-		}
 	}
 }
 .editor_rs{

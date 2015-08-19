@@ -459,6 +459,10 @@ require(['../config'], function(config){
 		$('#save').on('click', function(e){
 			e.preventDefault();
 
+			html.save();
+			css.save();
+			js.save();
+
 			var form = $form.serializeArray()
 				, data = {}
 				, t

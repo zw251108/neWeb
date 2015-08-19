@@ -6,17 +6,24 @@
 
 //---------- Reader 订阅 ---------
 .module-reader{
-
 }
+.module-bookmark{
+}
+.icon-reader:before{
+	&:extend(.icon-rss:before);
+}
+
 .reader_section{
 	border: 1px solid #ddd;
 	margin-bottom: 10px;
+	padding-bottom: 10px;
 
 	hr{
 		border: 0;
 		border-bottom: 1px dashed #ddd;
 		margin: 0 10px;
 	}
+
 	.section_title{
 		overflow: hidden;
 		width: 90%;
@@ -41,28 +48,15 @@
 		float: right;
 		height: 30px;
 		text-indent: 0;
-	}
-	.icon:before{
-		margin: 5px;
-	}
-}
-.icon-reader:before{
-	&:extend(.icon-rss:before);
-}
-.reader_articleList{
-	margin: 10px;
-	padding-top: 10px;
-	//padding: 10px 10px 0;
 
-	.article{
-		overflow: hidden;
-		//margin: 0 10px 10px;
+		&:before{
+			margin: 5px;
+		}
 	}
-	a:extend(.link){}
-	.article_content{
-		margin: 30px;
-		text-indent: 2em;
-	}
+}
+
+.reader_articleList{
+
 	img{
 		float: left;
 		height: auto !important;
@@ -70,26 +64,37 @@
 		margin-right: 10px;
 	}
 }
+.reader_article{
+	overflow: hidden;
+	position: relative;
 
-.module-bookmark{
-	.article{
-		position: relative;
+	margin: 10px;
 
-		.icon{
-			position: absolute;
-			top: 10px;
-			right: 0;
-			width: 5em;
+	.icon{
+		position: absolute;
+		top: 10px;
+		right: 0;
+		width: 5em;
 
-			text-align: center;
+		text-align: center;
 
-			&:before{
-				margin-right: 3px;
-				font-size: 16px;
-			}
+		&:before{
+			margin-right: 3px;
+			font-size: 16px;
+		}
+
+		&-bookmark,
+		&-bookmark-full{
+			right: 5em;
+			width: 6em;
 		}
 	}
-	.article_title{
+
+	.article_title:extend(.link){
 		margin-right: 60px;
+	}
+	.article_content{
+		margin: 30px;
+		text-indent: 2em;
 	}
 }

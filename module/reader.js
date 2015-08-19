@@ -18,12 +18,12 @@ var db          = require('./db.js')
 		template: 'section#reader_%Id%.reader_section.section' +
 			'>a[href=%html_url% data-feed=%xml_url% data-id=%Id%]' +
 				'>h3.section_title{%name%}' +
-					'>span.icon.icon-plus' +
+					'>span.icon.icon-up' +
 				'^^hr' +
 				'+ul.reader_articleList'
 	})
 	, articleTpl   = emmetTpl({
-		template: 'article#readerArt%Id%.article[data-id=%Id%]' +
+		template: 'article#readerArt%Id%.reader_article.article[data-id=%Id%]' +
 			'>a[href=%url% title=%title% target=_blank]' +
 				'>h3.article_title{%title%}' +
 			'^hr' +
@@ -58,6 +58,7 @@ var db          = require('./db.js')
 	, bookmarkReadFormTpl  = emmetTpl({
 		template: 'form#readForm' +
 			'>input#bookmarkId[type=hidden name=bookmarkId]' +
+			'+input#bookmarkUrl[type=hidden name=bookmarkUrl]' +
 			'+div.formGroup' +
 				'>label.label[for=bookmarkTitle]{请设置标题}' +
 				'+input#bookmarkTitle.input[type=text name=title placeholder="重新设置标题" data-validator=title]' +
@@ -388,7 +389,11 @@ var db          = require('./db.js')
 							id: 'add', icon: 'plus', title: '添加订阅源'
 						}])
 						, content: readerTpl(rs).join('')
-					}).join('')
+					}).join('') + tpl.popupTpl([{
+						id: 'readPopup', size: 'normal'
+						, content: bookmarkReadFormTpl({})
+						, button: '<button type="button" id="readBookmark" class="btn">确定</button>'
+					}]).join('')
 					, script: {
 						main: '../script/module/reader/index'
 						, src: '../script/lib/require.min.js'
@@ -709,7 +714,88 @@ socket.register({
 		//	error( 'E0002' );
 		//}
 	}
-	, 'reader/favor': function(socket, data){}
+	, 'reader/article/bookmark': function(socket, data){
+		var send = {
+				topic: 'reader/article/bookmark'
+			}
+			, query = data.query || {}
+			, url = query.url
+			, targetId = query.targetId
+			, dataAll
+			;
+
+		if( url && targetId ){
+
+			db.handle({
+				sql: Reader.Model.bookmarkIsExist
+				, data: {
+					url: '%'+ url +'%'
+				}
+			}).then(function(rs){
+
+				if( rs && rs.length ){
+					send.error = '';
+					send.msg = '数据已存在';
+					send.info = rs[0];
+					send.info.targetId = targetId;
+
+
+					socket.emit('data', send);
+
+					throw new Error(url +'，数据已存在');
+				}
+
+				return Reader.crawler( url );
+			}).then( Reader.Handler.crawlerArticle ).then(function( data ){
+
+				if( !data ){
+					send.error = '';
+					send.msg = '抓取数据失败';
+
+					socket.emit('data', send);
+
+					throw new Error('抓取数据失败');
+				}
+				dataAll = data;
+				return db.handle({
+					sql: Reader.Model.bookmarkAdd
+					, data: data
+				});
+			}).then(function(rs){
+				//var data = rs.data;
+
+				//rs= rs.result;
+
+				dataAll.targetId = targetId;
+
+				if( rs.insertId ){
+					dataAll.id = rs.insertId;
+					dataAll.statsu = 0;
+				}
+				else{
+					send.error = '';
+					send.msg = '数据已存在'
+				}
+				send.info = dataAll;//data;
+
+				socket.emit('data', send);
+			}).catch(function(err){
+				console.log( err );
+			});
+		}
+		else{
+			send.error = '';
+			send.msg = '缺少参数';
+
+			socket.emit('data', send);
+
+			error( 'E0002' );
+		}
+	}
+	, 'reader/article/read': function(socket, data){
+
+	}
+	//, 'reader/favor': function(socket, data){}
 
 	, 'reader/bookmark': function(socket, data){
 		var query = data.query || {}
@@ -862,6 +948,105 @@ socket.register({
 		}
 	}
 
+	, 'reader/read': function(socket, data){
+		var query = data.query
+			, id = query.id
+			, url = query.url
+			, tags = query.tags || ''
+			, score = query.score || 0
+			, title = query.title || ''
+			;
+
+
+		if( id ){
+			if( /^\d+$/.test( id ) ){
+				db.handle({
+					sql: Reader.Model.bookmarkRead
+					, data: {
+						id: id
+						, title: title
+						, score: score
+						, tags: tags
+					}
+				}).then(function(rs){
+
+					if( rs.changedRows ){
+						send.info = {
+							id: id
+						};
+					}
+					else{
+						send.error = '';
+						send.msg = '该文章已被读过' ;
+					}
+
+					socket.emit('data', send);
+				});
+			}
+			else if( url ){
+				db.handle({
+					sql: Reader.Model.bookmarkIsExist
+					, data: {
+						url: '%'+ url +'%'
+					}
+				}).then( Reader.Handler.bookmarkIsExist ).then(function(rs){
+
+					if( rs ){
+						send.error = '';
+						send.msg = '数据已存在';
+
+						socket.emit('data', send);
+
+						throw new Error(url +'，数据已存在');
+					}
+
+					var source = Url.parse(url);
+					source = source.protocol + '//' + source.host;
+
+					return db.handle({
+						sql: Reader.Model.bookmarkAdd
+						, data: {
+							url: url
+							, title: title
+							, score: score
+							, tags: tags
+							, source: source
+						}
+					});
+				}).then(function(rs){
+					//var data = rs.data;
+
+					//rs= rs.result;
+
+					if( rs.insertId ){
+						send.info = {
+							targetId: id
+							, tags: tags
+							, bookmarkId: rs.insertId
+						};
+						//dataAll.id = rs.insertId;
+						//dataAll.statsu = 0;
+
+						//send.info = dataAll;//data;
+					}
+					else{
+						send.error = '';
+						send.msg = '数据已存在'
+					}
+
+					socket.emit('data', send);
+				}).catch(function(err){
+					console.log( err );
+				});
+			}
+			else{
+				// todo 错误
+			}
+		}
+		else{
+			// todo 错误
+		}
+	}
 	, 'reader/favorite': function(socket, data){
 		var query = data.query || {}
 			, page

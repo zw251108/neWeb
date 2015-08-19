@@ -24,6 +24,8 @@ define({
 			, document: 'module/document/document'
 			, editor: 'module/editor/editor'
 			, talk: 'module/talk/talk'
+
+			, bookmarkRead: 'module/reader/bookmarkRead'
 		}
 		, baseUrl: '../script/'
 	}

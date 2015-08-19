@@ -141,7 +141,9 @@ var db          = require('./db.js')
 				//rs = rs.result;
 
 				rs = rs[0];
-				rs.html = rs.html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+				rs.html = rs.html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\$/g, '&#36;');
+				rs.css = rs.css.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\$/g, '&#36;');
+				rs.js = rs.js.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\$/g, '&#36;');
 
 				return rs;
 			}
@@ -257,7 +259,7 @@ web.get('/editor/code', function(req, res){
 	else{
 		res.send( Editor.View.code({
 			Id: 0
-			, js_lib: 'jquery/dist/jquery.min.js'
+			, js_lib: 'jquery/dist/jquery.js'
 		}) );
 		res.end();
 	}

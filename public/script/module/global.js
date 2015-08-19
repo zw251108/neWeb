@@ -12,6 +12,32 @@ define(function(require){
 		, animationEnd = 'webkitAnimationEnd mozAnimationEnd msAnimationEnd animationEnd'
 		;
 
+	g.datetime = function(datetime){
+		var today = datetime ? datetime : new Date()
+			, y, m, d, h, mm, s
+			;
+
+		if( !(today instanceof Date) || today.toString() === 'Invalid Date' ){
+			today = new Date();
+		}
+
+		y = today.getFullYear();
+		m = today.getMonth() +1;
+		d = today.getDate();
+		h = today.getHours();
+		mm = today.getMinutes();
+		s = today.getSeconds();
+
+		m = m < 10 ? '0' + m : m;
+		d = d < 10 ? '0' + d : d;
+		h = h < 10 ? '0' + h : h;
+		mm = mm < 10 ? '0' + mm : mm;
+		s = s < 10 ? '0' + s : s;
+		datetime = y +'-'+ m +'-'+ d +' '+ h +':'+ mm +':'+ s;
+
+		return datetime;
+	};
+
 	g.$body = $(document.body);
 	g.$overlay = $('#overlay');
 

@@ -42,7 +42,7 @@ require(['module/config'], function(config){
 						}).join('') : '';
 					}
 					, receipt_time: function(d){
-						return datetime
+						return g.datetime();
 					}
 				}
 			})
@@ -146,24 +146,10 @@ require(['module/config'], function(config){
 				}
 			})
 			, infoLoading = false
-			, today = new Date()
-			, y = today.getFullYear()
-			, m = today.getMonth() +1
-			, d = today.getDate()
-			, h = today.getHours()
-			, mm = today.getMinutes()
-			, s = today.getSeconds()
-			, datetime
 
 			, END_CHOOSE_CACHE = []
 			, END_CHOOSE_INDEX = {}
 			;
-		m = m > 10 ? '0' + m : m;
-		d = d > 10 ? '0' + d : d;
-		h = h > 10 ? '0' + h : h;
-		mm = mm > 10 ? '0' + mm : mm;
-		s = s > 10 ? '0' + s : s;
-		datetime = y +'-'+ m +'-'+ d +' '+ h +':'+ mm +':'+ s;
 
 		$('#switch_dialog').on('click', function(e){
 			$searchDialog.trigger('showDialog');

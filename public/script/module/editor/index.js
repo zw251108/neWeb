@@ -36,7 +36,7 @@ require(['../config'], function(config){
 				$.layout({
 					container: $editorContainer,
 					items: 'article',
-					left: -5,
+					left: -1,
 					right: -15,
 					top: 10,
 					colSpace: 10,

@@ -51,7 +51,7 @@ var db  = require('../db.js')
 				return rs[0];
 			}).then(function(rs){
 
-				rs.content = rs.content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+				rs.content = rs.contentrs.html = rs.html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\$/g, '&#36;');
 
 				return rs;
 			});

@@ -19,7 +19,7 @@ require(['../module/config'], function(config){
 						, dataType: 'json'
 						, success: function(json){
 							if( json.success ){
-								$('.module-main').find('.module_content ul').append('<li><a href="'+ json.id +'">'+ title +'</a><span class="icon icon-edit"></span></li>');
+								$mainList.append('<li><a href="'+ json.id +'">'+ title +'</a><span class="icon icon-edit"></span></li>');
 								$addPopup.trigger('closeDialog');
 							}
 							else{
@@ -29,7 +29,6 @@ require(['../module/config'], function(config){
 					});
 				}
 			})
-			//, $$addForm = $addPopup.find('form')
 			, $add = $('#add').on('click', function(){
 				$addPopup.trigger('showDialog');
 			})
