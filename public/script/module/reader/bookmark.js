@@ -5,7 +5,7 @@
 define('bookmarkAdd', ['jquery', 'global', 'socket', 'template'], function($, g, socket){
 	var $bookmark
 		, articleTpl = $.template({
-			template: 'article#readerArt%Id%.article[data-id=%Id%]>a[href=%url% title=%url% target=_blank]>h3.article_title{%title%}^hr+a.icon.icon-checkbox%readStatus%[href=read title=%readTitle%]{%readText%}+time.article_date[pubdate=pubdate datetime=%datetime%]{%datetime%}+div.tagsArea{%tags%}'
+			template: 'article#readerArt%Id%.article.reader_article[data-id=%Id%]>a[href=%url% title=%url% target=_blank]>h3.article_title{%title%}^hr+a.icon.icon-checkbox%readStatus%[href=read title=%readTitle%]{%readText%}+time.article_date[pubdate=pubdate datetime=%datetime%]{%datetime%}+div.tagsArea{%tags%}'
 			, filter: {
 				title: function(d){
 					return d.title || d.url;

@@ -122,7 +122,7 @@ index.push({
  * */
 require('./module/blog.js');        // 加载模块 blog
 
-//require('./module/document.js');    // 加载模块 document
+//require('./module/content.js');    // 加载模块 document
 require('./module/document/controller.js'); // 加载模块 document
 
 require('./module/editor.js');      // 加载模块 editor

@@ -207,7 +207,7 @@ define('uiLibPopup', ['jquery', 'socket', 'template'], function($, socket){
 			template: 'div>label>input[type=checkbox value=%path%]+span.left.icon.icon-checkbox[title=%path%]{%path%}'
 		})
 		, uiLibTpl = $.template({
-			template: 'dt>label>input[type=checkbox]+span.left.icon.icon-checkbox{%name%}^span.right.icon.icon-down{%version%}^dd.hidden{%paths%}'
+			template: 'dt>label>span.right.icon.icon-down{%version%}+input[type=checkbox]+span.left.icon.icon-checkbox[title=%name%]{%name%}^^dd.hidden{%paths%}'
 			, filter: {
 				paths: function(d){
 					var css = d.css_path

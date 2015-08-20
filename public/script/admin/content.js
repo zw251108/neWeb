@@ -10,7 +10,7 @@ require(['../module/config'], function(config){
 				code.save();
 
 				$.ajax({
-					url: location.href
+					url: 'save'
 					, type: 'POST'
 					, data: {
 						id: $id.val()

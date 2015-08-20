@@ -160,7 +160,7 @@ var db          = require('./db.js')
 		 * @desc    业务相关 sql 语句集合
 		 * */
 		, Model: {
-			bower: 'select * from ui_lib'
+			bower: 'select * from ui_lib where status=\'1\''
 			, bowerPage: 'select * from ui_lib limit :page,:size'
 			, bowerIsExist: 'select * from ui_lib where name like :name'
 			, save: 'insert into ui_lib(name,version,css_path,js_path,source,homepage,tags,receipt_time) values(:name,:version,:css_path,:js_path,:source,:homepage,:tags,now())'

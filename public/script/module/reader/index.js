@@ -16,11 +16,32 @@ require(['../config'], function(config){
 					'+div.article_content{%content%}' +
 					'+div.tagsArea{%tags%}'
 				, filter:{
-					tags: function(d){
+					datetime: function(d){
+						return g.datetime( d.datetime );
+					}
+					, tags: function(d){
 						return d.tags ? '<span class="tag">'+ d.tags.split(',').join('</span><span class="tag">') +'</span>' : '';
 					}
-					, datetime: function(d){
-						return g.datetime( d.datetime );
+					, content: function(d){
+						var content = '<div>'+ d.content +'</div>'
+							, img = content.match(/<img.*?>/g) || []
+							, srcExpr = /src=('|")?http/
+							, i, j, t
+							, rs = -1
+							;
+
+						for(i = 0, j = img.length; i < j; i++){
+							t = img[i];
+
+							if( srcExpr.test( t ) ){
+								rs = i;
+							}
+							else{
+								content = content.replace(t, '');
+							}
+						}
+
+						return (rs !== -1 ? img[rs] : '') + '<p>' + $(content).text().slice(0, 500).replace(/</g, '&lt;') + '<a class="link" href="'+ d.url +'" target="_blank">查看更多</a></p>';
 					}
 				}
 			})
@@ -52,20 +73,21 @@ require(['../config'], function(config){
 			$that.find('.icon').toggleClass('icon-up icon-down');
 
 
-		}).on('click', '.reader_article > a', function(e){
-
-		}).on('click', '.icon-bookmark', function(e){
+		}).on('click', '.article .icon-bookmark', function(e){
 			e.preventDefault();
 
 			var id = 'readerArt' + (+new Date())
-				, $that = $(this).parents('.article').attr('id', id).find('.article_title').parent()
+				, $parent = $(this).parents('.article')
+				, href = $parent.find('.article_title').parent().attr('href')
 				;
+
+			!$parent.attr('id') && $parent.attr('id', id);
 
 			socket.emit('data', {
 				topic: 'reader/article/bookmark'
 				, query: {
 					targetId: id
-					, url: $that.attr('href')
+					, url: href
 				}
 			});
 		}).on('click', '.icon-checkbox', function(e){
@@ -73,8 +95,9 @@ require(['../config'], function(config){
 
 			var  id = 'readerArt' + (+new Date())
 				, $that = $(this)
-				, $parent = $that.parents('.article').attr('id', id)
+				, $parent = $that.parents('.article')
 				;
+			!$parent.attr('id') && $parent.attr('id', id);
 
 			$readPopup.triggerHandler('setData', [{
 				id: $parent.data('bookmarkId') || id
@@ -109,12 +132,12 @@ require(['../config'], function(config){
 					$reader.find('#reader_'+ id).find('ul').html( articleTpl(data).join('') );
 				}
 			}
-			, 'reader/article': function(data){
-				if( 'error' in data ){
-					alert(data.msg);
-				}
-				console.log(data);
-			}
+			//, 'reader/article': function(data){
+			//	if( 'error' in data ){
+			//		alert(data.msg);
+			//	}
+			//	console.log(data);
+			//}
 			, 'reader/article/bookmark': function(data){
 				var info = data.info || {}
 					, targetId = info.targetId
@@ -122,7 +145,7 @@ require(['../config'], function(config){
 					;
 
 				if( $target ){
-					$target.data('bookmarkId', info.Id);
+					$target.data('bookmarkId', info.id).attr('id', 'readerArt'+ info.id);
 					$target.find('.icon-bookmark').toggleClass('icon-bookmark icon-bookmark-full').text('已标记');
 					$target.find('div.tagsArea').html(info.tags ? '<span class="tag">'+ info.tags.split(',').join('</span><span class="tag">') +'</span>' : '');
 				}
@@ -131,9 +154,9 @@ require(['../config'], function(config){
 					alert( data.msg );
 				}
 			}
-			, 'reader/artcile/read': function(data){
-
-			}
+			//, 'reader/artcile/read': function(data){
+			//
+			//}
 		})
 	});
 });

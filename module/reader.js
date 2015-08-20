@@ -141,16 +141,16 @@ var db          = require('./db.js')
 			, readerPage: 'select * from reader where status=1 limit :page,:size'
 			, readerIsExist: 'select * from reader where xml_url like :xmlUrl'
 
-			, bookmark: 'select Id,title,url,status,tags,datetime from bookmark order by status,Id desc'
-			, bookmarkCount: 'select count(*) as count from bookmark'
-			, bookmarkPage: 'select Id,title,url,status,tags,datetime from bookmark order by status,Id desc limit :page,:size'
-			, bookmarkAdd: 'insert into bookmark(url,title,source,tags,datetime) select :url,:title,:source,:tags,now() from dual where not exists (select * from bookmark where url like :url)'
-			, bookmarkRead: 'update bookmark set status=2,title=:title,tags=:tags,score=score+:score where Id=:id and status<2'
-			, bookmarkIsExist: 'select * from bookmark where url like :url'
+			, bookmark: 'select Id,title,url,status,tags,datetime from reader_bookmark order by status,Id desc'
+			, bookmarkCount: 'select count(*) as count from reader_bookmark'
+			, bookmarkPage: 'select Id,title,url,status,tags,datetime from reader_bookmark order by status,Id desc limit :page,:size'
+			, bookmarkAdd: 'insert into reader_bookmark(url,title,source,tags,datetime,status) select :url,:title,:source,:tags,now(),:status from dual where not exists (select * from reader_bookmark where url like :url)'
+			, bookmarkRead: 'update reader_bookmark set status=2,title=:title,tags=:tags,score=score+:score where Id=:id and status<2'
+			, bookmarkIsExist: 'select * from reader_bookmark where url like :url'
 
-			, favorite: 'select * from bookmark where status=2 order by score desc,datetime desc'
-			, favoriteCount: 'select count(*) as count from bookmark where status=2'
-			, favoritePage: 'select * from bookmark where status=2 order by datetime desc limit :page,:size'
+			, favorite: 'select * from reader_bookmark where status=2 order by score desc,datetime desc'
+			, favoriteCount: 'select count(*) as count from reader_bookmark where status=2'
+			, favoritePage: 'select * from reader_bookmark where status=2 order by datetime desc limit :page,:size'
 		}
 
 		/**
@@ -179,19 +179,18 @@ var db          = require('./db.js')
 
 				if( rss ){
 					$ = Cheerio.load(rss, {xmlMode: true});
-					$item = $('item');
+					$item = $('item,entry');
 
 					for(i = 0, j = $item.length; i < j; i++){
 						temp = {};
 						$t = $item.eq(i);
 
 						temp.title = $t.find('title').text();
-						temp.url = $t.find('link').text();
-						temp.content = $t.find('description').text();
-						temp.author = $t.find('author').text();
-						!temp.author && (temp.author = $t.find('dc\\:creator').text());
+						temp.url = $t.find('link,id').text();
+						temp.content = $t.find('description,summary').text();
+						temp.author = $t.find('author,dc\\:creator').text();
 						temp.tags = $t.find('category').map(function(){
-							return $(this).text();
+							return $(this).text() || $(this).attr('term');
 						}).get().join();
 						temp.datetime = $t.find('pubDate').text();
 
@@ -737,6 +736,7 @@ socket.register({
 					send.error = '';
 					send.msg = '数据已存在';
 					send.info = rs[0];
+					send.info.id = rs[0].Id;
 					send.info.targetId = targetId;
 
 
@@ -756,7 +756,10 @@ socket.register({
 
 					throw new Error('抓取数据失败');
 				}
+
+				data.status = 0;
 				dataAll = data;
+
 				return db.handle({
 					sql: Reader.Model.bookmarkAdd
 					, data: data
@@ -789,7 +792,7 @@ socket.register({
 
 			socket.emit('data', send);
 
-			error( 'E0002' );
+			//error( 'E0002' );
 		}
 	}
 	, 'reader/article/read': function(socket, data){
@@ -867,7 +870,9 @@ socket.register({
 
 					throw new Error('抓取数据失败');
 				}
+				data.status = 0;
 				dataAll = data;
+
 				return db.handle({
 					sql: Reader.Model.bookmarkAdd
 					, data: data
@@ -949,7 +954,10 @@ socket.register({
 	}
 
 	, 'reader/read': function(socket, data){
-		var query = data.query
+		var send = {
+				topic: 'reader/read'
+			}
+			, query = data.query
 			, id = query.id
 			, url = query.url
 			, tags = query.tags || ''
@@ -970,12 +978,11 @@ socket.register({
 					}
 				}).then(function(rs){
 
-					if( rs.changedRows ){
-						send.info = {
-							id: id
-						};
-					}
-					else{
+					send.info = {
+						id: id
+					};
+
+					if( !rs.changedRows ){
 						send.error = '';
 						send.msg = '该文章已被读过' ;
 					}
@@ -989,11 +996,13 @@ socket.register({
 					, data: {
 						url: '%'+ url +'%'
 					}
-				}).then( Reader.Handler.bookmarkIsExist ).then(function(rs){
+				}).then(function(rs){
 
-					if( rs ){
+					if( rs && rs.length ){
 						send.error = '';
 						send.msg = '数据已存在';
+						send.info = rs[0];
+						send.info.id = rs[0].Id;
 
 						socket.emit('data', send);
 
@@ -1011,6 +1020,7 @@ socket.register({
 							, score: score
 							, tags: tags
 							, source: source
+							, status: 2
 						}
 					});
 				}).then(function(rs){
@@ -1022,7 +1032,7 @@ socket.register({
 						send.info = {
 							targetId: id
 							, tags: tags
-							, bookmarkId: rs.insertId
+							, id: rs.insertId
 						};
 						//dataAll.id = rs.insertId;
 						//dataAll.statsu = 0;

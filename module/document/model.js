@@ -8,15 +8,17 @@ var db  = require('../db.js')
 		, documentPage: 'select Id,title from document limit :page,size'
 		, documentCount: 'select count(*) as count from document'
 		, documentAdd: 'insert into document(title) values(:title)'
+		, documentOrder: 'update document set section_order=:order where Id=:documentId'
 
 		, sectionByDocument: 'select Id,title from document_section where document_id=:documentId'
 		, sectionById: 'select Id,title from document_section where Id=:id'
 		, sectionAdd: 'insert into document_section(title,document_id) values(:title,:documentId)'
+		, sectionOrder: 'update document_section set content_order=:order where Id=:sectionId'
 
 		, contentByDocument: 'select Id,title,content,section_title from document_content where document_id=:documentId order by section_id,`order`'
 		, contentBySection: 'select Id,title,content,section_title from document_content where section_id=:sectionId order by `order`'
 		, contentById: 'select Id,title,content,section_title from document_content where Id=:id'
-		, contentAdd: 'insert into document_content(title,`order`,content,document_id,section_id,section_title) values(:title,:order,\'\',:documentId,:sectionId,:sectionTitle)'
+		, contentAdd: 'insert into document_content(title,content,document_id,section_id,section_title) values(:title,\'\',:documentId,:sectionId,:sectionTitle)'
 		, contentSaveContent: 'update document_content set content=:content where Id=:id'
 	}
 	, Model = {
@@ -51,7 +53,7 @@ var db  = require('../db.js')
 				return rs[0];
 			}).then(function(rs){
 
-				rs.content = rs.contentrs.html = rs.html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\$/g, '&#36;');
+				rs.content = rs.content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\$/g, '&#36;');
 
 				return rs;
 			});
@@ -111,6 +113,19 @@ var db  = require('../db.js')
 		, saveContent: function(data){
 			return db.handle({
 				sql: SQL.contentSaveContent
+				, data: data
+			});
+		}
+
+		, documentSaveOrder: function(data){
+			return db.handle({
+				sql: SQL.documentOrder
+				, data: data
+			});
+		}
+		, sectionSaveOrder: function(data){
+			return db.handle({
+				sql: SQL.sectionOrder
 				, data: data
 			});
 		}

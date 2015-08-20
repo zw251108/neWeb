@@ -25,6 +25,7 @@ define(['jquery', 'global', 'socket', 'tag', 'template'], function($, g, socket,
 
 			if( query.tags !== '' ){
 				query.id = query.bookmarkId;
+				query.url = query.bookmarkUrl;
 				query.score = +query.score;
 
 				socket.emit('data', {
@@ -33,7 +34,7 @@ define(['jquery', 'global', 'socket', 'tag', 'template'], function($, g, socket,
 				});
 
 				$bookmark
-					.find('#readerArt'+ $bookmarkId.val())
+					.find('#'+ (/^\d+$/.test(query.id) ? 'readerArt' + query.id : query.id) )
 					.find('div.tagsArea').html( '<span class="tag tag-checked">'+ query.tags.split(',').join('</span><span class="tag tag-checked">') +'</span>')
 					.end().find('.article_title').html( $bookmarkTitle.val() );
 				$readPopup.trigger('closeDialog').find('form')[0].reset();
@@ -55,9 +56,14 @@ define(['jquery', 'global', 'socket', 'tag', 'template'], function($, g, socket,
 	tag.setAdd( $readPopup );
 
 	socket.register('reader/read', function(data){
+		var info = data.info || {}
+			, targetId = info.targetId
+			, id = info.id
+			;
+
 		if( !('error' in data) ){
 			$bookmark
-				.find('#readerArt'+ data.info.id).data('bookmarkId', data.info.insertId || data.info.id)
+				.find('#'+ (targetId || 'readerArt'+ id)).data('bookmarkId', id).attr('id', 'readerArt'+ id)
 				.find('.icon-checkbox').toggleClass('icon-checkbox icon-checkbox-checked').attr('title', '已读').text('已读过')
 				.end().find('.icon-bookmark').toggleClass('icon-bookmark icon-bookmark-full').text('已标记');
 		}

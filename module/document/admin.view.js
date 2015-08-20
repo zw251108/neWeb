@@ -8,7 +8,11 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	, Model = require('./model.js')
 
 	, docList = emmetTpl({
-		template: 'li>span.icon.icon-edit+a[href=./%Id%/]{%title%}'
+		template: 'li[data-id=%Id%]' +
+			'>span.icon.icon-edit' +
+			'+span.icon.icon-up' +
+			'+span.icon.icon-down' +
+			'+a[href=%Id%/]{%title%}'
 	})
 
 	, View = {
@@ -22,10 +26,8 @@ var getEmmet    = require('../emmet/getEmmet.js')
 				, main: {
 					moduleMain: {
 						toolbar: [{
-							type: 'button'
-							, id: 'add'
-							, icon: 'plus'
-							, title: '添加'
+							type: 'button', id: 'save', icon: 'save', title: '保存排序'}, {
+							type: 'button', id: 'add', icon: 'plus', title: '添加'
 						}]
 						, content: '<ul>' + docList(rs).join('') + '</ul>'
 					}
@@ -43,7 +45,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					}
 				}
 				, script: {
-					main: '../../script/admin/add'
+					main: '../../script/admin/list'
 					, src: '../../script/lib/require.min.js'
 				}
 			})
@@ -58,10 +60,8 @@ var getEmmet    = require('../emmet/getEmmet.js')
 				, main: {
 					moduleMain: {
 						toolbar: [{
-							type: 'button'
-							, id: 'add'
-							, icon: 'plus'
-							, title: '添加'
+							type: 'button', id: 'save', icon: 'save', title: '保存排序'}, {
+							type: 'button', id: 'add', icon: 'plus', title: '添加'
 						}]
 						, content: '<ul>' + docList(rs).join('') + '</ul>'
 					}
@@ -79,7 +79,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					}
 				}
 				, script: {
-					main: '../../../script/admin/add'
+					main: '../../../script/admin/list'
 					, src: '../../../script/lib/require.min.js'
 				}
 			});
@@ -93,10 +93,8 @@ var getEmmet    = require('../emmet/getEmmet.js')
 				, main: {
 					moduleMain: {
 						toolbar: [{
-							type: 'button'
-							, id: 'add'
-							, icon: 'plus'
-							, title: '添加'
+							type: 'button', id: 'save', icon: 'save', title: '保存排序'}, {
+							type: 'button', id: 'add', icon: 'plus', title: '添加'
 						}]
 						, content: '<ul>' + docList(rs).join('') + '</ul>'
 					}
@@ -114,7 +112,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					}
 				}
 				, script: {
-					main: '../../../../script/admin/add'
+					main: '../../../../script/admin/list'
 					, src: '../../../../script/lib/require.min.js'
 				}
 			});
@@ -136,7 +134,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					}
 				}
 				, script: {
-					main: '../../../../../script/admin/document'
+					main: '../../../../../script/admin/content'
 					, src: '../../../../../script/lib/require.min.js'
 				}
 			});

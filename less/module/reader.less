@@ -55,15 +55,7 @@
 	}
 }
 
-.reader_articleList{
-
-	img{
-		float: left;
-		height: auto !important;
-		max-width: 300px !important;
-		margin-right: 10px;
-	}
-}
+.reader_articleList{}
 .reader_article{
 	overflow: hidden;
 	position: relative;
@@ -72,7 +64,7 @@
 
 	.icon{
 		position: absolute;
-		top: 10px;
+		top: 45px;
 		right: 0;
 		width: 5em;
 
@@ -94,7 +86,24 @@
 		margin-right: 60px;
 	}
 	.article_content{
-		margin: 30px;
+		margin: 0 30px;
 		text-indent: 2em;
+
+		/**
+		 * 第三方内容 样式控制
+		 */
+		img{
+			float: left;
+			height: auto !important;
+			max-width: 300px !important;
+			margin-right: 10px;
+		}
+		p{
+			margin: 0;
+			line-height: 1.5;
+		}
+		br{
+			display: none;
+		}
 	}
 }
