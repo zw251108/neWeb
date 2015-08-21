@@ -1,6 +1,6 @@
-require(['../module/config'], function(config){
+require(['../../module/config'], function(config){
 
-	config.requireConfig.baseUrl = 'http://'+ location.host + '/script/';
+	config.requireConfig.baseUrl = location.origin + '/script/';
 
 	var r = require.config(config.requireConfig);
 	r(['jquery', 'global'], function($, g){

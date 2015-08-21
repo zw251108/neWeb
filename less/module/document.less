@@ -24,6 +24,19 @@
 			font-size: 1em;
 			text-indent: 0;
 		}
+		.icon{
+			float: right;
+
+			height: 30px;
+			width: 30px;
+
+			margin: 5px;
+			padding: 0;
+
+			line-height: 30px;
+			text-indent: 0;
+			//text-align: center;
+		}
 	}
 	dd{
 		display: none;
@@ -82,7 +95,6 @@
 //    p{
 //        margin:0;
 //    }
-
 	.CodeMirror{
 		height: auto;
 		border: 1px solid #ddd;
@@ -92,21 +104,24 @@
 		text-indent: 0;
 
 		.boxSizing( border-box );
+
+		&-scroll{
+			overflow: scroll !important;
+			/*max-height: 200px;*/
+		}
+		pre{
+			padding-left: 7px;
+			line-height: 1.25;
+		}
+		&-gutter{
+			margin-bottom: -30px;
+			padding-bottom: 0;
+		}
 	}
-	.CodeMirror-scroll{
-		overflow: scroll !important;
-		/*max-height: 200px;*/
-	}
-	.CodeMirror pre{
-		padding-left: 7px;
-		line-height: 1.25;
-	}
-	.CodeMirror-gutters{
-		padding-bottom: 0;
-	}
-	.CodeMirror-gutter{
-		margin-bottom: -30px;
-		padding-bottom: 0;
+
+	.edit_CodeMirror{
+		height: 300px;
+		margin-top: 10px;
 	}
 }
 
@@ -133,8 +148,16 @@
 		float: right;
 		height: 30px;
 		text-indent: 0;
+
+		&:before{
+			margin: 5px;
+		}
 	}
-	.icon:before{
-		margin: 5px;
+
+	button.icon{
+		width: 30px;
+		margin: 9px 5px;
+		padding: 0;
+		text-indent: -1px;
 	}
 }

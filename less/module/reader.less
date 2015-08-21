@@ -38,6 +38,10 @@
 			text-indent: 0;
 		}
 	}
+
+	.tagsArea{
+		margin: 5px 5px -5px;
+	}
 }
 .reader_title{
 	height: 2em;
@@ -64,7 +68,7 @@
 
 	.icon{
 		position: absolute;
-		top: 45px;
+		//top: 45px;
 		right: 0;
 		width: 5em;
 
@@ -86,10 +90,11 @@
 		margin-right: 60px;
 	}
 	.article_content{
+		overflow: hidden;
 		margin: 0 30px;
 		text-indent: 2em;
 
-		/**
+		/**     .reader_article .article_content
 		 * 第三方内容 样式控制
 		 */
 		img{
@@ -102,8 +107,8 @@
 			margin: 0;
 			line-height: 1.5;
 		}
-		br{
-			display: none;
-		}
+		//br{
+		//	display: none;
+		//}
 	}
 }

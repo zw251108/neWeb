@@ -10,7 +10,6 @@ var db          = require('./db.js')
 	, tpl       = require('./emmetTpl/tpl.js')
 	, emmetTpl  = require('./emmetTpl/emmetTpl.js').template
 
-	//, tag       = require('./tag.js')
 	, tagModel  = require('./tag/model.js')
 	, tagView   = require('./tag/view.js')
 
@@ -20,7 +19,13 @@ var db          = require('./db.js')
 				'>h3.section_title{%name%}' +
 					'>span.icon.icon-up' +
 				'^^hr' +
-				'+ul.reader_articleList'
+				'+ul.reader_articleList' +
+				'+div.tagsArea{%tags%}'
+		, filter: {
+			tags: function(d){
+				return d.tags ? '<span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">'+ d.tags.split(',').join('</span><span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">') +'</span>' : '';
+			}
+		}
 	})
 	, articleTpl   = emmetTpl({
 		template: 'article#readerArt%Id%.reader_article.article[data-id=%Id%]' +
@@ -297,7 +302,6 @@ var db          = require('./db.js')
 						 * */
 						index = prefix + w;
 
-						//console.log(w);
 						if( index in indexCache ){
 							filterResult[indexCache[index]].n++;
 						}
@@ -351,8 +355,7 @@ var db          = require('./db.js')
 			 * @return  {boolean}   该数据是否存在
 			 * */
 			, readerIsExist: function(rs){
-				//rs = rs.result;
-				
+
 				return !!(rs && rs.length);
 			}
 			/**
@@ -362,7 +365,6 @@ var db          = require('./db.js')
 			 * @return  {boolean}   该数据是否存在
 			 * */
 			, bookmarkIsExist: function(rs){
-				//rs = rs.result;
 
 				return !!(rs && rs.length);
 			}
@@ -375,7 +377,6 @@ var db          = require('./db.js')
 		 * */
 		, View: {
 			reader: function(rs){
-				//rs = rs.result;
 
 				return tpl.html('module', {
 					title: '阅读 reader'
@@ -400,7 +401,6 @@ var db          = require('./db.js')
 				});
 			}
 			, bookmark: function(rs){
-				//rs = rs.result;
 
 				return tpl.html('module', {
 					title: '书签 bookmark'
@@ -429,7 +429,6 @@ var db          = require('./db.js')
 				});
 			}
 			, favorite: function(rs){
-				//rs = rs.result;
 
 				return tpl.html('module', {
 					title: '收藏文章 favorite'
@@ -439,9 +438,8 @@ var db          = require('./db.js')
 							, toolbar: '<li><a href="./" id="reader" class="icon icon-rss" title="返回订阅列表"></a></li>' +
 								'<li><a href="bookmark" id="favorite" class="icon icon-bookmark" title="待读文章"></a></li>' +
 								tpl.toolbarTpl([{
-								//id: 'add', icon: 'plus', title: '添加待读文章'}, {
 									id: 'filter', icon: 'filter', title: '过滤'
-							}])
+								}])
 							, content: articleTpl(rs).join('')
 					}).join('') + tpl.popupTpl([{
 						id: 'addPopup', size: 'normal'
@@ -553,7 +551,7 @@ web.get('/data/reader', function(req, res){
 	}
 
 	db.handle( handle ).then(function(rs){
-		rs = JSON.stringify( rs )//.result );
+		rs = JSON.stringify( rs );
 
 		res.send( callback ? callback +'('+ rs +')' : rs );
 		res.end();
@@ -585,7 +583,7 @@ web.get('/data/bookmark', function(req, res){
 	}
 
 	db.handle( handle ).then(function(rs){
-		rs = JSON.stringify( rs )//.result );
+		rs = JSON.stringify( rs );
 
 		res.send( callback ? callback +'('+ rs +')' : rs );
 		res.end();
@@ -617,7 +615,6 @@ web.get('/data/favorite', function(req, res){
 	}
 
 	db.handle( handle ).then(function(rs){
-		//rs = rs.result;
 
 		res.send( callback ? callback +'('+ rs +')' : rs );
 		res.end();
@@ -650,7 +647,6 @@ socket.register({
 		}
 
 		db.handle( handle ).then(function(rs){
-			//rs = rs.result;
 
 			socket.emit('data', {
 				topic: 'reader'
@@ -693,26 +689,7 @@ socket.register({
 			error( 'E0002' );
 		}
 	}
-	, 'reader/article': function(socket, data){
-		// todo 抓取 rss 文章，进行分词
 
-		//var url = data.query.url;
-		//
-		//if( url ){
-		//	getArticle(url, function(rs){
-		//
-		//		reader.emit('socket', 'reader/article', socket, [rs.url, rs.title, rs.source, rs.tags.map(function(d){return d.tagName;}).join(), rs.url]);
-		//	}, function(err){
-		//
-		//		reader.emit('socket', 'reader/article', socket, '订阅文章获取失败');
-		//		error( err );
-		//	});
-		//}
-		//else{
-		//	reader.emit('socket', 'reader/article', socket, '缺少参数');
-		//	error( 'E0002' );
-		//}
-	}
 	, 'reader/article/bookmark': function(socket, data){
 		var send = {
 				topic: 'reader/article/bookmark'
@@ -720,41 +697,75 @@ socket.register({
 			, query = data.query || {}
 			, url = query.url
 			, targetId = query.targetId
+			, tags = query.tags
+			, title = query.title
 			, dataAll
-			;
-
-		if( url && targetId ){
-
-			db.handle({
+			, execute = db.handle({
 				sql: Reader.Model.bookmarkIsExist
 				, data: {
 					url: '%'+ url +'%'
 				}
-			}).then(function(rs){
+			})
+			;
 
-				if( rs && rs.length ){
-					send.error = '';
-					send.msg = '数据已存在';
-					send.info = rs[0];
-					send.info.id = rs[0].Id;
-					send.info.targetId = targetId;
+		if( url && targetId ){
+
+			if( tags && title ){
+				execute = execute.then(function(rs){
+					var source = Url.parse(url);
+
+					source = source.protocol + '//' + source.host;
+
+					if( rs && rs.length ){
+						send.error = '';
+						send.msg = '数据已存在';
+						send.info = rs[0];
+						send.info.id = rs[0].Id;
+						send.info.targetId = targetId;
 
 
-					socket.emit('data', send);
+						socket.emit('data', send);
 
-					throw new Error(url +'，数据已存在');
-				}
+						throw new Error(url +'，数据已存在');
+					}
 
-				return Reader.crawler( url );
-			}).then( Reader.Handler.crawlerArticle ).then(function( data ){
+					return {
+						url: url
+						, title: title
+						, tags: tags
+						, source: source
+					};
+				});
+			}
+			else{
+				execute = execute.then(function(rs){
+
+					if( rs && rs.length ){
+						send.error = '';
+						send.msg = '数据已存在';
+						send.info = rs[0];
+						send.info.id = rs[0].Id;
+						send.info.targetId = targetId;
+
+
+						socket.emit('data', send);
+
+						throw new Error(url +'，数据已存在');
+					}
+
+					return Reader.crawler( url );
+				}).then( Reader.Handler.crawlerArticle )
+			}
+
+			execute.then(function( data ){
 
 				if( !data ){
 					send.error = '';
-					send.msg = '抓取数据失败';
+					send.msg = '数据缺失';
 
 					socket.emit('data', send);
 
-					throw new Error('抓取数据失败');
+					throw new Error('数据缺失');
 				}
 
 				data.status = 0;
@@ -765,9 +776,6 @@ socket.register({
 					, data: data
 				});
 			}).then(function(rs){
-				//var data = rs.data;
-
-				//rs= rs.result;
 
 				dataAll.targetId = targetId;
 
@@ -779,7 +787,7 @@ socket.register({
 					send.error = '';
 					send.msg = '数据已存在'
 				}
-				send.info = dataAll;//data;
+				send.info = dataAll;
 
 				socket.emit('data', send);
 			}).catch(function(err){
@@ -791,14 +799,8 @@ socket.register({
 			send.msg = '缺少参数';
 
 			socket.emit('data', send);
-
-			//error( 'E0002' );
 		}
 	}
-	, 'reader/article/read': function(socket, data){
-
-	}
-	//, 'reader/favor': function(socket, data){}
 
 	, 'reader/bookmark': function(socket, data){
 		var query = data.query || {}
@@ -907,51 +909,51 @@ socket.register({
 			error( 'E0002' );
 		}
 	}
-	, 'reader/bookmark/read': function(socket, data){
-		var send = {
-				topic: 'reader/bookmark/read'
-			}
-			, query = data.query
-			, id = query.id
-			, tags = query.tags || ''
-			, score = query.score || 0
-			, title = query.title || ''
-			;
-
-		if( id ){
-			db.handle({
-				sql: Reader.Model.bookmarkRead
-				, data: {
-					id: id
-					, title: title
-					, score: score
-					, tags: tags
-				}
-			}).then(function(rs){
-				//rs = rs.result;
-
-				if( rs.changedRows ){
-					send.info = {
-						id: id
-					};
-				}
-				else{
-					send.error = '';
-					send.msg = '该文章已被读过' ;
-				}
-
-				socket.emit('data', send);
-			});
-		}
-		else{
-			send.error = '';
-			send.msg = '缺少参数';
-
-			socket.emit('data', send);
-
-			error( 'E0002' );
-		}
-	}
+	//, 'reader/bookmark/read': function(socket, data){
+	//	var send = {
+	//			topic: 'reader/bookmark/read'
+	//		}
+	//		, query = data.query
+	//		, id = query.id
+	//		, tags = query.tags || ''
+	//		, score = query.score || 0
+	//		, title = query.title || ''
+	//		;
+	//
+	//	if( id ){
+	//		db.handle({
+	//			sql: Reader.Model.bookmarkRead
+	//			, data: {
+	//				id: id
+	//				, title: title
+	//				, score: score
+	//				, tags: tags
+	//			}
+	//		}).then(function(rs){
+	//			//rs = rs.result;
+	//
+	//			if( rs.changedRows ){
+	//				send.info = {
+	//					id: id
+	//				};
+	//			}
+	//			else{
+	//				send.error = '';
+	//				send.msg = '该文章已被读过' ;
+	//			}
+	//
+	//			socket.emit('data', send);
+	//		});
+	//	}
+	//	else{
+	//		send.error = '';
+	//		send.msg = '缺少参数';
+	//
+	//		socket.emit('data', send);
+	//
+	//		error( 'E0002' );
+	//	}
+	//}
 
 	, 'reader/read': function(socket, data){
 		var send = {

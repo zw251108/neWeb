@@ -41,7 +41,11 @@ require(['../config'], function(config){
 							}
 						}
 
-						return (rs !== -1 ? img[rs] : '') + '<p>' + $(content).text().slice(0, 500).replace(/</g, '&lt;') + '<a class="link" href="'+ d.url +'" target="_blank">查看更多</a></p>';
+						return (rs !== -1 ? $(img[rs]).attr({
+								style: ''
+								, width: ''
+								, height: ''
+							})[0].outerHTML : '') + '<p>' + $(content).text().slice(0, 500).replace(/</g, '&lt;') + ' <a class="link" href="'+ d.url +'" target="_blank">查看更多</a></p>';
 					}
 				}
 			})
@@ -78,16 +82,21 @@ require(['../config'], function(config){
 
 			var id = 'readerArt' + (+new Date())
 				, $parent = $(this).parents('.article')
-				, href = $parent.find('.article_title').parent().attr('href')
+				, $title = $parent.find('.article_title')
+				, href = $title.parent().attr('href')
+				, tags = $parent.find('.tagsArea .tag')
 				;
 
 			!$parent.attr('id') && $parent.attr('id', id);
+			tags.length && (tags = tags.map(function(){return this.innerHTML}).get().join());
 
 			socket.emit('data', {
 				topic: 'reader/article/bookmark'
 				, query: {
 					targetId: id
 					, url: href
+					, tags: tags
+					, title: $title.html()
 				}
 			});
 		}).on('click', '.icon-checkbox', function(e){

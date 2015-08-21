@@ -7,17 +7,37 @@ var getEmmet    = require('../emmet/getEmmet.js')
 
 	, Model = require('./model.js')
 
+	, sectionTpl    = emmetTpl({
+		template: 'section.document_section.section[data-section-id=%sectionId%]' +
+			'>h3.section_title{%sectionTitle%}' +
+				'>button.icon.icon-plus[type=button title=添加章节]' +
+				'+button.icon.icon-up[type=button title=上移]' +
+				'+button.icon.icon-down[type=button title=下移]' +
+				'+button.icon.icon-save[type=button title=保存排序]' +
+			'^dl{%sectionList%}'
+		, filter: {
+			sectionList: function(d){
+				return sectionListTpl( d.sectionList ).join('')
+			}
+		}
+	})
+	, sectionListTpl = emmetTpl({
+		template: 'dt.icon.icon-right[data-content-id=%Id%]{%title%}' +
+				'>button.icon.icon-up[type=button title=上移]' +
+				'+button.icon.icon-down[type=button title=下移]' +
+			'^dd>textarea[data-code-type=html]{%content%}+button.btn[type=button]{保存}'
+	})
+
 	, docList = emmetTpl({
 		template: 'li[data-id=%Id%]' +
 			'>span.icon.icon-edit' +
 			'+span.icon.icon-up' +
 			'+span.icon.icon-down' +
-			'+a[href=%Id%/]{%title%}'
+			'+a[href=./%Id%/]{%title%}'
 	})
 
 	, View = {
 		documentList: function(rs){
-
 			return tpl({
 				title: '全部文档'
 				, stylesheet: {
@@ -45,100 +65,150 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					}
 				}
 				, script: {
-					main: '../../script/admin/list'
+					main: '../../script/admin/document/list'
 					, src: '../../script/lib/require.min.js'
 				}
 			})
 		}
-		, sectionList: function(rs){
-
-			return tpl({
-				title: '章节列表'
-				, stylesheet: {
-					path: '../../../style/style.css'
-				}
+		, document: function(rs){
+			var document = {
+				title: '前端文档 Document'
+				, stylesheet: [{
+					path: '../../../style/style.css'}, {
+					path: '../../../style/test.css'
+				}]
 				, main: {
 					moduleMain: {
-						toolbar: [{
+						id: 'document'
+						, title: '前端文档 document'
+						, size: 'large'
+						, toolbar: [{
 							type: 'button', id: 'save', icon: 'save', title: '保存排序'}, {
-							type: 'button', id: 'add', icon: 'plus', title: '添加'
+							type: 'button', id: 'add', icon: 'plus', title: '添加章节'
 						}]
-						, content: '<ul>' + docList(rs).join('') + '</ul>'
+						, content: sectionTpl( rs).join('')
 					}
-					, modulePopup: {
-						id: 'addPopup'
-						, size: 'normal'
-						, toolbar: ''
+					, modulePopup: [{
+						id: 'addSectionPopup', size: 'normal', toolbar: ''
 						, content: '<form>' +
+								'<input type="hidden" id="documentId"/>' +
+								'<div class="formGroup">' +
+								'<label class="label" for="sectionTitle">请添加标题</label>' +
+								'<input type="text" id="sectionTitle" class="input" name="sectionTitle"/>' +
+								'</div>' +
+							'</form>'
+						, button: '<button type="button" id="addSection" class="btn">添加</button>'
+					}, {
+						id: 'addContentPopup', size: 'normal', toolbar: ''
+						, content: '<form>' +
+							'<input type="hidden" id="sectionId"/>' +
+							'<input type="hidden" id="sectionTitle"/>' +
 							'<div class="formGroup">' +
-								'<label class="label" for="title">请添加标题</label>' +
-								'<input type="text" id="title" class="input" name="title"/>' +
+								'<label class="label" for="contentTitle">请添加标题</label>' +
+								'<input type="text" id="contentTitle" class="input" name="contentTitle"/>' +
 							'</div>' +
 						'</form>'
-						, button: '<button type="button" id="addData" class="btn">添加</button>'
-					}
+						, button: '<button type="button" id="addContent" class="btn">添加</button>'
+					}]
 				}
 				, script: {
-					main: '../../../script/admin/list'
+					main: '../../../script/admin/document/document'
 					, src: '../../../script/lib/require.min.js'
 				}
-			});
+			};
+
+			return tpl( document );
 		}
-		, contentList: function(rs){
-			return tpl({
-				title: '内容章节'
-				, stylesheet: {
-					path: '../../../../style/style.css'
-				}
-				, main: {
-					moduleMain: {
-						toolbar: [{
-							type: 'button', id: 'save', icon: 'save', title: '保存排序'}, {
-							type: 'button', id: 'add', icon: 'plus', title: '添加'
-						}]
-						, content: '<ul>' + docList(rs).join('') + '</ul>'
-					}
-					, modulePopup: {
-						id: 'addPopup'
-						, size: 'normal'
-						, toolbar: ''
-						, content: '<form>' +
-							'<div class="formGroup">' +
-								'<label class="label" for="title">请添加标题</label>' +
-								'<input type="text" id="title" class="input" name="title"/>' +
-							'</div>' +
-						'</form>'
-						, button: '<button type="button" id="addData" class="btn">添加</button>'
-					}
-				}
-				, script: {
-					main: '../../../../script/admin/list'
-					, src: '../../../../script/lib/require.min.js'
-				}
-			});
-		}
-		, content: function(rs){
-			return tpl({
-				title: '内容'
-				, stylesheet: {
-					path: '../../../../../style/style.css'
-				}
-				, main: {
-					moduleMain: {
-						id: 'editor'
-						, content: '<form>' +
-							'<input type="hidden" id="id" name="id" value="' + rs.Id + '"/>' +
-							'<textarea id="content" name="content" class="hidden">' + rs.content + '</textarea>' +
-							'<button class="btn" type="submit">保存</button>' +
-						'</form>'
-					}
-				}
-				, script: {
-					main: '../../../../../script/admin/content'
-					, src: '../../../../../script/lib/require.min.js'
-				}
-			});
-		}
+
+		//, sectionList: function(rs){
+		//
+		//	return tpl({
+		//		title: '章节列表'
+		//		, stylesheet: {
+		//			path: '../../../style/style.css'
+		//		}
+		//		, main: {
+		//			moduleMain: {
+		//				toolbar: [{
+		//					type: 'button', id: 'save', icon: 'save', title: '保存排序'}, {
+		//					type: 'button', id: 'add', icon: 'plus', title: '添加'
+		//				}]
+		//				, content: '<ul>' + docList(rs).join('') + '</ul>'
+		//			}
+		//			, modulePopup: {
+		//				id: 'addPopup'
+		//				, size: 'normal'
+		//				, toolbar: ''
+		//				, content: '<form>' +
+		//					'<div class="formGroup">' +
+		//						'<label class="label" for="title">请添加标题</label>' +
+		//						'<input type="text" id="title" class="input" name="title"/>' +
+		//					'</div>' +
+		//				'</form>'
+		//				, button: '<button type="button" id="addData" class="btn">添加</button>'
+		//			}
+		//		}
+		//		, script: {
+		//			main: '../../../script/admin/list'
+		//			, src: '../../../script/lib/require.min.js'
+		//		}
+		//	});
+		//}
+		//, contentList: function(rs){
+		//	return tpl({
+		//		title: '内容章节'
+		//		, stylesheet: {
+		//			path: '../../../../style/style.css'
+		//		}
+		//		, main: {
+		//			moduleMain: {
+		//				toolbar: [{
+		//					type: 'button', id: 'save', icon: 'save', title: '保存排序'}, {
+		//					type: 'button', id: 'add', icon: 'plus', title: '添加'
+		//				}]
+		//				, content: '<ul>' + docList(rs).join('') + '</ul>'
+		//			}
+		//			, modulePopup: {
+		//				id: 'addPopup'
+		//				, size: 'normal'
+		//				, toolbar: ''
+		//				, content: '<form>' +
+		//					'<div class="formGroup">' +
+		//						'<label class="label" for="title">请添加标题</label>' +
+		//						'<input type="text" id="title" class="input" name="title"/>' +
+		//					'</div>' +
+		//				'</form>'
+		//				, button: '<button type="button" id="addData" class="btn">添加</button>'
+		//			}
+		//		}
+		//		, script: {
+		//			main: '../../../../script/admin/list'
+		//			, src: '../../../../script/lib/require.min.js'
+		//		}
+		//	});
+		//}
+		//, content: function(rs){
+		//	return tpl({
+		//		title: '内容'
+		//		, stylesheet: {
+		//			path: '../../../../../style/style.css'
+		//		}
+		//		, main: {
+		//			moduleMain: {
+		//				id: 'editor'
+		//				, content: '<form>' +
+		//					'<input type="hidden" id="id" name="id" value="' + rs.Id + '"/>' +
+		//					'<textarea id="content" name="content" class="hidden">' + rs.content + '</textarea>' +
+		//					'<button class="btn" type="submit">保存</button>' +
+		//				'</form>'
+		//			}
+		//		}
+		//		, script: {
+		//			main: '../../../../../script/admin/content'
+		//			, src: '../../../../../script/lib/require.min.js'
+		//		}
+		//	});
+		//}
 	}
 	;
 

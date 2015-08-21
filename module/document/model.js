@@ -15,7 +15,7 @@ var db  = require('../db.js')
 		, sectionAdd: 'insert into document_section(title,document_id) values(:title,:documentId)'
 		, sectionOrder: 'update document_section set content_order=:order where Id=:sectionId'
 
-		, contentByDocument: 'select Id,title,content,section_title from document_content where document_id=:documentId order by section_id,`order`'
+		, contentByDocument: 'select Id,title,content,section_id,section_title from document_content where document_id=:documentId order by section_id,`order`'
 		, contentBySection: 'select Id,title,content,section_title from document_content where section_id=:sectionId order by `order`'
 		, contentById: 'select Id,title,content,section_title from document_content where Id=:id'
 		, contentAdd: 'insert into document_content(title,content,document_id,section_id,section_title) values(:title,\'\',:documentId,:sectionId,:sectionTitle)'
@@ -81,10 +81,12 @@ var db  = require('../db.js')
 
 						document.push({
 							sectionTitle: tempTitle
+							, sectionId: t.section_id
 							, sectionList: tempArray
 						});
 					}
 
+					t.content = t.content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\$/g, '&#36;');
 					tempArray.push( t );
 				}
 

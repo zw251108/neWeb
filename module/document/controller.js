@@ -33,55 +33,27 @@ web.get('/document/', function(req, res){
 	});
 });
 
+/**
+ *
+ * */
 web.get('/admin/document/', function(req, res){
-	Model.getAllDoc().then( Admin.documentList ).then(function(html){console.log(html)
-		res.send( html );
+	Model.getAllDoc().then( Admin.documentList ).then(function(html){
+		res.send( config.docType.html5 + html );
 		res.end();
 	});
 });
-// section 列表
 web.get('/admin/document/:documentId/',function(req, res, next){
 	var param = req.params || {}
 		, documentId = param.documentId
 		;
 	if( documentId && /^\d+$/.test( documentId ) ){
-		Model.getSectionByDoc(documentId).then( Admin.sectionList).then(function(html){
-			res.send( html );
-			res.end();
-		});
-	}
-	else{
-		next();
-	}
-});
-// content 列表
-web.get('/admin/document/:documentId/:sectionId/', function(req, res, next){
-	var param = req.params || {}
-		, documentId = param.documentId
-		, sectionId = param.sectionId
-		;
+		//Model.getSectionByDoc(documentId).then( Admin.sectionList).then(function(html){
+		//	res.send( html );
+		//	res.end();
+		//});
 
-	if( documentId && /^\d+$/.test( documentId ) && sectionId && /^\d+$/.test( sectionId) ){
-		Model.getContentBySec( sectionId ).then( Admin.contentList ).then(function(html){
-			res.send( html );
-			res.end();
-		});
-	}
-	else{
-		next();
-	}
-});
-// content 详细
-web.get('/admin/document/:documentId/:sectionId/:contentId', function(req, res){
-	var param = req.params || {}
-		, documentId = param.documentId
-		, sectionId = param.sectionId
-		, contentId = param.contentId
-		;
-
-	if( documentId && /^\d+$/.test( documentId ) && sectionId && /^\d+$/.test( sectionId ) && contentId && /^\d+$/.test( contentId ) ){
-		Model.getContentById( contentId ).then( Admin.content ).then(function(html){
-			res.send( html );
+		Model.getAllContent( documentId ).then( Admin.document).then(function(html){
+			res.send( config.docType.html5 + html );
 			res.end();
 		});
 	}
@@ -90,7 +62,50 @@ web.get('/admin/document/:documentId/:sectionId/:contentId', function(req, res){
 	}
 });
 
-// 新建文档
+//// content 列表
+//web.get('/admin/document/:documentId/:sectionId/', function(req, res, next){
+//	var param = req.params || {}
+//		, documentId = param.documentId
+//		, sectionId = param.sectionId
+//		;
+//
+//	if( documentId && /^\d+$/.test( documentId ) && sectionId && /^\d+$/.test( sectionId) ){
+//		Model.getContentBySec( sectionId ).then( Admin.contentList ).then(function(html){
+//			res.send( html );
+//			res.end();
+//		});
+//	}
+//	else{
+//		next();
+//	}
+//});
+//// content 详细
+//web.get('/admin/document/:documentId/:sectionId/:contentId', function(req, res){
+//	var param = req.params || {}
+//		, documentId = param.documentId
+//		, sectionId = param.sectionId
+//		, contentId = param.contentId
+//		;
+//
+//	if( documentId && /^\d+$/.test( documentId ) && sectionId && /^\d+$/.test( sectionId ) && contentId && /^\d+$/.test( contentId ) ){
+//		Model.getContentById( contentId ).then( Admin.content ).then(function(html){
+//			res.send( html );
+//			res.end();
+//		});
+//	}
+//	else{
+//		next();
+//	}
+//});
+
+/**
+ * /admin/document/add                                      新建文档
+ * /admin/document/:documentId/add                          新建章节
+ * /admin/document/:documentId/save                         保存章节排序
+ * /admin/document/:documentId/:sectionId/add               新建内容
+ * /admin/document/:documentId/:sectionId/save              保存内容排序
+ * /admin/document/:documentId/:sectionId/:contentId/save   内容详细保存
+ * */
 web.post('/admin/document/add', function(req, res){
 	var body = req.body || {}
 		, title = body.title
@@ -119,7 +134,6 @@ web.post('/admin/document/add', function(req, res){
 		res.end();
 	}
 });
-// 新建章节
 web.post('/admin/document/:documentId/add', function(req, res){
 	var param = req.params || {}
 		, documentId = param.documentId
@@ -153,7 +167,6 @@ web.post('/admin/document/:documentId/add', function(req, res){
 		res.end();
 	}
 });
-// 保存章节排序
 web.post('/admin/document/:documentId/save', function(req, res){
 	var param = req.params || {}
 		, documentId = param.documentId
@@ -191,7 +204,6 @@ web.post('/admin/document/:documentId/save', function(req, res){
 		res.end();
 	}
 });
-// 新建内容
 web.post('/admin/document/:documentId/:sectionId/add', function(req, res){
 	var param = req.params || {}
 		, documentId = param.documentId
@@ -203,7 +215,6 @@ web.post('/admin/document/:documentId/:sectionId/add', function(req, res){
 
 		body.documentId = documentId;
 		body.sectionId = sectionId;
-		body.sectionTitle = '';
 
 		Model.addContentBySec( body ).then(function(rs){
 			var json = {};
@@ -228,7 +239,6 @@ web.post('/admin/document/:documentId/:sectionId/add', function(req, res){
 		res.end();
 	}
 });
-// 保存内容排序
 web.post('/admin/document/:documentId/:sectionId/save', function(req, res){
 	var param = req.params || {}
 		, documentId = param.documentId
@@ -268,7 +278,6 @@ web.post('/admin/document/:documentId/:sectionId/save', function(req, res){
 		res.end();
 	}
 });
-// 内容详细保存
 web.post('/admin/document/:documentId/:sectionId/:contentId/save', function(req, res){
 	var param = req.params || {}
 		, documentId = param.documentId
