@@ -141,10 +141,11 @@ var db          = require('./db.js')
 		 * @desc    业务相关 sql 语句集合
 		 * */
 		, Model: {
-			reader: 'select * from reader where status=1'
-			, readerCount: 'select count(*) as count from reader where status=1'
-			, readerPage: 'select * from reader where status=1 limit :page,:size'
+			reader: 'select * from reader where `show`=1'
+			, readerCount: 'select count(*) as count from reader where `show`=1'
+			, readerPage: 'select * from reader where `show`=1 limit :page,:size'
 			, readerIsExist: 'select * from reader where xml_url like :xmlUrl'
+			, readerUpdatePub: 'update reader set last_pub=:lastPub where Id=:id'
 
 			, bookmark: 'select Id,title,url,status,tags,datetime from reader_bookmark order by status,Id desc'
 			, bookmarkCount: 'select count(*) as count from reader_bookmark'
@@ -178,10 +179,10 @@ var db          = require('./db.js')
 					, charset = res.charset
 					, $
 					, $item
-					, i, j, temp, $t
+					, i, j, temp, $t, t
 					, rs = []
 					;
-
+				console.log(rss)
 				if( rss ){
 					$ = Cheerio.load(rss, {xmlMode: true});
 					$item = $('item,entry');
@@ -191,13 +192,22 @@ var db          = require('./db.js')
 						$t = $item.eq(i);
 
 						temp.title = $t.find('title').text();
-						temp.url = $t.find('link,id').text();
-						temp.content = $t.find('description,summary').text();
-						temp.author = $t.find('author,dc\\:creator').text();
+
+						t = $t.find('link')
+						temp.url = t.text() || t.attr('href');
+						!temp.url && (temp.url = $t.find('id').text());
+
+						temp.content = $t.find('description').text();
+						!temp.content && (temp.content = $t.find('summary').text());
+
+						temp.author = $t.find('author').text();
+						!temp.author && (temp.author = $t.find('dc\\:creator').text());
+
 						temp.tags = $t.find('category').map(function(){
-							return $(this).text() || $(this).attr('term');
+							var t = $(this)
+							return t.text() || t.attr('term');
 						}).get().join();
-						temp.datetime = $t.find('pubDate').text();
+						temp.datetime = $t.find('pubDate,published').text();
 
 						rs.push(temp);
 					}
@@ -664,7 +674,52 @@ socket.register({
 
 		if( feed ){
 
-			Reader.crawler( feed ).then( Reader.Handler.crawlerFeed ).then(function(rs){
+			Reader.crawler( feed ).then( Reader.Handler.crawlerFeed).then(function(rs){
+
+				if( rs.length ){
+					var datetime = rs[0].datetime
+						, today = datetime ? datetime : new Date()
+						, type = typeof today
+						, y, m, d, h, mm, s
+						;
+
+					if( type === 'string' || type === 'number' ){
+						today = new Date( datetime );
+					}
+
+					if( !(today instanceof Date) || today.toString() === 'Invalid Date' ){
+						today = new Date();
+					}
+
+					y = today.getFullYear();
+					m = today.getMonth() +1;
+					d = today.getDate();
+					h = today.getHours();
+					mm = today.getMinutes();
+					s = today.getSeconds();
+
+					m = m < 10 ? '0' + m : m;
+					d = d < 10 ? '0' + d : d;
+					h = h < 10 ? '0' + h : h;
+					mm = mm < 10 ? '0' + mm : mm;
+					s = s < 10 ? '0' + s : s;
+					datetime = y +'-'+ m +'-'+ d +' '+ h +':'+ mm +':'+ s;
+
+					// 更新最后发布时间
+					return db.handle({
+						sql: Reader.Model.readerUpdatePub
+						, data: {
+							id: data.query.id
+							, lastPub: datetime
+						}
+					}).then(function(r){
+						return rs;
+					});
+				}
+				else{
+					return rs;
+				}
+			}).then(function(rs){
 
 				if( rs ){
 					send.info = {
@@ -1000,31 +1055,51 @@ socket.register({
 					}
 				}).then(function(rs){
 
+					var p, id;
+
 					if( rs && rs.length ){
-						send.error = '';
-						send.msg = '数据已存在';
-						send.info = rs[0];
-						send.info.id = rs[0].Id;
+						console.log('url ', url, '已存在');
+						//send.error = '';
+						//send.msg = '数据已存在';
+						//send.info = rs[0];
+						//send.info.id = rs[0].Id;
+						//
+						//socket.emit('data', send);
+						//
+						//throw new Error(url +'，数据已存在');
+						id = rs[0].Id;
 
-						socket.emit('data', send);
+						p = db.handle({
+							sql: Reader.Model.bookmarkRead
+							, data: {
+								id: id
+								, title: title
+								, score: score
+								, tags: tags
+							}
+						}).then(function(rs){
+							rs.insertId = id;
 
-						throw new Error(url +'，数据已存在');
+							return rs;
+						});
 					}
+					else{
+						var source = Url.parse(url);
+						source = source.protocol + '//' + source.host;
 
-					var source = Url.parse(url);
-					source = source.protocol + '//' + source.host;
-
-					return db.handle({
-						sql: Reader.Model.bookmarkAdd
-						, data: {
-							url: url
-							, title: title
-							, score: score
-							, tags: tags
-							, source: source
-							, status: 2
-						}
-					});
+						p = db.handle({
+							sql: Reader.Model.bookmarkAdd
+							, data: {
+								url: url
+								, title: title
+								, score: score
+								, tags: tags
+								, source: source
+								, status: 2
+							}
+						});
+					}
+					return p;
 				}).then(function(rs){
 					//var data = rs.data;
 

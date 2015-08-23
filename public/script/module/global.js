@@ -14,8 +14,13 @@ define(function(require){
 
 	g.datetime = function(datetime){
 		var today = datetime ? datetime : new Date()
+			, type = typeof today
 			, y, m, d, h, mm, s
 			;
+
+		if( type === 'string' || type === 'number' ){
+			today = new Date( datetime );
+		}
 
 		if( !(today instanceof Date) || today.toString() === 'Invalid Date' ){
 			today = new Date();
