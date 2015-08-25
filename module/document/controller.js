@@ -52,7 +52,7 @@ web.get('/admin/document/:documentId/',function(req, res, next){
 		//	res.end();
 		//});
 
-		Model.getAllContent( documentId ).then( Admin.document).then(function(html){
+		Model.getAllContent( documentId, true ).then( Admin.document).then(function(html){
 			res.send( config.docType.html5 + html );
 			res.end();
 		});

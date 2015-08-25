@@ -6,6 +6,7 @@ require(['../config'], function(config){
 	r(['jquery', 'global', 'socket', 'tag', config.dataSource.tag, 'template',  'layout'], function($, g, socket, tag, tagData){
 		var $editor = $('#editor')
 			, $editorContainer = $editor.find('.module_content')
+			, PREVIEW_SIZE = 128
 			, editorTpl = $.template({
 				template: 'a[href=code?id=%Id%]' +
 					'>article.article.editor_article' +
@@ -13,7 +14,41 @@ require(['../config'], function(config){
 					'+img.article_preview[src=%preview% width=%width% height=%height% alt=%alt%]' +
 					'+div.tagsArea{%tags%}'
 				, filter:{
-					alt:function(data, index){
+					width: function(d){
+						var w = d.width
+							, h = d.height
+							, rs
+							;
+						if( w <= PREVIEW_SIZE && h <= PREVIEW_SIZE ){
+							rs = w;
+						}
+						else if( w >= h ){
+							rs = PREVIEW_SIZE;
+						}
+						else{
+							rs = Math.floor( PREVIEW_SIZE/h * w );
+						}
+
+						return rs;
+					}
+					, height: function(d){
+						var w = d.width
+							, h = d.height
+							, rs
+							;
+						if( w <= PREVIEW_SIZE && h <= PREVIEW_SIZE ){
+							rs = h;
+						}
+						else if( h >= w ){
+							rs = PREVIEW_SIZE;
+						}
+						else{
+							rs = Math.floor( PREVIEW_SIZE/w * h );
+						}
+
+						return rs;
+					}
+					, alt:function(data, index){
 						return data.preview ? data.name : '没有预览图片';
 					}
 					, tags: tag.tagTpl
@@ -29,7 +64,7 @@ require(['../config'], function(config){
 			, moreData = false
 			, space = 10
 			, loading = function(){
-				$editorContainer.height( $editorContainer.height() + 182 );
+				$editorContainer.height( $editorContainer.height() + 192 );
 				$editorContainer.append('<article class="article article-block"><div class="loading loading-chasing"></div></article>');
 			}
 			, layout = function(){

@@ -5,7 +5,7 @@ require(['../../module/config'], function(config){
 	config.requireConfig.baseUrl = location.origin +'/script/';
 
 	var r = require(config.requireConfig);
-	r(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g, socket, code){
+	r(['jquery', 'global', 'socket', 'codeEditor', 'codeEditorSkin', 'template'], function($, g, socket, code, codeSkin){
 		var $document = $('#document')
 			, $curr = null
 			, $temp = $([])
@@ -22,7 +22,7 @@ require(['../../module/config'], function(config){
 				}
 			})
 			, $addSectionPopup = $('#addSectionPopup').on('click', '#addSection', function(){
-				var title = $addSectionPopup.find('#sectionTitle').val()
+				var title = $addSectionPopup.find('#newSectionTitle').val()
 					;
 				if( title ){
 					$.ajax({
@@ -30,6 +30,7 @@ require(['../../module/config'], function(config){
 						, type: 'POST'
 						, data: {
 							title: title
+							, order: $document.find('.document_section').length +1
 						}
 						, dataType: 'json'
 						, success: function(json){
@@ -38,8 +39,11 @@ require(['../../module/config'], function(config){
 								$document.find('.module_content').append( sectionTpl({
 									sectionId: json.id
 									, sectionTitle: title
+									, dl: []
 								}).join('') );
 								$addSectionPopup.trigger('closeDialog');
+
+								$('#save').trigger('click');
 							}
 							else{
 
@@ -52,6 +56,7 @@ require(['../../module/config'], function(config){
 				var title = $addContentPopup.find('#contentTitle').val()
 					, sectionId = $addContentPopup.find('#sectionId').val()
 					, sectionTitle = $addContentPopup.find('#sectionTitle').val()
+					, $section = $document.find('.module_content .section[data-section-id="'+ sectionId +'"]')
 					;
 
 				if( title ){
@@ -62,16 +67,19 @@ require(['../../module/config'], function(config){
 							title: title
 							, sectionId: sectionId
 							, sectionTitle: sectionTitle
+							, order: $section.find('dt').length +1
 						}
 						, dataType: 'json'
 						, success: function(json){
 							if( json.success ){
 								//$mainList.append('<li data-id="'+ json.id +'"><a href="'+ json.id +'">'+ title +'</a><span class="icon icon-edit"></span></li>');
-								$document.find('.module_content .section[data-section-id="'+ sectionId +'"] dl').append( sectionListTpl({
+								$section.find('dl').append( sectionListTpl({
 									Id: json.id
 									, title: title
-								}).join('') );
+								}).join('') );console.log(111)
 								$addContentPopup.trigger('closeDialog');
+
+								$section.find('.icon-save').trigger('click');
 							}
 							else{
 
@@ -80,7 +88,11 @@ require(['../../module/config'], function(config){
 					});
 				}
 			})
+			, codeList = []
+			, $skinList
 			;
+
+		$skinList = codeSkin(config.requireConfig.baseUrl, codeList);
 
 		$document.on('click', '#save', function(){
 			var order = $document.find('.section').map(function(){
@@ -111,7 +123,7 @@ require(['../../module/config'], function(config){
 			var $that = $(this).parents('.section');
 
 			$addContentPopup.find('#sectionId').val( $that.data('sectionId') );
-			$addContentPopup.find('#sectionTitle').val($that.find('.section_title').text() );
+			$addContentPopup.find('#sectionTitle').val( $that.find('.section_title').text() );
 
 			$addContentPopup.trigger('showDialog');
 		})
@@ -177,6 +189,10 @@ require(['../../module/config'], function(config){
 				if( !$curr.data('codeMirror') ){
 					$curr.next().find('textarea').each(function(){
 						var c = code(this, 'dataset' in this ? this.dataset.codeType : this.getAttribute('data-code-type'));
+
+						codeList.push( c );
+
+						$skinList.triggerHandler('setSkin');
 
 						$curr.data('codeMirror', c);
 					}).end().find('.CodeMirror').addClass('edit_CodeMirror');

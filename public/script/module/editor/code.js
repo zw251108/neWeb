@@ -5,7 +5,7 @@
 /**
  * @module  editor UI 设置
  * */
-define('editorUISet', ['jquery', 'global', 'template'], function($, g){
+define('editorLayout', ['jquery', 'global', 'template'], function($, g){
 	var listTpl = $.template({
 			template: 'li.%on%.%sp%[title=%name% data-type=%type%]{%name%}'
 		})
@@ -89,12 +89,15 @@ define('editorUISet', ['jquery', 'global', 'template'], function($, g){
 
 			switch( type ){
 				case 1:
+					$currentShow && $currentShow.removeClass('on');
 					$editor.removeClass('editor-4col editor-4cor editor-htmlFS editor-cssFS editor-jsFS editor-rsFS').addClass('editor-4row');
 					break;
 				case 2:
+					$currentShow && $currentShow.removeClass('on');
 					$editor.removeClass('editor-4row editor-4cor editor-htmlFS editor-cssFS editor-jsFS editor-rsFS').addClass('editor-4col');
 					break;
 				case 3:
+					$currentShow && $currentShow.removeClass('on');
 					$editor.removeClass('editor-4row editor-4col editor-htmlFS editor-cssFS editor-jsFS editor-rsFS').addClass('editor-4cor');
 					break;
 				case 4:
@@ -129,7 +132,7 @@ define('editorUISet', ['jquery', 'global', 'template'], function($, g){
 		, $currentShow
 		, $showHTML = $('#showHTML').on('click', function(){
 			if( $currentShow !== $showHTML ){
-				$editor.removeClass('editor-cssFS editor-jsFS editor-rsFS').addClass('editor-htmlFS');
+				$editor.removeClass('editor-4row editor-4col editor-4cor editor-cssFS editor-jsFS editor-rsFS').addClass('editor-htmlFS');
 
 				$currentShow && $currentShow.removeClass('on');
 				$showHTML.addClass('on');
@@ -140,7 +143,7 @@ define('editorUISet', ['jquery', 'global', 'template'], function($, g){
 		})
 		, $showCSS = $('#showCSS').on('click', function(){
 			if( $currentShow !== $showCSS ){
-				$editor.removeClass('editor-htmlFS editor-jsFS editor-rsFS').addClass('editor-cssFS');
+				$editor.removeClass('editor-4row editor-4col editor-4cor editor-htmlFS editor-jsFS editor-rsFS').addClass('editor-cssFS');
 
 				$currentShow && $currentShow.removeClass('on');
 				$showCSS.addClass('on');
@@ -151,7 +154,7 @@ define('editorUISet', ['jquery', 'global', 'template'], function($, g){
 		})
 		, $showJS = $('#showJS').on('click', function(){
 			if( $currentShow !== $showJS ){
-				$editor.removeClass('editor-htmlFS editor-cssFS editor-rsFS').addClass('editor-jsFS');
+				$editor.removeClass('editor-4row editor-4col editor-4cor editor-htmlFS editor-cssFS editor-rsFS').addClass('editor-jsFS');
 
 				$currentShow && $currentShow.removeClass('on');
 				$showJS.addClass('on');
@@ -162,7 +165,7 @@ define('editorUISet', ['jquery', 'global', 'template'], function($, g){
 		})
 		, $showRS = $('#showRS').on('click', function(){
 			if( $currentShow !== $showRS ){
-				$editor.removeClass('editor-htmlFS editor-cssFS editor-jsFS').addClass('editor-rsFS');
+				$editor.removeClass('editor-4row editor-4col editor-4cor editor-htmlFS editor-cssFS editor-jsFS').addClass('editor-rsFS');
 
 				$currentShow.removeClass('on');
 				$showRS.addClass('on');
@@ -199,6 +202,8 @@ define('editorUISet', ['jquery', 'global', 'template'], function($, g){
 		html = h;
 		css = c;
 		js = j;
+
+		return $layoutList;
 	};
 });
 define('uiLibPopup', ['jquery', 'socket', 'template'], function($, socket){
@@ -367,12 +372,13 @@ require(['../config'], function(config){
 	var r = require.config(config.requireConfig);
 	r(['jquery', 'global', 'socket'
 		, 'codeEditor'
-		, 'editorUISet'
+		, 'codeEditorSkin'
+		, 'editorLayout'
 		, 'uiLibPopup'
 		, 'demoImgLibPopup'
 		, 'setMorePopup'
 		, 'tag', config.dataSource.tag
-		, 'template'], function($, g, socket, codeArea, initUI, initUiLib, demoImg, setMore, tag, tagsData){
+		, 'template'], function($, g, socket, code, codeSkin, layout, initUiLib, demoImg, setMore, tag, tagsData){
 		var $editor = $('#editor')
 			, $form = $editor.find('#editorForm')
 			, $toolbar = $editor.find('.toolbar')
@@ -428,6 +434,9 @@ require(['../config'], function(config){
 
 			, $codeName = $setMorePopup.find('#codeName')
 			, $tags = $('#tags')
+
+			, $skinList
+			, $layoutList
 			;
 
 		tag( tagsData );
@@ -448,9 +457,9 @@ require(['../config'], function(config){
 
 		g.mod('$editor', $editor);
 
-		html = codeArea(html[0], 'html');
-		css = codeArea(css[0], 'css');
-		js = codeArea(js[0], 'js');
+		html = code(html[0], 'html');
+		css = code(css[0], 'css');
+		js = code(js[0], 'js');
 
 		html.on('change', editFunc);
 		css.on('change', editFunc);
@@ -501,7 +510,10 @@ require(['../config'], function(config){
 
 		$editor.find('label').removeClass('hidden');
 
-		initUI($editor, html, css, js);
+		$skinList = codeSkin(config.requireConfig.baseUrl, [html, css, js], function(){
+
+		});
+		$layoutList = layout($editor, html, css, js);
 		initUiLib($jsLib, $cssLib);
 
 		$('#editorSetMoreRs').on('load', function(){

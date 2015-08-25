@@ -53,6 +53,11 @@
 
 		font-size: 14px;
 		text-indent: 2em;
+
+		.btn{
+			display: block;
+			margin: 10px auto 0;
+		}
 	}
 
 	ul,
@@ -86,6 +91,68 @@
 	 */
 	.code{
 		white-space: nowrap;
+	}
+
+	.list{
+		list-style: none;
+		overflow: auto;
+		position: absolute;
+		top: 40px;
+		right: 0;
+		max-height: 16em;
+		margin: 0;
+		padding: 0;
+		outline: 1px solid #fff;
+		background: #888;
+		margin-bottom: -1px;
+		font-size: 14px;
+
+		&::-webkit-scrollbar {
+			width: 5px;
+		}
+		&::-webkit-scrollbar-thumb{
+			height: 50px;
+			border-radius: 20px;
+			background: #c0c0c0;
+		}
+		&::-webkit-scrollbar-track-piece{
+			background: #fff;
+		}
+
+		li{
+			overflow: hidden;
+			position: relative;
+			height: 2em;
+			max-width: 10em;
+			border-bottom: 1px solid #fff;
+			padding: 0 1em;
+			background: #888;
+
+			color: #fff;
+
+			line-height: 2em;
+			white-space: nowrap;
+
+			cursor: pointer;
+
+			-ms-text-overflow: ellipsis;
+			text-overflow: ellipsis;
+
+			-webkit-box-sizing: border-box;
+			-moz-box-sizing: border-box;
+			box-sizing: border-box;
+
+			&:hover{
+				background: #444;
+			}
+			&:last-child{
+				border: 0;
+			}
+		}
+
+		.on{
+			background: #444;
+		}
 	}
 
 //	.icon{

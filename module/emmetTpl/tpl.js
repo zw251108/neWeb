@@ -96,7 +96,7 @@ module.exports = {
 			'+div.module_content{%content%}'
 	})
 	, metroTpl: emmetTpl({
-		template: 'a[href=%id%/]>section#%id%.module.module-metro.module-%id%.%size%' +
+		template: 'a[href=%id%/]>section#%id%.module.module-metro.module-%id%.tiny' +
 			'>h2.module_title.icon.icon-%id%{%title%}' +
 			'+div.m_info{%info%}' +
 			'+div.module_content'

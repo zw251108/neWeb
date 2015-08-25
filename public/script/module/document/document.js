@@ -5,14 +5,14 @@ define(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g, 
 	var $document = g.mod('$document') || $('#document')
 		, $curr = null
 		, $temp = $([])
-		, dlTmpl = $.template({
+		, dlTpl = $.template({
 			template: 'dt.icon.icon-right{%title%}+dd{%content%}'
 		})
-		, sectionTmpl = $.template({
+		, sectionTpl = $.template({
 			template: 'section.document_section.section>h3.section_title{%section_title%}>span.icon.icon-down^dl{%dl%}'
 			, filter: {
 				dl: function(d){
-					return dlTmpl(d.dl).join('');
+					return dlTpl(d.dl).join('');
 				}
 			}
 		})
@@ -22,7 +22,7 @@ define(['jquery', 'global', 'socket', 'codeEditor', 'template'], function($, g, 
 	// 绑定 socket 回调 事件
 	socket.register({
 		document: function(data){
-			$document.data('data', true).find('.module_content').append( sectionTmpl(data.data).join('') );
+			$document.data('data', true).find('.module_content').append( sectionTpl(data.data).join('') );
 
 			// 数据已加载完成
 			$container.triggerHandler('dataReady');

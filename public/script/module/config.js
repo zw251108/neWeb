@@ -16,6 +16,7 @@ define({
 			, time: 'module/time'
 
 			, codeEditor: 'module/codeEditor'
+			, codeEditorSkin: 'module/codeEditorSkin'
 
 			, template: 'ui/jquery.emmetTpl'
 			, layout: 'ui/jquery.layout'

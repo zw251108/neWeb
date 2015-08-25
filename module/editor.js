@@ -16,6 +16,8 @@ var db          = require('./db.js')
 	, tagView   = require('./tag/view.js')
 	, image     = require('./image.js')
 
+	, PREVIEW_SIZE = 128
+	, PREVIEW_WIDTH = 128
 	, codeTpl       = emmetTpl({
 		template: 'a[href=code?id=%Id%]' +
 			'>article.article.editor_article' +
@@ -23,7 +25,41 @@ var db          = require('./db.js')
 				'+img.article_preview[src=%preview% width=%width% height=%height% alt=%alt%]' +
 				'+div.tagsArea{%tags%}'
 		, filter:{
-			alt:function(data, index){
+			width: function(d){
+				var w = d.width
+					, h = d.height
+					, rs
+					;
+				if( w <= PREVIEW_SIZE && h <= PREVIEW_SIZE ){
+					rs = w;
+				}
+				else if( w >= h ){
+					rs = PREVIEW_SIZE;
+				}
+				else{
+					rs = Math.floor( PREVIEW_SIZE/h * w );
+				}
+
+				return rs;
+			}
+			, height: function(d){
+				var w = d.width
+					, h = d.height
+					, rs
+					;
+				if( w <= PREVIEW_SIZE && h <= PREVIEW_SIZE ){
+					rs = h;
+				}
+				else if( h >= w ){
+					rs = PREVIEW_SIZE;
+				}
+				else{
+					rs = Math.floor( PREVIEW_SIZE/w * h );
+				}
+
+				return rs;
+			}
+			,alt:function(data, index){
 				return data.preview ? data.name : '没有预览图片';
 			}
 			, tags: tagView.tagEditorFilter.tagsArea

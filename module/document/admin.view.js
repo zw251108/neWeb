@@ -84,24 +84,25 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						, size: 'large'
 						, toolbar: [{
 							type: 'button', id: 'save', icon: 'save', title: '保存排序'}, {
-							type: 'button', id: 'add', icon: 'plus', title: '添加章节'
+							type: 'button', id: 'add', icon: 'plus', title: '添加章节'}, {
+							type: 'button', id: 'changeSkin',   icon: 'skin',   title: '更改皮肤'
 						}]
 						, content: sectionTpl( rs).join('')
 					}
 					, modulePopup: [{
 						id: 'addSectionPopup', size: 'normal', toolbar: ''
 						, content: '<form>' +
-								'<input type="hidden" id="documentId"/>' +
+								'<input type="hidden" name="documentId" id="documentId"/>' +
 								'<div class="formGroup">' +
-								'<label class="label" for="sectionTitle">请添加标题</label>' +
-								'<input type="text" id="sectionTitle" class="input" name="sectionTitle"/>' +
+								'<label class="label" for="newSectionTitle">请添加标题</label>' +
+								'<input type="text" id="newSectionTitle" class="input" name="newSectionTitle"/>' +
 								'</div>' +
 							'</form>'
 						, button: '<button type="button" id="addSection" class="btn">添加</button>'
 					}, {
 						id: 'addContentPopup', size: 'normal', toolbar: ''
 						, content: '<form>' +
-							'<input type="hidden" id="sectionId"/>' +
+							'<input type="hidden" name="sectionId" id="sectionId"/>' +
 							'<input type="hidden" id="sectionTitle"/>' +
 							'<div class="formGroup">' +
 								'<label class="label" for="contentTitle">请添加标题</label>' +

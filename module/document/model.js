@@ -12,13 +12,13 @@ var db  = require('../db.js')
 
 		, sectionByDocument: 'select Id,title from document_section where document_id=:documentId'
 		, sectionById: 'select Id,title from document_section where Id=:id'
-		, sectionAdd: 'insert into document_section(title,document_id) values(:title,:documentId)'
+		, sectionAdd: 'insert into document_section(title,document_id,`order`) values(:title,:documentId,:order)'
 		, sectionOrder: 'update document_section set content_order=:order where Id=:sectionId'
 
 		, contentByDocument: 'select Id,title,content,section_id,section_title from document_content where document_id=:documentId order by section_id,`order`'
 		, contentBySection: 'select Id,title,content,section_title from document_content where section_id=:sectionId order by `order`'
 		, contentById: 'select Id,title,content,section_title from document_content where Id=:id'
-		, contentAdd: 'insert into document_content(title,content,document_id,section_id,section_title) values(:title,\'\',:documentId,:sectionId,:sectionTitle)'
+		, contentAdd: 'insert into document_content(title,content,document_id,section_id,section_title,`order`) values(:title,\'\',:documentId,:sectionId,:sectionTitle,:order)'
 		, contentSaveContent: 'update document_content set content=:content where Id=:id'
 	}
 	, Model = {
@@ -59,7 +59,7 @@ var db  = require('../db.js')
 			});
 		}
 
-		, getAllContent: function(documentId){
+		, getAllContent: function(documentId, encode){
 			return db.handle({
 				sql: SQL.contentByDocument
 				, data: {
@@ -86,7 +86,7 @@ var db  = require('../db.js')
 						});
 					}
 
-					t.content = t.content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\$/g, '&#36;');
+					encode && (t.content = t.content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\$/g, '&#36;'));
 					tempArray.push( t );
 				}
 

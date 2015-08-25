@@ -32,6 +32,9 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						id: 'document'
 						, title: '前端文档 document'
 						, size: 'large'
+						, toolbar: [{
+							type: 'button', id: 'changeSkin',   icon: 'skin',   title: '更改皮肤'
+						}]
 						, content: sectionTpl( rs).join('')
 					}
 				}
