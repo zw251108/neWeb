@@ -247,7 +247,7 @@ index.push({
 	id: 'bower'
 	, type: 'metro'
 	, size: 'normal'
-	, title: '前端组件管理 bower'
+	, title: '组件 bower'
 });
 
 web.get('/bower/', function(req, res){

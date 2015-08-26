@@ -22,7 +22,7 @@ index.push({
 	id: 'document'
 	, type: 'metro'
 	, size: 'small'
-	, title: '前端文档 document'
+	, title: '文档 document'
 });
 
 web.get('/document/', function(req, res){

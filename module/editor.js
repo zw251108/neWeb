@@ -253,7 +253,7 @@ index.push({
 	id: 'editor'
 	, type: 'metro'
 	, size: 'normal'
-	, title: '前端编辑器 editor'
+	, title: '编辑器 editor'
 });
 
 web.get('/editor/', function(req, res){
