@@ -5,6 +5,7 @@ define(['jquery', 'global', 'socket', 'tag', 'template'], function($, g, socket,
 			$bookmarkId.val( data.id );
 			$bookmarkUrl.val( data.url );
 			$bookmarkTitle.val( data.title );
+			data.score && $readPopup.find('#star'+ data.score).prop('checked', true);
 
 			$readPopup.find('div.tagsArea').html( data.tags );
 

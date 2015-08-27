@@ -69,7 +69,8 @@
     "angular-route": "~1.4.4",
     "Hover": "~2.0.2",
     "Buttons": "~2.0.0",
-    "csshake": "*"
+    "csshake": "*",
+    "svg.js": "~2.0.5"
   },
   "resolutions": {
     "animate.css": "~3.4.0",

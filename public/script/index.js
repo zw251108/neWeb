@@ -130,22 +130,42 @@ require(['module/config'], function(config){
 
 		var d = [
 			[
-				{axis: 'HTML(5) & CSS(3)', value: 9},
-				{axis: 'JavaScript(jQuery)', value: 8},
-				{axis: 'Node.js', value: 7},
-				{axis: '前端工具', value: 7},
-				{axis: '设计能力', value: 2},
-				{axis: '用户体验', value: 7}
+				{value: 9, axis: 'HTML(5) & CSS(3)'},
+				{value: 8, axis: 'JavaScript'},
+				{value: 7, axis: 'Node.js'},
+				{value: 7, axis: '前端工具'},
+				{value: 2, axis: '设计能力'},
+				{value: 7, axis: '用户体验'}
 			]
 		], data = [
-			[
-				{axis: '学习能力',value: 9},
-				{axis: '创意',value: 7},
-				{axis: '团队协作',value: 9},
-				{axis: '应变能力',value: 8},
-				{axis: '责任心',value: 8},
-				{axis: '耐心',value: 8}
-			]
+			[{
+				value: 9, axis: '学习能力'}, {
+				value: 7, axis: '创意'}, {
+				value: 9, axis: '团队协作'}, {
+				value: 8, axis: '应变能力'}, {
+				value: 8, axis: '责任心'}, {
+				value: 8, axis: '耐心'
+			}]
+		], data1 = [
+			[{
+				axis: '思维'
+				, desc: '设计感觉，理念，思想。<br/>对专业的直觉。<br/>例：有人有天生色彩感觉好，或对版式的控制感觉良好。'
+			}, {
+				axis: '视野'
+				, desc: '眼界，认知程度。国内设计环境认知，国际流行认知。<br/>广度：国标、界面、动效、视频、平面、标志、字体等。<br/>深度：对某一项有深入研究，特长点。<br/>例：对动效、视频剪辑有深入了解，有一技之长。'
+			}, {
+				axis: '沟通'
+				, desc: '表达能力，聆听。<br/>对自己观点的表述，懂得倾听。<br/>在面试与讨论是状态的体现。'
+			}, {
+				axis: '动力'
+				, desc: '工作状态，动能。<br/>对渴望得到这份工作所做的努力，面试作业的体现。'
+			}, {
+				axis: '经验'
+				, desc: '过往工作经验，职业背景。<br/>应届生可忽略此项。<br/>如果是跨专业，例如平面转GUI，或者产品转交互，需要重新评估。'
+			}, {
+				axis: '表达'
+				, desc: '纯技法，手上功夫。<br/>高级、资深视觉设计师重要考核项。'
+			}]
 		];
 
 //Options for the Radar chart, other than default

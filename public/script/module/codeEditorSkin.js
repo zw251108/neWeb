@@ -14,6 +14,8 @@ define(['jquery', 'socket', 'template'], function($, g){
 				$skinList.slideToggle().prev().toggle();
 			}
 			, setSkin: function(e, skin){
+				console.log(skin)
+				skin = skin || CURRENT_SKIN;
 
 				$skinLink.attr('href', skin !== 'default' ? BASE_URL +'plugin/codeMirror/theme/'+ skin +'.css' : '');
 
@@ -45,9 +47,7 @@ define(['jquery', 'socket', 'template'], function($, g){
 			return obj;
 		})).join('') ).on('click', 'li', function(){
 
-			CURRENT_SKIN = this.innerHTML;
-
-			$codeEditorSkin.trigger('setSkin', [skin]);
+			$codeEditorSkin.trigger('setSkin', [this.innerHTML]);
 
 			$(this).addClass('on').siblings('.on').removeClass('on');
 
@@ -82,6 +82,6 @@ define(['jquery', 'socket', 'template'], function($, g){
 			}
 		};
 
-		return $skinList;
+		return $codeEditorSkin;
 	}
 });

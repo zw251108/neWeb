@@ -28,7 +28,7 @@ var db          = require('./db.js')
 		}
 	})
 	, articleTpl   = emmetTpl({
-		template: 'article#readerArt%Id%.reader_article.article[data-id=%Id%]' +
+		template: 'article#readerArt%Id%.reader_article.article[data-id=%Id% data-score=%score%]' +
 			'>a[href=%url% title=%title% target=_blank]' +
 				'>h3.article_title{%title%}' +
 			'^hr' +
@@ -147,9 +147,9 @@ var db          = require('./db.js')
 			, readerIsExist: 'select * from reader where xml_url like :xmlUrl'
 			, readerUpdatePub: 'update reader set last_pub=:lastPub where Id=:id'
 
-			, bookmark: 'select Id,title,url,status,tags,datetime from reader_bookmark order by status,Id desc'
+			, bookmark: 'select Id,title,url,status,tags,datetime,score from reader_bookmark order by status,Id desc'
 			, bookmarkCount: 'select count(*) as count from reader_bookmark'
-			, bookmarkPage: 'select Id,title,url,status,tags,datetime from reader_bookmark order by status,Id desc limit :page,:size'
+			, bookmarkPage: 'select Id,title,url,status,tags,datetime,score from reader_bookmark order by status,Id desc limit :page,:size'
 			, bookmarkAdd: 'insert into reader_bookmark(url,title,source,tags,datetime,status) select :url,:title,:source,:tags,now(),:status from dual where not exists (select * from reader_bookmark where url like :url)'
 			, bookmarkRead: 'update reader_bookmark set status=2,title=:title,tags=:tags,score=score+:score where Id=:id and status<2'
 			, bookmarkIsExist: 'select * from reader_bookmark where url like :url'
@@ -452,10 +452,14 @@ var db          = require('./db.js')
 								}])
 							, content: articleTpl(rs).join('')
 					}).join('') + tpl.popupTpl([{
-						id: 'addPopup', size: 'normal'
-							, content: bookmarkAddFormTpl({})
-							, button: '<button type="button" id="addBookmark" class="btn">确定</button>'
+						id: 'readPopup', size: 'normal'
+							, content: bookmarkReadFormTpl({})
+							, button: '<button type="button" id="readBookmark" class="btn">确定</button>'
 					}])
+					, script: {
+						main: '../script/module/reader/favorite'
+						, src: '../script/lib/require.min.js'
+					}
 				});
 			}
 		}

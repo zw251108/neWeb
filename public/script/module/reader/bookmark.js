@@ -83,6 +83,7 @@ require(['../config'], function(config){
 					id: $parent.data('id')
 					, title: $parent.find('h3.article_title').html()
 					, tags: $parent.find('div.tagsArea').html()
+					, score: $parent.data('score')
 				}]);
 
 				$readPopup.trigger('showDialog');
