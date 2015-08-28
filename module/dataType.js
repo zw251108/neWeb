@@ -50,7 +50,7 @@ var dataType = {
 	, bigint: {
 		valid: [
 			['isNumber']
-			, ['limit', -Math.pow(2, 63), Math.pow(2, 63)-1]
+			, ['limit', -Math.pow(2, 63), Math.pow(2, 63)-1e]
 		]
 	}
 	, 'float': {

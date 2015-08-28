@@ -173,6 +173,9 @@
 
 				return rs;
 			}
+			, 'reset.validator': function(e){
+				$form.reset();
+			}
 			, valid: function(e, $item, type){
 
 				var methods = type.valid || []

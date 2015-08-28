@@ -27,7 +27,7 @@ index.push({
 
 web.get('/document/', function(req, res){
 
-	Model.getAllContent( DOCUMENT_ID ).then( View.document ).then(function( html ){
+	Model.getContentByDocumentId( DOCUMENT_ID ).then( View.document ).then(function( html ){
 		res.send( config.docType.html5 + html );
 		res.end();
 	});
@@ -37,7 +37,7 @@ web.get('/document/', function(req, res){
  *
  * */
 web.get('/admin/document/', function(req, res){
-	Model.getAllDoc().then( Admin.documentList ).then(function(html){
+	Model.getDocumentList().then( Admin.documentList ).then(function(html){
 		res.send( config.docType.html5 + html );
 		res.end();
 	});
@@ -52,7 +52,7 @@ web.get('/admin/document/:documentId/',function(req, res, next){
 		//	res.end();
 		//});
 
-		Model.getAllContent( documentId, true ).then( Admin.document).then(function(html){
+		Model.getContentByDocumentId( documentId, true ).then( Admin.document).then(function(html){
 			res.send( config.docType.html5 + html );
 			res.end();
 		});

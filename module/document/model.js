@@ -22,7 +22,7 @@ var db  = require('../db.js')
 		, contentSaveContent: 'update document_content set content=:content where Id=:id'
 	}
 	, Model = {
-		getAllDoc: function(){
+		getDocumentList: function(){
 			return db.handle({
 				sql: SQL.document
 			})
@@ -59,7 +59,7 @@ var db  = require('../db.js')
 			});
 		}
 
-		, getAllContent: function(documentId, encode){
+		, getContentByDocumentId: function(documentId, encode){
 			return db.handle({
 				sql: SQL.contentByDocument
 				, data: {
