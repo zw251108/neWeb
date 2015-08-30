@@ -1,3 +1,5 @@
+@import "../lib/function.less";
+
 @-webkit-keyframes bounce{
 	0%, 100%{
 		-webkit-transform:  scale(0.0);
@@ -30,15 +32,13 @@
 }
 @keyframes bounce{
 	0%, 100%{
-		-webkit-transform:  scale(0.0);
-		-moz-transform:     scale(0.0);
-		-ms-transform:      scale(0.0);
 		transform:          scale(0.0);
 	}
 	50%{
-		-webkit-transform:  scale(1.0);
-		-moz-transform:     scale(1.0);
-		-ms-transform:      scale(1.0);
 		transform:          scale(1.0);
 	}
+}
+
+.animate-bounce{
+	.animation-name(bounce);
 }

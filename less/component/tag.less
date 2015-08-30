@@ -1,25 +1,28 @@
+@import "../lib/color.less";
+@import "../core/color.config.less";
+
 .tag{
 	display: inline-block;
 	min-width: 4em;
-	border: 1px solid #c0c0c0;
+	border: 1px solid @tag_bd_c;
 	border-radius: 20px;
 	margin: 5px;
 	padding: 0 .5em;
 
-	background: -webkit-linear-gradient(top,#eee,#888);
+	background: -webkit-linear-gradient(top, @tag_bg_gradient_s, @tag_bg_gradient_e);
 
-	color: #fff;
+	color: @tag_c;
 	text-align: center;
 
 	cursor: pointer;
 
 	&-checked{
-		background: #ccc -webkit-linear-gradient(top,#888,#eee);
+		background: @tag_checked_bg_c -webkit-linear-gradient(top, @tag_checked_bg_gradient_s, @tag_checked_bg_gradient_e);
 	}
 }
 .tagInput{
 	position: relative;
-	border-bottom: 1px solid #c0c0c0;
+	border-bottom: 1px solid @tagInput_bd_c;
 	margin: 0 10px;
 }
 .tagsArea{

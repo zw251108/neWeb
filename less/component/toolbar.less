@@ -1,3 +1,6 @@
+@import "../lib/color.less";
+@import "../core/color.config.less";
+
 .toolbar{
 	float: right;
 	z-index: 130;
@@ -16,22 +19,22 @@
 		//border: solid #fff;
 		//border-width: 0 1px;
 		//border: 0;
-		border: 1px solid #fff;
+		border: 1px solid @toolbar_bd_c;
 		border-radius: 5px;
 		margin: 5px;
 		padding: 0;
 		//outline: 1px solid #fff;
 //		background-position: center center;
 //		background-repeat: no-repeat;
-		color: #fff;
+		color: @toolbar_c;
 
 		-webkit-box-sizing: border-box;
 		-moz-box-sizing: border-box;
 		box-sizing: border-box;
 
 		&:hover{
-			border-color: #d35400;
-			background: #d35400 -webkit-linear-gradient(top,#f88,#d35400);
+			border-color: @toolbar_hover_bd_c;
+			background: @toolbar_hover_bg_c -webkit-linear-gradient(top, @toolbar_hover_bg_gradient_s, @toolbar_hover_bg_gradient_e);
 		}
 		
 		&:before{

@@ -1,4 +1,7 @@
+@import "../lib/color.less";
 @import "../lib/function.less";
+@import "../core/color.config.less";
+
 
 .loading{
 	position: relative;
@@ -12,7 +15,7 @@
 
 	text-align: center;
 
-	.animation(rotate 2s infinite linear);
+	.animation(rotate-360 2s infinite linear);
 
 
 	&:before,
@@ -23,7 +26,7 @@
 		height: 30px;
 		width: 30px;
 		border-radius: 100%;
-		background-color: #888;
+		background-color: @loading_bg_c;
 
 		content: "";
 

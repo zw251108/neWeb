@@ -35,7 +35,7 @@ require(['../../module/config'], function(config){
 					url: 'save'
 					, type: 'POST'
 					, data: {
-						order: $mainList.children().map(function(){return $(this).data('id');}).get().join()
+						order: $mainList.children().map(function(){return 'dataset' in this ? this.dataset.id : this.getAttribute('data-id');}).get().join()
 					}
 					, dataType: 'json'
 					, success: function(json){

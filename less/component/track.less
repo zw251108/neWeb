@@ -1,5 +1,5 @@
-@track:          #c0c0c0;   // 分步操作背景颜色
-@track-on:       #d35400;   // 分步操作 当前操作背景颜色
+@import "../lib/color.less";
+@import "../core/color.config.less";
 
 @track-height:       40px;   // 分步操作高度
 @track-min-width:    100px;  // 分步操作最小宽度
@@ -16,7 +16,7 @@
 
 	margin-left: @track-margin-left;
 
-	background: @track;
+	background: @track_bg_c;
 
 	text-align:center;
 	line-height: 40px;
@@ -44,25 +44,25 @@
 .track-last:before{
 	left: -@track-border;
 	border-width: @track-arrow;
-	border-color: @track transparent;
+	border-color: @track_bd_c transparent;
 }
 .track:after,
 .track-first:after{
 	right: -@track-border;
 	border-width: @track-arrow;
-	border-color: transparent @track;
+	border-color: transparent @track_bd_c;
 }
 
 .track-done{
 
 }
 .track-on{
-	background: @track-on;
+	background: @track_on_bg_c;
 
 	&:before{
-		border-color: @track-on transparent;
+		border-color: @track_on_bd_c transparent;
 	}
 	&:after{
-		border-color: transparent @track-on;
+		border-color: transparent @track_on_bd_c;
 	}
 }

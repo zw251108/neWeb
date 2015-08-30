@@ -1,3 +1,6 @@
+@import "../lib/color.less";
+@import "../core/color.config.less";
+
 /**
  * 按钮相关
  *  btnGroup 是用来包裹按钮，button、input:submit、input:reset、input:button 可以用在表单中
@@ -10,10 +13,10 @@
 	display: inline-block;
 	min-width: 4em;
 	padding: 0 1em;
-	border: 1px solid #00bfff;
+	border: 1px solid @btn_bd_c;
 	border-radius: 5px;
-	background: -webkit-linear-gradient(top, #00ffff, #00bfff);
-	color: #fff;
+	background: -webkit-linear-gradient(top, @btn_bg_gradient_s, @btn_bg_gradient_e);
+	color: @btn_c;
 	line-height: 2em;
 
 	-webkit-appearance: none;
