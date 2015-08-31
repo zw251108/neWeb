@@ -63,7 +63,7 @@ require(['module/config'], function(config){
 
 	var r = require.config(config.requireConfig);
 
-	r(['jquery', 'global', 'socket', 'time'], function($, g, socket, $time){
+	r(['jquery', 'global', 'socket', 'time', 'login'], function($, g, socket, $time){
 		var $container = g.$container
 			, $blog = $('#blog').data('width', 'big') // Blog 模块
 			, $document = $('#document').data('width', 'small') // Document 文档模块

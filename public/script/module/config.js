@@ -15,6 +15,8 @@ define({
 			, tag: 'module/tag'
 			, time: 'module/time'
 
+			, login: 'module/login'
+
 			, codeEditor: 'module/codeEditor'
 			, codeEditorSkin: 'module/codeEditorSkin'
 

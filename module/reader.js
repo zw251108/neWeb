@@ -151,12 +151,12 @@ var db          = require('./db.js')
 			, bookmarkCount: 'select count(*) as count from reader_bookmark'
 			, bookmarkPage: 'select Id,title,url,status,tags,datetime,score from reader_bookmark order by status,Id desc limit :page,:size'
 			, bookmarkAdd: 'insert into reader_bookmark(url,title,source,tags,datetime,status) select :url,:title,:source,:tags,now(),:status from dual where not exists (select * from reader_bookmark where url like :url)'
-			, bookmarkRead: 'update reader_bookmark set status=2,title=:title,tags=:tags,score=score+:score where Id=:id and status<2'
+			, bookmarkRead: 'update reader_bookmark set status=2,title=:title,tags=:tags,score=score+:score where Id=:id'
 			, bookmarkIsExist: 'select * from reader_bookmark where url like :url'
 
 			, favorite: 'select * from reader_bookmark where status=2 order by score desc,datetime desc'
 			, favoriteCount: 'select count(*) as count from reader_bookmark where status=2'
-			, favoritePage: 'select * from reader_bookmark where status=2 order by datetime desc limit :page,:size'
+			, favoritePage: 'select * from reader_bookmark where status=2 order by score desc,datetime desc limit :page,:size'
 		}
 
 		/**

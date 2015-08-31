@@ -23,10 +23,6 @@ var getEmmet    = require('../emmet/getEmmet.js')
 		document: function(rs){
 			var document = {
 				title: '前端文档 Document'
-				, script: {
-					main: '../script/module/document/index'
-					, src: '../script/lib/require.min.js'
-				}
 				, main: {
 					moduleMain: {
 						id: 'document'
@@ -35,8 +31,12 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						, toolbar: [{
 							type: 'button', id: 'changeSkin',   icon: 'skin',   title: '更改皮肤'
 						}]
-						, content: sectionTpl( rs).join('')
+						, content: sectionTpl( rs ).join('')
 					}
+				}
+				, script: {
+					main: '../script/module/document/index'
+					, src: '../script/lib/require.min.js'
 				}
 			};
 

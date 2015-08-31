@@ -76,14 +76,27 @@ web.use('/requirement',     express.static(__dirname + '/requirement'));
 
 web.use('/test.html',    express.static(__dirname + '/test.html') );  //
 
+var user = {
+	id: 1
+};
+
 /**
  * 访问主页	/
  * */
 web.get('/', function(req, res){
+	var session = req.session;
+
+	if( !('user' in session) ){
+		session.user = user;
+	}
+
 	console.log('session id', req.session.id);
+
+	console.log(req.session);
 
 	res.send( tpl.html('index', {
 		title: '个人小站（开发测试中...）'
+		, user: ('user' in session) ? '/user' : '/login'
 		, modules: tpl.metroTpl(index).join('')
 		, script: {
 			main: 'script/index'
