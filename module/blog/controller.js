@@ -17,3 +17,4 @@ var web         = require('../web.js')
 	;
 
 
+web.use('/script/module/blog.js', __dirname +'/module/blog/handler.js');

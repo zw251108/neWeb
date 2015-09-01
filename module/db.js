@@ -10,7 +10,14 @@ var mysql = require('mysql')
 	, error = require('./error.js')
 
 	, db = mysql.createConnection( config.db )
+	, DBError = function(msg){
+		this.message = msg;
+	}
 	;
+
+DBError.prototype = new Error();
+
+error.register('DBError', '数据库错误');
 
 // 自定义参数格式
 db.config.queryFormat = function(sql, values){
@@ -52,13 +59,17 @@ db.handle = function(query){
 			});
 		}
 		else{
-			reject( new Error('缺少 SQL 语句') );
+			reject( new DBError('缺少 SQL 语句') );
 		}
 	}).then(function(rs){
 		return rs;
-	}, function(err){
-		console.log(err);
-		return err;
+	}, function(e){
+		if( e instanceof DBError){
+			console.log('[DBError]', e.message);
+		}
+		else{
+			throw e;
+		}
 	});
 };
 

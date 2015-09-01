@@ -3,17 +3,17 @@
  * @param   {string}    html
  * @return  {string}    html 代码转换成 emmet 的结果
  * */
-;(function(factory, namespace){
+;(function(factory, global, namespace){
 	// 后端
 	if( typeof exports === 'object' && typeof module === 'object' ){
 		module.exports = factory;
 	}
-	// 前端
+	// 前端 AMD 规范
 	else if( typeof define === 'function' && define.amd ){
 		define(factory);
 	}
 	else{
-		(jQuery || this)[namespace] = factory;
+		global[namespace] = factory;
 	}
 })(function($, html){
 	'use strict';
@@ -119,4 +119,4 @@
 	}
 
 	return emmet.replace(/([^\^\+])(\+*)(\^*)$/, '$1');
-}, 'htmlToEmmet');
+}, this, 'htmlToEmmet');

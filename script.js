@@ -654,3 +654,28 @@ function saveOrUpdate(name, num){
 //var c = [{i: 0}, {i: 1}, {i: 2}, {i: 3}, {i: 4}, {i: 5}, {i: 6}, {i: 7}, {i: 8}, {i: 9}, {i: 10}, {i: 11}]
 //console.log(arr.map(function(d, i){console.log(d, i);return d}));
 //console.log(c.map(function(d, i){console.log(d.i, i);return d}));
+var BlogError = function(msg){
+	this.message = '[Blog Error]' +msg;
+}
+;
+
+BlogError.prototype = new Error();
+
+var pro = function(v){   console.log(1)
+	return new Promise(function(resolve, reject){
+		resolve(v)
+	});
+};
+
+pro(123).then(function(v){console.log(2)
+	throw new BlogError('123123123');
+}).catch(function(e){    console.log(3)
+	if( e instanceof BlogError){
+		console.log(4)
+	}
+	else{
+		throw e;
+	}
+}).catch(function(e){
+	console.log(5)
+});
