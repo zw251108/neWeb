@@ -16,7 +16,7 @@ module.exports = {
 	register: function(topic, desc){
 		if( !(topic in ERROR ) ){
 			ERROR[topic] = desc;
-			console.log('ERROR topic: ', topic, ' 注册');
+			console.log('topic: ', topic, ' 错误类型注册');
 		}
 		else{
 			console.log('ERROR topic: ', topic, ' 重复注册');

@@ -1,0 +1,59 @@
+@import "../config/color.config.less";
+
+//----- Main 主内容模块 ------
+/**
+ * main 模块
+
+ main.module.module-main
+    h2.module_title.icon
+    ul.toolbar
+    div.module_content
+ */
+/*main*/.module-main{
+	overflow: hidden;
+	float: none;
+
+	margin: 0;
+
+	> .module_title,
+	> .module_info{
+		display: none;
+	}
+
+	> .module_content{
+
+		border-radius: 10px;
+
+		margin: 40px 1px 10px;
+
+		background-color: #fff;
+	}
+
+	.icon:before{
+		font-size: 20px;
+	}
+
+	> .toolbar{
+		position: absolute;
+		top: 0;
+		right: 0;
+
+		> li{
+			display: inline-block;
+			position: relative;
+		}
+
+		.icon{
+			width: 30px;
+			height: 30px;
+			background: #888;
+		}
+		.btn{
+			outline: 0;
+
+			&:active{
+				background: #999;
+			}
+		}
+	}
+}

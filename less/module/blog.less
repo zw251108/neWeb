@@ -1,16 +1,15 @@
-@charset "utf-8";
-
-@import "../lib/color.less";
 @import "../lib/function.less";
 @import "../lib/grid.less";
+
+@import "../config/color.config.less";
 
 //---------- Blog 博客文章 ----------
 .module-blog{
 //    .metroBgSprite(3);
-	background-image: url("../image/default/metro/Blog.png");
+//	background-image: url("../image/default/metro/Blog.png");
 
     .module_title{
-        background-image:url("../image/default/metro-small/blog.png");
+        //background-image:url("../image/default/metro-small/blog.png");
     }
 
 	.module_content{
@@ -23,9 +22,9 @@
 		margin: 0 10px 10px 0;
 	}
 
-    .tag:after{
-        background: @article-tagsArea-bg;
-    }
+    //.tag:after{
+    //    background: @article-tagsArea-bg;
+    //}
 
 	.article{
 		margin-bottom: 10px;
@@ -39,9 +38,9 @@
 	    margin: 10px 0 0;
     }
 
-    .xhe_default table.xheLayout{
-        border: none;
-    }
+    //.xhe_default table.xheLayout{
+    //    border: none;
+    //}
 }
 .blog-detail{
 

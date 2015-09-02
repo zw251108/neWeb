@@ -1,0 +1,298 @@
+@import "../config/color.config.less";
+
+//----- Popup 弹窗模块
+/**
+ * popup 模块
+
+ dialog.module.module-popup.hidden[open=open]
+    ul.toolbar
+    div.module_content
+    div.btnGroup
+ */
+/*dialog*/.module-popup{
+	overflow: auto;
+	position: fixed;
+	z-index: 130;
+	top: 50%;
+
+	left: 0;
+	right: 0;
+
+	border: 1px solid @module-popup_bd_c;
+
+	margin: auto;
+	padding: 0;
+
+	outline: 100em solid rgba(0, 0, 0, .5);
+
+	.boxShadow(~"2px 2px 5px #c0c0c0,2px -2px 5px #c0c0c0,-2px 2px 5px #c0c0c0,-2px -2px 5px #c0c0c0");
+
+	.transform(translateY(-50%));
+
+	opacity: 1;
+
+	&::backdrop{
+		background: rgba(0, 0, 0, .5);
+	}
+
+	> .toolbar{
+		position: absolute;
+		top: 0;
+		right: 0;
+
+		> li{
+			display: inline-block;
+			position: relative;
+		}
+		.icon{
+			width: 30px;
+			height: 30px;
+			background: #888;
+
+			&:before{
+				margin: 0;
+			}
+		}
+		.btn{
+			outline: 0;
+
+			&:active{
+				background: #999;
+			}
+		}
+	}
+
+	> .module_content{
+		overflow: auto;
+		max-height: 500px;
+		min-height: 4em;
+		margin: 40px 0 0;
+		padding: 0;
+		background-color: #fff;
+	}
+
+	.formGroup{
+		position: relative;
+		min-height: 3em;
+
+		border: 1px solid #c0c0c0;
+		border-radius: 10px;
+		margin: 30px 10px;
+
+		.label{
+			position: absolute;
+			z-index: 10;
+			top: -8px;
+			left: 1em;
+			margin-left: -5px;
+			padding: 0 5px;
+			background: #fff;
+			color: #c0c0c0;
+			font-size: 14px;
+			line-height: 1;
+		}
+
+		.input-score{
+			float: left;
+		}
+		.icon-star{
+			float: right;
+			margin-left: 14px;
+			color: #888;
+			font-size: 24px;
+		}
+
+		.btn{
+			position: absolute;
+			top: 10px;
+			bottom: 10px;
+			right: 10px;
+		}
+	}
+	.tagsArea{
+		min-height: 44px;
+	}
+	.input{
+		display: block;
+		height: 48px;
+		width: 100%;
+		border: 0;
+		border-radius: 10px;
+		margin: 0;
+		padding: 0;
+		font-size: 14px;
+		text-indent: 1em;
+
+		.boxSizing(border-box);
+
+		&:focus{
+			outline: 0;
+		}
+
+		&[type="file"]{
+			position: relative;
+			top: 13px;
+			padding-left: 1em;
+			text-indent: 0;
+		}
+	}
+
+	/**
+	 * code
+	 *  ui 组件库
+	 */
+	.list-tree{
+		height: 20em;
+		margin: 10px 10px 0;
+
+		dt{
+			height: 2em;
+			border-top: 1px solid #c0c0c0;
+
+			line-height: 2;
+
+			-webkit-box-sizing: border-box;
+			-moz-box-sizing: border-box;
+			box-sizing: border-box;
+		}
+		dd{
+			margin: 0 10px;
+			padding-left: 10px;
+		}
+		div{
+			overflow: hidden;
+
+			height: 2em;
+			border-top: 1px dashed #c0c0c0;
+
+			line-height: 2;
+
+			text-overflow: ellipsis;
+			white-space: nowrap;
+
+			-webkit-box-sizing: border-box;
+			-moz-box-sizing: border-box;
+			box-sizing: border-box;
+		}
+		.icon:before{
+			margin-right: 5px;
+			color: #888;
+		}
+		.left{
+			overflow: hidden;
+			display: block;
+			margin-right: 90px;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+		.right{
+			float: right;
+			line-height: 1.8;
+
+			&:before{
+				float: right;
+				margin-left: 10px;
+				line-height: 1.8;
+			}
+		}
+	}
+
+	/**
+	 * code
+	 *  素材图片库
+	 */
+	.list-img{
+		overflow: hidden;
+		margin: 0 5px 5px;
+		li{
+			float: left;
+			position: relative;
+			height: 160px;
+			width: 110px;
+			margin: 5px;
+			outline: 1px solid #c0c0c0;
+
+			background: #fafafa;
+		}
+		.img{
+			position: relative;
+			height: 100px;
+			width: 100px;
+			margin: 5px;
+		}
+		img{
+			position: absolute;
+			bottom: 0;
+			top: 0;
+			left: 0;
+			right: 0;
+			max-height: 100px;
+			max-width: 100px;
+			margin: auto;
+		}
+		.src,
+		.desc{
+			background: #c0c0c0;
+			color: #fff;
+			line-height: 25px;
+			text-align: center;
+		}
+		.src{
+			line-height: 25px;
+			input{
+				height: 25px;
+				width: 100%;
+				border-width: 1px 0;
+				-webkit-box-sizing: border-box;
+				-moz-box-sizing: border-box;
+				box-sizing: border-box;
+			}
+		}
+	}
+
+	fieldset{
+		position: relative;
+
+		border: 0;
+		margin: 30px 0 30px;
+		padding: 0;
+
+		.group{
+			border: 1px solid #c0c0c0;
+			border-radius: 10px;
+			margin: 0 10px;
+			padding: 10px 0 0;
+		}
+
+		.formGroup{
+			margin-bottom: 30px;
+			border-radius: 0;
+			border-top-color: #efefef;
+			border-width: 1px 0;
+		}
+	}
+	legend{
+		position: absolute;
+		top: -1em;
+		left: 20px;
+		background: #fff;
+		color: #888;
+
+		label{
+			color: #c0c0c0;
+		}
+		span{
+			&:hover{
+				text-decoration: underline;
+				color: #d35400;
+			}
+		}
+	}
+
+	.form-disabled{
+		.icon-checkbox:before,
+		.icon-radio:before{
+			color: #ccc;
+		}
+	}
+}

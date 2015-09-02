@@ -1,10 +1,8 @@
-@import "lib/color";
-@import "lib/grid";
+@import "lib/grid.less";
 
-@import "lib/function";
+@import "lib/function.less";
 
-@module-bg: #555;
-@module-start-bg: #eee;
+@import "config/color.config.less";
 
 /**
  *---------- Module 模块 汇总 ----------
@@ -40,8 +38,8 @@
     </section>
  * */
 
-// 模块样式
-/*section,dialog*/.module{
+//---------- 模块样式 ----------
+/*section,dialog,main*/.module{
 	float:left;
 	position: relative;
 
@@ -49,14 +47,13 @@
 
 	margin: @grid-space;
 
-	background-color: @module-bg;
+	background-color: @module-bg_c;
 	background-repeat: no-repeat;
 
-	background-image: -webkit-linear-gradient(top, @module-start-bg, @module-bg);
-	background-image: -moz-linear-gradient(top, @module-start-bg, @module-bg);
-	background-image: -ms-linear-gradient(top, @module-start-bg, @module-bg);
-	background-image: linear-gradient(top, @module-start-bg, @module-bg);
-	//outline: 1px solid #888;
+	background-image: -webkit-linear-gradient(top, @module_bg_gradient_s, @module_bg_gradient_e);
+	background-image: -moz-linear-gradient(top, @module_bg_gradient_s, @module_bg_gradient_e);
+	background-image: -ms-linear-gradient(top, @module_bg_gradient_s, @module_bg_gradient_e);
+	background-image: linear-gradient(top, @module_bg_gradient_s, @module_bg_gradient_e);
 }
 
 //----- 模块标题 建议标签 h2 -----
@@ -78,6 +75,7 @@
 	position: relative;
 	overflow:hidden;
 }
+
 //----- 模块信息 -----
 /*span*/.module_info{
     position: absolute;
@@ -85,429 +83,20 @@
     top: 0;
     right: 10px;
 
-//    height: @module-info-height;
-
-    //    padding-right: @module-info-padding-right;
-
     font-size: 18px;
     line-height: 40px;
     text-align: right;
 }
 
-//----- Main 主内容模块 ------
-/*section*/.module-main{
-	overflow: hidden;
-	//background-image: none;
-	float: none;
+//----- 模块类别样式 -----
+@import "module/module-main.less";
 
-	margin: 0;
+@import "module/module-metro.less";
 
-	> .module_title,
-	> .module_info{
-		display: none;
-	}
-
-	> .module_content{
-
-		border-radius: 10px;
-
-		margin: 40px 1px 10px;
-
-		//padding: 10px 0 0;
-
-		background-color: #fff;
-	}
-
-	.icon:before{
-	   font-size: 20px;
-	}
-
-	> .toolbar{
-	   position: absolute;
-	   top: 0;
-	   right: 0;
-
-	   > li{
-	       display: inline-block;
-	       position: relative;
-	   }
-
-	   .icon{
-	       width: 30px;
-	       height: 30px;
-	       //border-width: 0 0 1px 1px;
-	       background: #888;
-
-	       //&:before{
-	       //	//margin: 5px;
-	       //}
-	   }
-	   //.icon:before{
-	   //	margin: 0;
-	   //}
-	   //a.icon:before{
-	   //	margin: 4px;
-	   //}
-	   .btn{
-	       outline: 0;
-
-	       &:active{
-	           background: #999;
-	       }
-	   }
-	}
-}
-
-//----- Metro 动态磁砖 -----
-/*section*/.module-metro{
-	height: 150px;
-
-	//background-position: center 20px;
-
-	color: #fff;
-
-	&:hover{
-		//background-color: @a-hover;
-		//color: @metro-hover_c;
-
-		//outline: 1px solid #d35400;
-
-		background: #d35400 -webkit-linear-gradient(top,#f88,#d35400);
-		color: #fff;
-	}
-
-	> .module_title{
-		position: absolute;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		width: auto;
-
-		background: none;
-
-		font-size: 20px;
-		line-height: 30px;
-//		text-indent: 10px;
-		text-align: center;
-	}
-
-	> .module_content{
-		display:none;
-	}
-
-	.toolbar{
-		display: none;
-	}
-}
-
-/*dialog*/.module-popup{
-	overflow: auto;
-//	position: absolute;
-	position: fixed;
-	z-index: 130;
-	top: 50%;
-
-	left: 0;
-	right: 0;
-
-	//min-height: 300px;
-	//max-height: 500px;
-
-	border: 1px solid #888;
-
-	margin: auto;
-	padding: 0;
-
-	outline: 100em solid rgba(0, 0, 0, .5);
-
-	.boxShadow(~"2px 2px 5px #c0c0c0,2px -2px 5px #c0c0c0,-2px 2px 5px #c0c0c0,-2px -2px 5px #c0c0c0");
-
-	.transform(translateY(-50%));
-
-	opacity: 1;
-
-	&::backdrop{
-	  background: rgba(0, 0, 0, .5);
-	}
-
-	> .toolbar{
-		position: absolute;
-		top: 0;
-		right: 0;
-
-		> li{
-			display: inline-block;
-			position: relative;
-		}
-		.icon{
-			width: 30px;
-			height: 30px;
-			//border-width: 0 0 1px 1px;
-			background: #888;
-
-			&:before{
-				margin: 0;
-			}
-		}
-		//.icon:before{
-		//	margin: 0;
-		//}
-		.btn{
-			outline: 0;
-
-			&:active{
-				background: #999;
-			}
-		}
-		//.btn:active{
-		//	background: #999;
-		//}
-	}
-
-	> .module_content{
-		overflow: auto;
-		max-height: 500px;
-		min-height: 4em;
-		//height: 20em;
-		margin: 40px 0 0;
-		padding: 0;
-		background-color: #fff;
-	}
-
-	.formGroup{
-		position: relative;
-		min-height: 3em;
-
-		border: 1px solid #c0c0c0;
-		border-radius: 10px;
-		margin: 30px 10px;
-
-		.label{
-			position: absolute;
-			z-index: 10;
-			top: -8px;
-			left: 1em;
-			margin-left: -5px;
-			padding: 0 5px;
-			background: #fff;
-			color: #c0c0c0;
-			font-size: 14px;
-			line-height: 1;
-		}
-
-		.input-score{
-			float: left;
-		}
-		.icon-star{
-			float: right;
-			margin-left: 14px;
-			color: #888;
-			font-size: 24px;
-		}
-
-		.btn{
-			position: absolute;
-			top: 10px;
-			bottom: 10px;
-			right: 10px;
-		}
-	}
-	.tagsArea{
-		min-height: 44px;
-	}
-	.input{
-		display: block;
-		height: 48px;
-		//height: 100%;
-		width: 100%;
-		//border: 1px solid #c0c0c0;
-		border: 0;
-		border-radius: 10px;
-		margin: 0;
-		padding: 0;
-		font-size: 14px;
-		//line-height: 48px;
-		text-indent: 1em;
-
-		.boxSizing(border-box);
-
-		&:focus{
-			outline: 0;
-		}
-
-		&[type="file"]{
-			position: relative;
-			top: 13px;
-			//left: 1em;
-			padding-left: 1em;
-			text-indent: 0;
-		}
-	}
-
-	/**
-	 * code
-	 *  ui 组件库
-	 */
-	.list-tree{
-	/*overflow: auto;*/
-		height: 20em;
-		margin: 10px 10px 0;
-
-		dt{
-			height: 2em;
-			border-top: 1px solid #c0c0c0;
-
-			line-height: 2;
-
-			-webkit-box-sizing: border-box;
-			-moz-box-sizing: border-box;
-			box-sizing: border-box;
-		}
-		dd{
-			margin: 0 10px;
-			padding-left: 10px;
-		}
-		div{
-			overflow: hidden;
-
-			height: 2em;
-			border-top: 1px dashed #c0c0c0;
-
-			line-height: 2;
-
-			text-overflow: ellipsis;
-			white-space: nowrap;
-
-			-webkit-box-sizing: border-box;
-			-moz-box-sizing: border-box;
-			box-sizing: border-box;
-		}
-		.icon:before{
-			margin-right: 5px;
-			color: #888;
-		}
-		.left{
-			overflow: hidden;
-			display: block;
-			margin-right: 90px;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-		}
-		.right{
-			float: right;
-			line-height: 1.8;
-
-			&:before{
-				float: right;
-				margin-left: 10px;
-				line-height: 1.8;
-			}
-		}
-	}
-
-	/**
-	 * code
-	 *  素材图片库
-	 */
-	.list-img{
-		overflow: hidden;
-		margin: 0 5px 5px;
-		li{
-			float: left;
-			position: relative;
-			height: 160px;
-			width: 110px;
-			margin: 5px;
-			outline: 1px solid #c0c0c0;
-
-			background: #fafafa;
-		}
-		.img{
-			position: relative;
-			height: 100px;
-			width: 100px;
-			margin: 5px;
-		}
-		img{
-			position: absolute;
-			bottom: 0;
-			top: 0;
-			left: 0;
-			right: 0;
-			max-height: 100px;
-			max-width: 100px;
-			margin: auto;
-		}
-		.src,
-		.desc{
-			background: #c0c0c0;
-			color: #fff;
-			line-height: 25px;
-			text-align: center;
-		}
-		.src{
-			line-height: 25px;
-			input{
-				height: 25px;
-				width: 100%;
-				border-width: 1px 0;
-				-webkit-box-sizing: border-box;
-				-moz-box-sizing: border-box;
-				box-sizing: border-box;
-			}
-		}
-	}
-
-	fieldset{
-		position: relative;
-
-		border: 0;
-		margin: 30px 0 30px;
-		padding: 0;
-
-		.group{
-			border: 1px solid #c0c0c0;
-			border-radius: 10px;
-			margin: 0 10px;
-			padding: 10px 0 0;
-		}
-
-		.formGroup{
-			margin-bottom: 30px;
-			border-radius: 0;
-			border-top-color: #efefef;
-			border-width: 1px 0;
-		}
-	}
-	legend{
-		position: absolute;
-		top: -1em;
-		left: 20px;
-		background: #fff;
-		color: #888;
-
-		label{
-			color: #c0c0c0;
-		}
-		span{
-			&:hover{
-				text-decoration: underline;
-				color: #d35400;
-			}
-		}
-	}
-
-	.form-disabled{
-		.icon-checkbox:before,
-		.icon-radio:before{
-			color: #ccc;
-		}
-	}
-}
+@import "module/module-popup.less";
 
 
 //----- 功能模块样式 -----    todo
-// 以下顺序同时为 metro.png 中图标的顺序
 //@import "module/user";        // 用户中心
 //
 //@import "module/palette";     // 调色板
@@ -532,12 +121,12 @@
 //
 @import "module/reader";    // 订阅
 //
-////@import "module/timeLine";    // 时间轴
+//@import "module/timeLine";    // 时间轴
 //
 //@import "module/advert";      // 广告区
 //
 //@import "module/popup";       // 弹窗
 //
-////@import "module/header";      // 页头
-////
-////@import "module/footer";      // 页脚
+//@import "module/header";      // 页头
+//
+//@import "module/footer";      // 页脚

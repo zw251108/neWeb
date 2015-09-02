@@ -1,0 +1,45 @@
+@import "../config/color.config.less";
+
+//----- Metro 动态磁砖 -----
+/**
+ * metro 模块
+
+ a[href]
+    section.module.module-metro.tiny
+        h2.module_title.icon
+        span.module_info
+ */
+/*section*/.module-metro{
+	height: 140px;
+	width: 140px;
+	margin: 10px;
+
+	color: @module-metro_c;
+
+	&:hover{
+		background: @module-metro-hover_bg_c -webkit-linear-gradient(top, @module-metro-hover_bg_gradient_s, @module-metro-hover_bg_gradient_e);
+		color: @module-metro-hover_c;
+	}
+
+	> .module_title{
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		width: auto;
+
+		background: none;
+
+		font-size: 20px;
+		line-height: 30px;
+		text-align: center;
+	}
+
+	> .module_content{
+		display:none;
+	}
+
+	.toolbar{
+		display: none;
+	}
+}
