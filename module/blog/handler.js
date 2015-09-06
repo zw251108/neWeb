@@ -20,10 +20,19 @@
 	var Blog = function(data){
 		return {
 			getList: function(){
-				return data.namespace('blog.list')()
+				return data({
+					topic: 'blog/list'
+				});
+				//return data.namespace('blog.list')();
 			}
-			, getArticle: function(){
-
+			, getArticle: function(articleId){
+				return data({
+					topic: 'blog/article'
+					, data: {
+						articleId: articleId
+					}
+				});
+				//return data.namespace('blog.article')(articleId);
 			}
 		}
 	};

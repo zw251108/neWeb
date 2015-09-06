@@ -120,6 +120,9 @@
 					end.unshift('</' + tag + '>');
 				}
 			}
+			else{
+				end.unshift('');
+			}
 
 			temp = /\{(.*)\}/.exec(rs[5]);
 			html.push(temp ? temp[1] : '');

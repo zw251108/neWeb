@@ -1,9 +1,12 @@
+/**
+ * db 模块基于 socket.io
+ * */
 define(['jquery', 'socket'], function(){
 	return function(topic){}
 });
 
 /**
- * data 模块基于 ajax
+ * db 模块基于 ajax
  * */
 define(['jquery'], function($){
 
