@@ -23,6 +23,7 @@ admin.push('province');
  * */
 // 地区数据
 web.get('/data/province', function(req, res){
+
 	var query = req.query || {}
 		, callback = query.callback
 		;

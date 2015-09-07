@@ -402,7 +402,7 @@ var db          = require('./db.js')
 					}).join('') + tpl.popupTpl([{
 						id: 'readPopup', size: 'normal'
 						, content: bookmarkReadFormTpl({})
-						, button: '<button type="button" id="readBookmark" class="btn">确定</button>'
+						, button: '<button type="button" id="readBookmark" class="btn btn-submit">确定</button>'
 					}]).join('')
 					, script: {
 						main: '../script/module/reader/index'
@@ -426,11 +426,11 @@ var db          = require('./db.js')
 					}).join('') + tpl.popupTpl([{
 						id: 'addPopup', size: 'normal'
 							, content: bookmarkAddFormTpl({})
-							, button: '<button type="button" id="addBookmark" class="btn">确定</button>'
+							, button: '<button type="button" id="addBookmark" class="btn btn-submit">确定</button>'
 					}, {
 						id: 'readPopup', size: 'normal'
 						, content: bookmarkReadFormTpl({})
-						, button: '<button type="button" id="readBookmark" class="btn">确定</button>'
+						, button: '<button type="button" id="readBookmark" class="btn btn-submit">确定</button>'
 					}]).join('')
 					, script: {
 						main: '../script/module/reader/bookmark'
@@ -454,7 +454,7 @@ var db          = require('./db.js')
 					}).join('') + tpl.popupTpl([{
 						id: 'readPopup', size: 'normal'
 							, content: bookmarkReadFormTpl({})
-							, button: '<button type="button" id="readBookmark" class="btn">确定</button>'
+							, button: '<button type="button" id="readBookmark" class="btn btn-submit">确定</button>'
 					}])
 					, script: {
 						main: '../script/module/reader/favorite'

@@ -6,6 +6,11 @@ define(function(require){
 	var $ = require('jquery')
 		, socket = require('./socket')
 		;
+
+	$.ajaxSetup({
+		dataType: 'json'
+	});
+
 	var
 		// 单全局变量
 		g =  window.GLOBAL || {}

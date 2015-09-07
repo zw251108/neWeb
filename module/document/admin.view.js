@@ -25,7 +25,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 		template: 'dt.icon.icon-right[data-content-id=%Id%]{%title%}' +
 				'>button.icon.icon-up[type=button title=上移]' +
 				'+button.icon.icon-down[type=button title=下移]' +
-			'^dd>textarea[data-code-type=html]{%content%}+button.btn[type=button]{保存}'
+			'^dd>textarea[data-code-type=html]{%content%}+button.btn.btn-submit[type=button]{保存}'
 	})
 
 	, docList = emmetTpl({

@@ -133,7 +133,8 @@ index.push({
 /**
  * 加载模块
  * */
-require('./module/blog.js');        // 加载模块 blog
+//require('./module/blog.js');        // 加载模块 blog
+require('./module/blog/controller.js');
 
 //require('./module/content.js');    // 加载模块 document
 require('./module/document/controller.js'); // 加载模块 document

@@ -3,6 +3,8 @@
 var db  = require('../db.js')
 	, error = require('../error.js')
 
+	, TABLE_NAME = 'document'
+
 	, SQL = {
 		document: 'select Id,title from document'
 		, documentPage: 'select Id,title from document limit :page,size'

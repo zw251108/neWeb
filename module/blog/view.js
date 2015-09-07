@@ -40,3 +40,5 @@ var getEmmet    = require('../emmet/getEmmet.js')
 		}
 	}
 	;
+
+module.exports = View;

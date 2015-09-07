@@ -1,5 +1,5 @@
 /**
- *
+ * todo 前后端通用 数据控制接口
  * */
 (function(factory, global, namespace){
 	// 后端
@@ -14,30 +14,22 @@
 	else{
 		global[namespace] = factory;
 	}
-})(function(data){
+})(function(model){
 	'use strict';
 
-	var Blog = function(data){
-		return {
-			getList: function(){
-				return data({
-					topic: 'blog/list'
-				});
-				//return data.namespace('blog.list')();
-			}
-			, getArticle: function(articleId){
-				return data({
-					topic: 'blog/article'
-					, data: {
-						articleId: articleId
-					}
-				});
-				//return data.namespace('blog.article')(articleId);
-			}
+	return {
+		getList: function(){
+			return model({
+				topic: 'blog/list'
+			});
 		}
-	};
-
-
-	return Blog;
-
+		, getArticle: function(articleId){
+			return model({
+				topic: 'blog/article'
+				, data: {
+					articleId: articleId
+				}
+			});
+		}
+	}
 }, this, 'blog');
