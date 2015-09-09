@@ -33,19 +33,21 @@ define(['jquery', 'global', 'socket', 'template'], function($, g, socket){
 	});
 
 	$talk.on('submit', 'form', function(e){
-		var postData = $talk.find('form').serializeArray()
-			, i = postData.length
-			, data = {}
+		var
+			//postData = $talk.find('form').serializeArray()
+			//, i = postData.length
+			//,
+			data = $talk.find('form').serializeJson()
 			;
 
-		while( i-- ){
-			if( postData[i].name in data ){
-				data[postData[i].name] += ',' + postData[i].value;
-			}
-			else{
-				data[postData[i].name] = postData[i].value;
-			}
-		}
+		//while( i-- ){
+		//	if( postData[i].name in data ){
+		//		data[postData[i].name] += ',' + postData[i].value;
+		//	}
+		//	else{
+		//		data[postData[i].name] = postData[i].value;
+		//	}
+		//}
 
 		// todo 提交表单
 		socket.emit('message', data);

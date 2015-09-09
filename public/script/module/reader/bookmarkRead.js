@@ -12,18 +12,20 @@ define(['jquery', 'global', 'socket', 'tag', 'template'], function($, g, socket,
 
 		}).on('click', '#readBookmark', function(){
 
-			var data = $readForm.serializeArray()
-				, query = {}
+			var
+				//data = $readForm.serializeArray()
+				//,
+				query = $readForm.serializeJson()
 				;
 
-			$.each(data, function(i, d){
-				if( d.name in query ){
-					query[d.name] += ','+ d.value;
-				}
-				else{
-					query[d.name] = d.value;
-				}
-			});
+			//$.each(data, function(i, d){
+			//	if( d.name in query ){
+			//		query[d.name] += ','+ d.value;
+			//	}
+			//	else{
+			//		query[d.name] = d.value;
+			//	}
+			//});
 
 			if( query.tags !== '' ){
 				query.id = query.bookmarkId;

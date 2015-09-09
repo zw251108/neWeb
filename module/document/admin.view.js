@@ -27,6 +27,12 @@ var getEmmet    = require('../emmet/getEmmet.js')
 				'+button.icon.icon-down[type=button title=下移]' +
 			'^dd>textarea[data-code-type=html]{%content%}+button.btn.btn-submit[type=button]{保存}'
 	})
+	, sectionAddFormTpl = emmetTpl({
+		template: 'form[method=post action=add]' +
+			'>div.formGroup' +
+				'>label.label[for=title]{请添加标题}' +
+				'+input#title.input[type=text name=title data-validator=title]'
+	})
 
 	, docList = emmetTpl({
 		template: 'li[data-id=%Id%]' +
@@ -55,12 +61,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						id: 'addPopup'
 						, size: 'normal'
 						, toolbar: ''
-						, content: '<form>' +
-							'<div class="formGroup">' +
-								'<label class="label" for="title">请添加标题</label>' +
-								'<input type="text" id="title" class="input" name="title"/>' +
-							'</div>' +
-						'</form>'
+						, content: sectionAddFormTpl({}).join('')
 						, button: '<button type="button" id="addData" class="btn">添加</button>'
 					}
 				}

@@ -49,9 +49,32 @@ web.use( session({
 	store:      sessionStore
 	, secret:   CONFIG.web.cookieSecret
 	, key:      CONFIG.web.cookieKey
-	, resave:   true
+	, resave:   false
 	, saveUninitialized: true
 }) );
+
+var userInfo = {
+	id: 1
+};
+web.use(function(req, res, next){
+	//console.log(req.url, req.session.id, sessionStore);
+
+	var sessionId = req.session.id
+	//	, session = (sessionId && sessionId in sessionStore.sessions)? JSON.parse( sessionStore.sessions[sessionId] ) : {}
+	//	, user = session.user
+		;
+	//console.log('session id', sessionId);
+	//if( !user ){
+	//	user = req.session.user = userInfo;
+	//}
+	//else{
+	//
+	//}
+
+	// todo
+
+	next();
+});
 
 //----- 静态资源 重定向 -----
 web.use('/cache.manifest', express.static(__dirname + '/public/cache.manifest') );  // 离线缓存配置文件
@@ -76,23 +99,21 @@ web.use('/requirement',     express.static(__dirname + '/requirement'));
 
 web.use('/test.html',    express.static(__dirname + '/test.html') );  //
 
-var user = {
-	id: 1
-};
 
 /**
  * 访问主页	/
  * */
 web.get('/', function(req, res){
-	var session = req.session;
+	var sessionId = req.session.id
+		//, session = JSON.parse( sessionStore.sessions[sessionId] )
+		, user = req.session.user
+		;
 
-	if( !('user' in session) ){
-		session.user = user;
+	if( !user ){
+		user = req.session.user = userInfo;
 	}
 
-	console.log('session id', req.session.id);
-
-	console.log(req.session);
+	console.log(sessionId);
 
 	res.send( tpl.html('index', {
 		title: '个人小站（开发测试中...）'
@@ -104,6 +125,10 @@ web.get('/', function(req, res){
 		}
 	}) );
 	res.end();
+});
+
+web.post('/login', function(req, res){
+	// todo 登录功能
 });
 
 index.push({

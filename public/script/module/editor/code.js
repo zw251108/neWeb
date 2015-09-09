@@ -472,20 +472,22 @@ require(['../config'], function(config){
 			css.save();
 			js.save();
 
-			var form = $form.serializeArray()
-				, data = {}
-				, t
+			var
+				//form = $form.serializeArray()
+				//,
+				data = $form.serializeJson()
+				//, t
 				;
-			$.each(form, function(i, d){
-				t = d.name;
-
-				if( t in data ){
-					data[t] += ','+ d.value;
-				}
-				else{
-					data[t] = d.value;
-				}
-			});
+			//$.each(form, function(i, d){
+			//	t = d.name;
+			//
+			//	if( t in data ){
+			//		data[t] += ','+ d.value;
+			//	}
+			//	else{
+			//		data[t] = d.value;
+			//	}
+			//});
 
 			socket.emit('data', {
 				topic: 'editor/code/save'

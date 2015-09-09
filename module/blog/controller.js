@@ -47,17 +47,75 @@ web.get('/blog/detail', function(req, res){
 });
 
 
+/**
+ *
+ * */
 web.get('/admin/blog/', function(req, res){
-	Model.getBlogList(1, 20).then( Admin.list).then(function(html){
+	console.log(req.session.user)
+	Model.getAllList(1, 20).then( Admin.list ).then(function(html){
 		res.send( config.docType.html5 + html );
 		res.end();
 	});
 });
-web.get('/admin/blog/:blogId/', function(req, res){
-	var blogId = req.params.blogId;
-	Model.getContentById( blogId).then( Admin.article ).then(function(html){
-		res.send( config.docType.html5 + html );
+web.get('/admin/blog/:blogId/', function(req, res, next){
+	var param = req.params || {}
+		, blogId = param.blogId
+		;
+
+	if( blogId && /^\d+$/.test( blogId ) ){
+		Model.getContentById( blogId).then( Admin.article ).then(function(html){
+			res.send( config.docType.html5 + html );
+			res.end();
+		});
+	}
+	else{
+		next();
+	}
+});
+
+/**
+ * /admin/blog/add              新建文章
+ * /admin/blog/:blogId/save     保存文章内容
+ * */
+web.post('/admin/blog/add', function(req, res){
+	var body = req.body || {}
+		, title = body.title
+		;
+	console.log(req.session);
+	if( title ){
+		Model.addBlog(req.session.user.id, title).then(function(rs){
+			var json = {}
+				;
+
+			if( rs.insertId ){
+				json.success = true;
+				json.id = rs.insertId;
+			}
+			else{
+				json.success = false;
+			}
+
+			res.send( JSON.stringify(json) );
+			res.end();
+		});
+	}
+	else{
+		res.send( JSON.stringify({
+			success: false
+			, error: ''
+			, msg: '缺少标题'
+		}) );
 		res.end();
+	}
+});
+web.post('/admin/blog/:blogId/save', function(req, res){
+	var body = req.body || {}
+		, content = body.content
+		, param = req.params || {}
+		, blogId = param.blogId
+		;
+	Model.saveBlog(content, '', blogId).then(function(rs){
+
 	});
 });
 

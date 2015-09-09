@@ -29,6 +29,8 @@ define({
 			, talk: 'module/talk/talk'
 
 			, bookmarkRead: 'module/reader/bookmarkRead'
+
+			, adminAddDataPopup: 'admin/addPopup'
 		}
 		, baseUrl: '../script/'
 	}

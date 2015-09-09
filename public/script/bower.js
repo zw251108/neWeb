@@ -1,19 +1,19 @@
-define('formValue', ['jquery'], function($){
-	return function(serializeArray){
-		var val = {};
-
-		$.each(serializeArray, function(i, d){
-			if( d.name in val ){
-				val[d.name] += ','+ d.value;
-			}
-			else{
-				val[d.name] = d.value;
-			}
-		});
-
-		return val;
-	}
-});
+//define('formValue', ['jquery'], function($){
+//	return function(serializeArray){
+//		var val = {};
+//
+//		$.each(serializeArray, function(i, d){
+//			if( d.name in val ){
+//				val[d.name] += ','+ d.value;
+//			}
+//			else{
+//				val[d.name] = d.value;
+//			}
+//		});
+//
+//		return val;
+//	}
+//});
 
 
 /**
@@ -24,7 +24,7 @@ require(['module/config'], function(config){
 	//config.requireConfig.baseUrl = '../script/';
 
 	var r = require.config(config.requireConfig);
-	r(['jquery', 'global', 'socket', 'formValue', 'template'], function($, g, socket, formValue){
+	r(['jquery', 'global', 'socket', 'template'], function($, g, socket){
 		var tableTpl = $.template({
 				template: 'tr>td>button[type=button]{安装}+input[type=hidden value=%name%]^td[title=%name%]{%name%}+td[title=%url%]{%url%}'
 			})
@@ -99,13 +99,13 @@ require(['module/config'], function(config){
 			, $infoContent = $infoDialog.find('.module_content')
 			, $infoList = $infoDialog.find('#infoList').on('click', '[name="pickId"]', function(){
 				var $form = $(this).parents('form')
-					, values = $form.serializeArray()
-					, val
+					//, values = $form.serializeArray()
+					, val = $form.serializeJson()
 					;
 
 				if( !$form.hasClass('form-disabled') ){
 
-					val = formValue( values );
+					//val = formValue( values );
 
 					socket.emit('data', {
 						topic: 'bower/install/prompts'
@@ -118,14 +118,14 @@ require(['module/config'], function(config){
 
 				var $that = $(this)
 					, $form = $that.parents('form')
-					, values = $form.serializeArray()
-					, val
+					//, values = $form.serializeArray()
+					, val = $form.serializeJson()
 					, choose
 					;
 
 				if( !$form.hasClass('form-disabled') ){
 
-					val = formValue( values );
+					//val = formValue( values );
 
 					if( val.choose ){
 						choose = $.map(val.choose.split(','), function(d){

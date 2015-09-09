@@ -76,7 +76,7 @@ require(['../../module/config'], function(config){
 								$section.find('dl').append( sectionListTpl({
 									Id: json.id
 									, title: title
-								}).join('') );console.log(111)
+								}).join('') );
 								$addContentPopup.trigger('closeDialog');
 
 								$section.find('.icon-save').trigger('click');

@@ -11,6 +11,29 @@ define(function(require){
 		dataType: 'json'
 	});
 
+	$.fn.serializeJson = function(){
+		var rs = {}
+			, array
+			, t
+			;
+
+		if( this.is('form') ){
+			array = this.serializeArray();
+
+			$.each(array, function(i, d){
+				t = d.name;
+				if( t in rs ){
+					rs[t] += ','+ d.value;
+				}
+				else{
+					rs[t] = d.value;
+				}
+			});
+		}
+
+		return rs;
+	};
+
 	var
 		// 单全局变量
 		g =  window.GLOBAL || {}
