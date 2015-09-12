@@ -4,9 +4,11 @@
 	display: inline-block;
 	min-width: 4em;
 	border: 1px solid @tag_bd_c;
-	border-radius: 20px;
+
+	border-radius: 8px;
+	//border-radius: 20px;
 	margin: 5px;
-	padding: 0 .5em;
+	padding: 0 1em 0 .5em;
 
 	background: -webkit-linear-gradient(top, @tag_bg_gradient_s, @tag_bg_gradient_e);
 
@@ -21,6 +23,12 @@
 
 	&-checked{
 		background: @tag_checked_bg_c -webkit-linear-gradient(top, @tag_checked_bg_gradient_s, @tag_checked_bg_gradient_e);
+	}
+	&:before:extend(.icon:before):extend(.icon-tags:before){
+		float: left;
+		font-size: 16px;
+		line-height: 2.5* 12px;
+		margin-right: 10px;
 	}
 }
 .tagInput{
