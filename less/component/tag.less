@@ -10,8 +10,9 @@
 	margin: 5px;
 	padding: 0 1em 0 .5em;
 
-	background: -webkit-linear-gradient(top, @tag_bg_gradient_s, @tag_bg_gradient_e);
+	//background: -webkit-linear-gradient(top, @tag_bg_gradient_s, @tag_bg_gradient_e);
 
+	background: @tag_bg_c;
 	color: @tag_c;
 
 	font-size: 12px;
@@ -22,7 +23,10 @@
 	cursor: pointer;
 
 	&-checked{
-		background: @tag_checked_bg_c -webkit-linear-gradient(top, @tag_checked_bg_gradient_s, @tag_checked_bg_gradient_e);
+		//background: @tag_checked_bg_c -webkit-linear-gradient(top, @tag_checked_bg_gradient_s, @tag_checked_bg_gradient_e);
+		border-color: @tag_checked_bd_c;
+		background: @tag_checked_bg_c;
+		color: @tag_checked_c;
 	}
 	&:before:extend(.icon:before):extend(.icon-tags:before){
 		float: left;

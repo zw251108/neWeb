@@ -11,7 +11,7 @@ var db = require('../db.js')
 		, blogDetail: 'select Id,title,content,datetime,tags from '+ TABLE_NAME +' where Id=:id'
 		, adminBlogList: 'select Id,title,datetime,tags from '+ TABLE_NAME +' order by Id desc limit :page,:size'
 
-		, blogAdd: 'insert into '+ TABLE_NAME +'(user_id,title,tags) values(:userId,:title,\'\')'
+		, blogAdd: 'insert into '+ TABLE_NAME +'(user_id,title,tags,content) values(:userId,:title,\'\',\'\')'
 		, blogSave: 'update '+ TABLE_NAME +' set content=:content,tags=:tags where Id=:id'
 	}
 	, Model = {

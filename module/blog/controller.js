@@ -13,8 +13,8 @@ var web         = require('../web.js')
 	, Model = require('./model.js')
 	, View  = require('./view.js')
 	, Admin = require('./admin.view.js')
-	, Handler = require('./handler.js')(data)
-
+	//, Handler = require('./handler.js')(data)
+	, BlogError = require('./error.js')
 	;
 
 
@@ -115,6 +115,13 @@ web.post('/admin/blog/:blogId/save', function(req, res){
 		, blogId = param.blogId
 		;
 	Model.saveBlog(content, '', blogId).then(function(rs){
+		var json = {
+			success: true
+		};
+
+		res.send( JSON.stringify(json) );
+		res.end();
+	}, function(e){
 
 	});
 });

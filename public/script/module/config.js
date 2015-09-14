@@ -30,6 +30,8 @@ define({
 
 			, bookmarkRead: 'module/reader/bookmarkRead'
 
+			, msgPopup: 'module/msg.popup'
+
 			, adminAddDataPopup: 'admin/addPopup'
 		}
 		, baseUrl: '../script/'

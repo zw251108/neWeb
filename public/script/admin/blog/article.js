@@ -6,18 +6,34 @@ define(['../../module/config'], function(config){
 
 	var r = require(config.requireConfig);
 	r(['jquery', 'global', 'socket', 'codeEditor', 'codeEditorSkin', 'template'], function($, g, socket, code, codeSkin){
-		var $blog = $('#blog').on('click', '.icon-save', function(){
+		var $blog = $('#blog').on('click', '.icon-save', function(e){
+				content.save();
 
+				var data = $form.serializeJson()
+					;
+
+				$.ajax({
+					url: form.action
+					, type: form.method
+					, data: data
+					, success: function(json){
+						if( json.success ){
+							alert('保存成功');
+						}
+					}
+				})
 			})
+			, $form = $blog.find('form')
+			, form = $form[0]
 			, $codeArea = $blog.find('textarea')
-			, $addSectionPopup = $('')
-
+			, content
 			, $skinList
 			;
 
+		content = code($codeArea[0], $codeArea.data('codeType'));
 
-		$skinList = codeSkin(config.requireConfig.baseUrl, [$codeArea[0]]);
+		$codeArea.nextAll('.CodeMirror').addClass('edit_CodeMirror');
 
-		code($codeArea[0], $codeArea.data('codeType'));
+		$skinList = codeSkin(config.requireConfig.baseUrl, [content]);
 	});
 });

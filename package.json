@@ -41,7 +41,7 @@
     "grunt-croc-requirejs": "~0.1.0",
     "grunt-jsdoc": "~0.6.7",
     "grunt-sass": "^1.0.0",
-    "node-gyp": "^2.0.2",
-    "node-sass": "^3.2.0"
+    "node-gyp": "^3.0.3",
+    "node-sass": "^3.3.2"
   }
 }

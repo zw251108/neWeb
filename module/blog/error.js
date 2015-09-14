@@ -11,4 +11,4 @@ BlogError.prototype = new Error();
 
 error.register('BlogError', '博客模块 错误');
 
-Module.exports = BlogError;
+module.exports = BlogError;

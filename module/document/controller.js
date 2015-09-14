@@ -181,7 +181,9 @@ web.post('/admin/document/:documentId/save', function(req, res){
 			documentId: documentId
 			, order: body.order
 		}).then(function(rs){
-			var json = {};
+			var json = {
+				success: true
+			};
 
 			//if( rs.insertId ){
 			//	json.success = true;
@@ -191,7 +193,7 @@ web.post('/admin/document/:documentId/save', function(req, res){
 			//	json.success = false;
 			//}
 			//
-			//res.send( JSON.stringify(json) );
+			res.send( JSON.stringify(json) );
 			res.end();
 		});
 	}
@@ -255,7 +257,9 @@ web.post('/admin/document/:documentId/:sectionId/save', function(req, res){
 			sectionId: sectionId
 			, order: body.order
 		}).then(function(rs){
-			var json = {};
+			var json = {
+				success: true
+			};
 
 			//if( rs.insertId ){
 			//	json.success = true;
@@ -265,7 +269,7 @@ web.post('/admin/document/:documentId/:sectionId/save', function(req, res){
 			//	json.success = false;
 			//}
 			//
-			//res.send( JSON.stringify(json) );
+			res.send( JSON.stringify(json) );
 			res.end();
 		});
 	}
