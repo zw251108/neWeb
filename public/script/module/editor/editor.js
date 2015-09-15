@@ -30,7 +30,7 @@ define(['jquery', 'global', 'socket', 'tag', 'template'], function($, g, socket,
 				alt:function(data, index){
 					return data.preview ? data.name : '没有预览图片';
 				}
-				, tags: tag.tagTpl
+				, tags: tag.tagCheckedTpl
 			}
 		})
 		, $container = g.$container

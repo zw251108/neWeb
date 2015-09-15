@@ -19,7 +19,7 @@
 /**
  * @module
  * */
-require(['module/config'], function(config){
+require(['config'], function(config){
 
 	//config.requireConfig.baseUrl = '../script/';
 

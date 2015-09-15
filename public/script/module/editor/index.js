@@ -1,7 +1,7 @@
 /**
  *
  */
-require(['../config'], function(config){
+require(['../../config'], function(config){
 	var r = require.config(config.requireConfig);
 	r(['jquery', 'global', 'socket', 'tag', config.dataSource.tag, 'template',  'layout'], function($, g, socket, tag, tagData){
 		var $editor = $('#editor')
@@ -51,7 +51,7 @@ require(['../config'], function(config){
 					, alt:function(data, index){
 						return data.preview ? data.name : '没有预览图片';
 					}
-					, tags: tag.tagTpl
+					, tags: tag.tagCheckedTpl
 				}
 			})
 

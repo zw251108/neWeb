@@ -15,10 +15,6 @@
 	animation: 1s both;
 }
 
-.section{
-	margin: 10px;
-}
-
 .hideMetro .module-metro{
 	display: none;
 }

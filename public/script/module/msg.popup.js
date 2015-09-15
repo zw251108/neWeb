@@ -2,12 +2,13 @@
  * @module msg.popup
  * */
 define(['jquery', 'global'], function($, g){
-	var $msgPopup = $('msgPopup')
+	var msgPopup = {}
 		;
 
-	$msgPopup.showMsg = function(msg){
-		$msgPopup.find('#msgContent').html( msg).end().trigger('showDialog');
+	msgPopup.$target = $('#msgPopup');
+	msgPopup.showMsg = function(msg){
+		this.$target.find('#msgContent').html( msg ).end().trigger('showDialog');
 	};
 
-	return $msgPopup
+	return msgPopup
 });

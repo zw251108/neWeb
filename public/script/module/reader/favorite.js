@@ -1,7 +1,7 @@
 /**
  *
  * */
-require(['../config'], function(config){
+require(['../../config'], function(config){
 	var r = require(config.requireConfig);
 	r(['jquery', 'global', 'socket', 'bookmarkRead', config.dataSource.tag, 'template'], function($, g, socket, bookmarkRead, tagsData){
 		var $favorite = $('#bookmark').on('click', '.icon-checkbox-checked', function(e){

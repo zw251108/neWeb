@@ -1,7 +1,7 @@
 /**
  *
  * */
-define(['../../module/config'], function(config){
+define(['../../config'], function(config){
 	config.requireConfig.baseUrl = location.origin +'/script/';
 
 	var r = require(config.requireConfig);

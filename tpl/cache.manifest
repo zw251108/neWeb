@@ -54,6 +54,7 @@ image/default/icon/close.png
 NETWORK:
 socket.io/
 
+script/config.js
 script/index.js
 script/bookmark.js
 script/module/

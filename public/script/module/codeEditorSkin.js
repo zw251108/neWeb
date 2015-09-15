@@ -11,10 +11,15 @@ define(['jquery', 'socket', 'template'], function($, g){
 		, $codeEditorSkin = $('#changeSkin').on({
 			click: function(){
 				//$layoutList.slideUp().prev().hide();
+
+				beforeCallback && beforeCallback();
+
 				$skinList.slideToggle().prev().toggle();
 			}
-			, setSkin: function(e, skin){
-				console.log(skin)
+			, setSkin: function(e, skin){console.log(skin);
+
+				beforeCallback && beforeCallback();
+
 				skin = skin || CURRENT_SKIN;
 
 				$skinLink.attr('href', skin !== 'default' ? BASE_URL +'plugin/codeMirror/theme/'+ skin +'.css' : '');
@@ -25,17 +30,28 @@ define(['jquery', 'socket', 'template'], function($, g){
 					d.setOption('theme', skin);
 				});
 
-				afterCallback && afterCallback();
+				$.ajax({
+					url: '/skin'
+					, data: {
+						skin: skin
+					}
+					, type: 'POST'
+					, success: function(json){
+						if( json.success ){
+
+						}
+					}
+				});
 			}
-			, getSkin: function(){
-				return CURRENT_SKIN;
-			}
-			, getSkinList: function(){
-				return SKIN_LIST;
-			}
+			//, getSkin: function(){
+			//	return CURRENT_SKIN;
+			//}
+			//, getSkinList: function(){
+			//	return SKIN_LIST;
+			//}
 		})
 
-		, $skinList = $codeEditorSkin.after('<span class="arrow hidden"></span><ul class="list skinList hidden"></ul>').nextAll('ul').append( listTpl($.map(SKIN_LIST, function(d){
+		, $skinList = $codeEditorSkin.after('<span class="arrow hidden"></span><ul class="list scrollBar skinList hidden"></ul>').nextAll('ul').append( listTpl($.map(SKIN_LIST, function(d){
 			var obj = {
 				name: d
 			};
@@ -52,36 +68,57 @@ define(['jquery', 'socket', 'template'], function($, g){
 			$(this).addClass('on').siblings('.on').removeClass('on');
 
 			$skinList.slideUp().prev().hide();
+		}).on({
+			show: function(){
+				$skinList.slideDown().prev().show();
+			}
+			, hide: function(){
+				$skinList.slideUp().prev().hide();
+			}
+			, setSkin: function(){
+
+			}
 		})
 		, BASE_URL
 		, codeEditorList = []
-		, afterCallback
+		, beforeCallback
+
+		, skinList = {
+			$target: $skinList
+			, setSkin: function(skin){}
+			, show: function(){
+				$skinList.slideDown().prev().show();
+			}
+			, hide: function(){
+				$skinList.slideUp().prev().hide();
+			}
+		}
 		;
 
 	$codeEditorSkin.setSkin = function(){
 
 	};
 
-	return function(dir, list, after){
+	return function(dir, list, before){
 		BASE_URL = dir;
 
 		codeEditorList = list;
 
-		afterCallback = after;
+		beforeCallback = before;
 
-		var t = {
-			codeEditorList: []
-			, setSkin: function(skin){
+		//var t = {
+		//	codeEditorList: []
+		//	, setSkin: function(skin){
+		//
+		//	}
+		//	, getSkin: function(){
+		//		return CURRENT_SKIN;
+		//	}
+		//	, getSkinList: function(){
+		//		return SKIN_LIST;
+		//	}
+		//};
 
-			}
-			, getSkin: function(){
-				return CURRENT_SKIN;
-			}
-			, getSkinList: function(){
-				return SKIN_LIST;
-			}
-		};
-
-		return $codeEditorSkin;
+		return skinList;//$skinList;//$codeEditorSkin;
 	}
 });

@@ -69,7 +69,7 @@ define('bookmarkAdd', ['jquery', 'global', 'socket', 'template'], function($, g,
 	}
 });
 
-require(['../config'], function(config){
+require(['../../config'], function(config){
 	var r = require(config.requireConfig);
 	r(['jquery', 'global', 'socket', 'bookmarkAdd', 'bookmarkRead', config.dataSource.tag, 'template'], function($, g, socket, bookmarkAdd, bookmarkRead, tagsData){
 		var $bookmark = $('#bookmark').on('click', '.icon-checkbox', function(e){

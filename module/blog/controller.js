@@ -26,20 +26,26 @@ var web         = require('../web.js')
 
 
 web.get('/blog/', function(req, res){
+	var query = req.query || {}
+		, page = query.page || 1
+		, size = query.size || 20
+		;
 
-	//Handler.getList().then( View.blogList ).then(function( html ){
-	//	res.send( config.docType.html5 + html );
-	//	res.end();
-	//});
+	Model.getBlogList(page, size).then( View.blog ).then(function(html){
+		res.send( config.docType.html5 + html );
+		res.end();
+	});
 });
 
 web.get('/blog/detail', function(req, res){
-	var callback
+	var query = req.query || {}
+		, id = query.id
 		;
-
-	// 判断是否为 ajax
-	if( req.xhr ){
-		callback = req.query.callback;
+	if( id ){
+		Model.getContentById( id ).then( View.blogDetail ).then(function(html){
+			res.send( config.docType.html5 + html );
+			res.end();
+		});
 	}
 	else{
 
@@ -51,7 +57,7 @@ web.get('/blog/detail', function(req, res){
  *
  * */
 web.get('/admin/blog/', function(req, res){
-	console.log(req.session.user)
+
 	Model.getAllList(1, 20).then( Admin.list ).then(function(html){
 		res.send( config.docType.html5 + html );
 		res.end();

@@ -1,9 +1,9 @@
 /**
  *
  * */
-require(['../config'], function(config){
+require(['../../config'], function(config){
 	var r = require(config.requireConfig);
-	r(['jquery', 'global', 'socket', 'bookmarkRead', config.dataSource.tag, 'template'], function($, g, socket, bookmarkRead, tagsData){
+	r(['jquery', 'global', 'socket', 'bookmarkRead', 'tag', config.dataSource.tag, 'template'], function($, g, socket, bookmarkRead, tag, tagData){
 		var $reader = $('#reader')
 			, articleTpl = $.template({
 				template: 'li.reader_article.article' +
@@ -19,9 +19,7 @@ require(['../config'], function(config){
 					datetime: function(d){
 						return g.datetime( d.datetime );
 					}
-					, tags: function(d){
-						return d.tags ? '<span class="tag">'+ d.tags.split(',').join('</span><span class="tag">') +'</span>' : '';
-					}
+					, tags: tag.tagTpl
 					, content: function(d){
 						var content = '<div>'+ d.content +'</div>'
 							, img = content.match(/<img.*?>/g) || []
@@ -49,7 +47,7 @@ require(['../config'], function(config){
 					}
 				}
 			})
-			, $readPopup = bookmarkRead($reader, tagsData)
+			, $readPopup = bookmarkRead($reader, tagData)
 			;
 
 		$reader.on('click', '.reader_section > a', function(e){

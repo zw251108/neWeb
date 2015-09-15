@@ -8,6 +8,9 @@ define(['jquery', 'socket', 'template'], function($, socket, tpl){
 
 		}
 		, tagTpl = function(d){
+			return d.tags ? '<span class="tag">'+ d.tags.split(',').join('</span><span class="tag">') +'</span>' : '';
+		}
+		, tagCheckedTpl = function(d){
 			return d.tags ? '<span class="tag tag-checked">'+ d.tags.split(',').join('</span><span class="tag tag-checked">') +'</span>' : '';
 		}
 		;
@@ -87,6 +90,7 @@ define(['jquery', 'socket', 'template'], function($, socket, tpl){
 		});
 	};
 	Tag.tagTpl = tagTpl;
+	Tag.tagCheckedTpl = tagCheckedTpl;
 
 	return Tag;
 });

@@ -58,7 +58,7 @@ define('radarChart', ['jquery', 'd3'], function($, d3){
 });
 
 //---------- 应用模块 ----------
-require(['module/config'], function(config){
+require(['config'], function(config){
 	config.requireConfig.baseUrl = 'script/';
 
 	var r = require.config(config.requireConfig);

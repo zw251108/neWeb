@@ -132,6 +132,27 @@ web.post('/login', function(req, res){
 	// todo 登录功能
 });
 
+web.post('/skin', function(req, res){   // 设置皮肤功能
+
+	var body = req.body || {}
+		, skin = body.skin
+		, session = req.session || {}
+		, user = session.user
+		, rs = {}
+		;
+	if( !user ){
+		user = req.session.user = userInfo;
+	}
+	if( skin ){
+		user.skin = skin;
+	}
+
+	rs.success = true;
+
+	res.send( JSON.stringify(rs) );
+	res.end();
+});
+
 index.push({
 	id: 'time'
 	, type: 'metro'

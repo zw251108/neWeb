@@ -10,66 +10,7 @@ define('editorLayout', ['jquery', 'global', 'template'], function($, g){
 			template: 'li.%on%.%sp%[title=%name% data-type=%type%]{%name%}'
 		})
 
-		, $skinLink = $('<link />', {rel: 'stylesheet'}).appendTo('head')
-		, $skinList = $('#changeSkin').on('click', function(){
-			$layoutList.slideUp().prev().hide();
-			$skinList.slideToggle().prev().toggle();
-		}).after('<span class="arrow hidden"></span><ul class="list skinList hidden"></ul>').nextAll('ul').append(listTpl([{
-			name: 'default', on: true}, {
-			name: '3024-day'}, {
-			name: '3024-night'}, {
-			name: 'ambiance'}, {
-			name: 'base16-dark'}, {
-			name: 'base16-light'}, {
-			name: 'blackboard'}, {
-			name: 'cobalt'}, {
-			name: 'eclipse'}, {
-			name: 'elegant'}, {
-			name: 'erlang-dark'}, {
-			name: 'lesser-dark'}, {
-			name: 'mbo'}, {
-			name: 'mdn-like'}, {
-			name: 'midnight'}, {
-			name: 'monokai'}, {
-			name: 'neat'}, {
-			name: 'neo'}, {
-			name: 'night'}, {
-			name: 'paraiso-dark'}, {
-			name: 'paraiso-light'}, {
-			name: 'pastel-on-dark'}, {
-			name: 'rubyblue'}, {
-			name: 'solarized'}, {
-			name: 'the-matrix'}, {
-			name: 'tomorrow-night-bright'}, {
-			name: 'tomorrow-night-eighties'}, {
-			name: 'twilight'}, {
-			name: 'vibrant-ink'}, {
-			name: 'xq-dark'}, {
-			name: 'xq-light'}, {
-			name: 'zenburn'
-		}]).join('')).on('click', 'li', function(){
-
-			var skin = this.innerHTML;
-
-			$(this).addClass('on').siblings('.on').removeClass('on');
-
-			$layoutList.slideUp().prev().hide();
-			$skinLink.attr('href', skin !== 'default' ? '../script/plugin/codeMirror/theme/'+ skin +'.css' : '');
-
-			html.setOption('theme', skin);
-			css.setOption('theme', skin);
-			js.setOption('theme', skin);
-
-			$skinList.slideUp().prev().hide();
-		})
-		, $layoutList = $('#changeLayout').on('click', function(){
-			$skinList.slideUp().prev().hide();
-			$layoutList.slideToggle().prev().toggle();
-		}).after('<button id="showHTML" class="icon showSp" title="更改布局">html</button>' +
-			'<button id="showCSS" class="icon showSp" title="更改布局">css</button>' +
-			'<button id="showJS" class="icon showSp" title="更改布局">js</button>' +
-			'<button id="showRS" class="icon showSp" title="更改布局">结果</button>' +
-			'<span class="arrow hidden"></span><ul class="list layoutList hidden"></ul>').nextAll('ul').append(listTpl([{
+		, LAYOUT_LIST = [{
 			name: '默认布局', type: '0', on: 'on'}, {
 			name: '四行布局', type: '1'}, {
 			name: '四列布局', type: '2'}, {
@@ -77,28 +18,46 @@ define('editorLayout', ['jquery', 'global', 'template'], function($, g){
 			name: '全屏 HTML', type: '4', sp: 'sp'}, {
 			name: '全屏 CSS', type: '5', sp: 'sp'}, {
 			name: '全屏 JS', type: '6', sp: 'sp'}, {
-			name: '全屏结果', type: '7', sp: 'sp'}]).join('')).on('click', 'li', function(){
+			name: '全屏结果', type: '7', sp: 'sp'
+		}]
+		, $layoutList = $('#changeLayout').on({
+			click: function(){
+				//$skinList.slideUp().prev().hide();
+
+				beforeCallback && beforeCallback();
+
+				$layoutList.slideToggle().prev().toggle();
+			}
+		}).after('<button id="showHTML" class="icon showSp" title="更改布局">html</button>' +
+			'<button id="showCSS" class="icon showSp" title="更改布局">css</button>' +
+			'<button id="showJS" class="icon showSp" title="更改布局">js</button>' +
+			'<button id="showRS" class="icon showSp" title="更改布局">结果</button>' +
+			'<span class="arrow hidden"></span><ul class="list scrollBar layoutList hidden"></ul>').nextAll('ul').append( listTpl(LAYOUT_LIST).join('') ).on('click', 'li', function(){
 			var $that = $(this)
 				, type = $that.data('type')
 				;
 
+			beforeCallback && beforeCallback();
+
 			$that.addClass('on').siblings('.on').removeClass('on');
 
-			$skinList.slideUp().prev().hide();
 			g.$container.addClass('Container-eFS');
 
 			switch( type ){
 				case 1:
 					$currentShow && $currentShow.removeClass('on');
 					$editor.removeClass('editor-4col editor-4cor editor-htmlFS editor-cssFS editor-jsFS editor-rsFS').addClass('editor-4row');
+					$currentShow = null;
 					break;
 				case 2:
 					$currentShow && $currentShow.removeClass('on');
 					$editor.removeClass('editor-4row editor-4cor editor-htmlFS editor-cssFS editor-jsFS editor-rsFS').addClass('editor-4col');
+					$currentShow = null;
 					break;
 				case 3:
 					$currentShow && $currentShow.removeClass('on');
 					$editor.removeClass('editor-4row editor-4col editor-htmlFS editor-cssFS editor-jsFS editor-rsFS').addClass('editor-4cor');
+					$currentShow = null;
 					break;
 				case 4:
 					$currentShow = $showHTML.addClass('on');
@@ -120,6 +79,7 @@ define('editorLayout', ['jquery', 'global', 'template'], function($, g){
 				default:
 					g.$container.removeClass('Container-eFS');
 					$editor.removeClass('editor-4row editor-4col editor-4cor editor-htmlFS editor-cssFS editor-jsFS editor-rsFS');
+					$currentShow = null;
 					break;
 			}
 
@@ -127,6 +87,13 @@ define('editorLayout', ['jquery', 'global', 'template'], function($, g){
 			html.refresh();
 			css.refresh();
 			js.refresh();
+		}).on({
+			show: function(){
+				$layoutList.slideDown().prev().show();
+			}
+			, hide: function(){
+				$layoutList.slideUp().prev().hide();
+			}
 		})
 
 		, $currentShow
@@ -137,6 +104,7 @@ define('editorLayout', ['jquery', 'global', 'template'], function($, g){
 				$currentShow && $currentShow.removeClass('on');
 				$showHTML.addClass('on');
 				$currentShow = $showHTML;
+				$layoutList.find('li.on').removeClass('on').end().find('li[data-type="4"]').addClass();
 
 				html.refresh();
 			}
@@ -148,6 +116,7 @@ define('editorLayout', ['jquery', 'global', 'template'], function($, g){
 				$currentShow && $currentShow.removeClass('on');
 				$showCSS.addClass('on');
 				$currentShow = $showCSS;
+				$layoutList.find('li.on').removeClass('on').end().find('li[data-type="5"]').addClass();
 
 				css.refresh();
 			}
@@ -159,6 +128,7 @@ define('editorLayout', ['jquery', 'global', 'template'], function($, g){
 				$currentShow && $currentShow.removeClass('on');
 				$showJS.addClass('on');
 				$currentShow = $showJS;
+				$layoutList.find('li.on').removeClass('on').end().find('li[data-type="6"]').addClass();
 
 				js.refresh();
 			}
@@ -170,6 +140,8 @@ define('editorLayout', ['jquery', 'global', 'template'], function($, g){
 				$currentShow.removeClass('on');
 				$showRS.addClass('on');
 				$currentShow = $showRS;
+
+				$layoutList.find('li.on').removeClass('on').end().find('li[data-type="7"]').addClass();
 			}
 		})
 
@@ -177,6 +149,7 @@ define('editorLayout', ['jquery', 'global', 'template'], function($, g){
 		, html
 		, css
 		, js
+		, beforeCallback
 		;
 
 	$layoutList.parent().on('click', '#htmlShow', function(){
@@ -197,11 +170,13 @@ define('editorLayout', ['jquery', 'global', 'template'], function($, g){
 
 	});
 
-	return function($e, h, c, j){
+	return function($e, h, c, j, before){
 		$editor = $e;
 		html = h;
 		css = c;
 		js = j;
+
+		beforeCallback = before;
 
 		return $layoutList;
 	};
@@ -368,7 +343,7 @@ define('setMorePopup', ['jquery', 'socket', 'template'], function($, socket){
 });
 
 
-require(['../config'], function(config){
+require(['../../config'], function(config){
 	var r = require.config(config.requireConfig);
 	r(['jquery', 'global', 'socket'
 		, 'codeEditor'
@@ -378,7 +353,8 @@ require(['../config'], function(config){
 		, 'demoImgLibPopup'
 		, 'setMorePopup'
 		, 'tag', config.dataSource.tag
-		, 'template'], function($, g, socket, code, codeSkin, layout, initUiLib, demoImg, setMore, tag, tagsData){
+		, 'msgPopup'
+		, 'template'], function($, g, socket, code, codeSkin, layout, initUiLib, demoImg, setMore, tag, tagsData, msgPopup){
 		var $editor = $('#editor')
 			, $form = $editor.find('#editorForm')
 			, $toolbar = $editor.find('.toolbar')
@@ -435,7 +411,7 @@ require(['../config'], function(config){
 			, $codeName = $setMorePopup.find('#codeName')
 			, $tags = $('#tags')
 
-			, $skinList
+			, skinList
 			, $layoutList
 			;
 
@@ -512,10 +488,12 @@ require(['../config'], function(config){
 
 		$editor.find('label').removeClass('hidden');
 
-		$skinList = codeSkin(config.requireConfig.baseUrl, [html, css, js], function(){
-
+		skinList = codeSkin(config.requireConfig.baseUrl, [html, css, js], function(){
+			$layoutList.hide();
 		});
-		$layoutList = layout($editor, html, css, js);
+		$layoutList = layout($editor, html, css, js, function(){
+			skinList.hide();
+		});
 		initUiLib($jsLib, $cssLib);
 
 		$('#editorSetMoreRs').on('load', function(){
@@ -537,7 +515,8 @@ require(['../config'], function(config){
 		socket.register('editor/code/save', function(data){
 
 			if( 'error' in data ){
-				$alert.find('#alertConternt').html('保存失败' + data.msg).end().trigger('showDialog');
+				msgPopup.showMsg('保存失败' + data.msg);
+				//$alert.find('#alertConternt').html('保存失败' + data.msg).end().trigger('showDialog');
 			}
 			else{
 				isEdit = false;
@@ -546,8 +525,8 @@ require(['../config'], function(config){
 					location.search = '?id='+ data.info.id;
 				}
 				else{
-					$alert.find('#alertContent').html('保存成功')
-						.end().trigger('showDialog');
+					msgPopup.showMsg('保存成功');
+					//$alert.find('#alertContent').html('保存成功').end().trigger('showDialog');
 				}
 			}
 		});

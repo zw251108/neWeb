@@ -159,7 +159,7 @@ var db          = require('./db.js')
 			editor: 'select editor.Id,editor.name,preview,tags,width,height from editor,image where status=1 and editor.preview=image.src order by editor.Id'
 			, editorCount: 'select count(*) as count from editor where status=1'
 			, editorPage: 'select editor.Id,editor.name,preview,tags,width,height from editor,image where ' +
-				'status=1 and ' +
+				//'status=1 and ' +
 				'editor.preview=image.src order by editor.Id limit :page,:size'
 			, code: 'select Id,name,tags,css_lib,js_lib,html,css,js from editor where Id=:id'
 			, codeSave: 'insert into editor(status,html,css,js,css_lib,js_lib,name,preview,create_time) values(1,:html,:css,:js,:cssLib,:jsLib,:name,:preview,now())'
@@ -228,7 +228,7 @@ var db          = require('./db.js')
 						}]).join('')
 						, content: codeEditTpl(rs).join('')
 					}).join('') + tpl.popupTpl([{
-						id: 'alert',    size: 'small', content: '<div class="msg" id="alertContent"></div>'}, {
+						id: 'msgPopup',    size: 'small', content: '<div class="msg" id="msgContent"></div>'}, {
 						id: 'setMore',   size: 'normal'
 							, content: codeSetMoreFormTpl(rs)
 							, button: '<button type="button" id="codeSave" class="btn btn-submit">保存</button>'}, {
@@ -511,6 +511,64 @@ web.get('/data/code', function(req, res){
 	else{
 		res.end();
 	}
+});
+
+var SKIN_LIST = [{
+	name: 'default'}, {
+	name: '3024-day'}, {
+	name: '3024-night'}, {
+	name: 'ambiance'}, {
+	name: 'base16-dark'}, {
+	name: 'base16-light'}, {
+	name: 'blackboard'}, {
+	name: 'cobalt'}, {
+	name: 'eclipse'}, {
+	name: 'elegant'}, {
+	name: 'erlang-dark'}, {
+	name: 'lesser-dark'}, {
+	name: 'mbo'}, {
+	name: 'mdn-like'}, {
+	name: 'midnight'}, {
+	name: 'monokai'}, {
+	name: 'neat'}, {
+	name: 'neo'}, {
+	name: 'night'}, {
+	name: 'paraiso-dark'}, {
+	name: 'paraiso-light'}, {
+	name: 'pastel-on-dark'}, {
+	name: 'rubyblue'}, {
+	name: 'solarized'}, {
+	name: 'the-matrix'}, {
+	name: 'tomorrow-night-bright'}, {
+	name: 'tomorrow-night-eighties'}, {
+	name: 'twilight'}, {
+	name: 'vibrant-ink'}, {
+	name: 'xq-dark'}, {
+	name: 'xq-light'}, {
+	name: 'zenburn'
+}];
+web.get('/data/layout', function(req, res){
+
+});
+web.get('/data/skin', function(req, res){
+	var session = req.session || {}
+		, user = session.user
+		, rs = SKIN_LIST
+		;
+
+	if( user && user.skin ){
+		rs.forEach(function(d){
+			if( d.name === user.skin ){
+				d.on = 'on';
+			}
+		});
+	}
+	else{
+		rs[0].on = 'on';
+	}
+
+	res.send( JSON.stringify(rs) );
+	res.end();
 });
 
 socket.register({

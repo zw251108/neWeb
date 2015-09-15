@@ -2,15 +2,14 @@
  * @module  global
  * */
 //----- 全局模块 -----
-define(function(require){
-	var $ = require('jquery')
-		, socket = require('./socket')
-		;
+define(['jquery', 'socket'], function($, socket){
 
+	//ajax 全局设置
 	$.ajaxSetup({
 		dataType: 'json'
 	});
 
+	// 整理表单项数据，组成 json 格式，多选类格式为逗号分隔
 	$.fn.serializeJson = function(){
 		var rs = {}
 			, array
@@ -34,11 +33,18 @@ define(function(require){
 		return rs;
 	};
 
-	var
-		// 单全局变量
-		g =  window.GLOBAL || {}
-		, animationEnd = 'webkitAnimationEnd mozAnimationEnd msAnimationEnd animationEnd'
+	// 全局图片加载错误处理
+	$(document).on('error', 'img', function(){
+		this.src = location.original +'/image/default/no-pic.png';
+	});
+
+	var ANIMATION_END = 'webkitAnimationEnd mozAnimationEnd msAnimationEnd animationEnd';
+
+	// 单全局变量
+	var g =  window.GLOBAL || {}
 		;
+
+	window.GLOBAL = g;// 释放到全局
 
 	g.datetime = function(datetime){
 		var today = datetime ? datetime : new Date()
@@ -102,11 +108,10 @@ define(function(require){
 	};
 
 	g.eventType = {
-		animationEnd: animationEnd
+		animationEnd: ANIMATION_END
 	};
 
-	window.GLOBAL = g;// 释放到全局
-
+	// 全局事件代理
 	var $container = $('#container')
 		, target
 		;
@@ -194,9 +199,11 @@ define(function(require){
 			, closeDialog: function(){
 				this.className += ' hidden';
 			}
-		}, '.module-popup').on('click', '.module-popup .module_close', function(){
+		}, '.module-popup')
+		.on('click', '.module-popup .module_close', function(){
 			$(this).parents('.module-popup').addClass('hidden');
-		}).on('mousewheel DOMMouseScroll', '.module-popup .module_content', function(e){
+		})
+		.on('mousewheel DOMMouseScroll', '.module-popup .module_content', function(e){
 			var delta = e.originalEvent.wheelDelta || -e.originalEvent.detail
 				, $that = $(this)
 				;
@@ -213,7 +220,8 @@ define(function(require){
 					}
 				}
 			}
-		}).on('click', '.module-main .module_close', function(e){
+		})
+		.on('click', '.module-main .module_close', function(e){
 		e.preventDefault();
 		e.stopImmediatePropagation();
 

@@ -1,11 +1,11 @@
 /**
  *
  * */
-require(['../../module/config'], function(config){
+require(['../../config'], function(config){
 	config.requireConfig.baseUrl = location.origin +'/script/';
 
 	var r = require(config.requireConfig);
-	r(['jquery', 'global', 'socket', 'codeEditor', 'codeEditorSkin', 'template'], function($, g, socket, code, codeSkin){
+	r(['jquery', 'global', 'socket', 'codeEditor', 'codeEditorSkin', 'msgPopup', 'template'], function($, g, socket, code, codeSkin, msgPopup){
 		var $document = $('#document')
 			, $curr = null
 			, $temp = $([])
@@ -35,7 +35,7 @@ require(['../../module/config'], function(config){
 						, dataType: 'json'
 						, success: function(json){
 							if( json.success ){
-								//$mainList.append('<li data-id="'+ json.id +'"><a href="'+ json.id +'">'+ title +'</a><span class="icon icon-edit"></span></li>');
+
 								$document.find('.module_content').append( sectionTpl({
 									sectionId: json.id
 									, sectionTitle: title
@@ -43,7 +43,8 @@ require(['../../module/config'], function(config){
 								}).join('') );
 								$addSectionPopup.trigger('closeDialog');
 
-								$('#save').trigger('click');
+								msgPopup.showMsg(title +' 章节创建成功！');
+								$save.trigger('click', [true]);
 							}
 							else{
 
@@ -72,14 +73,16 @@ require(['../../module/config'], function(config){
 						, dataType: 'json'
 						, success: function(json){
 							if( json.success ){
-								//$mainList.append('<li data-id="'+ json.id +'"><a href="'+ json.id +'">'+ title +'</a><span class="icon icon-edit"></span></li>');
+
 								$section.find('dl').append( sectionListTpl({
 									Id: json.id
 									, title: title
 								}).join('') );
 								$addContentPopup.trigger('closeDialog');
 
-								$section.find('.icon-save').trigger('click');
+								msgPopup.showMsg(title +' 小节创建成功！');
+
+								$section.find('.icon-save').trigger('click', [true]);
 							}
 							else{
 
@@ -88,17 +91,19 @@ require(['../../module/config'], function(config){
 					});
 				}
 			})
+			, $save = $document.find('#save')
 			, codeList = []
 			, $skinList
 			;
 
 		$skinList = codeSkin(config.requireConfig.baseUrl, codeList);
 
-		$document.on('click', '#save', function(){
+		$document.on('click', '#save', function(e, hideMsg){
 			var order = $document.find('.section').map(function(){
 					return $(this).data('sectionId');
 				}).get().join()
 				;
+
 			$.ajax({
 				url: 'save'
 				, type: 'POST'
@@ -107,9 +112,11 @@ require(['../../module/config'], function(config){
 					order: order
 				}
 				, success: function(json){
-
+					if( json.success ){
+						!hideMsg && msgPopup.showMsg('章节排序，保存成功！');
+					}
 				}
-			})
+			});
 		})
 			.on('click', '#add', function(){
 			$addSectionPopup.trigger('showDialog');
@@ -145,7 +152,7 @@ require(['../../module/config'], function(config){
 				$that.insertAfter( $that.next() );
 			}
 		})
-			.on('click', '.section_title .icon-save', function(e){
+			.on('click', '.section_title .icon-save', function(e, hideMsg){
 			e.stopImmediatePropagation();
 
 			var $that = $(this).parents('.section')
@@ -163,9 +170,11 @@ require(['../../module/config'], function(config){
 					order: order
 				}
 				, success: function(json){
-
+					if( json.success ){
+						!hideMsg && msgPopup.showMsg('内容排序，保存成功！');
+					}
 				}
-			})
+			});
 		})
 			.on('click', 'dt', function(){
 			if( $curr ){

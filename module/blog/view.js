@@ -12,7 +12,17 @@ var getEmmet    = require('../emmet/getEmmet.js')
 		, filter: {
 			tags: function(d){
 				return d.tags ? d.tags.split(',').map(function(d){
-					return '<span class="tag">' + d +'</span>';
+					return '<span class="tag tag-checked">' + d +'</span>';
+				}).join('') : '';
+			}
+		}
+	})
+	, articleDetailTpl = emmetTpl({
+		template: getEmmet('blog/articleDetail.html')
+		, filter: {
+			tags: function(d){
+				return d.tags ? d.tags.split(',').map(function(d){
+					return '<span class="tag tag-checked">' + d +'</span>';
 				}).join('') : '';
 			}
 		}
@@ -20,23 +30,32 @@ var getEmmet    = require('../emmet/getEmmet.js')
 
 	, View = {
 		blog: function(rs){
-			var blog = {
+			return tpl({
 				title: '博客 blog'
 				, main: {
 					moduleMain: {
 						id: 'blog'
 						, title: '博客 blog'
-						, size: 'large'
 						, content: articleTpl( rs ).join('')
 					}
 				}
-				, script: {
-					main: '../script/module/blog/index'
-					, src: '../script/lib/require.min.js'
+				//, script: {
+				//	main: '../script/module/blog/index'
+				//	, src: '../script/lib/require.min.js'
+				//}
+			});
+		}
+		, blogDetail: function(rs){
+			return tpl({
+				title: '博客 blog'
+				, main: {
+					moduleMain: {
+						id: 'blog'
+						, title: '博客 blog'
+						, content : articleDetailTpl( rs ).join('')
+					}
 				}
-			};
-
-			return tpl( blog );
+			})
 		}
 	}
 	;

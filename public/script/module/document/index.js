@@ -1,7 +1,7 @@
 /**
  *
  * */
-require(['../config'], function(config){
+require(['../../config'], function(config){
 	var r = require(config.requireConfig);
 	r(['jquery', 'global', 'socket', 'codeEditor', 'codeEditorSkin', 'template'], function($, g, socket, code, codeSkin){
 		var $document = g.mod('$document') || $('#document')

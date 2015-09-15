@@ -21,33 +21,34 @@
 		//width: 310px;
 		width: 150px;
 
-		margin: 0 5px 10px;
+		//margin: 0 5px 10px;
 		//background: transparent;
 
 		.boxSizing(border-box);
-	}
-	.article_title{
-		font-size: 18px;
-		line-height: 1.2;
-		text-align: center;
-	}
-	.article_preview{
-		display: block;
-		height: auto;
-		max-width: 100%;
-		margin: 10px auto 0;
-	}
-	.article-block{
-		position: absolute;
-		bottom: 0;
 
-		left: 0;
-		right: 5px;
+		&_title{
+			font-size: 18px;
+			line-height: 1.2;
+			text-align: center;
+		}
+		&_preview{
+			display: block;
+			height: auto;
+			max-width: 100%;
+			margin: 10px auto 0;
+		}
+		&-block{
+			position: absolute;
+			bottom: 0;
 
-		height: auto;
-		width: auto;
-		margin-right: 0;
-		text-align: center;
+			left: 0;
+			right: 5px;
+
+			height: auto;
+			width: auto;
+			margin-right: 0;
+			text-align: center;
+		}
 	}
 
 	.CodeMirror{
@@ -155,17 +156,17 @@
 		margin-bottom: -1px;
 		font-size: 14px;
 
-		&::-webkit-scrollbar {
-			width: 5px;
-		}
-		&::-webkit-scrollbar-thumb{
-			height: 50px;
-			border-radius: 20px;
-			background: #c0c0c0;
-		}
-		&::-webkit-scrollbar-track-piece{
-			background: #fff;
-		}
+		//&::-webkit-scrollbar {
+		//	width: 5px;
+		//}
+		//&::-webkit-scrollbar-thumb{
+		//	height: 50px;
+		//	border-radius: 20px;
+		//	background: #c0c0c0;
+		//}
+		//&::-webkit-scrollbar-track-piece{
+		//	background: #fff;
+		//}
 
 		li{
 			overflow: hidden;
@@ -250,6 +251,59 @@
 	.boxSizing( border-box );
 
 
+	label{
+		position: absolute;
+		z-index: 120;
+		top: 0;
+		right: 25px;
+		min-width: 100px;
+		border: solid #ddd;
+		border-width: 1px;
+		border-top-color: #fff;
+		border-radius: 0 0 10px 10px;
+		//		background: #efefef;
+		background: #fff;
+		//		background: rgba(255, 255, 255, .5);
+
+		color: #333;
+		font-size: 12px;
+		line-height: 2em;
+		text-align: center;
+		//		opacity: .6;
+
+		.transition(top .5s ease-in-out);
+
+		&:before{
+			position: absolute;
+			top: -2px;
+			left: -11px;
+			height: 12px;
+			width: 12px;
+			background-image: -webkit-radial-gradient(bottom left, transparent 9px, #ddd 10px, #fff 11px);
+			background-image: -moz-radial-gradient(bottom left, transparent 9px, #ddd 10px, #fff 11px);
+			background-image: -ms-radial-gradient(bottom left, transparent 9px, #ddd 10px, #fff 11px);
+			background-image: radial-gradient(bottom left, transparent 9px, #ddd 10px, #fff 11px);
+			content: "";
+		}
+		&:after{
+			position: absolute;
+			top: -2px;
+			right: -11px;
+			height: 12px;
+			width: 12px;
+			background-image: -webkit-radial-gradient(bottom right, transparent 9px, #ddd 10px, #fff 11px);
+			background-image: -moz-radial-gradient(bottom right, transparent 9px, #ddd 10px, #fff 11px);
+			background-image: -ms-radial-gradient(bottom right, transparent 9px, #ddd 10px, #fff 11px);
+			background-image: radial-gradient(bottom right, transparent 9px, #ddd 10px, #fff 11px);
+			content: "";
+		}
+	}
+
+	&:hover label{
+		//display: none;
+		top: -25px;
+	}
+
 	&-html{
 		float: left;
 		width: 30%;
@@ -290,59 +344,6 @@
 				background-image: radial-gradient(bottom right, transparent 9px, #888 10px, #ffffff 11px);
 			}
 		}
-	}
-
-	label{
-		position: absolute;
-		z-index: 120;
-		top: 0;
-		right: 25px;
-		min-width: 100px;
-		border: solid #ddd;
-		border-width: 1px;
-		border-top-color: #fff;
-		border-radius: 0 0 10px 10px;
-//		background: #efefef;
-		background: #fff;
-//		background: rgba(255, 255, 255, .5);
-
-		color: #333;
-		font-size: 12px;
-		line-height: 2em;
-		text-align: center;
-//		opacity: .6;
-
-		.transition(top .5s ease-in-out);
-
-		&:before{
-			position: absolute;
-			top: -2px;
-			left: -11px;
-			height: 12px;
-			width: 12px;
-			background-image: -webkit-radial-gradient(bottom left, transparent 9px, #ddd 10px, #fff 11px);
-			background-image: -moz-radial-gradient(bottom left, transparent 9px, #ddd 10px, #fff 11px);
-			background-image: -ms-radial-gradient(bottom left, transparent 9px, #ddd 10px, #fff 11px);
-			background-image: radial-gradient(bottom left, transparent 9px, #ddd 10px, #fff 11px);
-			content: "";
-		}
-		&:after{
-			position: absolute;
-			top: -2px;
-			right: -11px;
-			height: 12px;
-			width: 12px;
-			background-image: -webkit-radial-gradient(bottom right, transparent 9px, #ddd 10px, #fff 11px);
-			background-image: -moz-radial-gradient(bottom right, transparent 9px, #ddd 10px, #fff 11px);
-			background-image: -ms-radial-gradient(bottom right, transparent 9px, #ddd 10px, #fff 11px);
-			background-image: radial-gradient(bottom right, transparent 9px, #ddd 10px, #fff 11px);
-			content: "";
-		}
-	}
-
-	&:hover label{
-		//display: none;
-		top: -25px;
 	}
 }
 .editor_rs{
