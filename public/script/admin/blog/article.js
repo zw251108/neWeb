@@ -5,7 +5,7 @@ define(['../../config'], function(config){
 	config.requireConfig.baseUrl = location.origin +'/script/';
 
 	var r = require(config.requireConfig);
-	r(['jquery', 'global', 'socket', 'codeEditor', 'codeEditorSkin', 'template'], function($, g, socket, code, codeSkin){
+	r(['jquery', 'global', 'socket', 'codeEditor', 'codeEditorSkin', 'msgPopup', 'template'], function($, g, socket, code, codeSkin, msgPopup){
 		var $blog = $('#blog').on('click', '.icon-save', function(e){
 				content.save();
 
@@ -18,7 +18,7 @@ define(['../../config'], function(config){
 					, data: data
 					, success: function(json){
 						if( json.success ){
-							alert('保存成功');
+							msgPopup.showMsg('保存成功');
 						}
 					}
 				})

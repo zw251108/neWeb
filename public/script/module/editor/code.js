@@ -22,7 +22,6 @@ define('editorLayout', ['jquery', 'global', 'template'], function($, g){
 		}]
 		, $layoutList = $('#changeLayout').on({
 			click: function(){
-				//$skinList.slideUp().prev().hide();
 
 				beforeCallback && beforeCallback();
 
@@ -32,116 +31,97 @@ define('editorLayout', ['jquery', 'global', 'template'], function($, g){
 			'<button id="showCSS" class="icon showSp" title="更改布局">css</button>' +
 			'<button id="showJS" class="icon showSp" title="更改布局">js</button>' +
 			'<button id="showRS" class="icon showSp" title="更改布局">结果</button>' +
-			'<span class="arrow hidden"></span><ul class="list scrollBar layoutList hidden"></ul>').nextAll('ul').append( listTpl(LAYOUT_LIST).join('') ).on('click', 'li', function(){
+			'<span class="arrow hidden"></span><ul class="list scrollBar layoutList hidden"></ul>')
+			.nextAll('ul').append( listTpl(LAYOUT_LIST).join('') )
+			.on('click', 'li', function(){
 			var $that = $(this)
 				, type = $that.data('type')
 				;
 
-			beforeCallback && beforeCallback();
-
 			$that.addClass('on').siblings('.on').removeClass('on');
 
-			g.$container.addClass('Container-eFS');
+			$layoutList.triggerHandler('setLayout', [type]);
+		})
+			.on({
+			setLayout: function(e, layout){
 
-			switch( type ){
-				case 1:
-					$currentShow && $currentShow.removeClass('on');
-					$editor.removeClass('editor-4col editor-4cor editor-htmlFS editor-cssFS editor-jsFS editor-rsFS').addClass('editor-4row');
-					$currentShow = null;
-					break;
-				case 2:
-					$currentShow && $currentShow.removeClass('on');
-					$editor.removeClass('editor-4row editor-4cor editor-htmlFS editor-cssFS editor-jsFS editor-rsFS').addClass('editor-4col');
-					$currentShow = null;
-					break;
-				case 3:
-					$currentShow && $currentShow.removeClass('on');
-					$editor.removeClass('editor-4row editor-4col editor-htmlFS editor-cssFS editor-jsFS editor-rsFS').addClass('editor-4cor');
-					$currentShow = null;
-					break;
-				case 4:
-					$currentShow = $showHTML.addClass('on');
-					$editor.removeClass('editor-4row editor-4col editor-4cor editor-cssFS editor-jsFS editor-rsFS').addClass('editor-htmlFS');
-					break;
-				case 5:
-					$currentShow = $showCSS.addClass('on');
-					$editor.removeClass('editor-4row editor-4col editor-4cor editor-htmlFS editor-jsFS editor-rsFS').addClass('editor-cssFS');
-					break;
-				case 6:
-					$currentShow = $showJS.addClass('on');
-					$editor.removeClass('editor-4row editor-4col editor-4cor editor-htmlFS editor-cssFS editor-rsFS').addClass('editor-jsFS');
-					break;
-				case 7:
-					$currentShow = $showRS.addClass('on');
-					$editor.removeClass('editor-4row editor-4col editor-4cor editor-htmlFS editor-cssFS editor-jsFS').addClass('editor-rsFS');
-					break;
-				case 0:
-				default:
-					g.$container.removeClass('Container-eFS');
-					$editor.removeClass('editor-4row editor-4col editor-4cor editor-htmlFS editor-cssFS editor-jsFS editor-rsFS');
-					$currentShow = null;
-					break;
-			}
+				beforeCallback && beforeCallback();
 
-			$layoutList.slideUp().prev().hide();
-			html.refresh();
-			css.refresh();
-			js.refresh();
-		}).on({
-			show: function(){
-				$layoutList.slideDown().prev().show();
-			}
-			, hide: function(){
+				g.$container.addClass('Container-eFS');
+
+				$editor.removeClass('editor-4row editor-4col editor-4cor editor-htmlFS editor-cssFS editor-jsFS editor-rsFS');
+				$currentShow && $currentShow.removeClass('on');
+
+				switch( layout ){
+					case 1:
+						$editor.addClass('editor-4row');
+						$currentShow = null;
+						break;
+					case 2:
+						$editor.addClass('editor-4col');
+						$currentShow = null;
+						break;
+					case 3:
+						$editor.addClass('editor-4cor');
+						$currentShow = null;
+						break;
+					case 4:
+						$editor.addClass('editor-htmlFS');
+						$currentShow = $showHTML.addClass('on');
+						$layoutList.find('li.on').removeClass('on').end().find('li[data-type="4"]').addClass();
+						break;
+					case 5:
+						$editor.addClass('editor-cssFS');
+						$currentShow = $showCSS.addClass('on');
+						$layoutList.find('li.on').removeClass('on').end().find('li[data-type="5"]').addClass();
+						break;
+					case 6:
+						$editor.addClass('editor-jsFS');
+						$currentShow = $showJS.addClass('on');
+						$layoutList.find('li.on').removeClass('on').end().find('li[data-type="6"]').addClass();
+						break;
+					case 7:
+						$editor.addClass('editor-rsFS');
+						$currentShow = $showRS.addClass('on');
+						$layoutList.find('li.on').removeClass('on').end().find('li[data-type="7"]').addClass();
+						break;
+					case 0:
+					default:
+						g.$container.removeClass('Container-eFS');
+						$currentShow = null;
+						break;
+				}
+
 				$layoutList.slideUp().prev().hide();
+				html.refresh();
+				css.refresh();
+				js.refresh();
 			}
 		})
 
 		, $currentShow
 		, $showHTML = $('#showHTML').on('click', function(){
 			if( $currentShow !== $showHTML ){
-				$editor.removeClass('editor-4row editor-4col editor-4cor editor-cssFS editor-jsFS editor-rsFS').addClass('editor-htmlFS');
 
-				$currentShow && $currentShow.removeClass('on');
-				$showHTML.addClass('on');
-				$currentShow = $showHTML;
-				$layoutList.find('li.on').removeClass('on').end().find('li[data-type="4"]').addClass();
-
-				html.refresh();
+				$layoutList.triggerHandler('setLayout', [4]);
 			}
 		})
 		, $showCSS = $('#showCSS').on('click', function(){
 			if( $currentShow !== $showCSS ){
-				$editor.removeClass('editor-4row editor-4col editor-4cor editor-htmlFS editor-jsFS editor-rsFS').addClass('editor-cssFS');
 
-				$currentShow && $currentShow.removeClass('on');
-				$showCSS.addClass('on');
-				$currentShow = $showCSS;
-				$layoutList.find('li.on').removeClass('on').end().find('li[data-type="5"]').addClass();
-
-				css.refresh();
+				$layoutList.triggerHandler('setLayout', [5]);
 			}
 		})
 		, $showJS = $('#showJS').on('click', function(){
 			if( $currentShow !== $showJS ){
-				$editor.removeClass('editor-4row editor-4col editor-4cor editor-htmlFS editor-cssFS editor-rsFS').addClass('editor-jsFS');
 
-				$currentShow && $currentShow.removeClass('on');
-				$showJS.addClass('on');
-				$currentShow = $showJS;
-				$layoutList.find('li.on').removeClass('on').end().find('li[data-type="6"]').addClass();
-
-				js.refresh();
+				$layoutList.triggerHandler('setLayout', [6]);
 			}
 		})
 		, $showRS = $('#showRS').on('click', function(){
 			if( $currentShow !== $showRS ){
-				$editor.removeClass('editor-4row editor-4col editor-4cor editor-htmlFS editor-cssFS editor-jsFS').addClass('editor-rsFS');
 
-				$currentShow.removeClass('on');
-				$showRS.addClass('on');
-				$currentShow = $showRS;
-
-				$layoutList.find('li.on').removeClass('on').end().find('li[data-type="7"]').addClass();
+				$layoutList.triggerHandler('setLayout', [7]);
 			}
 		})
 
@@ -150,25 +130,20 @@ define('editorLayout', ['jquery', 'global', 'template'], function($, g){
 		, css
 		, js
 		, beforeCallback
+
+		, layoutList = {
+			$target: $layoutList
+			, show: function(){
+				$layoutList.slideDown().prev().show();
+			}
+			, hide: function(){
+				$layoutList.slideUp().prev().hide();
+			}
+			, setSkin: function(skin){
+				this.$target.triggerHandler('setLayout', [skin]);
+			}
+		}
 		;
-
-	$layoutList.parent().on('click', '#htmlShow', function(){
-		$editor.removeClass('editor-cssFS editor-jsFS editor-rsFS').addClass('editor-htmlFS');
-
-		html.refresh();
-	}).on('click', '#cssShow', function(){
-		$editor.removeClass('editor-htmlFS editor-jsFS editor-rsFS').addClass('editor-cssFS');
-
-		css.refresh();
-	}).on('click', '#jsShow', function(){
-		$editor.removeClass('editor-htmlFS editor-cssFS editor-rsFS').addClass('editor-jsFS');
-
-		js.refresh();
-	}).on('click', '#rsShow', function(){
-		$editor.removeClass('editor-htmlFS editor-cssFS editor-jsFS').addClass('editor-rsFS');
-	}).on('click', '.showSp', function(){
-
-	});
 
 	return function($e, h, c, j, before){
 		$editor = $e;
@@ -178,7 +153,7 @@ define('editorLayout', ['jquery', 'global', 'template'], function($, g){
 
 		beforeCallback = before;
 
-		return $layoutList;
+		return layoutList;
 	};
 });
 define('uiLibPopup', ['jquery', 'socket', 'template'], function($, socket){
@@ -342,7 +317,6 @@ define('setMorePopup', ['jquery', 'socket', 'template'], function($, socket){
 	});
 });
 
-
 require(['../../config'], function(config){
 	var r = require.config(config.requireConfig);
 	r(['jquery', 'global', 'socket'
@@ -365,12 +339,9 @@ require(['../../config'], function(config){
 			, html = $editor.find('#html')
 			, css = $editor.find('#css')
 			, js = $editor.find('#js')
+			, $rs = $editor.find('#result')
 
 			, $name = $editor.find('#name')
-			, $id = $editor.find('#id')
-
-			//, $editorTitle = $('#editorTitle')
-			, $rs = $editor.find('#result')
 
 			, isEdit = false
 			, editFunc = function(){isEdit = true;}
@@ -400,19 +371,16 @@ require(['../../config'], function(config){
 
 				$setMoreForm.find('#codeId');
 
-				//$editorTitle.html( $codeName.val() );
 				$name.val( $codeName.val() );
 
 				//isEdit = false;
 				// todo 如果 isEdit === true 将代码提交
 			})
-			, $alert = $('#alert')
 
 			, $codeName = $setMorePopup.find('#codeName')
-			, $tags = $('#tags')
 
 			, skinList
-			, $layoutList
+			, layoutList
 			;
 
 		tag( tagsData );
@@ -489,9 +457,9 @@ require(['../../config'], function(config){
 		$editor.find('label').removeClass('hidden');
 
 		skinList = codeSkin(config.requireConfig.baseUrl, [html, css, js], function(){
-			$layoutList.hide();
+			layoutList.hide();
 		});
-		$layoutList = layout($editor, html, css, js, function(){
+		layoutList = layout($editor, html, css, js, function(){
 			skinList.hide();
 		});
 		initUiLib($jsLib, $cssLib);

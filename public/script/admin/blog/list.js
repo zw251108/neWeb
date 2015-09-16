@@ -9,7 +9,7 @@ require(['../../config'], function(config){
 				return !!data.title;
 			}, function(data, json){
 				if( json.success ){
-					$blog.find('.module_content').prepend('<article class="article" data-id="'+ json.id +'"><a href="./'+ json.id +'"><h3 class="article_title">'+ data.title +'</h3></a></article>');
+					$blog.find('.module_content').prepend('<article class="article" data-id="'+ json.id +'"><a href="./'+ json.id +'/"><h3 class="article_title">'+ data.title +'</h3></a></article>');
 					$addPopup.trigger('closeDialog');
 				}
 				else{

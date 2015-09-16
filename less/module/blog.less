@@ -43,6 +43,32 @@
     //}
 
 	// todo 抽出放入单独文件
+	.arrow{
+		position: absolute;
+		z-index: 10;
+		bottom: 1px;
+		right: 15px;
+
+		height: 0;
+		width: 0;
+
+		border: 5px solid transparent;
+		border-bottom-color: #fff;
+
+		&:before{
+			position: absolute;
+			top: -4px;
+			left: -5px;
+
+			height: 0;
+			width: 0;
+
+			border: 5px solid transparent;
+			border-bottom-color: #888;
+
+			content: "";
+		}
+	}
 	.list{
 		overflow: auto;
 		position: absolute;

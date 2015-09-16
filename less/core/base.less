@@ -130,14 +130,16 @@ td{
 //----- 引用 -----
 blockquote,
 q{
-	quotes:none;
+	quotes: "\201C" "\201D";
 }
 blockquote:before,
-blockquote:after,
-q:before,
-q:after{
+q:before{
 	//    content:"";
-	content:none;
+	content: open-quote;
+}
+blockquote:after,
+q:after{
+	content: close-quote;
 }
 
 sup{

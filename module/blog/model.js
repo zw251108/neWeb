@@ -7,12 +7,14 @@ var db = require('../db.js')
 
 	, SQL = {
 		blogList: 'select Id,title,datetime,tags from '+ TABLE_NAME +' where status=1 order by Id desc'
-		, blogPage: 'select Id,title,datetime,tags from '+ TABLE_NAME +' where status=1 order by Id desc limit :page,:size'
+		, blogPage: 'select Id,title,datetime,tags from '+ TABLE_NAME +' ' +
+			//'where status=1 ' +
+			'order by Id desc limit :page,:size'
 		, blogDetail: 'select Id,title,content,datetime,tags from '+ TABLE_NAME +' where Id=:id'
 		, adminBlogList: 'select Id,title,datetime,tags from '+ TABLE_NAME +' order by Id desc limit :page,:size'
 
 		, blogAdd: 'insert into '+ TABLE_NAME +'(user_id,title,tags,content) values(:userId,:title,\'\',\'\')'
-		, blogSave: 'update '+ TABLE_NAME +' set content=:content,tags=:tags where Id=:id'
+		, blogSave: 'update '+ TABLE_NAME +' set title=:title,content=:content,tags=:tags where Id=:id'
 	}
 	, Model = {
 		getBlogList: function(page, size){
@@ -51,11 +53,12 @@ var db = require('../db.js')
 				}
 			})
 		}
-		, saveBlog: function(content, tags, id){
+		, saveBlog: function(title, content, tags, id){
 			return db.handle({
 				sql: SQL.blogSave
 				, data: {
 					id: id
+					, title: title
 					, content: content
 					, tags: tags
 				}

@@ -116,11 +116,12 @@ web.post('/admin/blog/add', function(req, res){
 });
 web.post('/admin/blog/:blogId/save', function(req, res){
 	var body = req.body || {}
+		, title = body.title
 		, content = body.content
 		, param = req.params || {}
 		, blogId = param.blogId
 		;
-	Model.saveBlog(content, '', blogId).then(function(rs){
+	Model.saveBlog(title, content, '', blogId).then(function(rs){
 		var json = {
 			success: true
 		};

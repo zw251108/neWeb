@@ -22,9 +22,16 @@ define(['jquery', 'global'], function($, g){
 				, data: data
 				, success: function(json){
 					afterSend && afterSend(data, json);
+
+					form.reset();
 				}
 			});
+		}).on('submit', 'form', function(e){
+			e.preventDefault();
+
+			$addData.trigger('click');
 		})
+		, $addData = $addPopup.find('#addData')
 		;
 
 	return function(before, after){

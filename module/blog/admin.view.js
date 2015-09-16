@@ -73,7 +73,11 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						}]
 						, content: articleTpl(rs).join('')
 					}
-					//, modulePopup: {
+					, modulePopup: [{
+
+						id: 'msgPopup', size: 'small', toolbar: ''
+						, content: '<div class="msg" id="msgContent"></div>'
+					//}, {
 					//	id: 'addPopup'
 					//	, size: 'normal'
 					//	, toolbar: ''
@@ -84,7 +88,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					//			'</div>' +
 					//		'</form>'
 					//	, button: '<button type="button" id="addData" class="btn">添加</button>'
-					//}
+					}]
 				}
 				, script: {
 					main: '../../../script/admin/blog/article'

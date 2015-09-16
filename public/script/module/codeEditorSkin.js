@@ -1,7 +1,7 @@
 /**
  * @module codeEditorSkin
  * */
-define(['jquery', 'socket', 'template'], function($, g){
+define(['jquery', 'socket', 'template'], function($, socket){
 	var listTpl = $.template({
 			template: 'li.%on%.%sp%[title=%name% data-type=%type%]{%name%}'
 		})
