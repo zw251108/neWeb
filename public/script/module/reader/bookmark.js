@@ -2,7 +2,7 @@
  *
  * */
 
-define('bookmarkAdd', ['jquery', 'global', 'socket', 'template'], function($, g, socket){
+define('bookmarkAdd', ['jquery', 'global', 'socket', 'msgPopup', 'template'], function($, g, socket, msgPopup){
 	var $bookmark
 		, articleTpl = $.template({
 			template: 'article#readerArt%Id%.article.reader_article[data-id=%Id%]>a[href=%url% title=%url% target=_blank]>h3.article_title{%title%}^hr+a.icon.icon-checkbox%readStatus%[href=read title=%readTitle%]{%readText%}+time.article_date[pubdate=pubdate datetime=%datetime%]{%datetime%}+div.tagsArea{%tags%}'
@@ -50,7 +50,8 @@ define('bookmarkAdd', ['jquery', 'global', 'socket', 'template'], function($, g,
 	socket.register('reader/bookmark/add', function(data){
 
 		if( 'error' in data ){
-			alert( data.msg );
+			msgPopup.showMsg( data.msg );
+			//alert( data.msg );
 
 			$bookmark.find('.module_content article.article[data-target]:eq(0)').remove();
 		}

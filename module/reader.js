@@ -7,6 +7,8 @@ var db          = require('./db.js')
 
 	, index     = require('./index.js')
 
+	, pagination    = require('./pagination.js')
+
 	, tpl       = require('./emmetTpl/tpl.js')
 	, emmetTpl  = require('./emmetTpl/emmetTpl.js').template
 
@@ -147,6 +149,8 @@ var db          = require('./db.js')
 			, readerIsExist: 'select * from reader where xml_url like :xmlUrl'
 			, readerUpdatePub: 'update reader set last_pub=:lastPub where Id=:id'
 
+			, countReader: 'select count(*) as count from reader where `show`=1'
+
 			, bookmark: 'select Id,title,url,status,tags,datetime,score from reader_bookmark order by status,Id desc'
 			, bookmarkCount: 'select count(*) as count from reader_bookmark'
 			, bookmarkPage: 'select Id,title,url,status,tags,datetime,score from reader_bookmark order by status,Id desc limit :page,:size'
@@ -154,9 +158,13 @@ var db          = require('./db.js')
 			, bookmarkRead: 'update reader_bookmark set status=2,title=:title,tags=:tags,score=score+:score where Id=:id'
 			, bookmarkIsExist: 'select * from reader_bookmark where url like :url'
 
+			, countBookmark: 'select count(*) as count from reader_bookmark'
+
 			, favorite: 'select * from reader_bookmark where status=2 order by score desc,datetime desc'
 			, favoriteCount: 'select count(*) as count from reader_bookmark where status=2'
 			, favoritePage: 'select * from reader_bookmark where status=2 order by score desc,datetime desc limit :page,:size'
+
+			, countFavorite: 'select count(*) as count from reader_bookmark where status=2'
 		}
 
 		/**
@@ -398,11 +406,14 @@ var db          = require('./db.js')
 						tpl.toolbarTpl([{
 							id: 'add', icon: 'plus', title: '添加订阅源'
 						}])
-						, content: readerTpl(rs).join('')
+						, content: readerTpl(rs.data).join('')  + '<div class="pagination">'+ pagination(rs.index, rs.size, rs.count, rs.urlCallback) +'</div>'
 					}).join('') + tpl.popupTpl([{
 						id: 'readPopup', size: 'normal'
 						, content: bookmarkReadFormTpl({})
 						, button: '<button type="button" id="readBookmark" class="btn btn-submit">确定</button>'
+					}, {
+						id: 'msgPopup', size: 'small'
+						, content: '<div class="msg" id="msgContent"></div>'
 					}]).join('')
 					, script: {
 						main: '../script/module/reader/index'
@@ -422,7 +433,7 @@ var db          = require('./db.js')
 							tpl.toolbarTpl([{
 								id: 'add', icon: 'plus', title: '添加待读文章'
 							}])
-						, content: articleTpl(rs).join('')
+						, content: articleTpl(rs.data).join('') + '<div class="pagination">'+ pagination(rs.index, rs.size, rs.count, rs.urlCallback) +'</div>'
 					}).join('') + tpl.popupTpl([{
 						id: 'addPopup', size: 'normal'
 							, content: bookmarkAddFormTpl({})
@@ -431,6 +442,9 @@ var db          = require('./db.js')
 						id: 'readPopup', size: 'normal'
 						, content: bookmarkReadFormTpl({})
 						, button: '<button type="button" id="readBookmark" class="btn btn-submit">确定</button>'
+					}, {
+						id: 'msgPopup', size: 'small'
+						, content: '<div class="msg" id="msgContent"></div>'
 					}]).join('')
 					, script: {
 						main: '../script/module/reader/bookmark'
@@ -450,7 +464,7 @@ var db          = require('./db.js')
 								tpl.toolbarTpl([{
 									id: 'filter', icon: 'filter', title: '过滤'
 								}])
-							, content: articleTpl(rs).join('')
+							, content: articleTpl(rs.data).join('') + '<div class="pagination">'+ pagination(rs.index, rs.size, rs.count, rs.urlCallback) +'</div>'
 					}).join('') + tpl.popupTpl([{
 						id: 'readPopup', size: 'normal'
 							, content: bookmarkReadFormTpl({})
@@ -489,6 +503,28 @@ web.get('/reader/', function(req, res){
 			page: (page-1) * size
 			, size: size
 		}
+	}).then(function(rs){
+		return db.handle({
+			sql: Reader.Model.countReader
+		}).then(function(rs){
+			var count = 0;
+
+			if( rs && rs.length ){
+				count = rs[0].count;
+			}
+
+			return count;
+		}).then(function(count){
+			return {
+				data: rs
+				, index: page
+				, size: size
+				, count: count
+				, urlCallback: function(index){
+					return '?page='+ index;
+				}
+			}
+		})
 	}).then( Reader.View.reader ).then(function(html){
 		res.send( html );
 		res.end();
@@ -510,6 +546,28 @@ web.get('/reader/bookmark', function(req, res){
 			page: (page-1) * size
 			, size: size
 		}
+	}).then(function(rs){
+		return db.handle({
+			sql: Reader.Model.countBookmark
+		}).then(function(rs){
+			var count = 0;
+
+			if( rs && rs.length ){
+				count = rs[0].count;
+			}
+
+			return count;
+		}).then(function(count){
+			return {
+				data: rs
+				, index: page
+				, size: size
+				, count: count
+				, urlCallback: function(index){
+					return '?page='+ index;
+				}
+			}
+		});
 	}).then( Reader.View.bookmark ).then(function(html){
 		res.send( html );
 		res.end();
@@ -530,6 +588,28 @@ web.get('/reader/favorite', function(req, res){
 			page: (page-1) * size
 			, size: size
 		}
+	}).then(function(rs){
+		return db.handle({
+			sql: Reader.Model.countFavorite
+		}).then(function(rs){
+			var count = 0;
+
+			if( rs && rs.length ){
+				count = rs[0].count;
+			}
+
+			return count;
+		}).then(function(count){
+			return {
+				data: rs
+				, index: page
+				, size: size
+				, count: count
+				, urlCallback: function(index){
+					return '?page='+ index;
+				}
+			}
+		});
 	}).then( Reader.View.favorite ).then(function(html){
 		res.send( html );
 		res.end();

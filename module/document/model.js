@@ -7,10 +7,12 @@ var db  = require('../db.js')
 
 	, SQL = {
 		document: 'select Id,title from document'
-		, documentPage: 'select Id,title from document limit :page,size'
+		, documentPage: 'select Id,title from document limit :page,:size'
 		, documentCount: 'select count(*) as count from document'
 		, documentAdd: 'insert into document(title) values(:title)'
 		, documentOrder: 'update document set section_order=:order where Id=:documentId'
+
+		, countDocument: 'select count(*) as count from document'
 
 		, sectionByDocument: 'select Id,title from document_section where document_id=:documentId'
 		, sectionById: 'select Id,title from document_section where Id=:id'
@@ -24,11 +26,30 @@ var db  = require('../db.js')
 		, contentSaveContent: 'update document_content set content=:content where Id=:id'
 	}
 	, Model = {
-		getDocumentList: function(){
+		getDocumentList: function(page, size){
 			return db.handle({
-				sql: SQL.document
+				sql: SQL.documentPage
+				, data: {
+					page: (page-1) * size
+					, size: size
+				}
 			})
 		}
+
+		, getCountDoc: function(){
+			return db.handle({
+				sql: SQL.countDocument
+			}).then(function(rs){
+				var count = 0;
+
+				if( rs && rs.length ){
+					count = rs[0].count;
+				}
+
+				return count;
+			});
+		}
+
 		, getSectionByDoc: function(documentId){
 			return db.handle({
 				sql: SQL.sectionByDocument

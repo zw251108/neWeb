@@ -5,7 +5,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 
 	, emmetTpl  = require('../emmetTpl/emmetTpl.js').template
 
-	, Model = require('./model.js')
+	, pagination    = require('../pagination.js')
 
 	, articleListTpl    = emmetTpl({
 		template: 'article.article' +
@@ -39,7 +39,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						, toolbar: [{
 							type: 'button', id: 'add', icon: 'plus', title: '新建'
 						}]
-						, content: articleListTpl(rs).join('')
+						, content: articleListTpl(rs.data).join('') + '<div class="pagination">'+ pagination(rs.index, rs.size, rs.count, rs.urlCallback) +'</div>'
 					}
 					, modulePopup: {
 						id: 'addPopup'
@@ -74,7 +74,6 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						, content: articleTpl(rs).join('')
 					}
 					, modulePopup: [{
-
 						id: 'msgPopup', size: 'small', toolbar: ''
 						, content: '<div class="msg" id="msgContent"></div>'
 					//}, {

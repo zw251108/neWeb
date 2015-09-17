@@ -106,20 +106,70 @@ var pageFirst = '<a href="%href%?%param%=1" class="page page-first">%page%</a>'
 /**
  *
  * */
-;(function(factory, namespace){
-	// 后端
-	if( typeof exports === 'object' && typeof module === 'object' ){
-		module.exports = factory;
-	}
-	// 前端
-	else if( typeof define === 'function' && define.amd ){
-		define(factory);
-	}
-	else{
-		(jQuery || this)[namespace] = factory;
-	}
-})(function($, options){
-	'use strict';
+//;(function(factory, namespace){
+//	// 后端
+//	if( typeof exports === 'object' && typeof module === 'object' ){
+//		module.exports = factory;
+//	}
+//	// 前端
+//	else if( typeof define === 'function' && define.amd ){
+//		define(factory);
+//	}
+//	else{
+//		(jQuery || this)[namespace] = factory;
+//	}
+//})(function($, options){
+//	'use strict';
+//
+//	var extend = $.extend || function(){}
+//});
 
-	var extend = $.extend || function(){}
-});
+var PAGE_SHOW_NUM = 10;
+var pagination = function(index, size, count, urlCallback){
+	var pageNum
+		, left = Math.ceil( PAGE_SHOW_NUM /2 -1 )
+		, right
+		, html = []
+		, i = 0, t
+		;
+
+	size = +size || 20;
+	index = +index || 1;
+	count = +count || 1;
+
+	pageNum = Math.ceil( count / size );
+
+	index = index < 1 ? 1 : index;
+	index = index > pageNum ? pageNum : index;
+
+	left = index > left ? (index - left + PAGE_SHOW_NUM > pageNum ? (pageNum - PAGE_SHOW_NUM +1 <= 0 ? 1 : pageNum - PAGE_SHOW_NUM +1) : index - left) : 1;
+	right = left + PAGE_SHOW_NUM -1 > pageNum ? pageNum : left + PAGE_SHOW_NUM -1;
+
+	//html.push('<a href="'+ urlCallback(1) +'" class="page page-first" title="第 1 页">1</a>');
+
+	html.push( index === 1 ? '<a href="'+ urlCallback(1) +'" title="上一页" class="page page-prev">上一页</a>' : '<a href="'+ urlCallback(index -1) +'" title="上一页" class="page page-prev">上一页</a>' );
+	html.push( left === 1 ? '' : '<a href="'+ urlCallback(1) +'" title="第 1 页" class="page page-first">1</a>' );
+	html.push( left > 2 ? '<b>...</b>' : '' );
+
+	for(; left < index; left++, i++){
+		html.push('<a href="'+ urlCallback(left) +'" title="第 '+ left +' 页" class="page">'+ left +'</a>');
+	}
+
+	html.push('<a href="'+ urlCallback(index) +'" title="第 '+ index +' 页" class="page page-current">'+ index +'</a>');
+	i++;
+
+	for( left = index +1 ; left <= pageNum && i !== PAGE_SHOW_NUM; i++, left++){
+		html.push( '<a href="'+ urlCallback(left) +'" title="第 '+ left +' 页" class="page">'+ left +'</a>' );
+	}
+
+	html.push( pageNum - right >= 2 ? '<b>...</b>' : '' );
+	html.push( right === pageNum ? '' : '<a href="'+ urlCallback(pageNum) +'" title="第 '+ pageNum +' 页" class="page page-last">'+ pageNum +'</a>' );
+	html.push( index === pageNum ? '<a href="'+ urlCallback(pageNum) +'" title="下一页" class="page page-next">下一页</a>' : '<a href="'+ urlCallback(index) +'" title="下一页" class="page page-next">下一页</a>' );
+
+	//html.push('<label>共'+ pageNum +'页 到第<input type="text" id="jumpPage">页<a class="list_num_btn" href="#">确定</a></label>');
+
+	//last.show && html.push('<a href="javascript:;" class="page page-last "'+ last.extendClass +'" title="'+ last.text +'">'+ last.text +'</a>');
+	return html.join('');
+};
+
+module.exports = pagination;

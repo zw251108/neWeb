@@ -57,8 +57,24 @@ web.get('/blog/detail', function(req, res){
  *
  * */
 web.get('/admin/blog/', function(req, res){
+	var query = req.query || {}
+		, page = query.page || 1
+		, size = query.size || 20
+		;
 
-	Model.getAllList(1, 20).then( Admin.list ).then(function(html){
+	Model.getAllList(page, size).then(function(rs){
+		return Model.getCount().then(function(count){
+			return {
+				data: rs
+				, count: count
+				, index: page
+				, size: size
+				, urlCallback: function(index){
+					return '?page='+ index;
+				}
+			}
+		});
+	}).then( Admin.list ).then(function(html){
 		res.send( config.docType.html5 + html );
 		res.end();
 	});

@@ -3,7 +3,7 @@
  * */
 require(['../../config'], function(config){
 	var r = require(config.requireConfig);
-	r(['jquery', 'global', 'socket', 'bookmarkRead', 'tag', config.dataSource.tag, 'template'], function($, g, socket, bookmarkRead, tag, tagData){
+	r(['jquery', 'global', 'socket', 'bookmarkRead', 'tag', config.dataSource.tag, 'msgPopup', 'template'], function($, g, socket, bookmarkRead, tag, tagData, msgPopup){
 		var $reader = $('#reader')
 			, articleTpl = $.template({
 				template: 'li.reader_article.article' +
@@ -129,7 +129,8 @@ require(['../../config'], function(config){
 			'reader/feed': function(data){
 				var id;
 				if( 'error' in data ){
-					alert(data.msg);
+					msgPopup.showMsg( data.msg );
+					//alert(data.msg);
 				}
 				else{
 					data = data.info;
@@ -158,7 +159,8 @@ require(['../../config'], function(config){
 				}
 
 				if( 'error' in data ){
-					alert( data.msg );
+					msgPopup.showMsg( data.msg );
+					//alert( data.msg );
 				}
 			}
 			//, 'reader/artcile/read': function(data){

@@ -37,7 +37,23 @@ web.get('/document/', function(req, res){
  *
  * */
 web.get('/admin/document/', function(req, res){
-	Model.getDocumentList().then( Admin.documentList ).then(function(html){
+	var query = req.query || {}
+		, page = query.page || 1
+		, size = query.size || 20
+		;
+	Model.getDocumentList(page, size).then(function(rs){
+		return Model.getCountDoc().then(function(count){
+			return {
+				data: rs
+				, count: count
+				, index: page
+				, size: size
+				, urlCallback: function(index){
+					return '?page='+ index
+				}
+			}
+		});
+	}).then( Admin.documentList ).then(function(html){
 		res.send( config.docType.html5 + html );
 		res.end();
 	});

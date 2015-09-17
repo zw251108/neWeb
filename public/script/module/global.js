@@ -194,7 +194,7 @@ define(['jquery', 'socket'], function($, socket){
 	//})
 		.on({
 			showDialog: function(){
-				this.className = this.className.replace('hidden', '');
+				this.className = this.className.replace(/(^|\s)hidden(\s|$)/, '');
 			}
 			, closeDialog: function(){
 				this.className += ' hidden';

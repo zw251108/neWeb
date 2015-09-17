@@ -19,7 +19,7 @@
 	right: 0;
 
 	border: 1px solid @module-popup_bd_c;
-
+	border-radius: 0;
 	margin: auto;
 	padding: 0;
 
@@ -30,6 +30,16 @@
 	.transform(translateY(-50%));
 
 	opacity: 1;
+
+	&:before{
+		position: fixed;
+		bottom: -1000em;
+		top: -1000em;
+		left: -1000em;
+		right: -1000em;
+		background-color: rgba(0, 0, 0, .5);
+		content: "";
+	}
 
 	&::backdrop{
 		background: rgba(0, 0, 0, .5);

@@ -13,6 +13,8 @@ var db = require('../db.js')
 		, blogDetail: 'select Id,title,content,datetime,tags from '+ TABLE_NAME +' where Id=:id'
 		, adminBlogList: 'select Id,title,datetime,tags from '+ TABLE_NAME +' order by Id desc limit :page,:size'
 
+		, countBlog: 'select count(*) as count from '+ TABLE_NAME
+
 		, blogAdd: 'insert into '+ TABLE_NAME +'(user_id,title,tags,content) values(:userId,:title,\'\',\'\')'
 		, blogSave: 'update '+ TABLE_NAME +' set title=:title,content=:content,tags=:tags where Id=:id'
 	}
@@ -42,6 +44,20 @@ var db = require('../db.js')
 					, size: size
 				}
 			})
+		}
+
+		, getCount: function(){
+			return db.handle({
+				sql: SQL.countBlog
+			}).then(function(rs){
+				var count = 0;
+
+				if( rs && rs.length ){
+					count = rs[0].count;
+				}
+
+				return count;
+			});
 		}
 
 		, addBlog: function(userId, title){

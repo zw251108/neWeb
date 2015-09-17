@@ -1,4 +1,4 @@
-define(['jquery', 'global', 'socket', 'tag', 'template'], function($, g, socket, tag){
+define(['jquery', 'global', 'socket', 'tag', 'msgPopup', 'template'], function($, g, socket, tag, msgPopup){
 	var $bookmark
 		, $readPopup = $('#readPopup').on('setData', function(e, data){
 
@@ -45,7 +45,8 @@ define(['jquery', 'global', 'socket', 'tag', 'template'], function($, g, socket,
 			}
 			else{
 				// todo 替换为自定义弹窗
-				alert('请至少添加一个标签，以方便管理！');
+				msgPopup.showMsg('请至少添加一个标签，以方便管理！');
+				//alert('请至少添加一个标签，以方便管理！');
 			}
 		})
 

@@ -5,6 +5,8 @@ var getEmmet    = require('../emmet/getEmmet.js')
 
 	, emmetTpl  = require('../emmetTpl/emmetTpl.js').template
 
+	, pagination    = require('../pagination.js')
+
 	, sectionTpl        = emmetTpl({
 		template: 'section.document_section.section[data-section-id=%sectionId%]' +
 			'>h3.section_title{%sectionTitle%}' +
@@ -52,7 +54,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						toolbar: [{
 							type: 'button', id: 'add', icon: 'plus', title: '添加'
 						}]
-						, content: '<ul>' + docList(rs).join('') + '</ul>'
+						, content: '<ul>' + docList(rs.data).join('') + '</ul>' + '<div class="pagination">'+ pagination(rs.index, rs.size, rs.count, rs.urlCallback) +'</div>'
 					}
 					, modulePopup: [{
 						id: 'addPopup'
@@ -90,7 +92,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 							type: 'button', id: 'add', icon: 'plus', title: '添加章节'}, {
 							type: 'button', id: 'changeSkin',   icon: 'skin',   title: '更改皮肤'
 						}]
-						, content: sectionTpl( rs).join('')
+						, content: sectionTpl( rs ).join('')
 					}
 					, modulePopup: [{
 						id: 'addSectionPopup', size: 'normal', toolbar: ''

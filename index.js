@@ -75,6 +75,10 @@ web.use(function(req, res, next){
 
 	next();
 });
+// 判断浏览器类型，操作系统
+//web.use(function(req, res, next){
+//
+//});
 
 //----- 静态资源 重定向 -----
 web.use('/cache.manifest', express.static(__dirname + '/public/cache.manifest') );  // 离线缓存配置文件

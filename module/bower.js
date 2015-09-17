@@ -7,6 +7,8 @@ var db          = require('./db.js')
 
 	, index     = require('./index.js')
 
+	, pagination    = require('./pagination.js')
+
 	, tpl       = require('./emmetTpl/tpl.js')
 	, emmetTpl  = require('./emmetTpl/emmetTpl.js').template
 
@@ -29,6 +31,8 @@ var db          = require('./db.js')
 	, bower     = require('bower')
 
 	, Promise   = require('promise')
+
+	, TABLE_NAME = 'ui_lib'
 
 	/**
 	 * @namespace   Bower
@@ -160,10 +164,13 @@ var db          = require('./db.js')
 		 * @desc    业务相关 sql 语句集合
 		 * */
 		, Model: {
-			bower: 'select * from ui_lib where status=\'1\''
-			, bowerPage: 'select * from ui_lib limit :page,:size'
-			, bowerIsExist: 'select * from ui_lib where name like :name'
-			, save: 'insert into ui_lib(name,version,css_path,js_path,source,homepage,tags,receipt_time) values(:name,:version,:css_path,:js_path,:source,:homepage,:tags,now())'
+			bower: 'select * from '+ TABLE_NAME +' where status=\'1\''
+			, bowerPage: 'select * from '+ TABLE_NAME +' limit :page,:size'
+			, bowerIsExist: 'select * from '+ TABLE_NAME +' where name like :name'
+
+			, countBower: 'select count(*) as count from '+ TABLE_NAME
+
+			, save: 'insert into '+ TABLE_NAME +'(name,version,css_path,js_path,source,homepage,tags,receipt_time) values(:name,:version,:css_path,:js_path,:source,:homepage,:tags,now())'
 		}
 
 		/**
@@ -204,9 +211,9 @@ var db          = require('./db.js')
 											'<th>收录时间</th>' +
 										'</tr>' +
 									'</thead>' +
-									'<tbody>'+ bowerTpl(rs).join('') +'</tbody>' +
+									'<tbody>'+ bowerTpl(rs.data).join('') +'</tbody>' +
 								'</table>' +
-							'</div>'
+							'</div>' + '<div class="pagination">'+ pagination(rs.index, rs.size, rs.count, rs.urlCallback) +'</div>'
 					}).join('') + tpl.popupTpl([{
 						id: 'result', type: 'popup', size: 'large'
 							, content: '<form action="#" id="bowerSearch">' +
@@ -230,10 +237,10 @@ var db          = require('./db.js')
 		}
 
 		, index: {
-			sql: 'select * from ui_lib'
+			sql: 'select * from '+ TABLE_NAME +''
 		}
 		, save: {
-			sql: 'insert into ui_lib(name,version,css_path,js_path,source,homepage,receipt_time) values(?,?,?,?,?,now())'
+			sql: 'insert into '+ TABLE_NAME +'(name,version,css_path,js_path,source,homepage,receipt_time) values(?,?,?,?,?,now())'
 		}
 	}
 
@@ -265,6 +272,28 @@ web.get('/bower/', function(req, res){
 			page: (page-1) * size
 			, size: size
 		}
+	}).then(function(rs){
+		return db.handle({
+			sql: Bower.Model.countBower
+		}).then(function(rs){
+			var count = 0;
+
+			if( rs && rs.length ){
+				count = rs[0].count;
+			}
+
+			return count;
+		}).then(function(count){
+			return {
+				data: rs
+				, index: page
+				, size: size
+				, count: count
+				, urlCallback: function(index){
+					return '?page='+ index
+				}
+			}
+		})
 	}).then( Bower.View.bower ).then(function(html){
 		res.send( html );
 		res.end();
