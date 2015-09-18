@@ -117,7 +117,10 @@ define(['jquery', 'socket', 'template'], function($, socket, tpl){
 				}
 			}
 		}).on('click', '#pointOut .tag', function(){
+			var tags = $tags.val();
+
 			$tagsArea.prepend('<span class="tag tag-checked">'+ this.innerHTML +'</span>');
+			$tags.val( tags ? tags +',' + this.innerHTML : this.innerHTML);
 			$tagPointOut.slideUp();
 			$tag.val('').focus();
 		}).on('click', '#addTag', function(){
