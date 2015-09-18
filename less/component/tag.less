@@ -1,5 +1,11 @@
 @import "../config/color.config.less";
+@import "../lib/function.less";
 
+/**
+ * example
+
+
+ */
 .tag{
 	display: inline-block;
 	min-width: 4em;
@@ -42,4 +48,20 @@
 }
 .tagsArea{
 	//margin: 5px;
+}
+
+.tagPointOut{
+	overflow: auto;
+	position: absolute;
+	z-index: 1;
+	left: 0;
+	right: 0;
+	max-height: 172px;
+	border: 1px solid @tagPointOut_bd_c;
+	background: @tagPointOut_bg_c;
+
+	li{
+		border-bottom: 1px solid @tagPointOut_li_bd_c;
+		.boxSizing(border-box);
+	}
 }

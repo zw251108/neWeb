@@ -12,12 +12,12 @@ var db          = require('./db.js')
 
 	, bower     = require('./bower.js')
 
-	//, tag       = require('./tag.js')
 	, tagView   = require('./tag/view.js')
 	, image     = require('./image.js')
 
 	, PREVIEW_SIZE = 128
 	, PREVIEW_WIDTH = 128
+
 	, codeTpl       = emmetTpl({
 		template: 'a[href=code?id=%Id%]' +
 			'>article.article.editor_article' +

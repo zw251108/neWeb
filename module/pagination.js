@@ -147,24 +147,24 @@ var pagination = function(index, size, count, urlCallback){
 
 	//html.push('<a href="'+ urlCallback(1) +'" class="page page-first" title="第 1 页">1</a>');
 
-	html.push( index === 1 ? '<a href="'+ urlCallback(1) +'" title="上一页" class="page page-prev">上一页</a>' : '<a href="'+ urlCallback(index -1) +'" title="上一页" class="page page-prev">上一页</a>' );
-	html.push( left === 1 ? '' : '<a href="'+ urlCallback(1) +'" title="第 1 页" class="page page-first">1</a>' );
+	html.push( index === 1 ? '<a href="'+ urlCallback(1) +'" data-page="'+ index +'" title="上一页" class="page page-prev">上一页</a>' : '<a href="'+ urlCallback(index -1) +'" data-page="'+ (index-1) +'" title="上一页" class="page page-prev">上一页</a>' );
+	html.push( left === 1 ? '' : '<a href="'+ urlCallback(1) +'" data-page="'+ index +'" title="第 1 页" class="page page-first">1</a>' );
 	html.push( left > 2 ? '<b>...</b>' : '' );
 
 	for(; left < index; left++, i++){
-		html.push('<a href="'+ urlCallback(left) +'" title="第 '+ left +' 页" class="page">'+ left +'</a>');
+		html.push('<a href="'+ urlCallback(left) +'" data-page="'+ index +'" title="第 '+ left +' 页" class="page">'+ left +'</a>');
 	}
 
-	html.push('<a href="'+ urlCallback(index) +'" title="第 '+ index +' 页" class="page page-current">'+ index +'</a>');
+	html.push('<a href="'+ urlCallback(index) +'" data-page="'+ index +'" title="第 '+ index +' 页" class="page page-current">'+ index +'</a>');
 	i++;
 
 	for( left = index +1 ; left <= pageNum && i !== PAGE_SHOW_NUM; i++, left++){
-		html.push( '<a href="'+ urlCallback(left) +'" title="第 '+ left +' 页" class="page">'+ left +'</a>' );
+		html.push( '<a href="'+ urlCallback(left) +'" data-page="'+ index +'" title="第 '+ left +' 页" class="page">'+ left +'</a>' );
 	}
 
 	html.push( pageNum - right >= 2 ? '<b>...</b>' : '' );
-	html.push( right === pageNum ? '' : '<a href="'+ urlCallback(pageNum) +'" title="第 '+ pageNum +' 页" class="page page-last">'+ pageNum +'</a>' );
-	html.push( index === pageNum ? '<a href="'+ urlCallback(pageNum) +'" title="下一页" class="page page-next">下一页</a>' : '<a href="'+ urlCallback(index) +'" title="下一页" class="page page-next">下一页</a>' );
+	html.push( right === pageNum ? '' : '<a href="'+ urlCallback(pageNum) +'" data-page="'+ index +'" title="第 '+ pageNum +' 页" class="page page-last">'+ pageNum +'</a>' );
+	html.push( index === pageNum ? '<a href="'+ urlCallback(pageNum) +'" data-page="'+ index +'" title="下一页" class="page page-next">下一页</a>' : '<a href="'+ urlCallback(index+1) +'" data-page="'+ (index+1) +'" title="下一页" class="page page-next">下一页</a>' );
 
 	//html.push('<label>共'+ pageNum +'页 到第<input type="text" id="jumpPage">页<a class="list_num_btn" href="#">确定</a></label>');
 

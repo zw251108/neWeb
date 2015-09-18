@@ -5,7 +5,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 
 	, emmetTpl  = require('../emmetTpl/emmetTpl.js').template
 
-	, Model = require('./model.js')
+	, pagination    = require('../pagination.js')
 
 	, articleTpl = emmetTpl({
 		template: getEmmet('blog/article.html')
@@ -36,7 +36,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					moduleMain: {
 						id: 'blog'
 						, title: '博客 blog'
-						, content: articleTpl( rs ).join('')
+						, content: articleTpl( rs.data ).join('') + '<div class="pagination">'+ pagination(rs.index, rs.size, rs.count, rs.urlCallback) +'</div>'
 					}
 				}
 				//, script: {

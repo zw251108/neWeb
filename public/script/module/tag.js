@@ -5,7 +5,7 @@
 //-----  -----
 define(['jquery', 'socket', 'template'], function($, socket, tpl){
 	var Tag = function(tagsData){
-
+			TAG_DATA = tagsData;
 		}
 		, tagTpl = function(d){
 			return d.tags ? '<span class="tag">'+ d.tags.split(',').join('</span><span class="tag">') +'</span>' : '';
@@ -13,6 +13,7 @@ define(['jquery', 'socket', 'template'], function($, socket, tpl){
 		, tagCheckedTpl = function(d){
 			return d.tags ? '<span class="tag tag-checked">'+ d.tags.split(',').join('</span><span class="tag tag-checked">') +'</span>' : '';
 		}
+		, TAG_DATA = []
 		;
 	//socket.emit('data', {
 	//	topic: 'tag'
@@ -55,9 +56,71 @@ define(['jquery', 'socket', 'template'], function($, socket, tpl){
 		var $tag = $target.find('#tag')
 			, $tags = $target.find('#tags')
 			, $tagsArea = $target.find('.tagsArea')
+			, $tagPointOut = $target.find('#pointOut')
+			, tagTimeout = null
 			;
 
-		$target.on('click', '#addTag', function(){
+		$target.on('keyup', '#tag', function(){
+			var that = this
+				, val = this.value
+				, expr
+				;
+
+			tagTimeout && clearTimeout( tagTimeout );
+			if( val ){
+				expr = new RegExp(val, 'i');
+
+				tagTimeout = setTimeout(function(){
+					var rs = []
+						, i, j, t
+						;
+					for( i = 0, j = TAG_DATA.length; i < j; i++ ){
+						t = TAG_DATA[i];
+
+						if( expr.test(t.name ) ){
+							rs.push( t );
+						}
+					}
+					                 console.log(rs)
+					if( rs.length ){
+						$tagPointOut.html($.map(rs, function(d){
+							return '<li><span class="tag">'+ d.name + '</span></li>';
+						}).join('')).slideDown();
+					}
+					else{
+						$tagPointOut.hide()
+					}
+
+					tagTimeout = null;
+				}, 500);
+			}
+			else{
+				$tagPointOut.slideUp();
+				tagTimeout = null;
+			}
+		}).on('mousewheel DOMMouseScroll', '#pointOut', function(e){
+			var delta = e.originalEvent.wheelDelta || -e.originalEvent.detail
+				, $that = $(this)
+				;
+
+			if( delta < 0 ){
+				if( this.scrollTop + $that.height() >= this.scrollHeight ){
+					return false;
+				}
+			}
+			else{
+				if( this.scrollTop === 0 ){
+					return false;
+				}
+				else{
+					e.stopImmediatePropagation();
+				}
+			}
+		}).on('click', '#pointOut .tag', function(){
+			$tagsArea.prepend('<span class="tag tag-checked">'+ this.innerHTML +'</span>');
+			$tagPointOut.slideUp();
+			$tag.val('').focus();
+		}).on('click', '#addTag', function(){
 			var tag = $tag.val()
 				, tags = $tags.val()
 				;
@@ -66,6 +129,7 @@ define(['jquery', 'socket', 'template'], function($, socket, tpl){
 				$tag.val('');
 				$tags.val( tags ? tags +',' + tag : tag);
 				$tagsArea.prepend('<span class="tag tag-checked">'+ tag +'</span>');
+				$tagPointOut.slideUp();
 
 				// todo 将标签添加到数据库
 				socket.emit('data', {

@@ -18,16 +18,25 @@
 	color: @btn_c;
 	line-height: 2em;
 
+	cursor: pointer;
 	-webkit-appearance: none;
+
+	&:hover{
+		background: @btn-hover_bg_c;
+	}
 
 	&[disabled],
 	&-disabled{
-
+		cursor: not-allowed;
 	}
 
 	&-submit{
 		border-color: @btn-submit_bd_c;
 		background: -webkit-linear-gradient(top, @btn-submit_bg_gradient_s, @btn-submit_bg_gradient_e);
+
+		&:hover{
+			background: @btn-submit-hover_bg_c;
+		}
 	}
 	&-reset{}
 

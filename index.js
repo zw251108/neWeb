@@ -184,10 +184,8 @@ index.push({
 /**
  * 加载模块
  * */
-//require('./module/blog.js');        // 加载模块 blog
-require('./module/blog/controller.js');
+require('./module/blog/controller.js'); // 加载模块 blog
 
-//require('./module/content.js');    // 加载模块 document
 require('./module/document/controller.js'); // 加载模块 document
 
 require('./module/editor.js');      // 加载模块 editor
@@ -196,7 +194,6 @@ require('./module/bower.js');       // 加载模块 bower
 
 require('./module/reader.js');      // 加载模块 reader
 
-//require('./module/tag.js');         // 加载模块 tag 功能
 require('./module/tag/controller.js');  // 加载模块 tag 功能
 
 require('./module/image.js');       // 加载模块 image

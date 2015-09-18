@@ -93,6 +93,9 @@ require(['config'], function(config){
 					if( $that[0].scrollTop === 0 ){
 						return false;
 					}
+					else{
+						e.stopImmediatePropagation();
+					}
 				}
 			})
 			, $infoDialog = $('#info')

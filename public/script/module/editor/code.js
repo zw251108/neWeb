@@ -383,7 +383,7 @@ require(['../../config'], function(config){
 			, layoutList
 			;
 
-		tag( tagsData );
+		tag($.parseJSON(tagsData) );
 		tag.setAdd( $setMorePopup );
 
 		$toolbar.on('click', '#newWin', function(){

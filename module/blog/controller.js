@@ -31,7 +31,19 @@ web.get('/blog/', function(req, res){
 		, size = query.size || 20
 		;
 
-	Model.getBlogList(page, size).then( View.blog ).then(function(html){
+	Model.getBlogList(page, size).then(function(rs){
+		return Model.getCount().then(function(count){
+			return {
+				data: rs
+				, index: page
+				, size: size
+				, count: count
+				, urlCallback: function(index){
+					return '?page='+ index;
+				}
+			}
+		})
+	}).then( View.blog ).then(function(html){
 		res.send( config.docType.html5 + html );
 		res.end();
 	});

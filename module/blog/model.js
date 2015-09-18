@@ -23,7 +23,7 @@ var db = require('../db.js')
 			return db.handle({
 				sql: SQL.blogPage
 				, data: {
-					page: page
+					page: (page -1) * size
 					, size: size
 				}
 			});
