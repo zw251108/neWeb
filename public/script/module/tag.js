@@ -62,7 +62,7 @@ define(['jquery', 'socket', 'template'], function($, socket, tpl){
 
 		$target.on('keyup', '#tag', function(){
 			var that = this
-				, val = this.value
+				, val = $.trim( this.value )
 				, expr
 				;
 
@@ -81,7 +81,7 @@ define(['jquery', 'socket', 'template'], function($, socket, tpl){
 							rs.push( t );
 						}
 					}
-					                 console.log(rs)
+					                 console.log(rs);
 					if( rs.length ){
 						$tagPointOut.html($.map(rs, function(d){
 							return '<li><span class="tag">'+ d.name + '</span></li>';
@@ -106,6 +106,9 @@ define(['jquery', 'socket', 'template'], function($, socket, tpl){
 			if( delta < 0 ){
 				if( this.scrollTop + $that.height() >= this.scrollHeight ){
 					return false;
+				}
+				else{
+					e.stopImmediatePropagation();
 				}
 			}
 			else{

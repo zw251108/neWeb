@@ -64,7 +64,7 @@ require(['../../config'], function(config){
 			, moreData = false
 			, space = 10
 			, loading = function(){
-				$editorContainer.height( $editorContainer.height() + 192 );
+				$editorContainer.height( $editorContainer.height() + 197 );
 				$editorContainer.append('<article class="article article-block"><div class="loading loading-chasing"></div></article>');
 			}
 			, layout = function(){
@@ -85,7 +85,6 @@ require(['../../config'], function(config){
 		$(window).on({
 			resize: function(){
 				HEIGHT = doc.clientHeight;
-
 				layout();
 			}
 			, scroll: function(){
@@ -101,7 +100,7 @@ require(['../../config'], function(config){
 						clearTimeout(socketTimeout);
 					}
 					else{
-						//$editorContainer.append('<article class="article article-block"><div class="loading loading-chasing"></div></article>');
+						$editorContainer.append('<article class="article article-block"><div class="loading loading-chasing"></div></article>');
 						loading();
 					}
 

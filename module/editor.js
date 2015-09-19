@@ -201,7 +201,8 @@ var db          = require('./db.js')
 						, title: '前端编辑器 editor'
 						, toolbar: '<li><a href="code?id=0" id="newCode" class="icon icon-file-code" title="新建代码"></a></li>' +
 							tpl.toolbarTpl([{
-								id: 'filter',   icon: 'filter',     title: '过滤'
+								id: 'filter',   icon: 'filter',     title: '过滤'}, {
+								id: 'search',   icon: 'search',     title: '搜索'
 							}]).join('')
 						, content: codeTpl(rs).join('')
 					}).join('')

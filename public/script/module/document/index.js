@@ -20,10 +20,10 @@ require(['../../config'], function(config){
 			})
 			, $container = g.$container
 			, codeList = []
-			, $skinList
+			, skinList
 			;
 
-		$skinList = codeSkin(config.requireConfig.baseUrl, codeList);
+		skinList = codeSkin(config.requireConfig.baseUrl, codeList);
 
 		// 绑定 socket 回调 事件
 		socket.register({
@@ -65,7 +65,7 @@ require(['../../config'], function(config){
 
 					codeList.push(c);
 
-					$skinList.triggerHandler('setSkin');
+					skinList.setSkin();
 				});
 			});
 		})

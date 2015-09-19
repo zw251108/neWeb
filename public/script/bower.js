@@ -88,6 +88,9 @@ require(['config'], function(config){
 					if( $that[0].scrollTop + $that.height() >= $that[0].scrollHeight ){
 						return false;
 					}
+					else{
+						e.stopImmediatePropagation();
+					}
 				}
 				else{
 					if( $that[0].scrollTop === 0 ){

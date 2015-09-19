@@ -10,7 +10,17 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	, articleListTpl    = emmetTpl({
 		template: 'article.article' +
 			'>a[href=./%Id%/]' +
-				'>h3.article_title{%title%}'
+				'>h3.article_title{%title%}' +
+			'^hr' +
+			'+time.article_date[pubdate=pubdate datetime=%datetime%]{%datetime%}' +
+			'+div.tags{%tags%}'
+		, filter: {
+			tags: function(d){
+				return d.tags ? d.tags.split(',').map(function(d){
+					return '<span class="tag tag-checked">' + d +'</span>';
+				}).join('') : '';
+			}
+		}
 	})
 	, articleTpl        = emmetTpl({
 		template: 'form[action=./save method=post]' +

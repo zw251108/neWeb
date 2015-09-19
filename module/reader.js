@@ -404,7 +404,9 @@ var db          = require('./db.js')
 						, toolbar: '<li><a href="bookmark" id="bookmark" class="icon icon-bookmark" title="待读文章列表"></a></li>' +
 						'<li><a href="favorite" id="favorite" class="icon icon-star" title="收藏文章"></a></li>'+
 						tpl.toolbarTpl([{
-							id: 'add', icon: 'plus', title: '添加订阅源'
+							id: 'add', icon: 'plus', title: '添加订阅源'}, {
+							id: 'filter',   icon: 'filter',     title: '过滤'}, {
+							id: 'search',   icon: 'search',     title: '搜索'
 						}])
 						, content: readerTpl(rs.data).join('')  + '<div class="pagination">'+ pagination(rs.index, rs.size, rs.count, rs.urlCallback) +'</div>'
 					}).join('') + tpl.popupTpl([{
@@ -429,9 +431,11 @@ var db          = require('./db.js')
 						id: 'bookmark'
 						, title: '待读文章 bookmark'
 						, toolbar: '<li><a href="./" id="reader" class="icon icon-rss" title="返回订阅列表"></a></li>' +
-							'<li><a href="favorite" id="favorite" class="icon icon-star" title="收藏文章"></a></li>' +
+							'<li><a href="./favorite" id="favorite" class="icon icon-star" title="收藏文章"></a></li>' +
 							tpl.toolbarTpl([{
-								id: 'add', icon: 'plus', title: '添加待读文章'
+								id: 'add',      icon: 'plus',   title: '添加待读文章'  }, {
+								id: 'filter',   icon: 'filter', title: '过滤'}, {
+								id: 'search',   icon: 'search', title: '搜索'
 							}])
 						, content: articleTpl(rs.data).join('') + '<div class="pagination">'+ pagination(rs.index, rs.size, rs.count, rs.urlCallback) +'</div>'
 					}).join('') + tpl.popupTpl([{
@@ -460,9 +464,10 @@ var db          = require('./db.js')
 						id: 'bookmark'
 							, title: '收藏文章 favorite'
 							, toolbar: '<li><a href="./" id="reader" class="icon icon-rss" title="返回订阅列表"></a></li>' +
-								'<li><a href="bookmark" id="favorite" class="icon icon-bookmark" title="待读文章"></a></li>' +
+								'<li><a href="./bookmark" id="favorite" class="icon icon-bookmark" title="待读文章"></a></li>' +
 								tpl.toolbarTpl([{
-									id: 'filter', icon: 'filter', title: '过滤'
+									id: 'filter',   icon: 'filter', title: '过滤'}, {
+									id: 'search',   icon: 'search', title: '搜索'
 								}])
 							, content: articleTpl(rs.data).join('') + '<div class="pagination">'+ pagination(rs.index, rs.size, rs.count, rs.urlCallback) +'</div>'
 					}).join('') + tpl.popupTpl([{

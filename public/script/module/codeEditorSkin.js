@@ -85,7 +85,9 @@ define(['jquery', 'socket', 'template'], function($, socket){
 
 		, skinList = {
 			$target: $skinList
-			, setSkin: function(skin){}
+			, setSkin: function(skin){
+				$codeEditorSkin.triggerHandler('setSkin');
+			}
 			, show: function(){
 				$skinList.slideDown().prev().show();
 			}
