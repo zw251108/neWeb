@@ -18,6 +18,18 @@ var db = require('../db.js')
 		, blogAdd: 'insert into '+ TABLE_NAME +'(user_id,title,tags,content) values(:userId,:title,\'\',\'\')'
 		, blogSave: 'update '+ TABLE_NAME +' set title=:title,content=:content,tags=:tags where Id=:id'
 	}
+
+	, Table = {
+		name: 'article'
+		, column: {
+			title: {
+				type: 'varchar'
+				, size: 255
+				, isRequired: true
+			}
+		}
+	}
+
 	, Model = {
 		getBlogList: function(page, size){
 			return db.handle({

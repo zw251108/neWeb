@@ -13,6 +13,11 @@ var mysql = require('mysql')
 	, DBError = function(msg){
 		this.message = msg;
 	}
+	, SQL = {
+		select: 'select :column from :table :where :order :group'
+		, update: 'update :table set :column :where'
+		, insert: 'insert into :table:column values(:values)'
+	}
 	;
 
 DBError.prototype = new Error();
