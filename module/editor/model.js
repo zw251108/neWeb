@@ -21,6 +21,44 @@ var db      = require('../db.js')
 				sql: SQL.editor
 			});
 		}
+		, getEditorList: function(page, size){
+			return db.handle({
+				sql: SQL.editorPage
+				, data: {
+					page: (page -1) * size
+					, size: size
+				}
+			})
+		}
+		, countEditor: function(){
+			return db.handle({
+				sql: SQL.editorCount
+			}).then(function(rs){
+				var count = 0;
+				if( rs && rs.length ){
+					count = rs[0].count
+				}
+
+				return count;
+			});
+		}
+
+		, getEditorById: function(id){
+			var rs;
+
+			if( id ){
+				rs = db.handle({
+					sql: SQL.codeById
+					, data: {
+						id: id
+					}
+				}).then(function(){
+					return rs[0]
+				})
+			}
+		}
+
+
 		, editorByPage: function(page, size){
 			page = page || 1;
 			size = size || 20;

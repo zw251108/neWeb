@@ -73,7 +73,8 @@ var db          = require('./db.js')
 				'+input#id[type=hidden name=id value=%Id%]' +
 				'+input#cssLib[type=hidden name=cssLib value=%css_lib%]' +
 				'+input#jsLib[type=hidden name=jsLib value=%js_lib%]' +
-				'+h3#editorTitle.editor_title>input#name.input[type=text name=name value=%name% placeholder=新建前端代码]' +
+				'+h3#editorTitle.editor_title' +
+					'>input#name.input[type=text name=name value=%name% placeholder=新建前端代码]' +
 				'^div.editor_area.editor_area-html' +
 					'>textarea#html.hidden[name=html placeholder=body&nbsp;之间的&nbsp;HTML&nbsp;代码]{%html%}' +
 					'+label.hidden[for=html]{HTML}' +
@@ -698,4 +699,3 @@ socket.register({
 });
 
 module.exports = Editor;
-

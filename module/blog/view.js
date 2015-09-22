@@ -7,24 +7,18 @@ var getEmmet    = require('../emmet/getEmmet.js')
 
 	, pagination    = require('../pagination.js')
 
+	, tagView   = require('../tag/view.js')
+
 	, articleTpl = emmetTpl({
 		template: getEmmet('blog/article.html')
 		, filter: {
-			tags: function(d){
-				return d.tags ? d.tags.split(',').map(function(d){
-					return '<span class="tag tag-checked">' + d +'</span>';
-				}).join('') : '';
-			}
+			tags: tagView.tagEditorFilter.tagsArea
 		}
 	})
 	, articleDetailTpl = emmetTpl({
 		template: getEmmet('blog/articleDetail.html')
 		, filter: {
-			tags: function(d){
-				return d.tags ? d.tags.split(',').map(function(d){
-					return '<span class="tag tag-checked">' + d +'</span>';
-				}).join('') : '';
-			}
+			tags: tagView.tagEditorFilter.tagsArea
 		}
 	})
 
