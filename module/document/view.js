@@ -20,7 +20,8 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	})
 
 	, View = {
-		document: function(rs){
+		documentList: function(rs){}
+		, document: function(rs){
 			var document = {
 				title: '前端文档 Document'
 				, main: {

@@ -35,7 +35,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	})
 
 	, View  = {
-		list: function(rs){
+		blogList: function(rs){
 			return tpl({
 				title: '文章'
 				, stylesheet: {
@@ -47,7 +47,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						, toolbar: [{
 							type: 'button', id: 'add', icon: 'plus', title: '新建'
 						}]
-						, content: articleListTpl(rs.data).join('') + '<div class="pagination">'+ pagination(rs.index, rs.size, rs.count, rs.urlCallback) +'</div>'
+						, content: articleListTpl(rs.data).join('') + '<div class="pagination" id="pagination">'+ pagination(rs.index, rs.size, rs.count, rs.urlCallback) +'</div>'
 					}
 					, modulePopup: {
 						id: 'addPopup'
@@ -63,7 +63,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 				}
 			});
 		}
-		, article: function(rs){
+		, blog: function(rs){
 			return tpl({
 				title: '文章'
 				, stylesheet: {

@@ -213,7 +213,7 @@ var db          = require('./db.js')
 									'</thead>' +
 									'<tbody>'+ bowerTpl(rs.data).join('') +'</tbody>' +
 								'</table>' +
-							'</div>' + '<div class="pagination">'+ pagination(rs.index, rs.size, rs.count, rs.urlCallback) +'</div>'
+							'</div>' + '<div class="pagination" id="pagination">'+ pagination(rs.index, rs.size, rs.count, rs.urlCallback) +'</div>'
 					}).join('') + tpl.popupTpl([{
 						id: 'result', type: 'popup', size: 'large'
 							, content: '<form action="#" id="bowerSearch">' +

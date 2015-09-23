@@ -7,7 +7,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 
 	, pagination    = require('../pagination.js')
 
-	, tagView   = require('../tag/view.js')
+	, TagView   = require('../tag/view.js')
 
 	, PREVIEW_SIZE = 128
 
@@ -51,7 +51,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 			,alt:function(data, index){
 				return data.preview ? data.name : '没有预览图片';
 			}
-			, tags: tagView.tagEditorFilter.tagsArea
+			, tags: TagView.tagEditorFilter.tagsArea
 		}
 	})
 	, codeEditTpl = emmetTpl({
@@ -70,7 +70,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					'>label.label[for=preview]{请添加预览图片}' +
 					'+input[type=hidden name=type value=preview]' +
 					'+input#preview.input[type=file name=preview]' +
-				'^' + tagView.tagEditorEmmet +
+				'^' + TagView.tagEditorEmmet +
 				'^fieldset' +
 					'>legend' +
 						'>label' +
@@ -85,13 +85,13 @@ var getEmmet    = require('../emmet/getEmmet.js')
 							'>label.label[for=uiNam2]{请设置 UI 组件名称}' +
 							'+input#uiNam2.input[type=text name=uiName placeholder=请设置&nbsp;UI&nbsp;组件名称 data-validator=uiName]' +
 			'^^^iframe#editorSetMoreRs.hidden[name=editorSetMoreRs]'
-		, filter: tagView.tagEditorFilter
+		, filter: TagView.tagEditorFilter
 	})
 
 	//,
 
 	, View = {
-		editor: function(rs){
+		editorList: function(rs){
 			return tpl({
 				title: '编辑器 editor'
 				, main: {
@@ -110,9 +110,9 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					main: '../script/module/editor/index'
 					, src: '../script/lib/require.min.js'
 				}
-			})
+			});
 		}
-		, editorEdit: function(rs){
+		, editor: function(rs){
 			return tpl({
 				title: '编辑器 editor'
 				, main: {
@@ -127,7 +127,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 							type: 'button', id: 'newWin',       icon: 'window', title: '在新窗口浏览'}, {
 							type: 'button', id: 'set',          icon: 'settle', title: '更多设置'
 						}]
-						, content: codeTpl( rs ).join('')
+						, content: codeEditTpl( rs ).join('')
 					}
 					, modulePopup: [{
 						id: 'msgPopup'
@@ -161,3 +161,5 @@ var getEmmet    = require('../emmet/getEmmet.js')
 		}
 	}
 	;
+
+module.exports = View;

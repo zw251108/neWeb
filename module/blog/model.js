@@ -7,11 +7,11 @@ var db = require('../db.js')
 
 	, SQL = {
 		blogList: 'select Id,title,datetime,tags from '+ TABLE_NAME +' where status=1 order by Id desc'
-		, blogPage: 'select Id,title,datetime,tags from '+ TABLE_NAME +' ' +
+		, blogByPage: 'select Id,title,datetime,tags from '+ TABLE_NAME +' ' +
 			//'where status=1 ' +
 			'order by Id desc limit :page,:size'
-		, blogDetail: 'select Id,title,content,datetime,tags from '+ TABLE_NAME +' where Id=:id'
-		, adminBlogList: 'select Id,title,datetime,tags from '+ TABLE_NAME +' order by Id desc limit :page,:size'
+		, blogById: 'select Id,title,content,datetime,tags from '+ TABLE_NAME +' where Id=:id'
+		//, adminBlogByPage: 'select Id,title,datetime,tags from '+ TABLE_NAME +' order by Id desc limit :page,:size'
 
 		, countBlog: 'select count(*) as count from '+ TABLE_NAME
 
@@ -31,34 +31,36 @@ var db = require('../db.js')
 	}
 
 	, Model = {
-		getBlogList: function(page, size){
+		getBlogAll: function(){}
+		, getBlogByPage: function(page, size){
 			return db.handle({
-				sql: SQL.blogPage
+				sql: SQL.blogByPage
 				, data: {
 					page: (page -1) * size
 					, size: size
 				}
 			});
 		}
-		, getContentById: function(id){
+		, getBlogById: function(id){
 			return db.handle({
-				sql: SQL.blogDetail
+				sql: SQL.blogById
 				, data: {
 					id: id
 				}
 			});
 		}
-		, getAllList: function(page, size){
-			return db.handle({
-				sql: SQL.adminBlogList
-				, data: {
-					page: (page-1) * size
-					, size: size
-				}
-			})
-		}
 
-		, getCount: function(){
+		//, getAdminBlogByPage: function(page, size){
+		//	return db.handle({
+		//		sql: SQL.blogByPage
+		//		, data: {
+		//			page: (page-1) * size
+		//			, size: size
+		//		}
+		//	});
+		//}
+
+		, countBlog: function(){
 			return db.handle({
 				sql: SQL.countBlog
 			}).then(function(rs){
@@ -81,7 +83,8 @@ var db = require('../db.js')
 				}
 			})
 		}
-		, saveBlog: function(title, content, tags, id){
+
+		, updateBlog: function(title, content, tags, id){
 			return db.handle({
 				sql: SQL.blogSave
 				, data: {

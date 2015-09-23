@@ -9,13 +9,13 @@ var getEmmet    = require('../emmet/getEmmet.js')
 
 	, tagView   = require('../tag/view.js')
 
-	, articleTpl = emmetTpl({
+	, articleListTpl = emmetTpl({
 		template: getEmmet('blog/article.html')
 		, filter: {
 			tags: tagView.tagEditorFilter.tagsArea
 		}
 	})
-	, articleDetailTpl = emmetTpl({
+	, articleTpl = emmetTpl({
 		template: getEmmet('blog/articleDetail.html')
 		, filter: {
 			tags: tagView.tagEditorFilter.tagsArea
@@ -23,14 +23,14 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	})
 
 	, View = {
-		blog: function(rs){
+		blogList: function(rs){
 			return tpl({
 				title: '博客 blog'
 				, main: {
 					moduleMain: {
 						id: 'blog'
 						, title: '博客 blog'
-						, content: articleTpl( rs.data ).join('') + '<div class="pagination">'+ pagination(rs.index, rs.size, rs.count, rs.urlCallback) +'</div>'
+						, content: articleListTpl( rs.data ).join('') + '<div class="pagination" id="pagination">'+ pagination(rs.index, rs.size, rs.count, rs.urlCallback) +'</div>'
 					}
 				}
 				//, script: {
@@ -39,14 +39,14 @@ var getEmmet    = require('../emmet/getEmmet.js')
 				//}
 			});
 		}
-		, blogDetail: function(rs){
+		, blog: function(rs){
 			return tpl({
 				title: '博客 blog'
 				, main: {
 					moduleMain: {
 						id: 'blog'
 						, title: '博客 blog'
-						, content : articleDetailTpl( rs ).join('')
+						, content : articleTpl( rs ).join('')
 					}
 				}
 			})

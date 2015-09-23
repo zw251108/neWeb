@@ -408,7 +408,7 @@ var db          = require('./db.js')
 							id: 'filter',   icon: 'filter',     title: '过滤'}, {
 							id: 'search',   icon: 'search',     title: '搜索'
 						}])
-						, content: readerTpl(rs.data).join('')  + '<div class="pagination">'+ pagination(rs.index, rs.size, rs.count, rs.urlCallback) +'</div>'
+						, content: readerTpl(rs.data).join('')  + '<div class="pagination" id="pagination">'+ pagination(rs.index, rs.size, rs.count, rs.urlCallback) +'</div>'
 					}).join('') + tpl.popupTpl([{
 						id: 'readPopup', size: 'normal'
 						, content: bookmarkReadFormTpl({})
@@ -437,7 +437,7 @@ var db          = require('./db.js')
 								id: 'filter',   icon: 'filter', title: '过滤'}, {
 								id: 'search',   icon: 'search', title: '搜索'
 							}])
-						, content: articleTpl(rs.data).join('') + '<div class="pagination">'+ pagination(rs.index, rs.size, rs.count, rs.urlCallback) +'</div>'
+						, content: articleTpl(rs.data).join('') + '<div class="pagination" id="pagination">'+ pagination(rs.index, rs.size, rs.count, rs.urlCallback) +'</div>'
 					}).join('') + tpl.popupTpl([{
 						id: 'addPopup', size: 'normal'
 							, content: bookmarkAddFormTpl({})
@@ -469,7 +469,7 @@ var db          = require('./db.js')
 									id: 'filter',   icon: 'filter', title: '过滤'}, {
 									id: 'search',   icon: 'search', title: '搜索'
 								}])
-							, content: articleTpl(rs.data).join('') + '<div class="pagination">'+ pagination(rs.index, rs.size, rs.count, rs.urlCallback) +'</div>'
+							, content: articleTpl(rs.data).join('') + '<div class="pagination" id="pagination">'+ pagination(rs.index, rs.size, rs.count, rs.urlCallback) +'</div>'
 					}).join('') + tpl.popupTpl([{
 						id: 'readPopup', size: 'normal'
 							, content: bookmarkReadFormTpl({})

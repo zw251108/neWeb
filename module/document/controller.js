@@ -14,6 +14,8 @@ var web         = require('../web.js')
 	, View  = require('./view.js')
 	, Admin = require('./admin.view.js')
 
+	, DocumentError = require('./error.js')
+
 	, DOCUMENT_ID = 1
 	;
 
@@ -42,7 +44,7 @@ web.get('/admin/document/', function(req, res){
 		, size = query.size || 20
 		;
 	Model.getDocumentList(page, size).then(function(rs){
-		return Model.getCountDoc().then(function(count){
+		return Model.countDocument().then(function(count){
 			return {
 				data: rs
 				, count: count
@@ -68,7 +70,7 @@ web.get('/admin/document/:documentId/',function(req, res, next){
 		//	res.end();
 		//});
 
-		Model.getContentByDocumentId( documentId, true ).then( Admin.document).then(function(html){
+		Model.getContentByDocumentId( documentId, true ).then( Admin.document ).then(function(html){
 			res.send( config.docType.html5 + html );
 			res.end();
 		});
@@ -127,7 +129,7 @@ web.post('/admin/document/add', function(req, res){
 		, title = body.title
 		;
 	if( title ){
-		Model.addDoc( body ).then(function(rs){
+		Model.addDocument( body ).then(function(rs){
 			var json = {};
 			if( rs.insertId ){
 				json.success = true;
@@ -193,7 +195,7 @@ web.post('/admin/document/:documentId/save', function(req, res){
 
 		body.documentId = documentId;
 
-		Model.documentSaveOrder({
+		Model.updateDocumentOrder({
 			documentId: documentId
 			, order: body.order
 		}).then(function(rs){
@@ -269,7 +271,7 @@ web.post('/admin/document/:documentId/:sectionId/save', function(req, res){
 		body.documentId = documentId;
 		body.sectionId = sectionId;
 
-		Model.sectionSaveOrder({
+		Model.updateSectionOrder({
 			sectionId: sectionId
 			, order: body.order
 		}).then(function(rs){
@@ -310,7 +312,7 @@ web.post('/admin/document/:documentId/:sectionId/:contentId/save', function(req,
 
 		body.content = body.content.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
 
-		Model.saveContent( body ).then(function(rs){
+		Model.updateContent( body ).then(function(rs){
 			res.send( JSON.stringify({
 				success: true
 			}) );

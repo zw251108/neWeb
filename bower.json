@@ -71,7 +71,8 @@
     "Buttons": "~2.0.0",
     "csshake": "*",
     "svg.js": "~2.0.5",
-    "tweenjs": "*"
+    "tweenjs": "*",
+    "raphael": "~2.1.4"
   },
   "resolutions": {
     "animate.css": "~3.4.0",

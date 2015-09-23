@@ -54,7 +54,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						toolbar: [{
 							type: 'button', id: 'add', icon: 'plus', title: '添加'
 						}]
-						, content: '<ul>' + docList(rs.data).join('') + '</ul>' + '<div class="pagination">'+ pagination(rs.index, rs.size, rs.count, rs.urlCallback) +'</div>'
+						, content: '<ul>' + docList(rs.data).join('') + '</ul>' + '<div class="pagination" id="pagination">'+ pagination(rs.index, rs.size, rs.count, rs.urlCallback) +'</div>'
 					}
 					, modulePopup: [{
 						id: 'addPopup'

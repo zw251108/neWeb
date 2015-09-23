@@ -12,7 +12,7 @@ var db  = require('../db.js')
 		, documentAdd: 'insert into document(title) values(:title)'
 		, documentOrder: 'update document set section_order=:order where Id=:documentId'
 
-		, countDocument: 'select count(*) as count from document'
+		//, countDocument: 'select count(*) as count from document'
 
 		, sectionByDocument: 'select Id,title from document_section where document_id=:documentId'
 		, sectionById: 'select Id,title from document_section where Id=:id'
@@ -26,7 +26,8 @@ var db  = require('../db.js')
 		, contentSaveContent: 'update document_content set content=:content where Id=:id'
 	}
 	, Model = {
-		getDocumentList: function(page, size){
+		getDocumentAll: function(){}
+		, getDocumentList: function(page, size){
 			return db.handle({
 				sql: SQL.documentPage
 				, data: {
@@ -36,9 +37,9 @@ var db  = require('../db.js')
 			})
 		}
 
-		, getCountDoc: function(){
+		, countDocument: function(){
 			return db.handle({
-				sql: SQL.countDocument
+				sql: SQL.documentCount
 			}).then(function(rs){
 				var count = 0;
 
@@ -117,7 +118,7 @@ var db  = require('../db.js')
 			});
 		}
 
-		, addDoc: function(data){
+		, addDocument: function(data){
 			return db.handle({
 				sql: SQL.documentAdd
 				, data: data
@@ -135,20 +136,21 @@ var db  = require('../db.js')
 				, data: data
 			});
 		}
-		, saveContent: function(data){
+
+		, updateContent: function(data){
 			return db.handle({
 				sql: SQL.contentSaveContent
 				, data: data
 			});
 		}
 
-		, documentSaveOrder: function(data){
+		, updateDocumentOrder: function(data){
 			return db.handle({
 				sql: SQL.documentOrder
 				, data: data
 			});
 		}
-		, sectionSaveOrder: function(data){
+		, updateSectionOrder: function(data){
 			return db.handle({
 				sql: SQL.sectionOrder
 				, data: data

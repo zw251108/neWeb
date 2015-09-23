@@ -188,7 +188,8 @@ require('./module/blog/controller.js'); // 加载模块 blog
 
 require('./module/document/controller.js'); // 加载模块 document
 
-require('./module/editor.js');      // 加载模块 editor
+//require('./module/editor.js');      // 加载模块 editor
+require('./module/editor/controller.js');   // 加载模块 editor
 
 require('./module/bower.js');       // 加载模块 bower
 

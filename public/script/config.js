@@ -9,19 +9,22 @@ define({
 			, css: 'lib/css'
 			, d3: 'lib/d3.min'
 
+			, template: 'ui/jquery.emmetTpl'
+			, layout: 'ui/jquery.layout'
+			, pagination: 'ui/jquery.pagination'
+
 			, global: 'module/global'
 			//, popup: 'module/popup'
 			, socket: 'module/socket'
 			, tag: 'module/tag'
 			, time: 'module/time'
 
+			, msgPopup: 'module/msg.popup'
+
 			, login: 'module/login'
 
 			, codeEditor: 'module/codeEditor'
 			, codeEditorSkin: 'module/codeEditorSkin'
-
-			, template: 'ui/jquery.emmetTpl'
-			, layout: 'ui/jquery.layout'
 
 			, blog: 'module/blog/blog'
 			, document: 'module/document/document'
@@ -29,8 +32,6 @@ define({
 			, talk: 'module/talk/talk'
 
 			, bookmarkRead: 'module/reader/bookmarkRead'
-
-			, msgPopup: 'module/msg.popup'
 
 			, adminAddDataPopup: 'admin/addPopup'
 		}
