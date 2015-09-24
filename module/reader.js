@@ -407,7 +407,7 @@ var db          = require('./db.js')
 							id: 'add', icon: 'plus', title: '添加订阅源'}, {
 							id: 'filter',   icon: 'filter',     title: '过滤'}, {
 							id: 'search',   icon: 'search',     title: '搜索'
-						}])
+						}]).join('')
 						, content: readerTpl(rs.data).join('')  + '<div class="pagination" id="pagination">'+ pagination(rs.index, rs.size, rs.count, rs.urlCallback) +'</div>'
 					}).join('') + tpl.popupTpl([{
 						id: 'readPopup', size: 'normal'
@@ -436,7 +436,7 @@ var db          = require('./db.js')
 								id: 'add',      icon: 'plus',   title: '添加待读文章'  }, {
 								id: 'filter',   icon: 'filter', title: '过滤'}, {
 								id: 'search',   icon: 'search', title: '搜索'
-							}])
+							}]).join('')
 						, content: articleTpl(rs.data).join('') + '<div class="pagination" id="pagination">'+ pagination(rs.index, rs.size, rs.count, rs.urlCallback) +'</div>'
 					}).join('') + tpl.popupTpl([{
 						id: 'addPopup', size: 'normal'
@@ -468,7 +468,7 @@ var db          = require('./db.js')
 								tpl.toolbarTpl([{
 									id: 'filter',   icon: 'filter', title: '过滤'}, {
 									id: 'search',   icon: 'search', title: '搜索'
-								}])
+								}]).join('')
 							, content: articleTpl(rs.data).join('') + '<div class="pagination" id="pagination">'+ pagination(rs.index, rs.size, rs.count, rs.urlCallback) +'</div>'
 					}).join('') + tpl.popupTpl([{
 						id: 'readPopup', size: 'normal'

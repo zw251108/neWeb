@@ -6,6 +6,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	, emmetTpl  = require('../emmetTpl/emmetTpl.js').template
 
 	, pagination    = require('../pagination.js')
+	, footer    = require('../footer.js')
 
 	, bowerListWrapTpl = emmetTpl({
 		template: 'div.wrap' +
@@ -53,7 +54,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 		template: 'form#bowerSearch[action=#]' +
 			'>div.formGroup' +
 				'>input.input[type=text]' +
-				'+button.btn.icon.icon-btn[type=submit]' +
+				'+button.btn.icon.icon-search[type=submit]{搜索}' +
 		'^^div.bowerSearchList' +
 			'>table' +
 				'>thead' +
@@ -85,11 +86,14 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						, toolbar: ''
 						, content: bowerSearchFormTpl({})
 					}, {
-						id: info
+						id: 'info'
 						, size: 'large'
 						, toolbar: ''
 						, content: '<ul id="infoList"></ul>'
 					}]
+				}
+				, footer: {
+					nav: footer('bower')
 				}
 				, script: {
 					main: '../script/bower'

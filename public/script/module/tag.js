@@ -81,7 +81,7 @@ define(['jquery', 'socket', 'template'], function($, socket, tpl){
 							rs.push( t );
 						}
 					}
-					                 console.log(rs);
+
 					if( rs.length ){
 						$tagPointOut.html($.map(rs, function(d){
 							return '<li><span class="tag">'+ d.name + '</span></li>';

@@ -235,6 +235,9 @@ define(['jquery', 'socket'], function($, socket){
 
 	g.$container = $container;
 
+	// 默认分页数量
+	g.PAGE_SIZE = 20;
+
 	// 兼容 console
 	if( !('console' in window) || !('log' in console) || (typeof console.log !== 'function') ){
 		window.console = {
@@ -255,6 +258,46 @@ define(['jquery', 'socket'], function($, socket){
 			'/__/  /__/ /__ __ __/ /__ __ __/ /__ __ __/ /__ __ __/\n'      +
 			'\n\n 有什么疑问吗？直接给我留言吧 :)');
 	}
+
+	var $main = $('.module-main')
+		, $mainToolbar = $main.find('.toolbar')
+		, width = $mainToolbar.width()
+		, offset = $mainToolbar.offset()
+		;
+
+	var $footer = $('#footer')
+		;
+	$(window).on({
+		scroll: function(){
+
+			var scrollTop = document.documentElement.scrollTop || document.body.scrollTop
+				, h = document.documentElement.clientHeight
+				;
+
+			if( scrollTop > h && ($footer.is(':hidden') || !$footer.is(':animated')) ){
+				$footer.fadeIn();
+			}
+			else if( scrollTop <= h ){
+				$footer.fadeOut();
+			}
+
+			if( scrollTop >= offset.top ){
+				$mainToolbar.css({
+					position: 'fixed'
+					, width: width +'px'
+				});
+			}
+			else{
+				$mainToolbar.css({
+					position: 'absolute'
+				})
+			}
+		}
+		, resize: function(){
+			width = $main.width();
+			$mainToolbar.width( width );
+		}
+	});
 
 	return g;
 });

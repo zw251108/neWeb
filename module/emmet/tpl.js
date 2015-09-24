@@ -77,7 +77,16 @@ var admin         = require('../admin.js')
 		template: getEmmet('toolbar-link.html')
 	})
 
-	, footer    // todo
+	, footer        = emmetTpl({
+		template: getEmmet('footer.html')
+		, filter: {
+			nav: function(d){
+				return d.nav.map(function(d){
+					return '<li><a href="'+ d.href +'" class="icon icon-'+ d.icon + (d.on ? ' on' : '') +'"></a>';
+				}).join('');
+			}
+		}
+	})
 
 	, script        = emmetTpl({
 		template: getEmmet('script.html')
@@ -95,6 +104,7 @@ var admin         = require('../admin.js')
 		, style: ''
 		, header: {}
 		, main: ''
+		, footer: ''
 		, script: ''
 		, scriptCode: ''
 	}
@@ -113,6 +123,9 @@ var admin         = require('../admin.js')
 			}
 			, main: function(d){
 				return d.main ? (typeof d.main === 'object' ? main(d.main) : d.main) : '';
+			}
+			, footer: function(d){
+				return d.footer ? footer(d.footer) : '';
 			}
 			, script: function(d){
 				return d.script ? script(d.script).join('') : '';
@@ -137,5 +150,5 @@ var admin         = require('../admin.js')
 		return pageTpl(page).join('');
 	}
 	;
-
+//console.log(getEmmet('footer.html'))
 module.exports = page;

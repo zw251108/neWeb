@@ -37,9 +37,12 @@ web.get('/bower/', function(req, res){
 				, index: page
 				, size: size
 				, count: count
+				, urlCallback: function(index){
+					return '?page='+ index;
+				}
 			}
 		});
-	}).then( View.bowerList).then(function(html){
+	}).then( View.bowerList ).catch(function(){console.log(arguments)}).then(function(html){
 		res.send( config.docType.html5 + html );
 		res.end();
 	});

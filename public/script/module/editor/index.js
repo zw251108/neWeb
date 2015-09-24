@@ -73,7 +73,7 @@ require(['../../config'], function(config){
 					items: 'article',
 					left: -1,
 					right: -15,
-					top: 10,
+					top: 0,
 					colSpace: 10,
 					rowSpace: 10
 				});
@@ -129,7 +129,7 @@ require(['../../config'], function(config){
 				}
 				else{
 					moreData = true;
-					content = '<article class="article article-block">沒有更多数据了...</article>';
+					content = '<article class="article article-block article-block-noMore">沒有更多数据了...</article>';
 				}
 
 				$editorContainer.find('article.article-block').remove().end().append( content );

@@ -5,7 +5,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 
 	, emmetTpl  = require('../emmetTpl/emmetTpl.js').template
 
-	, Model = require('./model.js')
+	, footer    = require('../footer.js')
 
 	, sectionTpl    = emmetTpl({
 		template: getEmmet('document/section.html')
@@ -34,6 +34,9 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						}]
 						, content: sectionTpl( rs ).join('')
 					}
+				}
+				, footer: {
+					nav: footer('document')
 				}
 				, script: {
 					main: '../script/module/document/index'

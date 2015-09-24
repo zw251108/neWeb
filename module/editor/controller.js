@@ -83,7 +83,7 @@ socket.register({
 			, size = query.size || 20
 			;
 
-		Model.getEditorList(page, size).then(function(rs){
+		Model.getEditorByPage(page, size).then(function(rs){
 			socket.emit('data', {
 				topic: 'editor'
 				, data: rs

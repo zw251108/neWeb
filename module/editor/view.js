@@ -6,6 +6,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	, emmetTpl  = require('../emmetTpl/emmetTpl.js').template
 
 	, pagination    = require('../pagination.js')
+	, footer    = require('../footer.js')
 
 	, TagView   = require('../tag/view.js')
 
@@ -106,6 +107,9 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						, content: codeTpl( rs.data ).join('')
 					}
 				}
+				, footer: {
+					nav: footer('editor')
+				}
 				, script: {
 					main: '../script/module/editor/index'
 					, src: '../script/lib/require.min.js'
@@ -152,6 +156,9 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						, toolbar: ''
 						, content: demoImgUploadFormTpl({})
 					}]
+				}
+				, footer: {
+					nav: footer('editor')
 				}
 				, script: {
 					main: '../script/module/editor/code'

@@ -14,6 +14,7 @@
 	float: none;
 
 	margin: 0;
+	background: @module-main_bg_c;
 
 	> .module_title,
 	> .module_info{
@@ -24,7 +25,7 @@
 
 		border-radius: 10px;
 
-		margin: 40px 1px 10px;
+		margin: 40px 0 10px;
 
 		background-color: #fff;
 	}
@@ -36,7 +37,30 @@
 	> .toolbar{
 		position: absolute;
 		top: 0;
+		left: 0;
 		right: 0;
+		border-radius: 10px 10px 0 0;
+		margin: 0 auto;
+		background: @module-main_toolbar_bg_c;
+		text-align: right;
+
+		&:before,
+		&:after{
+			position: absolute;
+			bottom: -10px;
+			height: 10px;
+			width: 10px;
+
+			content: "";
+		}
+		&:before{
+			left: 0;
+			background-image: -webkit-radial-gradient(bottom right, transparent 9px, #888 10px, #888 11px);
+		}
+		&:after{
+			right: 0;
+			background-image: -webkit-radial-gradient(bottom left, transparent 9px, #888 10px, #888 11px);
+		}
 
 		> li{
 			display: inline-block;

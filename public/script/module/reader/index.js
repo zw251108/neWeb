@@ -3,7 +3,7 @@
  * */
 require(['../../config'], function(config){
 	var r = require(config.requireConfig);
-	r(['jquery', 'global', 'socket', 'bookmarkRead', 'tag', config.dataSource.tag, 'msgPopup', 'template'], function($, g, socket, bookmarkRead, tag, tagData, msgPopup){
+	r(['jquery', 'global', 'socket', 'bookmarkRead', 'tag', config.dataSource.tag, 'msgPopup', 'pagination', 'template'], function($, g, socket, bookmarkRead, tag, tagData, msgPopup, pagination){
 		var $reader = $('#reader')
 			, articleTpl = $.template({
 				template: 'li.reader_article.article' +
@@ -48,7 +48,38 @@ require(['../../config'], function(config){
 				}
 			})
 			, $readPopup = bookmarkRead($reader, tagData)
+
+			, search = location.search
+			, currPage
+			//, $pagination = $('#pagination').on('click', '.page', function(e){
+			//	var page = +( this.dataset ? this.dataset.page : this.getAttribute('page') );
+			//
+			//	if( page !== currPage ){
+			//		socket.emit('data', {
+			//			topic: 'reader'
+			//			, query: {
+			//				page: page
+			//				, size: g.PAGE_SIZE
+			//			}
+			//		});
+			//	}
+			//})
 			;
+
+		if( search ){
+			search = search.split('&');
+			currPage = {};
+			$.each(search, function(i, d){
+				var t = d.split('=');
+				currPage[t[0]] = t[1];
+			});
+
+			search = currPage;
+			currPage = +search.page;
+		}
+		else{
+			currPage = 1;
+		}
 
 		$reader.on('click', '.reader_section > a', function(e){
 			e.preventDefault();

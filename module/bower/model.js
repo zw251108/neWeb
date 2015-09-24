@@ -13,7 +13,7 @@ var db      = require('../db.js')
 		bower: 'select * from '+ TABLE_NAME +' where status=\'1\''
 		, bowerByPage: 'select * from '+ TABLE_NAME +' limit :page,:size'
 
-		, bowerCount: 'select count(*) as count from'+ TABLE_NAME
+		, bowerCount: 'select count(*) as count from '+ TABLE_NAME
 	}
 
 	, Model = {

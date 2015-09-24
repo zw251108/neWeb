@@ -6,6 +6,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	, emmetTpl  = require('../emmetTpl/emmetTpl.js').template
 
 	, pagination    = require('../pagination.js')
+	, footer    = require('../footer.js')
 
 	, tagView   = require('../tag/view.js')
 
