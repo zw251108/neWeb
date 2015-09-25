@@ -55,12 +55,13 @@ var getEmmet    = require('../emmet/getEmmet.js')
 			'>div.formGroup' +
 				'>input.input[type=text]' +
 				'+button.btn.icon.icon-search[type=submit]{搜索}' +
-		'^^div.bowerSearchList' +
+		'^^div.bower_resultList' +
 			'>table' +
 				'>thead' +
 					'>tr' +
 						'>th{组件名称}' +
 						'+th{组件来源}' +
+						'+th' +
 				'^^tbody'
 	})
 

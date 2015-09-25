@@ -135,9 +135,13 @@
 .lib_table th:first-child,
 .lib_table td:first-child{
 	position: absolute;
-	left: 10px;
+	left: 0;
+	/*left: 10px;*/
 	/*height: 100px;*/
 	width: 150px;
+	margin-bottom: -1000px;
+	padding-bottom: 1000px;
+	background: #fff;
 	line-height: 100px;
 	text-align: center;
 }
