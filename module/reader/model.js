@@ -52,6 +52,19 @@ var db  = require('../db.js')
 				return isExist;
 			});
 		}
+
+		, getBookmarkByPage: function(page, size){
+
+		}
+		, countBookmark: function(){
+
+		}
+		, isExistBookmark: function(url){
+
+		}
+
+		, getFavoriteByPage: function(page, size){}
+		, countFavorite: function(){}
 	}
 	;
 
