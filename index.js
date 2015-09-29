@@ -22,7 +22,8 @@ var fs = require('fs')
 	, cookie        = require('cookie')
 	, cookieParser  = require('cookie-parser')
 	//, multer        = require('multer')
-	, logger        = require('morgan')
+	, log4js        = require('log4js')
+	, logger    //        = require('morgan')
 	, session       = require('express-session')
 	, sessionStore  = new session.MemoryStore()
 
@@ -34,6 +35,21 @@ var fs = require('fs')
 	, index         = require('./module/index.js') // 首页模块
 	;
 
+log4js.configure({
+	appenders: [{
+		type: "console"
+	}, {
+		type: 'file',
+		filename: __dirname + '/log/access.log',
+		maxLogSize: 1024 * 1024 * 1000,
+		backups: 4,
+		category: 'normal'
+	}],
+	replaceConsole: true
+});
+logger = log4js.getLogger('normal');
+logger.setLevel('INFO');
+
 //----- 重置 manifest 版本代号 -----
 var manifest = fs.readFileSync(__dirname + '/tpl/cache.manifest').toString();
 fs.writeFileSync(__dirname + '/public/cache.manifest', new Buffer(manifest.replace('%v%', Math.floor(Math.random()*100))) );
@@ -43,7 +59,10 @@ console.log('cache.mainfest has reset');
 web.use( bodyParser.json() );
 web.use( bodyParser.urlencoded({extended: true}) );
 web.use( cookieParser() );
-web.use( logger('dev') );
+web.use(    //logger('dev')
+	log4js.connectLogger(logger, {
+	format: ':method :url :remote-addr'
+}) );
 
 web.use( session({
 	store:      sessionStore

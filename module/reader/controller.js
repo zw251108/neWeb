@@ -4,6 +4,8 @@ var web         = require('../web.js')
 	, socket    = require('../socket.js')
 	, error     = require('../error.js')
 
+	, Url       = require('url')
+
 	, config    = require('../../config.js')
 
 	, index     = require('../index.js')
@@ -95,9 +97,9 @@ web.get('/reader/favorite', function(req, res){
 				}
 			};
 		});
-	}).then( View.favoriteList).then(function(html){
+	}).then( View.favoriteList ).then(function(html){
 		res.send( config.docType.html5 + html );
-		res.end()
+		res.end();
 	});
 });
 
@@ -105,9 +107,7 @@ socket.register({
 	reader: function(socket, data){
 
 	}
-	, 'reader/add': function(socket, data){
-
-	}
+	, 'reader/add': function(socket, data){}
 	, 'reader/feed': function(socket, data){
 		var send = {
 				topic: 'reader/feed'
@@ -116,14 +116,206 @@ socket.register({
 			;
 
 		if( feed ){
-			//Reader.crawler(  )
+			Reader.crawler( feed ).then( Reader.handleFeed ).then(function(rs){
+				var result
+					, datetime
+					, today
+					, type
+					, y, m, d, h, mm, s
+					;
+				if( rs.length ){
+					datetime = rs[0].datetime;
+					today = datetime ? datetime : new Date();
+					type = typeof today;
+
+					if( type === 'string' || type === 'number' ){
+						today = new Date( datetime );
+					}
+
+					if( !(today instanceof Date) || today.toString() === 'Invalid Date' ){
+						today = new Date();
+					}
+
+					y = today.getFullYear();
+					m = today.getMonth() +1;
+					d = today.getDate();
+					h = today.getHours();
+					mm = today.getMinutes();
+					s = today.getSeconds();
+
+					m = m < 10 ? '0' + m : m;
+					d = d < 10 ? '0' + d : d;
+					h = h < 10 ? '0' + h : h;
+					mm = mm < 10 ? '0' + mm : mm;
+					s = s < 10 ? '0' + s : s;
+					datetime = y +'-'+ m +'-'+ d +' '+ h +':'+ mm +':'+ s;
+
+					// 更新最后发布时间
+					result = Model.updateReaderPubById(datetime, data.query.id).then(function(r){
+						return rs;
+					});
+				}
+				else{
+					result = Promise.reject( new ReaderError('数据分析失败') );
+				}
+
+				return result;
+			}).then(function(rs){
+				if( rs ){
+					send.info = {
+						id: data.query.id
+						, data: rs
+					};
+				}
+				else{
+					send.error = '';
+					send.msg = '抓取失败';
+				}
+
+				socket.emit('data', send);
+			});
+		}
+		else{
+			send.error = '';
+			send.msg = '缺少参数';
+
+			socket.emit('data', send);
 		}
 	}
 
-	, 'reader/article/bookmark': function(socket, data){}
+	, 'reader/article/bookmark': function(socket, data){
+		var send = {
+				topic: 'reader/article/bookmark'
+			}
+			, query = data.query || {}
+			, url = query.url
+			, targetId = query.targetId
+			, tags = query.tags
+			, title = query.title
+			, dataAll
+			, execute = Model.isExistBookmark( url )
+			;
+
+		if( url && targetId ){
+			if( tags && title ){
+				execute = execute.then(function(rs){
+					var source = Url.parse(url)
+						, result
+						;
+
+					source = source.protocol + '//' + source.host;
+
+					if( rs && rs.length ){  // 数据已存在
+						send.error = '';
+						send.msg = '数据已存在';
+						send.info = rs[0];
+						send.info.id = rs[0].Id;
+						send.info.targetId = targetId;
+
+						socket.emit('data', send);
+
+						result = Promise.reject( new ReaderError('数据已存在') );
+					}
+					else{
+						result = {
+							url: url
+							, title: title
+							, tags: tags
+							, source: source
+						};
+					}
+
+					return result;
+				});
+			}
+			else{
+				execute = execute.then(function(rs){
+					var result;
+
+					if( rs && rs.length ){
+						send.error = '';
+						send.msg = '数据已存在';
+						send.info = rs[0];
+						send.info = rs[0].Id;
+						send.info.targetId = targetId;
+
+						socket.emit('data', send);
+
+						result = Promise.reject( new ReaderError('数据已存在') );
+					}
+					else{
+						result = Reader.crawler( url );
+					}
+
+					return result;
+				}).then( Reader.handleArticle );
+			}
+
+			execute.then(function( data ){
+				var result;
+
+				if( !data ){
+					send.error = '';
+					send.msg = '数据缺失';
+
+					socket.emit('data', send);
+
+					result = Promise.reject( new ReaderError('数据获取失败') );
+				}
+				else{
+					data.status = 0;
+					dataAll = data;
+
+					result = Model.addBookmark( data );
+				}
+
+				return result;
+			}).then(function(rs){
+				dataAll.targetId = targetId;
+
+				if( rs.insertId ){
+					dataAll.id = rs.insertId;
+					dataAll.sstatus = 0;
+				}
+				else{
+					send.error = '';
+					send.msg = '数据已存在';
+				}
+				send.info = dataAll;
+
+				socket.emit('data', send);
+			});
+		}
+		else{
+			send.error = '';
+			send.msg = '缺少参数';
+
+			socket.emit('data', send);
+		}
+	}
+	, 'reader/read': function(socket, data){
+		var send = {
+				topic: 'reader/read'
+			}
+			, query = data.query
+			, id = query.id
+			, url = query.url
+			, tags = query.tags || ''
+			, score = query.score || 0
+			, title = query.title || ''
+			;
+
+		if( id ){
+			if( /^\d+$/.test( id ) ){
+				Model
+			}
+		}
+	}
+
 	, 'reader/bookmark': function(socket, data){}
 	, 'reader/bookmark/add': function(socket, data){}
 
-	, 'reader/read': function(socket, data){}
-	, 'reader/favorite': function(socket, data){}
+	, 'reader/favorite': function(socket, data){
+
+	}
 });
