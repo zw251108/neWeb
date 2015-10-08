@@ -23,7 +23,7 @@ var fs = require('fs')
 	, cookieParser  = require('cookie-parser')
 	//, multer        = require('multer')
 	, log4js        = require('log4js')
-	, logger    //        = require('morgan')
+	, logger        //= require('morgan')
 	, session       = require('express-session')
 	, sessionStore  = new session.MemoryStore()
 
@@ -59,10 +59,12 @@ console.log('cache.mainfest has reset');
 web.use( bodyParser.json() );
 web.use( bodyParser.urlencoded({extended: true}) );
 web.use( cookieParser() );
-web.use(    //logger('dev')
+web.use(
+	//logger('dev')
 	log4js.connectLogger(logger, {
 	format: ':method :url :remote-addr'
-}) );
+})
+);
 
 web.use( session({
 	store:      sessionStore

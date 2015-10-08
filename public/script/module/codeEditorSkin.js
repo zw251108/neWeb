@@ -76,7 +76,7 @@ define(['jquery', 'socket', 'template'], function($, socket){
 				$skinList.slideUp().prev().hide();
 			}
 			, setSkin: function(){
-
+				$codeEditorSkin.triggerHandler('setSkin');
 			}
 		})
 		, BASE_URL
