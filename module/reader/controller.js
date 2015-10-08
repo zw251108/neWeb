@@ -303,17 +303,140 @@ socket.register({
 			, tags = query.tags || ''
 			, score = query.score || 0
 			, title = query.title || ''
+			, result
 			;
 
+		// 判断是否已有 id
 		if( id ){
-			if( /^\d+$/.test( id ) ){
-				Model
+			if( /^\d+$/.test( id ) ){   // 合法数据库 id
+				// 更新为 已读 状态
+				result = Model.updateBookmarkRead(id, title, score, tags).then(function(rs){
+
+					send.info = {
+						id: id
+					};
+
+					if( !rs.changedRows ){
+						send.error = '';
+						send.msg = '该文章已被读过';
+					}
+
+					return send;
+				});
+			}
+			else if( url ){ // id 为 targetId，使用 url
+				// 判断数据库是否已存在
+				result = Model.isExistBookmark(url).then(function(rs){
+					var p, source;
+
+					if( rs && rs.length ){  // 已存在
+						console.log('url ', url, '已存在');
+
+						send.info = {
+							id: rs[0].Id
+						};
+
+						// 更新为 已读 状态
+						p = Model.updateBookmarkRead(id, title, score, tags).then(function(rs){
+
+							if( !rs.changedRows ){
+								send.error = '';
+								send.msg = '该文章已被读过';
+							}
+
+							return send;
+						});
+					}
+					else{   // 不存在
+						source = Url.parse(url);
+						source = source.protocol + '//' + source.host;
+
+						// 保存到数据库
+						p = Model.addBookmark({
+							url: url
+							, title: title
+							, score: score
+							, tags: tags
+							, source: source
+							, status: 2
+						}).then(function(rs){
+
+							if( rs.insertId ){
+								send.info = {
+									id: rs.insertId
+									, targetId: id
+									, tags: tags
+								};
+							}
+							else{
+								send.error = '';
+								send.msg = '数据已存在';
+							}
+
+							return send;
+						});
+					}
+
+					return p;
+				});
+			}
+			else{
+				send.error = '';
+				send.msg = '缺少参数';
+
+				result = Promise.resolve( send );
 			}
 		}
+		else{
+			send.error = '';
+			send.msg = '缺少参数';
+
+			result = Promise.resolve( send );
+		}
+
+		result.then(function(send){
+			socket.emit('data', send);
+		});
 	}
 
 	, 'reader/bookmark': function(socket, data){}
-	, 'reader/bookmark/add': function(socket, data){}
+	, 'reader/bookmark/add': function(socket, data){
+		var send = {
+				topic: 'reader/bookmark/add'
+			}
+			, url = data.query.url
+			, dataAll
+			, result
+			;
+
+		if( url ){
+			result = Model.isExistBookmark( url ).then(function(rs){
+				var next;
+
+				if( rs && rs.length ){
+					send.error = '';
+					send.msg = '数据已存在';
+
+					next = Promise.reject();
+				}
+				else{
+					next = Model
+				}
+
+				return next;
+			});
+		}
+		else{
+			send.error = '';
+			send.msg = '缺少参数';
+
+			result = Promise.resolve( send );
+		}
+
+		result.then(function(send){
+			socket.emit('data', send);
+		});
+	}
 
 	, 'reader/favorite': function(socket, data){
 

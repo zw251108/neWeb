@@ -94,17 +94,17 @@ socket.register({
 	, 'editor/code/save': function(socket, data){
 		var query = data.query
 			, id = query.id || ''
-			, rs
+			, result
 			;
 
 		if( id !== '0' ){
-			rs = Model.updateEditor(query);
+			result = Model.updateEditor(query);
 		}
 		else{
-			rs = Model.addEditor(query);
+			result = Model.addEditor(query);
 		}
 
-		rs.then(function(rs){
+		result.then(function(rs){
 			socket.emit('data', {
 				topic: 'editor/code/save'
 				, info: {

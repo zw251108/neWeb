@@ -80,5 +80,5 @@ define(['jquery', 'global', 'socket', 'tag', 'msgPopup', 'template'], function($
 		tag( $.parseJSON( tagsData ) );
 
 		return $readPopup;
-	}
+	};
 });

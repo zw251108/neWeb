@@ -100,18 +100,30 @@ var db  = require('../db.js')
 			//	return isExist;
 			})
 		}
+
 		, addBookmark: function(data){
 			return db.handle({
 				sql: SQL
 				, data: data
 			});
 		}
+		, updateBookmarkRead: function(id, title, score, tags){
+			return db.handle({
+				sql: SQL.bookmarkUpdateRead
+				, data: {
+					id: id
+					, title: title
+					, score: score
+					, tags: tags
+				}
+			});
+		}
 
 		, getFavoriteByPage: function(page, size){
-			var query = req.query || {}
-				, page = query.page || 1
-				, size = query.size || 20
-				;
+			//var query = req.query || {}
+			//	, page = query.page || 1
+			//	, size = query.size || 20
+			//	;
 
 			return db.handle({
 				sql: SQL.favoriteByPage

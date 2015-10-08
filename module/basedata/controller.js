@@ -277,22 +277,28 @@ socket.register({
 			}
 			, query = data.query || {}
 			, province = query.province
+			, result
 			;
 
 		if( province ){
 
-			Model.city( province ).then(function(rs){
+			result = Model.city( province ).then(function(rs){
 
 				send.data = rs;
-				socket.emit('data', send);
+
+				return send;
 			});
 		}
 		else{
 			send.error = '';
 			send.msg = '缺少参数';
 
-			socket.emit('data', send);
+			result = Promise.resolve( send );
 		}
+
+		result.then(function(send){
+			socket.emit('data', send);
+		});
 	}
 	, district: function(socket, data){
 		var send = {
@@ -300,22 +306,28 @@ socket.register({
 			}
 			, query = data.query || {}
 			, city = query.city
+			, result
 			;
+
 		if( city ){
 
-			Model.district( city ).then(function(rs){
-				rs = rs.result;
+			result = Model.district( city ).then(function(rs){
 
 				send.data = rs;
-				socket.emit('data', send);
+
+				return send;
 			});
 		}
 		else{
 			send.error = '';
 			send.msg = '缺少参数';
 
-			socket.emit('data', send);
+			result = Promise.resolve( send );
 		}
+
+		result.then(function(send){
+			socket.emit('data', send);
+		});
 	}
 	, town: function(socket, data){
 		var send = {
@@ -323,22 +335,28 @@ socket.register({
 			}
 			, query = data.query || {}
 			, district = query.district
+			, result
 			;
 
 		if( district ){
 
-			Model.town( district ).then(function(rs){
+			result = Model.town( district ).then(function(rs){
 
 				send.data = rs;
-				socket.emit('data', send);
+
+				return send;
 			});
 		}
 		else{
 			send.error = '';
 			send.msg = '缺少参数';
 
-			socket.emit('data', send);
+			result = Promise.resolve( send );
 		}
+
+		result.then(function(send){
+			socket.emit('data', send);
+		});
 	}
 	, village: function(socket, data){
 		var send = {
@@ -346,22 +364,28 @@ socket.register({
 			}
 			, query = data.query || {}
 			, town = query.town
+			, result
 			;
 
 		if( town ){
 
-			Model.village( town ).then(function(rs){
+			result = Model.village( town ).then(function(rs){
 
 				send.data = rs;
-				socket.emit('data', send);
+
+				return send;
 			});
 		}
 		else{
 			send.error = '';
 			send.msg = '缺少参数';
 
-			socket.emit('data', send);
+			result = Promise.resolve( send );
 		}
+
+		result.then(function(send){
+			socket.emit('data', send);
+		});
 	}
 
 	, university: function(socket, data){
@@ -370,21 +394,27 @@ socket.register({
 			}
 			, query = data.query || {}
 			, province = query.province
+			, result
 			;
 
 		if( province ){
 
-			Model.university( province ).then(function(rs){
+			result = Model.university( province ).then(function(rs){
 
 				send.data = rs;
-				socket.emit('data', send);
+
+				return send;
 			});
 		}
 		else{
 			send.error = '';
 			send.msg = '缺少参数';
 
-			socket.emit('data', send);
+			result = Promise.resolve( send );
 		}
+
+		result.then(function(send){
+			socket.emit('data', send);
+		});
 	}
 });

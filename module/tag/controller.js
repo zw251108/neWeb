@@ -85,11 +85,12 @@ socket.register({
 			}
 			, query = data.query || {}
 			, name = query.name
+			, result
 			;
 
 		if( name ){
 
-			Model.add( name ).then(function(rs){
+			result = Model.add( name ).then(function(rs){
 
 				if( !rs.insertId ){
 					send.info = {
@@ -102,15 +103,19 @@ socket.register({
 					send.msg = '该标签已存在';
 				}
 
-				socket.emit('data', send);
+				return send;
 			});
 		}
 		else{
 			send.error = '';
 			send.msg = '缺少参数';
 
-			socket.emit('data', send);
+			result = Promise.reject( send );
 		}
+
+		result.then(function(send){
+			socket.emit('data', send);
+		});
 	}
 	, 'tag/increase': function(socket, data){
 		var send = {
@@ -119,29 +124,40 @@ socket.register({
 			, query = data.query || {}
 			, name = query.tagName
 			, num = query.num || 1
+			, result
 			;
 
 		if( name ){
-			Model.increaseByName(name, num).then(function(rs){
+			result = Model.increaseByName(name, num).then(function(rs){
 				rs = rs.result;
 
 				if( rs.changedRows ){
 					send.info = {
 						name: name
 					};
+
+					// 标签数量添加
+					if( name in TAG_INDEX ){
+						TAG_CACHE[TAG_INDEX[name]] += 1;
+					}
+				}
+				else{
+					send.error = '';
+					send.msg = '缺少参数';
 				}
 
-				// 标签数量添加
-				if( name in TAG_INDEX ){
-					TAG_CACHE[TAG_INDEX[name]] += 1;
-				}
+				return send;
 			});
 		}
 		else{
 			send.error = '';
 			send.msg = '缺少参数';
 
-			socket.emit('data', send);
+			result = Promise.resolve( send );
 		}
+
+		result.then(function(send){
+			socket.emit('data', send);
+		});
 	}
 });
