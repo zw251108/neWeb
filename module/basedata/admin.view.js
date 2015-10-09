@@ -13,20 +13,22 @@ var Promise = require('promise')
 
 	, View = {
 		province: function(){
-			return Model.province().then(function(rs){
-
-			});
+			return Model.province()
+			//	.then(function(rs){
+			//	return rs;
+			//});
 		}
 		, city: function( province ){
 			var rs;
 
 			if( province ){
-				rs = Model.city( province ).then(function(rs){
-
-				});
+				rs = Model.city( province )
+				//	.then(function(rs){
+				//
+				//});
 			}
 			else{
-				rs = Promise.resolve([]);
+				rs = Promise.reject([]);
 			}
 
 			return rs;

@@ -679,3 +679,26 @@ function saveOrUpdate(name, num){
 //}).catch(function(e){
 //	console.log(5)
 //});
+
+var n = Promise.reject('123123')
+	, m = Promise.resolve('1111')
+	;
+
+n.then(function(s){
+	console.log(1)
+}, function(str){
+	console.log(str);
+	return Promise.reject(1123);
+}).then(function(s){console.log(5)}, function(s){console.log(2)});
+
+m.then(function(str){
+	console.log(str);
+
+	return Promise.reject( new Error('error') );
+}, function(s){
+	console.log(2)
+}).then(function(e){
+	console.log(e)
+}, function(s){console.log(1)
+	console.log(s);
+});

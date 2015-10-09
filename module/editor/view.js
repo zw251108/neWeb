@@ -80,11 +80,11 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					'^^div.group.hidden' +
 						'>input[type=hidden name=setUI value=1]' +
 						'+div.formGroup' +
-							'>label.label[for=uiName]{请设置 UI 组件名称}' +
-							'+input#uiName.input[type=text name=uiName placeholder=请设置&nbsp;UI&nbsp;组件名称 data-validator=uiName]' +
+							'>input#uiName.input[type=text name=uiName placeholder=请设置&nbsp;UI&nbsp;组件名称 data-validator=uiName]' +
+							'+label.label[for=uiName]{请设置 UI 组件名称}' +
 						'^div.formGroup' +
-							'>label.label[for=uiNam2]{请设置 UI 组件名称}' +
-							'+input#uiNam2.input[type=text name=uiName placeholder=请设置&nbsp;UI&nbsp;组件名称 data-validator=uiName]' +
+							'>input#uiNam2.input[type=text name=uiName placeholder=请设置&nbsp;UI&nbsp;组件名称 data-validator=uiName]' +
+							'+label.label[for=uiNam2]{请设置 UI 组件名称}' +
 			'^^^iframe#editorSetMoreRs.hidden[name=editorSetMoreRs]'
 		, filter: TagView.tagEditorFilter
 	})

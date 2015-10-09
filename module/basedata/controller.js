@@ -9,6 +9,7 @@ var web         = require('../web.js')
 
 	, Model = require('./model.js')
 	, Admin = require('./admin.view.js')
+	, DataError = require('./error.js')
 	;
 
 web.get('/admin/province', function(req, res){
@@ -39,81 +40,114 @@ web.get('/data/city', function(req, res){
 	var query = req.query || {}
 		, province = query.province
 		, callback = query.callback
+		, result
 		;
 
 	if( province ){
+		result = Model.city( province ).then(function(rs){
+			rs = JSON.stringify( rs );
 
-		Model.city( province ).then(function(rs){
-			rs = JSON.stringify( rs.result );
-
-			res.send( callback ? callback +'('+ rs +')' : rs );
-			res.end();
+			return callback ? callback +'('+ rs +')' : rs;
 		});
 	}
 	else{
+		result = Promise.reject( new DataError('缺少参数 province') );
+	}
+
+	result.then(function(rs){
+		res.send( rs );
+		res.end();
+
+	}, function(e){
+		console.log( e );
+
 		res.send('[]');
 		res.end();
-	}
+	});
 });
 web.get('/data/district', function(req, res){
 	var query = req.query || {}
 		, city = query.city
 		, callback = query.callback
+		, result
 		;
 
 	if( city ){
-
-		Model.district( city ).then(function(rs){
+		result = Model.district( city ).then(function(rs){
 			rs = JSON.stringify( rs );
 
-			res.send( callback ? callback +'('+ rs +')' : rs );
-			res.end();
+			return callback ? callback +'('+ rs +')' : rs;
 		});
 	}
 	else{
+		result = Promise.reject( new DataError('缺少参数 city') );
+	}
+
+	result.then(function(rs){
+		res.send( rs );
+		res.end();
+	}, function(e){
+		console.log( e );
+
 		res.send('[]');
 		res.end();
-	}
+	});
 });
 web.get('/data/town', function(req, res){
 	var query = req.query || {}
 		, district = query.district
 		, callback = query.callback
+		, result
 		;
 
 	if( district ){
-
-		Model.town( district ).then(function(rs){
+		result = Model.town( district ).then(function(rs){
 			rs = JSON.stringify( rs );
 
-			res.send( callback ? callback +'('+ rs +')' : rs );
-			res.end();
+			return callback ? callback +'('+ rs +')' : rs;
 		});
 	}
 	else{
+		result = Promise.reject( new DataError('缺少参数 district') );
+	}
+
+	result.then(function(rs){
+		res.send( rs );
+		res.end();
+	}, function(e){
+		console.log( e );
+
 		res.send('[]');
 		res.end();
-	}
+	});
 });
 web.get('/data/village', function(req, res){
 	var query = req.query || {}
 		, town = query.town
 		, callback = query.callback
+		, result
 		;
 
 	if( town ){
-
-		Model.village( town ).then(function(rs){
+		result = Model.village( town ).then(function(rs){
 			rs = JSON.stringify( rs );
 
-			res.send( callback ? callback +'('+ rs +')' : rs );
-			res.end();
+			return callback ? callback +'('+ rs +')' : rs;
 		});
 	}
 	else{
+		result = Promise.reject( new DataError('缺少参数 town') );
+	}
+
+	result.then(function(rs){
+		res.send( rs );
+		res.end();
+	}, function(e){
+		console.log( e );
+
 		res.send('[]');
 		res.end();
-	}
+	});
 });
 
 // 大学数据
@@ -121,21 +155,29 @@ web.get('/university/data', function(req, res){
 	var query = req.query || {}
 		, province = query.province
 		, callback = query.callback
+		, result
 		;
 
 	if( province ){
-
-		Model.university( province ).then(function(rs){
+		result = Model.university( province ).then(function(rs){
 			rs = JSON.stringify( rs );
 
-			res.send( callback ? callback +'('+ rs +')' : rs );
-			res.end();
+			return callback ? callback +'('+ rs +')' : rs;
 		});
 	}
 	else{
+		result = Promise.reject( new DataError('缺少参数 province') );
+	}
+
+	result.then(function(rs){
+		res.send( rs );
+		res.end();
+	}, function(e){
+		console.log( e );
+
 		res.send('[]');
 		res.end();
-	}
+	});
 });
 data.push('province', 'city', 'district', 'town', 'village', 'university');
 
@@ -159,81 +201,114 @@ web.get('/city/data', function(req, res){
 	var query = req.query || {}
 		, province = query.province
 		, callback = query.callback
+		, result
 		;
 
 	if( province ){
+		result = Model.city( province ).then(function(rs){
+			rs = JSON.stringify( rs );
 
-		Model.city( province ).then(function(rs){
-			rs = JSON.stringify( rs.result );
-
-			res.send( callback ? callback +'('+ rs +')' : rs );
-			res.end();
+			return callback ? callback +'('+ rs +')' : rs;
 		});
 	}
 	else{
+		result = Promise.reject( new DataError('缺少参数 province') );
+	}
+
+	result.then(function(rs){
+		res.send( rs );
+		res.end();
+
+	}, function(e){
+		console.log( e );
+
 		res.send('[]');
 		res.end();
-	}
+	});
 });
 web.get('/district/data', function(req, res){
 	var query = req.query || {}
 		, city = query.city
 		, callback = query.callback
+		, result
 		;
 
 	if( city ){
-
-		Model.district( city ).then(function(rs){
+		result = Model.district( city ).then(function(rs){
 			rs = JSON.stringify( rs );
 
-			res.send( callback ? callback +'('+ rs +')' : rs );
-			res.end();
+			return callback ? callback +'('+ rs +')' : rs;
 		});
 	}
 	else{
+		result = Promise.reject( new DataError('缺少参数 city') );
+	}
+
+	result.then(function(rs){
+		res.send( rs );
+		res.end();
+	}, function(e){
+		console.log( e );
+
 		res.send('[]');
 		res.end();
-	}
+	});
 });
 web.get('/town/data', function(req, res){
 	var query = req.query || {}
 		, district = query.district
 		, callback = query.callback
+		, result
 		;
 
 	if( district ){
-
-		Model.town( district ).then(function(rs){
+		result = Model.town( district ).then(function(rs){
 			rs = JSON.stringify( rs );
 
-			res.send( callback ? callback +'('+ rs +')' : rs );
-			res.end();
+			return callback ? callback +'('+ rs +')' : rs;
 		});
 	}
 	else{
+		result = Promise.reject( new DataError('缺少参数 district') );
+	}
+
+	result.then(function(rs){
+		res.send( rs );
+		res.end();
+	}, function(e){
+		console.log( e );
+
 		res.send('[]');
 		res.end();
-	}
+	});
 });
 web.get('/village/data', function(req, res){
 	var query = req.query || {}
 		, town = query.town
 		, callback = query.callback
+		, result
 		;
 
 	if( town ){
-
-		Model.village( town ).then(function(rs){
+		result = Model.village( town ).then(function(rs){
 			rs = JSON.stringify( rs );
 
-			res.send( callback ? callback +'('+ rs +')' : rs );
-			res.end();
+			return callback ? callback +'('+ rs +')' : rs;
 		});
 	}
 	else{
+		result = Promise.reject( new DataError('缺少参数 town') );
+	}
+
+	result.then(function(rs){
+		res.send( rs );
+		res.end();
+	}, function(e){
+		console.log( e );
+
 		res.send('[]');
 		res.end();
-	}
+	});
 });
 
 // 大学数据
@@ -241,21 +316,29 @@ web.get('/university/data', function(req, res){
 	var query = req.query || {}
 		, province = query.province
 		, callback = query.callback
+		, result
 		;
 
 	if( province ){
-
-		Model.university( province ).then(function(rs){
+		result = Model.university( province ).then(function(rs){
 			rs = JSON.stringify( rs );
 
-			res.send( callback ? callback +'('+ rs +')' : rs );
-			res.end();
+			return callback ? callback +'('+ rs +')' : rs;
 		});
 	}
 	else{
+		result = Promise.reject( new DataError('缺少参数 province') );
+	}
+
+	result.then(function(rs){
+		res.send( rs );
+		res.end();
+	}, function(e){
+		console.log( e );
+
 		res.send('[]');
 		res.end();
-	}
+	});
 });
 
 /**
@@ -264,7 +347,6 @@ web.get('/university/data', function(req, res){
 socket.register({
 	province: function(socket){
 		Model.province().then(function(rs){
-
 			socket.emit('data', {
 				topic: 'province'
 				, data: rs
@@ -281,22 +363,24 @@ socket.register({
 			;
 
 		if( province ){
-
 			result = Model.city( province ).then(function(rs){
-
 				send.data = rs;
 
 				return send;
 			});
 		}
 		else{
-			send.error = '';
-			send.msg = '缺少参数';
-
-			result = Promise.resolve( send );
+			result = Promise.reject( new DataError('缺少参数 province') );
 		}
 
 		result.then(function(send){
+			socket.emit('data', send);
+		}, function(e){
+			console.log( e );
+
+			send.error = '';
+			send.msg = e.message;
+
 			socket.emit('data', send);
 		});
 	}
@@ -310,22 +394,24 @@ socket.register({
 			;
 
 		if( city ){
-
 			result = Model.district( city ).then(function(rs){
-
 				send.data = rs;
 
 				return send;
 			});
 		}
 		else{
-			send.error = '';
-			send.msg = '缺少参数';
-
-			result = Promise.resolve( send );
+			result = Promise.reject( new DataError('缺少参数 city') );
 		}
 
 		result.then(function(send){
+			socket.emit('data', send);
+		}, function(e){
+			console.log( e );
+
+			send.error = '';
+			send.msg = e.message;
+
 			socket.emit('data', send);
 		});
 	}
@@ -339,22 +425,24 @@ socket.register({
 			;
 
 		if( district ){
-
 			result = Model.town( district ).then(function(rs){
-
 				send.data = rs;
 
 				return send;
 			});
 		}
 		else{
-			send.error = '';
-			send.msg = '缺少参数';
-
-			result = Promise.resolve( send );
+			result = Promise.reject( new DataError('缺少参数 district') );
 		}
 
 		result.then(function(send){
+			socket.emit('data', send);
+		}, function(e){
+			console.log(e);
+
+			send.error = '';
+			send.msg = e.message;
+
 			socket.emit('data', send);
 		});
 	}
@@ -368,22 +456,24 @@ socket.register({
 			;
 
 		if( town ){
-
 			result = Model.village( town ).then(function(rs){
-
 				send.data = rs;
 
 				return send;
 			});
 		}
 		else{
-			send.error = '';
-			send.msg = '缺少参数';
-
-			result = Promise.resolve( send );
+			result = Promise.reject( new DataError('缺少参数 town') );
 		}
 
 		result.then(function(send){
+			socket.emit('data', send);
+		}, function(e){
+			console.log(e);
+
+			send.error = '';
+			send.msg = e.message;
+
 			socket.emit('data', send);
 		});
 	}
@@ -398,22 +488,24 @@ socket.register({
 			;
 
 		if( province ){
-
 			result = Model.university( province ).then(function(rs){
-
 				send.data = rs;
 
 				return send;
 			});
 		}
 		else{
-			send.error = '';
-			send.msg = '缺少参数';
-
-			result = Promise.resolve( send );
+			result = Promise.reject( new DataError('缺少参数 province') );
 		}
 
 		result.then(function(send){
+			socket.emit('data', send);
+		}, function(e){
+			console.log(e);
+
+			send.error = '';
+			send.msg = e.message;
+
 			socket.emit('data', send);
 		});
 	}

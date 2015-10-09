@@ -12,6 +12,7 @@ var web         = require('../web.js')
 	, Model = require('./model.js')
 	, View  = require('./view.js')
 	, Admin = require('./admin.view.js')
+	, TagError = require('./error.js')
 
 	, TAG_INDEX = {}
 	, TAG_CACHE = []
@@ -34,18 +35,29 @@ admin.push('tag');
 web.get('/data/tag', function(req, res){
 	var query = req.query || {}
 		, callback = query.callback
+		, result
 		;
 	if( callback ){
-		Model.getAll().then(function(rs){
+		result = Model.getAll().then(function(rs){
 			rs = JSON.stringify( rs );
 
-			res.send( callback +'('+ rs +')' );
-			res.end();
+			return callback +'('+ rs +')';
 		});
 	}
 	else{
-		res.end();
+		result = Promise.reject( new TagError('不是 jsonp 格式调用') );
 	}
+
+	result.then(function(rs){
+		return rs;
+	}, function(e){
+		console.log(e);
+
+		return '';
+	}).then(function(rs){
+		res.send( rs );
+		res.end();
+	});
 });
 data.push('tag');
 
@@ -53,7 +65,6 @@ data.push('tag');
  * Web 数据接口
  * */
 web.get('/tag/data', function(req, res){
-
 	Model.getAll().then(function(rs){
 		rs = JSON.stringify( rs );
 
@@ -70,9 +81,7 @@ web.get('/tag/increase', function(){
  * */
 socket.register({
 	tag: function(socket){
-
 		Model.getAll().then(function(rs){
-
 			socket.emit('data', {
 				topic: 'tag'
 				, data: rs
@@ -89,31 +98,39 @@ socket.register({
 			;
 
 		if( name ){
-
 			result = Model.add( name ).then(function(rs){
+				var result;
 
 				if( !rs.insertId ){
 					send.info = {
 						id: rs.insertId
 						, name: name
-					}
+					};
+
+					result = send;
 				}
 				else{
-					send.error = '';
-					send.msg = '该标签已存在';
+					result = Promise.reject( new TagError(name + ' 标签已存在') );
 				}
 
-				return send;
+				return result;
 			});
 		}
 		else{
-			send.error = '';
-			send.msg = '缺少参数';
-
-			result = Promise.reject( send );
+			result = Promise.reject( new TagError('缺少参数') );
 		}
 
 		result.then(function(send){
+			return send;
+
+		}, function(e){
+			console.log( e );
+
+			send.error = '';
+			send.msg = e.message;
+
+			return send;
+		}).then(function(send){
 			socket.emit('data', send);
 		});
 	}
@@ -129,7 +146,7 @@ socket.register({
 
 		if( name ){
 			result = Model.increaseByName(name, num).then(function(rs){
-				rs = rs.result;
+				var result;
 
 				if( rs.changedRows ){
 					send.info = {
@@ -140,23 +157,32 @@ socket.register({
 					if( name in TAG_INDEX ){
 						TAG_CACHE[TAG_INDEX[name]] += 1;
 					}
+					else{
+						// todo 加 1
+					}
+					result = send;
 				}
 				else{
-					send.error = '';
-					send.msg = '缺少参数';
+					result = Promise.reject( new TagError('缺少参数') );
 				}
 
-				return send;
+				return result;
 			});
 		}
 		else{
-			send.error = '';
-			send.msg = '缺少参数';
-
-			result = Promise.resolve( send );
+			result = Promise.reject( new TagError('缺少参数') );
 		}
 
 		result.then(function(send){
+			return send;
+		}, function(e){
+			console.log( e );
+
+			send.error = '';
+			send.msg = e.message;
+
+			return send;
+		}).then(function(send){
 			socket.emit('data', send);
 		});
 	}

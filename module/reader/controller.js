@@ -414,10 +414,10 @@ socket.register({
 				var next;
 
 				if( rs && rs.length ){
-					send.error = '';
-					send.msg = '数据已存在';
+					//send.error = '';
+					//send.msg = '数据已存在';
 
-					next = Promise.reject();
+					next = Promise.reject( new ReaderError('数据已存在') );
 				}
 				else{
 					next = Model

@@ -39,13 +39,13 @@ log4js.configure({
 	appenders: [{
 		type: "console"
 	}, {
-		type: 'file',
-		filename: __dirname + '/log/access.log',
-		maxLogSize: 1024 * 1024 * 1000,
-		backups: 4,
-		category: 'normal'
-	}],
-	replaceConsole: true
+		type: 'file'
+		, filename: __dirname + '/log/access.log'
+		, maxLogSize: 1024 * 1024 * 1000
+		, backups: 4
+		, category: 'normal'
+	}]
+	, replaceConsole: true
 });
 logger = log4js.getLogger('normal');
 logger.setLevel('INFO');
@@ -61,9 +61,7 @@ web.use( bodyParser.urlencoded({extended: true}) );
 web.use( cookieParser() );
 web.use(
 	//logger('dev')
-	log4js.connectLogger(logger, {
-	format: ':method :url :remote-addr'
-})
+	log4js.connectLogger(logger, {format: ':method :url :remote-addr'})
 );
 
 web.use( session({
