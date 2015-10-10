@@ -117,7 +117,7 @@ require(['../../config'], function(config){
 				;
 
 			!$parent.attr('id') && $parent.attr('id', id);
-			tags.length && (tags = tags.map(function(){return this.innerHTML}).get().join());
+			tags = tags.length ? tags.map(function(){return this.innerHTML}).get().join() : '';
 
 			socket.emit('data', {
 				topic: 'reader/article/bookmark'
