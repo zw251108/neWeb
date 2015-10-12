@@ -42,7 +42,7 @@ web.get('/blog/', function(req, res){
 					return '?page='+ index;
 				}
 			}
-		})
+		});
 	}).then( View.blogList ).then(function(html){
 		res.send( config.docType.html5 + html );
 		res.end();
@@ -52,16 +52,23 @@ web.get('/blog/', function(req, res){
 web.get('/blog/detail', function(req, res){
 	var query = req.query || {}
 		, id = query.id
+		, execute
 		;
 	if( id ){
-		Model.getBlogById( id ).then( View.blog ).then(function(html){
-			res.send( config.docType.html5 + html );
-			res.end();
-		});
+		execute = Model.getBlogById( id ).then( View.blog );
 	}
 	else{
-
+		execute = Promise.reject( new BlogError('缺少参数 id') );
 	}
+
+	execute.catch(function(e){
+		console.log( e );
+
+		return '';
+	}).then(function(html){
+		res.send( config.docType.html5 + html );
+		res.end();
+	});
 });
 
 
@@ -94,17 +101,24 @@ web.get('/admin/blog/', function(req, res){
 web.get('/admin/blog/:blogId/', function(req, res, next){
 	var param = req.params || {}
 		, blogId = param.blogId
+		, execute
 		;
 
 	if( blogId && /^\d+$/.test( blogId ) ){
-		Model.getBlogById( blogId).then( Admin.blog ).then(function(html){
-			res.send( config.docType.html5 + html );
-			res.end();
-		});
+		execute = Model.getBlogById( blogId).then( Admin.blog );
 	}
 	else{
-		next();
+		execute = Promise.reject( new BlogError('缺少参数 blogId') );
 	}
+
+	execute.catch(function(e){
+		console.log( e );
+
+		return '';
+	}).then(function(html){
+		res.send( config.docType.html5 + html );
+		res.end();
+	})
 });
 
 /**
@@ -114,33 +128,44 @@ web.get('/admin/blog/:blogId/', function(req, res, next){
 web.post('/admin/blog/add', function(req, res){
 	var body = req.body || {}
 		, title = body.title
+		, execute
 		;
+
 	console.log(req.session);
 	if( title ){
-		Model.addBlog(req.session.user.id, title).then(function(rs){
-			var json = {}
+		execute = Model.addBlog(req.session.user.id, title).then(function(rs){
+			var result
 				;
 
 			if( rs.insertId ){
-				json.success = true;
-				json.id = rs.insertId;
+				result = {
+					success: true
+					, id: rs.insertId
+				};
 			}
 			else{
-				json.success = false;
+				result = Promise.reject( new BlogError(title + ' 文章创建失败') );
 			}
 
-			res.send( JSON.stringify(json) );
-			res.end();
+			return result;
 		});
 	}
 	else{
-		res.send( JSON.stringify({
+		execute = Promise.reject( new BlogError('缺少标题') );
+	}
+
+	execute.catch(function(e){
+		console.log( e );
+
+		return {
 			success: false
 			, error: ''
-			, msg: '缺少标题'
-		}) );
+			, msg: e.message
+		};
+	}).then(function(json){
+		res.send( JSON.stringify(json) );
 		res.end();
-	}
+	})
 });
 web.post('/admin/blog/:blogId/save', function(req, res){
 	var body = req.body || {}
@@ -156,8 +181,6 @@ web.post('/admin/blog/:blogId/save', function(req, res){
 
 		res.send( JSON.stringify(json) );
 		res.end();
-	}, function(e){
-
 	});
 });
 

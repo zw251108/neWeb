@@ -31,26 +31,25 @@ admin.push('tag');
 
 /**
  * 全局 Web 数据接口 只支持 jsonp 格式，回调函数名为 callback
+ *
  * */
 web.get('/data/tag', function(req, res){
 	var query = req.query || {}
 		, callback = query.callback
-		, result
+		, execute
 		;
 	if( callback ){
-		result = Model.getAll().then(function(rs){
+		execute = Model.getAll().then(function(rs){
 			rs = JSON.stringify( rs );
 
 			return callback +'('+ rs +')';
 		});
 	}
 	else{
-		result = Promise.reject( new TagError('不是 jsonp 格式调用') );
+		execute = Promise.reject( new TagError('不是 jsonp 格式调用') );
 	}
 
-	result.then(function(rs){
-		return rs;
-	}, function(e){
+	execute.catch(function(e){
 		console.log(e);
 
 		return '';
@@ -94,12 +93,12 @@ socket.register({
 			}
 			, query = data.query || {}
 			, name = query.name
-			, result
+			, execute
 			;
 
 		if( name ){
-			result = Model.add( name ).then(function(rs){
-				var result;
+			execute = Model.add( name ).then(function(rs){
+				var execute;
 
 				if( !rs.insertId ){
 					send.info = {
@@ -107,23 +106,20 @@ socket.register({
 						, name: name
 					};
 
-					result = send;
+					execute = send;
 				}
 				else{
-					result = Promise.reject( new TagError(name + ' 标签已存在') );
+					execute = Promise.reject( new TagError(name + ' 标签已存在') );
 				}
 
-				return result;
+				return execute;
 			});
 		}
 		else{
-			result = Promise.reject( new TagError('缺少参数') );
+			execute = Promise.reject( new TagError('缺少参数') );
 		}
 
-		result.then(function(send){
-			return send;
-
-		}, function(e){
+		execute.catch(function(e){
 			console.log( e );
 
 			send.error = '';
@@ -141,12 +137,12 @@ socket.register({
 			, query = data.query || {}
 			, name = query.tagName
 			, num = query.num || 1
-			, result
+			, execute
 			;
 
 		if( name ){
-			result = Model.increaseByName(name, num).then(function(rs){
-				var result;
+			execute = Model.increaseByName(name, num).then(function(rs){
+				var execute;
 
 				if( rs.changedRows ){
 					send.info = {
@@ -160,22 +156,20 @@ socket.register({
 					else{
 						// todo 加 1
 					}
-					result = send;
+					execute = send;
 				}
-				else{
-					result = Promise.reject( new TagError('缺少参数') );
+				else{   // 该标签不存在
+					execute = Promise.reject( new TagError(name + ' 标签不存在') );
 				}
 
-				return result;
+				return execute;
 			});
 		}
 		else{
-			result = Promise.reject( new TagError('缺少参数') );
+			execute = Promise.reject( new TagError('缺少参数') );
 		}
 
-		result.then(function(send){
-			return send;
-		}, function(e){
+		execute.catch(function(e){
 			console.log( e );
 
 			send.error = '';

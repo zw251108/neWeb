@@ -104,24 +104,23 @@ web.get('/reader/favorite', function(req, res){
 });
 
 socket.register({
-	reader: function(socket, data){
-
-	}
+	reader: function(socket, data){}
 	, 'reader/add': function(socket, data){}
 	, 'reader/feed': function(socket, data){
 		var send = {
 				topic: 'reader/feed'
 			}
 			, feed = data.query.feed
+			, execute
 			;
 
 		if( feed ){
-			Reader.crawler( feed ).then( Reader.handleFeed ).then(function(rs){
-				var result
-					, datetime
+			execute = Reader.crawler( feed ).then( Reader.handleFeed ).then(function(rs){
+				var datetime
 					, today
 					, type
 					, y, m, d, h, mm, s
+					, result
 					;
 				if( rs.length ){
 					datetime = rs[0].datetime;
@@ -150,10 +149,10 @@ socket.register({
 					s = s < 10 ? '0' + s : s;
 					datetime = y +'-'+ m +'-'+ d +' '+ h +':'+ mm +':'+ s;
 
-					// 更新最后发布时间
-					result = Model.updateReaderPubById(datetime, data.query.id).then(function(r){
-						return rs;
-					});
+					// 更新最后发布时间 为异步操作 不关心结果
+					Model.updateReaderPubById(datetime, data.query.id);
+
+					result = rs;
 				}
 				else{
 					result = Promise.reject( new ReaderError('数据分析失败') );
@@ -161,26 +160,38 @@ socket.register({
 
 				return result;
 			}).then(function(rs){
+				var result
+					;
+
 				if( rs ){
 					send.info = {
 						id: data.query.id
 						, data: rs
 					};
+
+					result = send;
 				}
 				else{
-					send.error = '';
-					send.msg = '抓取失败';
+					result = Promise.reject( new ReaderError('抓取数据失败') );
 				}
 
-				socket.emit('data', send);
+				return result;
 			});
 		}
 		else{
-			send.error = '';
-			send.msg = '缺少参数';
-
-			socket.emit('data', send);
+			execute = Promise.reject( new ReaderError('缺少参数') );
 		}
+
+		execute.catch(function(e){
+			console.log( e );
+
+			send.error = '';
+			send.msg = e.message;
+
+			return send;
+		}).then(function(send){
+			socket.emit('data', send);
+		});
 	}
 
 	, 'reader/article/bookmark': function(socket, data){
@@ -206,13 +217,11 @@ socket.register({
 					source = source.protocol + '//' + source.host;
 
 					if( rs && rs.length ){  // 数据已存在
-						send.error = '';
-						send.msg = '数据已存在';
+
+						// 设置数据
 						send.info = rs[0];
 						send.info.id = rs[0].Id;
 						send.info.targetId = targetId;
-
-						socket.emit('data', send);
 
 						result = Promise.reject( new ReaderError('数据已存在') );
 					}
@@ -233,13 +242,10 @@ socket.register({
 					var result;
 
 					if( rs && rs.length ){
-						send.error = '';
-						send.msg = '数据已存在';
+
 						send.info = rs[0];
 						send.info = rs[0].Id;
 						send.info.targetId = targetId;
-
-						socket.emit('data', send);
 
 						result = Promise.reject( new ReaderError('数据已存在') );
 					}
@@ -252,14 +258,10 @@ socket.register({
 			}
 
 			execute.then(function( data ){
-				var result;
+				var result
+					;
 
 				if( !data ){
-					send.error = '';
-					send.msg = '数据缺失';
-
-					socket.emit('data', send);
-
 					result = Promise.reject( new ReaderError('数据获取失败') );
 				}
 				else{
@@ -271,27 +273,40 @@ socket.register({
 
 				return result;
 			}).then(function(rs){
+				var result
+					;
+
 				dataAll.targetId = targetId;
+
+				send.info = dataAll;
 
 				if( rs.insertId ){
 					dataAll.id = rs.insertId;
 					dataAll.sstatus = 0;
+
+					result = send;
 				}
 				else{
-					send.error = '';
-					send.msg = '数据已存在';
+					result = Promise.reject( new ReaderError('数据已存在') );
 				}
-				send.info = dataAll;
 
-				socket.emit('data', send);
+				return result;
 			});
 		}
 		else{
-			send.error = '';
-			send.msg = '缺少参数';
-
-			socket.emit('data', send);
+			execute = Promise.reject( new ReaderError('缺少参数') );
 		}
+
+		execute.catch(function(e){
+			console.log( e );
+
+			send.error = '';
+			send.msg = e.message;
+
+			return send;
+		}).then(function(send){
+			socket.emit('data', send);
+		})
 	}
 	, 'reader/read': function(socket, data){
 		var send = {
@@ -303,31 +318,36 @@ socket.register({
 			, tags = query.tags || ''
 			, score = query.score || 0
 			, title = query.title || ''
-			, result
+			, execute
 			;
 
 		// 判断是否已有 id
 		if( id ){
 			if( /^\d+$/.test( id ) ){   // 合法数据库 id
 				// 更新为 已读 状态
-				result = Model.updateBookmarkRead(id, title, score, tags).then(function(rs){
+				execute = Model.updateBookmarkRead(id, title, score, tags).then(function(rs){
+					var result
+						;
 
-					send.info = {
-						id: id
-					};
+					if( rs.changedRows ){
+						send.info = {
+							id: id
+						};
 
-					if( !rs.changedRows ){
-						send.error = '';
-						send.msg = '该文章已被读过';
+						result = send;
+					}
+					else{
+						result = Promise.reject( new ReaderError('该文章已被读过') );
 					}
 
-					return send;
+					return result;
 				});
 			}
 			else if( url ){ // id 为 targetId，使用 url
 				// 判断数据库是否已存在
-				result = Model.isExistBookmark(url).then(function(rs){
-					var p, source;
+				execute = Model.isExistBookmark(url).then(function(rs){
+					var source
+						, result;
 
 					if( rs && rs.length ){  // 已存在
 						console.log('url ', url, '已存在');
@@ -337,14 +357,18 @@ socket.register({
 						};
 
 						// 更新为 已读 状态
-						p = Model.updateBookmarkRead(id, title, score, tags).then(function(rs){
+						result = Model.updateBookmarkRead(id, title, score, tags).then(function(rs){
+							var result
+								;
 
-							if( !rs.changedRows ){
-								send.error = '';
-								send.msg = '该文章已被读过';
+							if( rs.changedRows ){
+								result = send;
+							}
+							else{
+								result = Promise.reject( new ReaderError('该文章已被读过') );
 							}
 
-							return send;
+							return result;
 						});
 					}
 					else{   // 不存在
@@ -352,7 +376,7 @@ socket.register({
 						source = source.protocol + '//' + source.host;
 
 						// 保存到数据库
-						p = Model.addBookmark({
+						result = Model.addBookmark({
 							url: url
 							, title: title
 							, score: score
@@ -360,6 +384,8 @@ socket.register({
 							, source: source
 							, status: 2
 						}).then(function(rs){
+							var result
+								;
 
 							if( rs.insertId ){
 								send.info = {
@@ -367,34 +393,36 @@ socket.register({
 									, targetId: id
 									, tags: tags
 								};
+
+								result = send;
 							}
 							else{
-								send.error = '';
-								send.msg = '数据已存在';
+								result = Promise.reject( new ReaderError('数据已存在') );
 							}
 
-							return send;
+							return result;
 						});
 					}
 
-					return p;
+					return result;
 				});
 			}
 			else{
-				send.error = '';
-				send.msg = '缺少参数';
-
-				result = Promise.resolve( send );
+				execute = Promise.reject( new ReaderError('缺少参数') );
 			}
 		}
 		else{
-			send.error = '';
-			send.msg = '缺少参数';
-
-			result = Promise.resolve( send );
+			execute = Promise.reject( new ReaderError('缺少参数') );
 		}
 
-		result.then(function(send){
+		execute.catch(function(e){
+			console.log( e );
+
+			send.error = '';
+			send.msg = e.message;
+
+			return send;
+		}).then(function(send){
 			socket.emit('data', send);
 		});
 	}
@@ -406,39 +434,40 @@ socket.register({
 			}
 			, url = data.query.url
 			, dataAll
-			, result
+			, excute
 			;
 
 		if( url ){
-			result = Model.isExistBookmark( url ).then(function(rs){
-				var next;
+			excute = Model.isExistBookmark( url ).then(function(rs){
+				var result
+					;
 
 				if( rs && rs.length ){
-					//send.error = '';
-					//send.msg = '数据已存在';
-
-					next = Promise.reject( new ReaderError('数据已存在') );
+					result = Promise.reject( new ReaderError('数据已存在') );
 				}
 				else{
-					next = Model
+					// todo
+					result = Model
 				}
 
-				return next;
+				return result;
 			});
 		}
 		else{
-			send.error = '';
-			send.msg = '缺少参数';
-
-			result = Promise.resolve( send );
+			excute = Promise.reject( new ReaderError('缺少参数') );
 		}
 
-		result.then(function(send){
+		excute.catch(function(e){
+			console.log( e );
+
+			send.error = '';
+			send.msg = e.message;
+
+			return send;
+		}).then(function(send){
 			socket.emit('data', send);
 		});
 	}
 
-	, 'reader/favorite': function(socket, data){
-
-	}
+	, 'reader/favorite': function(socket, data){}
 });

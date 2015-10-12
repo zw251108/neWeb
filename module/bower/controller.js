@@ -49,7 +49,9 @@ web.get('/bower/', function(req, res){
 				}
 			}
 		});
-	}).then( View.bowerList ).catch(function(){console.log(arguments)}).then(function(html){
+	}).then( View.bowerList )
+		//.catch(function(){console.log(arguments)})
+		.then(function(html){
 		res.send( config.docType.html5 + html );
 		res.end();
 	});
@@ -65,21 +67,30 @@ socket.register({
 			}
 			, query = data.query || {}
 			, name = query.name
+			, execute
 			;
 
 		if( name ){
-			Bower.search( name).then(function(rs){
+			execute = Bower.search( name).then(function(rs){
 				send.data = rs;
 
-				socket.emit('data', send);
+				return send;
 			});
 		}
 		else{
-			send.error = '';
-			send.msg = '缺少参数';
-
-			socket.emit('data', send);
+			execute = Promise.reject( new BowerError('缺少参数') );
 		}
+
+		execute.catch(function(e){
+			console.log( e );
+
+			send.error = '';
+			send.msg = e.message;
+
+			return send;
+		}).then(function(send){
+			socket.emit('data', send);
+		});
 	}
 	, 'bower/install': function(socket, data){
 		var send = {
@@ -88,34 +99,28 @@ socket.register({
 			, query = data.query || {}
 			, name = query.name
 			, index
+			, execute
 			;
 
 		if( name ){
-			Model.isExistBower( name ).then(function(isExist){
-				var rs;
-				if( isExist ){
-					socket.emit('data', {
-						topic: 'bower/install/end'
-						, error: ''
-						, msg: '该 UI 组件：'+ name +' 已存在！'
-						, info: {
-							name: name
-						}
-					});
+			execute = Model.isExistBower( name ).then(function(isExist){
+				var result
+					;
 
-					rs = Promise.reject( new BowerError(name + ', 该 UI 组件已存在！') );
+				if( isExist ){
+					result = Promise.reject( new BowerError(name + ' 该 UI 组件已存在！') );
 				}
 				else{
-					rs = Bower.install(name, function(type, info){  // 记录
+					result = Bower.install(name, function(type, info){  // 安装信息输出
 						var data = {
 							info: {}
 						};
 
-						if( type === 'info' ){
+						if( type === 'info' ){  // 安装进度信息
 							data.info = info;
 							data.topic = 'bower/info';
 						}
-						else if( type === 'conflict' ){
+						else if( type === 'conflict' ){ // 安装 依赖 选择项
 							index = +new Date();
 
 							data.topic = 'bower/install/prompts';
@@ -123,47 +128,60 @@ socket.register({
 							data.info.cbId = index;
 						}
 
+						// 发送安装信息
 						socket.emit('data', data);
-					}, function(prompts, callback){
-						// todo 分支选择
-
-						PROMPT_CALLBACK_CACHE.push( callback );
+					}, function(prompts, callback){ // 依赖 分支选择 回调函数记录
+                        PROMPT_CALLBACK_CACHE.push( callback );
 						PROMPT_CALLBACK_INDEX[index] = PROMPT_CALLBACK_CACHE.length -1;
 
 						console.log( PROMPT_CALLBACK_INDEX, typeof PROMPT_CALLBACK_CACHE[0] );
 					}).then(function(info){
 						var l = info.length
-							, rs
+							, result
 							;
 
-						if( l === 1 ){
-							// db 保存
+						if( l === 1 ){  // 独立组件
 							send.info = info[0];
 
-							Model.addBower(info[0]).then(function(rs){
-
+							// 保存 组件 数据
+							result = Model.addBower(info[0]).then(function(rs){
 								send.info.id = rs.insertId;
 
-								socket.emit('data', send);
+								return send;
 							});
 						}
 						else{
 							console.log('安装多个组件');
 
 							// 安装了多个组件，包哪个由用户选择
-							socket.emit('data', {
+							result = {
 								topic: 'bower/install/endChoose'
 								, data: info
-							});
+							};
 						}
-					}).catch(function(err){
-						console.log(err);
+
+						return result
 					});
+						//.catch(function(err){console.log(err);});
 				}
 
-				return rs;
+				return result;
 			});
 		}
+		else{
+			execute = Promise.reject( new Bower('缺少参数') );
+		}
+
+		execute.catch(function(e){
+			console.log( e );
+
+			send.error = '';
+			send.msg = e.message;
+
+			return send;
+		}).then(function(send){
+			socket.emit('data', send);
+		});
 	}
 	, 'bower/install/endChoose': function(socket, data){
 		var query = data.query || {}

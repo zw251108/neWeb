@@ -15,9 +15,11 @@ var web         = require('../web.js')
 	, Admin = require('./admin.view.js')
 	, EditorError   = require('./error.js')
 
+	// 外部数据模块引用
 	, LibModel = require('../bower/model.js')
 	, ImageModel = require('../image/model.js')
 
+	, EDITOR_DEMO_ALBUM_ID = 5
 	;
 
 // 注册首页 metro 模块
@@ -54,20 +56,20 @@ web.get('/editor/', function(req, res){
 web.get('/editor/code', function(req, res){
 	var query = req.query || {}
 		, id = query.id
-		, response
+		, execute
 		;
 
 	if( id !== '0' ){
-		response = Model.getEditorById(id);
+		execute = Model.getEditorById(id);
 	}
 	else{
-		response = Promise.resolve({
+		execute = Promise.resolve({
 			Id: 0
 			, js_lib: 'jquery/dist/jquery.js'
 		});
 	}
 
-	response.then( View.editor ).then(function(html){
+	execute.then( View.editor ).then(function(html){
 		res.send( config.docType.html5 + html );
 		res.end();
 	});
@@ -94,17 +96,17 @@ socket.register({
 	, 'editor/code/save': function(socket, data){
 		var query = data.query
 			, id = query.id || ''
-			, result
+			, execute
 			;
 
 		if( id !== '0' ){
-			result = Model.updateEditor(query);
+			execute = Model.updateEditor(query);
 		}
 		else{
-			result = Model.addEditor(query);
+			execute = Model.addEditor(query);
 		}
 
-		result.then(function(rs){
+		execute.then(function(rs){
 			socket.emit('data', {
 				topic: 'editor/code/save'
 				, info: {
@@ -114,9 +116,7 @@ socket.register({
 		});
 	}
 	, 'editor/lib': function(socket, data){
-
 		LibModel.getBowerAll().then(function(rs){
-
 			socket.emit('data', {
 				topic: 'editor/lib'
 				, data: rs
@@ -124,9 +124,7 @@ socket.register({
 		});
 	}
 	, 'editor/demoImgLib': function(socket, data){
-
-		ImageModel.getImageByAlbum(5).then(function(rs){
-
+		ImageModel.getImageByAlbum( EDITOR_DEMO_ALBUM_ID ).then(function(rs){
 			socket.emit('data', {
 				topic: 'editor/demoImgLib'
 				, data: rs

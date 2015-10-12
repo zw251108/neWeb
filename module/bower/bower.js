@@ -11,7 +11,6 @@ var Promise = require('promise')
 		search: function(name){
 			return new Promise(function(resolve, reject){
 				bower.commands.search(name, {}).on('end', function (results) {
-
 					resolve( results );
 				}).on('error', function(e){
 					reject(e);

@@ -13,7 +13,6 @@ var web         = require('../web.js')
 	, Model = require('./model.js')
 	, View  = require('./view.js')
 	, Admin = require('./admin.view.js')
-
 	, DocumentError = require('./error.js')
 
 	, DOCUMENT_ID = 1
@@ -28,7 +27,6 @@ index.push({
 });
 
 web.get('/document/', function(req, res){
-
 	Model.getContentByDocumentId( DOCUMENT_ID ).then( View.document ).then(function( html ){
 		res.send( config.docType.html5 + html );
 		res.end();
@@ -43,6 +41,7 @@ web.get('/admin/document/', function(req, res){
 		, page = query.page || 1
 		, size = query.size || 20
 		;
+
 	Model.getDocumentList(page, size).then(function(rs){
 		return Model.countDocument().then(function(count){
 			return {
@@ -63,21 +62,23 @@ web.get('/admin/document/', function(req, res){
 web.get('/admin/document/:documentId/',function(req, res, next){
 	var param = req.params || {}
 		, documentId = param.documentId
+		, execute
 		;
 	if( documentId && /^\d+$/.test( documentId ) ){
-		//Model.getSectionByDoc(documentId).then( Admin.sectionList).then(function(html){
-		//	res.send( html );
-		//	res.end();
-		//});
-
-		Model.getContentByDocumentId( documentId, true ).then( Admin.document ).then(function(html){
-			res.send( config.docType.html5 + html );
-			res.end();
-		});
+		execute = Model.getContentByDocumentId( documentId, true ).then( Admin.document );
 	}
 	else{
-		next();
+		execute = Promise.reject( new DocumentError('缺少参数 documentId') );
 	}
+
+	execute.catch(function(e){
+		console.log( e );
+
+		return '';
+	}).then(function(html){
+		res.send( config.docType.html5 + html );
+		res.end();
+	});
 });
 
 //// content 列表
@@ -127,82 +128,110 @@ web.get('/admin/document/:documentId/',function(req, res, next){
 web.post('/admin/document/add', function(req, res){
 	var body = req.body || {}
 		, title = body.title
+		, execute
 		;
+
 	if( title ){
-		Model.addDocument( body ).then(function(rs){
-			var json = {};
+		execute = Model.addDocument( body ).then(function(rs){
+			var result
+				;
+
 			if( rs.insertId ){
-				json.success = true;
-				json.id = rs.insertId;
+				result = {
+					success: true
+					, id: rs.insertId
+				}
 			}
 			else{
-				json.success = false;
+				result = Promise.reject( new DocumentError(title + ' 文档创建失败') );
 			}
 
-			res.send( JSON.stringify(json) );
-			res.end();
+			return result;
 		});
 	}
 	else{
-		res.send( JSON.stringify({
+		execute = Promise.reject( new DocumentError('缺少标题') );
+	}
+
+	execute.catch(function(e){
+		console.log( e );
+
+		return {
 			success: false
 			, error: ''
-			, msg: '缺少标题'
-		}) );
+			, msg: e.message
+		};
+	}).then(function(json){
+		res.send( JSON.stringify(json) );
 		res.end();
-	}
+	});
 });
 web.post('/admin/document/:documentId/add', function(req, res){
 	var param = req.params || {}
 		, documentId = param.documentId
 		, body = req.body || {}
 		, title = body.title
+		, execute
 		;
+
 	if( documentId && /^\d+$/.test( documentId ) && title ){
 
 		body.documentId = documentId;
 
 		Model.addSectionByDoc( body ).then(function(rs){
-			var json = {};
+			var result
+				, json = {}
+				;
+
 			if( rs.insertId ){
-				json.success = true;
-				json.id = rs.insertId;
+				result = {
+					success: true
+					, id: rs.insertId
+				};
 			}
 			else{
-				json.success = false;
+				result = Promise.reject( new DocumentError(title + ' 章节创建失败') );
 			}
 
-			res.send( JSON.stringify(json) );
-			res.end();
+			return result;
 		});
 	}
 	else{
-		res.send( JSON.stringify({
+		execute = Promise.reject( new DocumentError('缺少参数') );
+	}
+
+	execute.catch(function(e){
+		console.log( e );
+
+		return {
 			success: false
 			, error: ''
-			, msg: '缺少标题'
-		}) );
+			, msg: e.message
+		};
+	}).then(function(json){
+		res.send( JSON.stringify(json) );
 		res.end();
-	}
+	});
 });
 web.post('/admin/document/:documentId/save', function(req, res){
 	var param = req.params || {}
 		, documentId = param.documentId
 		, body = req.body || {}
 		, title = body.title
+		, execute
 		;
+
 	if( documentId && /^\d+$/.test( documentId ) ){
 
 		body.documentId = documentId;
 
-		Model.updateDocumentOrder({
+		execute = Model.updateDocumentOrder({
 			documentId: documentId
 			, order: body.order
 		}).then(function(rs){
-			var json = {
+			return {
 				success: true
 			};
-
 			//if( rs.insertId ){
 			//	json.success = true;
 			//	json.id = rs.insertId;
@@ -211,18 +240,26 @@ web.post('/admin/document/:documentId/save', function(req, res){
 			//	json.success = false;
 			//}
 			//
-			res.send( JSON.stringify(json) );
-			res.end();
+			//res.send( JSON.stringify(json) );
+			//res.end();
 		});
 	}
 	else{
-		res.send( JSON.stringify({
+		execute = Promise.reject( new DocumentError('缺少参数') );
+	}
+
+	execute.catch(function(e){
+		console.log( e );
+
+		return {
 			success: false
 			, error: ''
-			, msg: '缺少标题'
-		}) );
+			, msg: e.message
+		};
+	}).then(function(json){
+		res.send( JSON.stringify(json) );
 		res.end();
-	}
+	});
 });
 web.post('/admin/document/:documentId/:sectionId/add', function(req, res){
 	var param = req.params || {}
@@ -230,34 +267,47 @@ web.post('/admin/document/:documentId/:sectionId/add', function(req, res){
 		, sectionId = param.sectionId
 		, body = req.body || {}
 		, title = body.title
+		, execute
 		;
+
 	if( documentId && /^\d+$/.test( documentId ) && sectionId && /^\d+$/.test( sectionId )  && title ){
 
 		body.documentId = documentId;
 		body.sectionId = sectionId;
 
-		Model.addContentBySec( body ).then(function(rs){
-			var json = {};
+		execute = Model.addContentBySec( body ).then(function(rs){
+			var result
+				, json = {}
+				;
 			if( rs.insertId ){
-				json.success = true;
-				json.id = rs.insertId;
+				result = {
+					success: true
+					, id: rs.insertId
+				}
 			}
 			else{
-				json.success = false;
+				result = Promise.reject( new DocumentError(title + ' 内容创建失败') );
 			}
 
-			res.send( JSON.stringify(json) );
-			res.end();
+			return result;
 		});
 	}
 	else{
-		res.send( JSON.stringify({
+		execute = Promise.reject( new DocumentError('缺少参数') );
+	}
+
+	execute.catch(function(e){
+		console.log( e );
+
+		return {
 			success: false
 			, error: ''
-			, msg: '缺少标题'
-		}) );
+			, msg: e.message
+		};
+	}).then(function(json){
+		res.send( JSON.stringify(json) );
 		res.end();
-	}
+	});
 });
 web.post('/admin/document/:documentId/:sectionId/save', function(req, res){
 	var param = req.params || {}

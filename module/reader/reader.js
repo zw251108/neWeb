@@ -40,14 +40,14 @@ var Promise     = require('promise')
 				}
 			});
 		}
-		, handleFeed: function(result){
-			var res = result.res
+		, handleFeed: function(rs){
+			var res = rs.res
 				, rss = res.text
 				, charset = res.charset
 				, $
 				, $items
 				, i, j, temp, $t, t
-				, rs = []
+				, result = []
 				;
 
 			if( rss ){
@@ -77,18 +77,18 @@ var Promise     = require('promise')
 					}).get().join();
 					temp.datetime = $t.find('pubDate,published').text();
 
-					rs.push( temp );
+					result.push( temp );
 				}
 			}
 			else{
-				rs = Promise.reject( new ReaderError('获取内容为空') );
+				result = Promise.reject( new ReaderError('获取内容为空') );
 			}
 
-			return rs;
+			return result;
 		}
-		, handleArticle: function(result){
-			var res = result.res
-				, url = result.url
+		, handleArticle: function(rs){
+			var res = rs.res
+				, url = rs.url
 				, html = res.text
 				, charset = res.charset
 
@@ -109,7 +109,7 @@ var Promise     = require('promise')
 				, tagsIndex = TAG_INDEX || tagModel.TAG_INDEX || {}
 				, tagsRs
 
-				, rs = null
+				, result
 				;
 
 			TAG_CACHE = tagsData;
@@ -202,18 +202,19 @@ var Promise     = require('promise')
 
 				//console.log('\n', tagsRs);
 
-				rs = {
+				result = {
 					url: url
 					, title: title
 					, tags: tagsRs.map(function(d){return d.tagName;}).join()
 					, source: source
 				};
-				console.log(rs);
+				console.log(result);
 			}
 			else{
-				rs = Promise.reject( new ReaderError('获取内容失败') );
+				result = Promise.reject( new ReaderError('获取内容失败') );
 			}
-			return rs;
+
+			return result;
 		}
 	}
 	;
