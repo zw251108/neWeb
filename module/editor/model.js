@@ -45,7 +45,12 @@ var db      = require('../db.js')
 						id: id
 					}
 				}).then(function(rs){
-					return rs[0];
+					rs = rs[0];
+					rs.html = rs.html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\$/g, '&#36;');
+					rs.css = rs.css.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\$/g, '&#36;');
+					rs.js = rs.js.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\$/g, '&#36;');
+
+					return rs;
 				});
 			}
 			else{
