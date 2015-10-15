@@ -98,7 +98,7 @@ web.get('/admin/blog/', function(req, res){
 		res.end();
 	});
 });
-web.get('/admin/blog/:blogId/', function(req, res, next){
+web.get('/admin/blog/:blogId/', function(req, res){
 	var param = req.params || {}
 		, blogId = param.blogId
 		, execute

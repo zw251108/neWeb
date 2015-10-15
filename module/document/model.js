@@ -110,7 +110,7 @@ var db  = require('../db.js')
 						});
 					}
 
-					encode && (t.content = t.content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\$/g, '&#36;'));
+					encode && t.content && (t.content = t.content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\$/g, '&#36;'));
 					tempArray.push( t );
 				}
 

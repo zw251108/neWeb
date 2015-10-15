@@ -320,6 +320,7 @@ define('setMorePopup', ['jquery', 'socket', 'template'], function($, socket){
 require(['../../config'], function(config){
 	var r = require.config(config.requireConfig);
 	r(['jquery', 'global', 'socket'
+		, config.dataSource.skin
 		, 'codeEditor'
 		, 'codeEditorSkin'
 		, 'editorLayout'
@@ -328,7 +329,7 @@ require(['../../config'], function(config){
 		, 'setMorePopup'
 		, 'tag', config.dataSource.tag
 		, 'msgPopup'
-		, 'template'], function($, g, socket, code, codeSkin, layout, initUiLib, demoImg, setMore, tag, tagsData, msgPopup){
+		, 'template'], function($, g, socket, skin, code, codeSkin, layout, initUiLib, demoImg, setMore, tag, tagsData, msgPopup){
 		var $editor = $('#editor')
 			, $form = $editor.find('#editorForm')
 			, $toolbar = $editor.find('.toolbar')
@@ -456,13 +457,16 @@ require(['../../config'], function(config){
 
 		$editor.find('label').removeClass('hidden');
 
-		skinList = codeSkin(config.requireConfig.baseUrl, [html, css, js], function(){
+		skin = $.parseJSON( skin );
+		skinList = codeSkin(skin.skin, config.requireConfig.baseUrl, [html, css, js], function(){
 			layoutList.hide();
 		});
 		layoutList = layout($editor, html, css, js, function(){
 			skinList.hide();
 		});
 		initUiLib($jsLib, $cssLib);
+
+		skinList.setSkin();
 
 		$('#editorSetMoreRs').on('load', function(){
 			var res = this.contentDocument.body.innerHTML;

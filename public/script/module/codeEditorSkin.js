@@ -38,7 +38,7 @@ define(['jquery', 'socket', 'template'], function($, socket){
 					, type: 'POST'
 					, success: function(json){
 						if( json.success ){
-
+							//CURRENT_SKIN = json.skin;
 						}
 					}
 				});
@@ -101,7 +101,9 @@ define(['jquery', 'socket', 'template'], function($, socket){
 
 	};
 
-	return function(dir, list, before){
+	return function(skin, dir, list, before){
+		CURRENT_SKIN = skin;
+
 		BASE_URL = dir;
 
 		codeEditorList = list;

@@ -40,5 +40,6 @@ define({
 	, dataSource: {
 		json: 'text!../data/example'
 		, tag: 'text!../tag/data'
+		, skin: 'text!../skin'
 	}
 });

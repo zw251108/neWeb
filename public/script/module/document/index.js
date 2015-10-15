@@ -3,7 +3,7 @@
  * */
 require(['../../config'], function(config){
 	var r = require(config.requireConfig);
-	r(['jquery', 'global', 'socket', 'codeEditor', 'codeEditorSkin', 'template'], function($, g, socket, code, codeSkin){
+	r(['jquery', 'global', 'socket', config.dataSource.skin, 'codeEditor', 'codeEditorSkin', 'template'], function($, g, socket, skin, code, codeSkin){
 		var $document = g.mod('$document') || $('#document')
 			, $curr = null
 			, $temp = $([])
@@ -23,7 +23,8 @@ require(['../../config'], function(config){
 			, skinList
 			;
 
-		skinList = codeSkin(config.requireConfig.baseUrl, codeList);
+		skin = $.parseJSON( skin );
+		skinList = codeSkin(skin.skin, config.requireConfig.baseUrl, codeList);
 
 		// 绑定 socket 回调 事件
 		socket.register({

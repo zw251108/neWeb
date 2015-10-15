@@ -27,7 +27,11 @@ index.push({
 });
 
 web.get('/document/', function(req, res){
-	Model.getContentByDocumentId( DOCUMENT_ID ).then( View.document ).then(function( html ){
+	var query = req.query || {}
+		, documentId = query.id || DOCUMENT_ID
+		;
+
+	Model.getContentByDocumentId( documentId ).then( View.document ).then(function( html ){
 		res.send( config.docType.html5 + html );
 		res.end();
 	});
@@ -59,7 +63,7 @@ web.get('/admin/document/', function(req, res){
 		res.end();
 	});
 });
-web.get('/admin/document/:documentId/',function(req, res, next){
+web.get('/admin/document/:documentId/',function(req, res){
 	var param = req.params || {}
 		, documentId = param.documentId
 		, execute
@@ -178,7 +182,7 @@ web.post('/admin/document/:documentId/add', function(req, res){
 
 		body.documentId = documentId;
 
-		Model.addSectionByDoc( body ).then(function(rs){
+		execute = Model.addSectionByDoc( body ).then(function(rs){
 			var result
 				, json = {}
 				;
@@ -232,16 +236,6 @@ web.post('/admin/document/:documentId/save', function(req, res){
 			return {
 				success: true
 			};
-			//if( rs.insertId ){
-			//	json.success = true;
-			//	json.id = rs.insertId;
-			//}
-			//else{
-			//	json.success = false;
-			//}
-			//
-			//res.send( JSON.stringify(json) );
-			//res.end();
 		});
 	}
 	else{
@@ -315,40 +309,38 @@ web.post('/admin/document/:documentId/:sectionId/save', function(req, res){
 		, sectionId = param.sectionId
 		, body = req.body || {}
 		, title = body.title
+		, execute
 		;
 	if( documentId && /^\d+$/.test( documentId ) && sectionId && /^\d+$/.test( sectionId ) ){
 
 		body.documentId = documentId;
 		body.sectionId = sectionId;
 
-		Model.updateSectionOrder({
+		execute = Model.updateSectionOrder({
 			sectionId: sectionId
 			, order: body.order
 		}).then(function(rs){
-			var json = {
+			return {
 				success: true
 			};
-
-			//if( rs.insertId ){
-			//	json.success = true;
-			//	json.id = rs.insertId;
-			//}
-			//else{
-			//	json.success = false;
-			//}
-			//
-			res.send( JSON.stringify(json) );
-			res.end();
 		});
 	}
 	else{
-		res.send( JSON.stringify({
+		execute = Promise.reject( new DocumentError('缺少参数') );
+	}
+
+	execute.catch(function(e){
+		console.log( e );
+
+		return {
 			success: false
 			, error: ''
-			, msg: '缺少标题'
-		}) );
+			, msg: e.message
+		};
+	}).then(function(json){
+		res.send( JSON.stringify(json) );
 		res.end();
-	}
+	});
 });
 web.post('/admin/document/:documentId/:sectionId/:contentId/save', function(req, res){
 	var param = req.params || {}
@@ -356,20 +348,35 @@ web.post('/admin/document/:documentId/:sectionId/:contentId/save', function(req,
 		, sectionId = param.sectionId
 		, contentId = param.contentId
 		, body = req.body || {}
+		, execute
 		;
 
 	if( documentId && /^\d+$/.test( documentId ) && sectionId && /^\d+$/.test( sectionId ) && contentId && /^\d+$/.test( contentId ) ){
 
 		body.content = body.content.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
 
-		Model.updateContent( body ).then(function(rs){
-			res.send( JSON.stringify({
+		execute = Model.updateContent( body ).then(function(rs){
+			return {
 				success: true
-			}) );
-			res.end()
-
+			}
 		});
 	}
+	else{
+		execute = Promise.reject( new DocumentError('缺少参数') );
+	}
+
+	execute.catch(function(e){
+		console.log( e );
+
+		return {
+			success: false
+			, error: ''
+			, msg: e.message
+		};
+	}).then(function(json){
+		res.send( JSON.stringify(json) );
+		res.end();
+	});
 });
 
 admin.push('document');

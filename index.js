@@ -75,25 +75,26 @@ web.use( session({
 var userInfo = {
 	id: 1
 };
-web.use(function(req, res, next){
-	//console.log(req.url, req.session.id, sessionStore);
+//web.use(function(req, res, next){
+//	//console.log(req.url, req.session.id, sessionStore);
+//
+//	var sessionId = req.session.id
+//	//	, session = (sessionId && sessionId in sessionStore.sessions)? JSON.parse( sessionStore.sessions[sessionId] ) : {}
+//	//	, user = session.user
+//		;
+//	//console.log('session id', sessionId);
+//	//if( !user ){
+//	//	user = req.session.user = userInfo;
+//	//}
+//	//else{
+//	//
+//	//}
+//
+//	// todo
+//
+//	next();
+//});
 
-	var sessionId = req.session.id
-	//	, session = (sessionId && sessionId in sessionStore.sessions)? JSON.parse( sessionStore.sessions[sessionId] ) : {}
-	//	, user = session.user
-		;
-	//console.log('session id', sessionId);
-	//if( !user ){
-	//	user = req.session.user = userInfo;
-	//}
-	//else{
-	//
-	//}
-
-	// todo
-
-	next();
-});
 // 判断浏览器类型，操作系统
 //web.use(function(req, res, next){
 //
@@ -151,18 +152,38 @@ web.get('/', function(req, res){
 	res.end();
 });
 
+// 用户登录
 web.post('/login', function(req, res){
 	// todo 登录功能
 });
 
-web.post('/skin', function(req, res){   // 设置皮肤功能
-
-	var body = req.body || {}
-		, skin = body.skin
-		, session = req.session || {}
+// 编码工具皮肤设置与获取
+web.get('/skin', function(req, res){
+	var session = req.session || {}
 		, user = session.user
-		, rs = {}
+		, skin
 		;
+
+	if( !user ){
+		user = req.session.user = userInfo;
+		user.skin = 'default';
+	}
+
+	skin = user.skin;
+
+	res.send( JSON.stringify({
+		success: true
+		, skin: skin
+	}) );
+	res.end();
+});
+web.post('/skin', function(req, res){   // 设置皮肤功能
+	var session = req.session || {}
+		, user = session.user
+		, body = req.body || {}
+		, skin = body.skin
+		;
+
 	if( !user ){
 		user = req.session.user = userInfo;
 	}
@@ -170,9 +191,9 @@ web.post('/skin', function(req, res){   // 设置皮肤功能
 		user.skin = skin;
 	}
 
-	rs.success = true;
-
-	res.send( JSON.stringify(rs) );
+	res.send( JSON.stringify({
+		success: true
+	}) );
 	res.end();
 });
 

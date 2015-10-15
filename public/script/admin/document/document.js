@@ -5,7 +5,7 @@ require(['../../config'], function(config){
 	config.requireConfig.baseUrl = location.origin +'/script/';
 
 	var r = require(config.requireConfig);
-	r(['jquery', 'global', 'socket', 'codeEditor', 'codeEditorSkin', 'msgPopup', 'template'], function($, g, socket, code, codeSkin, msgPopup){
+	r(['jquery', 'global', 'socket', config.dataSource.skin, 'codeEditor', 'codeEditorSkin', 'msgPopup', 'template'], function($, g, socket, skin, code, codeSkin, msgPopup){
 		var $document = $('#document')
 			, $curr = null
 			, $temp = $([])
@@ -21,7 +21,8 @@ require(['../../config'], function(config){
 				}
 			})
 			, $addSectionPopup = $('#addSectionPopup').on('click', '#addSection', function(){
-				var title = $addSectionPopup.find('#newSectionTitle').val()
+				var $title = $addSectionPopup.find('#newSectionTitle')
+					, title = $title.val()
 					;
 				if( title ){
 					$.ajax({
@@ -34,6 +35,8 @@ require(['../../config'], function(config){
 						, dataType: 'json'
 						, success: function(json){
 							if( json.success ){
+
+								$title.val('');
 
 								$document.find('.module_content').append( sectionTpl({
 									sectionId: json.id
@@ -53,7 +56,8 @@ require(['../../config'], function(config){
 				}
 			})
 			, $addContentPopup = $('#addContentPopup').on('click', '#addContent', function(){
-				var title = $addContentPopup.find('#contentTitle').val()
+				var $title = $addContentPopup.find('#contentTitle')
+					, title = $title.val()
 					, sectionId = $addContentPopup.find('#sectionId').val()
 					, sectionTitle = $addContentPopup.find('#sectionTitle').val()
 					, $section = $document.find('.module_content .section[data-section-id="'+ sectionId +'"]')
@@ -72,6 +76,8 @@ require(['../../config'], function(config){
 						, dataType: 'json'
 						, success: function(json){
 							if( json.success ){
+
+								$title.val('');
 
 								$section.find('dl').append( sectionListTpl({
 									Id: json.id
@@ -95,7 +101,8 @@ require(['../../config'], function(config){
 			, skinList
 			;
 
-		skinList = codeSkin(config.requireConfig.baseUrl, codeList);
+		skin = $.parseJSON( skin );
+		skinList = codeSkin(skin.skin, config.requireConfig.baseUrl, codeList);
 
 		$document.on('click', '#save', function(e, hideMsg){
 			var order = $document.find('.section').map(function(){
@@ -252,7 +259,9 @@ require(['../../config'], function(config){
 				}
 				, dataType: 'json'
 				, success: function(json){
-
+					if( json.success ){
+						msgPopup.showMsg('内容保存成功！');
+					}
 				}
 			})
 		});
