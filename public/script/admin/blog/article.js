@@ -27,7 +27,7 @@ define(['../../config'], function(config){
 			, form = $form[0]
 			, $codeArea = $blog.find('textarea')
 			, content
-			, $skinList
+			, skinList
 			;
 
 		content = code($codeArea[0], $codeArea.data('codeType'));
@@ -36,6 +36,7 @@ define(['../../config'], function(config){
 
 		skin = $.parseJSON( skin );
 
-		$skinList = codeSkin(skin.skin, config.requireConfig.baseUrl, [content]);
+		skinList = codeSkin(skin.skin, config.requireConfig.baseUrl, [content]);
+		'setSkin' in skinList && skinList.setSkin();
 	});
 });
