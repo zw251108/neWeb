@@ -6,7 +6,7 @@ var db      = require('../db.js')
 	, SQL   = {
 		tag: 'select name,num from tag order by num'
 		, tagAll: 'select * from tag'
-		, tagAdd: 'insert into tag(name) select :name from dual where not exists (select * from tag where name like :name)'
+		, tagAdd: 'insert into tag(name,user_id) select :name,:userId from dual where not exists (select * from tag where name like :name)'
 		, tagIncrease: 'update tag set num=num+:increase where name=:name'
 		, tagIsExist: 'select * from tag where name=:name'
 	}
@@ -16,11 +16,12 @@ var db      = require('../db.js')
 				sql: SQL.tagAll
 			});
 		}
-		, add: function(name){
+		, add: function(name, userId){
 			return db.handle({
 				sql: SQL.tagAdd
 				, data: {
 					name: name
+					, userId: userId
 				}
 			});
 		}

@@ -56,6 +56,19 @@ var db          = require('./db.js')
 		}
 	})
 
+	, feedAddFormTpl        = emmetTpl({
+		template: 'form' +
+			'>div.formGroup' +
+				'>label.label[for=name]{请输入网站名称}' +
+				'+input#name.input[type=text name=name placeholder=请输入网站名称 data-validator=name]' +
+			'^div.formGroup' +
+				'>label.label[for=url]{请输入网站链接}' +
+				'+input#url.input[type=text name=url placeholder=请输入网站链接 data-validator=url]' +
+			'^div.formGroup' +
+				'>label.label[for=xml]{请输入订阅链接}' +
+				'+input#feed.input[type=text name=feed placeholder=请输入订阅链接 data-validator=feed]'
+	})
+
 	, bookmarkAddFormTpl    = emmetTpl({
 		template: 'form' +
 			'>div.formGroup' +
@@ -143,11 +156,14 @@ var db          = require('./db.js')
 		 * @desc    业务相关 sql 语句集合
 		 * */
 		, Model: {
-			reader: 'select * from reader where `show`=1'
+			reader: 'select * from reader where `show`=1 order by last_pub desc'
 			, readerCount: 'select count(*) as count from reader where `show`=1'
-			, readerPage: 'select * from reader where `show`=1 limit :page,:size'
+			, readerPage: 'select * from reader where `show`=1 order by last_pub desc limit :page,:size'
 			, readerIsExist: 'select * from reader where xml_url like :xmlUrl'
 			, readerUpdatePub: 'update reader set last_pub=:lastPub where Id=:id'
+
+			// todo 检测链接是否已存在
+			, readerAdd: 'insert into reader(`status`,`show`,name,xml_url,html_url,tags) values(1,1,:name,:feed,:url,\'\')'
 
 			, countReader: 'select count(*) as count from reader where `show`=1'
 
@@ -410,6 +426,10 @@ var db          = require('./db.js')
 						}]).join('')
 						, content: readerTpl(rs.data).join('')  + '<div class="pagination" id="pagination">'+ pagination(rs.index, rs.size, rs.count, rs.urlCallback) +'</div>'
 					}).join('') + tpl.popupTpl([{
+						id: 'addPopup', size: 'normal'
+						, content: feedAddFormTpl({})
+						, button: '<button type="button" id="addFeed" class="btn btn-submit">确定</button>'
+					}, {
 						id: 'readPopup', size: 'normal'
 						, content: bookmarkReadFormTpl({})
 						, button: '<button type="button" id="readBookmark" class="btn btn-submit">确定</button>'
@@ -753,7 +773,48 @@ socket.register({
 			});
 		});
 	}
-	, 'reader/add': function(socket, data){}
+	, 'reader/add': function(socket, data){
+		var query = data.query
+			;
+
+		if( query.name && query.url && query.feed ){
+			db.handle({
+				sql: Reader.Model.readerAdd
+				, data: query
+			}).then(function(rs){
+				var send = {}
+					;
+
+				if( rs.insertId ){
+					send = {
+						topic: 'reader/add'
+						, info: {
+							Id: rs.insertId
+							, html_url: query.url
+							, xml_url: query.feed
+							, name: query.name
+							, tags: ''
+						}
+					}
+				}
+				else{
+					send = {
+						topic: 'reader/add'
+						, error: ''
+						, msg: '创建失败'
+					}
+				}
+				socket.emit('data', send);
+			});
+		}
+		else{
+			socket.emit('data', {
+				topic: 'reader/add'
+				, error: ''
+				, msg: '缺少参数'
+			});
+		}
+	}
 	, 'reader/feed': function(socket, data){
 		var send = {
 				topic: 'reader/feed'

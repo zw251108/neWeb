@@ -93,11 +93,14 @@ socket.register({
 			}
 			, query = data.query || {}
 			, name = query.name
+			, session = socket.session || {}
+			, user = session.user || {}
+			, userId = user.id
 			, execute
 			;
 
 		if( name ){
-			execute = Model.add( name ).then(function(rs){
+			execute = Model.add(name, userId).then(function(rs){
 				var execute;
 
 				if( !rs.insertId ){

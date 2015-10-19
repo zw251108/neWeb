@@ -47,6 +47,37 @@ require(['../../config'], function(config){
 					}
 				}
 			})
+			, feedTpl = $.template({
+				template: 'section#reader_%Id%.reader_section.section' +
+					'>a[href=%html_url% data-feed=%xml_url% data-id=%Id%]' +
+						'>h3.section_title{%name%}' +
+							'>span.icon.icon-up' +
+					'^^hr' +
+					'+ul.reader_articleList' +
+					'+div.tagsArea{%tags%}'
+				, filter:{
+					tags: tag.tagTpl
+				}
+			})
+			, $addPopup = $('#addPopup').on('click', '#addFeed', function(){
+				var query = $addFeedForm.serializeJson();
+
+				if( query.url && query.feed && query.name ){
+					$reader.find('.module_content').prepend('<section class="reader_section section" data-feed="'+ query.feed +'"><div class="loading loading-chasing"></div></section>');
+
+					$addPopup.trigger('closeDialog');
+					$addFeedForm[0].reset();
+
+					socket.emit('data', {
+						topic: 'reader/add'
+						, query: query
+					});
+				}
+			})
+			, $addFeedForm = $addPopup.find('form')
+			, $add = $('#add').on('click', function(){
+				$addPopup.trigger('showDialog');
+			})
 			, $readPopup = bookmarkRead($reader, tagData)
 
 			, search = location.search
@@ -157,8 +188,21 @@ require(['../../config'], function(config){
 		});
 
 		socket.register({
-			'reader/feed': function(data){
-				var id;
+			'reader/add': function(data){
+				var id
+					;
+
+				if( 'error' in data ){
+					msgPopup.showMsg( data.msg );
+				}
+				else{
+					$reader.find('[data-feed="'+ data.info.xml_url +'"]').replaceWith( feedTpl(data.info).join('') );
+				}
+			}
+			, 'reader/feed': function(data){
+				var id
+					;
+
 				if( 'error' in data ){
 					msgPopup.showMsg( data.msg );
 					//alert(data.msg);
