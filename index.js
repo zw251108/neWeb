@@ -138,7 +138,7 @@ web.get('/', function(req, res){
 		user = req.session.user = userInfo;
 	}
 
-	console.log(sessionId);
+	console.log(user);
 
 	res.send( tpl.html('index', {
 		title: '个人小站（开发测试中...）'

@@ -27,6 +27,7 @@ sio.on('connection', function(socket){
 	CLIENT_INDEX_LIST.push( clientIndex );
 
 	console.log('socket: session id ', clientIndex, 'connect');
+	console.log( (socket.handshake || socket.request).session );
 
 	socket.on('data', function(query){   // 获取数据接口
 		var topic = query.topic
