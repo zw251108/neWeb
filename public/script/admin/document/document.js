@@ -255,7 +255,7 @@ require(['../../config'], function(config){
 				, type: 'POST'
 				, data: {
 					id: contentId
-					, content: code.getValue()
+					, content: code.getValue().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\$/g, '&#36;')
 				}
 				, dataType: 'json'
 				, success: function(json){

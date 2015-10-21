@@ -353,7 +353,7 @@ web.post('/admin/document/:documentId/:sectionId/:contentId/save', function(req,
 
 	if( documentId && /^\d+$/.test( documentId ) && sectionId && /^\d+$/.test( sectionId ) && contentId && /^\d+$/.test( contentId ) ){
 
-		body.content = body.content.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+		body.content = body.content.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
 
 		execute = Model.updateContent( body ).then(function(rs){
 			return {
