@@ -18,6 +18,8 @@ var web         = require('../web.js')
 	, ReaderError   = require('./error.js')
 
 	, Reader    = require('./reader.js')
+
+	, Promise = require('promise')
 	;
 
 // 注册首页 metro 模块
@@ -27,10 +29,19 @@ index.push({
 	, size: 'tiny'
 	, title: '阅读 reader'
 }, {
-	id: 'reader/bookmark'
+	id: 'bookmark'
+	, href: 'reader/bookmark'
+	, icon: 'bookmark'
 	, type: 'metro'
 	, size: 'tiny'
 	, title: '书签 bookmark'
+}, {
+	id: 'favorite'
+	, href: 'reader/favorite'
+	, icon: 'star'
+	, type: 'metro'
+	, size: 'tiny'
+	, title: '收藏 favorite'
 });
 
 web.get('/reader/', function(req, res){
@@ -97,7 +108,7 @@ web.get('/reader/favorite', function(req, res){
 				}
 			};
 		});
-	}).then( View.favoriteList ).then(function(html){
+	}).then( View.favoriteList).then(function(html){
 		res.send( config.docType.html5 + html );
 		res.end();
 	});
@@ -105,7 +116,64 @@ web.get('/reader/favorite', function(req, res){
 
 socket.register({
 	reader: function(socket, data){}
-	, 'reader/add': function(socket, data){}
+	, 'reader/add': function(socket, data){
+		var send = {
+				topic: 'reader/add'
+			}
+			, query = data.query || {}
+			, feed = query.url
+			, execute
+			;
+
+		query.tags = '';
+		if( feed ){
+			execute = Model.isExistReader( feed ).then(function(rs){
+				var result
+					;
+
+				if( rs && rs.length ){
+					result = Promise.reject( new ReaderError('数据已存在') );
+				}
+				else{
+					result = Model.addReader( query ).then(function(rs){
+						var result;
+						if( rs.insertId ){
+							send.info = {
+								Id: rs.insertId
+								, html_url: query.url
+								, xml_url: query.feed
+								, name: query.name
+								, tags: query.tags
+							};
+
+							result = send;
+						}
+						else{
+							result = Promise.reject( new ReaderError('数据已存在') );
+						}
+
+						return result;
+					});
+				}
+
+				return result;
+			});
+		}
+		else{
+			execute = Promise.reject( new ReaderError('缺少参数') );
+		}
+
+		execute.catch(function(e){
+			console.log( e );
+
+			send.error = '';
+			send.msg = e.message;
+
+			return send;
+		}).then(function(send){
+			socket.emit('data', send);
+		});
+	}
 	, 'reader/feed': function(socket, data){
 		var send = {
 				topic: 'reader/feed'
@@ -122,7 +190,7 @@ socket.register({
 					, y, m, d, h, mm, s
 					, result
 					;
-				if( rs.length ){
+				if( rs && rs.length ){
 					datetime = rs[0].datetime;
 					today = datetime ? datetime : new Date();
 					type = typeof today;
@@ -244,7 +312,7 @@ socket.register({
 					if( rs && rs.length ){
 
 						send.info = rs[0];
-						send.info = rs[0].Id;
+						send.info.id = rs[0].Id;
 						send.info.targetId = targetId;
 
 						result = Promise.reject( new ReaderError('数据已存在') );
@@ -257,7 +325,7 @@ socket.register({
 				}).then( Reader.handleArticle );
 			}
 
-			execute.then(function( data ){
+			execute = execute.then(function( data ){
 				var result
 					;
 
@@ -306,7 +374,7 @@ socket.register({
 			return send;
 		}).then(function(send){
 			socket.emit('data', send);
-		})
+		});
 	}
 	, 'reader/read': function(socket, data){
 		var send = {
@@ -434,11 +502,11 @@ socket.register({
 			}
 			, url = data.query.url
 			, dataAll
-			, excute
+			, execute
 			;
 
 		if( url ){
-			excute = Model.isExistBookmark( url ).then(function(rs){
+			execute = Model.isExistBookmark( url ).then(function(rs){
 				var result
 					;
 
@@ -447,17 +515,48 @@ socket.register({
 				}
 				else{
 					// todo
-					result = Model
+					result = Reader.crawler( url ).then( Reader.handleArticle ).then(function(rs){
+						var result
+							;
+
+						if( !data ){
+							result = Promise.reject( new ReaderError('抓取数据失败') );
+						}
+						else{
+							data.status = 0;
+							dataAll = data;
+
+							result = Model.addBookmark( data )
+						}
+
+						return result;
+					}).then(function(rs){
+						var result
+							;
+
+						if( rs.insertId ){
+							dataAll.id = rs.insertId;
+							dataAll.status = 0;
+
+							send.info = dataAll;
+							result = send;
+						}
+						else{
+							result = Promise.reject( new ReaderError('数据已存在') );
+						}
+
+						return result;
+					});
 				}
 
 				return result;
 			});
 		}
 		else{
-			excute = Promise.reject( new ReaderError('缺少参数') );
+			execute = Promise.reject( new ReaderError('缺少参数') );
 		}
 
-		excute.catch(function(e){
+		execute.catch(function(e){
 			console.log( e );
 
 			send.error = '';

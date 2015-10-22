@@ -14,6 +14,8 @@ var web         = require('../web.js')
 	, Admin = require('./admin.view.js')
 	, TagError = require('./error.js')
 
+	, Promise = require('promise')
+
 	, TAG_INDEX = {}
 	, TAG_CACHE = []
 	;

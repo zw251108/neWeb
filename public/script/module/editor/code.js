@@ -41,8 +41,7 @@ define('editorLayout', ['jquery', 'global', 'template'], function($, g){
 			$that.addClass('on').siblings('.on').removeClass('on');
 
 			$layoutList.triggerHandler('setLayout', [type]);
-		})
-			.on({
+		}).on({
 			setLayout: function(e, layout){
 
 				beforeCallback && beforeCallback();
@@ -243,7 +242,7 @@ define('uiLibPopup', ['jquery', 'socket', 'template'], function($, socket){
 		$cssLib = $cLib;
 	};
 });
-define('demoImgLibPopup', ['jquery', 'socket', 'template'], function($, socket){
+define('demoImgLibPopup', ['jquery', 'socket', 'msgPopup', 'template'], function($, socket, msgPopup){
 	var // 素材图片大小
 		DEMO_IMG_SIZE = 100
 		, demoImgLibTpl = $.template({
@@ -300,36 +299,112 @@ define('demoImgLibPopup', ['jquery', 'socket', 'template'], function($, socket){
 
 	// 素材图片上传结果
 	$('#demoImgUploadRs').on('load', function(){
-		var res = this.contentDocument.body.innerHTML;
+		var res = this.contentDocument.body.innerHTML
+			;
 
 		res = $.parseJSON( res );
 
-		$demoImgLibPopup.find('#demoImgList').prepend( demoImgLibTpl(res) );
+		if( 'error' in res ){
+			msgPopup.showMsg('图片上传失败！');
+		}
+		else{
+			$demoImgLibPopup.find(':file').val('');
+			$( demoImgLibTpl(res.info).join('') ).hide().prependTo( $demoImgLibPopup.find('#demoImgList')).fadeIn();
+		}
 	});
 
 	socket.register('editor/demoImgLib', function(data){
 		$demoImgLibPopup.data('data', true).find('#demoImgList').html( demoImgLibTpl(data.data).join('') ).end().trigger('showDialog');
 	});
 });
-define('setMorePopup', ['jquery', 'socket', 'template'], function($, socket){
-	var $setM = $('#setM').on('click', function(){
-		$setM.parents('legend').next().slideToggle();
+define('setMorePopup', ['jquery', 'socket', 'msgPopup', 'tag', 'template'], function($, socket, msgPopup, tag){
+	var $setMorePopup = $('#setMore').on('click', '#codeSave', function(e){ // 点击保存
+			if( $codeId.val() ){
+				$setMoreForm.trigger('submit');
+				$name.val( $codeName.val() );
+			}
+			else{
+				msgPopup.showMsg('请先保存代码');
+			}
+		}).on('submit', '#setMoreForm', function(e){ // 提交
+			if( !$codeId.val() ){
+				msgPopup.showMsg('请先保存代码');
+				e.preventDefault();
+			}
+		}).on('change', '#preview', function(e){    // 本地预览图片
+			if( 'FileReader' in window ){
+				var reader = new FileReader()
+					, files, file
+					;
+				if( reader ){
+					reader.onload = function(e){
+						$editorPreview.attr('src', e.target.result);
+					};
+
+					files = e.target.files || e.dataTransfer.files;
+					file = files[0];
+
+					if( /image\/(?:jpeg|png|gif|jpg)/.test( file.type ) ){
+						reader.readAsDataURL(file);
+					}
+				}
+				else{
+					// todo IE8 滤镜
+				}
+			}
+		})
+		, $codeId = $setMorePopup.find('#codeId')
+		, $codeName = $setMorePopup.find('#codeName')
+		, $setMoreForm = $setMorePopup.find('#setMoreForm')
+		, $editorPreview = $setMorePopup.find('#editorPreview')
+		, $setM = $setMorePopup.find('#setM').on('click', function(){   // 更多设置
+			$setM.parents('legend').next().slideToggle();
+		})
+		, $name
+		, $form
+		;
+
+
+	tag.setAdd( $setMorePopup );
+
+	$('#set').on('click', function(){
+		$setMorePopup.trigger('showDialog');
 	});
+
+	// 预览图片上传结果
+	$('#editorSetMoreRs').on('load', function(){
+		var res = this.contentDocument.body.innerHTML;
+
+		res = $.parseJSON( res );
+
+		if( 'error' in res ){
+			msgPopup.showMsg('设置失败');
+		}
+		else{
+			msgPopup.showMsg('设置成功');
+			$setMorePopup.trigger('closeDialog');
+		}
+	});
+
+	return function(name, form, tagsData){
+		$name = name;
+		$form = form;
+
+		tag( $.parseJSON(tagsData) );
+	};
 });
 
 require(['../../config'], function(config){
 	var r = require.config(config.requireConfig);
 	r(['jquery', 'global', 'socket'
-		, config.dataSource.skin
-		, 'codeEditor'
-		, 'codeEditorSkin'
+		, config.dataSource.skin, 'codeEditor', 'codeEditorSkin'
 		, 'editorLayout'
 		, 'uiLibPopup'
-		, 'demoImgLibPopup'
+		, config.dataSource.tag
 		, 'setMorePopup'
-		, 'tag', config.dataSource.tag
 		, 'msgPopup'
-		, 'template'], function($, g, socket, skin, code, codeSkin, layout, initUiLib, demoImg, setMore, tag, tagsData, msgPopup){
+		, 'demoImgLibPopup', 'template'
+	], function($, g, socket, skin, code, codeSkin, layout, initUiLib, tagsData, setMore, msgPopup){
 		var $editor = $('#editor')
 			, $form = $editor.find('#editorForm')
 			, $toolbar = $editor.find('.toolbar')
@@ -364,28 +439,9 @@ require(['../../config'], function(config){
 						'</body>' +
 					'</html>';
 			}
-
-			, $setMoreForm = $('#setMoreForm')
-
-			// 各个弹窗
-			, $setMorePopup = $('#setMore').on('click', '#codeSave', function(){
-
-				$setMoreForm.find('#codeId');
-
-				$name.val( $codeName.val() );
-
-				//isEdit = false;
-				// todo 如果 isEdit === true 将代码提交
-			})
-
-			, $codeName = $setMorePopup.find('#codeName')
-
 			, skinList
 			, layoutList
 			;
-
-		tag($.parseJSON(tagsData) );
-		tag.setAdd( $setMorePopup );
 
 		$toolbar.on('click', '#newWin', function(){
 			var  newWin = window.open('').document
@@ -396,8 +452,6 @@ require(['../../config'], function(config){
 			newWin.open();
 			newWin.write( runCode(html.getValue(), css.getValue(), js.getValue(), cssLib, jsLib) );
 			newWin.close();
-		}).on('click', '#set', function(){
-			$setMorePopup.trigger('showDialog');
 		});
 
 		g.mod('$editor', $editor);
@@ -457,28 +511,21 @@ require(['../../config'], function(config){
 
 		$editor.find('label').removeClass('hidden');
 
+		layoutList = layout($editor, html, css, js, function(){
+			skinList.hide();
+		});
+
 		skin = $.parseJSON( skin );
 		skinList = codeSkin(skin.skin, config.requireConfig.baseUrl, [html, css, js], function(){
 			layoutList.hide();
 		});
-		layoutList = layout($editor, html, css, js, function(){
-			skinList.hide();
-		});
-		initUiLib($jsLib, $cssLib);
-
 		skinList.setSkin();
 
-		$('#editorSetMoreRs').on('load', function(){
-			var res = this.contentDocument.body.innerHTML;
+		initUiLib($jsLib, $cssLib);
 
-			res = $.parseJSON( res );
+		setMore($name, $form, tagsData);
 
-			if( location.search !== '?id=' + res.Id ){
-				location.search = '?id=' + res.Id
-			}
-		});
-
-		$(window).bind('beforeunload', function(){
+		$(window).on('beforeunload', function(){
 			if( isEdit ){
 				return '确定不保存您幸苦写下的代码么？';
 			}

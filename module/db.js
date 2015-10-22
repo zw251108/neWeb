@@ -11,7 +11,7 @@ var mysql = require('mysql')
 
 	, db = mysql.createConnection( config.db )
 	, DBError = function(msg){
-		this.message = msg;
+		this.message = '[DB Error]' + msg;
 	}
 	, SQL = {
 		select: 'select :column from :table :where :order :group'

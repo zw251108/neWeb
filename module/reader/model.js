@@ -6,11 +6,13 @@ var db  = require('../db.js')
 	, SQL = {
 		readerByPage: 'select * from reader' +
 			' where `show`=1' +
-			' limit :page, :size'
+			' order by last_pub desc limit :page, :size'
 		, readerCount: 'select count(*) as count from reader' +
 			' where `show`=1'
 		, readerIsExist: 'select * from reader where xml_url like :xmlUrl'
 		, readerUpdatePub: 'update reader set last_pub=:lastPub where Id=:id'
+		, readerAdd: 'insert into reader(`status`,`show`,name,xml_url,html_url,tags)' +
+			' select 1,1,:name,:feed,:url,:tags,:status from dual where not exists (select * from reader where xml_url like :feed)'
 
 		, bookmarkByPage: 'select Id,title,url,status,tags,datetime,score from reader_bookmark order by status,Id desc limit :page,:size'
 		, bookmarkCount: 'select count(*) as count from reader_bookmark'
@@ -18,7 +20,7 @@ var db  = require('../db.js')
 		, bookmarkAdd: 'insert into reader_bookmark(url,title,source,tags,datetime,status) select :url,:title,:source,:tags,now(),:status from dual where not exists (select * from reader_bookmark where url like :url)'
 		, bookmarkUpdateRead: 'update reader_bookmark set status=2,title=:title,tags=:tags,score=score+:score where Id=:id'
 
-		, favoriteByPage: 'select * from reader_bookmark where status=2 order by score dsc,datetime desc'
+		, favoriteByPage: 'select * from reader_bookmark where status=2 order by score desc,datetime desc'
 		, favoriteCount: 'select count(*) as count from reader_bookmark where status=2'
 
 	}
@@ -70,9 +72,21 @@ var db  = require('../db.js')
 				}
 			});
 		}
+		, addReader: function(data){
+			return db.handle({
+				sql: SQL.readerAdd
+				, data: data
+			});
+		}
 
 		, getBookmarkByPage: function(page, size){
-
+			return db.handle({
+				sql: SQL.bookmarkByPage
+				, data: {
+					page: (page -1) * size
+					, size: size
+				}
+			});
 		}
 		, countBookmark: function(){
 			return db.handle({
@@ -90,6 +104,9 @@ var db  = require('../db.js')
 		, isExistBookmark: function(url){
 			return db.handle({
 				sql: SQL.bookmarkIsExist
+				, data: {
+					url: url
+				}
 			//}).then(function(rs){
 			//	var isExist = false;
 			//
@@ -103,7 +120,7 @@ var db  = require('../db.js')
 
 		, addBookmark: function(data){
 			return db.handle({
-				sql: SQL
+				sql: SQL.bookmarkAdd
 				, data: data
 			});
 		}

@@ -224,21 +224,21 @@ index.push({
 /**
  * 加载模块
  * */
-require('./module/blog/controller.js'); // 加载模块 blog
+require('./module/blog/controller.js'       );  // 加载模块 blog
 
-require('./module/document/controller.js'); // 加载模块 document
+require('./module/document/controller.js'   );  // 加载模块 document
 
-require('./module/editor/controller.js');   // 加载模块 editor
+require('./module/editor/controller.js'     );  // 加载模块 editor
 
-require('./module/bower/controller.js');    // 加载模块 bower
+require('./module/bower/controller.js'      );  // 加载模块 bower
 
-require('./module/reader.js');      // 加载模块 reader
+require('./module/reader/controller.js'     );  // 加载模块 reader
 
-require('./module/tag/controller.js');  // 加载模块 tag 功能
+require('./module/tag/controller.js'        );  // 加载模块 tag 功能
 
-require('./module/image.js');       // 加载模块 image
+//require('./module/image.js');       // 加载模块 image
 
-require('./module/basedata/controller.js'); // 加载模块 基础数据
+require('./module/basedata/controller.js'   );  // 加载模块 基础数据
 
 //----- 后台管理 -----
 require('./admin/index.js');

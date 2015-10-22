@@ -16,8 +16,13 @@ var web         = require('../web.js')
 	, EditorError   = require('./error.js')
 
 	// 外部数据模块引用
-	, LibModel = require('../bower/model.js')
-	, ImageModel = require('../image/model.js')
+	, LibModel      = require('../bower/model.js')
+
+	, Image         = require('../image/image.js')
+	, ImageModel    = require('../image/model.js')
+	, ImageError    = require('../image/error.js')
+
+	, Promise = require('promise')
 
 	, EDITOR_DEMO_ALBUM_ID = 5
 	;
@@ -76,6 +81,125 @@ web.get('/editor/code', function(req, res){
 });
 web.get('/editor/result', function(req, res){
 	res.end();
+});
+
+web.post('/editor/setMore', Image.uploadMiddle.single('preview'), function(req, res){
+	var body = req.body || {}
+		, type = body.type
+		, id = body.id
+		, file = req.file
+		, size
+		, imgData
+		, execute
+		;
+	console.log(req.file);
+	if( id ){
+		if( file ){
+			size = Image.sizeOf( req.file.path );
+			imgData = {
+				src: file.path.replace(/\\/g, '/').replace('public', '..')
+				, type: type === 'preview' ? 2 : 1
+				, height: size.height
+				, width: size.width
+			};
+
+			ImageModel.addImage( imgData ).then(function(rs){
+				if( rs && rs.insertId ){
+					console.log(imgData.src + '同名图片已存在');
+				}
+
+				return Promise.resolve('');
+			});
+
+			execute = Model.updateEditorSetImg({
+				id: body.id
+				, name: body.name
+				, tags: body.tags
+				, preview: imgData.src
+			});
+		}
+		else{
+			execute = Model.updateEditorSet({
+				id: body.id
+				, name: body.name
+				, tags: body.tags
+			});
+		}
+
+		execute = execute.then(function(rs){
+			var result
+				;
+
+			if( rs && rs.changedRows ){
+				result = {
+					success: true
+				};
+			}
+			else{
+				result = Promise.reject( new EditorError('设置失败') );
+			}
+
+			return result;
+		});
+	}
+	else{
+		execute = Promise.reject( new EditorError('缺少参数') );
+	}
+
+	execute.catch(function(e){
+		console.log(e);
+
+		return {
+			success: false
+			, error: ''
+			, msg: e.message
+		};
+	}).then(function(json){
+		res.send( JSON.stringify(json) );
+		res.end();
+	});
+});
+web.post('/editor/demoImgUpload', Image.uploadMiddle.single('image'), function(req, res){
+	var body = req.body || {}
+		, type = body.type
+		, file = req.file
+		, size = Image.sizeOf( req.file.path )
+		, imgData = {
+			src: file.path.replace(/\\/g, '/').replace('public', '..')
+			, type: type === 'demo' ? 5 : 1
+			, height: size.height
+			, width: size.width
+		}
+		;
+
+	ImageModel.addImage( imgData ).then(function(rs){
+		var result;
+
+		if( rs && rs.insertId ){
+			data.Id = rs.insertId;
+
+			result = {
+				success: true
+				, info: data
+			};
+		}
+		else{
+			result = Promise.reject( new ImageError('图片已存在') );
+		}
+
+		return result;
+	}).catch(function(e){
+		console.log( e );
+
+		return {
+			success: false
+			, error: ''
+			, msg: e.message
+		};
+	}).then(function(json){
+		res.send( JSON.stringify(json) );
+		res.end();
+	});
 });
 
 socket.register({

@@ -89,7 +89,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						, title: '阅读 reader'
 						, toolbar: [{
 							type: 'link', id: 'bookmark', icon: 'bookmark', title: '待读文章', href: 'bookmark'}, {
-							type: 'link', id: 'favorite', icon: 'favorite', title: '收藏文章', href: 'favorite'}, {
+							type: 'link', id: 'favorite', icon: 'star', title: '收藏文章', href: 'favorite'}, {
 							type: 'button', id: 'add', icon: 'plus', title: '添加订阅源'}, {
 							type: 'button', id: 'filter', icon: 'filter', title: '过滤'}, {
 							type: 'button', id: 'search', icon: 'search', title: '搜索'
@@ -107,6 +107,9 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						, button: '<button type="button" id="readBookmark" class="btn btn-submit">确定</button>'
 					}]
 				}
+				, footer: {
+					nav: footer('reader')
+				}
 				, script: {
 					main: '../script/module/reader/index'
 					, src: '../script/lib/require.min.js'
@@ -121,8 +124,8 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						id: 'bookmark'
 						, title: '书签 bookmark'
 						, toolbar: [{
-							type: 'link', id: 'rss', icon: 'rss', title: '订阅列表', href: '/'}, {
-							type: 'link', id: 'favorite', icon: 'favorite', title: '收藏文章', href: 'favorite'}, {
+							type: 'link', id: 'rss', icon: 'rss', title: '订阅列表', href: '/reader/'}, {
+							type: 'link', id: 'favorite', icon: 'star', title: '收藏文章', href: 'favorite'}, {
 							type: 'button', id: 'add', icon: 'plus', title: '添加订阅源'}, {
 							type: 'button', id: 'filter', icon: 'filter', title: '过滤'}, {
 							type: 'button', id: 'search', icon: 'search', title: '搜索'
@@ -145,6 +148,9 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						, button: '<button type="button" id="addBookmark" class="btn btn-submit">确定</button>'
 					}]
 				}
+				, footer: {
+					nav: footer('bookmark')
+				}
 				, script: {
 					main: '../script/module/reader/bookmark'
 					, src: '../script/lib/require.min.js'
@@ -159,7 +165,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						id: 'favorite'
 						, title: '收藏文章 favorite'
 						, toolbar: [{
-							type: 'link', id: 'rss', icon: 'rss', title: '订阅列表', href: '/'}, {
+							type: 'link', id: 'rss', icon: 'rss', title: '订阅列表', href: '/reader/'}, {
 							type: 'link', id: 'bookmark', icon: 'bookmark', title: '待读文章', href: 'bookmark'}, {
 							type: 'button', id: 'filter', icon: 'filter', title: '过滤'}, {
 							type: 'button', id: 'search', icon: 'search', title: '搜索'
@@ -168,10 +174,13 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					}
 					, modulePopup: [{
 						id: 'readPopup'
-						, size: normal
+						, size: 'normal'
 						, content: bookmarkReadFormTpl({})
 						, button: '<button type="button" id="readBookmark" class="btn btn-submit">确定</button>'
 					}]
+				}
+				, footer: {
+					nav: footer('star')
 				}
 				, script: {
 					main: '../script/module/reader/favorite'

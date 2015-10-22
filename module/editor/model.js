@@ -13,12 +13,14 @@ var db      = require('../db.js')
 		, editorCount: 'select count(*) as count from editor where status=1'
 		, editorPage: 'select editor.Id,editor.name,preview,tags,width,height from editor,image where status=1 and editor.preview=image.src order by editor.Id limit :page,:size'
 
-		, codeById: 'select Id,name,tags,css_lib,js_lib,html,css,js from editor where Id=:id'
+		, codeById: 'select editor.Id,editor.name,tags,css_lib,js_lib,html,css,js,preview,width,height from editor,image where editor.Id=:id and editor.preview=image.src'
 		, codeByName: 'select Id,name,tags,css_lib,js_lib,html,css,js from editor where name=:name'
 
 		, codeAdd: 'insert into editor(status,html,css,js,css_lib,js_lib,name,preview,create_time) values(1,:html,:css,:js,:cssLib,:jsLib,:name,\'../image/default/no-pic.png\',now())'
 		, codeUpdate: 'update editor set name=:name,html=:html,css=:css,js=:js,css_lib=:cssLib,js_lib=:jsLib where Id=:id'
-		, codeSetMore: 'update editor set name=:name,tags=:tags,preview=:preview where Id=:id'
+		// todo 设置 UI 组件
+		, codeSetMore: 'update editor set name=:name,tags=:tags where Id=:id'
+		, codeSetMoreImg: 'update editor set name=:name,tags=:tags,preview=:preview where Id=:id'
 	}
 	, Model = {
 		getEditorAll: function(){
@@ -83,6 +85,18 @@ var db      = require('../db.js')
 		, updateEditor: function(data){
 			return db.handle({
 				sql: SQL.codeUpdate
+				, data: data
+			});
+		}
+		, updateEditorSet: function(data){
+			return db.handle({
+				sql: SQL.codeSetMore
+				, data: data
+			});
+		}
+		, updateEditorSetImg: function(data){
+			return db.handle({
+				sql: SQL.codeSetMoreImg
 				, data: data
 			});
 		}

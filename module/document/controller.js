@@ -15,6 +15,8 @@ var web         = require('../web.js')
 	, Admin = require('./admin.view.js')
 	, DocumentError = require('./error.js')
 
+	, Promise = require('promise')
+
 	, DOCUMENT_ID = 1
 	;
 

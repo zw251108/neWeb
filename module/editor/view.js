@@ -68,7 +68,9 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					'>label.label[for=codeName]{请输入名称}' +
 					'+input#codeName.input[type=text name=name value=%name% placeholder=请输入名称 data-validator=title]' +
 				'^div.formGroup' +
-					'>label.label[for=preview]{请添加预览图片}' +
+					'>div#editorPreview.editor_preview' +
+						'>img[src=%preview% width=%width% height=%height% alt=%name%]' +
+					'^label.label[for=preview]{请添加预览图片}' +
 					'+input[type=hidden name=type value=preview]' +
 					'+input#preview.input[type=file name=preview]' +
 				'^' + TagView.tagEditorEmmet +

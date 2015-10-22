@@ -10,6 +10,8 @@ var web         = require('../web.js')
 	, Model = require('./model.js')
 	, Admin = require('./admin.view.js')
 	, DataError = require('./error.js')
+
+	, Promise = require('promise')
 	;
 
 web.get('/admin/province', function(req, res){

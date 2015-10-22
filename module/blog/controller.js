@@ -15,6 +15,8 @@ var web         = require('../web.js')
 	, Admin = require('./admin.view.js')
 	//, Handler = require('./handler.js')(data)
 	, BlogError = require('./error.js')
+
+	, Promise = require('promise')
 	;
 
 
