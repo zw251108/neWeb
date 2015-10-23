@@ -24,7 +24,9 @@ var web         = require('../web.js')
 
 	, Promise = require('promise')
 
+	, DEFAULT_ALBUM_ID = 1
 	, EDITOR_DEMO_ALBUM_ID = 5
+	, EDITOR_PREVIEW_ALBUM_ID = 2
 	;
 
 // 注册首页 metro 模块
@@ -136,7 +138,7 @@ web.post('/editor/setMore', Image.uploadMiddle.single('preview'), function(req, 
 			size = Image.sizeOf( req.file.path );
 			imgData = {
 				src: file.path.replace(/\\/g, '/').replace('public', '..')
-				, type: type === 'preview' ? 2 : 1
+				, type: type === 'preview' ? EDITOR_PREVIEW_ALBUM_ID : DEFAULT_ALBUM_ID
 				, height: size.height
 				, width: size.width
 			};
@@ -204,7 +206,7 @@ web.post('/editor/demoImgUpload', Image.uploadMiddle.single('image'), function(r
 		, size = Image.sizeOf( req.file.path )
 		, imgData = {
 			src: file.path.replace(/\\/g, '/').replace('public', '..')
-			, type: type === 'demo' ? 5 : 1
+			, type: type === 'demo' ? EDITOR_DEMO_ALBUM_ID : DEFAULT_ALBUM_ID
 			, height: size.height
 			, width: size.width
 		}
