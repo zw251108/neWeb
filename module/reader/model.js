@@ -12,7 +12,14 @@ var db  = require('../db.js')
 		, readerIsExist: 'select * from reader where xml_url like :xmlUrl'
 		, readerUpdatePub: 'update reader set last_pub=:lastPub where Id=:id'
 		, readerAdd: 'insert into reader(`status`,`show`,name,xml_url,html_url,tags)' +
-			' select 1,1,:name,:feed,:url,:tags,:status from dual where not exists (select * from reader where xml_url like :feed)'
+			' select 1,1,:name,:feed,:url,:tags from dual where not exists (select * from reader where xml_url like :feed)'
+		, readerSearchName: 'select * from reader' +
+			' where name like :keyword' +
+				' and `show`=1' +
+			' order by last_pub desc limit :page, :size'
+		, readerSearchNameCount: 'select count(*) as count from reader' +
+			' where name like :keyword' +
+				' and `show`=1'
 
 		, bookmarkByPage: 'select Id,title,url,status,tags,datetime,score from reader_bookmark order by status,Id desc limit :page,:size'
 		, bookmarkCount: 'select count(*) as count from reader_bookmark'
@@ -65,6 +72,42 @@ var db  = require('../db.js')
 				return isExist;
 			});
 		}
+		, searchReaderByName: function(keyword, page, size){
+			return db.handle({
+				sql: SQL.readerSearchName
+				, data: {
+					keyword: '%'+ keyword +'%'
+					, page: (page -1) * size
+					, size: size
+				}
+			});
+		}
+		, countSearchReaderByName: function(keyword){
+			return db.handle({
+				sql: SQL.readerSearchNameCount
+				, data: {
+					keyword: '%'+ keyword +'%'
+				}
+			}).then(function(rs){
+				var result
+					;
+
+				if( rs && rs.length ){
+					result = +rs[0].count;
+				}
+				else{
+					result = 0
+				}
+
+				return result;
+			});
+		}
+		, addReader: function(data){
+			return db.handle({
+				sql: SQL.readerAdd
+				, data: data
+			});
+		}
 		, updateReaderPubById: function(lastPub, id){
 			return db.handle({
 				sql: SQL.readerUpdatePub
@@ -72,12 +115,6 @@ var db  = require('../db.js')
 					lastPub: lastPub
 					, id: id
 				}
-			});
-		}
-		, addReader: function(data){
-			return db.handle({
-				sql: SQL.readerAdd
-				, data: data
 			});
 		}
 
@@ -146,7 +183,7 @@ var db  = require('../db.js')
 					result = 0
 				}
 
-				return result
+				return result;
 			});
 		}
 		, addBookmark: function(data){

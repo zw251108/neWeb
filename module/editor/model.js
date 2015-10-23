@@ -8,10 +8,24 @@ var db      = require('../db.js')
 	, EditorError = require('./error.js')
 
 	, SQL = {
-		editor: 'select editor.Id,editor.name,preview,tags,width,height from editor,image where status=1 and editor.preview=image.src order by editor.Id'
+		editor: 'select editor.Id,editor.name,preview,tags,width,height from editor,image' +
+			' where' +
+			' status=1 and' +
+			' editor.preview=image.src order by editor.Id'
 
-		, editorCount: 'select count(*) as count from editor where status=1'
-		, editorPage: 'select editor.Id,editor.name,preview,tags,width,height from editor,image where status=1 and editor.preview=image.src order by editor.Id limit :page,:size'
+		, editorPage: 'select editor.Id,editor.name,preview,tags,width,height from editor,image' +
+			' where' +
+			' status=1 and' +
+			' editor.preview=image.src order by editor.Id limit :page,:size'
+		, editorCount: 'select count(*) as count from editor' +
+			' where status=1'
+		, editorSearchName: 'select editor.Id,editor.name,preview,tags,width,height from editor,image' +
+			' where editor.name like :keyword' +
+			' and status=1' +
+			' and editor.preview=image.src order by editor.Id limit :page,:size'
+		, editorSearchNameCount: 'select count(*) as count from editor' +
+			' where name like :keyword' +
+			' and status=1'
 
 		, codeById: 'select editor.Id,editor.name,tags,css_lib,js_lib,html,css,js,preview,width,height from editor,image where editor.Id=:id and editor.preview=image.src'
 		, codeByName: 'select Id,name,tags,css_lib,js_lib,html,css,js from editor where name=:name'
@@ -73,6 +87,37 @@ var db      = require('../db.js')
 
 				return count;
 			});
+		}
+
+		, searchEditorByName: function(keyword, page, size){
+			return db.handle({
+				sql: SQL.editorSearchName
+				, data: {
+					keyword: '%'+ keyword +'%'
+					, page: (page -1) * size
+					, size: size
+				}
+			});
+		}
+		, countSearchEditorByName: function(keyword){
+			return db.handle({
+				sql: SQL.editorSearchNameCount
+				, data: {
+					keyword: '%'+ keyword + '%'
+				}
+			}).then(function(rs){
+				var result
+					;
+
+				if( rs && rs.length ){
+					result = +rs[0].count;
+				}
+				else{
+					result = 0
+				}
+
+				return result;
+			})
 		}
 
 		, addEditor: function(data){

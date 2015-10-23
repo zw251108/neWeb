@@ -3,7 +3,7 @@
  */
 require(['../../config'], function(config){
 	var r = require.config(config.requireConfig);
-	r(['jquery', 'global', 'socket', 'tag', config.dataSource.tag, 'template',  'layout'], function($, g, socket, tag, tagData){
+	r(['jquery', 'global', 'socket', 'searchBar', 'tag', config.dataSource.tag, 'template',  'layout'], function($, g, socket, searchBar, tag, tagData){
 		var $editor = $('#editor')
 			, $editorContainer = $editor.find('.module_content')
 			, PREVIEW_SIZE = 128
@@ -78,9 +78,32 @@ require(['../../config'], function(config){
 					rowSpace: 10
 				});
 			}
+			, search = location.search
+			, searchObj = {}
+			, i, j
 			;
 
 		layout();
+
+		if( search ){
+			search = search.slice(1);
+			search = search.split(/=|&/);
+
+			for( i = 0, j = search.length; i < j; i = i +2 ){
+				searchObj[search[i]] = search[i+1];
+			}
+		}
+
+		searchBar(function(form){
+			//var $form = $(form)
+			//	, data = $form.serializeJson()
+			//	;
+			//
+			//socket.emit('data', {
+			//	topic: 'editor/search'
+			//	, query: data
+			//});
+		});
 
 		$(window).on({
 			resize: function(){
@@ -105,13 +128,25 @@ require(['../../config'], function(config){
 					}
 
 					socketTimeout = setTimeout(function(){
-						socket.emit('data', {
-							topic: 'editor'
-							, query: {
-								page: ++page
-								, size: PAGE_SIZE
-							}
-						});
+						if( search && searchObj.keyword ){
+							socket.emit('data', {
+								topic: 'editor/search'
+								, query: {
+									keyword: searchObj.keyword
+									, page: ++page
+									, size: PAGE_SIZE
+								}
+							});
+						}
+						else{
+							socket.emit('data', {
+								topic: 'editor'
+								, query: {
+									page: ++page
+									, size: PAGE_SIZE
+								}
+							});
+						}
 						socketTimeout = null;
 					}, 300);
 				}
@@ -120,6 +155,28 @@ require(['../../config'], function(config){
 
 		socket.register({
 			editor: function(data){
+				var content = '';
+
+				data = data.data;
+
+				if( data.length ){
+					content = editorTpl( data ).join('');
+				}
+				else{
+					moreData = true;
+					content = '<article class="article article-block article-block-noMore">沒有更多数据了...</article>';
+				}
+
+				$editorContainer.find('article.article-block').remove().end().append( content );
+
+				if( data.length ){
+					layout();
+				}
+				else{
+					$editorContainer.height( $editorContainer.height() -128);
+				}
+			}
+			, 'editor/search': function(data){
 				var content = '';
 
 				data = data.data;

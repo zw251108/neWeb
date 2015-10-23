@@ -115,7 +115,7 @@ require(['../../config'], function(config){
 			}
 		});
 
-		searchBar(function(form){console.log(123)
+		searchBar(function(form){
 			//var $form = $(form)
 			//	, data = $form.serializeJson()
 			//	;

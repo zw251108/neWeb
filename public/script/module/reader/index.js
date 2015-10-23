@@ -3,7 +3,7 @@
  * */
 require(['../../config'], function(config){
 	var r = require(config.requireConfig);
-	r(['jquery', 'global', 'socket', 'bookmarkRead', 'tag', config.dataSource.tag, 'msgPopup', 'pagination', 'template'], function($, g, socket, bookmarkRead, tag, tagData, msgPopup, pagination){
+	r(['jquery', 'global', 'socket', 'bookmarkRead', 'searchBar', 'tag', config.dataSource.tag, 'msgPopup', 'pagination', 'template'], function($, g, socket, bookmarkRead, searchBar, tag, tagData, msgPopup, pagination){
 		var $reader = $('#reader')
 			, articleTpl = $.template({
 				template: 'li.reader_article.article' +
@@ -80,8 +80,8 @@ require(['../../config'], function(config){
 			})
 			, $readPopup = bookmarkRead($reader, tagData)
 
-			, search = location.search
-			, currPage
+			//, search = location.search
+			//, currPage
 			//, $pagination = $('#pagination').on('click', '.page', function(e){
 			//	var page = +( this.dataset ? this.dataset.page : this.getAttribute('page') );
 			//
@@ -97,20 +97,31 @@ require(['../../config'], function(config){
 			//})
 			;
 
-		if( search ){
-			search = search.split('&');
-			currPage = {};
-			$.each(search, function(i, d){
-				var t = d.split('=');
-				currPage[t[0]] = t[1];
-			});
+		//if( search ){
+		//	search = search.split('&');
+		//	currPage = {};
+		//	$.each(search, function(i, d){
+		//		var t = d.split('=');
+		//		currPage[t[0]] = t[1];
+		//	});
+		//
+		//	search = currPage;
+		//	currPage = +search.page;
+		//}
+		//else{
+		//	currPage = 1;
+		//}
 
-			search = currPage;
-			currPage = +search.page;
-		}
-		else{
-			currPage = 1;
-		}
+		searchBar(function(form){
+			//var $form = $(form)
+			//	, data = $form.serializeJson()
+			//	;
+			//
+			//socket.emit('data', {
+			//	topic: 'reader/bookmark/search'
+			//	, query: data
+			//});
+		});
 
 		$reader.on('click', '.reader_section > a', function(e){
 			e.preventDefault();
@@ -215,12 +226,6 @@ require(['../../config'], function(config){
 					$reader.find('#reader_'+ id).find('ul').html( articleTpl(data).join('') );
 				}
 			}
-			//, 'reader/article': function(data){
-			//	if( 'error' in data ){
-			//		alert(data.msg);
-			//	}
-			//	console.log(data);
-			//}
 			, 'reader/article/bookmark': function(data){
 				var info = data.info || {}
 					, targetId = info.targetId
@@ -238,9 +243,20 @@ require(['../../config'], function(config){
 					//alert( data.msg );
 				}
 			}
-			//, 'reader/artcile/read': function(data){
-			//
-			//}
-		})
+			, 'reader/search': function(data){
+				var count = data.count
+					;
+
+				data = data.data;
+
+				if( count ){
+					$reader.find('.module_content').html( feedTpl(data).join('') );
+					// todo 重置页码
+				}
+				else{
+					// todo 显示未搜索到结果
+				}
+			}
+		});
 	});
 });

@@ -48,21 +48,60 @@ web.get('/reader/', function(req, res){
 	var query = req.query || {}
 		, page = query.page || 1
 		, size = query.size || 20
+		, keyword = query.keyword || ''
+		, execute
 		;
 
-	Model.getReaderByPage(page, size).then(function(rs){
-		return Model.countReader().then(function(count){
-			return {
-				data: rs
-				, index: page
-				, size: size
-				, count: count
-				, urlCallback: function(index){
-					return '?page='+ index;
-				}
+	if( keyword ){
+		execute = Model.searchReaderByName(keyword, page, size).then(function(rs){
+			var result
+				;
+
+			if( rs && rs.length ){
+				result = Model.countSearchReaderByName(keyword).then(function(count){
+					return {
+						data: rs
+						, index: page
+						, size: size
+						, count: count
+						, urlCallback: function(index){
+							return '?keyword='+ keyword +'&page='+ index;
+						}
+					};
+				});
 			}
+			else{
+				result = {
+					data: []
+					, index: 1
+					, size: size
+					, count: 0
+					, urlCallback: function(index){
+						return '?keyword='+ keyword +'&page='+ index;
+					}
+				};
+			}
+
+			return result;
 		});
-	}).then( View.readerList ).then(function(html){
+	}
+	else{
+		execute = Model.getReaderByPage(page, size).then(function(rs){
+			return Model.countReader().then(function(count){
+				return {
+					data: rs
+					, index: page
+					, size: size
+					, count: count
+					, urlCallback: function(index){
+						return '?page='+ index;
+					}
+				}
+			});
+		});
+	}
+
+	execute.then( View.readerList ).then(function(html){
 		res.send( config.docType.html5 + html );
 		res.end();
 	});
@@ -535,6 +574,57 @@ socket.register({
 		});
 	}
 
+	, 'reader/search': function(socket, data){
+		var send = {
+				topic: 'reader/search'
+			}
+			, query = data.query || {}
+			, keyword = query.keyword
+			, page = query.page || 1
+			, size = query.size || 20
+			, execute
+			;
+
+		if( keyword ){
+			execute = Model.searchReaderByName(keyword, page, size).then(function(rs){
+				var result
+					;
+
+				if( rs && rs.length ){
+					send.data = rs;
+
+					result = Model.countSearchReaderByName(keyword).then(function(count){
+						send.count = count;
+
+						return send;
+					});
+				}
+				else{
+					send.data = [];
+					send.count = 0;
+
+					result = send;
+				}
+
+				return result;
+			});
+		}
+		else{
+			execute = Promise.reject( new ReaderError('缺少参数') );
+		}
+
+		execute.catch(function(e){
+			console.log( e );
+
+			send.error = '';
+			send.msg = e.message;
+
+			return send;
+		}).then(function(send){
+			socket.emit('data', send);
+		});
+	}
+
 	, 'reader/bookmark': function(socket, data){}
 	, 'reader/bookmark/search': function(socket, data){
 		var send = {
@@ -546,6 +636,7 @@ socket.register({
 			, size = query.size || 20
 			, execute
 			;
+
 		if( keyword ){
 			execute = Model.searchBookmarkByTitle(keyword, page, size).then(function(rs){
 				var result

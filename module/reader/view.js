@@ -50,6 +50,18 @@ var getEmmet    = require('../emmet/getEmmet.js')
 			}
 		}
 	})
+	, feedAddFormTpl        = emmetTpl({
+		template: 'form' +
+			'>div.formGroup' +
+				'>label.label[for=name]{请输入网站名称}' +
+				'+input#name.input[type=text name=name placeholder=请输入网站名称 data-validator=name]' +
+			'^div.formGroup' +
+				'>label.label[for=url]{请输入网站链接}' +
+				'+input#url.input[type=text name=url placeholder=请输入网站链接 data-validator=url]' +
+			'^div.formGroup' +
+				'>label.label[for=xml]{请输入订阅链接}' +
+				'+input#feed.input[type=text name=feed placeholder=请输入订阅链接 data-validator=feed]'
+	})
 	, bookmarkAddFormTpl    = emmetTpl({
 		template: 'form' +
 			'>div.formGroup' +
@@ -105,6 +117,10 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						, size: 'normal'
 						, content: bookmarkReadFormTpl({})
 						, button: '<button type="button" id="readBookmark" class="btn btn-submit">确定</button>'
+					}, {
+						id: 'addPopup', size: 'normal'
+						, content: feedAddFormTpl({})
+						, button: '<button type="button" id="addFeed" class="btn btn-submit">确定</button>'
 					}]
 				}
 				, footer: {

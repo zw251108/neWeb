@@ -39,21 +39,59 @@ web.get('/editor/', function(req, res){
 	var query = req.query || {}
 		, page = query.page || 1
 		, size = query.size || 20
+		, keyword = query.keyword || ''
+		, execute
 		;
 
-	Model.getEditorByPage(page, size).then(function(rs){
-		return Model.countEditor().then(function(count){
-			return {
-				data: rs
-				, index: page
-				, size: size
-				, count: count
-				, urlCallback: function(index){
-					return '?page='+ index;
-				}
-			};
+	if( keyword ){
+		execute = Model.searchEditorByName(keyword, page, size).then(function(rs){
+			var result
+				;
+
+			if( rs && rs.length ){
+				result = Model.countSearchEditorByName(keyword).then(function(count){
+					return {
+						data: rs
+						, index: page
+						, size: size
+						, count: count
+						, urlCallback: function(index){
+							return '?keyword='+ keyword +'&page='+ index;
+						}
+					};
+				});
+			}
+			else{
+				result = {
+					data: []
+					, index: 1
+					, size: size
+					, count: 0
+					, urlCallback: function(index){
+						return '?keyword='+ keyword +'&page='+ index;
+					}
+				};
+			}
+
+			return result;
 		});
-	}).then( View.editorList ).then(function(html){
+	}
+	else{
+		execute = Model.getEditorByPage(page, size).then(function(rs){
+			return Model.countEditor().then(function(count){
+				return {
+					data: rs
+					, index: page
+					, size: size
+					, count: count
+					, urlCallback: function(index){
+						return '?page='+ index;
+					}
+				};
+			});
+		});
+	}
+	execute.then( View.editorList ).then(function(html){
 		res.send( config.docType.html5 + html );
 		res.end();
 	});
@@ -214,6 +252,56 @@ socket.register({
 				topic: 'editor'
 				, data: rs
 			});
+		});
+	}
+	, 'editor/search': function(socket, data){
+		var send = {
+				topic: 'editor/search'
+			}
+			, query = data.query || {}
+			, keyword = query.keyword
+			, page = query.page || 1
+			, size = query.size || 20
+			, execute
+			;
+
+		if( keyword ){
+			execute = Model.searchEditorByName(keyword, page, size).then(function(rs){
+				var result
+					;
+
+				if( rs && rs.length ){
+					send.data = rs;
+
+					result = Model.countSearchEditorByName(keyword).then(function(count){
+						send.count = count;
+
+						return send;
+					});
+				}
+				else{
+					send.data = [];
+					send.count = 0;
+
+					result = send;
+				}
+
+				return result;
+			});
+		}
+		else{
+			execute = Promise.reject( new EditorError('缺少参数') );
+		}
+
+		execute.catch(function(e){
+			console.log( e );
+
+			send.error = '';
+			send.msg = e.message;
+
+			return send;
+		}).then(function(send){
+			socket.emit('data', send);
 		});
 	}
 	, 'editor/code': function(socket, data){}

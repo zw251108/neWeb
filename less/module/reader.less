@@ -28,18 +28,58 @@
 			content: "";
 		}
 	}
+
+	.searchBar{
+		display: none;
+		overflow: auto;
+		position: absolute;
+		top: 40px;
+		right: 0;
+		width: 300px;
+
+		margin-bottom: -1px;
+		outline: #fff solid 1px;
+
+		background: #888;
+
+		font-size: 14px;
+
+		.formGroup{
+			overflow: hidden;
+			position: relative;
+			border: 1px solid #c0c0c0;
+			border-radius: 10px;
+			margin: 10px;
+		}
+		.input{
+			display: block;
+			height: 30px;
+			width: 100%;
+			border: 0;
+			border-radius: 0;
+			margin: 0;
+			padding: 0;
+			font-size: 14px;
+			text-indent: 1em;
+
+			.boxSizing(border-box);
+		}
+		.btn{
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			right: 0;
+			border: 0;
+			border-radius: 0;
+			margin: 0;
+
+			&:hover{
+				background-color: #d35400;
+				color: #fff;
+			}
+		}
+	}
 }
-/**
-<li><button id="search" class="icon icon-search" type="button" title="搜索"></button>
-	<span class="arrow hidden" style="position: absolute; z-index: 10; bottom: 1px; right: 15px; height: 0px; width: 0px; border-width: 5px; border-style: solid; border-color: transparent transparent rgb(255, 255, 255); display: inline;"></span>
-	<div class="searchBar" style="">
-	<form id="searchForm"><div class="formGroup" style="
-
-"><input class="input" type="text" name="keyword" style="
-"><button class="btn icon icon-search" type="submit" style="
-"></button></div></form></div></li>
-*/
-
 .module-bookmark{
 	.arrow {
 		position: absolute;
