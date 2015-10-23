@@ -338,7 +338,7 @@ define('setMorePopup', ['jquery', 'socket', 'msgPopup', 'tag', 'template'], func
 					;
 				if( reader ){
 					reader.onload = function(e){
-						$editorPreview.attr('src', e.target.result);
+						$editorPreview.find('img').removeAttr('width').removeAttr('height').attr('src', e.target.result);
 					};
 
 					files = e.target.files || e.dataTransfer.files;

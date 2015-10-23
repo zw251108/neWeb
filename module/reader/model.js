@@ -19,6 +19,8 @@ var db  = require('../db.js')
 		, bookmarkIsExist: 'select * from reader_bookmark where url like :url'
 		, bookmarkAdd: 'insert into reader_bookmark(url,title,source,tags,datetime,status) select :url,:title,:source,:tags,now(),:status from dual where not exists (select * from reader_bookmark where url like :url)'
 		, bookmarkUpdateRead: 'update reader_bookmark set status=2,title=:title,tags=:tags,score=score+:score where Id=:id'
+		, bookmarkSearchTitle: 'select Id,title,url,status,tags,datetime,score from reader_bookmark where title like :keyword order by status,Id desc limit :page,:size'
+		, bookmarkSearchTitleCount: 'select count(*) as count from reader_bookmark where title like :keyword'
 
 		, favoriteByPage: 'select * from reader_bookmark where status=2 order by score desc,datetime desc'
 		, favoriteCount: 'select count(*) as count from reader_bookmark where status=2'
@@ -117,7 +119,36 @@ var db  = require('../db.js')
 			//	return isExist;
 			})
 		}
+		, searchBookmarkByTitle: function(keyword, page, size){
+			return db.handle({
+				sql: SQL.bookmarkSearchTitle
+				, data: {
+					keyword: '%'+ keyword +'%'
+					, page: (page -1) * size
+					, size: size
+				}
+			});
+		}
+		, countSearchBookmarkByTitle: function(keyword){
+			return db.handle({
+				sql: SQL.bookmarkSearchTitleCount
+				, data: {
+					keyword: '%'+ keyword +'%'
+				}
+			}).then(function(rs){
+				var result
+					;
 
+				if( rs && rs.length ){
+					result = +rs[0].count;
+				}
+				else{
+					result = 0
+				}
+
+				return result
+			});
+		}
 		, addBookmark: function(data){
 			return db.handle({
 				sql: SQL.bookmarkAdd

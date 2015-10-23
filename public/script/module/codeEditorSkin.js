@@ -16,7 +16,7 @@ define(['jquery', 'socket', 'template'], function($, socket){
 
 				$skinList.slideToggle().prev().toggle();
 			}
-			, setSkin: function(e, skin){console.log(skin);
+			, setSkin: function(e, skin){
 
 				beforeCallback && beforeCallback();
 

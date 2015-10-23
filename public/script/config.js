@@ -23,6 +23,7 @@ define({
 
 			, login: 'module/login'
 
+			, searchBar: 'module/searchBar'
 			, codeEditor: 'module/codeEditor'
 			, codeEditorSkin: 'module/codeEditorSkin'
 

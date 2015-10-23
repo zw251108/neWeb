@@ -4,29 +4,7 @@
 
 define('bookmarkAdd', ['jquery', 'global', 'socket', 'msgPopup', 'template'], function($, g, socket, msgPopup){
 	var $bookmark
-		, articleTpl = $.template({
-			template: 'article#readerArt%Id%.article.reader_article[data-id=%Id%]>a[href=%url% title=%url% target=_blank]>h3.article_title{%title%}^hr+a.icon.icon-checkbox%readStatus%[href=read title=%readTitle%]{%readText%}+time.article_date[pubdate=pubdate datetime=%datetime%]{%datetime%}+div.tagsArea{%tags%}'
-			, filter: {
-				title: function(d){
-					return d.title || d.url;
-				}
-				, readStatus: function(d){
-					return +d.status > 1 ? '-checked' : '';
-				}
-				, readTitle: function(d){
-					return +d.status > 1 ? '已读' : '未读';
-				}
-				, readText: function(d){
-					return +d.status > 1 ? '已读过' : '读过';
-				}
-				, tags: function(d){
-					return d.tags ? '<span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">'+ d.tags.split(',').join('</span><span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">') +'</span>' : '';
-				}
-				, datetime: function(){
-					return g.datetime();
-				}
-			}
-		})
+		, articleTpl
 		, $addPopup = $('#addPopup').on('click', '#addBookmark', function(){
 
 			if( $addUrl.val() ){
@@ -63,8 +41,10 @@ define('bookmarkAdd', ['jquery', 'global', 'socket', 'msgPopup', 'template'], fu
 		}
 	});
 
-	return function($bm){
+	return function($bm, tpl){
 		$bookmark = $bm;
+
+		articleTpl = tpl;
 
 		return $addPopup;
 	}
@@ -72,8 +52,31 @@ define('bookmarkAdd', ['jquery', 'global', 'socket', 'msgPopup', 'template'], fu
 
 require(['../../config'], function(config){
 	var r = require(config.requireConfig);
-	r(['jquery', 'global', 'socket', 'bookmarkAdd', 'bookmarkRead', config.dataSource.tag, 'template'], function($, g, socket, bookmarkAdd, bookmarkRead, tagsData){
-		var $bookmark = $('#bookmark').on('click', '.icon-checkbox', function(e){
+	r(['jquery', 'global', 'socket', 'bookmarkAdd', 'bookmarkRead', 'searchBar', config.dataSource.tag, 'template'], function($, g, socket, bookmarkAdd, bookmarkRead, searchBar, tagsData){
+		var articleTpl = $.template({
+				template: 'article#readerArt%Id%.article.reader_article[data-id=%Id%]>a[href=%url% title=%url% target=_blank]>h3.article_title{%title%}^hr+a.icon.icon-checkbox%readStatus%[href=read title=%readTitle%]{%readText%}+time.article_date[pubdate=pubdate datetime=%datetime%]{%datetime%}+div.tagsArea{%tags%}'
+				, filter: {
+					title: function(d){
+						return d.title || d.url;
+					}
+					, readStatus: function(d){
+						return +d.status > 1 ? '-checked' : '';
+					}
+					, readTitle: function(d){
+						return +d.status > 1 ? '已读' : '未读';
+					}
+					, readText: function(d){
+						return +d.status > 1 ? '已读过' : '读过';
+					}
+					, tags: function(d){
+						return d.tags ? '<span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">'+ d.tags.split(',').join('</span><span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">') +'</span>' : '';
+					}
+					, datetime: function(){
+						return g.datetime();
+					}
+				}
+			})
+			, $bookmark = $('#bookmark').on('click', '.icon-checkbox', function(e){
 				e.preventDefault();
 
 				var $that = $(this)
@@ -89,12 +92,38 @@ require(['../../config'], function(config){
 
 				$readPopup.trigger('showDialog');
 			})
-			, $addPopup = bookmarkAdd( $bookmark )
+			, $addPopup = bookmarkAdd( $bookmark, articleTpl)
 			, $readPopup = bookmarkRead($bookmark, tagsData)
 			;
 
 		$('#add').on('click', function(){
 			$addPopup.trigger('showDialog');
+		});
+
+		socket.register('reader/bookmark/search', function(data){
+			var count = data.count
+				;
+
+			data = data.data;
+
+			if( count ){
+				$bookmark.find('.module_content').html( articleTpl(data).join('') );
+				// todo 重置页码
+			}
+			else{
+				// todo 显示未搜索到结果
+			}
+		});
+
+		searchBar(function(form){console.log(123)
+			//var $form = $(form)
+			//	, data = $form.serializeJson()
+			//	;
+			//
+			//socket.emit('data', {
+			//	topic: 'reader/bookmark/search'
+			//	, query: data
+			//});
 		});
 	});
 });

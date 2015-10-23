@@ -71,21 +71,60 @@ web.get('/reader/bookmark', function(req, res){
 	var query = req.query || {}
 		, page = query.page || 1
 		, size = query.size || 20
+		, keyword = query.keyword || ''
+		, execute
 		;
 
-	Model.getBookmarkByPage(page, size).then(function(rs){
-		return Model.countBookmark().then(function(count){
-			return {
-				data: rs
-				, index: page
-				, size: size
-				, count: count
-				, urlCallback: function(index){
-					return '?page='+ index;
-				}
-			};
+	if( keyword ){
+		execute = Model.searchBookmarkByTitle(keyword, page, size).then(function(rs){
+			var result
+				;
+
+			if( rs && rs.length ){
+				result = Model.countSearchBookmarkByTitle(keyword).then(function(count){
+					return {
+						data: rs
+						, index: page
+						, size: size
+						, count: count
+						, urlCallback: function(index){
+							return '?keyword='+ keyword +'&page='+ index;
+						}
+					};
+				});
+			}
+			else{
+				result = {
+					data: []
+					, index: 1
+					, size: size
+					, count: 0
+					, urlCallback: function(index){
+						return '?keyword='+ keyword +'&page='+ index;
+					}
+				};
+			}
+
+			return result;
 		});
-	}).then( View.bookmarkList ).then(function(html){
+	}
+	else{
+		execute = Model.getBookmarkByPage(page, size).then(function(rs){
+			return Model.countBookmark().then(function(count){
+				return {
+					data: rs
+					, index: page
+					, size: size
+					, count: count
+					, urlCallback: function(index){
+						return '?page='+ index;
+					}
+				};
+			});
+		})
+	}
+
+	execute.then( View.bookmarkList ).then(function(html){
 		res.send( config.docType.html5 + html );
 		res.end();
 	});
@@ -415,7 +454,8 @@ socket.register({
 				// 判断数据库是否已存在
 				execute = Model.isExistBookmark(url).then(function(rs){
 					var source
-						, result;
+						, result
+						;
 
 					if( rs && rs.length ){  // 已存在
 						console.log('url ', url, '已存在');
@@ -496,6 +536,55 @@ socket.register({
 	}
 
 	, 'reader/bookmark': function(socket, data){}
+	, 'reader/bookmark/search': function(socket, data){
+		var send = {
+				topic: 'reader/bookmark/search'
+			}
+			, query = data.query || {}
+			, keyword = query.keyword
+			, page = query.page || 1
+			, size = query.size || 20
+			, execute
+			;
+		if( keyword ){
+			execute = Model.searchBookmarkByTitle(keyword, page, size).then(function(rs){
+				var result
+					;
+
+				if( rs && rs.length ){
+					send.data = rs;
+
+					result = Model.countSearchBookmarkByTitle(keyword).then(function(count){
+						send.count = count;
+
+						return send;
+					});
+				}
+				else{
+					send.data = [];
+					send.count = 0;
+
+					result = send;
+				}
+
+				return result;
+			});
+		}
+		else{
+			execute = Promise.reject( new ReaderError('缺少参数') );
+		}
+
+		execute.catch(function(e){
+			console.log( e );
+
+			send.error = '';
+			send.msg = e.message;
+
+			return send;
+		}).then(function(send){
+			socket.emit('data', send);
+		});
+	}
 	, 'reader/bookmark/add': function(socket, data){
 		var send = {
 				topic: 'reader/bookmark/add'
@@ -515,7 +604,7 @@ socket.register({
 				}
 				else{
 					// todo
-					result = Reader.crawler( url ).then( Reader.handleArticle ).then(function(rs){
+					result = Reader.crawler( url ).then( Reader.handleArticle ).then(function(data){
 						var result
 							;
 
