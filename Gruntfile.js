@@ -466,13 +466,13 @@ module.exports = function(grunt){
 					, src: ['admin/*']
 				}, {
 					dest: '../destiny_build/zw150026/module/', expand: true, flatten: true, filter: 'isFile'
-					, src: ['module/*']
+					, src: ['module/*', 'module/*/*.js']
 				}, {
 					dest: '../destiny_build/zw150026/public/font/', expand: true, flatten: true, filter: 'isFile'
 					, src: ['public/font/*']
 				}, {
 					dest: '../destiny_build/zw150026/public/image/', expand: true, flatten: true, filter: 'isFile'
-					, src: ['public/image/*']
+					, src: ['public/image/*', 'public/image/*/*']
 				}, {
 					dest: '../destiny_build/zw150026/public/style/', expand: true, flatten: true, filter: 'isFile'
 					, src: ['public/style/*']
@@ -486,9 +486,9 @@ module.exports = function(grunt){
 					dest: '../destiny_build/zw150026/', expand: true, flatten: false, filter: 'isFile'
 					, src: ['config.js']
 				}, {
-					dest: '../destiny_build/zw150026/', expand: true, flatten: false, filter: 'isFile'
-					, src: ['index.js']
-				}, {
+				//	dest: '../destiny_build/zw150026/', expand: true, flatten: false, filter: 'isFile'
+				//	, src: ['index.js']
+				//}, {
 					dest: '../destiny_build/zw150026/', expand: true, flatten: false, filter: 'isFile'
 					, src: ['bower.json']
 				}, {
