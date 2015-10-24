@@ -168,6 +168,10 @@ module.exports = function(grunt){
 				, 'uglify'
 //				, 'copy'
 			]
+			, destinyBuild: [
+				'less'
+				, 'uglify:destinyBuild'
+			]
 		}
 
 		, htmlmin: {
@@ -390,6 +394,14 @@ module.exports = function(grunt){
 			destiny: {
 				files: jsFiles
 			}
+			, destinyBuild: {
+				files: [{
+					expand:true,
+					cwd:'public/script/',//js目录下
+					src:'*/*.js',//所有js文件
+					dest: '../destiny_build/zw150026/public/script/'//输出到此目录下
+				}]
+			}
 		}
 
 		, copy: {
@@ -447,6 +459,42 @@ module.exports = function(grunt){
 //					dest: 'public/script/lib/kendoUI/styles/textures/', expand: true, flatten: true, filter: 'isFile'
 //					, src: ['bower_components/kendo-ui/styles/web/textures/*']
 //				}]
+			}
+			, destinyBuild: {
+				files: [{
+					dest: '../destiny_build/zw150026/admin/', expand: true, flatten: true, filter: 'isFile'
+					, src: ['admin/*']
+				}, {
+					dest: '../destiny_build/zw150026/module/', expand: true, flatten: true, filter: 'isFile'
+					, src: ['module/*']
+				}, {
+					dest: '../destiny_build/zw150026/public/font/', expand: true, flatten: true, filter: 'isFile'
+					, src: ['public/font/*']
+				}, {
+					dest: '../destiny_build/zw150026/public/image/', expand: true, flatten: true, filter: 'isFile'
+					, src: ['public/image/*']
+				}, {
+					dest: '../destiny_build/zw150026/public/style/', expand: true, flatten: true, filter: 'isFile'
+					, src: ['public/style/*']
+				}, {
+					dest: '../destiny_build/zw150026/public/media/', expand: true, flatten: true, filter: 'isFile'
+					, src: ['public/media/*']
+				}, {
+					dest: '../destiny_build/zw150026/tpl/', expand: true, flatten: true, filter: 'isFile'
+					, src: ['tpl/']
+				}, {
+					dest: '../destiny_build/zw150026/', expand: true, flatten: false, filter: 'isFile'
+					, src: ['config.js']
+				}, {
+					dest: '../destiny_build/zw150026/', expand: true, flatten: false, filter: 'isFile'
+					, src: ['index.js']
+				}, {
+					dest: '../destiny_build/zw150026/', expand: true, flatten: false, filter: 'isFile'
+					, src: ['bower.json']
+				}, {
+					dest: '../destiny_build/zw150026/', expand: true, flatten: false, filter: 'isFile'
+					, src: ['package.json']
+				}]
 			}
 		}
 
@@ -517,6 +565,7 @@ module.exports = function(grunt){
 
 	// 默认任务
 	grunt.registerTask('default', [
-		'concurrent'
+		'concurrent:destiny'
 	]);
+	grunt.registerTask('build', ['concurrent:destinyBuild', 'copy:destinyBuild'])
 };

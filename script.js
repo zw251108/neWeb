@@ -680,12 +680,12 @@ function saveOrUpdate(name, num){
 //	console.log(5)
 //});
 
-var n = Promise.reject('123123')//.catch(function(s){console.log(s, 2); return s;})
-	, m = Promise.resolve('1111')
-	;
-n.then(function(s){console.log(s, 1);return s;}).then(function(s){console.log(s, 2);})
-	.catch(function(s){console.log(s, 3);return s}).then(function(s){console.log(s, 7)}, function(s){console.log(s, 8)});
-m.catch(function(s){console.log(s, 4);}).then(function(s){console.log(s, 5)}, function(s){console.log(s, 6)});
+//var n = Promise.reject('123123')//.catch(function(s){console.log(s, 2); return s;})
+//	, m = Promise.resolve('1111')
+//	;
+//n.then(function(s){console.log(s, 1);return s;}).then(function(s){console.log(s, 2);})
+//	.catch(function(s){console.log(s, 3);return s}).then(function(s){console.log(s, 7)}, function(s){console.log(s, 8)});
+//m.catch(function(s){console.log(s, 4);}).then(function(s){console.log(s, 5)}, function(s){console.log(s, 6)});
 
 //n.then(function(s){
 //	console.log(1)
@@ -705,3 +705,80 @@ m.catch(function(s){console.log(s, 4);}).then(function(s){console.log(s, 5)}, fu
 //}, function(s){console.log(1)
 //	console.log(s);
 //});
+var xlsx = require('node-xlsx')
+	, list = xlsx.parse('./data.xlsx')
+	, i, j
+	, t, data
+	, m, n
+	, temp
+	, tree = []
+	, node, leave
+	, tempObj, tempNode
+	, bigData = []
+	, p, q
+	, r, s
+	;
+for( i = 0, j = list.length; i < j; i++){
+	t = list[i];
+
+	data = t.data;
+
+	tempObj = {
+		name: t.name
+	};
+
+	tree = [];
+	for( m = 0, n = data.length; m < n; m++ ){
+		temp = data[m][0];
+		if( temp ){
+			tree.push({
+				name: temp
+				, s: m
+				, n: 1
+			});
+		}
+		else{
+			tree[tree.length -1].n++;
+		}
+	}
+
+	for( m = 0, n = tree.length; m < n; m++ ){
+		temp = tree[m];
+
+		node = [];
+		for(p = temp.s, q = p +temp.n; p < q; p++){
+			tempNode = data[p][1];
+
+			if( tempNode ){
+				node.push({
+					name: tempNode
+					, s: p
+					, n: 1
+				});
+			}
+			else{
+				node[node.length -1].n++;
+			}
+		}
+
+		for( p = 0, q = node.length; p < q; p++ ){
+			leave = node[p];
+			leave.children = [];
+			for( r = leave.s, s = r +leave.n; r < s; r++ ){
+
+				data[r][2] && leave.children.push(data[r][2]);
+				data[r][3] && leave.children.push(data[r][3]);
+				data[r][4] && leave.children.push(data[r][4]);
+				data[r][5] && leave.children.push(data[r][5]);
+			}
+		}
+
+		temp.children = node;
+	}
+
+	tempObj.children = tree;
+	bigData.push( tempObj );
+
+	//console.log(temp);
+}
+console.log( JSON.stringify( bigData) );

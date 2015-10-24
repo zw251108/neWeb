@@ -200,6 +200,7 @@ web.post('/skin', function(req, res){   // 设置皮肤功能
 index.push({
 	id: 'time'
 	, type: 'metro'
+	, href: '#'
 	, size: 'tiny'
 	, title: '时间 time'
 	, info: '<div class="watch_wrap hidden" id="watch">' +
