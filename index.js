@@ -246,7 +246,9 @@ require('./admin/index.js');
 
 
 //----- Web 服务器 -----
-webServer = web.listen( CONFIG.web.port );
+webServer = web.listen( CONFIG.web.port
+	//, CONFIG.web.ip
+);
 console.log('Web Server is listening...');
 
 

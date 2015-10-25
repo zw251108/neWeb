@@ -398,7 +398,7 @@ module.exports = function(grunt){
 				files: [{
 					expand:true,
 					cwd:'public/script/',//js目录下
-					src:'*/*.js',//所有js文件
+					src: ['**/*.js'],//所有js文件
 					dest: '../destiny_build/zw150026/public/script/'//输出到此目录下
 				}]
 			}
@@ -465,35 +465,44 @@ module.exports = function(grunt){
 					dest: '../destiny_build/zw150026/admin/', expand: true, flatten: true, filter: 'isFile'
 					, src: ['admin/*']
 				}, {
-					dest: '../destiny_build/zw150026/module/', expand: true, flatten: true, filter: 'isFile'
-					, src: ['module/*', 'module/*/*.js']
+					dest: '../destiny_build/zw150026/module/', expand: true, filter: 'isFile'
+					, cwd: 'module/', src: ['**']
 				}, {
 					dest: '../destiny_build/zw150026/public/font/', expand: true, flatten: true, filter: 'isFile'
 					, src: ['public/font/*']
 				}, {
-					dest: '../destiny_build/zw150026/public/image/', expand: true, flatten: true, filter: 'isFile'
-					, src: ['public/image/*', 'public/image/*/*']
+					dest: '../destiny_build/zw150026/public/image/', expand: true, filter: 'isFile'
+					, cwd: 'public/image/', src: ['**']
 				}, {
 					dest: '../destiny_build/zw150026/public/style/', expand: true, flatten: true, filter: 'isFile'
 					, src: ['public/style/*']
 				}, {
+					dest: '../destiny_build/zw150026/public/script/plugin/codeMirror/lib/', expand: true, flatten: true, filter: 'isFile'
+					, src: ['public/script/plugin/codeMirror/lib/codemirror.css']
+				}, {
+					dest: '../destiny_build/zw150026/public/script/plugin/codeMirror/addon/fold/', expand: true, flatten: true, filter: 'isFile'
+					, src: ['public/script/plugin/codeMirror/addon/fold/*.css']
+				}, {
+					dest: '../destiny_build/zw150026/public/script/plugin/codeMirror/theme/', expand: true, flatten: true, filter: 'isFile'
+					, src: ['public/script/plugin/codeMirror/theme/*.css']
+				}, {
 					dest: '../destiny_build/zw150026/public/media/', expand: true, flatten: true, filter: 'isFile'
 					, src: ['public/media/*']
 				}, {
-					dest: '../destiny_build/zw150026/tpl/', expand: true, flatten: true, filter: 'isFile'
-					, src: ['tpl/']
+					dest: '../destiny_build/zw150026/tpl/', expand: true, filter: 'isFile'
+					, cwd: 'tpl/', src: ['**']
 				}, {
-					dest: '../destiny_build/zw150026/', expand: true, flatten: false, filter: 'isFile'
-					, src: ['config.js']
-				}, {
+				//	dest: '../destiny_build/zw150026/', expand: true, flatten: false, filter: 'isFile'
+				//	, src: ['config.js']
+				//}, {
 				//	dest: '../destiny_build/zw150026/', expand: true, flatten: false, filter: 'isFile'
 				//	, src: ['index.js']
 				//}, {
-					dest: '../destiny_build/zw150026/', expand: true, flatten: false, filter: 'isFile'
-					, src: ['bower.json']
-				}, {
-					dest: '../destiny_build/zw150026/', expand: true, flatten: false, filter: 'isFile'
-					, src: ['package.json']
+				//	dest: '../destiny_build/zw150026/', expand: true, flatten: false, filter: 'isFile'
+				//	, src: ['bower.json']
+				//}, {
+				//	dest: '../destiny_build/zw150026/', expand: true, flatten: false, filter: 'isFile'
+				//	, src: ['package.json']
 				}]
 			}
 		}
