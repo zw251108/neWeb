@@ -5,6 +5,8 @@
  * */
 var CONFIG = {
 	web: {
+		//ip: '127.0.0.1'
+		//,
 		port: 9001
 		, uploadDir: './public/image/'
 		, cookieSecret: 'secret'
