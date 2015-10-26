@@ -5,7 +5,7 @@ define({
 	requireConfig: {
 		paths: {
 			jquery: 'lib/jquery.min'
-			, text: '../lib/requirejs-text/text'
+			, text: 'lib/text'
 			, css: 'lib/css'
 			, d3: 'lib/d3.min'
 

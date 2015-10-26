@@ -169,7 +169,7 @@ web.get('/skin', function(req, res){
 		user.skin = 'default';
 	}
 
-	user.skin = skin = user.skin || 'defatul';
+	user.skin = skin = user.skin || 'default';
 
 	res.send( JSON.stringify({
 		success: true

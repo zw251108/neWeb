@@ -315,6 +315,21 @@ module.exports = function(grunt){
 ////					, 'public/script/lib/qunit/qunit.css': ['bower_components/qunit/qunit/qunit.css']
 //				}
 			}
+			, destinyBuild: {
+				files: [{
+					dest: '../destiny_build/zw150026/public/style/', expand: true
+					, cwd: 'public/style/', src: ['*.css']
+				}, {
+					dest: '../destiny_build/zw150026/public/script/plugin/codeMirror/lib/', expand: true
+					, cwd: 'public/script/plugin/codeMirror/lib/', src: ['*.css']
+				}, {
+					dest: '../destiny_build/zw150026/public/script/plugin/codeMirror/addon/fold/', expand: true
+					, cwd: 'public/script/plugin/codeMirror/addon/fold/', src: ['*.css']
+				}, {
+					dest: '../destiny_build/zw150026/public/script/plugin/codeMirror/theme/', expand: true
+					, cwd: 'public/script/plugin/codeMirror/theme/', src: ['*.css']
+				}]
+			}
 		}
 		, less: {
 			destiny: {
@@ -474,18 +489,6 @@ module.exports = function(grunt){
 					dest: '../destiny_build/zw150026/public/image/', expand: true, filter: 'isFile'
 					, cwd: 'public/image/', src: ['**']
 				}, {
-					dest: '../destiny_build/zw150026/public/style/', expand: true, flatten: true, filter: 'isFile'
-					, src: ['public/style/*']
-				}, {
-					dest: '../destiny_build/zw150026/public/script/plugin/codeMirror/lib/', expand: true, flatten: true, filter: 'isFile'
-					, src: ['public/script/plugin/codeMirror/lib/codemirror.css']
-				}, {
-					dest: '../destiny_build/zw150026/public/script/plugin/codeMirror/addon/fold/', expand: true, flatten: true, filter: 'isFile'
-					, src: ['public/script/plugin/codeMirror/addon/fold/*.css']
-				}, {
-					dest: '../destiny_build/zw150026/public/script/plugin/codeMirror/theme/', expand: true, flatten: true, filter: 'isFile'
-					, src: ['public/script/plugin/codeMirror/theme/*.css']
-				}, {
 					dest: '../destiny_build/zw150026/public/media/', expand: true, flatten: true, filter: 'isFile'
 					, src: ['public/media/*']
 				}, {
@@ -576,5 +579,5 @@ module.exports = function(grunt){
 	grunt.registerTask('default', [
 		'concurrent:destiny'
 	]);
-	grunt.registerTask('build', ['concurrent:destinyBuild', 'copy:destinyBuild'])
+	grunt.registerTask('build', ['concurrent:destinyBuild', 'cssmin:destinyBuild', 'copy:destinyBuild'])
 };

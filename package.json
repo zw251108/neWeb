@@ -4,7 +4,7 @@
   "description": "新的个人网站，基于 Node.js",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
   "author": "ZwB",
   "license": "BSD-2-Clause",

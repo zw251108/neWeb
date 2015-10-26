@@ -2,10 +2,14 @@
  * @module  socket
  * */
 //----- web socket 模块 目前基于 socket.io -----
-define(function(require){
-	var io = require('/socket.io/socket.io.js')
-		, host = location.host
-		, socket = io('http://'+ host)
+define(['/socket.io/socket.io.js'], function(io){
+	var
+		//io = require('/socket.io/socket.io.js')
+		//,
+		origin = location.origin
+		, socket = io(origin
+			//+(location.protocol==='http'?':8000':':8443')
+		)
 		, EVENT_LIST = {}
 		, EVENT_INDEX_LIST = []
 		;
