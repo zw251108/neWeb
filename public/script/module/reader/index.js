@@ -75,42 +75,12 @@ require(['../../config'], function(config){
 				}
 			})
 			, $addFeedForm = $addPopup.find('form')
-			, $add = $('#add').on('click', function(){
-				$addPopup.trigger('showDialog');
-			})
 			, $readPopup = bookmarkRead($reader, tagData)
-
-			//, search = location.search
-			//, currPage
-			//, $pagination = $('#pagination').on('click', '.page', function(e){
-			//	var page = +( this.dataset ? this.dataset.page : this.getAttribute('page') );
-			//
-			//	if( page !== currPage ){
-			//		socket.emit('data', {
-			//			topic: 'reader'
-			//			, query: {
-			//				page: page
-			//				, size: g.PAGE_SIZE
-			//			}
-			//		});
-			//	}
-			//})
 			;
 
-		//if( search ){
-		//	search = search.split('&');
-		//	currPage = {};
-		//	$.each(search, function(i, d){
-		//		var t = d.split('=');
-		//		currPage[t[0]] = t[1];
-		//	});
-		//
-		//	search = currPage;
-		//	currPage = +search.page;
-		//}
-		//else{
-		//	currPage = 1;
-		//}
+		$('#add').on('click', function(){
+			$addPopup.trigger('showDialog');
+		});
 
 		searchBar(function(form){
 			//var $form = $(form)
@@ -177,6 +147,7 @@ require(['../../config'], function(config){
 				, $that = $(this)
 				, $parent = $that.parents('.article')
 				;
+
 			!$parent.attr('id') && $parent.attr('id', id);
 
 			$readPopup.triggerHandler('setData', [{
@@ -187,15 +158,6 @@ require(['../../config'], function(config){
 			}]);
 
 			$readPopup.trigger('showDialog');
-
-			//var $that = $(this).toggleClass('icon-checkbox icon-checkbox-checked').parents('.article').find('.article_title').parent();
-			//
-			//socket.emit('data', {
-			//	topic: 'reader/article/bookmark'
-			//	, query: {
-			//		url: $that.attr('href')
-			//	}
-			//});
 		});
 
 		socket.register({
@@ -216,7 +178,6 @@ require(['../../config'], function(config){
 
 				if( 'error' in data ){
 					msgPopup.showMsg( data.msg );
-					//alert(data.msg);
 				}
 				else{
 					data = data.info;
@@ -240,7 +201,6 @@ require(['../../config'], function(config){
 
 				if( 'error' in data ){
 					msgPopup.showMsg( data.msg );
-					//alert( data.msg );
 				}
 			}
 			, 'reader/search': function(data){

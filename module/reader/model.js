@@ -29,8 +29,10 @@ var db  = require('../db.js')
 		, bookmarkSearchTitle: 'select Id,title,url,status,tags,datetime,score from reader_bookmark where title like :keyword order by status,Id desc limit :page,:size'
 		, bookmarkSearchTitleCount: 'select count(*) as count from reader_bookmark where title like :keyword'
 
-		, favoriteByPage: 'select * from reader_bookmark where status=2 order by score desc,datetime desc'
+		, favoriteByPage: 'select * from reader_bookmark where status=2 order by score desc,datetime desc limit :page,:size'
 		, favoriteCount: 'select count(*) as count from reader_bookmark where status=2'
+		, favoriteSearchTitle: 'select Id,title,url,status,tags,datetime,score from reader_bookmark where title like :keyword and status=2 order by status,Id desc limit :page,:size'
+		, favoriteSearchTitleCount: 'select count(*) as count from reader_bookmark where title like :keyword and status=2'
 
 	}
 	, Model = {
@@ -205,11 +207,6 @@ var db  = require('../db.js')
 		}
 
 		, getFavoriteByPage: function(page, size){
-			//var query = req.query || {}
-			//	, page = query.page || 1
-			//	, size = query.size || 20
-			//	;
-
 			return db.handle({
 				sql: SQL.favoriteByPage
 				, data: {
@@ -229,6 +226,36 @@ var db  = require('../db.js')
 				}
 
 				return count;
+			});
+		}
+		, searchFavoriteByTitle: function(keyword, page, size){
+			return db.handle({
+				sql: SQL.favoriteSearchTitle
+				, data: {
+					keyword: '%'+ keyword +'%'
+					, page: (page -1) * size
+					, size: size
+				}
+			});
+		}
+		, countSearchFavoriteByTitle: function(keyword){
+			return db.handle({
+				sql: SQL.favoriteSearchTitleCount
+				, data: {
+					keyword: '%'+ keyword +'%'
+				}
+			}).then(function(rs){
+				var result
+					;
+
+				if( rs && rs.length ){
+					result = +rs[0].count;
+				}
+				else{
+					result = 0
+				}
+
+				return result;
 			});
 		}
 	}

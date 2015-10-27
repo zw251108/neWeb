@@ -12,20 +12,8 @@ define(['jquery', 'global', 'socket', 'tag', 'msgPopup', 'template'], function($
 
 		}).on('click', '#readBookmark', function(){
 
-			var
-				//data = $readForm.serializeArray()
-				//,
-				query = $readForm.serializeJson()
+			var query = $readForm.serializeJson()
 				;
-
-			//$.each(data, function(i, d){
-			//	if( d.name in query ){
-			//		query[d.name] += ','+ d.value;
-			//	}
-			//	else{
-			//		query[d.name] = d.value;
-			//	}
-			//});
 
 			if( query.tags !== '' ){
 				query.id = query.bookmarkId;
@@ -44,9 +32,7 @@ define(['jquery', 'global', 'socket', 'tag', 'msgPopup', 'template'], function($
 				$readPopup.trigger('closeDialog').find('form')[0].reset();
 			}
 			else{
-				// todo 替换为自定义弹窗
 				msgPopup.showMsg('请至少添加一个标签，以方便管理！');
-				//alert('请至少添加一个标签，以方便管理！');
 			}
 		})
 

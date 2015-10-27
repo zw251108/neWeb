@@ -16,33 +16,9 @@ require(['../../config'], function(config){
 
 				}
 			})
-
-			//	$('#addPopup').on('click', '#addData', function(){
-			//	var title = $addPopup.find('#title').val()
-			//		;
-			//	if( title ){
-			//		$.ajax({
-			//			url: 'add'
-			//			, type: 'POST'
-			//			, data: {
-			//				title: title
-			//			}
-			//			, dataType: 'json'
-			//			, success: function(json){
-			//				if( json.success ){
-			//					$blog.find('.module_content').append('<li data-id="'+ json.id +'"><a href="'+ json.id +'">'+ title +'</a><span class="icon icon-edit"></span></li>');
-			//					$addPopup.trigger('closeDialog');
-			//				}
-			//				else{
-			//
-			//				}
-			//			}
-			//		});
-			//	}
-			//})
 			, $add = $('#add').on('click', function(){
 				$addPopup.trigger('showDialog');
 			})
 			;
 	});
-})
+});

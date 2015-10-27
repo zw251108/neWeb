@@ -3,8 +3,8 @@
  * */
 require(['../../config'], function(config){
 	var r = require(config.requireConfig);
-	r(['jquery', 'global', 'socket', 'bookmarkRead', config.dataSource.tag, 'template'], function($, g, socket, bookmarkRead, tagsData){
-		var $favorite = $('#bookmark').on('click', '.icon-checkbox-checked', function(e){
+	r(['jquery', 'global', 'socket', 'bookmarkRead', 'searchBar', config.dataSource.tag, 'template'], function($, g, socket, bookmarkRead, searchBar, tagsData){
+		var $favorite = $('#favorite').on('click', '.icon-checkbox-checked', function(e){
 			e.preventDefault();
 				var $that = $(this)
 					, $parent = $that.parents('.article')
@@ -21,5 +21,16 @@ require(['../../config'], function(config){
 			})
 			, $readPopup = bookmarkRead($favorite, tagsData)
 			;
+
+		searchBar(function(form){
+			//var $form = $(form)
+			//	, data = $form.serializeJson()
+			//	;
+			//
+			//socket.emit('data', {
+			//	topic: 'reader/bookmark/search'
+			//	, query: data
+			//});
+		});
 	});
 });

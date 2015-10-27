@@ -114,7 +114,8 @@ define(['jquery', 'socket'], function($, socket){
 	// 全局事件代理
 	var $container = $('#container')
 		, target
-		;
+		, SCORE_VALUE = ['', '还行', '不错', '好评', '推荐', '完美']
+	;
 	$container.length && $container.on({
 		'webkitAnimationEnd mozAnimationEnd msAnimationEnd animationend': function(){
 			var $t = g.mod('$' + target);
@@ -231,7 +232,10 @@ define(['jquery', 'socket'], function($, socket){
 		target = $t.attr('id');
 
 		$container.removeClass('main-show').addClass('fadeOut');
-	});
+	})
+		.on('click', '.input-score :radio', function(){
+			$(this).parent().nextAll('.score_value').html( SCORE_VALUE[this.value] );
+		});
 
 	g.$container = $container;
 
@@ -282,15 +286,10 @@ define(['jquery', 'socket'], function($, socket){
 			}
 
 			if( scrollTop >= offset.top ){
-				$mainToolbar.css({
-					position: 'fixed'
-					, width: width +'px'
-				});
+				$mainToolbar.addClass('toolbar-fixed').width( width );
 			}
 			else{
-				$mainToolbar.css({
-					position: 'absolute'
-				})
+				$mainToolbar.removeClass('toolbar-fixed');
 			}
 		}
 		, resize: function(){

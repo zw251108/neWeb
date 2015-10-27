@@ -100,6 +100,17 @@ require(['../../config'], function(config){
 			$addPopup.trigger('showDialog');
 		});
 
+		searchBar(function(form){
+			//var $form = $(form)
+			//	, data = $form.serializeJson()
+			//	;
+			//
+			//socket.emit('data', {
+			//	topic: 'reader/bookmark/search'
+			//	, query: data
+			//});
+		});
+
 		socket.register('reader/bookmark/search', function(data){
 			var count = data.count
 				;
@@ -113,17 +124,6 @@ require(['../../config'], function(config){
 			else{
 				// todo 显示未搜索到结果
 			}
-		});
-
-		searchBar(function(form){
-			//var $form = $(form)
-			//	, data = $form.serializeJson()
-			//	;
-			//
-			//socket.emit('data', {
-			//	topic: 'reader/bookmark/search'
-			//	, query: data
-			//});
 		});
 	});
 });

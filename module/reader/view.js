@@ -29,7 +29,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 			'>a[href=%url% title=%title% target=_blank]' +
 				'>h3.article_title{%title%}' +
 			'^hr' +
-			'+a.icon.icon-checkbox%readStatus%[href=reader/read title=%readTitle%]{%readText%}' +
+			'+a.icon.icon-checkbox%readStatus%[href=./read title=%readTitle%]{%readText%}' +
 			'+time.article_date[pubdate=pubdate datetime=%datetime%]{%datetime%}' +
 			'+div.tagsArea{%tags%}'
 		, filter: {
@@ -88,7 +88,8 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						'+label.icon.icon-star[for=star2]' +
 						'+input#star1[type=radio name=score value=1]' +
 						'+label.icon.icon-star[for=star1]' +
-				'^^' + TagView.tagEditorEmmet
+					'^span.score_value' +
+				'^' + TagView.tagEditorEmmet
 	})
 
 	, View = {

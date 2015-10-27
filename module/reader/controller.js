@@ -172,21 +172,60 @@ web.get('/reader/favorite', function(req, res){
 	var query = req.query || {}
 		, page = query.page || 1
 		, size = query.size || 20
+		, keyword = query.keyword || ''
+		, execute
 		;
 
-	Model.getFavoriteByPage(page, size).then(function(rs){
-		return Model.countFavorite().then(function(count){
-			return {
-				data: rs
-				, index: page
-				, size: size
-				, count: count
-				, urlCallback: function(index){
-					return '?page='+ index;
-				}
-			};
+	if( keyword ){
+		execute = Model.searchFavoriteByTitle(keyword, page, size).then(function(rs){
+			var result
+				;
+
+			if( rs && rs.length ){
+				result = Model.countSearchFavoriteByTitle(keyword).then(function(count){
+					return {
+						data: rs
+						, index: page
+						, size: size
+						, count: count
+						, urlCallback: function(index){
+							return '?keyword='+ keyword +'&page='+ index;
+						}
+					};
+				});
+			}
+			else{
+				result = {
+					data: []
+					, index: 1
+					, size: size
+					, count: 0
+					, urlCallback: function(index){
+						return '?keyword='+ keyword +'&page='+ index;
+					}
+				};
+			}
+
+			return result;
 		});
-	}).then( View.favoriteList).then(function(html){
+	}
+	else{
+		execute = Model.getFavoriteByPage(page, size).then(function(rs){
+			return Model.countFavorite().then(function(count){
+				return {
+					data: rs
+					, index: page
+					, size: size
+					, count: count
+					, urlCallback: function(index){
+						return '?page='+ index;
+					}
+				};
+			});
+		});
+	}
+
+	execute.catch(function(e){console.log(e)}).then( View.favoriteList ).then(function(html){
 		res.send( config.docType.html5 + html );
 		res.end();
 	});
