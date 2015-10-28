@@ -125,7 +125,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					}]
 				}
 				, footer: {
-					nav: footer('reader')
+					nav: footer('rss')
 				}
 				, script: {
 					main: '../script/module/reader/index'
