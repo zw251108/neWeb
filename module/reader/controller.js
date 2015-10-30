@@ -238,7 +238,7 @@ socket.register({
 				topic: 'reader/add'
 			}
 			, query = data.query || {}
-			, feed = query.url
+			, feed = query.feed
 			, execute
 			;
 

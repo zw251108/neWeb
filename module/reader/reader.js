@@ -71,7 +71,7 @@ var Promise     = require('promise')
 					temp.author = $t.find('author').text();
 					!temp.author && (temp.author = $t.find('dc\\:creator').text());
 
-					temp.tags = $t.find('cateory').map(function(){
+					temp.tags = $t.find('cateory,category').map(function(){
 						var t = $(this);
 						return t.text() || t.attr('term');
 					}).get().join();
