@@ -182,25 +182,37 @@ var Promise     = require('promise')
 					}
 				}
 
-				// 按钮权重排序
-				filterResult.sort(function(a, b){
-					var rs = b.rank - a.rank;
+				//// 按钮权重排序
+				//filterResult.sort(function(a, b){
+				//	var rs = b.rank - a.rank;
+				//
+				//	if( rs === 0 ){
+				//		rs = b.n - a.n;
+				//	}
+				//
+				//	return rs;
+				//});
+
+				tagsRs = filterResult.filter(function(d){
+					return d.rank;
+				}).sort(function(a, b){
+					var rs = b.n - a.n;
 
 					if( rs === 0 ){
-						rs = b.n - a.n;
+						rs = b.rank - a.rank;
 					}
 
 					return rs;
 				});
 
-				tagsRs = filterResult.slice(0, 15);
+				//tagsRs = filterResult.slice(0, 15);
 
-				// 按分词数量排序
-				tagsRs = tagsRs.concat( filterResult.slice(16).sort(function(a, b){
-					return b.n - a.n;
-				}).slice(0, 5) );
+				//// 按分词数量排序
+				//tagsRs = tagsRs.concat( filterResult.slice(16).sort(function(a, b){
+				//	return b.n - a.n;
+				//}).slice(0, 5) );
 
-				//console.log('\n', tagsRs);
+				console.log('\n', tagsRs);
 
 				result = {
 					url: url

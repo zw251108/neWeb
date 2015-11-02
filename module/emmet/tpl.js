@@ -124,7 +124,7 @@ var admin         = require('../admin.js')
 			, main: function(d){
 				return d.main ? (typeof d.main === 'object' ? main(d.main) : d.main) : '';
 			}
-			, footer: function(d){console.log(d.footer)
+			, footer: function(d){
 				return d.footer ? footer(d.footer) : '';
 			}
 			, script: function(d){

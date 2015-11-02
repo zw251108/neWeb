@@ -221,6 +221,10 @@ index.push({
 		'<span class="watch_mark watch_mark-12"></span>' +
 	'</div>'
 });
+index.push({
+	id: 'profile'
+	, href: '#'
+});
 
 /**
  * 加载模块
