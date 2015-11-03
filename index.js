@@ -126,11 +126,33 @@ web.use('/test.html',    express.static(__dirname + '/test.html') );  //
 
 
 /**
+ * 加载模块
+ * */
+require('./module/blog/controller.js'       );  // 加载模块 blog
+
+require('./module/document/controller.js'   );  // 加载模块 document
+
+require('./module/editor/controller.js'     );  // 加载模块 editor
+
+require('./module/bower/controller.js'      );  // 加载模块 bower
+
+require('./module/reader/controller.js'     );  // 加载模块 reader
+
+require('./module/tag/controller.js'        );  // 加载模块 tag 功能
+
+//require('./module/image.js');       // 加载模块 image
+
+require('./module/basedata/controller.js'   );  // 加载模块 基础数据
+
+//----- 后台管理 -----
+require('./admin/index.js');
+
+/**
  * 访问主页	/
  * */
 web.get('/', function(req, res){
 	var sessionId = req.session.id
-		//, session = JSON.parse( sessionStore.sessions[sessionId] )
+	//, session = JSON.parse( sessionStore.sessions[sessionId] )
 		, user = req.session.user
 		;
 
@@ -197,57 +219,34 @@ web.post('/skin', function(req, res){   // 设置皮肤功能
 	res.end();
 });
 
-index.push({
+index.unshift({
 	id: 'time'
 	, type: 'metro'
 	, href: '#'
 	, size: 'tiny'
 	, title: '时间 time'
 	, info: '<div class="watch_wrap hidden" id="watch">' +
-		'<span class="watch_hourHand" id="hourHand"></span>' +
-		'<span class="watch_minuteHand" id="minuteHand"></span>' +
-		'<span class="watch_secondHand" id="secondHand"></span>' +
-		'<span class="watch_mark watch_mark-1"></span>' +
-		'<span class="watch_mark watch_mark-2"></span>' +
-		'<span class="watch_mark watch_mark-3"></span>' +
-		'<span class="watch_mark watch_mark-4"></span>' +
-		'<span class="watch_mark watch_mark-5"></span>' +
-		'<span class="watch_mark watch_mark-6"></span>' +
-		'<span class="watch_mark watch_mark-7"></span>' +
-		'<span class="watch_mark watch_mark-8"></span>' +
-		'<span class="watch_mark watch_mark-9"></span>' +
-		'<span class="watch_mark watch_mark-10"></span>' +
-		'<span class="watch_mark watch_mark-11"></span>' +
-		'<span class="watch_mark watch_mark-12"></span>' +
+	'<span class="watch_hourHand" id="hourHand"></span>' +
+	'<span class="watch_minuteHand" id="minuteHand"></span>' +
+	'<span class="watch_secondHand" id="secondHand"></span>' +
+	'<span class="watch_mark watch_mark-1"></span>' +
+	'<span class="watch_mark watch_mark-2"></span>' +
+	'<span class="watch_mark watch_mark-3"></span>' +
+	'<span class="watch_mark watch_mark-4"></span>' +
+	'<span class="watch_mark watch_mark-5"></span>' +
+	'<span class="watch_mark watch_mark-6"></span>' +
+	'<span class="watch_mark watch_mark-7"></span>' +
+	'<span class="watch_mark watch_mark-8"></span>' +
+	'<span class="watch_mark watch_mark-9"></span>' +
+	'<span class="watch_mark watch_mark-10"></span>' +
+	'<span class="watch_mark watch_mark-11"></span>' +
+	'<span class="watch_mark watch_mark-12"></span>' +
 	'</div>'
 });
 index.push({
 	id: 'profile'
 	, href: '#'
 });
-
-/**
- * 加载模块
- * */
-require('./module/blog/controller.js'       );  // 加载模块 blog
-
-require('./module/document/controller.js'   );  // 加载模块 document
-
-require('./module/editor/controller.js'     );  // 加载模块 editor
-
-require('./module/bower/controller.js'      );  // 加载模块 bower
-
-require('./module/reader/controller.js'     );  // 加载模块 reader
-
-require('./module/tag/controller.js'        );  // 加载模块 tag 功能
-
-//require('./module/image.js');       // 加载模块 image
-
-require('./module/basedata/controller.js'   );  // 加载模块 基础数据
-
-//----- 后台管理 -----
-require('./admin/index.js');
-
 
 //----- Web 服务器 -----
 webServer = web.listen( CONFIG.web.port

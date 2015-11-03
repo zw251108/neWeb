@@ -269,6 +269,12 @@ define(['jquery', 'socket'], function($, socket){
 		, offset = $mainToolbar.offset()
 		;
 
+	if( !$mainToolbar.length ){
+		offset = {
+			top: 0
+		};
+	}
+
 	var $footer = $('#footer')
 		;
 	$(window).on({
