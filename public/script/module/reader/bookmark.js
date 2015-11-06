@@ -102,7 +102,7 @@ require(['../../config'], function(config){
 
 		searchBar(function(form){
 			//var $form = $(form)
-			//	, data = $form.serializeJson()
+			//	, data = $form.serializeJSON()
 			//	;
 			//
 			//socket.emit('data', {

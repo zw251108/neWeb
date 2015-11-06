@@ -48,8 +48,8 @@ require(['../../config'], function(config){
 
 						return rs;
 					}
-					, alt:function(data, index){
-						return data.preview ? data.name : '没有预览图片';
+					, alt: function(d){
+						return d.preview ? d.name : '没有预览图片';
 					}
 					, tags: tag.tagCheckedTpl
 				}
@@ -64,7 +64,7 @@ require(['../../config'], function(config){
 			, moreData = false
 			, space = 10
 			, loading = function(){
-				$editorContainer.height( $editorContainer.height() + 197 );
+				$editorContainer.height( $editorContainer.height() + 192 );
 				$editorContainer.append('<article class="article article-block"><div class="loading loading-chasing"></div></article>');
 			}
 			, layout = function(){
@@ -74,8 +74,9 @@ require(['../../config'], function(config){
 					left: -1,
 					right: -15,
 					top: 0,
-					colSpace: 10,
-					rowSpace: 10
+					bottom: space,
+					colSpace: space,
+					rowSpace: space
 				});
 			}
 			, search = location.search
@@ -96,7 +97,7 @@ require(['../../config'], function(config){
 
 		searchBar(function(form){
 			//var $form = $(form)
-			//	, data = $form.serializeJson()
+			//	, data = $form.serializeJSON()
 			//	;
 			//
 			//socket.emit('data', {

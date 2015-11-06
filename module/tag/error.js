@@ -3,7 +3,8 @@
 var error = require('../error.js')
 
 	, TagError = function(msg){
-		this.message = '[Tag Error]'+ msg;
+		this.type = '[Tag Error]';
+		this.message = msg;
 	}
 	;
 

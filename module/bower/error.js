@@ -3,7 +3,8 @@
 var error   = require('../error.js')
 
 	, BowerError = function(msg){
-		this.message = '[Bower Error]'+ msg;
+		this.type = '[Bower Error]';
+		this.message = msg;
 	}
 	;
 

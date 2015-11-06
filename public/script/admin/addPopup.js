@@ -1,10 +1,10 @@
-define(['jquery', 'global'], function($, g){
+define(['jquery', 'global'], function($){
 	var beforeSend
 		, afterSend
 		, $addPopup = $('#addPopup').on('click', '#addData', function(){
 			var $form = $addPopup.find('form')
 				, form = $form[0]
-				, data = $form.serializeJson()
+				, data = $form.serializeJSON()
 				, rs
 				;
 

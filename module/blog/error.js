@@ -3,7 +3,8 @@
 var error = require('../error.js')
 
 	, BlogError = function(msg){
-		this.message = '[Blog Error]'+ msg;
+		this.type = '[Blog Error]';
+		this.message = msg;
 	}
 	;
 

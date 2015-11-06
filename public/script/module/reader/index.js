@@ -60,7 +60,7 @@ require(['../../config'], function(config){
 				}
 			})
 			, $addPopup = $('#addPopup').on('click', '#addFeed', function(){
-				var query = $addFeedForm.serializeJson();
+				var query = $addFeedForm.serializeJSON();
 
 				if( query.url && query.feed && query.name ){
 					$reader.find('.module_content').prepend('<section class="reader_section section" data-feed="'+ query.feed +'"><div class="loading loading-chasing"></div></section>');
@@ -84,7 +84,7 @@ require(['../../config'], function(config){
 
 		searchBar(function(form){
 			//var $form = $(form)
-			//	, data = $form.serializeJson()
+			//	, data = $form.serializeJSON()
 			//	;
 			//
 			//socket.emit('data', {
@@ -162,8 +162,6 @@ require(['../../config'], function(config){
 
 		socket.register({
 			'reader/add': function(data){
-				var id
-					;
 
 				if( 'error' in data ){
 					msgPopup.showMsg( data.msg );

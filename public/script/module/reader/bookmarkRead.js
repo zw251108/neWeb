@@ -12,7 +12,7 @@ define(['jquery', 'global', 'socket', 'tag', 'msgPopup', 'template'], function($
 
 		}).on('click', '#readBookmark', function(){
 
-			var query = $readForm.serializeJson()
+			var query = $readForm.serializeJSON()
 				;
 
 			if( query.tags !== '' ){

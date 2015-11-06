@@ -6,10 +6,10 @@ define(['../../config'], function(config){
 
 	var r = require(config.requireConfig);
 	r(['jquery', 'global', 'socket', config.dataSource.skin, 'codeEditor', 'codeEditorSkin', 'msgPopup', 'template'], function($, g, socket, skin, code, codeSkin, msgPopup){
-		var $blog = $('#blog').on('click', '.icon-save', function(e){
+		var $blog = $('#blog').on('click', '.icon-save', function(){
 				content.save();
 
-				var data = $form.serializeJson()
+				var data = $form.serializeJSON()
 					;
 
 				$.ajax({

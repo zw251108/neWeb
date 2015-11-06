@@ -66,8 +66,9 @@ require(['config'], function(config){
 				}
 			}).on('click', '.module_close', function(){
 				$searchDialog.trigger('closeDialog');
-			}).on('click', 'td button', function(e){
+			}).on('click', 'td button', function(){
 				var name =  $(this).next().val();
+
 				socket.emit('data', {
 					topic: 'bower/install'
 					, query: {
@@ -106,7 +107,7 @@ require(['config'], function(config){
 			, $infoList = $infoDialog.find('#infoList').on('click', '[name="pickId"]', function(){
 				var $form = $(this).parents('form')
 					//, values = $form.serializeArray()
-					, val = $form.serializeJson()
+					, val = $form.serializeJSON()
 					;
 
 				if( !$form.hasClass('form-disabled') ){
@@ -125,7 +126,7 @@ require(['config'], function(config){
 				var $that = $(this)
 					, $form = $that.parents('form')
 					//, values = $form.serializeArray()
-					, val = $form.serializeJson()
+					, val = $form.serializeJSON()
 					, choose
 					;
 
@@ -157,7 +158,7 @@ require(['config'], function(config){
 			, END_CHOOSE_INDEX = {}
 			;
 
-		$('#switch_dialog').on('click', function(e){
+		$('#switch_dialog').on('click', function(){
 			$searchDialog.trigger('showDialog');
 		});
 

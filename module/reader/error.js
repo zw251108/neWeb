@@ -3,7 +3,8 @@
 var error = require('../error.js')
 
 	, ReaderError = function(msg){
-		this.message = '[Reader Error]' + msg;
+		this.type = '[Reader Error]';
+		this.message =  msg;
 	}
 	;
 

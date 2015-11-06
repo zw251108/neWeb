@@ -3,7 +3,8 @@
 var error = require('../error.js')
 
 	, ImageError = function(msg){
-		this.message = '[Image Error]'+ msg;
+		this.type = '[Image Error]';
+		this.message = msg;
 	}
 	;
 

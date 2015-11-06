@@ -3,7 +3,8 @@
 var error = require('../error.js')
 
 	, EditorError = function(msg){
-		this.message = '[Editor Error]'+ msg;
+		this.type = '[Editor Error]';
+		this.message = msg;
 	}
 	;
 

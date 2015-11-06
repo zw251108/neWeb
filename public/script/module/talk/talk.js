@@ -37,7 +37,7 @@ define(['jquery', 'global', 'socket', 'template'], function($, g, socket){
 			//postData = $talk.find('form').serializeArray()
 			//, i = postData.length
 			//,
-			data = $talk.find('form').serializeJson()
+			data = $talk.find('form').serializeJSON()
 			;
 
 		//while( i-- ){

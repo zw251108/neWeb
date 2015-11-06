@@ -3,7 +3,8 @@
 var error = require('../error.js')
 
 	, DataError = function(msg){
-		this.message = '[Data Error]'+ msg;
+		this.type = '[Data Error]';
+		this.message = msg;
 	}
 	;
 

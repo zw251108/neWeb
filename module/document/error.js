@@ -3,7 +3,8 @@
 var error = require('../error.js')
 
 	, DocumentError = function(msg){
-		this.message = '[Document Error]'+ msg;
+		this.type = '[Document Error]';
+		this.message = msg;
 	}
 	;
 

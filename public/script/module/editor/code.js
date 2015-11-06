@@ -1,8 +1,4 @@
 /**
- *
- * */
-
-/**
  * @module  editor UI 设置
  * */
 define('editorLayout', ['jquery', 'global', 'template'], function($, g){
@@ -155,6 +151,9 @@ define('editorLayout', ['jquery', 'global', 'template'], function($, g){
 		return layoutList;
 	};
 });
+/**
+ * @module  组件选择弹窗
+ * */
 define('uiLibPopup', ['jquery', 'socket', 'template'], function($, socket){
 	var // UI 库
 		pathTpl = $.template({
@@ -242,6 +241,9 @@ define('uiLibPopup', ['jquery', 'socket', 'template'], function($, socket){
 		$cssLib = $cLib;
 	};
 });
+/**
+ * @module  图片素材弹窗
+ * */
 define('demoImgLibPopup', ['jquery', 'socket', 'msgPopup', 'template'], function($, socket, msgPopup){
 	var // 素材图片大小
 		DEMO_IMG_SIZE = 100
@@ -317,8 +319,11 @@ define('demoImgLibPopup', ['jquery', 'socket', 'msgPopup', 'template'], function
 		$demoImgLibPopup.data('data', true).find('#demoImgList').html( demoImgLibTpl(data.data).join('') ).end().trigger('showDialog');
 	});
 });
+/**
+ * @module  设置更多弹窗
+ * */
 define('setMorePopup', ['jquery', 'socket', 'msgPopup', 'tag', 'template'], function($, socket, msgPopup, tag){
-	var $setMorePopup = $('#setMore').on('click', '#codeSave', function(e){ // 点击保存
+	var $setMorePopup = $('#setMore').on('click', '#codeSave', function(){ // 点击保存
 			if( $codeId.val() ){
 				$setMoreForm.trigger('submit');
 				$name.val( $codeName.val() );
@@ -368,6 +373,7 @@ define('setMorePopup', ['jquery', 'socket', 'msgPopup', 'tag', 'template'], func
 	tag.setAdd( $setMorePopup );
 
 	$('#set').on('click', function(){
+		$codeName.val( $name.val() );
 		$setMorePopup.trigger('showDialog');
 	});
 
@@ -471,22 +477,8 @@ require(['../../config'], function(config){
 			css.save();
 			js.save();
 
-			var
-				//form = $form.serializeArray()
-				//,
-				data = $form.serializeJson()
-				//, t
+			var data = $form.serializeJSON()
 				;
-			//$.each(form, function(i, d){
-			//	t = d.name;
-			//
-			//	if( t in data ){
-			//		data[t] += ','+ d.value;
-			//	}
-			//	else{
-			//		data[t] = d.value;
-			//	}
-			//});
 
 			socket.emit('data', {
 				topic: 'editor/code/save'

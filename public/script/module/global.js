@@ -2,7 +2,7 @@
  * @module  global
  * */
 //----- 全局模块 -----
-define(['jquery', 'socket'], function($, socket){
+define(['jquery', 'socket'], function($){
 
 	//ajax 全局设置
 	$.ajaxSetup({
@@ -10,7 +10,7 @@ define(['jquery', 'socket'], function($, socket){
 	});
 
 	// 整理表单项数据，组成 json 格式，多选类格式为逗号分隔
-	$.fn.serializeJson = function(){
+	$.fn.serializeJSON = function(){
 		var rs = {}
 			, array
 			, t
@@ -31,6 +31,47 @@ define(['jquery', 'socket'], function($, socket){
 		}
 
 		return rs;
+	};
+
+	// jquery 扩展 解析 url
+	$.parseURL = function(url){
+		var a =  document.createElement('a')
+			;
+
+		a.href = url || location.href;
+
+		return {
+			source: url
+			, protocol: a.protocol.replace(':', '')
+			, host: a.hostname
+			, port: a.port
+			, query: a.search
+			, params: (function(){
+				var ret = {}
+					, seg = a.search.replace(/^\?/, '').split('&')
+					, len = seg.length
+					, i = 0
+					, s
+					;
+
+				for(; i < len; i++ ){
+					if( !seg[i] ){
+						continue;
+					}
+
+					s = seg[i].split('=');
+
+					ret[s[0]] = s[1];
+				}
+
+				return ret;
+			})()
+			, file: (a.pathname.match(/\/([^\/?#]+)$/i) || ['', ''])[1]
+			, hash: a.hash.replace('#', '')
+			, path: a.pathname.replace(/^([^\/])/, '/$1')
+			, relative: (a.href.match(/tps?:\/\/[^\/]+(.+)/) || ['', ''])[1]
+			, segments: a.pathname.replace(/^\//, '').split('/')
+		};
 	};
 
 	// 全局图片加载错误处理

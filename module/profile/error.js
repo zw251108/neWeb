@@ -3,7 +3,8 @@
 var error = require('../error.js')
 
 	, ProfileError = function(msg){
-		this.message = '[Profile Error]'+ msg;
+		this.type = '[Profile Error]';
+		this.message = msg;
 	}
 	;
 
