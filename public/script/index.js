@@ -149,31 +149,52 @@ define('timeline', ['jquery', 'd3'], function($, d3){
 			, endDate = d3.max(data, function(d){
 				return d.end;
 			})
-			, time = d3.time.scale().domain([start, end]).range([0, h])
-			, line = d3.svg.axis().scale( time ).orient('left')
-			, timeline = d3.select(options.selector).append('svg').attr('class', opts.className).attr('height', h).attr('width', w)
-			, timeNodes
+			, time = d3.time.scale().domain([start, end]).range([h, 0])
+			, $timeline = $(opts.selector).height(h)
+			, $timeNodes
 			;
 
-		$.each(data, function(i, d){
-			var s = d.start.split('-')
-				, e = (d.end || '').split('-')
+		$timeline.append('<div class="timeline_line"></div>' +
+			'<div class="timeline_end">至今</div>' +
+			'<div class="timeline_start">'+ start.getFullYear() +'-'+ (start.getMonth()+1) +'</div>');
+
+		//$timeline.append(
+		$.map(data, function(d){
+			var s = d.start
+				, e = (d.end || '')
+				, html = '<section class="timeline_node" data-start="'
+				, top
+				, t
 				;
+
+			s = s.split('-');
+			e = e.split('-');
 
 			d.start = new Date(s[0], s[1]-1);
 			d.end = d.end ? new Date(e[0], e[1]-1) : new Date();
-			return d;
-		});
+			t = d.start.getMonth() + 1;
+			d.startText = d.start.getFullYear() + '-' + (t > 10 ? t : '0' +t);
+			t = d.end.getMonth() + 1;
+			d.endText = d.end.getFullYear() + '-' + (t > 10 ? t : '0' +t);
 
-		// 中线
-		timeNodes = timeline.selectAll('g').data( data ).enter().append('g');
-		timeNodes.append('rect').attr('x', 0).attr('y', function(d){
-			return time(d.start)
-		}).attr('width', 100).attr('height', function(d){
-			return time(d.end) - time(d.start);
-		}).attr('fill', '#c0c0c0');
 
-		timeline.append('g').attr('class', 'timeline').call( line ).attr('transform', 'translate(40,0)');
+			html += s;
+			html += '" data-end="';
+			html += e;
+
+			html += '" style="top:'+ Math.ceil( time( d.start ) );
+			html += 'px;">';
+
+			$('');
+
+			return html +
+					'<h4>'+ d.job.title +'</h4>' +
+					'<h5>'+ d.co.name +'</h5>' +
+					'<div class="datetime"></div>' +
+					'<div class="desc">'+ d.job.desc +'</div>' +
+				'</section>';
+		}).join('')
+		//);
 	};
 });
 
@@ -244,9 +265,6 @@ require(['config'], function(config){
 	});
 
 	r(['jquery', 'd3', 'radarChart', 'timeline'], function($, d3, radar, timeline){
-		var chartContainer = d3.select('#profile')
-				.select('.module_content')
-			;
 
 		var skillData = [{
 				value: 9, title: 'HTML(5) & CSS(3)'}, {
@@ -264,25 +282,25 @@ require(['config'], function(config){
 				value: 5, title: '沟通能力'}, {
 				value: 8, title: '视野'
 			}]
-			, data1 = [{
-				title: '思维'
-				, desc: '设计感觉，理念，思想。<br/>对专业的直觉。<br/>例：有人有天生色彩感觉好，或对版式的控制感觉良好。'
-			}, {
-				title: '视野'
-				, desc: '眼界，认知程度。国内设计环境认知，国际流行认知。<br/>广度：国标、界面、动效、视频、平面、标志、字体等。<br/>深度：对某一项有深入研究，特长点。<br/>例：对动效、视频剪辑有深入了解，有一技之长。'
-			}, {
-				title: '沟通'
-				, desc: '表达能力，聆听。<br/>对自己观点的表述，懂得倾听。<br/>在面试与讨论是状态的体现。'
-			}, {
-				title: '动力'
-				, desc: '工作状态，动能。<br/>对渴望得到这份工作所做的努力，面试作业的体现。'
-			}, {
-				title: '经验'
-				, desc: '过往工作经验，职业背景。<br/>应届生可忽略此项。<br/>如果是跨专业，例如平面转GUI，或者产品转交互，需要重新评估。'
-			}, {
-				title: '表达'
-				, desc: '纯技法，手上功夫。<br/>高级、资深视觉设计师重要考核项。'
-			}]
+			//, data1 = [{
+			//	title: '思维'
+			//	, desc: '设计感觉，理念，思想。<br/>对专业的直觉。<br/>例：有人有天生色彩感觉好，或对版式的控制感觉良好。'
+			//}, {
+			//	title: '视野'
+			//	, desc: '眼界，认知程度。国内设计环境认知，国际流行认知。<br/>广度：国标、界面、动效、视频、平面、标志、字体等。<br/>深度：对某一项有深入研究，特长点。<br/>例：对动效、视频剪辑有深入了解，有一技之长。'
+			//}, {
+			//	title: '沟通'
+			//	, desc: '表达能力，聆听。<br/>对自己观点的表述，懂得倾听。<br/>在面试与讨论是状态的体现。'
+			//}, {
+			//	title: '动力'
+			//	, desc: '工作状态，动能。<br/>对渴望得到这份工作所做的努力，面试作业的体现。'
+			//}, {
+			//	title: '经验'
+			//	, desc: '过往工作经验，职业背景。<br/>应届生可忽略此项。<br/>如果是跨专业，例如平面转GUI，或者产品转交互，需要重新评估。'
+			//}, {
+			//	title: '表达'
+			//	, desc: '纯技法，手上功夫。<br/>高级、资深视觉设计师重要考核项。'
+			//}]
 			, workHistoryData = [{
 				start: '2015-03'
 				, co: {
@@ -338,22 +356,31 @@ require(['config'], function(config){
 					, desc: ''
 				}
 			}]
+			, $profile = $('#profile').detach().appendTo('#container').toggleClass('module-metro module-main tiny large')
+			, $content = $profile.find('.module_content')
+			, width = $content.width()
 			;
 
-		var $profile = $('#profile').detach().appendTo('#container').toggleClass('module-metro module-main tiny large')
-			, width = $profile.find('.module_content').width()
-			;
+		$content.append('<section class="section profile_section" id="score">' +
+				'<h3>自我评估</h3>' +
+				'<div class="radar" id="skillRadar"></div>' +
+				'<div class="radar" id="baseRadar"></div>' +
+			'</section>' +
+			'<section class="section profile_section">' +
+				'<h3>工作经历</h3>' +
+				'<div class="timeline" id="timeline"></div>' +
+			'</section>');
 
 		radar({
 			data: skillData
-			, selector: '#profile .module_content'
+			, selector: '#skillRadar'
 			, h: Math.max(width/2, 310)
 			, w: Math.max(width/2, 310)
 			, className: ''
 		});
 		radar({
 			data: baseData
-			, selector: '#profile .module_content'
+			, selector: '#baseRadar'
 			, h: Math.max(width/2, 310)
 			, w: Math.max(width/2, 310)
 			, className: ''
@@ -361,7 +388,7 @@ require(['config'], function(config){
 
 		timeline({
 			data: workHistoryData
-			, selector: '#profile .module_content'
+			, selector: '#timeline'
 			, start: new Date(2009, 6)
 			, end: new Date()
 			, h: width

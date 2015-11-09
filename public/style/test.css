@@ -1,3 +1,96 @@
+.profile_section{
+	position: relative;
+	margin: 58px 10px 10px;
+	border: 1px solid #c0c0c0;
+}
+.profile_section:before,
+.profile_section:after{
+	content: "";
+	display: table;
+}
+.profile_section:after{
+	clear: both;
+}
+
+.profile_section h3{
+	position: absolute;
+	top: -48px;
+	left: 48px;
+	min-width: 200px;
+	border: solid #c0c0c0;
+	border-width: 1px;
+	border-bottom-color: #fff;
+	border-radius: 10px 10px 0 0;
+	background: #fff;
+	text-align: center;
+}
+.profile_section h3:before{
+	position: absolute;
+	top: 23px;
+	left: -23px;
+	height: 24px;
+	width: 24px;
+	background-image: -webkit-radial-gradient(top left, transparent 23px, #c0c0c0 24px, #ffffff 25px);
+	background-image: -moz-radial-gradient(top left, transparent 23px, #c0c0c0 25px, #ffffff 25px);
+	background-image: -ms-radial-gradient(top left, transparent 23px, #c0c0c0 24px, #ffffff 25px);
+	background-image: radial-gradient(top left, transparent 23px, #c0c0c0 24px, #ffffff 25px);
+	content: "";
+}
+.profile_section h3:after{
+	position: absolute;
+	top: 23px;
+	right: -23px;
+	height: 24px;
+	width: 24px;
+	background-image: -webkit-radial-gradient(top right, transparent 23px, #c0c0c0 24px, #ffffff 25px);
+	background-image: -moz-radial-gradient(top right, transparent 23px, #c0c0c0 24px, #ffffff 25px);
+	background-image: -ms-radial-gradient(top right, transparent 23px, #c0c0c0 24px, #ffffff 25px);
+	background-image: radial-gradient(top right, transparent 23px, #c0c0c0 24px, #ffffff 25px);
+	content: "";
+}
+.radar{
+	float: left;
+	width: 50%;
+	min-width: 310px;
+	text-align: center;
+}
+.timeline{
+	position: relative;
+}
+.timeline_line{
+	position: absolute;
+	bottom: 0;
+	top: 0;
+	left: 0;
+	right: 0;
+	width: 10px;
+	margin: auto;
+	background: #ccc;
+}
+.timeline_node{
+	position: absolute;
+}
+.timeline_start,
+.timeline_end{
+	position: absolute;
+	left: 0;
+	right: 0;
+	width: 10em;
+	border: 1px solid #c0c0c0;
+	border-radius: 10px;
+	margin: auto;
+	background: #fff;
+	font-size: 16px;
+	line-height: 1.5;
+	text-align: center;
+}
+.timeline_start{
+	bottom: 0;
+}
+.timeline_end{
+	top: 0;
+}
+
 
 /*----- 组件 -----*/
 
