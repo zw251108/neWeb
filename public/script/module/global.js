@@ -74,6 +74,23 @@ define(['jquery', 'socket'], function($){
 		};
 	};
 
+	// 数据补零
+	$.fillZero = function(num, length){
+		var l, i
+			;
+
+		num = num.toString();
+		l = num.length;
+
+		if( l < length ){
+			for(i = length - l; i--;){
+				num = '0' + num;
+			}
+		}
+
+		return num;
+	};
+
 	// 全局图片加载错误处理
 	$(document).on('error', 'img', function(){
 		this.src = location.original +'/image/default/no-pic.png';

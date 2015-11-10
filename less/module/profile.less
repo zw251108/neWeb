@@ -1,0 +1,191 @@
+@import "../lib/function.less";
+@import "../lib/grid.less";
+
+@import "../config/color.config.less";
+
+//---------- Profile 个人简历 ----------
+.module-profile{
+
+	.module_content{
+
+	}
+}
+
+.profile_section{
+	position: relative;
+	margin: 58px 10px 10px;
+	border: 1px solid #c0c0c0;
+
+	&:before,
+	&:after{
+		content: "";
+		display: table;
+	}
+	&:after{
+		clear: both;
+	}
+
+	h3{
+		position: absolute;
+		top: -48px;
+		left: 48px;
+		min-width: 200px;
+		border: solid #c0c0c0;
+		border-width: 1px;
+		border-bottom-color: #fff;
+		border-radius: 12px 12px 0 0;
+		background: #fff;
+		text-align: center;
+
+		&:before{
+			position: absolute;
+			top: 36px;
+			left: -11px;
+			height: 12px;
+			width: 12px;
+			background-image: -webkit-radial-gradient(top left, transparent 9px, #c0c0c0 10px, #ffffff 11px);
+			background-image: -moz-radial-gradient(top left, transparent 9px, #c0c0c0 10px, #ffffff 11px);
+			background-image: -ms-radial-gradient(top left, transparent 9px, #c0c0c0 10px, #ffffff 11px);
+			background-image: radial-gradient(top left, transparent 9px, #c0c0c0 10px, #ffffff 11px);
+			content: "";
+		}
+		&:after{
+			position: absolute;
+			top: 36px;
+			right: -11px;
+			height: 12px;
+			width: 12px;
+			background-image: -webkit-radial-gradient(top right, transparent 9px, #c0c0c0 10px, #ffffff 11px);
+			background-image: -moz-radial-gradient(top right, transparent 9px, #c0c0c0 10px, #ffffff 11px);
+			background-image: -ms-radial-gradient(top right, transparent 9px, #c0c0c0 10px, #ffffff 11px);
+			background-image: radial-gradient(top right, transparent 9px, #c0c0c0 10px, #ffffff 11px);
+			content: "";
+		}
+	}
+}
+.radar{
+	float: left;
+	width: 50%;
+	min-width: 278px;
+	text-align: center;
+}
+.timeline{
+	position: relative;
+
+	&_line{
+		position: absolute;
+		bottom: 0;
+		top: 0;
+		left: 0;
+		right: 0;
+		width: 2px;
+		margin: auto;
+		background: #c0c0c0;
+	}
+
+	&_start,
+	&_end{
+		position: absolute;
+		left: 0;
+		right: 0;
+		width: 10em;
+		border: 1px solid #c0c0c0;
+		border-radius: 10px;
+		margin: auto;
+		background: #fff;
+		font-size: 16px;
+		line-height: 1.5;
+		text-align: center;
+	}
+	&_start{
+		bottom: 0;
+	}
+	&_end{
+		top: 0;
+	}
+	&_node{
+		position: absolute;
+		border: 1px solid #c0c0c0;
+		border-radius: 10px;
+		padding: 10px;
+
+		&:before,
+		&:after{
+			position: absolute;
+			top: 20px;
+			height: 0;
+			width: 0;
+			border: 10px solid transparent;
+			content: "";
+		}
+
+		&:nth-child(even){
+			left: 0;
+
+			&:before{
+				right: -20px;
+				border-left-color: #c0c0c0;
+			}
+			&:after{
+				right: -19px;
+				border-left-color: #fff;
+			}
+
+			.datetime{
+				right: 0;
+
+				&:before{
+					right: -24px;
+				}
+			}
+		}
+		&:nth-child(odd){
+			right: 0;
+
+			&:before{
+				left: -20px;
+				border-right-color: #c0c0c0;
+			}
+			&:after{
+				left: -19px;
+				border-right-color: #fff;
+			}
+
+			.datetime{
+				left: 0;
+
+				&:before{
+					left: -24px;
+				}
+			}
+		}
+
+		h4{
+			border-bottom: 1px dashed #c0c0c0;
+		}
+		h5{
+			text-align: right;
+		}
+
+		.datetime{
+			position: absolute;
+			z-index: 10;
+			top: 25px;
+
+			&:hover{
+
+			}
+
+			&:before{
+				position: absolute;
+				height: 8px;
+				width: 8px;
+				border: 1px solid #c0c0c0;
+				border-radius: 50%;
+				background: #fff;
+
+				content: "";
+			}
+		}
+	}
+}

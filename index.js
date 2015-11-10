@@ -138,6 +138,8 @@ require('./module/bower/controller.js'      );  // 加载模块 bower
 
 require('./module/reader/controller.js'     );  // 加载模块 reader
 
+require('./module/profile/controller.js'    );  // 加载模块 profile
+
 require('./module/tag/controller.js'        );  // 加载模块 tag 功能
 
 //require('./module/image.js');       // 加载模块 image
@@ -243,10 +245,10 @@ index.unshift({
 	'<span class="watch_mark watch_mark-12"></span>' +
 	'</div>'
 });
-index.push({
-	id: 'profile'
-	, href: '#'
-});
+//index.push({
+//	id: 'profile'
+//	, href: '#'
+//});
 
 //----- Web 服务器 -----
 webServer = web.listen( CONFIG.web.port
