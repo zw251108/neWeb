@@ -55,8 +55,8 @@ define(['jquery', 'global', 'socket', 'tag', 'msgPopup', 'template'], function($
 		if( !('error' in data) ){
 			$bookmark
 				.find('#'+ (targetId || 'readerArt'+ id)).data('bookmarkId', id).attr('id', 'readerArt'+ id)
-				.find('.icon-checkbox').toggleClass('icon-checkbox icon-checkbox-checked').attr('title', '已读').text('已读过')
-				.end().find('.icon-bookmark').toggleClass('icon-bookmark icon-bookmark-full').text('已标记');
+				.find('.icon-checkbox').toggleClass('icon-checkbox icon-checkbox-checked').attr('title', '已读').text('已读')
+				.end().find('.icon-bookmark').toggleClass('icon-bookmark icon-bookmark-full').text('已加书签');
 		}
 	});
 

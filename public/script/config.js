@@ -24,6 +24,7 @@ define({
 			, login: 'module/login'
 
 			, searchBar: 'module/searchBar'
+			, filterBox: 'module/filterBox'
 			, codeEditor: 'module/codeEditor'
 			, codeEditorSkin: 'module/codeEditorSkin'
 

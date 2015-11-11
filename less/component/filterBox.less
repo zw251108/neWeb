@@ -1,0 +1,73 @@
+@import "../config/color.config.less";
+@import "../lib/function.less";
+
+/**
+ * 标签过滤盒子
+ div.filterBox
+    form
+        div.formGroup
+            div.tagInput
+                input.input[type=text name=tag]
+				button.btn.icon.icon-add.addTag[type=button]
+			div.tagsArea
+			textarea.hidden[name=tags]
+		div.btnGroup
+			button.btn[type=submit]{过滤}
+ */
+.filterBox{
+	display: none;
+	overflow: auto;
+	position: absolute;
+	top: 40px;
+	right: 0;
+	width: 300px;
+
+	margin-bottom: -1px;
+	outline: #fff solid 1px;
+
+	background: #888;
+
+	font-size: 14px;
+
+	.formGroup{
+		overflow: hidden;
+		position: relative;
+		border: 1px solid #c0c0c0;
+		border-radius: 10px;
+		margin: 10px;
+	}
+	.tagInput{
+		margin: 0;
+
+		.addTag:hover{
+			background-color: #d35400;
+			color: #fff;
+		}
+	}
+	.input{
+		display: block;
+		height: 30px;
+		width: 100%;
+		border: 0;
+		border-radius: 0;
+		margin: 0;
+		padding: 0;
+		font-size: 14px;
+		text-indent: 1em;
+
+		.boxSizing(border-box);
+	}
+	.addTag{
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		right: 0;
+		border: 0;
+		border-radius: 0;
+		margin: 0;
+	}
+	.tagsArea{
+		min-height: 40px;
+		text-align: left;
+	}
+}

@@ -11,7 +11,7 @@ require(['../../config'], function(config){
 						'>h4.article_title{%title%}' +
 					'^hr' +
 					'+a.icon.icon-bookmark[href=reader/bookmark title=稍后再读]{添加书签}' +
-					'+a.icon.icon-checkbox[href=reader/read title=未读]{读过}' +
+					'+a.icon.icon-checkbox[href=reader/read title=读过]{读过}' +
 					'+time.article_date[pubdate=pubdate datetime=%datetime%]{%datetime%}' +
 					'+div.article_content{%content%}' +
 					'+div.tagsArea{%tags%}'
@@ -193,7 +193,7 @@ require(['../../config'], function(config){
 
 				if( $target ){
 					$target.data('bookmarkId', info.id).attr('id', 'readerArt'+ info.id);
-					$target.find('.icon-bookmark').toggleClass('icon-bookmark icon-bookmark-full').text('已标记');
+					$target.find('.icon-bookmark').toggleClass('icon-bookmark icon-bookmark-full').text('已加书签');
 					$target.find('div.tagsArea').html(info.tags ? '<span class="tag">'+ info.tags.split(',').join('</span><span class="tag">') +'</span>' : '');
 				}
 

@@ -40,10 +40,10 @@ var getEmmet    = require('../emmet/getEmmet.js')
 				return +d.status > 1 ? '-checked' : '';
 			}
 			, readTitle: function(d){
-				return +d.status > 1 ? '已读' : '未读';
+				return +d.status > 1 ? '已读' : '读过';
 			}
 			, readText: function(d){
-				return +d.status > 1 ? '已读过' : '读过';
+				return +d.status > 1 ? '已读' : '读过';
 			}
 			, tags: function(d){
 				return d.tags ? '<span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">'+ d.tags.split(',').join('</span><span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">') +'</span>' : '';

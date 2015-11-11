@@ -211,57 +211,6 @@
 	.showSp{
 		display: none;
 	}
-
-	.searchBar{
-		display: none;
-		overflow: auto;
-		position: absolute;
-		top: 40px;
-		right: 0;
-		width: 300px;
-
-		margin-bottom: -1px;
-		outline: #fff solid 1px;
-
-		background: #888;
-
-		font-size: 14px;
-
-		.formGroup{
-			overflow: hidden;
-			position: relative;
-			border: 1px solid #c0c0c0;
-			border-radius: 10px;
-			margin: 10px;
-		}
-		.input{
-			display: block;
-			height: 30px;
-			width: 100%;
-			border: 0;
-			border-radius: 0;
-			margin: 0;
-			padding: 0;
-			font-size: 14px;
-			text-indent: 1em;
-
-			.boxSizing(border-box);
-		}
-		.btn{
-			position: absolute;
-			top: 0;
-			bottom: 0;
-			right: 0;
-			border: 0;
-			border-radius: 0;
-			margin: 0;
-
-			&:hover{
-				background-color: #d35400;
-				color: #fff;
-			}
-		}
-	}
 }
 
 /*----- editor -----*/
@@ -628,9 +577,15 @@
 	.showSp{
 		display: inline-block;
 		white-space: nowrap;
+
 		&.on{
 			border-color: #d35400;
 			background: #d35400 -webkit-linear-gradient(top, #ff8888, #d35400);
+			color: #000;
+
+			&:hover{
+				color: #fff;
+			}
 		}
 	}
 }

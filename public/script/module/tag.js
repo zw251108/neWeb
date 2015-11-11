@@ -52,15 +52,15 @@ define(['jquery', 'socket', 'template'], function($, socket, tpl){
 		}
 	});
 
-	Tag.setAdd = function( $target ){
-		var $tag = $target.find('#tag')
-			, $tags = $target.find('#tags')
+	Tag.setAdd = function($target, notSave){
+		var $tag = $target.find('[name="tag"]')
+			, $tags = $target.find('.tags')
 			, $tagsArea = $target.find('.tagsArea')
-			, $tagPointOut = $target.find('#pointOut')
+			, $tagPointOut = $target.find('.pointOut')
 			, tagTimeout = null
 			;
 
-		$target.on('keyup', '#tag', function(){
+		$target.on('keyup', '[name="tag"]', function(){
 			var that = this
 				, val = $.trim( this.value )
 				, expr
@@ -98,7 +98,7 @@ define(['jquery', 'socket', 'template'], function($, socket, tpl){
 				$tagPointOut.slideUp();
 				tagTimeout = null;
 			}
-		}).on('mousewheel DOMMouseScroll', '#pointOut', function(e){
+		}).on('mousewheel DOMMouseScroll', '.pointOut', function(e){
 			var delta = e.originalEvent.wheelDelta || -e.originalEvent.detail
 				, $that = $(this)
 				;
@@ -119,14 +119,14 @@ define(['jquery', 'socket', 'template'], function($, socket, tpl){
 					e.stopImmediatePropagation();
 				}
 			}
-		}).on('click', '#pointOut .tag', function(){
+		}).on('click', '.pointOut .tag', function(){
 			var tags = $tags.val();
 
 			$tagsArea.prepend('<span class="tag tag-checked">'+ this.innerHTML +'</span>');
 			$tags.val( tags ? tags +',' + this.innerHTML : this.innerHTML);
 			$tagPointOut.slideUp();
 			$tag.val('').focus();
-		}).on('click', '#addTag', function(){
+		}).on('click', '.addTag', function(){
 			var tag = $tag.val()
 				, tags = $tags.val()
 				;
@@ -138,7 +138,7 @@ define(['jquery', 'socket', 'template'], function($, socket, tpl){
 				$tagPointOut.slideUp();
 
 				// todo 将标签添加到数据库
-				socket.emit('data', {
+				!notSave && socket.emit('data', {
 					topic: 'tag/add'
 					, query: {
 						name: tag

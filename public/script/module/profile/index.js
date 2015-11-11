@@ -117,7 +117,7 @@ define('timeline', ['jquery', 'global', 'd3'], function($, g, d3){
 			, endDate = d3.max(data, function(d){
 				return d.end;
 			})
-			, time = d3.time.scale().domain([start, end]).range([h, 0])
+			, time = d3.time.scale().domain([start, end]).range([h -10, 0])
 			, $timeline = $(opts.selector).height(h)
 			, $timeNodes
 			;
@@ -145,22 +145,16 @@ define('timeline', ['jquery', 'global', 'd3'], function($, g, d3){
 			d.start = new Date(s[0], s[1]-1);
 			d.end = d.end ? new Date(e[0], e[1]-1) : new Date();
 
-			d.startText = d.start.getFullYear() + '-' + $.fillZero(d.start.getMonth() + 1, 2);
-			d.endText = d.end.getFullYear() + '-' + $.fillZero(d.end.getMonth() + 1, 2);
 
+			top = Math.ceil( time( d.end ) -10 );
+			$node.css('top', top +'px').height( Math.ceil( time(d.start) - top + 10 ) );
 
-			$node.css('top', Math.ceil( time( d.start ) ) +'px');
-
-			//html += s;
-			//html += '" data-end="';
-			//html += e;
-			//
-			//html += '" style="top:'+ Math.ceil( time( d.start ) );
-			//html += 'px;">';
+			!$node.data('end') && $node.addClass('timeline_now');
 
 			$node.append('<h4>'+ d.job.title +'</h4>' +
 				'<h5>'+ d.co.name +'</h5>' +
-				'<div class="datetime"></div>' +
+				'<div class="datetime datetime-start">'+ $node.data('start') +'</div>' +
+				($node.data('end') ? '<div class="datetime datetime-end">'+ $node.data('end') +'</div>' : '') +
 				'<div class="desc">'+ d.job.desc +'</div>');
 
 
