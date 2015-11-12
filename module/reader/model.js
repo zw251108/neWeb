@@ -14,12 +14,24 @@ var db  = require('../db.js')
 		, readerAdd: 'insert into reader(`status`,`show`,name,xml_url,html_url,tags)' +
 			' select 1,1,:name,:feed,:url,:tags from dual where not exists (select * from reader where xml_url like :feed)'
 		, readerSearchName: 'select * from reader' +
-			' where name like :keyword' +
-				' and `show`=1' +
+			' where' +
+				' `show`=1 and' +
+				' name like :keyword' +
 			' order by last_pub desc limit :page, :size'
 		, readerSearchNameCount: 'select count(*) as count from reader' +
-			' where name like :keyword' +
-				' and `show`=1'
+			' where' +
+				' `show`=1 and' +
+				' name like :keyword'
+		, readerFilterTags: 'select * from reader' +
+			' where' +
+				' `show`=1 and' +
+				' tags regexp :tags' +
+			' order by last_pub desc limit :page, :size'
+		, readerFilterTagsCount: 'select count(*) as count from reader' +
+			' where' +
+				' `show`=1 and' +
+				' tags regexp :tags'
+
 
 		, bookmarkByPage: 'select Id,title,url,status,tags,datetime,score from reader_bookmark order by status,Id desc limit :page,:size'
 		, bookmarkCount: 'select count(*) as count from reader_bookmark'
@@ -28,12 +40,15 @@ var db  = require('../db.js')
 		, bookmarkUpdateRead: 'update reader_bookmark set status=2,title=:title,tags=:tags,score=score+:score where Id=:id'
 		, bookmarkSearchTitle: 'select Id,title,url,status,tags,datetime,score from reader_bookmark where title like :keyword order by status,Id desc limit :page,:size'
 		, bookmarkSearchTitleCount: 'select count(*) as count from reader_bookmark where title like :keyword'
+		, bookmarkFilterTags: 'select Id,title,url,status,tags,datetime,score from reader_bookmark where tags regexp :tags order by status,Id desc limit :page,:size'
+		, bookmarkFilterTagsCount: 'select count(*) as count from reader_bookmark where tags regexp :tags'
 
 		, favoriteByPage: 'select * from reader_bookmark where status=2 order by score desc,datetime desc limit :page,:size'
 		, favoriteCount: 'select count(*) as count from reader_bookmark where status=2'
 		, favoriteSearchTitle: 'select Id,title,url,status,tags,datetime,score from reader_bookmark where title like :keyword and status=2 order by status,Id desc limit :page,:size'
 		, favoriteSearchTitleCount: 'select count(*) as count from reader_bookmark where title like :keyword and status=2'
-
+		, favoriteFilterTags: 'select Id,title,url,status,tags,datetime,score from reader_bookmark where status=2 and tags regexp :tags order by status,Id desc limit :page,:size'
+		, favoriteFilterTagsCount: 'select count(*) as count from reader_bookmark where  status=2 and tags regexp :tags'
 	}
 	, Model = {
 		getReaderByPage: function(page, size){
@@ -89,6 +104,36 @@ var db  = require('../db.js')
 				sql: SQL.readerSearchNameCount
 				, data: {
 					keyword: '%'+ keyword +'%'
+				}
+			}).then(function(rs){
+				var result
+					;
+
+				if( rs && rs.length ){
+					result = +rs[0].count;
+				}
+				else{
+					result = 0
+				}
+
+				return result;
+			});
+		}
+		, filterReaderByTag: function(tags, page, size){
+			return db.handle({
+				sql: SQL.readerFilterTags
+				, data: {
+					tags: '(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join('|') + ')(,|$)'
+					, page: (page -1) * size
+					, size: size
+				}
+			});
+		}
+		, countFilterReaderByTag: function(tags){
+			return db.handle({
+				sql: SQL.readerFilterTagsCount
+				, data: {
+					tags: '(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join('|') + ')(,|$)'
 				}
 			}).then(function(rs){
 				var result
@@ -188,6 +233,36 @@ var db  = require('../db.js')
 				return result;
 			});
 		}
+		, filterBookmarkByTags: function(tags, page, size){
+			return db.handle({
+				sql: SQL.bookmarkFilterTags
+				, data: {
+					tags: '(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join('|') + ')(,|$)'
+					, page: (page -1) * size
+					, size: size
+				}
+			})
+		}
+		, countFilterBookmarkByTags: function(tags){
+			return db.handle({
+				sql: SQL.bookmarkFilterTagsCount
+				, data: {
+					tags: '(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join('|') + ')(,|$)'
+				}
+			}).then(function(rs){
+				var result
+					;
+
+				if( rs && rs.length ){
+					result = +rs[0].length;
+				}
+				else{
+					result = 0;
+				}
+
+				return result;
+			});
+		}
 		, addBookmark: function(data){
 			return db.handle({
 				sql: SQL.bookmarkAdd
@@ -253,6 +328,36 @@ var db  = require('../db.js')
 				}
 				else{
 					result = 0
+				}
+
+				return result;
+			});
+		}
+		, filterFavoriteByTags: function(tags, page, size){
+			return db.handle({
+				sql: SQL.favoriteFilterTags
+				, data: {
+					tags: '(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join('|') + ')(,|$)'
+					, page: (page -1) * size
+					, size: size
+				}
+			})
+		}
+		, countFilterFavoriteByTags: function(tags){
+			return db.handle({
+				sql: SQL.favoriteFilterTagsCount
+				, data: {
+					tags: '(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join('|') + ')(,|$)'
+				}
+			}).then(function(rs){
+				var result
+					;
+
+				if( rs && rs.length ){
+					result = +rs[0].length;
+				}
+				else{
+					result = 0;
 				}
 
 				return result;

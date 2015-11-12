@@ -3,7 +3,7 @@
  * */
 require(['../../config'], function(config){
 	var r = require(config.requireConfig);
-	r(['jquery', 'global', 'socket', 'bookmarkRead', 'searchBar', config.dataSource.tag, 'template'], function($, g, socket, bookmarkRead, searchBar, tagsData){
+	r(['jquery', 'global', 'socket', 'bookmarkRead', 'searchBar', 'filterBox', config.dataSource.tag, 'template'], function($, g, socket, bookmarkRead, searchBar, filterBox, tagsData){
 		var $favorite = $('#favorite').on('click', '.icon-checkbox-checked', function(e){
 			e.preventDefault();
 				var $that = $(this)
@@ -31,6 +31,10 @@ require(['../../config'], function(config){
 			//	topic: 'reader/bookmark/search'
 			//	, query: data
 			//});
+		});
+
+		filterBox(tagsData, function(form){
+
 		});
 	});
 });

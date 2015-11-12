@@ -1,4 +1,5 @@
-@import "../lib/color";
+@import "../lib/color.less";
+@import "../lib/function.less";
 @import "../config/color.config.less";
 
 /**
@@ -9,8 +10,23 @@
 //@placeholder: #888;
 
 .input{
+
+	display: block;
+
+	min-height: 48px;
+	width: 100%;
+
+	border: 0;
+	border-radius: 10px;
+	margin: 0;
+	padding: 0;
+
+	font-size: 14px;
+	text-indent: 1em;
+
 	-webkit-appearance: none;
 
+	.boxSizing(border-box);
 
 	&::-webkit-input-placeholder{ /* WebKit browsers */
 		color: @input_placeholder_c;
@@ -46,13 +62,98 @@
 
 	/*textarea*/&-multiply{}
 
+	/**
+	 * 评分
+	 div.input-score
+		input#star5[type=radio name=score value=5]
+		label.icon.icon-star[for=star5]
+		input#star4[type=radio name=score value=4]
+		label.icon.icon-star[for=star4]
+		input#star3[type=radio name=score value=3]
+		label.icon.icon-star[for=star3]
+		input#star2[type=radio name=score value=2]
+		label.icon.icon-star[for=star2]
+		input#star1[type=radio name=score value=1]
+		label.icon.icon-star[for=star1]
+	 */
+	/*div*/&-score{
+       float: left;
+
+       .icon-star{
+	       float: right;
+	       margin-left: 14px;
+	       color: #888;
+	       font-size: 24px;
+       }
+	}
+
+	/**
+	 * 标签
+	 div.input-tag
+	    div.formGroup
+	        input.input[type=text name=tag placeholder=请输入标签 data-validator=tag]
+	        button.btn.tag_add[type=button]{添加}
+	        ul.hidden.list.scrollBar.tag_pointOut
+        div.tag_area
+        textarea.hidden[name=tags]
+	 */
+	/*div*/&-tag{
+		.tag_area{
+			min-height: 48px;
+			margin: 0 5px;
+		}
+
+		.tag_pointOut{
+			overflow: auto;
+			position: absolute;
+			z-index: 1;
+			left: 0;
+			right: 0;
+			max-height: 172px;
+			border: 1px solid @input-tag_pointOut_bd_c;
+			background: @input-tag_pointOut_bg_c;
+
+			li{
+				border-bottom: 1px solid @input-tag_pointOut_li_bd_c;
+				.boxSizing(border-box);
+			}
+		}
+	}
+
 	&-radio{}
 	&-checkbox{}
 	&-select{}
+
+	&[type="file"]{
+		position: relative;
+		top: 13px;
+		padding-left: 1em;
+		text-indent: 0;
+	}
 }
 
 /*div*/.formGroup{
+	position: relative;
+	min-height: 3em;
+	border: 1px solid #c0c0c0;
+	border-radius: 10px;
+	margin: 10px;
 
+	/*div*/.formGroup{
+		position: relative;
+		border: 0;
+		border-bottom: 1px solid @formGroup_formGroup_bd_c;
+		border-radius: 0;
+		margin: 0 10px;
+	}
+
+	/*button*/.btn{
+		position: absolute;
+		top: 10px;
+		bottom: 10px;
+		right: 10px;
+		margin: 0;
+	}
 }
 /*label*/.checkbox{
 

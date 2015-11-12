@@ -1,11 +1,13 @@
 <div class="formGroup">
-	<label for="tags" class="label">请设置标签</label>
+	<label class="label">请设置标签</label>
 
-	<div class="tagInput">
-		<input type="text" id="tag" class="input" name="tag" placeholder="请输入标签" data-validator="tag"/>
-		<button id="addTag" class="btn addTag" type="button">添加</button>
-		<ul id="pointOut" class="hidden list scrollBar tagPointOut"></ul>
+	<div class="input-tag">
+		<div class="formGroup">
+			<input type="text" name="tag" class="input" placeholder="请输入标签" data-validator="tag"/>
+			<button type="button" class="btn tag_add">添加</button>
+			<ul class="hidden list scrollBar tag_pointOut"></ul>
+		</div>
+		<div class="tag_area"></div>
+		<textarea name="tags" class="hidden"></textarea>
 	</div>
-	<div class="tagsArea">%tagsArea%</div>
-	<textarea name="tags" id="tags" class="hidden">%tags%</textarea>
 </div>

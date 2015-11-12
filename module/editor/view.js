@@ -74,7 +74,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					'+input[type=hidden name=type value=preview]' +
 					'+input#preview.input[type=file name=preview]' +
 				'^' + TagView.tagEditorEmmet +
-				'^fieldset' +
+				'^^fieldset' +
 					'>legend' +
 						'>label' +
 							'>input[type=checkbox name=setUI value=1]' +

@@ -49,6 +49,7 @@ web.get('/reader/', function(req, res){
 		, page = query.page || 1
 		, size = query.size || 20
 		, keyword = query.keyword || ''
+		, tags = query.tags || ''
 		, execute
 		;
 
@@ -85,6 +86,39 @@ web.get('/reader/', function(req, res){
 			return result;
 		});
 	}
+	else if( tags ){
+		execute = Model.filterReaderByTag(tags, page, size).then(function(rs){
+			var result
+				;
+
+			if( rs && rs.length ){
+				result = Model.countFilterReaderByTag(tags).then(function(count){
+					return {
+						data: rs
+						, index: page
+						, size: size
+						, count: count
+						, urlCallback: function(index){
+							return '?tags='+ tags + '&page='+ index;
+						}
+					};
+				});
+			}
+			else{
+				result = {
+					data: []
+					, index: 1
+					, size: size
+					, count: 0
+					, urlCallback: function(index){
+						return '?tags='+ tags + '&page='+ index;
+					}
+				};
+			}
+
+			return result;
+		});
+	}
 	else{
 		execute = Model.getReaderByPage(page, size).then(function(rs){
 			return Model.countReader().then(function(count){
@@ -111,6 +145,7 @@ web.get('/reader/bookmark', function(req, res){
 		, page = query.page || 1
 		, size = query.size || 20
 		, keyword = query.keyword || ''
+		, tags = query.tags || ''
 		, execute
 		;
 
@@ -147,6 +182,39 @@ web.get('/reader/bookmark', function(req, res){
 			return result;
 		});
 	}
+	else if( tags ){
+		execute = Model.filterBookmarkByTags(tags, page, size).then(function(rs){
+			var result
+				;
+
+			if( rs && rs.length ){
+				result = Model.countFilterBookmarkByTags(tags).then(function(count){
+					return {
+						data: rs
+						, index: page
+						, size: size
+						, count: count
+						, urlCallback: function(index){
+							return '?tags='+ tags + '&page='+ index;
+						}
+					};
+				});
+			}
+			else{
+				result = {
+					data: []
+					, index: 1
+					, size: size
+					, count: 0
+					, urlCallback: function(index){
+						return '?tags='+ tags + '&page='+ index;
+					}
+				};
+			}
+
+			return result;
+		});
+	}
 	else{
 		execute = Model.getBookmarkByPage(page, size).then(function(rs){
 			return Model.countBookmark().then(function(count){
@@ -173,6 +241,7 @@ web.get('/reader/favorite', function(req, res){
 		, page = query.page || 1
 		, size = query.size || 20
 		, keyword = query.keyword || ''
+		, tags = query.tags || ''
 		, execute
 		;
 
@@ -202,6 +271,39 @@ web.get('/reader/favorite', function(req, res){
 					, count: 0
 					, urlCallback: function(index){
 						return '?keyword='+ keyword +'&page='+ index;
+					}
+				};
+			}
+
+			return result;
+		});
+	}
+	else if( tags ){
+		execute = Model.filterFavoriteByTags(tags, page, size).then(function(rs){
+			var result
+				;
+
+			if( rs && rs.length ){
+				result = Model.countFilterFavoriteByTags(tags).then(function(count){
+					return {
+						data: rs
+						, index: page
+						, size: size
+						, count: count
+						, urlCallback: function(index){
+							return '?tags='+ tags + '&page='+ index;
+						}
+					};
+				});
+			}
+			else{
+				result = {
+					data: []
+					, index: 1
+					, size: size
+					, count: 0
+					, urlCallback: function(index){
+						return '?tags='+ tags + '&page='+ index;
 					}
 				};
 			}

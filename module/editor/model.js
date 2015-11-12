@@ -10,22 +10,36 @@ var db      = require('../db.js')
 	, SQL = {
 		editor: 'select editor.Id,editor.name,preview,tags,width,height from editor,image' +
 			' where' +
-			' status=1 and' +
-			' editor.preview=image.src order by editor.Id'
-
+				' status=1 and' +
+				' editor.preview=image.src' +
+			' order by editor.Id'
 		, editorPage: 'select editor.Id,editor.name,preview,tags,width,height from editor,image' +
 			' where' +
-			' status=1 and' +
-			' editor.preview=image.src order by editor.Id limit :page,:size'
+				' status=1 and' +
+				' editor.preview=image.src' +
+			' order by editor.Id limit :page,:size'
 		, editorCount: 'select count(*) as count from editor' +
 			' where status=1'
 		, editorSearchName: 'select editor.Id,editor.name,preview,tags,width,height from editor,image' +
-			' where editor.name like :keyword' +
-			' and status=1' +
-			' and editor.preview=image.src order by editor.Id limit :page,:size'
+			' where' +
+				' status=1 and' +
+				' editor.name like :keyword and' +
+				' editor.preview=image.src' +
+			' order by editor.Id limit :page,:size'
 		, editorSearchNameCount: 'select count(*) as count from editor' +
-			' where name like :keyword' +
-			' and status=1'
+			' where' +
+				' status=1 and' +
+				' name like :keyword'
+		, editorFilterTag: 'select editor.Id,editor.name,preview,tags,width,height from editor,image' +
+			' where' +
+				' status=1 and' +
+				' editor.tags regexp :tags and' +
+				' editor.preview=image.src' +
+			' order by editor.Id limit :page,:size'
+		, editorFilterTagCount: 'select count(*) as count from editor' +
+			' where' +
+				' status=1 and' +
+				' tags regexp :tags'
 
 		, codeById: 'select editor.Id,editor.name,tags,css_lib,js_lib,html,css,js,preview,width,height from editor,image where editor.Id=:id and editor.preview=image.src'
 		, codeByName: 'select Id,name,tags,css_lib,js_lib,html,css,js from editor where name=:name'
@@ -104,6 +118,36 @@ var db      = require('../db.js')
 				sql: SQL.editorSearchNameCount
 				, data: {
 					keyword: '%'+ keyword + '%'
+				}
+			}).then(function(rs){
+				var result
+					;
+
+				if( rs && rs.length ){
+					result = +rs[0].count;
+				}
+				else{
+					result = 0
+				}
+
+				return result;
+			})
+		}
+		, filterEditorByTag: function(tags, page, size){
+			return db.handle({
+				sql: SQL.editorFilterTag
+				, data: {
+					tags: '(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join('|') + ')(,|$)'
+					, page: (page -1) * size
+					, size: size
+				}
+			});
+		}
+		, countFilterEditorByTag: function(tags){
+			return db.handle({
+				sql: SQL.editorFilterTagCount
+				, data: {
+					tags: '(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join('|') + ')(,|$)'
 				}
 			}).then(function(rs){
 				var result

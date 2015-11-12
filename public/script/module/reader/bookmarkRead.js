@@ -7,7 +7,7 @@ define(['jquery', 'global', 'socket', 'tag', 'msgPopup', 'template'], function($
 			$bookmarkTitle.val( data.title );
 			data.score && $readPopup.find('#star'+ data.score).prop('checked', true);
 
-			$readPopup.find('div.tagsArea').html( data.tags );
+			$readPopup.find('div.tag_area').html( data.tags );
 			$tags.val( $(data.tags).filter('.tag-checked').map(function(){return this.innerHTML}).get().join() );
 
 		}).on('click', '#readBookmark', function(){

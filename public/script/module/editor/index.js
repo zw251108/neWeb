@@ -3,7 +3,7 @@
  */
 require(['../../config'], function(config){
 	var r = require.config(config.requireConfig);
-	r(['jquery', 'global', 'socket', 'searchBar', 'tag', config.dataSource.tag, 'template',  'layout'], function($, g, socket, searchBar, tag, tagData){
+	r(['jquery', 'global', 'socket', 'searchBar', 'filterBox', 'tag', config.dataSource.tag, 'template',  'layout'], function($, g, socket, searchBar, filterBox, tag, tagsData){
 		var $editor = $('#editor')
 			, $editorContainer = $editor.find('.module_content')
 			, PREVIEW_SIZE = 128
@@ -79,7 +79,7 @@ require(['../../config'], function(config){
 					rowSpace: space
 				});
 			}
-			, search = location.search
+			, search = unescape( location.search )
 			, searchObj = {}
 			, i, j
 			;
@@ -105,6 +105,10 @@ require(['../../config'], function(config){
 			//	, query: data
 			//});
 		});
+console.log(tagsData)
+		filterBox(tagsData, function(form){
+
+		});
 
 		$(window).on({
 			resize: function(){
@@ -129,25 +133,28 @@ require(['../../config'], function(config){
 					}
 
 					socketTimeout = setTimeout(function(){
-						if( search && searchObj.keyword ){
-							socket.emit('data', {
-								topic: 'editor/search'
-								, query: {
-									keyword: searchObj.keyword
-									, page: ++page
-									, size: PAGE_SIZE
-								}
-							});
-						}
-						else{
-							socket.emit('data', {
+						var send = {
 								topic: 'editor'
 								, query: {
 									page: ++page
 									, size: PAGE_SIZE
 								}
-							});
+							}
+							;
+
+						if( search ){
+							if( searchObj.keyword ){
+								send.topic = 'editor/search';
+								send.query.keyword = searchObj.keyword;
+							}
+							else if( searchObj.tags ){
+								send.topic = 'editor/filter';
+								send.query.tags = searchObj.tags
+							}
 						}
+
+						socket.emit('data', send);
+
 						socketTimeout = null;
 					}, 300);
 				}
@@ -178,6 +185,28 @@ require(['../../config'], function(config){
 				}
 			}
 			, 'editor/search': function(data){
+				var content = '';
+
+				data = data.data;
+
+				if( data.length ){
+					content = editorTpl( data ).join('');
+				}
+				else{
+					moreData = true;
+					content = '<article class="article article-block article-block-noMore">沒有更多数据了...</article>';
+				}
+
+				$editorContainer.find('article.article-block').remove().end().append( content );
+
+				if( data.length ){
+					layout();
+				}
+				else{
+					$editorContainer.height( $editorContainer.height() -128);
+				}
+			}
+			, 'editor/filter': function(data){
 				var content = '';
 
 				data = data.data;

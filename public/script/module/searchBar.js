@@ -16,7 +16,7 @@ define(['jquery', 'socket', 'template'], function($, socket){
 		;
 
 	return function(submit, prevent){
-		return $searchBar.on('submit', '#searchForm', function(e){console.log(123123)
+		return $searchBar.on('submit', '#searchForm', function(e){
 			prevent && e.preventDefault();
 
 			submit && submit(this);

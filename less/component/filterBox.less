@@ -6,13 +6,15 @@
  div.filterBox
     form
         div.formGroup
-            div.tagInput
-                input.input[type=text name=tag]
-				button.btn.icon.icon-add.addTag[type=button]
-			div.tagsArea
-			textarea.hidden[name=tags]
+			div.input-tag
+			    div.formGroup
+			        input.input[type=text name=tag]
+			        button.btn.icon.icon-plus.tag_add[type=button]
+			        ul.hidden.list.scrollBar.tag_pointOut
+		        div.tag_area
+		        textarea.hidden[name=tags]
 		div.btnGroup
-			button.btn[type=submit]{过滤}
+			button.btn.btn-submit[type=submit]{过滤}
  */
 .filterBox{
 	display: none;
@@ -22,52 +24,25 @@
 	right: 0;
 	width: 300px;
 
+	border: 1px solid #888;
 	margin-bottom: -1px;
 	outline: #fff solid 1px;
 
-	background: #888;
+	background: #fff;
 
 	font-size: 14px;
+	text-align: left;
+
+	.boxSizing(border-box);
 
 	.formGroup{
-		overflow: hidden;
-		position: relative;
-		border: 1px solid #c0c0c0;
-		border-radius: 10px;
-		margin: 10px;
-	}
-	.tagInput{
-		margin: 0;
 
-		.addTag:hover{
-			background-color: #d35400;
-			color: #fff;
+		.btn{
+			margin: 0;
 		}
 	}
-	.input{
-		display: block;
-		height: 30px;
-		width: 100%;
-		border: 0;
-		border-radius: 0;
-		margin: 0;
-		padding: 0;
-		font-size: 14px;
-		text-indent: 1em;
 
-		.boxSizing(border-box);
-	}
-	.addTag{
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		right: 0;
-		border: 0;
-		border-radius: 0;
-		margin: 0;
-	}
-	.tagsArea{
-		min-height: 40px;
-		text-align: left;
+	.btnGroup{
+		margin: 10px;
 	}
 }

@@ -97,12 +97,11 @@
 	}
 
 	.formGroup{
-		position: relative;
-		min-height: 3em;
-
-		border: 1px solid #c0c0c0;
-		border-radius: 10px;
 		margin: 30px 10px;
+
+		.formGroup{
+			margin: 0 10px;
+		}
 
 		.label{
 			position: absolute;
@@ -117,55 +116,11 @@
 			line-height: 1;
 		}
 
-		.input-score{
-			float: left;
-		}
-		.icon-star{
-			float: right;
-			margin-left: 14px;
-			color: #888;
-			font-size: 24px;
-		}
 		.score_value{
 			float: right;
 			margin-right: 10px;
 			color: #888;
 			line-height: 48px;
-		}
-
-		.btn{
-			position: absolute;
-			top: 10px;
-			bottom: 10px;
-			right: 10px;
-		}
-	}
-	.tagsArea{
-		min-height: 44px;
-		margin: 0 5px;
-	}
-	.input{
-		display: block;
-		height: 48px;
-		width: 100%;
-		border: 0;
-		border-radius: 10px;
-		margin: 0;
-		padding: 0;
-		font-size: 14px;
-		text-indent: 1em;
-
-		.boxSizing(border-box);
-
-		&:focus{
-			outline: 0;
-		}
-
-		&[type="file"]{
-			position: relative;
-			top: 13px;
-			padding-left: 1em;
-			text-indent: 0;
 		}
 	}
 

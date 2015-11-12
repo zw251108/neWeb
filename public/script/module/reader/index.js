@@ -3,7 +3,7 @@
  * */
 require(['../../config'], function(config){
 	var r = require(config.requireConfig);
-	r(['jquery', 'global', 'socket', 'bookmarkRead', 'searchBar', 'tag', config.dataSource.tag, 'msgPopup', 'pagination', 'template'], function($, g, socket, bookmarkRead, searchBar, tag, tagData, msgPopup, pagination){
+	r(['jquery', 'global', 'socket', 'bookmarkRead', 'searchBar', 'filterBox', 'tag', config.dataSource.tag, 'msgPopup', 'pagination', 'template'], function($, g, socket, bookmarkRead, searchBar, filterBox, tag, tagData, msgPopup, pagination){
 		var $reader = $('#reader')
 			, articleTpl = $.template({
 				template: 'li.reader_article.article' +
@@ -91,6 +91,10 @@ require(['../../config'], function(config){
 			//	topic: 'reader/bookmark/search'
 			//	, query: data
 			//});
+		});
+
+		filterBox(tagsData, function(form){
+
 		});
 
 		$reader.on('click', '.reader_section > a', function(e){

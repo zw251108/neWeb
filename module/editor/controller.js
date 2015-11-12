@@ -42,6 +42,7 @@ web.get('/editor/', function(req, res){
 		, page = query.page || 1
 		, size = query.size || 20
 		, keyword = query.keyword || ''
+		, tags = query.tags || ''
 		, execute
 		;
 
@@ -73,6 +74,39 @@ web.get('/editor/', function(req, res){
 						return '?keyword='+ keyword +'&page='+ index;
 					}
 				};
+			}
+
+			return result;
+		});
+	}
+	else if( tags ){
+		execute = Model.filterEditorByTag(tags, page, size).then(function(rs){
+			var result
+				;
+
+			if( rs && rs.length ){
+				result = Model.countFilterEditorByTag(tags).then(function(count){
+					return {
+						data: rs
+						, index: page
+						, size: size
+						, count: count
+						, urlCallback: function(index){
+							return '?tags='+ tags +'&page='+ index;
+						}
+					}
+				});
+			}
+			else{
+				result = {
+					data: []
+					, index: 1
+					, size: size
+					, count: 0
+					, urlCallback: function(index){
+						return '?tags='+ tags + '&page='+ index;
+					}
+				}
 			}
 
 			return result;
@@ -276,6 +310,56 @@ socket.register({
 					send.data = rs;
 
 					result = Model.countSearchEditorByName(keyword).then(function(count){
+						send.count = count;
+
+						return send;
+					});
+				}
+				else{
+					send.data = [];
+					send.count = 0;
+
+					result = send;
+				}
+
+				return result;
+			});
+		}
+		else{
+			execute = Promise.reject( new EditorError('缺少参数') );
+		}
+
+		execute.catch(function(e){
+			console.log( e );
+
+			send.error = '';
+			send.msg = e.message;
+
+			return send;
+		}).then(function(send){
+			socket.emit('data', send);
+		});
+	}
+	, 'editor/filter': function(socket, data){
+		var send = {
+				topic: 'editor/filter'
+			}
+			, query = data.query || {}
+			, tags = query.tags
+			, page = query.page || 1
+			, size = query.size || 20
+			, execute
+			;
+
+		if( tags ){
+			execute = Model.filterEditorByTag(tags, page, size).then(function(rs){
+				var result
+					;
+
+				if( rs && rs.length ){
+					send.data = rs;
+
+					result = Model.countFilterEditorByTag(tags).then(function(count){
 						send.count = count;
 
 						return send;

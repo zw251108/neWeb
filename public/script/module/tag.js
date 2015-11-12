@@ -3,7 +3,7 @@
  * @desc    标签 Tag 相关操作
  * */
 //-----  -----
-define(['jquery', 'socket', 'template'], function($, socket, tpl){
+define(['jquery', 'socket'], function($, socket){
 	var Tag = function(tagsData){
 			TAG_DATA = tagsData;
 		}
@@ -54,9 +54,9 @@ define(['jquery', 'socket', 'template'], function($, socket, tpl){
 
 	Tag.setAdd = function($target, notSave){
 		var $tag = $target.find('[name="tag"]')
-			, $tags = $target.find('.tags')
-			, $tagsArea = $target.find('.tagsArea')
-			, $tagPointOut = $target.find('.pointOut')
+			, $tags = $target.find('[name="tags"]')
+			, $tagsArea = $target.find('.tag_area')
+			, $tagPointOut = $target.find('.tag_pointOut')
 			, tagTimeout = null
 			;
 
@@ -65,6 +65,8 @@ define(['jquery', 'socket', 'template'], function($, socket, tpl){
 				, val = $.trim( this.value )
 				, expr
 				;
+
+			val = val.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)');
 
 			tagTimeout && clearTimeout( tagTimeout );
 			if( val ){
@@ -98,7 +100,7 @@ define(['jquery', 'socket', 'template'], function($, socket, tpl){
 				$tagPointOut.slideUp();
 				tagTimeout = null;
 			}
-		}).on('mousewheel DOMMouseScroll', '.pointOut', function(e){
+		}).on('mousewheel DOMMouseScroll', '.tag_pointOut', function(e){
 			var delta = e.originalEvent.wheelDelta || -e.originalEvent.detail
 				, $that = $(this)
 				;
@@ -119,14 +121,14 @@ define(['jquery', 'socket', 'template'], function($, socket, tpl){
 					e.stopImmediatePropagation();
 				}
 			}
-		}).on('click', '.pointOut .tag', function(){
+		}).on('click', '.tag_pointOut .tag', function(){
 			var tags = $tags.val();
 
 			$tagsArea.prepend('<span class="tag tag-checked">'+ this.innerHTML +'</span>');
 			$tags.val( tags ? tags +',' + this.innerHTML : this.innerHTML);
 			$tagPointOut.slideUp();
 			$tag.val('').focus();
-		}).on('click', '.addTag', function(){
+		}).on('click', '.tag_add', function(){
 			var tag = $tag.val()
 				, tags = $tags.val()
 				;
@@ -135,6 +137,7 @@ define(['jquery', 'socket', 'template'], function($, socket, tpl){
 				$tag.val('');
 				$tags.val( tags ? tags +',' + tag : tag);
 				$tagsArea.prepend('<span class="tag tag-checked">'+ tag +'</span>');
+
 				$tagPointOut.slideUp();
 
 				// todo 将标签添加到数据库
