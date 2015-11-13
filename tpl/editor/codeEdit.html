@@ -9,19 +9,20 @@
 		<input type="text" id="name" class="input" name="name" value="%name%" placeholder="新建前端代码"/>
 	</h3>
 
-	<div class="editor_area editor_area-html">
+	<div class="editor_area editor_area-html small">
 		<textarea name="html" id="html" class="hidden" placeholder="body&nbsp;之间的&nbsp;HTML&nbsp;代码">%html%</textarea>
 		<label for="html" class="hidden">HTML</label>
 	</div>
-	<div class="editor_area editor_area-js">
-		<textarea name="js" id="js" class="hidden" placeholder="JavaScript&nbsp;代码">%js%</textarea>
-		<label for="js" class="hidden">JavaScript</label>
-	</div>
-	<div class="editor_area editor_area-css">
+	<div class="editor_area editor_area-css small">
 		<textarea name="css" id="css" class="hidden" placeholder="CSS&nbsp;代码">%css%</textarea>
 		<label for="css" class="hidden">CSS</label>
 	</div>
-	<div class="editor_area editor_area-rs">
+	<div class="editor_area editor_area-js normal">
+		<textarea name="js" id="js" class="hidden" placeholder="JavaScript&nbsp;代码">%js%</textarea>
+		<label for="js" class="hidden">JavaScript</label>
+	</div>
+	<div class="editor_area editor_area-rs large">
 		<iframe src="result" frameborder="0" id="result" class="editor_rs" name="result"></iframe>
-		<label class="hidden">Result</label></div>
+		<label class="hidden">Result</label>
+	</div>
 </form>

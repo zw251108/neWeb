@@ -9,7 +9,7 @@ define(['jquery', 'global', 'socket', 'tag', 'msgPopup', 'template'], function($
 
 			$readPopup.find('div.tag_area').html( data.tags );
 			$tags.val( $(data.tags).filter('.tag-checked').map(function(){return this.innerHTML}).get().join() );
-
+			    console.log($tags.val())
 		}).on('click', '#readBookmark', function(){
 
 			var query = $readForm.serializeJSON()
@@ -40,8 +40,8 @@ define(['jquery', 'global', 'socket', 'tag', 'msgPopup', 'template'], function($
 		, $bookmarkId = $readPopup.find('#bookmarkId')
 		, $bookmarkUrl = $readPopup.find('#bookmarkUrl')
 		, $bookmarkTitle = $readPopup.find('#bookmarkTitle')
-		, $tag = $readPopup.find('#tag')
-		, $tags = $readPopup.find('#tags')
+		, $tag = $readPopup.find('[name="tag"]')
+		, $tags = $readPopup.find('[name="tags"]')
 		;
 
 	tag.setAdd( $readPopup );

@@ -1,0 +1,49 @@
+@import "../lib/color.less";
+@import "../lib/function.less";
+@import "../config/color.config.less";
+
+/**
+ * 箭头
+ */
+.arrow{
+
+	&:before,
+	&:after{
+		position: absolute;
+
+		content: "";
+	}
+
+	&-l{}
+	&-r{}
+	&-u{}
+	&-b{}
+}
+
+.arrow{
+	//position: relative;
+
+	&:before,
+	&:after{
+		position: absolute;
+		z-index: 10;
+		left: 0;
+		right: 0;
+
+		height: 0;
+		width: 0;
+		margin: auto;
+
+		border: 5px solid transparent;
+
+		content: "";
+	}
+	&:before{
+		bottom: 0;
+		border-bottom-color: #fff;
+	}
+	&:after{
+		bottom: -1px;
+		border-bottom-color: #888;
+	}
+}

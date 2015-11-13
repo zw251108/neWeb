@@ -18,6 +18,25 @@ define('editorLayout', ['jquery', 'global', 'template'], function($, g){
 		}]
 		, $layoutList = $('#changeLayout').on({
 			click: function(){
+				var $that = $(this)
+					, $parent = $that.parent()
+					, $toolbar = $that.parents('.toolbar')
+					, width = $layoutList.width()
+					, toolbarWidth = $toolbar.width()
+					, parentLeft = $parent.offset().left
+					;
+
+				if( width === toolbarWidth - 12 ){
+					$layoutList.css('right', (parentLeft + $that.width() -10+1 - toolbarWidth) + 'px');
+					// 10 为 外边距，1 为边框宽度
+				}
+				else if( parentLeft < width ){
+					$layoutList.css('right', (parentLeft + 10-1 - width) +'px');
+					// 10 为 外边距，1 为边框宽度
+				}
+				else{
+					$layoutList.css('right', 0);
+				}
 
 				beforeCallback && beforeCallback();
 
@@ -27,7 +46,7 @@ define('editorLayout', ['jquery', 'global', 'template'], function($, g){
 			'<button id="showCSS" class="icon showSp" title="更改布局">css</button>' +
 			'<button id="showJS" class="icon showSp" title="更改布局">js</button>' +
 			'<button id="showRS" class="icon showSp" title="更改布局">结果</button>' +
-			'<span class="arrow hidden"></span><ul class="list scrollBar layoutList hidden"></ul>')
+			'<span class="arrow hidden"></span><ul class="list tiny scrollBar layoutList hidden"></ul>')
 			.nextAll('ul').append( listTpl(LAYOUT_LIST).join('') )
 			.on('click', 'li', function(){
 			var $that = $(this)
@@ -410,7 +429,7 @@ require(['../../config'], function(config){
 		, 'setMorePopup'
 		, 'msgPopup'
 		, 'demoImgLibPopup', 'template'
-	], function($, g, socket, skin, code, codeSkin, layout, initUiLib, tagsData, setMore, msgPopup){
+	], function($, g, socket, skin, code, codeSkin, layout, initUiLib, tagsData, setMore, msgPopup){console.log(skin)
 		var $editor = $('#editor')
 			, $form = $editor.find('#editorForm')
 			, $toolbar = $editor.find('.toolbar')

@@ -5,53 +5,36 @@
 @import "../lib/grid.less";
 
 //---------- Reader 订阅 ---------
-.module-reader{
-	.arrow {
-		display: none;
-		position: absolute;
-		z-index: 10;
-		bottom: 1px;
-		right: 15px;
-		height: 0;
-		width: 0;
-		border: 5px solid transparent;
-		border-bottom-color: #fff;
-
-		&:before {
-			position: absolute;
-			top: -4px;
-			left: -5px;
-			height: 0;
-			width: 0;
-			border: 5px solid transparent;
-			border-bottom-color: #888;
-			content: "";
-		}
-	}
-}
+.module-reader,
 .module-bookmark,
 .module-favorite{
-	.arrow {
-		position: absolute;
-		z-index: 10;
-		bottom: 1px;
-		right: 15px;
-		height: 0;
-		width: 0;
-		border: 5px solid transparent;
-		border-bottom-color: #fff;
-
-		&:before {
-			position: absolute;
-			top: -4px;
-			left: -5px;
-			height: 0;
-			width: 0;
-			border: 5px solid transparent;
-			border-bottom-color: #888;
-			content: "";
-		}
-	}
+	// todo 抽出放入单独文件
+	//.arrow {
+	//	position: absolute;
+	//	z-index: 10;
+	//	bottom: 1px;
+	//	right: 15px;
+	//
+	//	height: 0;
+	//	width: 0;
+	//
+	//	border: 5px solid transparent;
+	//	border-bottom-color: #fff;
+	//
+	//	&:before {
+	//		position: absolute;
+	//		top: -4px;
+	//		left: -5px;
+	//
+	//		height: 0;
+	//		width: 0;
+	//
+	//		border: 5px solid transparent;
+	//		border-bottom-color: #888;
+	//
+	//		content: "";
+	//	}
+	//}
 }
 .icon-reader:before{
 	&:extend(.icon-rss:before);

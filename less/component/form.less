@@ -5,10 +5,16 @@
 /**
  * 表单相关
  *  formGroup 是用来包裹 input 和 label 等进行布局，一个表单项用一个
+
+ div.formGroup
+    input.input
+
+ div.formGroup
+    div.input-score
+
+ div.formGroup
+    div.input-tag
  * */
-
-//@placeholder: #888;
-
 .input{
 
 	display: block;
@@ -28,6 +34,7 @@
 
 	.boxSizing(border-box);
 
+	// placeholder
 	&::-webkit-input-placeholder{ /* WebKit browsers */
 		color: @input_placeholder_c;
 	}

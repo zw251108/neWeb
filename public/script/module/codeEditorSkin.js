@@ -10,7 +10,25 @@ define(['jquery', 'socket', 'template'], function($, socket){
 		, $skinLink = $('<link />', {rel: 'stylesheet'}).appendTo('head')
 		, $codeEditorSkin = $('#changeSkin').on({
 			click: function(){
-				//$layoutList.slideUp().prev().hide();
+				var $that = $(this)
+					, $parent = $that.parent()
+					, $toolbar = $that.parents('.toolbar')
+					, width = $skinList.width()
+					, toolbarWidth = $toolbar.width()
+					, parentLeft = $parent.offset().left
+					;
+
+				if( width === toolbarWidth - 12 ){
+					$skinList.css('right', (parentLeft + $that.width() -10+1 - toolbarWidth) + 'px');
+					// 10 为 外边距，1 为边框宽度
+				}
+				else if( parentLeft < width ){
+					$skinList.css('right', (parentLeft + 10-1 - width) +'px');
+					// 10 为 外边距，1 为边框宽度
+				}
+				else{
+					$skinList.css('right', 0);
+				}
 
 				beforeCallback && beforeCallback();
 
@@ -51,13 +69,13 @@ define(['jquery', 'socket', 'template'], function($, socket){
 			//}
 		})
 
-		, $skinList = $codeEditorSkin.after('<span class="arrow hidden"></span><ul class="list scrollBar skinList hidden"></ul>').nextAll('ul').append( listTpl($.map(SKIN_LIST, function(d){
+		, $skinList = $codeEditorSkin.after('<span class="arrow hidden"></span><ul class="list tiny scrollBar skinList hidden"></ul>').nextAll('ul').append( listTpl($.map(SKIN_LIST, function(d){
 			var obj = {
 				name: d
 			};
 
 			if( d === CURRENT_SKIN ){
-				obj.on = true
+				obj.on = 'on';
 			}
 
 			return obj;
