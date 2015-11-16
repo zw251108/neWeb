@@ -54,38 +54,40 @@
 	background-image: -moz-linear-gradient(top, @module_bg_gradient_s, @module_bg_gradient_e);
 	background-image: -ms-linear-gradient(top, @module_bg_gradient_s, @module_bg_gradient_e);
 	background-image: linear-gradient(top, @module_bg_gradient_s, @module_bg_gradient_e);
-}
 
-//----- 模块标题 建议标签 h2 -----
-/*h2*/.module_title{
-	text-transform: capitalize;
 
-	&.icon:before{
-		position: absolute;
-		top: -90px;
-		left: 0;
-		width: 100%;
-		font-size: 90px;
-		text-align: center;
+
+	//----- 模块标题 建议标签 h2 -----
+	/*h2*/&_title{
+		text-transform: capitalize;
+
+		&.icon:before{
+			position: absolute;
+			top: -90px;
+			left: 0;
+			width: 100%;
+			font-size: 90px;
+			text-align: center;
+		}
 	}
-}
 
-//----- 模块内容 -----
-/*div*/.module_content{
-	position: relative;
-	overflow:hidden;
-}
+	//----- 模块内容 -----
+	/*div*/&_content{
+		position: relative;
+		overflow:hidden;
+	}
 
-//----- 模块信息 -----
-/*span*/.module_info{
-    position: absolute;
+	//----- 模块信息 -----
+	/*span*/&_info{
+		position: absolute;
 
-    top: 0;
-    right: 10px;
+		top: 0;
+		right: 10px;
 
-    font-size: 18px;
-    line-height: 40px;
-    text-align: right;
+		font-size: 18px;
+		line-height: 40px;
+		text-align: right;
+	}
 }
 
 //----- 模块类别样式 -----

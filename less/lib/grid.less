@@ -1,12 +1,21 @@
 //@border-radius: 5px;    // 圆角的参数
 //
 //@line-height: 30px;     // 全局默认行间距
-//
-//@padding-lr: 5px;       // 行内元素 左右内边距
-//
-//@border-width:  0;    // 模块边框
-//
-//@outline-width: 0;    // outline 边框宽度
+
+// 模块内边距
+@padding-bottom-width:  0;
+@padding-top-width:     0;
+@padding-left-width:    0;
+@padding-right-width:   0;
+
+// 模块边框
+@border-bottom-width:   0;
+@border-top-width:      0;
+@border-left-width:     0;
+@border-right-width:    0;
+
+// outline 边框宽度
+@outline-width:         0;
 
 //----- Grid 栅格系统 -----
 // 外边距、内边距、边框 的宽度均为 @space 或 0
@@ -19,10 +28,9 @@
 @space: @grid-space *2; // 栅格间距 用作外边距、内边距、边框宽度
 
 .grid-x(@x){    // 栅格宽度计算
-	width: @grid-unit * @x - @space;
-//	 - @border-width *2;
+	@width: @grid-unit * @x - @space
+	 - @border-left-width - @border-right-width;
 }
-
 //@header-height: @grid-unit *2 - @grid-space;    // 页头高度
 //
 //@footer-height: @grid-unit *2 - @grid-space;    // 页脚高度
@@ -39,14 +47,15 @@
 //// 只有 动态磁砖模块 设定高度 由文字行距 + 外边距 + 内边距 + 边框宽度 及其它常量计算出来
 //// 其它类型模块高度为 auto 可设置最小高度
 //
-//@module-metro-title-height: 30px;   // 动态磁砖模块标题高度
+@module-metro-title-height: 30px;   // 动态磁砖模块标题高度
 //@module-metro-title-left:   @space; // 动态磁砖模块左位移
 //@module-metro-bg-top:       20px;   // 动态磁砖模块背景图片上位移
-//@module-info-height:        30px;   // 模块信息高度
+@module-info-height:        30px;   // 模块信息高度
 //@module-metro-bg-height:    90px;   // 动态磁砖背景图片的高度 这是一个常量，与实际的图片大小为准
+@module-metro-icon-height:    90px;   // 动态磁砖背景图片的高度 这是一个常量，与实际的图片大小为准
 //
-//// 动态磁砖高度 由 模块信息高度、模块标题高度、模块背景图片高度 相加得到
-//@module-metro-height: @module-info-height + @module-metro-title-height + @module-metro-bg-height;
+// 动态磁砖高度 由 模块信息高度、模块标题高度、模块背景图片高度 相加得到
+@module-metro-height: @module-info-height + @module-metro-title-height + @module-metro-icon-height;
 //
 //// 模块标题上外边距
 ////@module-metro-title-margin-top: @module-info-height + @module-metro-bg-height;// - 10px;

@@ -1,4 +1,5 @@
 @import "../config/color.config.less";
+@import "../lib/grid.less";
 
 //----- Metro 动态磁砖 -----
 /**
@@ -10,8 +11,8 @@
         span.module_info
  */
 /*section*/.module-metro{
-	height: 150px;
-	width: 150px;
+	height: @module-metro-height;
+	//width: 150px;
 	margin: 5px;
 
 	color: @module-metro_c;

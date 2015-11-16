@@ -215,9 +215,9 @@
 }
 
 /*----- editor -----*/
-.editor_form{
-	margin: 10px 0;
-}
+//.editor_form{
+//	margin: 10px 0;
+//}
 .editor_preview{
 	position: relative;
 	height: 200px;
@@ -241,12 +241,24 @@
 	float: right;
 	height: 40px;
 	width: 40px;
-	margin: 0 5px 10px;
+	//border: 0;
+	border: 2px solid #888;
+	border-radius: 10px;
+	margin: 0 5px 5px;
+	background: #fff;
+	color: #888;
+
+	.boxSizing(border-box);
+	
+	&:hover{
+		border-color: #d35400;
+		color: #d35400;
+	}
 }
 .editor_title{
 	height: 40px;
 
-	margin: 0 100px 10px 5px;
+	margin: 10px 105px 10px 5px;
 	//margin-bottom: 10px;
 	//margin-right: 100px;
 

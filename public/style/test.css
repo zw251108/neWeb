@@ -14,15 +14,15 @@
 	animation: 1s both;
 }
 
-.hideMetro .module-metro{
-	display: none;
-}
+/*.hideMetro .module-metro{*/
+	/*display: none;*/
+/*}*/
 
-.module{
-}
+/*.module{*/
+/*}*/
 
-.module-show{}
-.module-hide{}
+/*.module-show{}*/
+/*.module-hide{}*/
 
 .timeLine{
 	overflow: hidden;
@@ -91,7 +91,7 @@
 }
 
 /* bower */
-.wrap{
+.module-bower .module_content .wrap{
 	overflow: auto;
 	margin-left: 152px;
 	margin-bottom: 10px;

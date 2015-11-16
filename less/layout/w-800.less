@@ -5,9 +5,9 @@
  *  .Container 宽度 800
  *  共 20 列
  *  .large    20
- *  .big      16(默认)
- *  .normal   12(默认)
- *  .small    8(默认)
+ *  .big      20
+ *  .normal   20
+ *  .small    20
  *  .tiny     4(默认)
  * */
 @media screen and (min-width:800px) and (max-width:959px){
@@ -15,7 +15,11 @@
 		width: @grid-unit *20;
 	}
 
-	.large{
+	.large,
+	.big,
+	.normal,
+	.small{
 		.grid-x(20);
+		width: @width;
 	}
 }
