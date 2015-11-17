@@ -57,7 +57,7 @@ require(['../../config'], function(config){
 			$curr = $temp.add(this);
 
 			g.$body.animate({
-				scrollTop: this.offsetTop - 80
+				scrollTop: this.offsetTop + 40
 			}, function(){
 				$curr.toggleClass('icon-right icon-down').next().slideToggle();
 

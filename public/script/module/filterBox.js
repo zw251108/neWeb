@@ -1,7 +1,7 @@
 /**
  * @module filterBox
  * */
-define(['jquery', 'socket', 'tag'], function($, socket, tag){
+define(['jquery', 'socket', 'tag', 'template'], function($, socket, tag){
 	var filterBoxTpl = $.template({
 			template: 'div.filterBox.small' +
 				'>form#filterForm' +

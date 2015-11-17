@@ -4,13 +4,13 @@
 
 //----- Function 公用函数 -----
 
-//----- metro 模块背景图 sprite 函数 -----
-.metroBgImg(){
-    background-image:url("../image/default/metro.png");
-}
-.metroBgSprite(@num){
-    background-position:center @num *(-130px)+20px;
-}
+////----- metro 模块背景图 sprite 函数 -----
+//.metroBgImg(){
+//    background-image:url("../image/default/metro.png");
+//}
+//.metroBgSprite(@num){
+//    background-position:center @num *(-130px)+20px;
+//}
 
 //.textIndent(@text-indent:2em){
 //    text-indent: @text-indent;
@@ -125,4 +125,63 @@
 //----- 线性渐变 -----
 .linear-gradient{
 
+}
+
+//----- 滚动条 -----
+.scrollBar(@thumb, @track-piece){
+    &::-webkit-scrollbar{
+        height: 5px;
+        width: 5px;
+    }
+    &::-webkit-scrollbar-thumb{
+        height: 50px;
+        border-radius: 20px;
+        background: @thumb;
+    }
+    &::-webkit-scrollbar-track-piece{
+        background: @track-piece;
+    }
+}
+
+//----- CodeMirror 代码编辑器 样式扩展 -----
+.CodeMirrorExtend(@height){
+    .CodeMirror{
+        height: @height;
+        border: 1px solid #ddd;
+        font-family: inherit;
+        font-size: 13px;
+        line-height: 1em;
+        text-indent: 0;
+
+        .boxSizing( border-box );
+
+        &-scroll{
+            overflow: scroll !important;
+        }
+        &-vscrollbar{
+	        bottom: 5px !important;
+            .scrollBar(#c0c0c0, #fff);
+        }
+        &-hscrollbar{
+	        right: 5px !important;
+            .scrollBar(#c0c0c0, #fff);
+        }
+	    &-scrollbar-filler{
+		    height: 5px !important;
+		    width: 5px !important;
+	    }
+
+        pre{
+            padding-left: 7px;
+            line-height: 1.25;
+
+            &.CodeMirror-placeholder{
+                color: #999;
+            }
+        }
+        &-gutter{
+            margin-bottom: -30px;
+            padding-bottom: 0;
+        }
+    }
 }

@@ -56,6 +56,14 @@
 //
 // 动态磁砖高度 由 模块信息高度、模块标题高度、模块背景图片高度 相加得到
 @module-metro-height: @module-info-height + @module-metro-title-height + @module-metro-icon-height;
+
+//----- metro 动态磁砖 -----
+@metro_info_height: 20px;   // 动态磁砖信息高度
+@metro_title_height: 30px;
+@metro_title_icon_top: -90px; // 动态磁砖背景图片的高度 这是一个常量，与实际的图片大小为准
+@metro_title_icon_height: 90px; // 动态磁砖背景图片的高度 这是一个常量，与实际的图片大小为准
+@metro_height: @metro_title_height - @metro_title_icon_top + @metro_title_height;
+
 //
 //// 模块标题上外边距
 ////@module-metro-title-margin-top: @module-info-height + @module-metro-bg-height;// - 10px;

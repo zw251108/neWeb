@@ -1,6 +1,10 @@
 @import "../config/color.config.less";
+@import "../lib/function.less";
 
 .scrollBar{
+	.scrollBar(#c0c0c0, #fff)
+
+
 	///*三角箭头的颜色*/
 	//scrollbar-arrow-color: @scrollbar_bg_c;
 	//
@@ -91,17 +95,4 @@
 	//	border-radius: 20px;
 	//	background: @scrollbar_bg_c;
 	//}
-
-	&::-webkit-scrollbar{
-		height: 5px;
-		width: 5px;
-	}
-	&::-webkit-scrollbar-thumb{
-		height: 50px;
-		border-radius: 20px;
-		background: #c0c0c0;
-	}
-	&::-webkit-scrollbar-track-piece{
-		background: #fff;
-	}
 }

@@ -55,36 +55,44 @@
 		}
 	}
 
+	.CodeMirrorExtend(100%);
 	.CodeMirror{
-		height: 100%;
-		border: 1px solid #ddd;
-		//outline: 1px solid #ddd;
-		font-family: inherit;
-		font-size: 13px;
-		line-height: 1em;
-		text-indent: 0;
-
-		.boxSizing( border-box );
-
-		&-scroll{
-			overflow: scroll !important;
-			/*max-height: 200px;*/
-		}
-		pre{
-			padding-left: 7px;
-			line-height: 1.25;
-
-			&.CodeMirror-placeholder{
-				color: #999;
-			}
-		}
+		//height: 100%;
+		//border: 1px solid #ddd;
+		////outline: 1px solid #ddd;
+		//font-family: inherit;
+		//font-size: 13px;
+		//line-height: 1em;
+		//text-indent: 0;
+		//
+		//.boxSizing( border-box );
+		//
+		//&-scroll{
+		//	overflow: scroll !important;
+		//	/*max-height: 200px;*/
+		//}
+		//&-vscrollbar{
+		//	.scrollBar(#c0c0c0, #fff);
+		//}
+		//&-hscrollbar{
+		//	.scrollBar(#c0c0c0, #fff);
+		//}
+		//
+		//pre{
+		//	padding-left: 7px;
+		//	line-height: 1.25;
+		//
+		//	&.CodeMirror-placeholder{
+		//		color: #999;
+		//	}
+		//}
 		&-gutters{
 			padding-bottom: 0;
 		}
-		&-gutter{
-			margin-bottom: -30px;
-			padding-bottom: 0;
-		}
+		//&-gutter{
+		//	margin-bottom: -30px;
+		//	padding-bottom: 0;
+		//}
 		&-focused{
 			border: 1px solid #888;
 			//outline: 1px solid #888;
@@ -95,61 +103,7 @@
 			border-bottom-color: #888;
 		}
 	}
-	//.CodeMirror-scroll{
-	//	overflow: scroll !important;
-	//	/*max-height: 200px;*/
-	//}
-	//.CodeMirror pre{
-	//	padding-left: 7px;
-	//	line-height: 1.25;
-	//}
-	//.CodeMirror-gutters{
-	//	padding-bottom: 0;
-	//}
-	//.CodeMirror-gutter{
-	//	margin-bottom: -30px;
-	//	padding-bottom: 0;
-	//}
-	//.CodeMirror-focused{
-	//	border: 1px solid #888;
-	//	//outline: 1px solid #888;
-	//}
-	//.CodeMirror pre.CodeMirror-placeholder{
-	//	color: #999;
-	//}
-	//
-	//.CodeMirror-focused + label{
-	//	display: none;
-	//}
 
-	/* toolbar 子菜单 */
-	// todo 抽出放入单独文件
-	//.arrow{
-	//	position: absolute;
-	//	z-index: 10;
-	//	bottom: 1px;
-	//	right: 15px;
-	//
-	//	height: 0;
-	//	width: 0;
-	//
-	//	border: 5px solid transparent;
-	//	border-bottom-color: #fff;
-	//
-	//	&:before{
-	//		position: absolute;
-	//		top: -4px;
-	//		left: -5px;
-	//
-	//		height: 0;
-	//		width: 0;
-	//
-	//		border: 5px solid transparent;
-	//		border-bottom-color: #888;
-	//
-	//		content: "";
-	//	}
-	//}
 	.list{
 		overflow: auto;
 		position: absolute;
@@ -160,18 +114,6 @@
 		background: #888;
 		margin-bottom: -1px;
 		font-size: 14px;
-
-		//&::-webkit-scrollbar {
-		//	width: 5px;
-		//}
-		//&::-webkit-scrollbar-thumb{
-		//	height: 50px;
-		//	border-radius: 20px;
-		//	background: #c0c0c0;
-		//}
-		//&::-webkit-scrollbar-track-piece{
-		//	background: #fff;
-		//}
 
 		li{
 			overflow: hidden;
