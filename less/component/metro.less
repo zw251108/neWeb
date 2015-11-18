@@ -1,4 +1,5 @@
 @import "../config/color.config.less";
+@import "../lib/function.less";
 @import "../lib/grid.less";
 
 //----- Metro 动态磁砖 -----
@@ -6,14 +7,29 @@
  * metro 模块
 
  a[href]
-    section.module.module-metro.tiny
+    section.metro.tiny
         h2.module_title.icon
         span.module_info
  * */
 /*section*/.metro{
+	display: inline-block;
+
 	position: relative;
 	height: @metro_height;
-	
+
+	border: 2px solid @metro_c;
+	border-radius: @border-radius;
+	margin: 5px;
+
+	color: @metro_c;
+
+	.boxSizing(border-box);
+
+	&:hover{
+		border-color: @metro-hover_bd_c;
+		background: @metro-hover_bg_c -webkit-linear-gradient(top, @metro-hover_bg_gradient_s, @metro-hover_bg_gradient_e);
+		color: @metro-hover_c;
+	}
 
 	&_title{
 		position: absolute;
@@ -22,6 +38,7 @@
 		right: 0;
 		height: @metro_title_height;
 
+		font-size: 20px;
 		line-height: @metro_title_height;
 		text-align: center;
 	}
@@ -48,5 +65,21 @@
 		font-size: 12px;
 		line-height: @metro_info_height;
 		text-align: right;
+	}
+
+	&-time{
+		&:hover{
+			.watch_wrap{
+				border-color: @metro-hover_c;
+			}
+			.watch_hourHand,
+			.watch_minuteHand,
+			.watch_secondHand{
+				border-bottom-color: @metro-hover_c;
+			}
+			.watch_mark{
+				background: @metro-hover_c;
+			}
+		}
 	}
 }

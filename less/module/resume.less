@@ -1,17 +1,19 @@
-@import "../lib/function.less";
-@import "../lib/grid.less";
+@charset "utf-8";
 
 @import "../config/color.config.less";
 
+@import "../lib/function.less";
+@import "../lib/grid.less";
+
 //---------- Profile 个人简历 ----------
-.module-profile{
+.module-resume{
 
 	.module_content{
 
 	}
 }
 
-.profile_section{
+.resume_section{
 	position: relative;
 	margin: 58px 10px 10px;
 	border: 1px solid #c0c0c0;
@@ -105,10 +107,16 @@
 	&_end{
 		top: -1.5em;
 	}
+
+	@node_margin: 20px;
+
 	&_node{
 		position: absolute;
+
+		@diff: 15px + @node_margin;
+		width: calc(~"50% - @{diff}");
+
 		border: 1px solid #c0c0c0;
-		border-radius: 10px;
 		padding: 10px;
 
 		.boxSizing(border-box);
@@ -126,113 +134,55 @@
 			.boxSizing(border-box);
 		}
 		&:before{
-			top: 10px;
+			top: 5px;
 		}
 		&:after{
-			bottom: 10px;
+			bottom: 5px;
 		}
 
 
 		&:nth-child(even){
-			left: 0;
+			left: @node_margin;
+			border-radius: 10px 0 0 10px;
 
 			&:before,
 			&:after{
-				right: -85px;
+				right: -21px;
 			}
 
 			.datetime{
-				right: -60px;
-				//border-left-width: 1px;
+				right: 0;
 
 				&:before{
-					right: -30px;
+					right: -21px;
 					border-left-color: #c0c0c0;
 				}
 				&:after{
-					right: -29px;
+					right: -20px;
 					border-left-color: #fff;
 				}
-
-				//&-start{
-				//	&:before{
-				//		left: -11px;
-				//		border-width: 10px 0 0 10px;
-				//		border-left-color: #c0c0c0;
-				//	}
-				//	&:after{
-				//		top: 4px;
-				//		left: -13px;
-				//		border-width: 10px 0 0 10px;
-				//		border-left-color: #fff;
-				//	}
-				//
-				//}
-				//&-end{
-				//	&:before{
-				//		top: 15px;
-				//		left: -11px;
-				//		border-width: 0 0 10px 10px;
-				//		border-left-color: #c0c0c0;
-				//	}
-				//	&:after{
-				//		top: 16px;
-				//		left: -13px;
-				//		border-width: 0 0 10px 10px;
-				//		border-left-color: #fff;
-				//	}
-				//}
 			}
 		}
 		&:nth-child(odd){
-			right: 0;
+			right: @node_margin;
+			border-radius: 0 10px 10px 0;
 
 			&:before,
 			&:after{
-				left: -85px;
+				left: -21px;
 			}
 
 			.datetime{
-				left: -60px;
-				//border-right-width: 1px;
+				left: 0;
 
 				&:before{
-					left: -30px;
+					left: -21px;
 					border-right-color: #c0c0c0;
 				}
 				&:after{
-					left: -29px;
+					left: -20px;
 					border-right-color: #fff;
 				}
-
-				//&-start{
-				//	&:before{
-				//		top: 5px;
-				//		right: -11px;
-				//		border-width: 10px 10px 0 0;
-				//		border-right-color: #c0c0c0;
-				//	}
-				//	&:after{
-				//		top: 4px;
-				//		right: -13px;
-				//		border-width: 10px 10px 0 0;
-				//		border-right-color: #fff;
-				//	}
-				//}
-				//&-end{
-				//	&:before{
-				//		top: 15px;
-				//		right: -11px;
-				//		border-width: 0 10px 10px 0;
-				//		border-right-color: #c0c0c0;
-				//	}
-				//	&:after{
-				//		top: 16px;
-				//		right: -13px;
-				//		border-width: 0 10px 10px 0;
-				//		border-right-color: #fff;
-				//	}
-				//}
 			}
 		}
 	}
@@ -247,24 +197,18 @@
 	.datetime{
 		position: absolute;
 		z-index: 10;
-		height: 30px;
+		height: 20px;
 		width: 60px;
-		border-color: #c0c0c0 #fff;
-		border-style: solid;
-		border-width: 1px 0;
 		background: #fff;
 		font-size: 12px;
-		line-height: 30px;
+		line-height: 20px;
 		text-align: center;
-
-		.boxSizing(border-box);
 
 		&-start{
 			bottom: 0;
 		}
 		&-end{
-			//top: 10px;
-			top: 10px;
+			top: 0;
 		}
 
 		&:hover{
@@ -277,12 +221,19 @@
 			top: 0;
 			height: 0;
 			width: 0;
-			border: 15px solid transparent;
+			border: 10px solid transparent;
 			content: "";
 		}
 	}
 
 	&_now{
+		&:nth-child(even){
+			border-top-right-radius: 10px;
+		}
+		&:nth-child(odd){
+			border-top-left-radius: 10px;
+		}
+
 		&:before{
 			content: none;
 		}

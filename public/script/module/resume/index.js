@@ -262,8 +262,8 @@ require(['../../config'], function(config){
 					, desc: ''
 				}
 			}]
-			, $profile = $('#profile')
-			, $content = $profile.find('.module_content')
+			, $resume = $('#resume')
+			, $content = $resume.find('.module_content')
 			, width = $content.width()
 			;
 

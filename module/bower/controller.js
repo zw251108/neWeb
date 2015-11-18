@@ -8,7 +8,7 @@ var web         = require('../web.js')
 
 	, Promise   = require('promise')
 
-	, index     = require('../index.js')
+	, modules   = require('../module.js')
 	, admin     = require('../admin.js')
 	, data      = require('../data.js')
 
@@ -23,13 +23,20 @@ var web         = require('../web.js')
 	, PROMPT_CALLBACK_INDEX = {}
 	;
 
-// 注册首页 metro 模块
-index.push({
+modules.register({
 	id: 'bower'
-	, type: 'metro'
-	, size: 'normal'
+	, metroSize: 'tiny'
 	, title: '组件 bower'
+	, icon: 'bower'
+	, href: 'bower/'
 });
+//// 注册首页 metro 模块
+//index.push({
+//	id: 'bower'
+//	, type: 'metro'
+//	, size: 'normal'
+//	, title: '组件 bower'
+//});
 
 web.get('/bower/', function(req, res){
 	var query = req.query || {}

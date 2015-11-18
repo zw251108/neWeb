@@ -3,7 +3,7 @@
  * */
 require(['../../config'], function(config){
 	var r = require(config.requireConfig);
-	r(['jquery', 'global', 'socket', 'bookmarkRead', 'searchBar', 'filterBox', 'tag', config.dataSource.tag, 'msgPopup', 'pagination', 'template'], function($, g, socket, bookmarkRead, searchBar, filterBox, tag, tagData, msgPopup, pagination){
+	r(['jquery', 'global', 'socket', 'bookmarkRead', 'searchBar', 'filterBox', 'tag', config.dataSource.tag, 'msgPopup', 'pagination', 'template'], function($, g, socket, bookmarkRead, searchBar, filterBox, tag, tagsData, msgPopup, pagination){
 		var $reader = $('#reader')
 			, articleTpl = $.template({
 				template: 'li.reader_article.article' +
@@ -75,7 +75,7 @@ require(['../../config'], function(config){
 				}
 			})
 			, $addFeedForm = $addPopup.find('form')
-			, $readPopup = bookmarkRead($reader, tagData)
+			, $readPopup = bookmarkRead($reader, tagsData)
 			;
 
 		$('#add').on('click', function(){

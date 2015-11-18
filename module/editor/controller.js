@@ -6,7 +6,7 @@ var web         = require('../web.js')
 
 	, config    = require('../../config.js')
 
-	, index     = require('../index.js')
+	, modules   = require('../module.js')
 	, admin     = require('../admin.js')
 	, data      = require('../data.js')
 
@@ -29,13 +29,28 @@ var web         = require('../web.js')
 	, EDITOR_PREVIEW_ALBUM_ID = 2
 	;
 
-// 注册首页 metro 模块
-index.push({
+modules.register({
 	id: 'editor'
-	, type: 'metro'
-	, size: 'normal'
+	, metroSize: 'tiny'
+	, title: '代码 code'
+	, icon: 'code'
+	, href: 'editor/'
+	, hrefTitle: '代码列表'
+}, {
+	id: 'code'
+	, metroSize: 'tiny'
 	, title: '编辑器 editor'
+	, icon: 'editor'
+	, href: 'editor/code?id=0'
+	, hrefTitle: '新建代码'
 });
+//// 注册首页 metro 模块
+//index.push({
+//	id: 'editor'
+//	, type: 'metro'
+//	, size: 'normal'
+//	, title: '编辑器 editor'
+//});
 
 web.get('/editor/', function(req, res){
 	var query = req.query || {}

@@ -6,28 +6,32 @@ var web         = require('../web.js')
 
 	, config    = require('../../config.js')
 
-	, index     = require('../index.js')
+	, modules   = require('../module.js')
 	, admin     = require('../admin.js')
 	, data      = require('../data.js')
 
 	, Model = require('./model.js')
 	, View  = require('./view.js')
 	, Admin = require('./admin.view.js')
-	, ProfileError  = require('./error.js')
+	, ResumeError  = require('./error.js')
 
 	, Promise = require('promise')
 	;
 
-// 注册首页 metro 模块
-//index.push({
-//
-//});
+modules.register({
+	id: 'resume'
+	, metroSize: 'tiny'
+	, title: '简历 resume'
+	, icon: 'user'
+	, href: 'resume/'
+	, hrefTitle: '个人简历'
+});
 
-web.get('/profile/', function(req, res){
-	Promise.resolve( View.profile() ).then(function(html){
+web.get('/resume/', function(req, res){
+	Promise.resolve( View.resume() ).then(function(html){
 		res.send( config.docType.html5 + html );
 		res.end();
 	});
 });
 
-admin.push('profile');
+admin.push('resume');

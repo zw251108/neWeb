@@ -8,7 +8,7 @@ var web         = require('../web.js')
 
 	, config    = require('../../config.js')
 
-	, index     = require('../index.js')
+	, modules   = require('../module.js')
 	, admin     = require('../admin.js')
 	, data      = require('../data.js')
 
@@ -23,26 +23,45 @@ var web         = require('../web.js')
 	;
 
 // 注册首页 metro 模块
-index.push({
+modules.register({
 	id: 'reader'
-	, type: 'metro'
-	, size: 'tiny'
+	, metroSize: 'tiny'
 	, title: '阅读 reader'
+	, icon: 'reader'
+	, href: 'reader/'
 }, {
 	id: 'bookmark'
-	, href: 'reader/bookmark'
-	, icon: 'bookmark'
-	, type: 'metro'
-	, size: 'tiny'
+	, metroSize: 'tiny'
 	, title: '书签 bookmark'
+	, icon: 'bookmark'
+	, href: 'reader/bookmark'
 }, {
 	id: 'favorite'
-	, href: 'reader/favorite'
-	, icon: 'star'
-	, type: 'metro'
-	, size: 'tiny'
+	, metroSize: 'tiny'
 	, title: '收藏 favorite'
+	, icon: 'star'
+	, href: 'reader/favorite'
 });
+//index.push({
+//	id: 'reader'
+//	, type: 'metro'
+//	, size: 'tiny'
+//	, title: '阅读 reader'
+//}, {
+//	id: 'bookmark'
+//	, href: 'reader/bookmark'
+//	, icon: 'bookmark'
+//	, type: 'metro'
+//	, size: 'tiny'
+//	, title: '书签 bookmark'
+//}, {
+//	id: 'favorite'
+//	, href: 'reader/favorite'
+//	, icon: 'star'
+//	, type: 'metro'
+//	, size: 'tiny'
+//	, title: '收藏 favorite'
+//});
 
 web.get('/reader/', function(req, res){
 	var query = req.query || {}

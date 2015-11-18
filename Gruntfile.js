@@ -335,6 +335,7 @@ module.exports = function(grunt){
 			destiny: {
 				options: {
 					cleancss: true
+					//, strictMath: true
 				},
 				files: {
 					'public/style/style.css': 'less/style.less'
@@ -499,7 +500,7 @@ module.exports = function(grunt){
 				//	, src: ['config.js']
 				//}, {
 				//	dest: '../destiny_build/zw150026/', expand: true, flatten: false, filter: 'isFile'
-				//	, src: ['index.js']
+				//	, src: ['module.js']
 				//}, {
 				//	dest: '../destiny_build/zw150026/', expand: true, flatten: false, filter: 'isFile'
 				//	, src: ['bower.json']

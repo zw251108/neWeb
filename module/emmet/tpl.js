@@ -82,7 +82,7 @@ var admin         = require('../admin.js')
 		, filter: {
 			nav: function(d){
 				return d.nav.map(function(d){
-					return '<li><a href="'+ d.href +'" class="icon icon-'+ d.icon + (d.on ? ' on' : '') +'"></a>';
+					return '<li><a href="../'+ d.href +'" class="icon icon-'+ d.icon + (d.on ? ' on' : '') +'"></a>';
 				}).join('');
 			}
 		}

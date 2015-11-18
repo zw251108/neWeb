@@ -5,8 +5,8 @@ var getEmmet    = require('../emmet/getEmmet.js')
 
 	, emmetTpl  = require('../emmetTpl/emmetTpl.js').template
 
+	, modules   = require('../module.js')
 	, pagination    = require('../pagination.js')
-	, footer    = require('../footer.js')
 
 	, TagView   = require('../tag/view.js')
 
@@ -125,7 +125,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					}]
 				}
 				, footer: {
-					nav: footer('rss')
+					nav: modules.current('reader')
 				}
 				, script: {
 					main: '../script/module/reader/index'
@@ -166,7 +166,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					}]
 				}
 				, footer: {
-					nav: footer('bookmark')
+					nav: modules.current('bookmark')
 				}
 				, script: {
 					main: '../script/module/reader/bookmark'
@@ -197,7 +197,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					}]
 				}
 				, footer: {
-					nav: footer('star')
+					nav: modules.current('favorite')
 				}
 				, script: {
 					main: '../script/module/reader/favorite'

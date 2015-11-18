@@ -6,7 +6,7 @@ var web         = require('../web.js')
 
 	, config    = require('../../config.js')
 
-	, index     = require('../index.js')
+	, modules   = require('../module.js')
 	, admin     = require('../admin.js')
 	, data      = require('../data.js')
 
@@ -20,13 +20,20 @@ var web         = require('../web.js')
 	, DOCUMENT_ID = 1
 	;
 
-// 注册首页 metro 模块
-index.push({
+modules.register({
 	id: 'document'
-	, type: 'metro'
-	, size: 'small'
+	, metroSize: 'tiny'
 	, title: '文档 document'
+	, icon: 'document'
+	, href: 'document/'
 });
+//// 注册首页 metro 模块
+//index.push({
+//	id: 'document'
+//	, type: 'metro'
+//	, size: 'small'
+//	, title: '文档 document'
+//});
 
 web.get('/document/', function(req, res){
 	var query = req.query || {}

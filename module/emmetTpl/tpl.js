@@ -97,16 +97,19 @@ module.exports = {
 	})
 	, metroTpl:         emmetTpl({
 		template: 'a[href=%href%]' +
-			'>section#%id%.module.module-metro.module-%id%.tiny' +
-				'>h2.module_title.icon.icon-%icon%{%title%}' +
+			'>section#%id%.metro.metro-%id%.%metroSize%[title=%hrefTitle%]' +
+				'>h2.metro_title.icon.icon-%icon%{%title%}' +
 				'+div.m_info{%info%}' +
-				'+div.module_content'
+				'+span.metro_info'
 		, filter: {
 			icon: function(d){
 				return d.icon || d.id;
 			}
 			, href: function(d){
 				return d.href || d.id + '/';
+			}
+			, hrefTitle: function(d){
+				return d.hrefTitle || d.title;
 			}
 		}
 	})

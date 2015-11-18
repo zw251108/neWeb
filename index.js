@@ -31,8 +31,8 @@ var fs = require('fs')
 	, db     = require('./module/db.js')
 
 	//----- 自定义模块 -----
-	, tpl           = require('./module/emmetTpl/tpl.js') // 模板库
-	, index         = require('./module/index.js') // 首页模块
+	, tpl       = require('./module/emmetTpl/tpl.js') // 模板库
+	, modules   = require('./module/module.js') // 首页模块
 	;
 
 log4js.configure({
@@ -138,7 +138,7 @@ require('./module/bower/controller.js'      );  // 加载模块 bower
 
 require('./module/reader/controller.js'     );  // 加载模块 reader
 
-require('./module/profile/controller.js'    );  // 加载模块 profile
+require('./module/resume/controller.js'     );  // 加载模块 profile
 
 require('./module/tag/controller.js'        );  // 加载模块 tag 功能
 
@@ -167,7 +167,27 @@ web.get('/', function(req, res){
 	res.send( tpl.html('index', {
 		title: '个人小站（开发测试中...）'
 		, user: ('user' in session) ? '/user' : '/login'
-		, modules: tpl.metroTpl(index).join('')
+		, modules: '<section id="time" class="metro metro-time tiny">' +
+			'<h2 class="metro_title">时间 time</h2>' +
+			'<div class="watch_wrap hidden" id="watch">' +
+				'<span class="watch_hourHand" id="hourHand"></span>' +
+				'<span class="watch_minuteHand" id="minuteHand"></span>' +
+				'<span class="watch_secondHand" id="secondHand"></span>' +
+				'<span class="watch_mark watch_mark-1"></span>' +
+				'<span class="watch_mark watch_mark-2"></span>' +
+				'<span class="watch_mark watch_mark-3"></span>' +
+				'<span class="watch_mark watch_mark-4"></span>' +
+				'<span class="watch_mark watch_mark-5"></span>' +
+				'<span class="watch_mark watch_mark-6"></span>' +
+				'<span class="watch_mark watch_mark-7"></span>' +
+				'<span class="watch_mark watch_mark-8"></span>' +
+				'<span class="watch_mark watch_mark-9"></span>' +
+				'<span class="watch_mark watch_mark-10"></span>' +
+				'<span class="watch_mark watch_mark-11"></span>' +
+				'<span class="watch_mark watch_mark-12"></span>' +
+			'</div>' +
+			'<span class="metro_info"></span>' +
+		'</section>' + tpl.metroTpl( modules.modules ).join('')
 		, script: {
 			main: 'script/index'
 			, src: 'script/lib/require.min.js'
@@ -221,33 +241,29 @@ web.post('/skin', function(req, res){   // 设置皮肤功能
 	res.end();
 });
 
-index.unshift({
-	id: 'time'
-	, type: 'metro'
-	, href: '#'
-	, size: 'tiny'
-	, title: '时间 time'
-	, info: '<div class="watch_wrap hidden" id="watch">' +
-	'<span class="watch_hourHand" id="hourHand"></span>' +
-	'<span class="watch_minuteHand" id="minuteHand"></span>' +
-	'<span class="watch_secondHand" id="secondHand"></span>' +
-	'<span class="watch_mark watch_mark-1"></span>' +
-	'<span class="watch_mark watch_mark-2"></span>' +
-	'<span class="watch_mark watch_mark-3"></span>' +
-	'<span class="watch_mark watch_mark-4"></span>' +
-	'<span class="watch_mark watch_mark-5"></span>' +
-	'<span class="watch_mark watch_mark-6"></span>' +
-	'<span class="watch_mark watch_mark-7"></span>' +
-	'<span class="watch_mark watch_mark-8"></span>' +
-	'<span class="watch_mark watch_mark-9"></span>' +
-	'<span class="watch_mark watch_mark-10"></span>' +
-	'<span class="watch_mark watch_mark-11"></span>' +
-	'<span class="watch_mark watch_mark-12"></span>' +
-	'</div>'
-});
-//index.push({
-//	id: 'profile'
+//modules.unshift({
+//	id: 'time'
+//	, type: 'metro'
 //	, href: '#'
+//	, metroSize: 'tiny'
+//	, title: '时间 time'
+//	, info: '<div class="watch_wrap hidden" id="watch">' +
+//	'<span class="watch_hourHand" id="hourHand"></span>' +
+//	'<span class="watch_minuteHand" id="minuteHand"></span>' +
+//	'<span class="watch_secondHand" id="secondHand"></span>' +
+//	'<span class="watch_mark watch_mark-1"></span>' +
+//	'<span class="watch_mark watch_mark-2"></span>' +
+//	'<span class="watch_mark watch_mark-3"></span>' +
+//	'<span class="watch_mark watch_mark-4"></span>' +
+//	'<span class="watch_mark watch_mark-5"></span>' +
+//	'<span class="watch_mark watch_mark-6"></span>' +
+//	'<span class="watch_mark watch_mark-7"></span>' +
+//	'<span class="watch_mark watch_mark-8"></span>' +
+//	'<span class="watch_mark watch_mark-9"></span>' +
+//	'<span class="watch_mark watch_mark-10"></span>' +
+//	'<span class="watch_mark watch_mark-11"></span>' +
+//	'<span class="watch_mark watch_mark-12"></span>' +
+//	'</div>'
 //});
 
 //----- Web 服务器 -----

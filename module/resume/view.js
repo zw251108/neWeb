@@ -5,31 +5,34 @@ var getEmmet    = require('../emmet/getEmmet.js')
 
 	, emmetTpl  = require('../emmetTpl/emmetTpl.js').template
 
-	, footer    = require('../footer.js')
+	, modules   = require('../module.js')
 
-	, profileContent = emmetTpl({
-		template: 'section#score.section.profile_section' +
+	, resumeContent = emmetTpl({
+		template: 'section#score.section.resume_section' +
 				'>h3{自我评估}' +
 				'+div#skillRadar.radar' +
 				'+div#baseRadar.radar' +
-			'^^section.section.profile_section' +
+			'^^section.section.resume_section' +
 				'>h3{工作经历}' +
 				'+div#timeline.timeline'
 	})
 
 	, View = {
-		profile: function(){
+		resume: function(){
 			return tpl({
-				title: '个人简历 profile'
+				title: '个人简历 resume'
 				, main: {
 					moduleMain: {
-						id: 'profile'
-						, title: '个人简历 profile'
-						, content: profileContent({})
+						id: 'resume'
+						, title: '个人简历 resume'
+						, content: resumeContent({})
 					}
 				}
+				//, footer: {
+				//	nav: modules.current('resume')
+				//}
 				, script: {
-					main: '../script/module/profile/index'
+					main: '../script/module/resume/index'
 					, src: '../script/lib/require.min.js'
 				}
 			});

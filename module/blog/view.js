@@ -5,8 +5,8 @@ var getEmmet    = require('../emmet/getEmmet.js')
 
 	, emmetTpl  = require('../emmetTpl/emmetTpl.js').template
 
+	, modules   = require('../module.js')
 	, pagination    = require('../pagination.js')
-	, footer    = require('../footer.js')
 
 	, tagView   = require('../tag/view.js')
 
@@ -25,6 +25,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 
 	, View = {
 		blogList: function(rs){
+			console.log(rs);
 			return tpl({
 				title: '博客 blog'
 				, main: {
@@ -33,6 +34,9 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						, title: '博客 blog'
 						, content: articleListTpl( rs.data ).join('') + '<div class="pagination" id="pagination">'+ pagination(rs.index, rs.size, rs.count, rs.urlCallback) +'</div>'
 					}
+				}
+				, footer: {
+					nav: modules.current('blog')
 				}
 				//, script: {
 				//	main: '../script/module/blog/index'

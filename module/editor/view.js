@@ -5,8 +5,8 @@ var getEmmet    = require('../emmet/getEmmet.js')
 
 	, emmetTpl  = require('../emmetTpl/emmetTpl.js').template
 
+	, modules   = require('../module.js')
 	, pagination    = require('../pagination.js')
-	, footer    = require('../footer.js')
 
 	, TagView   = require('../tag/view.js')
 
@@ -110,7 +110,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					}
 				}
 				, footer: {
-					nav: footer('editor')
+					nav: modules.current('editor')
 				}
 				, script: {
 					main: '../script/module/editor/index'
@@ -160,7 +160,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					}]
 				}
 				, footer: {
-					nav: footer('editor')
+					nav: modules.current('code')
 				}
 				, script: {
 					main: '../script/module/editor/code'

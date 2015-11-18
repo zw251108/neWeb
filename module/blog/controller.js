@@ -6,7 +6,7 @@ var web         = require('../web.js')
 
 	, config    = require('../../config.js')
 
-	, index     = require('../index.js')
+	, modules   = require('../module.js')
 	, admin     = require('../admin.js')
 	, data      = require('../data.js')
 
@@ -22,10 +22,13 @@ var web         = require('../web.js')
 
 //web.use('/script/module/blog.js', __dirname +'/module/blog/handler.js');
 
-//index.push({
-//
-//});
-
+modules.register({
+	id: 'blog'
+	, metroSize: 'tiny'
+	, title: '博客 blog'
+	, icon: 'edit'
+	, href: 'blog/'
+});
 
 web.get('/blog/', function(req, res){
 	var query = req.query || {}

@@ -1,7 +1,6 @@
+@import "../config/color.config.less";
 @import "../lib/function.less";
 @import "../lib/grid.less";
-
-@import "../config/color.config.less";
 
 //---------- Watch 时钟 ----------
 .watch_wrap{
@@ -12,7 +11,7 @@
 	height: 80px;
 	width: 80px;
 
-	border: 5px solid #fff;
+	border: 5px solid @metro_c;
 	border-radius: 80px;
 	margin: 0 auto;
 }
@@ -25,7 +24,7 @@
 	width: 0;
 	height: 0;
 	border-style: solid;
-	border-color: transparent transparent #fff;
+	border-color: transparent transparent @metro_c;
 
 	.transformOrigin( center bottom );
 }
@@ -55,7 +54,7 @@
 	top: 0;
 	height: 8px;
 	width: 2px;
-	background:#fff;
+	background:@metro_c;
 
 	.transformOrigin(center 40px);
 }
