@@ -846,7 +846,7 @@ socket.register({
 			;
 
 		if( url ){
-			execute = Model.isExistBookmark( url ).then(function(rs){
+			execute = Model.isExistBookmark( url).catch(function(e){console.log(e)}).then(function(rs){
 				var result
 					;
 
