@@ -42,26 +42,6 @@ modules.register({
 	, icon: 'star'
 	, href: 'reader/favorite'
 });
-//index.push({
-//	id: 'reader'
-//	, type: 'metro'
-//	, size: 'tiny'
-//	, title: '阅读 reader'
-//}, {
-//	id: 'bookmark'
-//	, href: 'reader/bookmark'
-//	, icon: 'bookmark'
-//	, type: 'metro'
-//	, size: 'tiny'
-//	, title: '书签 bookmark'
-//}, {
-//	id: 'favorite'
-//	, href: 'reader/favorite'
-//	, icon: 'star'
-//	, type: 'metro'
-//	, size: 'tiny'
-//	, title: '收藏 favorite'
-//});
 
 web.get('/reader/', function(req, res){
 	var query = req.query || {}

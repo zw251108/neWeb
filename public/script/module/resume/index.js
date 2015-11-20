@@ -151,8 +151,7 @@ define('timeline', ['jquery', 'global', 'd3'], function($, g, d3){
 
 			!$node.data('end') && $node.addClass('timeline_now');
 
-			$node.append('<h4>'+ d.job.title +'</h4>' +
-				'<h5>'+ d.co.name +'</h5>' +
+			$node.append('<h4>'+ d.job.title +'<span class="subTitle">'+ d.co.name +'</span></h4>' +
 				'<div class="datetime datetime-start">'+ $node.data('start') +'</div>' +
 				($node.data('end') ? '<div class="datetime datetime-end">'+ $node.data('end') +'</div>' : '') +
 				'<div class="desc">'+ d.job.desc +'</div>');
@@ -262,8 +261,12 @@ require(['../../config'], function(config){
 					, desc: ''
 				}
 			}]
+			, tags = ['游戏宅', '动漫宅', '伪·技术宅', '程序员', '兼职·段子手', '吐槽爱好者', '自黑', '乐观'
+				, '80后', '没心没肺', '吃货', '肉食动物']
+
 			, $resume = $('#resume')
 			, $content = $resume.find('.module_content')
+			, $tagsArea = $resume.find('#tagsArea')
 			, width = $content.width()
 			;
 
@@ -285,10 +288,14 @@ require(['../../config'], function(config){
 		timeline({
 			data: workHistoryData
 			, selector: '#timeline'
-			, start: new Date(2009, 0)
+			, start: new Date(2009, 7)
 			, end: new Date()
-			, h: width
+			, h: Math.min(Math.max(278, width), 278*2)
 			, w: width
 		});
+
+		$tagsArea.html( $.map(tags, function(d){
+			return '<span class="tag">'+ d +'</span>';
+		}).join('') );
 	});
 });

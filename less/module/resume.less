@@ -73,13 +73,14 @@
 }
 .timeline{
 	position: relative;
-	//margin-top: -10px;
+	margin-bottom: 24px;
+	margin-top: 44px;
 
 	&_line{
 		position: absolute;
 		bottom: 0;
 		//top: 10px;
-		top: 0;
+		top: -18px;
 		left: 0;
 		right: 0;
 		width: 2px;
@@ -102,10 +103,10 @@
 		text-align: center;
 	}
 	&_start{
-		bottom: 0;
+		bottom: -24px;
 	}
 	&_end{
-		top: -1.5em;
+		top: -44px;
 	}
 
 	@node_margin: 20px;
@@ -139,7 +140,12 @@
 		&:after{
 			bottom: 5px;
 		}
-
+		
+		&:hover{
+			.datetime{
+				color: inherit;
+			}
+		}
 
 		&:nth-child(even){
 			left: @node_margin;
@@ -148,6 +154,7 @@
 			&:before,
 			&:after{
 				right: -21px;
+				line-height: 32px;
 			}
 
 			.datetime{
@@ -172,6 +179,10 @@
 				left: -21px;
 			}
 
+			h4{
+				text-align: right;
+			}
+
 			.datetime{
 				left: 0;
 
@@ -188,10 +199,18 @@
 	}
 
 	h4{
-		border-bottom: 1px dashed #c0c0c0;
+		width: 100%;
+		line-height: 32px;
+		.ellipsis();
 	}
-	h5{
-		text-align: right;
+	.subTitle{
+		font-size: 12px;
+		&:before{
+			content: "[";
+		}
+		&:after{
+			content: "]";
+		}
 	}
 
 	.datetime{
@@ -199,7 +218,7 @@
 		z-index: 10;
 		height: 20px;
 		width: 60px;
-		background: #fff;
+		color: transparent;
 		font-size: 12px;
 		line-height: 20px;
 		text-align: center;
@@ -209,10 +228,6 @@
 		}
 		&-end{
 			top: 0;
-		}
-
-		&:hover{
-
 		}
 
 		&:before,

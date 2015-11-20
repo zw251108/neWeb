@@ -14,7 +14,10 @@ var getEmmet    = require('../emmet/getEmmet.js')
 				'+div#baseRadar.radar' +
 			'^^section.section.resume_section' +
 				'>h3{工作经历}' +
-				'+div#timeline.timeline'
+				'+div#timeline.timeline' +
+			'^^section.section.resume_section' +
+				'>h3{标签}' +
+				'+div.tagsArea#tagsArea'
 	})
 
 	, View = {
