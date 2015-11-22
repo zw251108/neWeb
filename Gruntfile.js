@@ -334,8 +334,10 @@ module.exports = function(grunt){
 		, less: {
 			destiny: {
 				options: {
-					cleancss: true
+					//cleancss: true
 					//, strictMath: true
+
+					compress: true
 				},
 				files: {
 					'public/style/style.css': 'less/style.less'
