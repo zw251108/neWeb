@@ -20,19 +20,23 @@ define('editorLayout', ['jquery', 'global', 'template'], function($, g){
 			click: function(){
 				var $that = $(this)
 					, $parent = $that.parent()
-					, $toolbar = $that.parents('.toolbar')
-					, width = $layoutList.width()
-					, toolbarWidth = $toolbar.width()
+					, parentWidth = $parent.width()
 					, parentLeft = $parent.offset().left
+
+					, width = $layoutList.width()
+					, bdL = parseInt($layoutList.css('borderLeftWidth'), 10)
+					, bdR = parseInt($layoutList.css('borderRightWidth'), 10)
+
+					, $toolbar = $that.parents('.toolbar')
+					, toolbarWidth = $toolbar.width()
+					, toolbarLeft = $toolbar.offset().left
 					;
 
-				if( width === toolbarWidth - 12 ){
-					$layoutList.css('right', (parentLeft + $that.width() -10+1 - toolbarWidth) + 'px');
-					// 10 为 外边距，1 为边框宽度
+				if( width + bdL + bdR === toolbarWidth ){
+					$layoutList.css('right', (parentLeft + parentWidth - (toolbarLeft + toolbarWidth) ) + 'px');
 				}
 				else if( parentLeft < width ){
-					$layoutList.css('right', (parentLeft + 10-1 - width) +'px');
-					// 10 为 外边距，1 为边框宽度
+					$layoutList.css('right', (parentLeft + parentWidth - toolbarLeft - width) +'px');
 				}
 				else{
 					$layoutList.css('right', 0);

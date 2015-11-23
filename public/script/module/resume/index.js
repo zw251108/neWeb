@@ -262,7 +262,7 @@ require(['../../config'], function(config){
 				}
 			}]
 			, tags = ['游戏宅', '动漫宅', '伪·技术宅', '程序员', '兼职·段子手', '吐槽爱好者', '自黑', '乐观'
-				, '80后', '没心没肺', '吃货', '肉食动物']
+				, '80后', '没心没肺', '吃货', '肉食动物', '80后']
 
 			, $resume = $('#resume')
 			, $content = $resume.find('.module_content')

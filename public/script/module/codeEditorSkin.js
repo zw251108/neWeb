@@ -12,19 +12,23 @@ define(['jquery', 'socket', 'template'], function($, socket){
 			click: function(){
 				var $that = $(this)
 					, $parent = $that.parent()
-					, $toolbar = $that.parents('.toolbar')
-					, width = $skinList.width()
-					, toolbarWidth = $toolbar.width()
+					, parentWidth = $parent.width()
 					, parentLeft = $parent.offset().left
+
+					, width = $skinList.width()
+					, bdL = parseInt($skinList.css('borderLeftWidth'), 10)
+					, bdR = parseInt($skinList.css('borderRightWidth'), 10)
+
+					, $toolbar = $that.parents('.toolbar')
+					, toolbarWidth = $toolbar.width()
+					, toolbarLeft = $toolbar.offset().left
 					;
 
-				if( width === toolbarWidth - 12 ){
-					$skinList.css('right', (parentLeft + $that.width() -10+1 - toolbarWidth) + 'px');
-					// 10 为 外边距，1 为边框宽度
+				if( width + bdL + bdR === toolbarWidth ){
+					$skinList.css('right', (parentLeft + parentWidth - (toolbarLeft + toolbarWidth) ) + 'px');
 				}
 				else if( parentLeft < width ){
-					$skinList.css('right', (parentLeft + 10-1 - width) +'px');
-					// 10 为 外边距，1 为边框宽度
+					$skinList.css('right', (parentLeft + parentWidth - toolbarLeft - width) +'px');
 				}
 				else{
 					$skinList.css('right', 0);

@@ -19,19 +19,23 @@ define(['jquery', 'socket', 'tag', 'template'], function($, socket, tag){
 		, $filter = $('#filter').on('click', function(){
 			var $that = $(this)
 				, $parent = $that.parent()
-				, $toolbar = $that.parents('.toolbar')
-				, width = $filterBox.width()
-				, toolbarWidth = $toolbar.width()
+				, parentWidth = $parent.width()
 				, parentLeft = $parent.offset().left
+
+				, width = $filterBox.width()
+				, bdL = parseInt($filterBox.css('borderLeftWidth'), 10)
+				, bdR = parseInt($filterBox.css('borderRightWidth'), 10)
+
+				, $toolbar = $that.parents('.toolbar')
+				, toolbarWidth = $toolbar.width()
+				, toolbarLeft = $toolbar.offset().left
 				;
 
-			if( width === toolbarWidth - 12 ){
-				$filterBox.css('right', (parentLeft + $that.width() -10+1 - toolbarWidth) + 'px');
-				// 10 为 外边距，1 为边框宽度
+			if( width + bdL + bdR === toolbarWidth ){
+				$filterBox.css('right', (parentLeft + parentWidth - (toolbarLeft + toolbarWidth) ) + 'px');
 			}
 			else if( parentLeft < width ){
-				$filterBox.css('right', (parentLeft + 10-1 - width) +'px');
-				// 10 为 外边距，1 为边框宽度
+				$filterBox.css('right', (parentLeft + parentWidth - toolbarLeft - width) +'px');
 			}
 			else{
 				$filterBox.css('right', 0);

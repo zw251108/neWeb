@@ -11,20 +11,25 @@ define(['jquery', 'socket', 'template'], function($, socket){
 		})
 		, $search = $('#search').on('click', function(){
 			var $that = $(this)
+
 				, $parent = $that.parent()
-				, $toolbar = $that.parents('.toolbar')
-				, width = $searchBar.width()
-				, toolbarWidth = $toolbar.width()
+				, parentWidth = $parent.width()
 				, parentLeft = $parent.offset().left
+
+				, width = $searchBar.width()
+				, bdL = parseInt($searchBar.css('borderLeftWidth'), 10)
+				, bdR = parseInt($searchBar.css('borderRightWidth'), 10)
+
+				, $toolbar = $that.parents('.toolbar')
+				, toolbarWidth = $toolbar.width()
+				, toolbarLeft = $toolbar.offset().left
 				;
 
-			if( width === toolbarWidth - 12 ){
-				$searchBar.css('right', (parentLeft + $that.width() -10+1 - toolbarWidth) + 'px');
-				// 10 为 外边距，1 为边框宽度
+			if( width + bdL + bdR === toolbarWidth ){
+				$searchBar.css('right', (parentLeft + parentWidth - (toolbarLeft + toolbarWidth) ) + 'px');
 			}
 			else if( parentLeft < width ){
-				$searchBar.css('right', (parentLeft + 10-1 - width) +'px');
-				// 10 为 外边距，1 为边框宽度
+				$searchBar.css('right', (parentLeft + parentWidth - toolbarLeft - width) +'px');
 			}
 			else{
 				$searchBar.css('right', 0);

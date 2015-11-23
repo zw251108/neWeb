@@ -148,7 +148,7 @@ define(['jquery', 'socket'], function($, socket){
 					}
 				});
 			}
-		}).on('click', '.tagsArea .tag', function(){
+		}).on('click', '.tag_area .tag', function(){
 			var $that = $(this).toggleClass('tag-checked')
 				, tag = this.innerHTML
 				, tags = $tags.val()
