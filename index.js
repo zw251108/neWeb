@@ -241,31 +241,6 @@ web.post('/skin', function(req, res){   // 设置皮肤功能
 	res.end();
 });
 
-//modules.unshift({
-//	id: 'time'
-//	, type: 'metro'
-//	, href: '#'
-//	, metroSize: 'tiny'
-//	, title: '时间 time'
-//	, info: '<div class="watch_wrap hidden" id="watch">' +
-//	'<span class="watch_hourHand" id="hourHand"></span>' +
-//	'<span class="watch_minuteHand" id="minuteHand"></span>' +
-//	'<span class="watch_secondHand" id="secondHand"></span>' +
-//	'<span class="watch_mark watch_mark-1"></span>' +
-//	'<span class="watch_mark watch_mark-2"></span>' +
-//	'<span class="watch_mark watch_mark-3"></span>' +
-//	'<span class="watch_mark watch_mark-4"></span>' +
-//	'<span class="watch_mark watch_mark-5"></span>' +
-//	'<span class="watch_mark watch_mark-6"></span>' +
-//	'<span class="watch_mark watch_mark-7"></span>' +
-//	'<span class="watch_mark watch_mark-8"></span>' +
-//	'<span class="watch_mark watch_mark-9"></span>' +
-//	'<span class="watch_mark watch_mark-10"></span>' +
-//	'<span class="watch_mark watch_mark-11"></span>' +
-//	'<span class="watch_mark watch_mark-12"></span>' +
-//	'</div>'
-//});
-
 //----- Web 服务器 -----
 webServer = web.listen( CONFIG.web.port
 	//, CONFIG.web.ip

@@ -6,27 +6,35 @@ var db  = require('../db.js')
 	, TABLE_NAME = 'document'
 
 	, SQL = {
-		document: 'select Id,title from document'
+		documentById: 'select title,section_order from document where Id=:id'
 		, documentPage: 'select Id,title from document limit :page,:size'
 		, documentCount: 'select count(*) as count from document'
 		, documentAdd: 'insert into document(title) values(:title)'
-		, documentOrder: 'update document set section_order=:order where Id=:documentId'
+		, documentSetOrder: 'update document set section_order=:order where Id=:documentId'
 
-		//, countDocument: 'select count(*) as count from document'
-
-		, sectionByDocument: 'select Id,title from document_section where document_id=:documentId'
-		, sectionById: 'select Id,title from document_section where Id=:id'
+		, sectionById: 'select Id,title,content_order from document_section where Id=:id'
+		, sectionByDocument: 'select Id,title,content_order from document_section where document_id=:documentId'
 		, sectionAdd: 'insert into document_section(title,document_id,`order`) values(:title,:documentId,:order)'
-		, sectionOrder: 'update document_section set content_order=:order where Id=:sectionId'
+		, sectionSetOrder: 'update document_section set content_order=:order where Id=:sectionId'
 
-		, contentByDocument: 'select Id,title,content,section_id,section_title from document_content where document_id=:documentId order by section_id,`order`'
-		, contentBySection: 'select Id,title,content,section_title from document_content where section_id=:sectionId order by `order`'
 		, contentById: 'select Id,title,content,section_title from document_content where Id=:id'
+		, contentBySection: 'select Id,title,content,section_title from document_content where section_id=:sectionId order by `order`'
+		, contentByDocument: 'select Id,title,content,section_id,section_title from document_content where document_id=:documentId order by section_id,`order`'
 		, contentAdd: 'insert into document_content(title,content,document_id,section_id,section_title,`order`) values(:title,\'\',:documentId,:sectionId,:sectionTitle,:order)'
 		, contentSaveContent: 'update document_content set content=:content where Id=:id'
 	}
 	, Model = {
-		getDocumentAll: function(){}
+
+		getDocumentById: function(id){
+			return db.handle({
+				sql: SQL.documentById
+				, data: {
+					id: id
+				}
+			}).then(function(rs){
+				return rs[0];
+			});
+		}
 		, getDocumentList: function(page, size){
 			return db.handle({
 				sql: SQL.documentPage
@@ -36,7 +44,6 @@ var db  = require('../db.js')
 				}
 			})
 		}
-
 		, countDocument: function(){
 			return db.handle({
 				sql: SQL.documentCount
@@ -50,8 +57,30 @@ var db  = require('../db.js')
 				return count;
 			});
 		}
+		, updateDocumentOrder: function(data){
+			return db.handle({
+				sql: SQL.documentSetOrder
+				, data: data
+			});
+		}
+		, addDocument: function(data){
+			return db.handle({
+				sql: SQL.documentAdd
+				, data: data
+			});
+		}
 
-		, getSectionByDoc: function(documentId){
+		, getSectionById: function(id){
+			return db.handle({
+				sql: SQL.sectionById
+				, data: {
+					id: id
+				}
+			}).then(function(rs){
+				return rs[0];
+			});
+		}
+		, getSectionByDocumentId: function(documentId){
 			return db.handle({
 				sql: SQL.sectionByDocument
 				, data: {
@@ -59,15 +88,20 @@ var db  = require('../db.js')
 				}
 			});
 		}
-		, getContentBySec: function(sectionId){
+		, addSectionByDoc: function(data){
 			return db.handle({
-				sql: SQL.contentBySection
-				, data: {
-					sectionId: sectionId
-				}
+				sql: SQL.sectionAdd
+				, data: data
 			});
 		}
-		, getContentById: function(id){
+		, updateSectionOrder: function(data){
+			return db.handle({
+				sql: SQL.sectionSetOrder
+				, data: data
+			});
+		}
+
+		, getContentById: function(id, encode){
 			return db.handle({
 				sql: SQL.contentById
 				, data: {
@@ -77,12 +111,31 @@ var db  = require('../db.js')
 				return rs[0];
 			}).then(function(rs){
 
-				rs.content = rs.content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\$/g, '&#36;');
+				encode && rs.content && (rs.content = rs.content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\$/g, '&#36;'));
 
 				return rs;
 			});
 		}
+		, getContentBySectionId: function(sectionId, encode){
+			return db.handle({
+				sql: SQL.contentBySection
+				, data: {
+					sectionId: sectionId
+				}
+			}).then(function(rs){
+				var t, i, j;
 
+				if( encode ){
+					for(i = 0, j = rs.length; i < j; i++){
+						t = rs[i];
+
+						t.content && (t.content = t.content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\$/g, '&#36;'));
+					}
+				}
+
+				return rs;
+			});
+		}
 		, getContentByDocumentId: function(documentId, encode){
 			return db.handle({
 				sql: SQL.contentByDocument
@@ -90,44 +143,17 @@ var db  = require('../db.js')
 					documentId: documentId
 				}
 			}).then(function(rs){
-				var document = []
-					, tempTitle = ''
-					, tempArray
-					, t, i, j
-					;
+				var t, i, j;
 
-				for(i = 0, j = rs.length; i < j; i++){
-					t = rs[i];
+				if( encode ){
+					for(i = 0, j = rs.length; i < j; i++){
+						t = rs[i];
 
-					if( t.section_title !== tempTitle ){
-						tempTitle = t.section_title;
-						tempArray = [];
-
-						document.push({
-							sectionTitle: tempTitle
-							, sectionId: t.section_id
-							, sectionList: tempArray
-						});
+						t.content && (t.content = t.content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\$/g, '&#36;'));
 					}
-
-					encode && t.content && (t.content = t.content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\$/g, '&#36;'));
-					tempArray.push( t );
 				}
 
-				return document;
-			});
-		}
-
-		, addDocument: function(data){
-			return db.handle({
-				sql: SQL.documentAdd
-				, data: data
-			});
-		}
-		, addSectionByDoc: function(data){
-			return db.handle({
-				sql: SQL.sectionAdd
-				, data: data
+				return rs;
 			});
 		}
 		, addContentBySec: function(data){
@@ -136,23 +162,9 @@ var db  = require('../db.js')
 				, data: data
 			});
 		}
-
 		, updateContent: function(data){
 			return db.handle({
 				sql: SQL.contentSaveContent
-				, data: data
-			});
-		}
-
-		, updateDocumentOrder: function(data){
-			return db.handle({
-				sql: SQL.documentOrder
-				, data: data
-			});
-		}
-		, updateSectionOrder: function(data){
-			return db.handle({
-				sql: SQL.sectionOrder
 				, data: data
 			});
 		}
