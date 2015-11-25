@@ -5,7 +5,11 @@ require(['../../config'], function(config){
 	config.requireConfig.baseUrl = location.origin +'/script/';
 
 	var r = require(config.requireConfig);
-	r(['jquery', 'global', 'socket', config.dataSource.skin, 'codeEditor', 'codeEditorSkin', 'msgPopup', 'template'], function($, g, socket, skin, code, codeSkin, msgPopup){
+	r(['jquery', 'global', 'socket'
+		, config.dataSource.skin, 'codeEditor', 'codeEditorSkin'
+		, 'msgPopup'
+		, 'template'
+	], function($, g, socket, skin, code, codeSkin, msgPopup){
 		var $document = $('#document')
 			, $curr = null
 			, $temp = $([])
@@ -102,11 +106,12 @@ require(['../../config'], function(config){
 			;
 
 		skin = $.parseJSON( skin );
-		skinList = codeSkin(skin.skin, config.requireConfig.baseUrl, codeList);
+		codeSkin = codeSkin(skin.skin, config.requireConfig.baseUrl, codeList);
+		codeSkin.setSkin();
 
 		$document.on('click', '#save', function(e, hideMsg){
 			var order = $document.find('.section').map(function(){
-					return $(this).data('sectionId');
+					return this.dateset ? this.dataset.sectionId : this.getAttribute('data-section-id');
 				}).get().join()
 				;
 
@@ -164,7 +169,7 @@ require(['../../config'], function(config){
 			var $that = $(this).parents('.section')
 				, sectionId = $that.data('sectionId')
 				, order = $that.find('dt').map(function(){
-					return $(this).data('contentId')
+					return this.dataset ? this.dataset.contentId : this.getAttribute('data-content-id')
 				}).get().join()
 				;
 
@@ -203,11 +208,11 @@ require(['../../config'], function(config){
 
 				if( !$curr.data('codeMirror') ){
 					$curr.next().find('textarea').each(function(){
-						var c = code(this, 'dataset' in this ? this.dataset.codeType : this.getAttribute('data-code-type'));
+						var c = code(this, this.dataset ? this.dataset.codeType : this.getAttribute('data-code-type'));
 
 						codeList.push( c );
 
-						skinList.setSkin();
+						codeSkin.setSkin();
 
 						$curr.data('codeMirror', c);
 					}).end().find('.CodeMirror').addClass('edit_CodeMirror');

@@ -82,8 +82,9 @@ require(['../../config'], function(config){
 			$addPopup.trigger('showDialog');
 		});
 
-		searchBar(function(form){
-			//var $form = $(form)
+		searchBar = searchBar();
+		searchBar.submit(function(e){
+			//var $form = $(this)
 			//	, data = $form.serializeJSON()
 			//	;
 			//
@@ -93,8 +94,9 @@ require(['../../config'], function(config){
 			//});
 		});
 
-		filterBox(tagsData, function(form){
-
+		filterBox = filterBox( tagsData );
+		filterBox.submit(function(e){
+			// todo 阻止表单提交，改为 web socket 获取数据
 		});
 
 		$reader.on('click', '.reader_section > a', function(e){

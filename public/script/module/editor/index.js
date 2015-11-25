@@ -79,7 +79,7 @@ require(['../../config'], function(config){
 					rowSpace: space
 				});
 			}
-			, search = unescape( location.search )
+			, search = decodeURI( location.search )
 			, searchObj = {}
 			, i, j
 			;
@@ -95,8 +95,9 @@ require(['../../config'], function(config){
 			}
 		}
 
-		searchBar(function(form){
-			//var $form = $(form)
+		searchBar = searchBar();
+		searchBar.submit(function(e){
+			//var $form = $(this)
 			//	, data = $form.serializeJSON()
 			//	;
 			//
@@ -105,9 +106,10 @@ require(['../../config'], function(config){
 			//	, query: data
 			//});
 		});
-console.log(tagsData)
-		filterBox(tagsData, function(form){
 
+		filterBox = filterBox( tagsData );
+		filterBox.submit(function(e){
+			// todo 阻止表单提交，改为 web socket 获取数据
 		});
 
 		$(window).on({

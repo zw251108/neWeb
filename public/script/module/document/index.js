@@ -3,7 +3,10 @@
  * */
 require(['../../config'], function(config){
 	var r = require(config.requireConfig);
-	r(['jquery', 'global', 'socket', config.dataSource.skin, 'codeEditor', 'codeEditorSkin', 'template'], function($, g, socket, skin, code, codeSkin){
+	r(['jquery', 'global', 'socket'
+		, config.dataSource.skin, 'codeEditor', 'codeEditorSkin'
+		, 'template'
+	], function($, g, socket, skin, code, codeSkin){
 		var $document = g.mod('$document') || $('#document')
 			, $curr = null
 			, $temp = $([])
@@ -20,11 +23,11 @@ require(['../../config'], function(config){
 			})
 			, $container = g.$container
 			, codeList = []
-			, skinList
 			;
 
 		skin = $.parseJSON( skin );
-		skinList = codeSkin(skin.skin, config.requireConfig.baseUrl, codeList);
+		codeSkin = codeSkin(skin.skin, config.requireConfig.baseUrl, codeList);
+		codeSkin.setSkin();
 
 		// 绑定 socket 回调 事件
 		socket.register({
@@ -62,11 +65,11 @@ require(['../../config'], function(config){
 				$curr.toggleClass('icon-right icon-down').next().slideToggle();
 
 				!$curr.data('codeMirror') && $curr.data('codeMirror', true).next().find('textarea').each(function(){
-					var c = code(this, 'dataset' in this ? this.dataset.codeType : this.getAttribute('data-code-type'), true);
+					var c = code(this, this.dataset ? this.dataset.codeType : this.getAttribute('data-code-type'), true);
 
 					codeList.push(c);
 
-					skinList.setSkin();
+					codeSkin.setSkin();
 				});
 			});
 		})

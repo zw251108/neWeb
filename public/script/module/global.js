@@ -1,9 +1,7 @@
 /**
- * @module  global
+ * @module  jquery.extends
  * */
-//----- 全局模块 -----
-define(['jquery', 'socket'], function($){
-
+define('jquery.extends', ['jquery'], function($){
 	//ajax 全局设置
 	$.ajaxSetup({
 		dataType: 'json'
@@ -90,6 +88,13 @@ define(['jquery', 'socket'], function($){
 
 		return num;
 	};
+});
+
+/**
+ * @module  global
+ * */
+//----- 全局模块 -----
+define(['jquery', 'socket', 'jquery.extends'], function($){
 
 	// 全局图片加载错误处理
 	$(document).on('error', 'img', function(){

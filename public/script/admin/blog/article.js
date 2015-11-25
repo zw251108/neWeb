@@ -5,7 +5,11 @@ define(['../../config'], function(config){
 	config.requireConfig.baseUrl = location.origin +'/script/';
 
 	var r = require(config.requireConfig);
-	r(['jquery', 'global', 'socket', config.dataSource.skin, 'codeEditor', 'codeEditorSkin', 'msgPopup', 'template'], function($, g, socket, skin, code, codeSkin, msgPopup){
+	r(['jquery', 'global', 'socket'
+		, config.dataSource.skin, 'codeEditor', 'codeEditorSkin'
+		, 'msgPopup'
+		, 'template'
+	], function($, g, socket, skin, code, codeSkin, msgPopup){
 		var $blog = $('#blog').on('click', '.icon-save', function(){
 				content.save();
 
@@ -27,7 +31,6 @@ define(['../../config'], function(config){
 			, form = $form[0]
 			, $codeArea = $blog.find('textarea')
 			, content
-			, skinList
 			;
 
 		content = code($codeArea[0], $codeArea.data('codeType'));
@@ -35,8 +38,7 @@ define(['../../config'], function(config){
 		$codeArea.nextAll('.CodeMirror').addClass('edit_CodeMirror');
 
 		skin = $.parseJSON( skin );
-
-		skinList = codeSkin(skin.skin, config.requireConfig.baseUrl, [content]);
-		'setSkin' in skinList && skinList.setSkin();
+		codeSkin = codeSkin(skin.skin, config.requireConfig.baseUrl, [content]);
+		codeSkin.setSkin();
 	});
 });

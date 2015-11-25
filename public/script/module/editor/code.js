@@ -2,21 +2,33 @@
  * @module  editor UI 设置
  * */
 define('editorLayout', ['jquery', 'global', 'template'], function($, g){
-	var listTpl = $.template({
-			template: 'li.%on%.%sp%[title=%name% data-type=%type%]{%name%}'
+	var layoutListTpl = $.template({
+			template: 'li.%on%.%sp%[title=%name% data-layout=%layout%]{%name%}'
+			, filter: {
+				on: function(d){
+					return d.layout === DEFAULT_LAYOUT ? 'on' : '';
+				}
+			}
+		})
+		, layoutBtnTpl = $.template({
+			template: 'button.icon.showSp[title=%name% data-layout=%layout%]{%content%}'
 		})
 
 		, LAYOUT_LIST = [{
-			name: '默认布局', type: '0', on: 'on'}, {
-			name: '四行布局', type: '1'}, {
-			name: '四列布局', type: '2'}, {
-			name: '四角布局', type: '3'}, {
-			name: '全屏 HTML', type: '4', sp: 'sp'}, {
-			name: '全屏 CSS', type: '5', sp: 'sp'}, {
-			name: '全屏 JS', type: '6', sp: 'sp'}, {
-			name: '全屏结果', type: '7', sp: 'sp'
+			name: '默认布局', layout: 'editor-default', on: 'on'}, {
+			name: '四行布局', layout: 'editor-4row'}, {
+			name: '四列布局', layout: 'editor-4col'}, {
+			name: '四角布局', layout: 'editor-4col'
 		}]
-		, $layoutList = $('#changeLayout').on({
+		, FULL_SCREEN_LIST = [{
+			name: '全屏 HTML', layout: 'editor-htmlFS', sp: 'sp', content: 'html'}, {
+			name: '全屏 CSS', layout: 'editor-cssFS', sp: 'sp', content: 'css'}, {
+			name: '全屏 JS', layout: 'editor-jsFS', sp: 'sp', content: 'js'}, {
+			name: '全屏结果', layout: 'editor-rsFS', sp: 'sp', content: '结果'
+		}]
+		, DEFAULT_LAYOUT = 'editor-default'
+
+		, $layout = $('#changeLayout').on({
 			click: function(){
 				var $that = $(this)
 					, $parent = $that.parent()
@@ -42,104 +54,63 @@ define('editorLayout', ['jquery', 'global', 'template'], function($, g){
 					$layoutList.css('right', 0);
 				}
 
-				beforeCallback && beforeCallback();
-
-				$layoutList.slideToggle().prev().toggle();
+				layoutList.toggle();
 			}
-		}).after('<button id="showHTML" class="icon showSp" title="更改布局">html</button>' +
-			'<button id="showCSS" class="icon showSp" title="更改布局">css</button>' +
-			'<button id="showJS" class="icon showSp" title="更改布局">js</button>' +
-			'<button id="showRS" class="icon showSp" title="更改布局">结果</button>' +
-			'<span class="arrow hidden"></span><ul class="list tiny scrollBar layoutList hidden"></ul>')
-			.nextAll('ul').append( listTpl(LAYOUT_LIST).join('') )
+			, mouseover: function(){
+				$layout.addClass('hover');
+			}
+			, mouseout: function(){
+				$layout.removeClass('hover');
+			}
+		})
+		, $layoutList = $layout.after('<div>' +
+			layoutBtnTpl( FULL_SCREEN_LIST ).join('') +
+			'</div><span class="arrow hidden"></span><ul class="list tiny scrollBar layoutList hidden"></ul>')
+			.nextAll('ul').append( layoutListTpl( LAYOUT_LIST.concat( FULL_SCREEN_LIST ) ).join('') )
 			.on('click', 'li', function(){
-			var $that = $(this)
-				, type = $that.data('type')
-				;
-
-			$that.addClass('on').siblings('.on').removeClass('on');
-
-			$layoutList.triggerHandler('setLayout', [type]);
+			$layoutList.triggerHandler('setLayout', [this.dataset ? this.dataset.layout : this.getAttribute('data-layout')]);
 		}).on({
 			setLayout: function(e, layout){
 
-				beforeCallback && beforeCallback();
+				g.$container[layout !== 'editor-default' ? 'addClass' : 'removeClass']('Container-eFS');
 
-				g.$container.addClass('Container-eFS');
+				$editor.removeClass('editor-4row editor-4col editor-4cor editor-htmlFS editor-cssFS editor-jsFS editor-rsFS').addClass( layout );
 
-				$editor.removeClass('editor-4row editor-4col editor-4cor editor-htmlFS editor-cssFS editor-jsFS editor-rsFS');
-				$currentShow && $currentShow.removeClass('on');
+				$layoutList.find('[data-layout="'+ layout +'"]').addClass('on').siblings('.on').removeClass('on');
+				$layoutBtns.find('[data-layout="'+ layout +'"]').addClass('on').siblings('.on').removeClass('on');
 
-				switch( layout ){
-					case 1:
-						$editor.addClass('editor-4row');
-						$currentShow = null;
-						break;
-					case 2:
-						$editor.addClass('editor-4col');
-						$currentShow = null;
-						break;
-					case 3:
-						$editor.addClass('editor-4cor');
-						$currentShow = null;
-						break;
-					case 4:
-						$editor.addClass('editor-htmlFS');
-						$currentShow = $showHTML.addClass('on');
-						$layoutList.find('li.on').removeClass('on').end().find('li[data-type="4"]').addClass();
-						break;
-					case 5:
-						$editor.addClass('editor-cssFS');
-						$currentShow = $showCSS.addClass('on');
-						$layoutList.find('li.on').removeClass('on').end().find('li[data-type="5"]').addClass();
-						break;
-					case 6:
-						$editor.addClass('editor-jsFS');
-						$currentShow = $showJS.addClass('on');
-						$layoutList.find('li.on').removeClass('on').end().find('li[data-type="6"]').addClass();
-						break;
-					case 7:
-						$editor.addClass('editor-rsFS');
-						$currentShow = $showRS.addClass('on');
-						$layoutList.find('li.on').removeClass('on').end().find('li[data-type="7"]').addClass();
-						break;
-					case 0:
-					default:
-						g.$container.removeClass('Container-eFS');
-						$currentShow = null;
-						break;
-				}
-
-				$layoutList.slideUp().prev().hide();
 				html.refresh();
 				css.refresh();
 				js.refresh();
 			}
+		})
+		, $layoutBtns = $layout.nextAll('div').on('click', 'button', function(){
+			$layoutList.triggerHandler('setLayout', [this.dataset ? this.dataset.layout : this.getAttribute('data-layout')]);
 		})
 
 		, $currentShow
 		, $showHTML = $('#showHTML').on('click', function(){
 			if( $currentShow !== $showHTML ){
 
-				$layoutList.triggerHandler('setLayout', [4]);
+				$layoutList.triggerHandler('setLayout', ['editor-htmlFS']);
 			}
 		})
 		, $showCSS = $('#showCSS').on('click', function(){
 			if( $currentShow !== $showCSS ){
 
-				$layoutList.triggerHandler('setLayout', [5]);
+				$layoutList.triggerHandler('setLayout', ['editor-cssFS']);
 			}
 		})
 		, $showJS = $('#showJS').on('click', function(){
 			if( $currentShow !== $showJS ){
 
-				$layoutList.triggerHandler('setLayout', [6]);
+				$layoutList.triggerHandler('setLayout', ['editor-jsFS']);
 			}
 		})
 		, $showRS = $('#showRS').on('click', function(){
 			if( $currentShow !== $showRS ){
 
-				$layoutList.triggerHandler('setLayout', [7]);
+				$layoutList.triggerHandler('setLayout', ['editor-rsFS']);
 			}
 		})
 
@@ -147,29 +118,33 @@ define('editorLayout', ['jquery', 'global', 'template'], function($, g){
 		, html
 		, css
 		, js
-		, beforeCallback
 
 		, layoutList = {
 			$target: $layoutList
+			, toggle: function(){
+				$layoutList.slideToggle().prev().toggle();
+			}
 			, show: function(){
 				$layoutList.slideDown().prev().show();
 			}
 			, hide: function(){
 				$layoutList.slideUp().prev().hide();
 			}
-			, setSkin: function(skin){
-				this.$target.triggerHandler('setLayout', [skin]);
+			, setLayout: function(layout){
+				$layoutList.triggerHandler('setLayout', [layout]);
 			}
 		}
 		;
 
-	return function($e, h, c, j, before){
+	$(document).on('click', function(){
+		!$layout.hasClass('hover') && layoutList.hide();
+	});
+
+	return function($e, h, c, j){
 		$editor = $e;
 		html = h;
 		css = c;
 		js = j;
-
-		beforeCallback = before;
 
 		return layoutList;
 	};
@@ -428,15 +403,14 @@ require(['../../config'], function(config){
 	r(['jquery', 'global', 'socket'
 		, config.dataSource.skin, 'codeEditor', 'codeEditorSkin'
 		, 'editorLayout'
+		, config.dataSource.tag, 'setMorePopup'
 		, 'uiLibPopup'
-		, config.dataSource.tag
-		, 'setMorePopup'
 		, 'msgPopup'
-		, 'demoImgLibPopup', 'template'
-	], function($, g, socket, skin, code, codeSkin, layout, initUiLib, tagsData, setMore, msgPopup){console.log(skin)
+		, 'demoImgLibPopup'
+		, 'template'
+	], function($, g, socket, skin, code, codeSkin, layoutList, tagsData, setMore, uiLibPopup, msgPopup){
 		var $editor = $('#editor')
 			, $form = $editor.find('#editorForm')
-			, $toolbar = $editor.find('.toolbar')
 
 			, $cssLib = $editor.find('#cssLib')
 			, $jsLib = $editor.find('#jsLib')
@@ -468,20 +442,7 @@ require(['../../config'], function(config){
 						'</body>' +
 					'</html>';
 			}
-			, skinList
-			, layoutList
 			;
-
-		$toolbar.on('click', '#newWin', function(){
-			var  newWin = window.open('').document
-				, cssLib = $cssLib.val()
-				, jsLib = $jsLib.val()
-				;
-
-			newWin.open();
-			newWin.write( runCode(html.getValue(), css.getValue(), js.getValue(), cssLib, jsLib) );
-			newWin.close();
-		});
 
 		g.mod('$editor', $editor);
 
@@ -493,6 +454,17 @@ require(['../../config'], function(config){
 		css.on('change', editFunc);
 		js.on('change', editFunc);
 
+		// toolbar 功能按钮
+		$('#newWin').on('click', function(){
+			var  newWin = window.open('').document
+				, cssLib = $cssLib.val()
+				, jsLib = $jsLib.val()
+				;
+
+			newWin.open();
+			newWin.write( runCode(html.getValue(), css.getValue(), js.getValue(), cssLib, jsLib) );
+			newWin.close();
+		});
 		$('#save').on('click', function(e){
 			e.preventDefault();
 
@@ -526,19 +498,15 @@ require(['../../config'], function(config){
 
 		$editor.find('label').removeClass('hidden');
 
-		layoutList = layout($editor, html, css, js, function(){
-			skinList.hide();
-		});
+		layoutList = layoutList($editor, html, css, js);
 
 		skin = $.parseJSON( skin );
-		skinList = codeSkin(skin.skin, config.requireConfig.baseUrl, [html, css, js], function(){
-			layoutList.hide();
-		});
-		skinList.setSkin();
-
-		initUiLib($jsLib, $cssLib);
+		codeSkin = codeSkin(skin.skin, config.requireConfig.baseUrl, [html, css, js]);
+		codeSkin.setSkin();
 
 		setMore($name, $form, tagsData);
+
+		uiLibPopup($jsLib, $cssLib);
 
 		$(window).on('beforeunload', function(){
 			if( isEdit ){

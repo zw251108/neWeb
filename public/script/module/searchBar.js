@@ -1,7 +1,7 @@
 /**
  * @module searchBar
  * */
-define(['jquery', 'socket', 'template'], function($, socket){
+define(['jquery', 'template'], function($){
 	var searchBarTpl = $.template({
 			template: 'div.searchBar.small' +
 				'>form#searchForm' +
@@ -9,42 +9,71 @@ define(['jquery', 'socket', 'template'], function($, socket){
 						'>input.input[type=text name=keyword]' +
 						'+button.btn.icon.icon-search[type=submit]'
 		})
-		, $search = $('#search').on('click', function(){
-			var $that = $(this)
+		, $search = $('#search').on({
+			click: function(){
+				var $that = $(this)
 
-				, $parent = $that.parent()
-				, parentWidth = $parent.width()
-				, parentLeft = $parent.offset().left
+					, $parent = $that.parent()
+					, parentWidth = $parent.width()
+					, parentLeft = $parent.offset().left
 
-				, width = $searchBar.width()
-				, bdL = parseInt($searchBar.css('borderLeftWidth'), 10)
-				, bdR = parseInt($searchBar.css('borderRightWidth'), 10)
+					, width = $searchBar.width()
+					, bdL = parseInt($searchBar.css('borderLeftWidth'), 10)
+					, bdR = parseInt($searchBar.css('borderRightWidth'), 10)
 
-				, $toolbar = $that.parents('.toolbar')
-				, toolbarWidth = $toolbar.width()
-				, toolbarLeft = $toolbar.offset().left
-				;
+					, $toolbar = $that.parents('.toolbar')
+					, toolbarWidth = $toolbar.width()
+					, toolbarLeft = $toolbar.offset().left
+					;
 
-			if( width + bdL + bdR === toolbarWidth ){
-				$searchBar.css('right', (parentLeft + parentWidth - (toolbarLeft + toolbarWidth) ) + 'px');
+				if( width + bdL + bdR === toolbarWidth ){
+					$searchBar.css('right', (parentLeft + parentWidth - (toolbarLeft + toolbarWidth) ) + 'px');
+				}
+				else if( parentLeft < width ){
+					$searchBar.css('right', (parentLeft + parentWidth - toolbarLeft - width) + 'px');
+				}
+				else{
+					$searchBar.css('right', 0);
+				}
+
+				searchBar.toggle();
 			}
-			else if( parentLeft < width ){
-				$searchBar.css('right', (parentLeft + parentWidth - toolbarLeft - width) +'px');
+			, mouseover: function(){
+				$search.addClass('hover');
 			}
-			else{
-				$searchBar.css('right', 0);
+			, mouseout: function(){
+				$search.removeClass('hover');
 			}
-
-			$searchBar.slideToggle().prev().toggle();
 		})
-		, $searchBar = $search.after('<span class="arrow hidden"></span>'+ searchBarTpl({})).nextAll('.searchBar')
+		, $searchBar = $search.after('<span class="arrow hidden"></span>'+ searchBarTpl({}))
+			.nextAll('.searchBar')
+			.on('click', function(e){
+				e.stopPropagation();
+			})
+		, searchBar = {
+			$target: $searchBar
+			, toggle: function(){
+				$searchBar.slideToggle().prev().toggle();
+			}
+			, show: function(){
+				$searchBar.slideDown().prev().show();
+			}
+			, hide: function(){
+				$searchBar.slideUp().prev().hide();
+			}
+			, submit: function(func){
+				$searchBar.on('submit', 'form', func);
+			}
+		}
 		;
 
-	return function(submit, prevent){
-		return $searchBar.on('submit', '#searchForm', function(e){
-			prevent && e.preventDefault();
+	// 点击搜索条外的任意位置收起搜索条
+	$(document).on('click', function(){
+		!$search.hasClass('hover') && searchBar.hide();
+	});
 
-			submit && submit(this);
-		});
+	return function(){
+
+		return searchBar;
 	};
 });
