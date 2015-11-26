@@ -1,6 +1,51 @@
+@import "../config/color.config.less";
 
+/*ul*/.list{
+	overflow: auto;
+	position: absolute;
+	top: 40px;
+	right: 0;
+	max-height: 16em;
+	margin-bottom: -1px;
+	outline: 1px solid #fff;
+	background: #888;
+	font-size: 14px;
 
-/*li*/.list{
+	li{
+		overflow: hidden;
+		position: relative;
+		height: 2em;
+		//max-width: 10em;
+		border-bottom: 1px solid #fff;
+		padding: 0 1em;
+		background: #888;
+
+		color: #fff;
+
+		line-height: 2em;
+		text-align: left;
+		white-space: nowrap;
+
+		cursor: pointer;
+
+		-ms-text-overflow: ellipsis;
+		text-overflow: ellipsis;
+
+		-webkit-box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		box-sizing: border-box;
+
+		&:hover{
+			background: #444;
+		}
+		&:last-child{
+			border: 0;
+		}
+	}
+
+	.on{
+		background: #444;
+	}
 
 	&-inline{
 

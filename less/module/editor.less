@@ -7,7 +7,6 @@
 
 //---------- Editor 前端编辑器 ----------
 .module-editor{
-
 	//.module_content{
 	//	margin-left: -5px;
 	//	margin-right: -5px;
@@ -15,6 +14,7 @@
 	//	padding-right: 5px;
 	//	background: transparent;
 	//}
+
 	.article{
 //		display: inline-block;
 		float: left;
@@ -58,42 +58,10 @@
 
 	.CodeMirrorExtend(100%);
 	.CodeMirror{
-		//height: 100%;
-		//border: 1px solid #ddd;
-		////outline: 1px solid #ddd;
-		//font-family: inherit;
-		//font-size: 13px;
-		//line-height: 1em;
-		//text-indent: 0;
-		//
-		//.boxSizing( border-box );
-		//
-		//&-scroll{
-		//	overflow: scroll !important;
-		//	/*max-height: 200px;*/
-		//}
-		//&-vscrollbar{
-		//	.scrollBar(#c0c0c0, #fff);
-		//}
-		//&-hscrollbar{
-		//	.scrollBar(#c0c0c0, #fff);
-		//}
-		//
-		//pre{
-		//	padding-left: 7px;
-		//	line-height: 1.25;
-		//
-		//	&.CodeMirror-placeholder{
-		//		color: #999;
-		//	}
-		//}
+
 		&-gutters{
 			padding-bottom: 0;
 		}
-		//&-gutter{
-		//	margin-bottom: -30px;
-		//	padding-bottom: 0;
-		//}
 		&-focused{
 			border: 1px solid #888;
 			//outline: 1px solid #888;
@@ -105,53 +73,6 @@
 		}
 	}
 
-	.list{
-		overflow: auto;
-		position: absolute;
-		top: 40px;
-		right: 0;
-		max-height: 16em;
-		outline: 1px solid #fff;
-		background: #888;
-		margin-bottom: -1px;
-		font-size: 14px;
-
-		li{
-			overflow: hidden;
-			position: relative;
-			height: 2em;
-			//max-width: 10em;
-			border-bottom: 1px solid #fff;
-			padding: 0 1em;
-			background: #888;
-
-			color: #fff;
-
-			line-height: 2em;
-			text-align: left;
-			white-space: nowrap;
-
-			cursor: pointer;
-
-			-ms-text-overflow: ellipsis;
-			text-overflow: ellipsis;
-
-			-webkit-box-sizing: border-box;
-			-moz-box-sizing: border-box;
-			box-sizing: border-box;
-
-			&:hover{
-				background: #444;
-			}
-			&:last-child{
-				border: 0;
-			}
-		}
-
-		.on{
-			background: #444;
-		}
-	}
 	.showSp{
 		display: none;
 	}

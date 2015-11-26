@@ -32,8 +32,14 @@ var db  = require('../db.js')
 				' `show`=1 and' +
 				' tags regexp :tags'
 
-
 		, bookmarkByPage: 'select Id,title,url,status,tags,datetime,score from reader_bookmark order by status,Id desc limit :page,:size'
+		//, bookmarkByPage: 'select bookmark_id,title,url,urb.status,urb.tags,bookmark_datetime,urb.score' +
+		//	' from reader_bookmark as rb,user_reader_bookmark as urb' +
+		//	' where' +
+		//		' user_id=:userId and' +
+		//		' rb.Id=bookmark_id' +
+		//	' order by status,Id desc' +
+		//	' limit :page,:size'
 		, bookmarkCount: 'select count(*) as count from reader_bookmark'
 		, bookmarkIsExist: 'select * from reader_bookmark where url like :url'
 		, bookmarkAdd: 'insert into reader_bookmark(url,title,source,tags,datetime,status) select :url,:title,:source,:tags,now(),:status from dual where not exists (select * from reader_bookmark where url like :url)'
@@ -49,6 +55,9 @@ var db  = require('../db.js')
 		, favoriteSearchTitleCount: 'select count(*) as count from reader_bookmark where title like :keyword and status=2'
 		, favoriteFilterTags: 'select Id,title,url,status,tags,datetime,score from reader_bookmark where status=2 and tags regexp :tags order by status,Id desc limit :page,:size'
 		, favoriteFilterTagsCount: 'select count(*) as count from reader_bookmark where  status=2 and tags regexp :tags'
+
+		, a: 'insert into user_reader_bookmark(bookmark_id,user_id,score,tags,`status`,bookmark_datetime) select Id as bookmark_id,\'1\' as user_id,score,tags,`status`,`datetime` from reader_bookmark'
+		, b: 'update user_reader_bookmark set status=1 where status=0'
 	}
 	, Model = {
 		getReaderByPage: function(page, size){
@@ -165,18 +174,22 @@ var db  = require('../db.js')
 			});
 		}
 
-		, getBookmarkByPage: function(page, size){
+		, getBookmarkByPage: function(userId, page, size){
 			return db.handle({
 				sql: SQL.bookmarkByPage
 				, data: {
-					page: (page -1) * size
+					userId: userId
+					, page: (page -1) * size
 					, size: size
 				}
 			});
 		}
-		, countBookmark: function(){
+		, countBookmark: function(userId){
 			return db.handle({
 				sql: SQL.bookmarkCount
+				, data: {
+					userId: userId
+				}
 			}).then(function(rs){
 				var count = 0;
 
@@ -187,37 +200,23 @@ var db  = require('../db.js')
 				return count;
 			});
 		}
-		, isExistBookmark: function(url){
-			return db.handle({
-				sql: SQL.bookmarkIsExist
-				, data: {
-					url: url
-				}
-			//}).then(function(rs){
-			//	var isExist = false;
-			//
-			//	if( rs && rs.length ){
-			//		isExist = true;
-			//	}
-			//
-			//	return isExist;
-			})
-		}
-		, searchBookmarkByTitle: function(keyword, page, size){
+		, searchBookmarkByTitle: function(userId, keyword, page, size){
 			return db.handle({
 				sql: SQL.bookmarkSearchTitle
 				, data: {
-					keyword: '%'+ keyword +'%'
+					userId: userId
+					, keyword: '%'+ keyword +'%'
 					, page: (page -1) * size
 					, size: size
 				}
 			});
 		}
-		, countSearchBookmarkByTitle: function(keyword){
+		, countSearchBookmarkByTitle: function(userId, keyword){
 			return db.handle({
 				sql: SQL.bookmarkSearchTitleCount
 				, data: {
-					keyword: '%'+ keyword +'%'
+					userId: userId
+					, keyword: '%'+ keyword +'%'
 				}
 			}).then(function(rs){
 				var result
@@ -233,17 +232,18 @@ var db  = require('../db.js')
 				return result;
 			});
 		}
-		, filterBookmarkByTags: function(tags, page, size){
+		, filterBookmarkByTags: function(userId, tags, page, size){
 			return db.handle({
 				sql: SQL.bookmarkFilterTags
 				, data: {
-					tags: '(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join('|') + ')(,|$)'
+					userId: userId
+					, tags: '(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join('|') + ')(,|$)'
 					, page: (page -1) * size
 					, size: size
 				}
-			})
+			});
 		}
-		, countFilterBookmarkByTags: function(tags){
+		, countFilterBookmarkByTags: function(userId, tags){
 			return db.handle({
 				sql: SQL.bookmarkFilterTagsCount
 				, data: {
@@ -262,6 +262,22 @@ var db  = require('../db.js')
 
 				return result;
 			});
+		}
+		, isExistBookmark: function(url){
+			return db.handle({
+				sql: SQL.bookmarkIsExist
+				, data: {
+					url: url
+				}
+				//}).then(function(rs){
+				//	var isExist = false;
+				//
+				//	if( rs && rs.length ){
+				//		isExist = true;
+				//	}
+				//
+				//	return isExist;
+			})
 		}
 		, addBookmark: function(data){
 			return db.handle({

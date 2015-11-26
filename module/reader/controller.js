@@ -145,16 +145,17 @@ web.get('/reader/bookmark', function(req, res){
 		, size = query.size || 20
 		, keyword = query.keyword || ''
 		, tags = query.tags || ''
+		, userId = req.session.id
 		, execute
 		;
 
 	if( keyword ){
-		execute = Model.searchBookmarkByTitle(keyword, page, size).then(function(rs){
+		execute = Model.searchBookmarkByTitle(userId, keyword, page, size).then(function(rs){
 			var result
 				;
 
 			if( rs && rs.length ){
-				result = Model.countSearchBookmarkByTitle(keyword).then(function(count){
+				result = Model.countSearchBookmarkByTitle(userId, keyword).then(function(count){
 					return {
 						data: rs
 						, index: page
@@ -182,12 +183,12 @@ web.get('/reader/bookmark', function(req, res){
 		});
 	}
 	else if( tags ){
-		execute = Model.filterBookmarkByTags(tags, page, size).then(function(rs){
+		execute = Model.filterBookmarkByTags(userId, tags, page, size).then(function(rs){
 			var result
 				;
 
 			if( rs && rs.length ){
-				result = Model.countFilterBookmarkByTags(tags).then(function(count){
+				result = Model.countFilterBookmarkByTags(userId, tags).then(function(count){
 					return {
 						data: rs
 						, index: page
@@ -215,8 +216,8 @@ web.get('/reader/bookmark', function(req, res){
 		});
 	}
 	else{
-		execute = Model.getBookmarkByPage(page, size).then(function(rs){
-			return Model.countBookmark().then(function(count){
+		execute = Model.getBookmarkByPage(userId, page, size).then(function(rs){
+			return Model.countBookmark(userId).then(function(count){
 				return {
 					data: rs
 					, index: page
