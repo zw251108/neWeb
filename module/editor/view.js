@@ -49,7 +49,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 
 				return rs;
 			}
-			,alt:function(data, index){
+			,alt: function(data){
 				return data.preview ? data.name : '没有预览图片';
 			}
 			, tags: TagView.tagEditorFilter.tagsArea
@@ -90,8 +90,6 @@ var getEmmet    = require('../emmet/getEmmet.js')
 			'^^^iframe#editorSetMoreRs.hidden[name=editorSetMoreRs]'
 		, filter: TagView.tagEditorFilter
 	})
-
-	//,
 
 	, View = {
 		editorList: function(rs){

@@ -12,6 +12,9 @@ var web         = require('../web.js')
 	, admin     = require('../admin.js')
 	, data      = require('../data.js')
 
+	, TagModel  = require('../tag/model.js')
+	, User      = require('../user/user.js')
+
 	, Model = require('./model.js')
 	, View  = require('./view.js')
 	, Admin = require('./admin.view.js')
@@ -145,17 +148,17 @@ web.get('/reader/bookmark', function(req, res){
 		, size = query.size || 20
 		, keyword = query.keyword || ''
 		, tags = query.tags || ''
-		, userId = req.session.id
+		, user = User.getUserFromSession.fromReq(req)
 		, execute
 		;
 
 	if( keyword ){
-		execute = Model.searchBookmarkByTitle(userId, keyword, page, size).then(function(rs){
+		execute = Model.searchBookmarkByTitle(user.id, keyword, page, size).then(function(rs){
 			var result
 				;
 
 			if( rs && rs.length ){
-				result = Model.countSearchBookmarkByTitle(userId, keyword).then(function(count){
+				result = Model.countSearchBookmarkByTitle(user.id, keyword).then(function(count){
 					return {
 						data: rs
 						, index: page
@@ -183,12 +186,12 @@ web.get('/reader/bookmark', function(req, res){
 		});
 	}
 	else if( tags ){
-		execute = Model.filterBookmarkByTags(userId, tags, page, size).then(function(rs){
+		execute = Model.filterBookmarkByTags(user.id, tags, page, size).then(function(rs){
 			var result
 				;
 
 			if( rs && rs.length ){
-				result = Model.countFilterBookmarkByTags(userId, tags).then(function(count){
+				result = Model.countFilterBookmarkByTags(user.id, tags).then(function(count){
 					return {
 						data: rs
 						, index: page
@@ -216,8 +219,8 @@ web.get('/reader/bookmark', function(req, res){
 		});
 	}
 	else{
-		execute = Model.getBookmarkByPage(userId, page, size).then(function(rs){
-			return Model.countBookmark(userId).then(function(count){
+		execute = Model.getBookmarkByPage(user.id, page, size).then(function(rs){
+			return Model.countBookmark(user.id).then(function(count){
 				return {
 					data: rs
 					, index: page
@@ -702,6 +705,10 @@ socket.register({
 		else{
 			execute = Promise.reject( new ReaderError('缺少参数') );
 		}
+
+		//Promise.all( tags.split(',').map(function(d){
+		//	return TagModel.increaseByName(d, 1);
+		//}) );
 
 		execute.catch(function(e){
 			console.log( e );

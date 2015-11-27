@@ -17,6 +17,8 @@ var web         = require('../web.js')
 
 	// 外部数据模块引用
 	, LibModel      = require('../bower/model.js')
+	, TagModel      = require('../tag/model.js')
+	, User          = require('../user/user.js')
 
 	, Image         = require('../image/image.js')
 	, ImageModel    = require('../image/model.js')
@@ -44,13 +46,6 @@ modules.register({
 	, href: 'editor/code?id=0'
 	, hrefTitle: '新建代码'
 });
-//// 注册首页 metro 模块
-//index.push({
-//	id: 'editor'
-//	, type: 'metro'
-//	, size: 'normal'
-//	, title: '编辑器 editor'
-//});
 
 web.get('/editor/', function(req, res){
 	var query = req.query || {}
@@ -176,12 +171,13 @@ web.post('/editor/setMore', Image.uploadMiddle.single('preview'), function(req, 
 	var body = req.body || {}
 		, type = body.type
 		, id = body.id
+		, tags = body.tags
 		, file = req.file
 		, size
 		, imgData
 		, execute
 		;
-	console.log(req.file);
+
 	if( id ){
 		if( file ){
 			size = Image.sizeOf( req.file.path );
@@ -201,17 +197,17 @@ web.post('/editor/setMore', Image.uploadMiddle.single('preview'), function(req, 
 			});
 
 			execute = Model.updateEditorSetImg({
-				id: body.id
+				id: id
 				, name: body.name
-				, tags: body.tags
+				, tags: tags
 				, preview: imgData.src
 			});
 		}
 		else{
 			execute = Model.updateEditorSet({
-				id: body.id
+				id: id
 				, name: body.name
-				, tags: body.tags
+				, tags: tags
 			});
 		}
 
@@ -234,6 +230,10 @@ web.post('/editor/setMore', Image.uploadMiddle.single('preview'), function(req, 
 	else{
 		execute = Promise.reject( new EditorError('缺少参数') );
 	}
+
+	//Promise.all( tags.split(',').map(function(d){
+	//	return TagModel.increaseByName(d, 1);
+	//}) );
 
 	execute.catch(function(e){
 		console.log(e);
@@ -410,7 +410,10 @@ socket.register({
 		var query = data.query
 			, id = query.id || ''
 			, execute
+			, user = User.getUserFromSession.fromSocket(socket)
 			;
+
+		query.userId = user.id;
 
 		if( id !== '0' ){
 			execute = Model.updateEditor(query);
@@ -428,7 +431,7 @@ socket.register({
 			});
 		});
 	}
-	, 'editor/lib': function(socket, data){
+	, 'editor/lib': function(socket){
 		LibModel.getBowerAll().then(function(rs){
 			socket.emit('data', {
 				topic: 'editor/lib'
@@ -436,7 +439,7 @@ socket.register({
 			});
 		});
 	}
-	, 'editor/demoImgLib': function(socket, data){
+	, 'editor/demoImgLib': function(socket){
 		ImageModel.getImageByAlbum( EDITOR_DEMO_ALBUM_ID ).then(function(rs){
 			socket.emit('data', {
 				topic: 'editor/demoImgLib'

@@ -121,6 +121,7 @@
 			background: @input-tag_pointOut_bg_c;
 
 			li{
+				height: auto;
 				border-bottom: 1px solid @input-tag_pointOut_li_bd_c;
 				.boxSizing(border-box);
 			}
@@ -152,6 +153,18 @@
 		border-bottom: 1px solid @formGroup_formGroup_bd_c;
 		border-radius: 0;
 		margin: 0 10px;
+	}
+	/*label*/.label{
+		position: absolute;
+		z-index: 10;
+		top: -8px;
+		left: 1em;
+		margin-left: -5px;
+		padding: 0 5px;
+		background: #fff;
+		color: #c0c0c0;
+		font-size: 14px;
+		line-height: 1;
 	}
 
 	/*button*/.btn{

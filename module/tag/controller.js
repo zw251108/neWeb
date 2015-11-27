@@ -14,6 +14,8 @@ var web         = require('../web.js')
 	, Admin = require('./admin.view.js')
 	, TagError = require('./error.js')
 
+	, User  = require('../user/user.js')
+
 	, Promise = require('promise')
 
 	, TAG_INDEX = {}
@@ -40,6 +42,7 @@ web.get('/data/tag', function(req, res){
 		, callback = query.callback
 		, execute
 		;
+
 	if( callback ){
 		execute = Model.getAll().then(function(rs){
 			rs = JSON.stringify( rs );
@@ -95,17 +98,15 @@ socket.register({
 			}
 			, query = data.query || {}
 			, name = query.name
-			, session = socket.session || {}
-			, user = session.user || {}
-			, userId = user.id
+			, user = User.getUserFromSession.fromSocket(socket)
 			, execute
 			;
 
 		if( name ){
-			execute = Model.add(name, userId).then(function(rs){
+			execute = Model.add(name, user.id).then(function(rs){
 				var execute;
 
-				if( !rs.insertId ){
+				if( rs.insertId ){
 					send.info = {
 						id: rs.insertId
 						, name: name

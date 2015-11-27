@@ -7,7 +7,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 
 	, pagination    = require('../pagination.js')
 
-	, tagView   = require('../tag/view.js')
+	, TagView   = require('../tag/view.js')
 
 	, articleListTpl    = emmetTpl({
 		template: 'article.article' +
@@ -17,7 +17,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 			'+time.article_date[pubdate=pubdate datetime=%datetime%]{%datetime%}' +
 			'+div.tags{%tags%}'
 		, filter: {
-			tags: tagView.tagEditorFilter.tagsArea
+			tags: TagView.tagEditorFilter.tagsArea
 		}
 	})
 	, articleTpl        = emmetTpl({
@@ -25,7 +25,9 @@ var getEmmet    = require('../emmet/getEmmet.js')
 			'>article.article[data-id=%Id%]' +
 				'>h3.article_title>input#title.input[type=text name=title value=%title%]' +
 				'^div.article_content' +
-					'>textarea.hidden[name=content data-code-type=html]{%content%}'
+					'>textarea.hidden[name=content data-code-type=html]{%content%}' +
+					'+' + TagView.tagEditorEmmet
+		, filter: TagView.tagEditorFilter
 	})
 	, articleAddFormTpl = emmetTpl({
 		template: 'form[method=post action=./add]' +

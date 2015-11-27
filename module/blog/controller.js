@@ -16,9 +16,10 @@ var web         = require('../web.js')
 	//, Handler = require('./handler.js')(data)
 	, BlogError = require('./error.js')
 
+	, User  = require('../user/user.js')
+
 	, Promise = require('promise')
 	;
-
 
 //web.use('/script/module/blog.js', __dirname +'/module/blog/handler.js');
 
@@ -133,12 +134,13 @@ web.get('/admin/blog/:blogId/', function(req, res){
 web.post('/admin/blog/add', function(req, res){
 	var body = req.body || {}
 		, title = body.title
+		, user = User.getUserFromSession.fromReq(req)
 		, execute
 		;
 
 	console.log(req.session);
 	if( title ){
-		execute = Model.addBlog(req.session.user.id, title).then(function(rs){
+		execute = Model.addBlog(user.id, title).then(function(rs){
 			var result
 				;
 
@@ -176,10 +178,12 @@ web.post('/admin/blog/:blogId/save', function(req, res){
 	var body = req.body || {}
 		, title = body.title
 		, content = body.content
+		, tags = body.tags
 		, param = req.params || {}
 		, blogId = param.blogId
 		;
-	Model.updateBlog(title, content, '', blogId).then(function(rs){
+
+	Model.updateBlog(title, content, tags, blogId).then(function(){
 		var json = {
 			success: true
 		};

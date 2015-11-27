@@ -3,9 +3,9 @@
 var db      = require('../db.js')
 	, error = require('../error.js')
 
-	, Promise   = require('promise')
+	, Promise       = require('promise')
 
-	, EditorError = require('./error.js')
+	, EditorError   = require('./error.js')
 
 	, SQL = {
 		editor: 'select editor.Id,editor.name,preview,tags,width,height from editor,image' +
@@ -44,7 +44,7 @@ var db      = require('../db.js')
 		, codeById: 'select editor.Id,editor.name,tags,css_lib,js_lib,html,css,js,preview,width,height from editor,image where editor.Id=:id and editor.preview=image.src'
 		, codeByName: 'select Id,name,tags,css_lib,js_lib,html,css,js from editor where name=:name'
 
-		, codeAdd: 'insert into editor(status,html,css,js,css_lib,js_lib,name,preview,create_time) values(1,:html,:css,:js,:cssLib,:jsLib,:name,\'../image/default/no-pic.png\',now())'
+		, codeAdd: 'insert into editor(status,html,css,js,css_lib,js_lib,name,preview,create_time,user_id) values(1,:html,:css,:js,:cssLib,:jsLib,:name,\'../image/default/no-pic.png\',now(),:userId)'
 		, codeUpdate: 'update editor set name=:name,html=:html,css=:css,js=:js,css_lib=:cssLib,js_lib=:jsLib where Id=:id'
 		// todo 设置 UI 组件
 		, codeSetMore: 'update editor set name=:name,tags=:tags where Id=:id'

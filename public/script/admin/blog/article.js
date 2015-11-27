@@ -7,9 +7,10 @@ define(['../../config'], function(config){
 	var r = require(config.requireConfig);
 	r(['jquery', 'global', 'socket'
 		, config.dataSource.skin, 'codeEditor', 'codeEditorSkin'
+		, config.dataSource.tag, 'tag',
 		, 'msgPopup'
 		, 'template'
-	], function($, g, socket, skin, code, codeSkin, msgPopup){
+	], function($, g, socket, skin, code, codeSkin, tagsData, tag, msgPopup){
 		var $blog = $('#blog').on('click', '.icon-save', function(){
 				content.save();
 
@@ -40,5 +41,8 @@ define(['../../config'], function(config){
 		skin = $.parseJSON( skin );
 		codeSkin = codeSkin(skin.skin, config.requireConfig.baseUrl, [content]);
 		codeSkin.setSkin();
+
+		tag( $.parseJSON(tagsData) );
+		tag.setAdd( $form );
 	});
 });
