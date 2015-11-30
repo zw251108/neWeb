@@ -39,7 +39,7 @@ define(['jquery', 'socket', 'template'], function($, socket){
 				skinList.toggle();
 			}
 			, mouseover: function(){
-				$skin.addClass('hover');    0
+				$skin.addClass('hover');
 			}
 			, mouseout: function(){
 				$skin.removeClass('hover');
@@ -69,25 +69,29 @@ define(['jquery', 'socket', 'template'], function($, socket){
 			setSkin: function(e, skin){
 				skin = skin || CURRENT_SKIN;
 
-				$skinLink.attr('href', skin !== 'default' ? BASE_URL +'plugin/codeMirror/theme/'+ skin +'.css' : '');
+				var curr = $skinLink.data('skin');
 
-				CURRENT_SKIN = skin;
+				if( curr !== skin ){
+					$skinLink.attr('href', skin !== 'default' ? BASE_URL +'plugin/codeMirror/theme/'+ skin +'.css' : '').data('skin', skin);
+
+					CURRENT_SKIN = skin;
+
+					$.ajax({
+						url: '/skin'
+						, data: {
+							skin: skin
+						}
+						, type: 'POST'
+						, success: function(json){
+							if( json.success ){
+								//CURRENT_SKIN = json.skin;
+							}
+						}
+					});
+				}
 
 				$.each(codeEditorList, function(i, d){
 					d.setOption('theme', skin);
-				});
-
-				$.ajax({
-					url: '/skin'
-					, data: {
-						skin: skin
-					}
-					, type: 'POST'
-					, success: function(json){
-						if( json.success ){
-							//CURRENT_SKIN = json.skin;
-						}
-					}
 				});
 			}
 		})
