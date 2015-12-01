@@ -514,6 +514,11 @@ require(['../../config'], function(config){
 			}
 		});
 
+		//code.addPanel('12123123123123123123', js);
+		//code.addPanel('123', js);
+		//code.addPanel('123', js);
+		//code.addPanel('123', js);
+
 		socket.register('editor/code/save', function(data){
 
 			if( 'error' in data ){

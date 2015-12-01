@@ -93,15 +93,19 @@ require(['../../config'], function(config){
 				$readPopup.trigger('showDialog');
 			})
 			, $addPopup = bookmarkAdd( $bookmark, articleTpl)
-			, $readPopup = bookmarkRead($bookmark, tagsData)
+			, $readPopup
 			;
 
 		$('#add').on('click', function(){
 			$addPopup.trigger('showDialog');
 		});
 
+		tagsData = $.parseJSON( tagsData );
+
+		$readPopup = bookmarkRead($bookmark, tagsData);
+
 		searchBar = searchBar();
-		searchBar(function(e){
+		searchBar.submit(function(e){
 			//var $form = $(this)
 			//	, data = $form.serializeJSON()
 			//	;

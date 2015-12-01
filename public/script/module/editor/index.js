@@ -107,7 +107,7 @@ require(['../../config'], function(config){
 			//});
 		});
 
-		filterBox = filterBox( tagsData );
+		filterBox = filterBox( $.parseJSON(tagsData) );
 		filterBox.submit(function(e){
 			// todo 阻止表单提交，改为 web socket 获取数据
 		});

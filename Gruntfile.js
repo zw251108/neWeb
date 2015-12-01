@@ -350,7 +350,7 @@ module.exports = function(grunt){
 					outputStyle: 'compressed'
 				},
 				files: {
-					'sassOut/style.css': 'sass/style.scss'
+					'build/sass/style.css': 'sass/style.scss'
 				}
 			}
 		}

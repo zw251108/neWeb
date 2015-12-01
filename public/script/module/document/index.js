@@ -8,6 +8,7 @@ require(['../../config'], function(config){
 		, 'template'
 	], function($, g, socket, skin, code, codeSkin){
 		var $document = g.mod('$document') || $('#document')
+			, $toolbar = $document.find('.toolbar')
 			, $curr = null
 			, $temp = $([])
 			, dlTpl = $.template({
@@ -60,7 +61,7 @@ require(['../../config'], function(config){
 			$curr = $temp.add(this);
 
 			g.$body.animate({
-				scrollTop: this.offsetTop + 40
+				scrollTop: this.offsetTop + $toolbar.height()
 			}, function(){
 				$curr.toggleClass('icon-right icon-down').next().slideToggle();
 

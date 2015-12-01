@@ -7,7 +7,7 @@ define(['../../config'], function(config){
 	var r = require(config.requireConfig);
 	r(['jquery', 'global', 'socket'
 		, config.dataSource.skin, 'codeEditor', 'codeEditorSkin'
-		, config.dataSource.tag, 'tag',
+		, config.dataSource.tag, 'tag'
 		, 'msgPopup'
 		, 'template'
 	], function($, g, socket, skin, code, codeSkin, tagsData, tag, msgPopup){

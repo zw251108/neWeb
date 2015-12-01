@@ -70,19 +70,27 @@ define(['plugin/codeMirror/lib/codemirror'
 	};
 
 	codeEditor.addPanel = function(text, target){
-		var $panel = $('<div class="panel"><button class="btn icon icon-cancel" type="button"></button>'+ text +'</div>').css({
-				position: 'absolute'
-				, top: 0
-				, left: 0
-				, height: '100px'
-				, width: '100px'
-				, background: '#fff'
-			})
+		var $panel
+			, panel = target.panel
+			, widget
 			;
-		var widget = target.addPanel($panel[0], {position: 'top'});
-		cm.on($panel[0], 'click', function(){
-			widget.clear();
-		});
+
+		if( !panel ){
+			$panel = $('<div class="editor_panel"><button type="button" class="icon icon-"></button></div>');
+			panel = $panel[0];
+
+			widget = target.addPanel(panel, {position: 'bottom'});
+
+			cm.on(panel, 'click', function(){
+				widget.clear();
+			});
+
+			target.panel = panel
+		}
+
+		$panel = $(panel);
+
+		$panel.append('<button class="editor_incFile btn icon icon-cancel" type="button" title="'+ text +'">'+ text +'</button>');
 	};
 
 	return codeEditor;

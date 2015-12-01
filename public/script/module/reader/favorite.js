@@ -19,8 +19,12 @@ require(['../../config'], function(config){
 
 				$readPopup.trigger('showDialog');
 			})
-			, $readPopup = bookmarkRead($favorite, tagsData)
+			, $readPopup
 			;
+
+		tagsData = $.parseJSON( tagsData );
+
+		$readPopup = bookmarkRead($favorite, tagsData)
 
 		searchBar = searchBar();
 		searchBar.submit(function(e){

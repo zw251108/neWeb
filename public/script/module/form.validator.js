@@ -4,7 +4,11 @@
 define(['jquery', 'jquery.validator'], function($){
 
 	$.validType = {
-
+		title: {}
+		, uiName: {}
+		, name: {}
+		, url: {}
+		, feed: {}
 	};
 
 	return function(selector){

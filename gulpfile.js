@@ -10,7 +10,7 @@ var gulp    = require('gulp')
 	, rename    = require('gulp-rename')
 	;
 
-var SRC = 'public/upload/js/*.js';
+var SRC = 'public/script/*.js';
 
 // 语法检查
 gulp.task('jshint', function(){
@@ -23,10 +23,10 @@ gulp.task('jshint', function(){
 gulp.task('minify', function(){
 	gulp.src( SRC )
 		.pipe( concat('all.js') )
-		.pipe( gulp.dest('public/upload/dist/js') )
+		.pipe( gulp.dest('build/dist/js') )
 		.pipe( uglify() )
 		.pipe( rename('all.min.js') )
-		.pipe( gulp.dest('public/upload/dist/js') );
+		.pipe( gulp.dest('build/dist/js') );
 });
 
 // 监视文件变化

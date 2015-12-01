@@ -8,8 +8,8 @@ define(['jquery', 'global', 'socket', 'tag', 'msgPopup', 'template'], function($
 			data.score && $readPopup.find('#star'+ data.score).prop('checked', true);
 
 			$readPopup.find('div.tag_area').html( data.tags );
-			$tags.val( $(data.tags).filter('.tag-checked').map(function(){return this.innerHTML}).get().join() );
-			    console.log($tags.val())
+			$tags.val( $(data.tags).filter('.tag-checked').map(function(){return this.innerHTML;}).get().join() );
+
 		}).on('click', '#readBookmark', function(){
 
 			var query = $readForm.serializeJSON()
@@ -63,7 +63,7 @@ define(['jquery', 'global', 'socket', 'tag', 'msgPopup', 'template'], function($
 	return function($bm, tagsData){
 		$bookmark = $bm;
 
-		tag( $.parseJSON( tagsData ) );
+		tag( tagsData );
 
 		return $readPopup;
 	};
