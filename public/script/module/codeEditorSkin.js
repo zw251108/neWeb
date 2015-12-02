@@ -1,7 +1,7 @@
 /**
  * @module codeEditorSkin
  * */
-define(['jquery', 'socket', 'template'], function($, socket){
+define(['jquery', 'socket', 'storage', 'template'], function($, socket, storage){
 	var listTpl = $.template({
 			template: 'li.%on%.%sp%[title=%name% data-type=%type%]{%name%}'
 		})
@@ -76,22 +76,31 @@ define(['jquery', 'socket', 'template'], function($, socket){
 
 					CURRENT_SKIN = skin;
 
-					$.ajax({
-						url: '/skin'
-						, data: {
+					socket.emit('data', {
+						topic: 'user/skin'
+						, query: {
 							skin: skin
 						}
-						, type: 'POST'
-						, success: function(json){
-							if( json.success ){
-								//CURRENT_SKIN = json.skin;
-							}
-						}
 					});
+
+					storage.setItem('skin', CURRENT_SKIN);
+
+					//$.ajax({
+					//	url: '/skin'
+					//	, data: {
+					//		skin: skin
+					//	}
+					//	, type: 'POST'
+					//	, success: function(json){
+					//		if( json.success ){
+					//			//CURRENT_SKIN = json.skin;
+					//		}
+					//	}
+					//});
 				}
 
 				$.each(codeEditorList, function(i, d){
-					d.setOption('theme', skin);
+					d.getOption('theme') !== CURRENT_SKIN && d.setOption('theme', skin);
 				});
 			}
 		})
@@ -115,12 +124,40 @@ define(['jquery', 'socket', 'template'], function($, socket){
 		}
 		;
 
+	socket.register({
+		'user/skin': function(data){
+			var skin = data.info.skin || 'default';
+
+			skin !== CURRENT_SKIN && skinList.setSkin( skin );
+		}
+	});
+
+	storage.setItem('skin', CURRENT_SKIN);
+
+	window.addEventListener('storage',
+
+	//$(window).on('storage',
+		function(e){                console.log(e)
+		var skin
+			;
+
+		if( e.key === 'skin' ){
+			skin = e.newValue;
+
+			if( skin !== CURRENT_SKIN ){
+				skinList.setSkin( skin );
+			}
+		}
+	});
+
 	$(document).on('click', function(){
 		!$skin.hasClass('hover') && skinList.hide();
 	});
 
 	return function(skin, dir, list){
 		CURRENT_SKIN = skin;
+
+		storage.setItem('skin', skin);
 
 		BASE_URL = dir;
 

@@ -33,7 +33,7 @@ var db      = require('../db.js')
 		, editorFilterTag: 'select editor.Id,editor.name,preview,tags,width,height from editor,image' +
 			' where' +
 				' status=1 and' +
-				' editor.tags regexp :tags and' +
+				' tags regexp :tags and' +
 				' editor.preview=image.src' +
 			' order by editor.Id limit :page,:size'
 		, editorFilterTagCount: 'select count(*) as count from editor' +
@@ -135,20 +135,20 @@ var db      = require('../db.js')
 		}
 		, filterEditorByTag: function(tags, page, size){
 			return db.handle({
-				sql: SQL.editorFilterTag
-				, data: {
-					tags: '(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join('|') + ')(,|$)'
-					, page: (page -1) * size
-					, size: size
-				}
+				sql: SQL.editorFilterTag.replace(':page', (page -1) * size).replace(':size', size).replace(':tags', '\'(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join(')(,|$)\' and tags regexp \'(^|,)(') + ')(,|$)\'')
+				//, data: {
+				//	tags: '(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join('|') + ')(,|$)'
+				//	, page: (page -1) * size
+				//	, size: size
+				//}
 			});
 		}
 		, countFilterEditorByTag: function(tags){
 			return db.handle({
-				sql: SQL.editorFilterTagCount
-				, data: {
-					tags: '(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join('|') + ')(,|$)'
-				}
+				sql: SQL.editorFilterTagCount.replace(':tags', '\'(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join(')(,|$)\' and tags regexp \'(^|,)(') + ')(,|$)\'')
+				//, data: {
+				//	tags: '(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join('|') + ')(,|$)'
+				//}
 			}).then(function(rs){
 				var result
 					;

@@ -14,6 +14,8 @@ var admin         = require('../admin.js')
 
 	, header        = emmetTpl({
 		template: getEmmet('header.html')
+		, filter: {
+		}
 	})
 
 	, main          = emmetTpl({

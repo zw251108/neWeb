@@ -23,8 +23,17 @@ sio.on('connection', function(socket){
 	    , temp
 	    ;
 
-	CLIENT_LIST[clientIndex] = socket;
-	CLIENT_INDEX_LIST.push( clientIndex );
+	if( clientIndex in CLIENT_LIST ){
+
+		console.log( CLIENT_LIST[clientIndex] === socket );
+
+		CLIENT_LIST[clientIndex].push( socket );
+		console.log( CLIENT_LIST[clientIndex].length );
+	}
+	else{
+		CLIENT_LIST[clientIndex] = [socket];
+		CLIENT_INDEX_LIST.push( clientIndex );
+	}
 
 	console.log('socket: session id ', clientIndex, 'connect');
 	console.log( (socket.handshake || socket.request).session );
@@ -53,53 +62,8 @@ sio.on('connection', function(socket){
 	}).on('disconnect', function(){ // 断开连接
 		console.log('socket: session id ', clientIndex, 'disconnect');
 	})
-//		.on('login', function(user){  // 登录接口
-//        var username = user.username
-//            , pwd = user.password
-//            ;
-//
-//		console.log('user username: ', username, 'login');
-//
-////        dbInterface.select('select * from user where email=\'' + username +'\'', function(rs){
-////            var userData = rs[0]
-////                ;
-////
-////            if( userData.password = pwd ){
-////                delete userData.password;
-////                socket.emit('login', userData);
-////            }
-////            else{
-////                console.log('用户密码错误');
-////                socket.emit('login', {error: 1});
-////            }
-////        }, function(){
-////            console.log('数据库查询错误');
-////            socket.emit('login', {error: 2});
-////        });
-//    })
-	// bower 接口
-	//.on('bower_search', function(name){
-	//	bower.search(name, function(rs){
-	//		socket.emit('bower_search_result', rs);
-	//	});
-	//}).on('bower_install', function(){
-	//
-	//})
 	;
 });
-//exports.socket = {
-//	listen: function(){
-//
-//	}
-//	, eventRegister: function(){}
-//}
-//exports.listen = function(webServer, database){
-//	db = database;
-//	return sio.listen( webServer );
-//};
-//exports.addEvent = function(topic, data){
-//
-//};
 
 module.exports = {
 	listen: function(webServer){

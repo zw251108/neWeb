@@ -9,15 +9,6 @@ define('location', function(){});
 define('storage', function(){});
 
 //---------- 公用基础模块 ----------
-//----- 页头 Header -----
-define('header', ['jquery', 'global'], function($, g){
-	var $header = $('#header')
-		, $pageTitle = $header.find('#pageTitle')
-		, $user = $header.find('#user')
-		;
-
-	return $header;
-});
 //----- 用户信息模块 user -----
 define('user', ['jquery', 'global', 'socket', 'header'], function($, g, socket, $header){
 	// 判断用户数据是否存在

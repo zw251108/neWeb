@@ -18,6 +18,9 @@ define({
 			, socket: 'module/socket'
 			, tag: 'module/tag'
 			, time: 'module/time'
+			, storage: 'module/storage'
+
+			, header: 'module/header'
 
 			, msgPopup: 'module/msg.popup'
 

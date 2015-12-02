@@ -130,20 +130,20 @@ var db  = require('../db.js')
 		}
 		, filterReaderByTag: function(tags, page, size){
 			return db.handle({
-				sql: SQL.readerFilterTags
-				, data: {
-					tags: '(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join('|') + ')(,|$)'
-					, page: (page -1) * size
-					, size: size
-				}
+				sql: SQL.readerFilterTags.replace(':page', (page -1) * size).replace(':size', size).replace(':tags', '\'(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join(')(,|$)\' and tags regexp \'(^|,)(') + ')(,|$)\'')
+				//, data: {
+				//	tags: '(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join('|') + ')(,|$)'
+				//	, page: (page -1) * size
+				//	, size: size
+				//}
 			});
 		}
 		, countFilterReaderByTag: function(tags){
 			return db.handle({
-				sql: SQL.readerFilterTagsCount
-				, data: {
-					tags: '(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join('|') + ')(,|$)'
-				}
+				sql: SQL.readerFilterTagsCount.replace(':tags', '\'(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join(')(,|$)\' and tags regexp \'(^|,)(') + ')(,|$)\'')
+				//, data: {
+				//	tags: '(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join('|') + ')(,|$)'
+				//}
 			}).then(function(rs){
 				var result
 					;
@@ -234,21 +234,21 @@ var db  = require('../db.js')
 		}
 		, filterBookmarkByTags: function(userId, tags, page, size){
 			return db.handle({
-				sql: SQL.bookmarkFilterTags
-				, data: {
-					userId: userId
-					, tags: '(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join('|') + ')(,|$)'
-					, page: (page -1) * size
-					, size: size
-				}
+				sql: SQL.bookmarkFilterTags.replace(':page', (page -1) * size).replace(':size', size).replace(':tags', '\'(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join(')(,|$)\' and tags regexp \'(^|,)(') + ')(,|$)\'')
+				//, data: {
+				//	userId: userId
+				//	, tags: '(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join('|') + ')(,|$)'
+				//	, page: (page -1) * size
+				//	, size: size
+				//}
 			});
 		}
 		, countFilterBookmarkByTags: function(userId, tags){
 			return db.handle({
-				sql: SQL.bookmarkFilterTagsCount
-				, data: {
-					tags: '(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join('|') + ')(,|$)'
-				}
+				sql: SQL.bookmarkFilterTagsCount.replace(':tags', '\'(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join(')(,|$)\' and tags regexp \'(^|,)(') + ')(,|$)\'')
+				//, data: {
+				//	tags: '(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join('|') + ')(,|$)'
+				//}
 			}).then(function(rs){
 				var result
 					;
@@ -351,20 +351,20 @@ var db  = require('../db.js')
 		}
 		, filterFavoriteByTags: function(tags, page, size){
 			return db.handle({
-				sql: SQL.favoriteFilterTags
-				, data: {
-					tags: '(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join('|') + ')(,|$)'
-					, page: (page -1) * size
-					, size: size
-				}
+				sql: SQL.favoriteFilterTags.replace(':page', (page -1) * size).replace(':size', size).replace(':tags', '\'(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join(')(,|$)\' and tags regexp \'(^|,)(') + ')(,|$)\'')
+				//, data: {
+				//	tags: '(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join('|') + ')(,|$)'
+				//	, page: (page -1) * size
+				//	, size: size
+				//}
 			})
 		}
 		, countFilterFavoriteByTags: function(tags){
 			return db.handle({
-				sql: SQL.favoriteFilterTagsCount
-				, data: {
-					tags: '(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join('|') + ')(,|$)'
-				}
+				sql: SQL.favoriteFilterTagsCount.replace(':tags', '\'(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join(')(,|$)\' and tags regexp \'(^|,)(') + ')(,|$)\'')
+				//, data: {
+				//	tags: '(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join('|') + ')(,|$)'
+				//}
 			}).then(function(rs){
 				var result
 					;

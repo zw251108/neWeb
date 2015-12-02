@@ -33,3 +33,32 @@ var web         = require('../web.js')
 web.get('/user/', function(req, res){
 	// todo 用户首页
 });
+
+socket.register({
+	'user/skin': function(socket, data){console.log(data)
+		var user = User.getUserFromSession.fromSocket( socket )
+			, query = data.query || {}
+			, skin = query.skin || 'default'
+
+			, session = socket.handshake.session
+			;
+		//console.log(socket)
+		console.log(query, user)
+
+		//session.reload(function(){
+		//	user.skin = skin;
+		//	session.user = user;
+		//});
+
+		user.skin = skin;
+
+		console.log(session);
+
+		//socket.emit('data', {
+		//	topic: 'user/skin'
+		//	, info: {
+		//		skin: skin
+		//	}
+		//});
+	}
+});

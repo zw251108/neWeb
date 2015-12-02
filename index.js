@@ -27,6 +27,8 @@ var fs = require('fs')
 	, session       = require('express-session')
 	, sessionStore  = new session.MemoryStore()
 
+	, sharedSession = require('express-socket.io-session')
+
 	// 数据库操作
 	, db     = require('./module/db.js')
 
@@ -64,13 +66,15 @@ web.use(
 	log4js.connectLogger(logger, {format: ':method :url :remote-addr'})
 );
 
-web.use( session({
+// 设置 session
+session = session({
 	store:      sessionStore
 	, secret:   CONFIG.web.cookieSecret
 	, key:      CONFIG.web.cookieKey
 	, resave:   false
 	, saveUninitialized: true
-}) );
+});
+web.use( session );
 
 var userInfo = {
 	id: 1
@@ -128,6 +132,8 @@ web.use('/test.html',    express.static(__dirname + '/test.html') );  //
 /**
  * 加载模块
  * */
+require('./module/user/controller.js'       );  // 加载模块 user
+
 require('./module/blog/controller.js'       );  // 加载模块 blog
 
 require('./module/document/controller.js'   );  // 加载模块 document
@@ -197,6 +203,9 @@ web.get('/', function(req, res){
 });
 
 // 用户登录
+web.get('/login', function(req, res){
+
+});
 web.post('/login', function(req, res){
 	// todo 登录功能
 });
@@ -252,31 +261,34 @@ console.log('Web Server is listening...');
 socketServer = socket.listen( webServer );
 
 // 设置 socket.IO 与 express 共用 session
-socketServer.use(function(socket, next){
-	var data = socket.handshake || socket.request
-		, cookieData = data.headers.cookie
-		;
-
-	if( cookieData ){
-
-		data.cookie = cookie.parse( cookieData );
-		data.sessionID = cookieParser.signedCookie(data.cookie[CONFIG.web.cookieKey], CONFIG.web.cookieSecret);
-		data.sessionStore = sessionStore;
-
-		sessionStore.get(data.sessionID, function(err, session){
-			if( err || !session ){
-				next( new Error('session not found') );
-			}
-			else{
-				data.session = session;
-				data.session.id = data.sessionID;
-				next();
-			}
-		});
-	}
-	else{
-		next( new Error('missing cookie headers') );
-	}
-});
+socketServer.use( sharedSession(session, {
+	autoSave: true
+}) );
+//socketServer.use(function(socket, next){
+//	var data = socket.handshake || socket.request
+//		, cookieData = data.headers.cookie
+//		;
+//
+//	if( cookieData ){
+//
+//		data.cookie = cookie.parse( cookieData );
+//		data.sessionID = cookieParser.signedCookie(data.cookie[CONFIG.web.cookieKey], CONFIG.web.cookieSecret);
+//		data.sessionStore = sessionStore;
+//
+//		sessionStore.get(data.sessionID, function(err, session){
+//			if( err || !session ){
+//				next( new Error('session not found') );
+//			}
+//			else{
+//				data.session = session;
+//				data.session.id = data.sessionID;
+//				next();
+//			}
+//		});
+//	}
+//	else{
+//		next( new Error('missing cookie headers') );
+//	}
+//});
 
 console.log('Socket Server is listening...');
