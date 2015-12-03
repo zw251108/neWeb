@@ -9,6 +9,12 @@ var db      = require('../db.js')
 
 	, SQL = {}
 	, Model = {}
+
+	, UserModel = require('../model.js')({
+		Id: {
+			type: ''
+		}
+	})
 	;
 
 module.exports = Model;

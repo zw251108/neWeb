@@ -35,15 +35,12 @@ web.get('/user/', function(req, res){
 });
 
 socket.register({
-	'user/skin': function(socket, data){console.log(data)
+	'user/skin': function(socket, data){
 		var user = User.getUserFromSession.fromSocket( socket )
 			, query = data.query || {}
 			, skin = query.skin || 'default'
-
-			, session = socket.handshake.session
 			;
 		//console.log(socket)
-		console.log(query, user)
 
 		//session.reload(function(){
 		//	user.skin = skin;
@@ -51,8 +48,6 @@ socket.register({
 		//});
 
 		user.skin = skin;
-
-		console.log(session);
 
 		//socket.emit('data', {
 		//	topic: 'user/skin'

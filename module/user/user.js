@@ -16,6 +16,8 @@ var User = {
 			return session.user || {};
 		}
 	}
+
+
 };
 
 module.exports = User;

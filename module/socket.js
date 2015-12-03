@@ -20,23 +20,24 @@ sio.on('connection', function(socket){
  	var session = socket.handshake.session
 		, clientIndex = session.id
 	    , i = EVENT_INDEX_LIST.length
+	    , socketId
 	    , temp
 	    ;
 
 	if( clientIndex in CLIENT_LIST ){
-
-		console.log( CLIENT_LIST[clientIndex] === socket );
+		socketId = CLIENT_LIST[clientIndex].length;
+		console.log( CLIENT_LIST[clientIndex].length );
 
 		CLIENT_LIST[clientIndex].push( socket );
 		console.log( CLIENT_LIST[clientIndex].length );
 	}
 	else{
+		socketId = 0;
 		CLIENT_LIST[clientIndex] = [socket];
 		CLIENT_INDEX_LIST.push( clientIndex );
 	}
 
 	console.log('socket: session id ', clientIndex, 'connect');
-	console.log( (socket.handshake || socket.request).session );
 
 	socket.on('data', function(query){   // 获取数据接口
 		var topic = query.topic
@@ -60,6 +61,8 @@ sio.on('connection', function(socket){
 	}).on('message', function(data){    // 即时通信接口
 		console.log('user chat');
 	}).on('disconnect', function(){ // 断开连接
+		CLIENT_LIST[clientIndex][socketId] = null;
+
 		console.log('socket: session id ', clientIndex, 'disconnect');
 	})
 	;
@@ -108,5 +111,9 @@ module.exports = {
 		else{
 			console.log('事件注册失败，参数类型不符！');
 		}
+	}
+
+	, getSession: function(socket){
+		return socket.handshake.session || {};
 	}
 };

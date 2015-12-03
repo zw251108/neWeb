@@ -445,7 +445,7 @@ socket.register({
 		}
 
 		execute.catch(function(e){
-			console.log(e);
+			console.log( e );
 
 			send.error = '';
 			send.msg = e.message;
@@ -476,7 +476,7 @@ socket.register({
 		}
 
 		execute.catch(function(e){
-			console.log(e);
+			console.log( e );
 
 			send.error = '';
 			send.msg = e.message;
@@ -508,7 +508,7 @@ socket.register({
 		}
 
 		execute.catch(function(e){
-			console.log(e);
+			console.log( e );
 
 			send.error = '';
 			send.msg = e.message;

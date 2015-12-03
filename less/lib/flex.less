@@ -1,0 +1,46 @@
+#flew{
+	.flew{
+		display: flex;
+	}
+
+	//----- 水平方向 -----
+	.flew-x-l{
+		justify-content: flex-start;
+	}
+	.flew-x-r{
+		justify-content: flex-end;
+	}
+	.flew-x-c{
+		justify-content: center;
+	}
+	.flew-x-a{
+		justify-content: space-around;
+	}
+	.flew-x-b{
+		justify-content: space-between;
+	}
+
+	//----- 垂直方向 -----
+	.flew-y-t{
+		align-items: flex-start;
+	}
+	.flew-y-b{
+		align-items: flex-end;
+	}
+	.flew-y-c{
+		align-items: center;
+	}
+
+	.flew-c-c:extend(.flew-x-c, .flew-y-c){    // 水平垂直居中
+	}
+
+	.flew-r-r{
+		flex-direction: row-reverse;
+	}
+	.flew-c{
+		flex-direction: column;
+	}
+	.flew-c-r{
+		flex-direction: column-reverse;
+	}
+}

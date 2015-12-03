@@ -55,7 +55,7 @@ web.get('/data/tag', function(req, res){
 	}
 
 	execute.catch(function(e){
-		console.log(e);
+		console.log( e );
 
 		return '';
 	}).then(function(rs){

@@ -134,7 +134,7 @@ web.get('/admin/blog/:blogId/', function(req, res){
 web.post('/admin/blog/add', function(req, res){
 	var body = req.body || {}
 		, title = body.title
-		, user = User.getUserFromSession.fromReq(req)
+		, user = req.session.user || {} //User.getUserFromSession.fromReq(req)
 		, execute
 		;
 
