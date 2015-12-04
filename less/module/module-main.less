@@ -1,5 +1,9 @@
 @import "../config/color.config.less";
 
+@module-main_min-height: 500px;
+@module-main_content_margin_top: 40px;
+@module-main_content_margin_bottom: 10px;
+
 //----- Main 主内容模块 ------
 /**
  * main 模块
@@ -13,7 +17,7 @@
 	overflow: hidden;
 	float: none;
 
-	min-height: 500px;
+	min-height: @module-main_min-height;
 
 	margin: 0 auto;
 	background: @module-main_bg_c;
@@ -25,11 +29,10 @@
 
 	> .module_content{
 
-		//border-radius: 10px;
+		min-height: @module-main_min-height - @module-main_content_margin_top - @module-main_content_margin_bottom;
 
-		//margin: 40px 0 10px;
-		margin-bottom: 10px;
-		margin-top: 40px;
+		margin-bottom: @module-main_content_margin_bottom;
+		margin-top: @module-main_content_margin_top;
 
 		background-color: #fff;
 	}

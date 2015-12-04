@@ -16,9 +16,88 @@ var mysql = require('mysql')
 	}
 	, SQL = {
 		select: 'select :column from :table :where :order :group'
-		, update: 'update :table set :column :where'
+		, update: 'update :table set :update :where'
 		, insert: 'insert into :table:column values(:values)'
 	}
+
+	, where = {
+		eq: function(col, value){
+
+		}
+		, lt: function(col, value, eq){}
+		, gt: function(col, value, eq){}
+
+		, like: function(col, value, or){
+			var type = typeof Value
+				, rs = ''
+				;
+
+			if( type === 'string' ){
+				rs = col + ' like \'%'+ value + '%\'';
+			}
+			else if( type === 'object' ){
+				if( Array.isArray(value) ){
+					rs = value.map(function(d){
+						return col + ' like \'%'+ d +'%\'';
+					}).join(or ? ' and ' : ' or ');
+				}
+			}
+
+			return ' '+ rs +' ';
+		}
+		, regexp: function(col, value, or){
+			var type = typeof Value
+				, rs = ''
+				;
+
+			if( type === 'string' ){
+				rs = col + ' regexp \''+ value + '\'';
+			}
+			else if( type === 'object' ){
+				if( Array.isArray(value) ){
+					rs = value.map(function(d){
+
+						if( d instanceof RegExp ){
+							d = d.toString().slice(1, -1);
+						}
+
+						return r = col + ' regexp \''+ d +'\'';
+					}).join(or ? ' and ' : ' or ');
+				}
+			}
+
+			return ' '+ rs +' ';
+		}
+	}
+	, order = function(col, desc){
+		var type = typeof col
+			, rs = ''
+			;
+
+		if( type === 'string' ){
+			rs = col + (desc ? ' desc' : '')
+		}
+		else if( type === 'object' ){
+			if( Array.isArray(col) ){
+				rs = col.map(function(d){
+					return d.col + (d.desc ? ' desc' : '');
+				}).join();
+			}
+		}
+		return ' order by '+ rs +' ';
+	}
+	, sql = ['select', {
+		table: ['editor', 'image']
+		, column: {
+			editor: [{
+
+			}]
+		}
+		, where: [{
+			'editor.preview': ['eq', 'image.url']
+			, '': ''
+		}]
+	}]
 	;
 
 DBError.prototype = new Error();

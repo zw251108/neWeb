@@ -25,10 +25,6 @@ var web         = require('../web.js')
 	, ImageError    = require('../image/error.js')
 
 	, Promise = require('promise')
-
-	, DEFAULT_ALBUM_ID = 1
-	, EDITOR_DEMO_ALBUM_ID = 5
-	, EDITOR_PREVIEW_ALBUM_ID = 2
 	;
 
 modules.register({
@@ -163,9 +159,6 @@ web.get('/editor/code', function(req, res){
 		res.end();
 	});
 });
-web.get('/editor/result', function(req, res){
-	res.end();
-});
 
 web.post('/editor/setMore', Image.uploadMiddle.single('preview'), function(req, res){
 	var body = req.body || {}
@@ -183,7 +176,7 @@ web.post('/editor/setMore', Image.uploadMiddle.single('preview'), function(req, 
 			size = Image.sizeOf( req.file.path );
 			imgData = {
 				src: file.path.replace(/\\/g, '/').replace('public', '..')
-				, type: type === 'preview' ? EDITOR_PREVIEW_ALBUM_ID : DEFAULT_ALBUM_ID
+				, type: type === 'preview' ? Image.ALBUM.EDITOR_PREVIEW_ID : Image.ALBUM.DEFAULT_ID
 				, height: size.height
 				, width: size.width
 			};
@@ -231,6 +224,7 @@ web.post('/editor/setMore', Image.uploadMiddle.single('preview'), function(req, 
 		execute = Promise.reject( new EditorError('缺少参数') );
 	}
 
+	// todo 处理 tag 数据
 	//Promise.all( tags.split(',').map(function(d){
 	//	return TagModel.increaseByName(d, 1);
 	//}) );
@@ -255,7 +249,7 @@ web.post('/editor/demoImgUpload', Image.uploadMiddle.single('image'), function(r
 		, size = Image.sizeOf( req.file.path )
 		, imgData = {
 			src: file.path.replace(/\\/g, '/').replace('public', '..')
-			, type: type === 'demo' ? EDITOR_DEMO_ALBUM_ID : DEFAULT_ALBUM_ID
+			, type: type === 'demo' ? Image.ALBUM.EDITOR_DEMO_ID : Image.ALBUM.DEFAULT_ID
 			, height: size.height
 			, width: size.width
 		}
@@ -289,6 +283,25 @@ web.post('/editor/demoImgUpload', Image.uploadMiddle.single('image'), function(r
 		res.send( JSON.stringify(json) );
 		res.end();
 	});
+});
+
+// 编辑器 demo API
+web.get('/editor/demo/', function(req, res){
+	res.end();
+});
+web.get('/editor/demo/get', function(req, res){
+	var query = req.query
+		;
+
+	res.send( JSON.stringify(query) );
+	res.end();
+});
+web.post('/editor/demo/set', function(req, res){
+	var body = req.body
+		;
+
+	res.send( JSON.stringify(body) );
+	res.end();
 });
 
 socket.register({
@@ -440,7 +453,7 @@ socket.register({
 		});
 	}
 	, 'editor/demoImgLib': function(socket){
-		ImageModel.getImageByAlbum( EDITOR_DEMO_ALBUM_ID ).then(function(rs){
+		ImageModel.getImageByAlbum( Image.ALBUM.EDITOR_DEMO_ID ).then(function(rs){
 			socket.emit('data', {
 				topic: 'editor/demoImgLib'
 				, data: rs

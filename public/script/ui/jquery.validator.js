@@ -97,13 +97,13 @@
 
 				return result;
 			}
-			, reset: function(){ // 重置表单
+			, reset: function(deep){ // 重置表单
 				var $items = this.find('[data-validator]')
 					, i = $items.length
 					, normal = this.validOpts.normal
 					;
 
-				this.get(0).reset();    // 重置表单项的值
+				deep && this.get(0).reset();    // 重置表单项的值
 
 				while( i-- ){
 					normal.apply( $items.eq(i) );

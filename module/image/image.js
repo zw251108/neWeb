@@ -34,6 +34,11 @@ var config  = require('../../config.js')
 	, Image = {
 		uploadMiddle: upload
 		, sizeOf: sizeOf
+		, ALBUM: {
+			DEFAULT_ID: 1
+			, EDITOR_PREVIEW_ID: 2
+			, EDITOR_DEMO_ID: 5
+		}
 	}
 	;
 
