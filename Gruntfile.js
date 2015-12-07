@@ -350,7 +350,7 @@ module.exports = function(grunt){
 					outputStyle: 'compressed'
 				},
 				files: {
-					'build/sass/style.css': 'sass/style.scss'
+					'build/sass/style.css': 'test/sass/style.scss'
 				}
 			}
 		}
@@ -359,9 +359,9 @@ module.exports = function(grunt){
 			destiny: {
 				options: {
 					baseUrl: 'public/script'
-					, dir:'public/build'
+					, dir:'build/requirejs'
 					//, optimize: 'uglify2'
-					//, out: 'public/build/'
+					//, out: 'build/requirejs'
 					//, paths: {
 					//	'jquery': 'lib/jquery.min.js'
 					//	//, 'd3': 'lib/d3.min.js'

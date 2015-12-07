@@ -117,7 +117,7 @@ web.use('/image',   express.static(__dirname + '/public/image') );  // 图片
 web.use('/style',   express.static(__dirname + '/public/style') );  // 样式
 web.use('/media',   express.static(__dirname + '/public/media') );  // 多媒体文件
 
-web.use('/doc.html',    express.static(__dirname + '/doc.html') );  //
+//web.use('/validator.html',    express.static(__dirname + '/validator.html') );  //
 
 web.use('/lib',     express.static(__dirname + '/bower_components'));
 web.use('/lib/zui', express.static(__dirname + '/public/script/ui'));

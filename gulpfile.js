@@ -10,7 +10,7 @@ var gulp    = require('gulp')
 	, rename    = require('gulp-rename')
 	;
 
-var SRC = 'public/script/*.js';
+var SRC = 'test/script/*.js';
 
 // 语法检查
 gulp.task('jshint', function(){

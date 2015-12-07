@@ -24,18 +24,15 @@ public/media/
 # 文件上传文件夹
 public/upload/
 
-impress/
-
-doc.html
-test.html
-
-build/
-
 doc/
 
-requirement/
+validator.html
+test.html
 
-allUniv.js
+test/
+build/
+
+requirement/
 
 backup/
 

@@ -220,7 +220,6 @@ var Promise     = require('promise')
 					, tags: tagsRs.map(function(d){return d.tagName;}).join()
 					, source: source
 				};
-				console.log(result);
 			}
 			else{
 				result = Promise.reject( new ReaderError('获取内容失败') );
