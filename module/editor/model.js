@@ -89,6 +89,14 @@ var db      = require('../db.js')
 
 			return rs;
 		}
+		, getEditorByName: function(name){
+			return db.handle({
+				sql: SQL.codeByName
+				, data: {
+					name: name
+				}
+			});
+		}
 
 		, countEditor: function(){
 			return db.handle({

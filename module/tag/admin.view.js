@@ -9,7 +9,9 @@ var config  = require('../../config.js')
 
 	, View = {
 		tag: function(){
-			return CodeModel.codeByName('admin/tag').then(function(rs){
+			return CodeModel.getEditorByName('admin/tag').then(function(rs){console.log(rs)
+				return rs[0];
+			}).then(function(rs){console.log(rs)
 				var code = {};
 
 				code.title = rs.name;
