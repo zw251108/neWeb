@@ -9,16 +9,16 @@ var config  = require('../../config.js')
 
 	, View = {
 		tag: function(){
-			return CodeModel.getEditorByName('admin/tag').then(function(rs){console.log(rs)
+			return CodeModel.getEditorByName('admin/tag').then(function(rs){
 				return rs[0];
-			}).then(function(rs){console.log(rs)
+			}).then(function(rs){
 				var code = {};
 
 				code.title = rs.name;
 
 				code.stylesheet = rs.css_lib ? rs.css_lib.split(',').map(function(d){
 					return {
-						path: '../lib/'+ d
+						path: '../../lib/'+ d
 					};
 				}) : '';
 				code.style = rs.css ? {
@@ -33,7 +33,7 @@ var config  = require('../../config.js')
 				code.script = rs.js_lib ? rs.js_lib.split(',').map(function(d){
 					return {
 						main: ''
-						, src: '../lib/'+ d
+						, src: '../../lib/'+ d
 					};
 				}) : '';
 				code.scriptCode = rs.js ? {

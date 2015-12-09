@@ -40,7 +40,6 @@ define(['../../config'], function(config){
 
 		skin = $.parseJSON( skin );
 		codeSkin = codeSkin(skin.skin, config.requireConfig.baseUrl, [content]);
-		codeSkin.setSkin();
 
 		tag( $.parseJSON(tagsData) );
 		tag.setAdd( $form );

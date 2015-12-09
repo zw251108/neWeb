@@ -28,7 +28,6 @@ require(['../../config'], function(config){
 
 		skin = $.parseJSON( skin );
 		codeSkin = codeSkin(skin.skin, config.requireConfig.baseUrl, codeList);
-		codeSkin.setSkin();
 
 		// 绑定 socket 回调 事件
 		socket.register({
@@ -69,8 +68,6 @@ require(['../../config'], function(config){
 					var c = code(this, this.dataset ? this.dataset.codeType : this.getAttribute('data-code-type'), true);
 
 					codeList.push(c);
-
-					codeSkin.setSkin();
 				});
 			});
 		})

@@ -69,10 +69,8 @@ define(['jquery', 'socket', 'storage', 'template'], function($, socket, storage)
 			setSkin: function(e, skin){
 				skin = skin || CURRENT_SKIN;
 
-				var curr = $skinLink.data('skin');
-
-				if( curr !== skin ){
-					$skinLink.attr('href', skin !== 'default' ? BASE_URL +'plugin/codeMirror/theme/'+ skin +'.css' : '').data('skin', skin);
+				if( CURRENT_SKIN !== skin ){
+					$skinLink.attr('href', skin !== 'default' ? BASE_URL +'plugin/codeMirror/theme/'+ skin +'.css' : '');
 
 					CURRENT_SKIN = skin;
 
@@ -103,6 +101,24 @@ define(['jquery', 'socket', 'storage', 'template'], function($, socket, storage)
 					d.getOption('theme') !== CURRENT_SKIN && d.setOption('theme', skin);
 				});
 			}
+			, 'mousewheel DOMMouseScroll': function(e){
+				var delta = e.originalEvent.wheelDelta || -e.originalEvent.detail
+					, $that = $(this)
+					;
+
+				if( $that.height() !== this.scrollHeight ){
+					if( delta < 0 ){
+						if( this.scrollTop + $that.height() >= this.scrollHeight ){
+							return false;
+						}
+					}
+					else{
+						if( this.scrollTop === 0 ){
+							return false;
+						}
+					}
+				}
+			}
 		})
 		, BASE_URL
 		, codeEditorList = []
@@ -132,12 +148,12 @@ define(['jquery', 'socket', 'storage', 'template'], function($, socket, storage)
 		}
 	});
 
-	storage.setItem('skin', CURRENT_SKIN);
+	//storage.setItem('skin', CURRENT_SKIN);
 
 	window.addEventListener('storage',
 
 	//$(window).on('storage',
-		function(e){                console.log(e)
+		function(e){
 		var skin
 			;
 
@@ -155,13 +171,11 @@ define(['jquery', 'socket', 'storage', 'template'], function($, socket, storage)
 	});
 
 	return function(skin, dir, list){
-		CURRENT_SKIN = skin;
-
-		storage.setItem('skin', skin);
-
 		BASE_URL = dir;
 
 		codeEditorList = list;
+
+		skinList.setSkin( skin );
 
 		return skinList;
 	}

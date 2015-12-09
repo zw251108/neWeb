@@ -107,7 +107,6 @@ require(['../../config'], function(config){
 
 		skin = $.parseJSON( skin );
 		codeSkin = codeSkin(skin.skin, config.requireConfig.baseUrl, codeList);
-		codeSkin.setSkin();
 
 		$document.on('click', '#save', function(e, hideMsg){
 			var order = $document.find('.section').map(function(){
@@ -211,8 +210,6 @@ require(['../../config'], function(config){
 						var c = code(this, this.dataset ? this.dataset.codeType : this.getAttribute('data-code-type'));
 
 						codeList.push( c );
-
-						codeSkin.setSkin();
 
 						$curr.data('codeMirror', c);
 					}).end().find('.CodeMirror').addClass('edit_CodeMirror');

@@ -83,6 +83,24 @@ define('editorLayout', ['jquery', 'global', 'template'], function($, g){
 				css.refresh();
 				js.refresh();
 			}
+			, 'mousewheel DOMMouseScroll': function(e){
+				var delta = e.originalEvent.wheelDelta || -e.originalEvent.detail
+					, $that = $(this)
+					;
+
+				if( $that.height() !== this.scrollHeight ){
+					if( delta < 0 ){
+						if( this.scrollTop + $that.height() >= this.scrollHeight ){
+							return false;
+						}
+					}
+					else{
+						if( this.scrollTop === 0 ){
+							return false;
+						}
+					}
+				}
+			}
 		})
 		, $layoutBtns = $layout.nextAll('div').on('click', 'button', function(){
 			$layoutList.triggerHandler('setLayout', [this.dataset ? this.dataset.layout : this.getAttribute('data-layout')]);
@@ -427,7 +445,7 @@ require(['../../config'], function(config){
 
 			, runCode = function(html, css, js, cssLib, jsLib){
 				return '<!DOCTYPE html>' +
-					'<html lang="zh-CN">' +
+					'<html lang="cmn">' +
 						'<head>' +
 							'<meta charset="UTF-8"/>' +
 							'<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>' +
@@ -502,7 +520,6 @@ require(['../../config'], function(config){
 
 		skin = $.parseJSON( skin );
 		codeSkin = codeSkin(skin.skin, config.requireConfig.baseUrl, [html, css, js]);
-		codeSkin.setSkin();
 
 		setMore($name, $form, tagsData);
 
