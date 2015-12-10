@@ -75,7 +75,8 @@ define(['jquery', 'socket'], function($, socket){
 				tagTimeout = setTimeout(function(){
 					var rs = []
 						, i, j, t
-						;                 console.log(expr)
+						;
+
 					for( i = 0, j = TAG_DATA.length; i < j; i++ ){
 						t = TAG_DATA[i];
 

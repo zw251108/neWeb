@@ -531,16 +531,10 @@ require(['../../config'], function(config){
 			}
 		});
 
-		//code.addPanel('12123123123123123123', js);
-		//code.addPanel('123', js);
-		//code.addPanel('123', js);
-		//code.addPanel('123', js);
-
 		socket.register('editor/code/save', function(data){
 
 			if( 'error' in data ){
 				msgPopup.showMsg('保存失败' + data.msg);
-				//$alert.find('#alertConternt').html('保存失败' + data.msg).end().trigger('showDialog');
 			}
 			else{
 				isEdit = false;
@@ -550,7 +544,6 @@ require(['../../config'], function(config){
 				}
 				else{
 					msgPopup.showMsg('保存成功');
-					//$alert.find('#alertContent').html('保存成功').end().trigger('showDialog');
 				}
 			}
 		});
