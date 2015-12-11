@@ -159,7 +159,7 @@ define(['jquery', 'socket'], function($, socket){
 				$tags.val( tags ? tags +',' + tag : tag );
 			}
 			else{
-				$tags.val( tags ? (','+tags+',').replace(','+ tag +',', '').replace(/^,/, '').replace(/,$/, '') : '' );
+				$tags.val( tags ? (','+tags+',').replace(','+ tag +',', ',').replace(/^,/, '').replace(/,$/, '') : '' );
 			}
 		});
 	};

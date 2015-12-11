@@ -195,15 +195,35 @@ define('uiLibPopup', ['jquery', 'socket', 'template'], function($, socket){
 		})
 
 		, $uiLibPopup = $('#uiLib').on('click', 'dt input:checkbox', function(){
-			$(this).parents('dt').next().find('input:checkbox').prop('checked', this.checked);
-		}).on('click', '.right', function(){
+			$(this).next().removeClass('icon-checkbox-half').parents('dt').next().find('input:checkbox').prop('checked', this.checked);
+		}).on('click', '.right', function(e){
+			e.preventDefault();
+
 			$(this).toggleClass('icon-down icon-up').parents('dt').next().slideToggle();
 		}).on('click', 'dd input:checkbox', function(){
 			var $parent = $(this).parents('dd')
 				, $checkbox = $parent.find('input:checkbox')
+				, lCheckbox = $checkbox.length
 				, lChecked = $checkbox.filter(':checked').length
 				;
-			$parent.prev().find('input:checkbox').prop('checked', lChecked === $checkbox.length);
+
+			if( lChecked > 0 ){
+				if( lChecked === lCheckbox ){console.log(lChecked, lCheckbox);
+					$parent.prev().find('input:checkbox').prop({
+						checked: true
+						, indeterminate: false
+					}).next().removeClass('icon-checkbox-half');
+				}
+				else{
+					$parent.prev().find('input:checkbox').prop({
+						checked: false
+						, indeterminate: true
+					}).next().addClass('icon-checkbox-half');
+				}
+			}
+			else{
+				$parent.prev().find('input:checkbox').prop('checked', false).next().removeClass('icon-checkbox-half');
+			}
 		}).on('click', 'button.btn', function(){
 			var $checked = $uiLibPopup.find('input:checkbox:checked')
 				, jsLib = []
