@@ -53,10 +53,10 @@ define(['jquery', 'template'], function($){
 		, searchBar = {
 			$target: $searchBar
 			, toggle: function(){
-				$searchBar.slideToggle().prev().toggle();
+				$searchBar.slideToggle().find('input').focus().end().prev().toggle();
 			}
 			, show: function(){
-				$searchBar.slideDown().prev().show();
+				$searchBar.slideDown().find('input').focus().end().prev().show();
 			}
 			, hide: function(){
 				$searchBar.slideUp().prev().hide();

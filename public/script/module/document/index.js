@@ -39,9 +39,7 @@ require(['../../config'], function(config){
 			}
 		});
 
-		$document.on('click', '.icon-close', function(e){
-			// todo 保存未保存的数据
-		}).on('click', '.section_title', function(){
+		$document.on('click', '.section_title', function(){
 			$temp.add(this)
 				.find('.icon').toggleClass('icon-up icon-down').end()
 				.next('dl').slideToggle();
@@ -68,6 +66,7 @@ require(['../../config'], function(config){
 					var c = code(this, this.dataset ? this.dataset.codeType : this.getAttribute('data-code-type'), true);
 
 					codeList.push(c);
+					codeSkin.setSkin();
 				});
 			});
 		})

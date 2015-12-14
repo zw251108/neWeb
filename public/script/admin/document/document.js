@@ -102,7 +102,6 @@ require(['../../config'], function(config){
 			})
 			, $save = $document.find('#save')
 			, codeList = []
-			, skinList
 			;
 
 		skin = $.parseJSON( skin );
@@ -210,6 +209,7 @@ require(['../../config'], function(config){
 						var c = code(this, this.dataset ? this.dataset.codeType : this.getAttribute('data-code-type'));
 
 						codeList.push( c );
+						codeSkin.setSkin();
 
 						$curr.data('codeMirror', c);
 					}).end().find('.CodeMirror').addClass('edit_CodeMirror');
