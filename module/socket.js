@@ -19,22 +19,13 @@ sio.on('connection', function(socket){
 	// todo 应该获取 session
  	var session = socket.handshake.session
 		, clientIndex = session.id
-	    , i = EVENT_INDEX_LIST.length
-	    , socketId
-	    , temp
 	    ;
 
 	if( clientIndex in CLIENT_LIST ){
-		socketId = CLIENT_LIST[clientIndex].length;
-		console.log( CLIENT_LIST[clientIndex].length );
-
 		CLIENT_LIST[clientIndex].push( socket );
-		console.log( CLIENT_LIST[clientIndex].length );
 	}
 	else{
-		socketId = 0;
 		CLIENT_LIST[clientIndex] = [socket];
-		CLIENT_INDEX_LIST.push( clientIndex );
 	}
 
 	console.log('socket: session id ', clientIndex, 'connect');
@@ -61,8 +52,10 @@ sio.on('connection', function(socket){
 	}).on('message', function(data){    // 即时通信接口
 		console.log('user chat');
 	}).on('disconnect', function(){ // 断开连接
-		CLIENT_LIST[clientIndex][socketId] = null;
+		var index = CLIENT_LIST[clientIndex].indexOf( socket )
+			;
 
+		CLIENT_LIST[clientIndex].splice(index, 1);
 		console.log('socket: session id ', clientIndex, 'disconnect');
 	})
 	;
