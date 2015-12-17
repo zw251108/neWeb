@@ -54,7 +54,7 @@ var db  = require('../db.js')
 		, favoriteSearchTitle: 'select Id,title,url,status,tags,datetime,score from reader_bookmark where title like :keyword and status=2 order by status,Id desc limit :page,:size'
 		, favoriteSearchTitleCount: 'select count(*) as count from reader_bookmark where title like :keyword and status=2'
 		, favoriteFilterTags: 'select Id,title,url,status,tags,datetime,score from reader_bookmark where status=2 and tags regexp :tags order by status,Id desc limit :page,:size'
-		, favoriteFilterTagsCount: 'select count(*) as count from reader_bookmark where  status=2 and tags regexp :tags'
+		, favoriteFilterTagsCount: 'select count(*) as count from reader_bookmark where status=2 and tags regexp :tags'
 
 		, a: 'insert into user_reader_bookmark(bookmark_id,user_id,score,tags,`status`,bookmark_datetime) select Id as bookmark_id,\'1\' as user_id,score,tags,`status`,`datetime` from reader_bookmark'
 		, b: 'update user_reader_bookmark set status=1 where status=0'
@@ -254,7 +254,7 @@ var db  = require('../db.js')
 					;
 
 				if( rs && rs.length ){
-					result = +rs[0].length;
+					result = +rs[0].count;
 				}
 				else{
 					result = 0;
