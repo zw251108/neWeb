@@ -104,16 +104,19 @@ define(['jquery', 'socket', 'storage', 'template'], function($, socket, storage)
 			, 'mousewheel DOMMouseScroll': function(e){
 				var delta = e.originalEvent.wheelDelta || -e.originalEvent.detail
 					, $that = $(this)
+					, h = $that.height()
+					, sch = this.scrollHeight
+					, sct = this.scrollTop
 					;
 
-				if( $that.height() !== this.scrollHeight ){
+				if( h !== sch ){
 					if( delta < 0 ){
-						if( this.scrollTop + $that.height() >= this.scrollHeight ){
+						if( sct + h >= sch ){
 							return false;
 						}
 					}
 					else{
-						if( this.scrollTop === 0 ){
+						if( sct === 0 ){
 							return false;
 						}
 					}

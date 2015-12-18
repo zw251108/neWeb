@@ -270,16 +270,19 @@ define(['jquery', 'socket', 'jquery.extends'], function($){
 		.on('mousewheel DOMMouseScroll', '.module-popup .module_content', function(e){
 			var delta = e.originalEvent.wheelDelta || -e.originalEvent.detail
 				, $that = $(this)
+				, h = $that.height()
+				, sch = this.scrollHeight
+				, sct = this.scrollTop
 				;
 
-			if( $that.height() !== $that[0].scrollHeight ){
+			if( h !== sch ){
 				if( delta < 0 ){
-					if( $that[0].scrollTop + $that.height() >= $that[0].scrollHeight ){
+					if( sct + h >= sch ){
 						return false;
 					}
 				}
 				else{
-					if( $that[0].scrollTop === 0 ){
+					if( sct === 0 ){
 						return false;
 					}
 				}

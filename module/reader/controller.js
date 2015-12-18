@@ -493,6 +493,7 @@ socket.register({
 			, targetId = query.targetId
 			, tags = query.tags
 			, title = query.title
+			, user = User.getUserFromSession.fromSocket(socket)
 			, dataAll
 			, execute = Model.isExistBookmark( url )
 			;
@@ -556,6 +557,7 @@ socket.register({
 				}
 				else{
 					data.status = 0;
+					data.userId = user.id;
 					dataAll = data;
 
 					result = Model.addBookmark( data );
@@ -608,6 +610,7 @@ socket.register({
 			, tags = query.tags || ''
 			, score = query.score || 0
 			, title = query.title || ''
+			, user = User.getUserFromSession.fromSocket(socket)
 			, execute
 			;
 
@@ -674,6 +677,7 @@ socket.register({
 							, tags: tags
 							, source: source
 							, status: 2
+							, userId: user.id
 						}).then(function(rs){
 							var result
 								;
@@ -829,6 +833,7 @@ socket.register({
 				topic: 'reader/bookmark/add'
 			}
 			, url = data.query.url
+			, user = User.getUserFromSession.fromSocket(socket)
 			, dataAll
 			, execute
 			;
@@ -852,6 +857,7 @@ socket.register({
 						}
 						else{
 							data.status = 0;
+							data.userId = user.id;
 							dataAll = data;
 
 							result = Model.addBookmark( data )
