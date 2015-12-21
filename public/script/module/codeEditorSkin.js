@@ -1,4 +1,4 @@
-/**
+5/**
  * @module codeEditorSkin
  * */
 define(['jquery', 'socket', 'storage', 'template'], function($, socket, storage){
@@ -151,12 +151,7 @@ define(['jquery', 'socket', 'storage', 'template'], function($, socket, storage)
 		}
 	});
 
-	//storage.setItem('skin', CURRENT_SKIN);
-
-	window.addEventListener('storage',
-
-	//$(window).on('storage',
-		function(e){
+	window.addEventListener('storage', function(e){
 		var skin
 			;
 
@@ -181,5 +176,5 @@ define(['jquery', 'socket', 'storage', 'template'], function($, socket, storage)
 		skinList.setSkin( skin );
 
 		return skinList;
-	}
+	};
 });

@@ -7,7 +7,6 @@ define(['jquery'], function(){
 
 	if( 'localStorage' in window ){
 		store = localStorage;
-		//store = sessionStorage;
 	}
 	else{
 		store = {
