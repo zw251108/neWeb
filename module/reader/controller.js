@@ -330,7 +330,11 @@ web.get('/reader/favorite', function(req, res){
 		});
 	}
 
-	execute.catch(function(e){console.log(e)}).then( View.favoriteList ).then(function(html){
+	execute.catch(function(e){
+		console.log(e);
+
+		return [];
+	}).then( View.favoriteList ).then(function(html){
 		res.send( config.docType.html5 + html );
 		res.end();
 	});
@@ -838,8 +842,10 @@ socket.register({
 			, execute
 			;
 
+		console.log('bookmark add url: ' + url);
+
 		if( url ){
-			execute = Model.isExistBookmark( url).catch(function(e){console.log(e)}).then(function(rs){
+			execute = Model.isExistBookmark( url ).then(function(rs){
 				var result
 					;
 

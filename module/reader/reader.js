@@ -21,6 +21,8 @@ var Promise     = require('promise')
 
 	, Reader    = {
 		crawler: function(url){
+			console.log('正在获取 url: ' + url);
+
 			return new Promise(function(resolve, reject){
 				if( url ){
 					superAgent.get(url).buffer(true).end(function(err, res){
@@ -29,6 +31,7 @@ var Promise     = require('promise')
 								res: res
 								, url: url
 							});
+							console.log('获取 url: ' + url + ' 成功');
 						}
 						else{
 							reject( err );

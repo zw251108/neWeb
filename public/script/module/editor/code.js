@@ -208,7 +208,7 @@ define('uiLibPopup', ['jquery', 'socket', 'template'], function($, socket){
 				;
 
 			if( lChecked > 0 ){
-				if( lChecked === lCheckbox ){console.log(lChecked, lCheckbox);
+				if( lChecked === lCheckbox ){
 					$parent.prev().find('input:checkbox').prop({
 						checked: true
 						, indeterminate: false

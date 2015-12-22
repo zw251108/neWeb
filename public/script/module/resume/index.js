@@ -168,26 +168,20 @@ define('timeline', ['jquery', 'global', 'd3'], function($, g, d3){
 });
 
 require(['../../config'], function(config){
-	var r = require.config(config.requireConfig);
+	var r = require.config(config.requireConfig)
+		, ds = config.dataSource
+		;
 
-	r(['jquery', 'global', 'socket', 'radarChart', 'timeline'], function($, g, socket, chart, timeline){
-		var skillData = [{
-				value: 9, title: 'HTML(5) & CSS(3)'}, {
-				value: 8, title: 'JavaScript'}, {
-				value: 7, title: '库 & 框架'}, {
-				value: 7, title: 'Node.js & 前端工具'}, {
-				value: 2, title: '设计审美'}, {
-				value: 6, title: '用户体验'
-			}]
-			, baseData = [{
-				value: 8, title: '团队协作'}, {
-				value: 9, title: '学习能力'}, {
-				value: 7, title: '创意'}, {
-				value: 6, title: '责任心'}, {
-				value: 5, title: '沟通能力'}, {
-				value: 8, title: '视野'
-			}]
-		//, data1 = [{
+	r(['jquery', 'global', 'socket'
+		, 'radarChart', ds.resumeSkill, ds.resumeBasicData
+		, 'timeline', ds.resumeWorkHistory
+		, ds.resumeTags
+	], function($, g, socket
+		, chart, skill, basic
+		, timeline, workHistory
+		, tags){
+		var
+		// data1 = [{
 		//	title: '思维'
 		//	, desc: '设计感觉，理念，思想。<br/>对专业的直觉。<br/>例：有人有天生色彩感觉好，或对版式的控制感觉良好。'
 		//}, {
@@ -206,79 +200,22 @@ require(['../../config'], function(config){
 		//	title: '表达'
 		//	, desc: '纯技法，手上功夫。<br/>高级、资深视觉设计师重要考核项。'
 		//}]
-			, workHistoryData = [{
-				start: '2015-03'
-				, co: {
-					name: '大连面视科技有限公司'
-					, href: ''
-				}
-				, job: {
-					title: 'Web 前端工程师'
-					, desc: ''
-				}
-			}, {
-				start: '2014-11'
-				, end: '2015-03'
-				, co: {
-					name: '天向企业'
-					, href: ''
-				}
-				, job: {
-					title: 'Web 前端工程师'
-					, desc: ''
-				}
-			}, {
-				start: '2013-04'
-				, end: '2014-09'
-				, co: {
-					name: '德辉科技（大连）有限公司'
-					, href: ''
-				}
-				, job: {
-					title: 'Web 前端工程师'
-					, desc: ''
-				}
-			}, {
-				start: '2012-04'
-				, end: '2013-04'
-				, co: {
-					name: '中科海云网络科技（大连）有限公司'
-					, href: ''
-				}
-				, job: {
-					title: 'Web 前端工程师'
-					, desc: ''
-				}
-			}, {
-				start: '2009-10'
-				, end: '2012-03'
-				, co: {
-					name: '大连网景科技有限公司'
-					, href: ''
-				}
-				, job: {
-					title: 'PHP 开发工程师'
-					, desc: ''
-				}
-			}]
-			, tags = ['游戏宅', '动漫宅', '伪·技术宅', '程序员', '兼职·段子手', '吐槽爱好者', '自黑狂', '乐观'
-				, '80后', '没心没肺', '吃货', '肉食动物', '80后', '天蝎座']
-
-			, $resume = $('#resume')
+		//	,
+			$resume = $('#resume')
 			, $content = $resume.find('.module_content')
 			, $tagsArea = $resume.find('#tagsArea')
 			, width = $content.width()
 			;
 
 		chart({
-			data: skillData
+			data: $.parseJSON(skill)
 			, selector: '#skillRadar'
 			, h: Math.max(width/2, 278)
 			, w: Math.max(width/2, 278)
 			, className: ''
 		});
 		chart({
-			data: baseData
+			data: $.parseJSON(basic)
 			, selector: '#baseRadar'
 			, h: Math.max(width/2, 278)
 			, w: Math.max(width/2, 278)
@@ -286,7 +223,7 @@ require(['../../config'], function(config){
 		});
 
 		timeline({
-			data: workHistoryData
+			data: $.parseJSON(workHistory)
 			, selector: '#timeline'
 			, start: new Date(2009, 7)
 			, end: new Date()
@@ -294,7 +231,7 @@ require(['../../config'], function(config){
 			, w: width
 		});
 
-		$tagsArea.html( $.map(tags, function(d){
+		$tagsArea.html( $.map($.parseJSON(tags), function(d){
 			return '<span class="tag">'+ d +'</span>';
 		}).join('') );
 	});

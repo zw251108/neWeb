@@ -25,13 +25,19 @@ var web         = require('../web.js')
 /**
  * 后台管理
  * */
+admin.register({
+	id: 'tag'
+	, metroSize: 'tiny'
+	, title: '标签 tag'
+	, icon: 'tags'
+	, href: 'tag/'
+});
 web.get('/admin/tag/', function(req, res){
 	Admin.tag().then(function( html ){
 		res.send( config.docType.html5 + html );
 		res.end();
 	});
 });
-admin.push('tag');
 
 /**
  * 全局 Web 数据接口 只支持 jsonp 格式，回调函数名为 callback

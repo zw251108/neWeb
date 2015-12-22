@@ -35,6 +35,7 @@ var fs = require('fs')
 	//----- 自定义模块 -----
 	, tpl       = require('./module/emmetTpl/tpl.js') // 模板库
 	, modules   = require('./module/module.js') // 首页模块
+	, admin     = require('./module/admin.js')   // 后台管理模块
 	;
 
 log4js.configure({
@@ -79,25 +80,6 @@ web.use( session );
 var userInfo = {
 	id: 1
 };
-//web.use(function(req, res, next){
-//	//console.log(req.url, req.session.id, sessionStore);
-//
-//	var sessionId = req.session.id
-//	//	, session = (sessionId && sessionId in sessionStore.sessions)? JSON.parse( sessionStore.sessions[sessionId] ) : {}
-//	//	, user = session.user
-//		;
-//	//console.log('session id', sessionId);
-//	//if( !user ){
-//	//	user = req.session.user = userInfo;
-//	//}
-//	//else{
-//	//
-//	//}
-//
-//	// todo
-//
-//	next();
-//});
 
 // 判断浏览器类型，操作系统
 //web.use(function(req, res, next){
@@ -152,16 +134,12 @@ require('./module/tag/controller.js'        );  // 加载模块 tag 功能
 
 require('./module/basedata/controller.js'   );  // 加载模块 基础数据
 
-//----- 后台管理 -----
-require('./admin/index.js');
-
 /**
- * 访问主页	/
+ * 访问主页
+	/
  * */
 web.get('/', function(req, res){
-	var sessionId = req.session.id
-	//, session = JSON.parse( sessionStore.sessions[sessionId] )
-		, user = req.session.user
+	var user = req.session.user
 		;
 
 	if( !user ){
@@ -246,6 +224,25 @@ web.post('/skin', function(req, res){   // 设置皮肤功能
 
 	res.send( JSON.stringify({
 		success: true
+	}) );
+	res.end();
+});
+
+/**
+ * 后台管理首页
+	admin/
+ * */
+web.get('/admin/', function(req, res){
+	var user = req.session.user
+		;
+
+	if( !user ){
+		req.session.user = userInfo;
+	}
+
+	res.send( tpl.html('admin', {
+		title: '个人小站（开发测试中...）'
+		, modules: tpl.metroTpl( admin.modules ).join('')
 	}) );
 	res.end();
 });

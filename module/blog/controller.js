@@ -30,7 +30,6 @@ modules.register({
 	, icon: 'edit'
 	, href: 'blog/'
 });
-
 web.get('/blog/', function(req, res){
 	var query = req.query || {}
 		, page = query.page || 1
@@ -54,7 +53,6 @@ web.get('/blog/', function(req, res){
 		res.end();
 	});
 });
-
 web.get('/blog/detail', function(req, res){
 	var query = req.query || {}
 		, id = query.id
@@ -77,10 +75,16 @@ web.get('/blog/detail', function(req, res){
 	});
 });
 
-
 /**
  *
  * */
+admin.register({
+	id: 'blog'
+	, metroSize: 'tiny'
+	, title: '博客 blog'
+	, icon: 'edit'
+	, href: 'blog/'
+});//push('blog');
 web.get('/admin/blog/', function(req, res){
 	var query = req.query || {}
 		, page = query.page || 1
@@ -192,5 +196,3 @@ web.post('/admin/blog/:blogId/save', function(req, res){
 		res.end();
 	});
 });
-
-admin.push('blog');

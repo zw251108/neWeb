@@ -20,6 +20,9 @@ var web         = require('../web.js')
 	, DOCUMENT_ID = 1
 	;
 
+/**
+ *
+ * */
 modules.register({
 	id: 'document'
 	, metroSize: 'tiny'
@@ -27,10 +30,6 @@ modules.register({
 	, icon: 'document'
 	, href: 'document/'
 });
-
-/**
- *
- * */
 web.get('/document/', function(req, res){
 	var query = req.query || {}
 		, documentId = query.id || DOCUMENT_ID
@@ -101,6 +100,13 @@ web.get('/document/', function(req, res){
 /**
  *
  * */
+admin.register({
+	id: 'document'
+	, metroSize: 'tiny'
+	, title: '文档 document'
+	, icon: 'document'
+	, href: 'document/'
+});
 web.get('/admin/document/', function(req, res){
 	var query = req.query || {}
 		, page = query.page || 1
@@ -201,42 +207,6 @@ web.get('/admin/document/:documentId/',function(req, res){
 		res.end();
 	});
 });
-
-//// content 列表
-//web.get('/admin/document/:documentId/:sectionId/', function(req, res, next){
-//	var param = req.params || {}
-//		, documentId = param.documentId
-//		, sectionId = param.sectionId
-//		;
-//
-//	if( documentId && /^\d+$/.test( documentId ) && sectionId && /^\d+$/.test( sectionId) ){
-//		Model.getContentBySec( sectionId ).then( Admin.contentList ).then(function(html){
-//			res.send( html );
-//			res.end();
-//		});
-//	}
-//	else{
-//		next();
-//	}
-//});
-//// content 详细
-//web.get('/admin/document/:documentId/:sectionId/:contentId', function(req, res){
-//	var param = req.params || {}
-//		, documentId = param.documentId
-//		, sectionId = param.sectionId
-//		, contentId = param.contentId
-//		;
-//
-//	if( documentId && /^\d+$/.test( documentId ) && sectionId && /^\d+$/.test( sectionId ) && contentId && /^\d+$/.test( contentId ) ){
-//		Model.getContentById( contentId ).then( Admin.content ).then(function(html){
-//			res.send( html );
-//			res.end();
-//		});
-//	}
-//	else{
-//		next();
-//	}
-//});
 
 /**
  * /admin/document/add                                      新建文档
@@ -495,5 +465,3 @@ web.post('/admin/document/:documentId/:sectionId/:contentId/save', function(req,
 		res.end();
 	});
 });
-
-admin.push('document');

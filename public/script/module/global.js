@@ -177,7 +177,7 @@ define(['jquery', 'socket', 'jquery.extends'], function($){
 	// 全局事件代理
 	var $container = $('#container')
 		, target
-		, SCORE_VALUE = ['', '还行', '不错', '好评', '推荐', '完美']
+		, SCORE_VALUE = ['', '还行', '不错', '推荐', '好评', '完美']
 	;
 	$container.length && $container.on({
 		'webkitAnimationEnd mozAnimationEnd msAnimationEnd animationend': function(){

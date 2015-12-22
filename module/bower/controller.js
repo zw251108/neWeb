@@ -23,6 +23,7 @@ var web         = require('../web.js')
 	, PROMPT_CALLBACK_INDEX = {}
 	;
 
+// 注册首页 metro 模块
 modules.register({
 	id: 'bower'
 	, metroSize: 'tiny'
@@ -30,13 +31,6 @@ modules.register({
 	, icon: 'bower'
 	, href: 'bower/'
 });
-//// 注册首页 metro 模块
-//index.push({
-//	id: 'bower'
-//	, type: 'metro'
-//	, size: 'normal'
-//	, title: '组件 bower'
-//});
 
 web.get('/bower/', function(req, res){
 	var query = req.query || {}

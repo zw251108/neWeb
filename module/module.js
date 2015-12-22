@@ -15,23 +15,21 @@ var ModuleError = function(msg){
 				, index = this.index
 				;
 
-			if( j > i ){
-				for(; i < j; i++ ){
-					t = arguments[i];
-					id = t.id;
+			for(; i < j; i++ ){
+				t = arguments[i];
+				id = t.id;
 
-					if( id ){
-						if( id in index ){
-							console.log( new ModuleError(id + ' 模块已被注册') );
-						}
-						else{
-							index[id] = module.length;
-							module.push( t );
-						}
+				if( id ){
+					if( id in index ){
+						console.log( new ModuleError(id + ' 模块已被注册') );
 					}
 					else{
-						console.log( new ModuleError('模块缺少 id') );
+						index[id] = module.length;
+						module.push( t );
 					}
+				}
+				else{
+					console.log( new ModuleError('模块缺少 id') );
 				}
 			}
 		}

@@ -62,7 +62,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 		template: getEmmet('editor/demoImgUploadForm.html')
 	})
 	, codeSetMoreFormTpl = emmetTpl({
-		template: 'form#setMoreForm[method=post action=setMore target=editorSetMoreRs enctype=multipart/form-data]' +
+		template: 'form#setMoreForm[method=post action=%setMore% target=editorSetMoreRs enctype=multipart/form-data]' +
 				'>input#codeId[type=hidden name=id value=%Id%]' +
 				'+div.formGroup' +
 					'>label.label[for=codeName]{请输入名称}' +
@@ -154,7 +154,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						id: 'demoImgLib'
 						, size: 'large'
 						, toolbar: ''
-						, content: demoImgUploadFormTpl({})
+						, content: demoImgUploadFormTpl(rs)
 					}]
 				}
 				, footer: {

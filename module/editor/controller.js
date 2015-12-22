@@ -24,6 +24,9 @@ var web         = require('../web.js')
 	, ImageModel    = require('../image/model.js')
 	, ImageError    = require('../image/error.js')
 
+	, DEMO_IMG_UPLOAD   = '/editor/demoImgUpload'
+	, SET_MORE          = '/editor/setMore'
+
 	, Promise = require('promise')
 	;
 
@@ -42,7 +45,6 @@ modules.register({
 	, href: 'editor/code?id=0'
 	, hrefTitle: '新建代码'
 });
-
 web.get('/editor/', function(req, res){
 	var query = req.query || {}
 		, page = query.page || 1
@@ -145,7 +147,12 @@ web.get('/editor/code', function(req, res){
 		;
 
 	if( id !== '0' ){
-		execute = Model.getEditorById(id);
+		execute = Model.getEditorById(id).then(function(rs){
+			rs.setMore = SET_MORE;
+			rs.demoImgUpload = DEMO_IMG_UPLOAD;
+
+			return rs;
+		});
 	}
 	else{
 		execute = Promise.resolve({
@@ -259,11 +266,11 @@ web.post('/editor/demoImgUpload', Image.uploadMiddle.single('image'), function(r
 		var result;
 
 		if( rs && rs.insertId ){
-			data.Id = rs.insertId;
+			imgData.Id = rs.insertId;
 
 			result = {
 				success: true
-				, info: data
+				, info: imgData
 			};
 		}
 		else{

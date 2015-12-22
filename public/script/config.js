@@ -46,5 +46,9 @@ define({
 		json: 'text!../data/example'
 		, tag: 'text!../tag/data'
 		, skin: 'text!../skin'
+		, resumeSkill: 'text!../resume/skill'
+		, resumeBasicData: 'text!../resume/basicData'
+		, resumeWorkHistory: 'text!../resume/workHistory'
+		, resumeTags: 'text!../resume/tags'
 	}
 });
