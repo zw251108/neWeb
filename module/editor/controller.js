@@ -296,6 +296,40 @@ web.post('/editor/demoImgUpload', Image.uploadMiddle.single('image'), function(r
 web.get('/editor/demo/', function(req, res){
 	res.end();
 });
+web.post('/editor/demo/', function(req, res){
+	var body = req.body
+		, html = body.html
+		, css = body.css
+		, cssLib = body.cssLib
+		, js = body.js
+		, jsLib = body.jsLib
+		;
+
+	// todo 处理 html 相关
+	// todo 处理 css 相关
+	// todo 处理 js 相关
+
+	res.send('<!DOCTYPE html>' +
+		'<html lang="cmn">' +
+			'<head>' +
+				'<meta charset="UTF-8"/>' +
+				'<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>' +
+				'<title>前端代码运行结果</title>' +
+				(cssLib ? cssLib.split(',').map(function(d){
+					return '<link rel="stylesheet" href="../lib/'+ d +'"/>';
+				}).join('') : '') +
+				'<style>' +	css + '</style>' +
+			'</head>' +
+			'<body>' +
+				html +
+				(jsLib ? jsLib.split(',').map(function(d){
+					return '<script src="../lib/'+ d +'"></script>';
+				}).join('') : '') +
+				'<script>' + js + '</script>' +
+			'</body>' +
+		'</html>');
+	res.end();
+});
 web.get('/editor/demo/get', function(req, res){
 	var query = req.query
 		;

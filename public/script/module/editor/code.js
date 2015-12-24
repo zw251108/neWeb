@@ -470,7 +470,7 @@ require(['../../config'], function(config){
 							'<meta charset="UTF-8"/>' +
 							'<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>' +
 							'<title>前端代码运行结果</title>' +
-							(cssLib ? $.map(cssLib.split(','), function(d){return '<link rel="stylesheet" href="../lib/'+ d +'">'}).join('') : '') +
+							(cssLib ? $.map(cssLib.split(','), function(d){return '<link rel="stylesheet" href="../lib/'+ d +'"/>'}).join('') : '') +
 							'<style>' +	css + '</style>' +
 						'</head>' +
 						'<body>' +

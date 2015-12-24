@@ -4,13 +4,13 @@ var db      = require('../db.js')
 	, error = require('../error.js')
 
 	, SQL   = {
-		province:   'select * from basedata_province'
-		, city:     'select * from basedata_city where province=:province'
-		, district: 'select * from basedata_district where city=:city'
-		, town:     'select * from basedata_town where district=:district'
-		, village:  'select * from basedata_village where town=:town'
+		province:   'select * from basedata_add_province'
+		, city:     'select * from basedata_add_city where province=:province'
+		, district: 'select * from basedata_add_district where city=:city'
+		, town:     'select * from basedata_add_town where district=:district'
+		, village:  'select * from basedata_add_village where town=:town'
 
-		, university: 'select * from basedata_university where province=:province'
+		, university: 'select * from basedata_edu_university where province=:province'
 	}
 	, Model = {
 		province: function(){

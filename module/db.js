@@ -14,6 +14,13 @@ var mysql = require('mysql')
 		this.type = '[DB Error]';
 		this.message = msg;
 	}
+	, DBBaseType = {
+		int: []
+		, string: []
+		, text: []
+		, boolean: []
+		, datetime: []
+	}
 	, SQL = {
 		select: 'select :column from :table :where :order :group'
 		, update: 'update :table set :update :where'
