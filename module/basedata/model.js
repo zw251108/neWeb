@@ -10,7 +10,7 @@ var db      = require('../db.js')
 		, town:     'select * from basedata_add_town where district=:district'
 		, village:  'select * from basedata_add_village where town=:town'
 
-		, university: 'select * from basedata_edu_university where province=:province'
+		, university:   'select * from basedata_edu_university where province=:province'
 	}
 	, Model = {
 		province: function(){
