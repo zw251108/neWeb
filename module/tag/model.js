@@ -11,29 +11,82 @@ var db      = require('../db.js')
 		, tagIsExist: 'select * from tag where name=:name'
 	}
 	, Model = {
+		/**
+		 * @method  获取全部标签
+		 * @return  {object(Promise)}   数据库返回结果
+		 * */
 		getAll: function(){
 			return db.handle({
 				sql: SQL.tagAll
+			}).then(function(rs){
+				var result = [];
+
+				if( rs && rs.length ){
+					result = rs;
+				}
+
+				return result;
 			});
 		}
-		, add: function(name, userId){
+
+		/**
+		 * @method  添加标签
+		 * @param   {object}    tag 标签数据
+		 * @param   {string}    tag.name    标签名称
+		 * @param   {string}    tag.userId  创建者名称
+		 * @return  {object(Promise)}   数据库返回结果
+		 * @desc
+		 *  Promise 返回结果：
+		 *      正确：带 id 标签数据
+		 * */
+		, add: function(tag){
 			return db.handle({
 				sql: SQL.tagAdd
-				, data: {
-					name: name
-					, userId: userId
+				, data: tag
+			}).then(function(rs){
+				var result = tag;
+
+				if( rs && rs.insertId ){
+					result.id = rs.insertId
 				}
+				else{
+					result = Promise.reject( new TagError(tag.name + ' 标签已存在') );
+				}
+
+				return result;
 			});
 		}
-		, increaseByName: function(name, num){
+
+		/**
+		 * @method  对标签增加数量
+		 * @param   {object}    tag 标签数据
+		 * @param   {string}    tag.name    标签名称
+		 * @param   {num}       tag.num     标签增加数量
+		 * @return  {object(Promise)}   数据库返回的结果
+		 * */
+		, increaseByName: function(tag){
 			return db.handle({
 				sql: SQL.tagIncrease
-				, data: {
-					name: name
-					, num: num
+				, data: tag
+			}).then(function(rs){
+				var result;
+
+				if( rs && rs.changedRows ){
+					result = true;
 				}
+				else{
+					result = Promise.reject( new TagError(tag.name + ' 标签不存在') );
+				}
+
+				return result;
 			});
 		}
+
+		/**
+		 * @method  检测标签名是否存在
+		 * @param   {string}    name    要检测标签名
+		 * @return  {boolean}   是否存在
+		 * */
 		, isExist: function(name){
 			return db.handle({
 				sql: SQL.tagIsExist

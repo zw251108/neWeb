@@ -75,23 +75,31 @@ data.push('tag');
  * Web 数据接口
  * */
 web.get('/tag/data', function(req, res){
-	Model.getAll().then(function(rs){
+	Model.getAll().catch(function(e){
+		console.log( e );
+
+		return [];
+	}).then(function(rs){
 		rs = JSON.stringify( rs );
 
 		res.send( rs );
 		res.end();
 	});
 });
-web.get('/tag/increase', function(){
-	res.end();
-});
+//web.get('/tag/increase', function(){
+//	res.end();
+//});
 
 /**
  * Web Socket 数据接口
  * */
 socket.register({
 	tag: function(socket){
-		Model.getAll().then(function(rs){
+		Model.getAll().catch(function(e){
+			console.log( e );
+
+			return [];
+		}).then(function(rs){
 			socket.emit('data', {
 				topic: 'tag'
 				, data: rs
@@ -109,22 +117,9 @@ socket.register({
 			;
 
 		if( name ){
-			execute = Model.add(name, user.id).then(function(rs){
-				var execute;
-
-				if( rs.insertId ){
-					send.info = {
-						id: rs.insertId
-						, name: name
-					};
-
-					execute = send;
-				}
-				else{
-					execute = Promise.reject( new TagError(name + ' 标签已存在') );
-				}
-
-				return execute;
+			execute = Model.add({
+				name: name
+				, userId: user.id
 			});
 		}
 		else{
@@ -153,10 +148,13 @@ socket.register({
 			;
 
 		if( name ){
-			execute = Model.increaseByName(name, num).then(function(rs){
+			execute = Model.increaseByName({
+				name: name
+				, num: num
+			}).then(function(rs){
 				var execute;
 
-				if( rs.changedRows ){
+				if( rs ){
 					send.info = {
 						name: name
 					};

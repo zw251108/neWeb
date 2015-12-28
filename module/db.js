@@ -162,6 +162,8 @@ db.handle = function(query){
 		else{
 			throw e;
 		}
+
+		return Promise.reject( e );
 	});
 };
 
