@@ -17,12 +17,12 @@ var web         = require('../web.js')
 /**
  * 后台管理
  * */
-//web.get('/admin/province', function(req, res){
-//	Admin.province().then(function(html){
-//		res.send();
-//	});
-//});
-//admin.push('province');
+web.get('/admin/address', function(req, res){
+	Admin.province().then(function(html){
+		res.send();
+	});
+});
+admin.push('province');
 
 /**
  * 全局 Web 数据接口 只支持 jsonp 格式，回调函数名为 callback

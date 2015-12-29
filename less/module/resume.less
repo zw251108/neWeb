@@ -70,11 +70,34 @@
 	width: 50%;
 	min-width: 278px;
 	text-align: center;
+
+	&_line{
+		stroke: #c0c0c0;
+		stroke-dasharray: 5 5;
+	}
+
+	&_path{
+		fill: #ff6a07;
+		stroke: #d35400;
+		stroke-width: 1px;
+		opacity: .5;
+	}
+	&_point{
+		fill: #fff;
+		stroke: #c0c0c0;
+		stroke-width: 1px;
+
+		&:hover{
+			stroke: #d35400;
+		}
+	}
 }
 .timeline{
-	position: relative;
-	margin-bottom: 24px;
-	margin-top: 44px;
+
+	&_content{
+		position: relative;
+		margin: 44px 0 24px;
+	}
 
 	&_line{
 		position: absolute;
@@ -109,7 +132,7 @@
 		top: -44px;
 	}
 
-	@node_margin: 20px;
+	@node_margin: 65px;
 
 	&_node{
 		position: absolute;
@@ -118,6 +141,7 @@
 		width: calc(~"50% - @{diff}");
 
 		border: 1px solid #c0c0c0;
+		//border-radius: 10px;
 		padding: 10px;
 
 		.boxSizing(border-box);
@@ -125,6 +149,7 @@
 		&:before,
 		&:after{
 			position: absolute;
+			z-index: 11;
 			height: 10px;
 			width: 10px;
 			border: 1px solid #c0c0c0;
@@ -142,41 +167,47 @@
 		}
 		
 		&:hover{
+			&:before,
+			&:after{
+				border-color: #d35400;
+			}
+
 			.datetime{
-				color: inherit;
+				//color: inherit;
+				color: #d35400;
 			}
 		}
 
 		&:nth-child(even){
-			left: @node_margin;
+			left: 20px;
 			border-radius: 10px 0 0 10px;
 
 			&:before,
 			&:after{
-				right: -21px;
+				right: -66px;
 				line-height: 32px;
 			}
 
 			.datetime{
-				right: 0;
+				right: -60px;
 
 				&:before{
-					right: -21px;
+					left: 1px;
 					border-left-color: #c0c0c0;
 				}
 				&:after{
-					right: -20px;
+					left: 0;
 					border-left-color: #fff;
 				}
 			}
 		}
 		&:nth-child(odd){
-			right: @node_margin;
+			right: 20px;
 			border-radius: 0 10px 10px 0;
 
 			&:before,
 			&:after{
-				left: -21px;
+				left: -66px;
 			}
 
 			h4{
@@ -184,14 +215,14 @@
 			}
 
 			.datetime{
-				left: 0;
+				left: -60px;
 
 				&:before{
-					left: -21px;
+					right: 1px;
 					border-right-color: #c0c0c0;
 				}
 				&:after{
-					left: -20px;
+					right: 0;
 					border-right-color: #fff;
 				}
 			}
@@ -204,6 +235,7 @@
 		.ellipsis();
 	}
 	.subTitle{
+		color: #888;
 		font-size: 12px;
 		&:before{
 			content: "[";
@@ -218,22 +250,25 @@
 		z-index: 10;
 		height: 20px;
 		width: 60px;
+
+		border-bottom: 1px solid #c0c0c0;
+
 		color: transparent;
 		font-size: 12px;
 		line-height: 20px;
 		text-align: center;
 
 		&-start{
-			bottom: 0;
+			bottom: 10px;
 		}
 		&-end{
-			top: 0;
+			top: -11px;
 		}
 
 		&:before,
 		&:after{
 			position: absolute;
-			top: 0;
+			top: 11px;
 			height: 0;
 			width: 0;
 			border: 10px solid transparent;

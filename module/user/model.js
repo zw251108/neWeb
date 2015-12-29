@@ -20,25 +20,27 @@ var db      = require('../db.js')
 	 * @param   {string}    userTag.targetType
 	 * @return  {object(Promise)}   数据库返回的结果
 	 * */
-	userTag: function(userTag){
-		return db.handle({
-			sql: SQL.userTag
-			, data: userTag
-		}).then(function(rs){
-			var result = userTag
-				;
+		userTag: function(userTag){
+			return db.handle({
+				sql: SQL.userTag
+				, data: userTag
+			}).then(function(rs){
+				var result = userTag
+					;
 
-			if( rs && rs.insertId ){
-				result.id = rs.insertId;
-			}
-			else{
-				result = Promise.reject(new TagError('未知错误'));
-			}
+				if( rs && rs.insertId ){
+					result.id = rs.insertId;
+				}
+				else{
+					result = Promise.reject(new TagError('未知错误'));
+				}
 
-			return result;
-		});
+				return result;
+			});
+		}
 	}
-}
+
+	, UserData
 
 	, UserModel = require('../model.js')({
 		Id: {

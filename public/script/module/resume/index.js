@@ -83,15 +83,15 @@ define('radarChart', ['jquery', 'global', 'd3'], function($, g, d3){
 		});
 
 		// 发散线
-		chart.selectAll('line').data( tempData ).enter().append('line').style('stroke', '#c0c0c0').style('stroke-dasharray', '5 5').attr('x1', startX).attr('y1', startY).attr('x2', x).attr('y2', y);
+		chart.selectAll('line').data( tempData ).enter().append('line').attr('class', 'radar_line').attr('x1', startX).attr('y1', startY).attr('x2', x).attr('y2', y);
 
 		// 雷达图
 		data.push( data[0] );
-		chart.append('path').attr('class', '').style('stroke', '#888').style('stroke-width', '1px').attr('fill', '#888').style('opacity', 0.5).datum( data ).attr('d', valPoint);
+		chart.append('path').attr('class', 'radar_path').datum( data ).attr('d', valPoint);
 
 		// 坐标点
 		data.pop();
-		chart.selectAll('circle').data( data ).enter().append('circle').style('fill', '#fff').style('stroke', '#888').style('stroke-width', '1px').attr('cx', valPointX).attr('cy', valPointY).attr('r', 4);
+		chart.selectAll('circle').data( data ).enter().append('circle').attr('class', 'radar_point').attr('cx', valPointX).attr('cy', valPointY).attr('r', 5);
 
 		// todo 添加交互效果
 	};
@@ -118,7 +118,7 @@ define('timeline', ['jquery', 'global', 'd3'], function($, g, d3){
 				return d.end;
 			})
 			, time = d3.time.scale().domain([start, end]).range([h -10, 0])
-			, $timeline = $(opts.selector).height(h)
+			, $timeline = $('<div class="timeline_content"></div>').appendTo(opts.selector).height(h)
 			, $timeNodes
 			;
 
