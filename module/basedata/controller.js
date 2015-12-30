@@ -22,7 +22,14 @@ web.get('/admin/address', function(req, res){
 		res.send();
 	});
 });
-admin.push('province');
+//admin.push('province');
+admin.register({
+	id: 'basedata'
+	, metroSize: 'tiny'
+	, title: '基础数据 basedata'
+	, icon: 'tags'
+	, href: 'basedata/'
+});
 
 /**
  * 全局 Web 数据接口 只支持 jsonp 格式，回调函数名为 callback

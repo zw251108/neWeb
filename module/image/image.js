@@ -6,27 +6,23 @@ var config  = require('../../config.js')
 
 	, sizeOf    = require('image-size')
 	, multer    = require('multer')
+	, ALBUM_TYPE    = {
+		demo: 'demo/'
+	}
 	, upload    = multer({
 		storage: multer.diskStorage({
-			destination: function(req, file, cb){
+			destination: function(req, file, next){
 				var body = req.body || {}
 					, type = body.type
 					, path
 					;
 
-				switch( type ){
-					case 'demo':
-						path = config.web.uploadDir +'demo/';
-						break;
-					default :
-						path = config.web.uploadDir + 'upload/';
-						break;
-				}
+				path = config.web.uploadDir + (ALBUM_TYPE[type] || 'upload/');
 
-				cb(null, path);
+				next(null, path);
 			}
-			, filename: function(req, file, cb){
-				cb(null, file.originalname);
+			, filename: function(req, file, next){
+				next(null, file.originalname);
 			}
 		})
 	})

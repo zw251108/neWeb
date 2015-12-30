@@ -13,6 +13,7 @@ var web         = require('../web.js')
 	, Model = require('./model.js')
 	, View  = require('./view.js')
 	, Admin = require('./admin.view.js')
+	, Document  = require('./document.js')
 	, DocumentError = require('./error.js')
 
 	, Promise = require('promise')
@@ -38,60 +39,7 @@ web.get('/document/', function(req, res){
 	Promise.all([Model.getDocumentById( documentId )
 		, Model.getSectionByDocumentId( documentId )
 		, Model.getContentByDocumentId( documentId )
-	]).then(function( documentData ){
-		var document = documentData[0]
-			, section = documentData[1]
-			, content = documentData[2]
-
-			, sectionIndex = {}
-			, contentIndex = {}
-			, sectionOrder = document.section_order.split(',')
-			, contentOrder
-			, i, j, t, x
-			, m, n
-
-			, result = []
-			, obj
-			;
-
-		i = content.length;
-		while( i-- ){
-			t = content[i];
-
-			contentIndex[t.Id] = t;
-		}
-
-		i = section.length;
-		while( i-- ){
-			t = section[i];
-
-			sectionIndex[t.Id] = t;
-		}
-
-		for(i = 0, j = sectionOrder.length; i < j; i++ ){
-			t = sectionIndex[sectionOrder[i]];
-
-			obj = {
-				sectionId: t.Id
-				, sectionTitle: t.title
-			};
-
-			contentOrder = t.content_order.split(',');
-
-			t = [];
-			for(m = 0, n = contentOrder.length; m < n; m++ ){
-				x = contentIndex[contentOrder[m]];
-
-				t.push( x );
-			}
-
-			obj.sectionList = t;
-
-			result.push( obj );
-		}
-
-		return result;
-	}).then( View.document ).then(function( html ){
+	]).then( Document.handleData ).then( View.document ).then(function( html ){
 		res.send( config.docType.html5 + html );
 		res.end();
 	});
@@ -130,7 +78,7 @@ web.get('/admin/document/', function(req, res){
 		res.end();
 	});
 });
-web.get('/admin/document/:documentId/',function(req, res){
+web.get('/admin/document/:documentId/', function(req, res){
 	var param = req.params || {}
 		, documentId = param.documentId
 		, execute
@@ -139,60 +87,7 @@ web.get('/admin/document/:documentId/',function(req, res){
 		execute = Promise.all([Model.getDocumentById( documentId )
 			, Model.getSectionByDocumentId( documentId )
 			, Model.getContentByDocumentId(documentId, true)
-		]).then(function( documentData ){
-			var document = documentData[0]
-				, section = documentData[1]
-				, content = documentData[2]
-
-				, sectionIndex = {}
-				, contentIndex = {}
-				, sectionOrder = document.section_order.split(',')
-				, contentOrder
-				, i, j, t, x
-				, m, n
-
-				, result = []
-				, obj
-				;
-
-			i = content.length;
-			while( i-- ){
-				t = content[i];
-
-				contentIndex[t.Id] = t;
-			}
-
-			i = section.length;
-			while( i-- ){
-				t = section[i];
-
-				sectionIndex[t.Id] = t;
-			}
-
-			for(i = 0, j = sectionOrder.length; i < j; i++ ){
-				t = sectionIndex[sectionOrder[i]];
-
-				obj = {
-					sectionId: t.Id
-					, sectionTitle: t.title
-				};
-
-				contentOrder = t.content_order.split(',');
-
-				t = [];
-				for(m = 0, n = contentOrder.length; m < n; m++ ){
-					x = contentIndex[contentOrder[m]];
-
-					t.push( x );
-				}
-
-				obj.sectionList = t;
-
-				result.push( obj );
-			}
-
-			return result;
-		}).then( Admin.document );
+		]).then( Document.handleData ).then( Admin.document );
 	}
 	else{
 		execute = Promise.reject( new DocumentError('缺少参数 documentId') );
