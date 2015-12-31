@@ -21,36 +21,8 @@ module.exports = {
 		else{
 			console.log('ERROR topic: ', topic, ' 重复注册');
 		}
-
-		//var type = typeof errCode
-		//	, key
-		//	, t
-		//	;
-		//if( type === 'string' ){
-		//	if( errCode in ERROR ){
-		//		console.log(errCode, ' 已存在，错误信息：', ERROR[errCode]);
-		//	}
-		//	else{
-		//		ERROR[errCode] = errMsg;
-		//	}
-		//}
-		//else if( type === 'object' ){
-		//	for( key in errCode ) if( errCode.hasOwnProperty(key) ){
-		//
-		//		if( key in ERROR ){
-		//			console.log(key, ' 已存在，错误信息：', ERROR[key]);
-		//		}
-		//		else{
-		//			ERROR[key] = errCode[key];
-		//		}
-		//	}
-		//}
-		//else{
-		//	console.log('errCode 未知的参数类型');
-		//}
 	}
 	, log: function(e){
-
 		if( typeof e === 'string' ){
 			console.log(e, ': ', ERROR[e]);
 		}

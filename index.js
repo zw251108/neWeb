@@ -29,9 +29,6 @@ var fs = require('fs')
 
 	, sharedSession = require('express-socket.io-session')
 
-	// 数据库操作
-	, db     = require('./module/db.js')
-
 	//----- 自定义模块 -----
 	, tpl       = require('./module/emmetTpl/tpl.js') // 模板库
 	, modules   = require('./module/module.js') // 首页模块
@@ -52,6 +49,9 @@ log4js.configure({
 });
 logger = log4js.getLogger('normal');
 logger.setLevel('INFO');
+
+var // 数据库操作
+	db     = require('./module/db.js');
 
 //----- 重置 manifest 版本代号 -----
 var manifest = fs.readFileSync(__dirname + '/tpl/cache.manifest').toString();
