@@ -8,47 +8,47 @@ var db      = require('../db.js')
 	, EditorError   = require('./error.js')
 
 	, SQL = {
-		editor: 'select editor.Id,editor.name,preview,tags,width,height from editor,image' +
+		editor: 'select editor.id,editor.name,preview,tags,width,height from editor,image' +
 			' where' +
 				' status=1 and' +
 				' editor.preview=image.src' +
-			' order by editor.Id'
-		, editorPage: 'select editor.Id,editor.name,preview,tags,width,height from editor,image' +
+			' order by editor.id'
+		, editorPage: 'select editor.id,editor.name,preview,tags,width,height from editor,image' +
 			' where' +
 				' status=1 and' +
 				' editor.preview=image.src' +
-			' order by editor.Id limit :page,:size'
+			' order by editor.id limit :page,:size'
 		, editorCount: 'select count(*) as count from editor' +
 			' where status=1'
-		, editorSearchName: 'select editor.Id,editor.name,preview,tags,width,height from editor,image' +
+		, editorSearchName: 'select editor.id,editor.name,preview,tags,width,height from editor,image' +
 			' where' +
 				' status=1 and' +
 				' editor.name like :keyword and' +
 				' editor.preview=image.src' +
-			' order by editor.Id limit :page,:size'
+			' order by editor.id limit :page,:size'
 		, editorSearchNameCount: 'select count(*) as count from editor' +
 			' where' +
 				' status=1 and' +
 				' name like :keyword'
-		, editorFilterTag: 'select editor.Id,editor.name,preview,tags,width,height from editor,image' +
+		, editorFilterTag: 'select editor.id,editor.name,preview,tags,width,height from editor,image' +
 			' where' +
 				' status=1 and' +
 				' tags regexp :tags and' +
 				' editor.preview=image.src' +
-			' order by editor.Id limit :page,:size'
+			' order by editor.id limit :page,:size'
 		, editorFilterTagCount: 'select count(*) as count from editor' +
 			' where' +
 				' status=1 and' +
 				' tags regexp :tags'
 
-		, codeById: 'select editor.Id,editor.name,tags,css_lib,js_lib,html,css,js,preview,width,height from editor,image where editor.Id=:id and editor.preview=image.src'
-		, codeByName: 'select Id,name,tags,css_lib,js_lib,html,css,js from editor where name=:name'
+		, codeById: 'select editor.id,editor.name,tags,css_lib,js_lib,html,css,js,preview,width,height from editor,image where editor.id=:id and editor.preview=image.src'
+		, codeByName: 'select id,name,tags,css_lib,js_lib,html,css,js from editor where name=:name'
 
 		, codeAdd: 'insert into editor(status,html,css,js,css_lib,js_lib,name,preview,create_time,user_id) values(1,:html,:css,:js,:cssLib,:jsLib,:name,\'../image/default/no-pic.png\',now(),:userId)'
-		, codeUpdate: 'update editor set name=:name,html=:html,css=:css,js=:js,css_lib=:cssLib,js_lib=:jsLib where Id=:id'
+		, codeUpdate: 'update editor set name=:name,html=:html,css=:css,js=:js,css_lib=:cssLib,js_lib=:jsLib where id=:id'
 		// todo 设置 UI 组件
-		, codeSetMore: 'update editor set name=:name,tags=:tags where Id=:id'
-		, codeSetMoreImg: 'update editor set name=:name,tags=:tags,preview=:preview where Id=:id'
+		, codeSetMore: 'update editor set name=:name,tags=:tags where id=:id'
+		, codeSetMoreImg: 'update editor set name=:name,tags=:tags,preview=:preview where id=:id'
 	}
 	, Model = {
 		getEditorAll: function(){

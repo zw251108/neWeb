@@ -6,22 +6,22 @@ var db  = require('../db.js')
 	, TABLE_NAME = 'document'
 
 	, SQL = {
-		documentById: 'select title,section_order from document where Id=:id'
-		, documentPage: 'select Id,title from document limit :page,:size'
+		documentById: 'select title,section_order from document where id=:id'
+		, documentPage: 'select id,title from document limit :page,:size'
 		, documentCount: 'select count(*) as count from document'
 		, documentAdd: 'insert into document(title) values(:title)'
-		, documentSetOrder: 'update document set section_order=:order where Id=:documentId'
+		, documentSetOrder: 'update document set section_order=:order where id=:documentId'
 
-		, sectionById: 'select Id,title,content_order from document_section where Id=:id'
-		, sectionByDocument: 'select Id,title,content_order from document_section where document_id=:documentId'
+		, sectionById: 'select id,title,content_order from document_section where id=:id'
+		, sectionByDocument: 'select id,title,content_order from document_section where document_id=:documentId'
 		, sectionAdd: 'insert into document_section(title,document_id,`order`) values(:title,:documentId,:order)'
-		, sectionSetOrder: 'update document_section set content_order=:order where Id=:sectionId'
+		, sectionSetOrder: 'update document_section set content_order=:order where id=:sectionId'
 
-		, contentById: 'select Id,title,content,section_title from document_content where Id=:id'
-		, contentBySection: 'select Id,title,content,section_title from document_content where section_id=:sectionId order by `order`'
-		, contentByDocument: 'select Id,title,content,section_id,section_title from document_content where document_id=:documentId order by section_id,`order`'
+		, contentById: 'select id,title,content,section_title from document_content where id=:id'
+		, contentBySection: 'select id,title,content,section_title from document_content where section_id=:sectionId order by `order`'
+		, contentByDocument: 'select id,title,content,section_id,section_title from document_content where document_id=:documentId order by section_id,`order`'
 		, contentAdd: 'insert into document_content(title,content,document_id,section_id,section_title,`order`) values(:title,\'\',:documentId,:sectionId,:sectionTitle,:order)'
-		, contentSaveContent: 'update document_content set content=:content where Id=:id'
+		, contentSaveContent: 'update document_content set content=:content where id=:id'
 	}
 	, Model = {
 

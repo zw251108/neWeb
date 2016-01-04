@@ -365,7 +365,7 @@ socket.register({
 						var result;
 						if( rs.insertId ){
 							send.info = {
-								Id: rs.insertId
+								id: rs.insertId
 								, html_url: query.url
 								, xml_url: query.feed
 								, name: query.name
@@ -467,6 +467,56 @@ socket.register({
 				}
 				else{
 					result = Promise.reject( new ReaderError('抓取数据失败') );
+				}
+
+				return result;
+			});
+		}
+		else{
+			execute = Promise.reject( new ReaderError('缺少参数') );
+		}
+
+		execute.catch(function(e){
+			console.log( e );
+
+			send.error = '';
+			send.msg = e.message;
+
+			return send;
+		}).then(function(send){
+			socket.emit('data', send);
+		});
+	}
+	, 'reader/search': function(socket, data){
+		var send = {
+				topic: 'reader/search'
+			}
+			, query = data.query || {}
+			, keyword = query.keyword
+			, page = query.page || 1
+			, size = query.size || 20
+			, execute
+			;
+
+		if( keyword ){
+			execute = Model.searchReaderByName(keyword, page, size).then(function(rs){
+				var result
+					;
+
+				if( rs && rs.length ){
+					send.data = rs;
+
+					result = Model.countSearchReaderByName(keyword).then(function(count){
+						send.count = count;
+
+						return send;
+					});
+				}
+				else{
+					send.data = [];
+					send.count = 0;
+
+					result = send;
 				}
 
 				return result;
@@ -639,6 +689,10 @@ socket.register({
 
 					return result;
 				});
+
+				execute = Model.updateUserBookmarkRead(id, title, score, tags).then(function(rs){
+
+				});
 			}
 			else if( url ){ // id 为 targetId，使用 url
 				// 判断数据库是否已存在
@@ -651,7 +705,7 @@ socket.register({
 						console.log('url ', url, '已存在');
 
 						send.info = {
-							id: rs[0].Id
+							id: rs[0].id
 						};
 
 						// 更新为 已读 状态
@@ -717,57 +771,6 @@ socket.register({
 		//Promise.all( tags.split(',').map(function(d){
 		//	return TagModel.increaseByName(d, 1);
 		//}) );
-
-		execute.catch(function(e){
-			console.log( e );
-
-			send.error = '';
-			send.msg = e.message;
-
-			return send;
-		}).then(function(send){
-			socket.emit('data', send);
-		});
-	}
-
-	, 'reader/search': function(socket, data){
-		var send = {
-				topic: 'reader/search'
-			}
-			, query = data.query || {}
-			, keyword = query.keyword
-			, page = query.page || 1
-			, size = query.size || 20
-			, execute
-			;
-
-		if( keyword ){
-			execute = Model.searchReaderByName(keyword, page, size).then(function(rs){
-				var result
-					;
-
-				if( rs && rs.length ){
-					send.data = rs;
-
-					result = Model.countSearchReaderByName(keyword).then(function(count){
-						send.count = count;
-
-						return send;
-					});
-				}
-				else{
-					send.data = [];
-					send.count = 0;
-
-					result = send;
-				}
-
-				return result;
-			});
-		}
-		else{
-			execute = Promise.reject( new ReaderError('缺少参数') );
-		}
 
 		execute.catch(function(e){
 			console.log( e );

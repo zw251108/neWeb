@@ -70,27 +70,6 @@
 	width: 50%;
 	min-width: 278px;
 	text-align: center;
-
-	&_line{
-		stroke: #c0c0c0;
-		stroke-dasharray: 5 5;
-	}
-
-	&_path{
-		fill: #ff6a07;
-		stroke: #d35400;
-		stroke-width: 1px;
-		opacity: .5;
-	}
-	&_point{
-		fill: #fff;
-		stroke: #c0c0c0;
-		stroke-width: 1px;
-
-		&:hover{
-			stroke: #d35400;
-		}
-	}
 }
 .timeline{
 
@@ -141,7 +120,6 @@
 		width: calc(~"50% - @{diff}");
 
 		border: 1px solid #c0c0c0;
-		//border-radius: 10px;
 		padding: 10px;
 
 		.boxSizing(border-box);
@@ -167,13 +145,15 @@
 		}
 		
 		&:hover{
+			border-color: #d35400;
+
 			&:before,
 			&:after{
 				border-color: #d35400;
 			}
 
 			.datetime{
-				//color: inherit;
+				border-bottom-color: #d35400;
 				color: #d35400;
 			}
 		}
@@ -200,6 +180,12 @@
 					border-left-color: #fff;
 				}
 			}
+
+			&:hover{
+				.datetime:before{
+					border-left-color: #d35400;
+				}
+			}
 		}
 		&:nth-child(odd){
 			right: 20px;
@@ -224,6 +210,12 @@
 				&:after{
 					right: 0;
 					border-right-color: #fff;
+				}
+			}
+
+			&:hover{
+				.datetime:before{
+					border-right-color: #d35400;
 				}
 			}
 		}

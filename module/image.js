@@ -90,7 +90,7 @@ web.post('/image/imageUpload', upload.single('image'), function(req, res){
 
 		//rs = rs.result;
 
-		data.Id = rs.insertId;
+		data.id = rs.insertId;
 
 		res.send( JSON.stringify(data) );
 		res.end();
@@ -122,7 +122,7 @@ web.post('/image/imagesUpload', upload.array(), function(req, res){
 //
 //		rs = rs.result;
 //
-//		data.Id = rs.insertId;
+//		data.id = rs.insertId;
 //
 //		res.send( JSON.stringify(data) );
 //		res.end();

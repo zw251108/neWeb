@@ -69,16 +69,18 @@
 
 	&-time{
 		&:hover{
-			.watch_wrap{
-				border-color: @metro-hover_c;
-			}
-			.watch_hourHand,
-			.watch_minuteHand,
-			.watch_secondHand{
-				border-bottom-color: @metro-hover_c;
-			}
-			.watch_mark{
-				background: @metro-hover_c;
+			.watch{
+				&_wrap{
+					stroke: #fff;
+				}
+				&_mark{
+					fill: #fff;
+				}
+				&_hour,
+				&_minute,
+				&_second{
+					fill: #fff;
+				}
 			}
 		}
 	}

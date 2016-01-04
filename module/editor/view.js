@@ -63,7 +63,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	})
 	, codeSetMoreFormTpl = emmetTpl({
 		template: 'form#setMoreForm[method=post action=%setMore% target=editorSetMoreRs enctype=multipart/form-data]' +
-				'>input#codeId[type=hidden name=id value=%Id%]' +
+				'>input#codeId[type=hidden name=id value=%id%]' +
 				'+div.formGroup' +
 					'>label.label[for=codeName]{请输入名称}' +
 					'+input#codeName.input[type=text name=name value=%name% placeholder=请输入名称 data-validator=title]' +

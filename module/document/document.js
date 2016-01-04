@@ -21,21 +21,21 @@ var Document = {
 		while( i-- ){
 			t = content[i];
 
-			contentIndex[t.Id] = t;
+			contentIndex[t.id] = t;
 		}
 
 		i = section.length;
 		while( i-- ){
 			t = section[i];
 
-			sectionIndex[t.Id] = t;
+			sectionIndex[t.id] = t;
 		}
 
 		for(i = 0, j = sectionOrder.length; i < j; i++ ){
 			t = sectionIndex[sectionOrder[i]];
 
 			obj = {
-				sectionId: t.Id
+				sectionId: t.id
 				, sectionTitle: t.title
 			};
 

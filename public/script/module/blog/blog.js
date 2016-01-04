@@ -5,7 +5,7 @@ define(['jquery', 'global', 'socket', 'tag', 'template'], function($, g, socket,
 	var $blog = g.mod('$blog') || $('#blog')
 		, tagTmpl = tag.tagTmpl
 		, articleTmpl = $.template({
-			template:'article#blogArt%Id%.article>a[href=blog/detail?id=%Id%]>h3.article_title{%title%}' +
+			template:'article#blogArt%Id%.article>a[href=blog/detail?id=%id%]>h3.article_title{%title%}' +
 				'^time.article_date[pubdate=pubdate datetime=%datetime%]{%datetime%}+div.tagsArea{%tags%}'
 			, filter:{
 				tags: function(d){
@@ -16,7 +16,7 @@ define(['jquery', 'global', 'socket', 'tag', 'template'], function($, g, socket,
 
 					$.each(tagsId, function(i, d){
 						data.push({
-							Id: d
+							id: d
 							, name: tagsName[i]
 						});
 					});
@@ -40,7 +40,7 @@ define(['jquery', 'global', 'socket', 'tag', 'template'], function($, g, socket,
 		, 'blog/detail': function(data){
 			data = data.info;
 			$('<div class="article_content">'+ data.content +'</div>').hide()
-				.insertAfter( $blog.find('#blogArt'+ data.Id).find('a').data('deploy', true) ).slideDown();
+				.insertAfter( $blog.find('#blogArt'+ data.id).find('a').data('deploy', true) ).slideDown();
 		}
 	});
 

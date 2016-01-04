@@ -43,7 +43,7 @@ var db      = require('../db.js')
 	, UserData
 
 	, UserModel = require('../model.js')({
-		Id: {
+		id: {
 			type: ''
 		}
 	})

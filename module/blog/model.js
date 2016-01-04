@@ -6,17 +6,17 @@ var db = require('../db.js')
 	, TABLE_NAME = 'blog'
 
 	, SQL = {
-		blogList: 'select Id,title,datetime,tags from '+ TABLE_NAME +' where status=1 order by Id desc'
-		, blogByPage: 'select Id,title,datetime,tags from '+ TABLE_NAME +' ' +
+		blogList: 'select id,title,datetime,tags from '+ TABLE_NAME +' where status=1 order by Id desc'
+		, blogByPage: 'select id,title,datetime,tags from '+ TABLE_NAME +' ' +
 			//'where status=1 ' +
-			'order by Id desc limit :page,:size'
-		, blogById: 'select Id,title,content,datetime,tags from '+ TABLE_NAME +' where Id=:id'
-		//, adminBlogByPage: 'select Id,title,datetime,tags from '+ TABLE_NAME +' order by Id desc limit :page,:size'
+			'order by id desc limit :page,:size'
+		, blogById: 'select id,title,content,datetime,tags from '+ TABLE_NAME +' where Id=:id'
+		//, adminBlogByPage: 'select id,title,datetime,tags from '+ TABLE_NAME +' order by Id desc limit :page,:size'
 
 		, countBlog: 'select count(*) as count from '+ TABLE_NAME
 
 		, blogAdd: 'insert into '+ TABLE_NAME +'(user_id,title,tags,content) values(:userId,:title,\'\',\'\')'
-		, blogSave: 'update '+ TABLE_NAME +' set title=:title,content=:content,tags=:tags where Id=:id'
+		, blogSave: 'update '+ TABLE_NAME +' set title=:title,content=:content,tags=:tags where id=:id'
 	}
 
 	, Table = {

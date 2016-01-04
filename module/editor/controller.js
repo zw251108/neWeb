@@ -156,7 +156,7 @@ web.get('/editor/code', function(req, res){
 	}
 	else{
 		execute = Promise.resolve({
-			Id: 0
+			id: 0
 			, js_lib: 'jquery/dist/jquery.js'
 		});
 	}
@@ -266,7 +266,7 @@ web.post('/editor/demoImgUpload', Image.uploadMiddle.single('image'), function(r
 		var result;
 
 		if( rs && rs.insertId ){
-			imgData.Id = rs.insertId;
+			imgData.id = rs.insertId;
 
 			result = {
 				success: true

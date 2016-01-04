@@ -14,7 +14,7 @@ require(['../../config'], function(config){
 			, $curr = null
 			, $temp = $([])
 			, sectionListTpl = $.template({
-				template: 'dt.icon.icon-right[data-content-id=%Id%]{%title%}>button.icon.icon-up[type=button title=上移]+button.icon.icon-down[type=button title=下移]^dd>textarea[data-code-type=html]{%content%}+button.btn.btn-submit[type=button]{保存}'
+				template: 'dt.icon.icon-right[data-content-id=%id%]{%title%}>button.icon.icon-up[type=button title=上移]+button.icon.icon-down[type=button title=下移]^dd>textarea[data-code-type=html]{%content%}+button.btn.btn-submit[type=button]{保存}'
 			})
 			, sectionTpl = $.template({
 				template: 'section.document_section.section[data-section-id=%sectionId%]>h3.section_title{%sectionTitle%}>button.icon.icon-plus[type=button title=添加章节]+button.icon.icon-up[type=button title=上移]+button.icon.icon-down[type=button title=下移]+button.icon.icon-save[type=button title=保存排序]^dl{%sectionList%}'
@@ -84,7 +84,7 @@ require(['../../config'], function(config){
 								$title.val('');
 
 								$section.find('dl').append( sectionListTpl({
-									Id: json.id
+									id: json.id
 									, title: title
 								}).join('') );
 								$addContentPopup.trigger('closeDialog');

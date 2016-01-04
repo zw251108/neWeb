@@ -134,6 +134,14 @@ require('./module/tag/controller.js'        );  // 加载模块 tag 功能
 
 require('./module/basedata/controller.js'   );  // 加载模块 基础数据
 
+modules.register({
+	id: 'time'
+	, metroSize: 'tiny'
+	, title: '时间 time'
+	, icon: ''
+	, href: '#'
+});
+
 /**
  * 访问主页
 	/
@@ -151,27 +159,7 @@ web.get('/', function(req, res){
 	res.send( tpl.html('index', {
 		title: '个人小站（开发测试中...）'
 		, user: ('user' in session) ? '/user' : '/login'
-		, modules: '<section id="time" class="metro metro-time tiny">' +
-			'<h2 class="metro_title">时间 time</h2>' +
-			'<div class="watch_wrap hidden" id="watch">' +
-				'<span class="watch_hourHand" id="hourHand"></span>' +
-				'<span class="watch_minuteHand" id="minuteHand"></span>' +
-				'<span class="watch_secondHand" id="secondHand"></span>' +
-				'<span class="watch_mark watch_mark-1"></span>' +
-				'<span class="watch_mark watch_mark-2"></span>' +
-				'<span class="watch_mark watch_mark-3"></span>' +
-				'<span class="watch_mark watch_mark-4"></span>' +
-				'<span class="watch_mark watch_mark-5"></span>' +
-				'<span class="watch_mark watch_mark-6"></span>' +
-				'<span class="watch_mark watch_mark-7"></span>' +
-				'<span class="watch_mark watch_mark-8"></span>' +
-				'<span class="watch_mark watch_mark-9"></span>' +
-				'<span class="watch_mark watch_mark-10"></span>' +
-				'<span class="watch_mark watch_mark-11"></span>' +
-				'<span class="watch_mark watch_mark-12"></span>' +
-			'</div>' +
-			'<span class="metro_info"></span>' +
-		'</section>' + tpl.metroTpl( modules.modules ).join('')
+		, modules: tpl.metroTpl( modules.modules ).join('')
 		, script: {
 			main: 'script/index'
 			, src: 'script/lib/require.min.js'

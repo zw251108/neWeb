@@ -8,7 +8,7 @@ define(['jquery', 'global', 'socket', 'template'], function($, g, socket){
 			, filter: {
 				content: function(data){
 					if( data.type === 'blog' ){
-						return '发布了文章 <a class="link" href="blog/detail/?id=' + data.Id +
+						return '发布了文章 <a class="link" href="blog/detail/?id=' + data.id +
 							'">' + data.content +'</a>';
 					}
 					return data.content;

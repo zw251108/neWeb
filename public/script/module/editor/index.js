@@ -8,7 +8,7 @@ require(['../../config'], function(config){
 			, $editorContainer = $editor.find('.module_content')
 			, PREVIEW_SIZE = 128
 			, editorTpl = $.template({
-				template: 'a[href=code?id=%Id%]' +
+				template: 'a[href=code?id=%id%]' +
 					'>article.article.editor_article' +
 					'>h3.article_title{%name%}' +
 					'+img.article_preview[src=%preview% width=%width% height=%height% alt=%alt%]' +

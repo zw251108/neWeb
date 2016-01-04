@@ -11,7 +11,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 
 	, articleListTpl    = emmetTpl({
 		template: 'article.article' +
-			'>a[href=./%Id%/]' +
+			'>a[href=./%id%/]' +
 				'>h3.article_title{%title%}' +
 			'^hr' +
 			'+time.article_date[pubdate=pubdate datetime=%datetime%]{%datetime%}' +
@@ -22,7 +22,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	})
 	, articleTpl        = emmetTpl({
 		template: 'form[action=./save method=post]' +
-			'>article.article[data-id=%Id%]' +
+			'>article.article[data-id=%id%]' +
 				'>h3.article_title>input#title.input[type=text name=title value=%title%]' +
 				'^div.article_content' +
 					'>textarea.hidden[name=content data-code-type=html]{%content%}' +

@@ -3,105 +3,29 @@
 @import "../lib/grid.less";
 
 //---------- Watch 时钟 ----------
-.watch_wrap{
+.watch{
+	position: absolute;
+	bottom: 0;
+	top: 0;
+	left: 0;
+	right: 0;
+	margin: auto;
+}
+
+/**
+ * 对不支持 svg 的浏览器的降级处理
+ */
+.watch-info{
 	position: relative;
 
-	top: 20px;
-
-	height: 80px;
-	width: 80px;
-
-	border: 5px solid @metro_c;
-	border-radius: 80px;
-	margin: 0 auto;
-}
-
-.watch_hourHand,
-.watch_minuteHand,
-.watch_secondHand{
-	position: absolute;
-
-	width: 0;
-	height: 0;
-	border-style: solid;
-	border-color: transparent transparent @metro_c;
-
-	.transformOrigin( center bottom );
-}
-
-.watch_hourHand{
-	left: 34px;
-	top: 0;
-	border-width: 20px 6px;
-}
-
-.watch_minuteHand{
-	left: 35px;
-	top: -20px;
-	border-width: 30px 5px;
-}
-
-.watch_secondHand{
-	left: 38px;
-	top: -40px;
-	border-width: 40px 2px;
-}
-
-.watch_mark{
-	position: absolute;
-
-	left: 39px;
-	top: 0;
-	height: 8px;
-	width: 2px;
-	background:@metro_c;
-
-	.transformOrigin(center 40px);
-}
-.watch_mark-1{
-}
-.watch_mark-2{
-	.transformRotate(30deg);
-}
-.watch_mark-3{
-	.transformRotate(60deg);
-}
-.watch_mark-4{
-	.transformRotate(90deg);
-}
-.watch_mark-5{
-	.transformRotate(120deg);
-}
-.watch_mark-6{
-	.transformRotate(150deg);
-}
-.watch_mark-7{
-	.transformRotate(180deg);
-}
-.watch_mark-8{
-	.transformRotate(210deg);
-}
-.watch_mark-9{
-	.transformRotate(240deg);
-}
-.watch_mark-10{
-	.transformRotate(270deg);
-}
-.watch_mark-11{
-	.transformRotate(300deg);
-}
-.watch_mark-12{
-	.transformRotate(330deg);
-}
-
-.watch_wrap-info{
 	left: 0;
 	top: -90px;
 
 	height: auto;
 	width: auto;
 
-	border: 0 none;
+	border: 0;
+	margin: 0 auto;
 
 	font-size: 24px;
 	font-weight: bolder;

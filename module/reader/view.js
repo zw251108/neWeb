@@ -11,8 +11,8 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	, TagView   = require('../tag/view.js')
 
 	, readerTpl    = emmetTpl({
-		template: 'section#reader_%Id%.reader_section.section' +
-			'>a[href=%html_url% data-feed=%xml_url% data-id=%Id%]' +
+		template: 'section#reader_%id%.reader_section.section' +
+			'>a[href=%html_url% data-feed=%xml_url% data-id=%id%]' +
 				'>h3.section_title{%name%}' +
 					'>span.icon.icon-up' +
 				'^^hr' +
@@ -25,7 +25,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 		}
 	})
 	, articleTpl   = emmetTpl({
-		template: 'article#readerArt%Id%.reader_article.article[data-id=%Id% data-score=%score%]' +
+		template: 'article#readerArt%id%.reader_article.article[data-id=%id% data-score=%score%]' +
 			'>a[href=%url% title=%title% target=_blank]' +
 				'>h3.article_title{%title%}' +
 			'^hr' +

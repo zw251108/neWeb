@@ -38,7 +38,7 @@ define('radarChart', ['jquery', 'global', 'd3'], function($, g, d3){
 			}
 			, valPoint = d3.svg.line().x(valPointX).y(valPointY)
 
-			, chart = d3.select(opts.selector).append('svg').attr('class', opts.className).attr('height', h).attr('width', w)
+			, chart = d3.select(opts.selector).append('svg').attr('class', 'radar').attr('height', h).attr('width', w)
 			, tempData = $.map(data, function(d){
 				return {
 					value: r
@@ -49,8 +49,8 @@ define('radarChart', ['jquery', 'global', 'd3'], function($, g, d3){
 
 		// 坐标
 		tempData.push( tempData[0] );
-		chart.append('path').attr('class', 'hexagon hexagon-big').style('stroke', '#c0c0c0').style('stroke-width', '1px').attr('fill', 'transparent').datum( tempData ).attr('d', point);
-		chart.append('path').attr('class', 'hexagon').style('stroke', '#c0c0c0').style('stroke-width', '1px').attr('fill', 'transparent').datum( $.map(tempData, function(d){
+		chart.append('path').attr('class', 'radar_hexagon radar_hexagon-big').datum( tempData ).attr('d', point);
+		chart.append('path').attr('class', 'radar_hexagon').datum( $.map(tempData, function(d){
 			return {
 				value: d.value /2
 			};
@@ -58,7 +58,7 @@ define('radarChart', ['jquery', 'global', 'd3'], function($, g, d3){
 
 		// 坐标文字
 		tempData.pop();
-		chart.selectAll('text').data( tempData ).enter().append('text').attr('font-size', '12px').attr('x', function(d, i){
+		chart.selectAll('text').data( tempData ).enter().append('text').attr('class', 'radar_axis').attr('x', function(d, i){
 			var ax = x(d, i)
 				;
 
@@ -91,7 +91,14 @@ define('radarChart', ['jquery', 'global', 'd3'], function($, g, d3){
 
 		// 坐标点
 		data.pop();
-		chart.selectAll('circle').data( data ).enter().append('circle').attr('class', 'radar_point').attr('cx', valPointX).attr('cy', valPointY).attr('r', 5);
+		chart.selectAll('rect').data( data ).enter().append('rect').attr('class', 'radar_point').attr('x', function(d, i){
+			return valPointX(d, i) - 3;
+		}).attr('y', function(d, i){
+			return valPointY(d, i) - 3;
+		}).attr('width', 6).attr('height', 6)
+			.attr('transform', function(d, i){
+			return 'rotate(45, '+ valPointX(d, i) +' '+ valPointY(d, i) +')';
+		});
 
 		// todo 添加交互效果
 	};
@@ -212,14 +219,12 @@ require(['../../config'], function(config){
 			, selector: '#skillRadar'
 			, h: Math.max(width/2, 278)
 			, w: Math.max(width/2, 278)
-			, className: ''
 		});
 		chart({
 			data: $.parseJSON(basic)
 			, selector: '#baseRadar'
 			, h: Math.max(width/2, 278)
 			, w: Math.max(width/2, 278)
-			, className: ''
 		});
 
 		timeline({

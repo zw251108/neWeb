@@ -48,8 +48,8 @@ require(['../../config'], function(config){
 				}
 			})
 			, feedTpl = $.template({
-				template: 'section#reader_%Id%.reader_section.section' +
-					'>a[href=%html_url% data-feed=%xml_url% data-id=%Id%]' +
+				template: 'section#reader_%id%.reader_section.section' +
+					'>a[href=%html_url% data-feed=%xml_url% data-id=%id%]' +
 						'>h3.section_title{%name%}' +
 							'>span.icon.icon-up' +
 					'^^hr' +

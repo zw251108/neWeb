@@ -22,7 +22,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 		}
 	})
 	, sectionListTpl    = emmetTpl({
-		template: 'dt.icon.icon-right[data-content-id=%Id%]{%title%}' +
+		template: 'dt.icon.icon-right[data-content-id=%id%]{%title%}' +
 				'>button.icon.icon-up[type=button title=上移]' +
 				'+button.icon.icon-down[type=button title=下移]' +
 			'^dd' +
@@ -37,8 +37,8 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	})
 
 	, docList           = emmetTpl({
-		template: 'li.article[data-id=%Id%]' +
-			'>a[href=./%Id%/]' +
+		template: 'li.article[data-id=%id%]' +
+			'>a[href=./%id%/]' +
 				'>h3.article_title' +
 					'>span.icon.icon-edit{ }' +
 					'+{%title%}'
@@ -208,7 +208,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 		//			moduleMain: {
 		//				id: 'editor'
 		//				, content: '<form>' +
-		//					'<input type="hidden" id="id" name="id" value="' + rs.Id + '"/>' +
+		//					'<input type="hidden" id="id" name="id" value="' + rs.id + '"/>' +
 		//					'<textarea id="content" name="content" class="hidden">' + rs.content + '</textarea>' +
 		//					'<button class="btn" type="submit">保存</button>' +
 		//				'</form>'
