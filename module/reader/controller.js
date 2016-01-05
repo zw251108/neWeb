@@ -245,16 +245,17 @@ web.get('/reader/favorite', function(req, res){
 		, size = query.size || 20
 		, keyword = query.keyword || ''
 		, tags = query.tags || ''
+		, user = User.getUserFromSession.fromReq(req)
 		, execute
 		;
 
 	if( keyword ){
-		execute = Model.searchFavoriteByTitle(keyword, page, size).then(function(rs){
+		execute = Model.searchFavoriteByTitle(user.id, keyword, page, size).then(function(rs){
 			var result
 				;
 
 			if( rs && rs.length ){
-				result = Model.countSearchFavoriteByTitle(keyword).then(function(count){
+				result = Model.countSearchFavoriteByTitle(user.id, keyword).then(function(count){
 					return {
 						data: rs
 						, index: page
@@ -282,12 +283,12 @@ web.get('/reader/favorite', function(req, res){
 		});
 	}
 	else if( tags ){
-		execute = Model.filterFavoriteByTags(tags, page, size).then(function(rs){
+		execute = Model.filterFavoriteByTags(user.id, tags, page, size).then(function(rs){
 			var result
 				;
 
 			if( rs && rs.length ){
-				result = Model.countFilterFavoriteByTags(tags).then(function(count){
+				result = Model.countFilterFavoriteByTags(user.id, tags).then(function(count){
 					return {
 						data: rs
 						, index: page
@@ -315,8 +316,8 @@ web.get('/reader/favorite', function(req, res){
 		});
 	}
 	else{
-		execute = Model.getFavoriteByPage(page, size).then(function(rs){
-			return Model.countFavorite().then(function(count){
+		execute = Model.getFavoriteByPage(user.id, page, size).then(function(rs){
+			return Model.countFavorite(user.id).then(function(count){
 				return {
 					data: rs
 					, index: page
@@ -538,110 +539,315 @@ socket.register({
 		});
 	}
 
-	, 'reader/article/bookmark': function(socket, data){
+	//, 'reader/article/bookmark': function(socket, data){
+	//	var send = {
+	//			topic: 'reader/article/bookmark'
+	//		}
+	//		, query = data.query || {}
+	//		, url = query.url
+	//		, targetId = query.targetId
+	//		, tags = query.tags
+	//		, title = query.title
+	//		, user = User.getUserFromSession.fromSocket(socket)
+	//		, dataAll
+	//		, execute
+	//		;
+	//
+	//	if( url && targetId ){
+	//		if( tags && title ){
+	//			execute = Model.isExistBookmark( url ).then(function(rs){
+	//				var source = Url.parse(url)
+	//					, result
+	//					;
+	//
+	//				source = source.protocol + '//' + source.host;
+	//
+	//				if( rs && rs.length ){  // 数据已存在
+	//
+	//					// 设置数据
+	//					send.info = rs[0];
+	//					send.info.id = rs[0].Id;
+	//					send.info.targetId = targetId;
+	//
+	//					result = Promise.reject( new ReaderError('数据已存在') );
+	//				}
+	//				else{
+	//					result = {
+	//						url: url
+	//						, title: title
+	//						, tags: tags
+	//						, source: source
+	//					};
+	//				}
+	//
+	//				return result;
+	//			});
+	//		}
+	//		else{
+	//			execute = execute.then(function(rs){
+	//				var result;
+	//
+	//				if( rs && rs.length ){
+	//
+	//					send.info = rs[0];
+	//					send.info.id = rs[0].Id;
+	//					send.info.targetId = targetId;
+	//
+	//					result = Promise.reject( new ReaderError('数据已存在') );
+	//				}
+	//				else{
+	//					result = Reader.crawler( url );
+	//				}
+	//
+	//				return result;
+	//			}).then( Reader.handleArticle );
+	//		}
+	//
+	//		execute = execute.then(function( data ){
+	//			var result
+	//				;
+	//
+	//			if( !data ){
+	//				result = Promise.reject( new ReaderError('数据获取失败') );
+	//			}
+	//			else{
+	//				data.status = 0;
+	//				data.userId = user.id;
+	//				dataAll = data;
+	//
+	//				result = Model.addBookmark( data );
+	//			}
+	//
+	//			return result;
+	//		}).then(function(rs){
+	//			var result
+	//				;
+	//
+	//			dataAll.targetId = targetId;
+	//
+	//			send.info = dataAll;
+	//
+	//			if( rs.insertId ){
+	//				dataAll.id = rs.insertId;
+	//				dataAll.sstatus = 0;
+	//
+	//				result = send;
+	//			}
+	//			else{
+	//				result = Promise.reject( new ReaderError('数据已存在') );
+	//			}
+	//
+	//			return result;
+	//		});
+	//	}
+	//	else{
+	//		execute = Promise.reject( new ReaderError('缺少参数') );
+	//	}
+	//
+	//	execute.catch(function(e){
+	//		console.log( e );
+	//
+	//		send.error = '';
+	//		send.msg = e.message;
+	//
+	//		return send;
+	//	}).then(function(send){
+	//		socket.emit('data', send);
+	//	});
+	//}
+	, 'reader/bookmark': function(socket, data){}
+	, 'reader/bookmark/add': function(socket, data){
 		var send = {
-				topic: 'reader/article/bookmark'
+				topic: 'reader/bookmark/add'
 			}
 			, query = data.query || {}
 			, url = query.url
 			, targetId = query.targetId
-			, tags = query.tags
 			, title = query.title
+			, tags = query.tags
+			, source
 			, user = User.getUserFromSession.fromSocket(socket)
-			, dataAll
-			, execute = Model.isExistBookmark( url )
+			, execute
+			, bookmark = {} //
 			;
+		console.log(user)
+		console.log('bookmark add url: ' + url);
 
-		if( url && targetId ){
-			if( tags && title ){
-				execute = execute.then(function(rs){
-					var source = Url.parse(url)
-						, result
+		// 检测 user
+		//if( User.isGuest(user) ){
+			if( url ){
+				execute = Model.isExistBookmark(url, true)
+					.then(function(rs){
+					var result
+						, bookmarkId
 						;
 
-					source = source.protocol + '//' + source.host;
+					if( rs && rs.length ){  // reader_bookmark 表中已存在该 url
+						bookmarkId = rs[0].id;
 
-					if( rs && rs.length ){  // 数据已存在
+						// 在 user_reader_bookmark 表中查找该用户是否已有该 bookmark
+						result = Model.isExistUserBookmark(bookmarkId, user.id, true).then(function(rs){
+							var result
+								;
 
-						// 设置数据
-						send.info = rs[0];
-						send.info.id = rs[0].Id;
-						send.info.targetId = targetId;
+							if( rs && rs.length ){  // user_reader_bookmark 表中已有数据
+								result = rs[0];
+								result.bookmarkId = bookmarkId;
+								result.targetId = targetId;
 
-						result = Promise.reject( new ReaderError('数据已存在') );
+								send.info = result;
+
+								result = Promise.reject( new ReaderError('该文章已在您的书签中已存在') );
+							}
+							else{   // 没有该数据 添加
+								result = {
+									bookmarkId: bookmarkId
+									, userId: user.id
+									, score: 0
+									, status: 0
+									, tags: ''
+								};
+							}
+
+							return result;
+						}).then(function(data){
+							return Model.addUserBookmark({
+								bookmarkId: bookmarkId
+								, userId: user.id
+								, score: 0
+								, tags: tags
+								, status: 0
+							}).then(function(rs){
+								var result;
+
+								if( rs && rs.insertId ){
+									send.info = {
+										id: rs.insertId
+										, bookmarkId: bookmarkId
+										, targetId: targetId
+										, score: 0
+										, tags: tags
+										, status: 0
+									};
+
+									result = send;
+								}
+								else{
+									result = Promise.reject( new ReaderError('数据保存失败') );
+								}
+
+								return result;
+							});
+						});
 					}
-					else{
-						result = {
-							url: url
-							, title: title
-							, tags: tags
-							, source: source
-						};
+					else{   // reader_bookmark 表中不存在该 url
+						if( targetId ){ // 已有相关数据 添加到 reader_bookmark 表中
+							source = Url.parse(url);
+							source = source.protocol + '//' + source.host;
+
+							result = Promise.resolve({
+								url: url
+								, title: title
+								, source: source
+								, tags: tags
+								, userId: user.id
+								, score: 0
+								, status: 0
+							});
+						}
+						else{   // 没有相关数据 抓取 整理数据
+							result = Reader.crawler( url ).then( Reader.handleArticle ).then(function(data){
+								var result
+									;
+
+								if( data ){
+									data.userId = user.id;
+									data.score = 0;
+									data.status = 0;
+									result = data;
+								}
+								else{
+									result = Promise.reject( new ReaderError('抓取数据失败') );
+								}
+
+								return result;
+							});
+						}
+
+						result = result.then(function(data){ // 添加到 reader_bookmark
+							console.log(data);
+
+							return Model.addBookmark({
+								url: data.url
+								, title: data.title
+								, source: data.source
+								, userId: data.userId
+							}).then(function(rs){
+								var result
+									;
+
+								if( rs && rs.insertId ){
+									data.bookmarkId = rs.insertId;
+
+									result = data;
+								}
+								else{
+									result = Promise.reject( new ReaderError('保存失败') );
+								}
+
+								return result;
+							});
+						}).then(function(data){ // 添加到 user_reader_bookmark
+							return Model.addUserBookmark( data ).then(function(rs){
+								var result
+									;
+
+								if( rs && rs.insertId ){
+									data.id = rs.insertId;
+
+									result = data;
+								}
+								else{
+									result = Promise.reject( new ReaderError('数据保存失败') );
+								}
+
+								return result;
+							});
+						}).then(function(data){ // 处理返回信息
+							send.info = data;
+
+							return send;
+						});
 					}
 
 					return result;
-				});
+				})
+					//// 判断 reader_bookmark 表中是否有该 url
+					//.then(function(bookmark){   // reader_bookmark 表中已有该 url
+					//	return Promise.reject(bookmark);
+					//}, function(){  // reader_bookmark 表中没有该 url
+					//	if( targetId ){ // 已有相关数据
+					//
+					//	}
+					//	else{   // 没有相关数据 抓取并整理
+					//
+					//	}
+					//})
+					//// 获取 url 对应数据
+					//.then(function(){}, function(){
+					//
+					//})
+					////
+					//.then(function(){}, function(){})
+				;
 			}
 			else{
-				execute = execute.then(function(rs){
-					var result;
-
-					if( rs && rs.length ){
-
-						send.info = rs[0];
-						send.info.id = rs[0].Id;
-						send.info.targetId = targetId;
-
-						result = Promise.reject( new ReaderError('数据已存在') );
-					}
-					else{
-						result = Reader.crawler( url );
-					}
-
-					return result;
-				}).then( Reader.handleArticle );
+				execute = Promise.reject( new ReaderError('缺少参数') );
 			}
-
-			execute = execute.then(function( data ){
-				var result
-					;
-
-				if( !data ){
-					result = Promise.reject( new ReaderError('数据获取失败') );
-				}
-				else{
-					data.status = 0;
-					data.userId = user.id;
-					dataAll = data;
-
-					result = Model.addBookmark( data );
-				}
-
-				return result;
-			}).then(function(rs){
-				var result
-					;
-
-				dataAll.targetId = targetId;
-
-				send.info = dataAll;
-
-				if( rs.insertId ){
-					dataAll.id = rs.insertId;
-					dataAll.sstatus = 0;
-
-					result = send;
-				}
-				else{
-					result = Promise.reject( new ReaderError('数据已存在') );
-				}
-
-				return result;
-			});
-		}
-		else{
-			execute = Promise.reject( new ReaderError('缺少参数') );
-		}
+		//}
+		//else{
+		//	execute = Promise.reject( new ReaderError('用户尚未登录') );
+		//}
 
 		execute.catch(function(e){
 			console.log( e );
@@ -654,7 +860,7 @@ socket.register({
 			socket.emit('data', send);
 		});
 	}
-	, 'reader/read': function(socket, data){
+	, 'reader/bookmark/read': function(socket, data){
 		var send = {
 				topic: 'reader/read'
 			}
@@ -783,8 +989,6 @@ socket.register({
 			socket.emit('data', send);
 		});
 	}
-
-	, 'reader/bookmark': function(socket, data){}
 	, 'reader/bookmark/search': function(socket, data){
 		var send = {
 				topic: 'reader/bookmark/search'
@@ -835,81 +1039,7 @@ socket.register({
 			socket.emit('data', send);
 		});
 	}
-	, 'reader/bookmark/add': function(socket, data){
-		var send = {
-				topic: 'reader/bookmark/add'
-			}
-			, url = data.query.url
-			, user = User.getUserFromSession.fromSocket(socket)
-			, dataAll
-			, execute
-			;
-
-		console.log('bookmark add url: ' + url);
-
-		if( url ){
-			execute = Model.isExistBookmark( url ).then(function(rs){
-				var result
-					;
-
-				if( rs && rs.length ){
-					result = Promise.reject( new ReaderError('数据已存在') );
-				}
-				else{
-					// todo
-					result = Reader.crawler( url ).then( Reader.handleArticle ).then(function(data){
-						var result
-							;
-
-						if( !data ){
-							result = Promise.reject( new ReaderError('抓取数据失败') );
-						}
-						else{
-							data.status = 0;
-							data.userId = user.id;
-							dataAll = data;
-
-							result = Model.addBookmark( data )
-						}
-
-						return result;
-					}).then(function(rs){
-						var result
-							;
-
-						if( rs.insertId ){
-							dataAll.id = rs.insertId;
-							dataAll.status = 0;
-
-							send.info = dataAll;
-							result = send;
-						}
-						else{
-							result = Promise.reject( new ReaderError('数据已存在') );
-						}
-
-						return result;
-					});
-				}
-
-				return result;
-			});
-		}
-		else{
-			execute = Promise.reject( new ReaderError('缺少参数') );
-		}
-
-		execute.catch(function(e){
-			console.log( e );
-
-			send.error = '';
-			send.msg = e.message;
-
-			return send;
-		}).then(function(send){
-			socket.emit('data', send);
-		});
-	}
+	, 'reader/bookmark/filter': function(socket, data){}
 
 	, 'reader/favorite': function(socket, data){}
 });

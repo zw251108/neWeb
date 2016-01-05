@@ -25,7 +25,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 		}
 	})
 	, articleTpl   = emmetTpl({
-		template: 'article#readerArt%id%.reader_article.article[data-id=%id% data-score=%score%]' +
+		template: 'article#readerArt%id%.reader_article.article[data-id=%id% data-bookmark-id=%bookmarkId% data-score=%score%]' +
 			'>a[href=%url% title=%title% target=_blank]' +
 				'>h3.article_title{%title%}' +
 			'^hr' +
@@ -37,13 +37,13 @@ var getEmmet    = require('../emmet/getEmmet.js')
 				return d.title || d.url;
 			}
 			, readStatus: function(d){
-				return +d.status > 1 ? '-checked' : '';
+				return +d.status > 0 ? '-checked' : '';
 			}
 			, readTitle: function(d){
-				return +d.status > 1 ? '已读' : '读过';
+				return +d.status > 0 ? '已读' : '读过';
 			}
 			, readText: function(d){
-				return +d.status > 1 ? '已读' : '读过';
+				return +d.status > 0 ? '已读' : '读过';
 			}
 			, tags: function(d){
 				return d.tags ? '<span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">'+ d.tags.split(',').join('</span><span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">') +'</span>' : '';

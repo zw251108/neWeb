@@ -16,8 +16,9 @@ var User = {
 			return session.user || {};
 		}
 	}
-
-
+	, isGuest: function(user){
+		return !!user.id;
+	}
 };
 
 module.exports = User;

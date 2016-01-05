@@ -10,8 +10,8 @@ require(['../../config'], function(config){
 					'>a[href=%url% title=%title% target=_blank]' +
 						'>h4.article_title{%title%}' +
 					'^hr' +
-					'+a.icon.icon-bookmark[href=reader/bookmark title=稍后再读]{添加书签}' +
-					'+a.icon.icon-checkbox[href=reader/read title=读过]{读过}' +
+					'+a.icon.icon-bookmark[href=bookmark/add title=稍后再读]{添加书签}' +
+					'+a.icon.icon-checkbox[href=bookmark/read title=读过]{读过}' +
 					'+time.article_date[pubdate=pubdate datetime=%datetime%]{%datetime%}' +
 					'+div.article_content{%content%}' +
 					'+div.tagsArea{%tags%}'
@@ -127,18 +127,21 @@ require(['../../config'], function(config){
 		}).on('click', '.article .icon-bookmark', function(e){
 			e.preventDefault();
 
-			var id = 'readerArt' + (+new Date())
-				, $parent = $(this).parents('.article')
+			var $parent = $(this).parents('.article')
+				, id = $parent.attr('id') || 'readerArt' + (+new Date())
 				, $title = $parent.find('.article_title')
 				, href = $title.parent().attr('href')
 				, tags = $parent.find('.tagsArea .tag')
 				;
 
-			!$parent.attr('id') && $parent.attr('id', id);
-			tags = tags.length ? tags.map(function(){return this.innerHTML}).get().join() : '';
+			$parent.attr('id', id);
+			tags = tags.length ? tags.map(function(){
+				return this.innerHTML;
+			}).get().join() : '';
 
 			socket.emit('data', {
-				topic: 'reader/article/bookmark'
+				//topic: 'reader/article/bookmark'
+				topic: 'reader/bookmark/add'
 				, query: {
 					targetId: id
 					, url: href
@@ -191,22 +194,6 @@ require(['../../config'], function(config){
 					$reader.find('#reader_'+ id).find('ul').html( articleTpl(data).join('') );
 				}
 			}
-			, 'reader/article/bookmark': function(data){
-				var info = data.info || {}
-					, targetId = info.targetId
-					, $target = targetId ? $reader.find('#'+ targetId) : null
-					;
-
-				if( $target ){
-					$target.data('bookmarkId', info.id).attr('id', 'readerArt'+ info.id);
-					$target.find('.icon-bookmark').toggleClass('icon-bookmark icon-bookmark-full').text('已加书签');
-					$target.find('div.tagsArea').html(info.tags ? '<span class="tag">'+ info.tags.split(',').join('</span><span class="tag">') +'</span>' : '');
-				}
-
-				if( 'error' in data ){
-					msgPopup.showMsg( data.msg );
-				}
-			}
 			, 'reader/search': function(data){
 				var count = data.count
 					;
@@ -219,6 +206,47 @@ require(['../../config'], function(config){
 				}
 				else{
 					// todo 显示未搜索到结果
+				}
+			}
+			//, 'reader/article/bookmark': function(data){
+			//	var info = data.info || {}
+			//		, targetId = info.targetId
+			//		, $target = targetId ? $reader.find('#'+ targetId) : null
+			//		;
+			//
+			//	if( $target ){
+			//		$target.data('bookmarkId', info.id).attr('id', 'readerArt'+ info.id);
+			//		$target.find('.icon-bookmark').toggleClass('icon-bookmark icon-bookmark-full').text('已加书签');
+			//		$target.find('div.tagsArea').html(info.tags ? '<span class="tag">'+ info.tags.split(',').join('</span><span class="tag">') +'</span>' : '');
+			//	}
+			//
+			//	if( 'error' in data ){
+			//		msgPopup.showMsg( data.msg );
+			//	}
+			//}
+			, 'reader/bookmark/add': function(data){
+				var info = data.info
+					, targetId
+					, $target
+					;
+
+				if( info ){
+					targetId = info.targetId;
+					$target = targetId ? $reader.find('#'+ targetId) : null;
+
+					if( $target ){
+						$target.data({
+							id: info.id
+							, bookmarkId: info.bookmarkId
+						}).attr('id', 'readerArt'+ info.id)
+							.find('.icon-bookmark').toggleClass('icon-bookmark icon-bookmark-full').text('已加书签')
+							.end()
+							.find('div.tagsArea').html(info.tags ? '<span class="tag">'+ info.tags.split(',').join('</span><span class="tag">') +'</span>' : '');
+					}
+				}
+
+				if( 'error' in data ){
+					msgPopup.showMsg( data.msg );
 				}
 			}
 		});

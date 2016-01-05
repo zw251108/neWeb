@@ -46,7 +46,7 @@ define(['jquery', 'global', 'socket', 'tag', 'msgPopup', 'template'], function($
 
 	tag.setAdd( $readPopup );
 
-	socket.register('reader/read', function(data){
+	socket.register('reader/bookmark/read', function(data){
 		var info = data.info || {}
 			, targetId = info.targetId
 			, id = info.id
