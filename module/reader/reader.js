@@ -138,7 +138,7 @@ var Promise     = require('promise')
 				// 获取页面主内容
 				$main = $('article');
 				content = $main.length ? $main.html() : $('body').html();
-
+console.log(content);
 				// 连接分词结果
 				segmentResult = segmentResult.concat( segment.doSegment(content) );
 

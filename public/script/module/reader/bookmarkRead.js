@@ -2,9 +2,14 @@ define(['jquery', 'global', 'socket', 'tag', 'msgPopup', 'template'], function($
 	var $bookmark
 		, $readPopup = $('#readPopup').on('setData', function(e, data){
 
-			$bookmarkId.val( data.id );
+			$ubId.val( data.id );
+			$bookmarkId.val( data.bookmarkId );
 			$bookmarkUrl.val( data.url );
 			$bookmarkTitle.val( data.title );
+
+			$oldScore.val( data.score );
+			$oldStatus.val( data.status );
+
 			data.score && $readPopup.find('#star'+ data.score).prop('checked', true);
 
 			$readPopup.find('div.tag_area').html( data.tags );
@@ -21,7 +26,7 @@ define(['jquery', 'global', 'socket', 'tag', 'msgPopup', 'template'], function($
 				query.score = +query.score;
 
 				socket.emit('data', {
-					topic: 'reader/read'
+					topic: 'reader/bookmark/read'
 					, query: query
 				});
 
@@ -37,10 +42,12 @@ define(['jquery', 'global', 'socket', 'tag', 'msgPopup', 'template'], function($
 		})
 
 		, $readForm = $readPopup.find('#readForm')
+		, $ubId = $readPopup.find('#ubId')
 		, $bookmarkId = $readPopup.find('#bookmarkId')
 		, $bookmarkUrl = $readPopup.find('#bookmarkUrl')
 		, $bookmarkTitle = $readPopup.find('#bookmarkTitle')
-		, $tag = $readPopup.find('[name="tag"]')
+		, $oldScore = $readPopup.find('#oldScore')
+		, $oldStatus = $readPopup.find('#oldStatus')
 		, $tags = $readPopup.find('[name="tags"]')
 		;
 

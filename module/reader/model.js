@@ -32,7 +32,7 @@ var db  = require('../db.js')
 				' `show`=1 and' +
 				' tags regexp :tags'
 
-		, userBookmarkByPage: 'select urb.id as id,rb.id as bookmarkId,title,url,status,tags,mark_datetime as datetime,score' +
+		, userBookmarkByPage: 'select urb.id as id,rb.id as bookmarkId,urb.title as title,url,status,tags,mark_datetime as datetime,score' +
 			' from reader_bookmark as rb,user_reader_bookmark as urb' +
 			' where urb.user_id=:userId' +
 				' and rb.id=urb.bookmark_id' +
@@ -40,20 +40,20 @@ var db  = require('../db.js')
 			' limit :page,:size'
 		, userBookmarkCount: 'select count(*) as count from user_reader_bookmark where user_id=:userId'
 
-		, bookmarkSearchTitle: 'select urb.id as id,rb.id as bookmarkId,title,url,status,tags,mark_datetime as datetime,score' +
+		, bookmarkSearchTitle: 'select urb.id as id,rb.id as bookmarkId,urb.title as title,url,status,tags,mark_datetime as datetime,score' +
 			' from reader_bookmark as rb,user_reader_bookmark as urb' +
 			' where user_id=:userId' +
-				' and title like :keyword' +
+				' and urb.title like :keyword' +
 				' and rb.id=urb.bookmark_id' +
 			' order by status,id desc' +
 			' limit :page,:size'
 		, bookmarkSearchTitleCount: 'select count(*) as count' +
 			' from reader_bookmark as rb,user_reader_bookmark as urb' +
 			' where user_id=:userId' +
-				' and title like :keyword' +
+				' and urb.title like :keyword' +
 				' and rb.id=urb.bookmark_id'
 
-		, bookmarkFilterTags: 'select urb.id as id,rb.id as bookmarkId,title,url,status,tags,mark_datetime as datetime,score' +
+		, bookmarkFilterTags: 'select urb.id as id,rb.id as bookmarkId,urb.title as title,url,status,tags,mark_datetime as datetime,score' +
 			' from reader_bookmark as rb,user_reader_bookmark as urb' +
 			' where user_id=:userId' +
 				' and tags regexp :tags' +
@@ -68,18 +68,18 @@ var db  = require('../db.js')
 		, bookmarkIsExist: 'select * from reader_bookmark where url like :url'
 		, userBookmarkIsExist: 'select * from user_reader_bookmark where bookmark_id=:bookmarkId and user_id=:userId'
 
-		, bookmarkAdd: 'insert into reader_bookmark(url,title,source,create_user_id)' +
+		, bookmarkAdd: 'insert into reader_bookmark(url,title,source,creator_id)' +
 			' select :url,:title,:source,:userId from dual' +
 				' where not exists (select * from reader_bookmark where url like :url)'
-		, userBookmarkAdd: 'insert into user_reader_bookmark(bookmark_id,user_id,score,tags,status)' +
-			' select :bookmarkId,:userId,:score,:tags,:status from dual' +
+		, userBookmarkAdd: 'insert into user_reader_bookmark(bookmark_id,user_id,title,score,tags,status)' +
+			' select :bookmarkId,:userId,:title,:score,:tags,:status from dual' +
 				' where not exists (select * from user_reader_bookmark where bookmark_id=:bookmarkId and user_id=:userId)'
 
-		, bookmarkUpdateRead: 'update reader_bookmark set status=1,title=:title,tags=:tags,total_score=total_score+:score,num_reader=num_reader+1 where id=:id'
-		, userBookmarkUpdateRead: 'update user_reader_bookmark set status=1,tags=:tags,score=:score where id=:id'
-		, userBookmarkUpdateInfo: 'update user_reader_bookmark set tags=:tags,score=:score where id=:id'
+		, bookmarkUpdateRead: 'update reader_bookmark set total_score=total_score+:score,num_reader=num_reader+:num where id=:id'
+		, userBookmarkUpdateRead: 'update user_reader_bookmark set title=:title,status=:status,tags=:tags,score=:score,read_datetime=now() where id=:id'
+		, userBookmarkUpdateInfo: 'update user_reader_bookmark set title=:title,tags=:tags,score=:score where id=:id'
 
-		, favoriteByPage: 'select rb.id as id,title,url,status,tags,mark_datetime as datetime' +
+		, favoriteByPage: 'select rb.id as id,urb.title as title,url,status,tags,mark_datetime as datetime' +
 			' from reader_bookmark as rb,user_reader_bookmark as urb' +
 			' where user_id=:userId' +
 				' and status=1' +
@@ -90,11 +90,11 @@ var db  = require('../db.js')
 			' from user_reader_bookmark' +
 			' where status=1'
 
-		, favoriteSearchTitle: 'select rb.id,title,url,status,tags,datetime,score' +
+		, favoriteSearchTitle: 'select rb.id,urb.title as title,url,status,tags,datetime,score' +
 			' from reader_bookmark as rb,user_reader_bookmark as urb' +
 			' where user_id=:userId' +
 				' and status=1' +
-				' and title like :keyword' +
+				' and urb.title like :keyword' +
 				' and rb.id=urb.bookmark_id' +
 			' order by status,id desc' +
 			' limit :page,:size'
@@ -102,10 +102,10 @@ var db  = require('../db.js')
 			' from reader_bookmark as rb,user_reader_bookmark as urb' +
 			' where user_id=:userId' +
 				' and status=1' +
-				' and title like :keyword' +
+				' and urb.title like :keyword' +
 				' and rb.id=urb.bookmark_id'
 
-		, favoriteFilterTags: 'select rb.id,title,url,status,tags,datetime,score' +
+		, favoriteFilterTags: 'select rb.id,urb.title as title,url,status,tags,datetime,score' +
 			' from reader_bookmark as rb,user_reader_bookmark as urb' +
 			' where user_id=:userId' +
 				' and status=1' +
@@ -414,26 +414,38 @@ var db  = require('../db.js')
 			});
 		}
 
-		, updateBookmarkRead: function(id, title, score, tags){
+		, updateBookmarkRead: function(id, title, score, num){
 			return db.handle({
 				sql: SQL.bookmarkUpdateRead
 				, data: {
 					id: id
 					, title: title
 					, score: score
-					, tags: tags
+					, num: num
 				}
 			});
 		}
-		, updateUserBookmarkRead: function(id, title, score, tags){
+		, updateUserBookmarkRead: function(id, title, score, tags, status, isInfo){
+			var sql
+				;
+
+			if( !isInfo ){
+				sql = SQL.userBookmarkUpdateRead;
+			}
+			else{
+				sql =
+					SQL.userBookmarkUpdateInfo;
+			}
 			return db.handle({
-				sql: SQL.userBookmarkUpdateRead
+				sql: sql
 				, data: {
 					id: id
+					, title: title
 					, score: score
 					, tags: tags
+					, status: status
 				}
-			})
+			});
 		}
 
 		, getFavoriteByPage: function(userId, page, size){console.log(page, size);

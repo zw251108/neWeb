@@ -35,7 +35,6 @@ define('bookmarkAdd', ['jquery', 'global', 'socket', 'msgPopup', 'template'], fu
 		}
 		else{
 			data = data.info;
-			data.id = data.id;
 
 			$bookmark.find('.module_content article.article[data-target="'+ data.url +'"]').replaceWith( articleTpl(data) );
 		}
@@ -81,13 +80,17 @@ require(['../../config'], function(config){
 
 				var $that = $(this)
 					, $parent = $that.parents('.article')
+					, $title = $parent.find('.article_title')
 					;
 
 				$readPopup.triggerHandler('setData', [{
 					id: $parent.data('id')
-					, title: $parent.find('h3.article_title').html()
+					, bookmarkId: $parent.data('bookmarkId')
+					, title: $title.html()
+					, url: $title.parent().attr('href')
 					, tags: $parent.find('div.tagsArea').html()
 					, score: $parent.data('score')
+					, status: $parent.data('status')
 				}]);
 
 				$readPopup.trigger('showDialog');
@@ -105,7 +108,7 @@ require(['../../config'], function(config){
 		$readPopup = bookmarkRead($bookmark, tagsData);
 
 		searchBar = searchBar();
-		searchBar.submit(function(e){
+		searchBar.submit(function(){
 			//var $form = $(this)
 			//	, data = $form.serializeJSON()
 			//	;
@@ -117,7 +120,7 @@ require(['../../config'], function(config){
 		});
 
 		filterBox = filterBox( tagsData );
-		filterBox.submit(function(e){
+		filterBox.submit(function(){
 			// todo 阻止表单提交，改为 web socket 获取数据
 		});
 

@@ -25,7 +25,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 		}
 	})
 	, articleTpl   = emmetTpl({
-		template: 'article#readerArt%id%.reader_article.article[data-id=%id% data-bookmark-id=%bookmarkId% data-score=%score%]' +
+		template: 'article#readerArt%id%.reader_article.article[data-id=%id% data-bookmark-id=%bookmarkId% data-status=%data-status% data-score=%score%]' +
 			'>a[href=%url% title=%title% target=_blank]' +
 				'>h3.article_title{%title%}' +
 			'^hr' +
@@ -70,11 +70,14 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	})
 	, bookmarkReadFormTpl   = emmetTpl({
 		template: 'form#readForm' +
-			'>input#bookmarkId[type=hidden name=bookmarkId]' +
+				'>input#ubId[type=hidden name=id]' +
+				'+input#bookmarkId[type=hidden name=bookmarkId]' +
 				'+input#bookmarkUrl[type=hidden name=bookmarkUrl]' +
+				'+input#oldScore[type=hidden name=oldScore value=%score%]' +
+				'+input#oldStatus[type=hidden name=oldStatus value=%status%]' +
 				'+div.formGroup' +
 					'>label.label[for=bookmarkTitle]{请设置标题}' +
-					'+input#bookmarkTitle.input[type=text name=title placeholder="重新设置标题" data-validator=title]' +
+					'+input#bookmarkTitle.input[type=text name=title placeholder=重新设置标题 data-validator=title]' +
 				'^div.formGroup' +
 					'>label.label[for=star1]{请评分}' +
 					'+div.input-score' +

@@ -83,7 +83,7 @@ require(['../../config'], function(config){
 		});
 
 		searchBar = searchBar();
-		searchBar.submit(function(e){
+		searchBar.submit(function(){
 			//var $form = $(this)
 			//	, data = $form.serializeJSON()
 			//	;
@@ -95,7 +95,7 @@ require(['../../config'], function(config){
 		});
 
 		filterBox = filterBox( tagsData );
-		filterBox.submit(function(e){
+		filterBox.submit(function(){
 			// todo 阻止表单提交，改为 web socket 获取数据
 		});
 
@@ -122,8 +122,6 @@ require(['../../config'], function(config){
 				$that.data('deploy', true);
 			}
 			$that.find('.icon').toggleClass('icon-up icon-down');
-
-
 		}).on('click', '.article .icon-bookmark', function(e){
 			e.preventDefault();
 
@@ -152,18 +150,21 @@ require(['../../config'], function(config){
 		}).on('click', '.icon-checkbox', function(e){
 			e.preventDefault();
 
-			var  id = 'readerArt' + (+new Date())
-				, $that = $(this)
-				, $parent = $that.parents('.article')
+			var $parent = $(this).parents('.article')
+				, id = $parent.data('id') || 'readerArt' + (+new Date())
+				, $title = $parent.find(',article_title')
 				;
 
 			!$parent.attr('id') && $parent.attr('id', id);
 
 			$readPopup.triggerHandler('setData', [{
-				id: $parent.data('bookmarkId') || id
-				, url: $parent.find('.article_title').parent().attr('href')
-				, title: $parent.find('.article_title').html()
+				id: $parent.data('id') || id
+				, bookmarkId: $parent.data('bookmarkId')
+				, title: $title.html()
+				, url: $title.parent().attr('href')
 				, tags: $parent.find('div.tagsArea').html()
+				, score: $parent.data('score')
+				, status: $parent.data('status')
 			}]);
 
 			$readPopup.trigger('showDialog');
@@ -235,10 +236,7 @@ require(['../../config'], function(config){
 					$target = targetId ? $reader.find('#'+ targetId) : null;
 
 					if( $target ){
-						$target.data({
-							id: info.id
-							, bookmarkId: info.bookmarkId
-						}).attr('id', 'readerArt'+ info.id)
+						$target.data( info ).attr('id', 'readerArt'+ info.id)
 							.find('.icon-bookmark').toggleClass('icon-bookmark icon-bookmark-full').text('已加书签')
 							.end()
 							.find('div.tagsArea').html(info.tags ? '<span class="tag">'+ info.tags.split(',').join('</span><span class="tag">') +'</span>' : '');
