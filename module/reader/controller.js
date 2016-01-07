@@ -763,8 +763,8 @@ socket.register({
 					// 更新 reader_bookmark 表 total_score num_reader 字段
 
 					execute = Promise.all([
-						Model.updateBookmarkRead(bookmarkId, title, score - oldScore, oldStatus? 0 : 1)
-						, Model.updateUserBookmarkRead(id, title, score, tags, 1, oldStatus)
+						Model.updateBookmarkRead(bookmarkId, title, score - oldScore, +oldStatus? 0 : 1)
+						, Model.updateUserBookmarkRead(id, title, score, tags, 1, +oldStatus)
 					]).then(function(rs){
 						var r1 = rs[0]
 							, r2 = rs[1]

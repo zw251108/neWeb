@@ -6,7 +6,8 @@ var db  = require('../db.js')
 	, SQL = {
 		readerByPage: 'select * from reader' +
 			' where `show`=1' +
-			' order by last_pub desc limit :page, :size'
+			' order by last_pub desc' +
+			' limit :page, :size'
 		, readerCount: 'select count(*) as count from reader' +
 			' where `show`=1'
 		, readerIsExist: 'select * from reader where xml_url like :xmlUrl'
@@ -15,55 +16,72 @@ var db  = require('../db.js')
 			' select 1,1,:name,:feed,:url,:tags from dual where not exists (select * from reader where xml_url like :feed)'
 		, readerSearchName: 'select * from reader' +
 			' where' +
-				' `show`=1 and' +
+				' `show`=1' +
+			' and' +
 				' name like :keyword' +
 			' order by last_pub desc limit :page, :size'
 		, readerSearchNameCount: 'select count(*) as count from reader' +
 			' where' +
-				' `show`=1 and' +
+				' `show`=1' +
+			' and' +
 				' name like :keyword'
 		, readerFilterTags: 'select * from reader' +
 			' where' +
-				' `show`=1 and' +
+				' `show`=1' +
+			' and' +
 				' tags regexp :tags' +
 			' order by last_pub desc limit :page, :size'
 		, readerFilterTagsCount: 'select count(*) as count from reader' +
 			' where' +
-				' `show`=1 and' +
+				' `show`=1' +
+			' and' +
 				' tags regexp :tags'
 
 		, userBookmarkByPage: 'select urb.id as id,rb.id as bookmarkId,urb.title as title,url,status,tags,mark_datetime as datetime,score' +
 			' from reader_bookmark as rb,user_reader_bookmark as urb' +
-			' where urb.user_id=:userId' +
-				' and rb.id=urb.bookmark_id' +
+			' where' +
+				' urb.user_id=:userId' +
+			' and' +
+				' rb.id=urb.bookmark_id' +
 			' order by status,rb.id desc' +
 			' limit :page,:size'
 		, userBookmarkCount: 'select count(*) as count from user_reader_bookmark where user_id=:userId'
 
 		, bookmarkSearchTitle: 'select urb.id as id,rb.id as bookmarkId,urb.title as title,url,status,tags,mark_datetime as datetime,score' +
 			' from reader_bookmark as rb,user_reader_bookmark as urb' +
-			' where user_id=:userId' +
-				' and urb.title like :keyword' +
-				' and rb.id=urb.bookmark_id' +
+			' where' +
+				' user_id=:userId' +
+			' and' +
+				' urb.title like :keyword' +
+			' and' +
+				' rb.id=urb.bookmark_id' +
 			' order by status,id desc' +
 			' limit :page,:size'
 		, bookmarkSearchTitleCount: 'select count(*) as count' +
 			' from reader_bookmark as rb,user_reader_bookmark as urb' +
-			' where user_id=:userId' +
-				' and urb.title like :keyword' +
-				' and rb.id=urb.bookmark_id'
+			' where' +
+				' user_id=:userId' +
+			' and' +
+				' urb.title like :keyword' +
+			' and' +
+				' rb.id=urb.bookmark_id'
 
 		, bookmarkFilterTags: 'select urb.id as id,rb.id as bookmarkId,urb.title as title,url,status,tags,mark_datetime as datetime,score' +
 			' from reader_bookmark as rb,user_reader_bookmark as urb' +
-			' where user_id=:userId' +
-				' and tags regexp :tags' +
-				' and rb.id=urb.bookmark_id' +
+			' where' +
+				' user_id=:userId' +
+			' and' +
+				' tags regexp :tags' +
+			' and' +
+				' rb.id=urb.bookmark_id' +
 			' order by status,id desc' +
 			' limit :page,:size'
 		, bookmarkFilterTagsCount: 'select count(*) as count' +
 			' from user_reader_bookmark' +
-			' where user_id=:userId' +
-				' and tags regexp :tags'
+			' where' +
+				' user_id=:userId' +
+			' and' +
+				' tags regexp :tags'
 
 		, bookmarkIsExist: 'select * from reader_bookmark where url like :url'
 		, userBookmarkIsExist: 'select * from user_reader_bookmark where bookmark_id=:bookmarkId and user_id=:userId'
@@ -79,45 +97,63 @@ var db  = require('../db.js')
 		, userBookmarkUpdateRead: 'update user_reader_bookmark set title=:title,status=:status,tags=:tags,score=:score,read_datetime=now() where id=:id'
 		, userBookmarkUpdateInfo: 'update user_reader_bookmark set title=:title,tags=:tags,score=:score where id=:id'
 
-		, favoriteByPage: 'select rb.id as id,urb.title as title,url,status,tags,mark_datetime as datetime' +
+		, favoriteByPage: 'select rb.id as id,urb.title as title,url,status,score,tags,mark_datetime as datetime' +
 			' from reader_bookmark as rb,user_reader_bookmark as urb' +
-			' where user_id=:userId' +
-				' and status=1' +
-				' and rb.id=urb.bookmark_id' +
+			' where' +
+				' user_id=:userId' +
+			' and' +
+				' status=1' +
+			' and' +
+				' rb.id=urb.bookmark_id' +
 			' order by score desc,datetime desc' +
 			' limit :page,:size'
 		, favoriteCount: 'select count(*) as count' +
 			' from user_reader_bookmark' +
 			' where status=1'
 
-		, favoriteSearchTitle: 'select rb.id,urb.title as title,url,status,tags,datetime,score' +
+		, favoriteSearchTitle: 'select rb.id,urb.title as title,url,status,score,tags,mark_datetime as datetime' +
 			' from reader_bookmark as rb,user_reader_bookmark as urb' +
-			' where user_id=:userId' +
-				' and status=1' +
-				' and urb.title like :keyword' +
-				' and rb.id=urb.bookmark_id' +
+			' where' +
+				' user_id=:userId' +
+			' and' +
+				' status=1' +
+			' and' +
+				' urb.title like :keyword' +
+			' and' +
+				' rb.id=urb.bookmark_id' +
 			' order by status,id desc' +
 			' limit :page,:size'
 		, favoriteSearchTitleCount: 'select count(*) as count' +
 			' from reader_bookmark as rb,user_reader_bookmark as urb' +
-			' where user_id=:userId' +
-				' and status=1' +
-				' and urb.title like :keyword' +
-				' and rb.id=urb.bookmark_id'
+			' where' +
+				' user_id=:userId' +
+			' and' +
+				' status=1' +
+			' and' +
+				' urb.title like :keyword' +
+			' and' +
+				' rb.id=urb.bookmark_id'
 
-		, favoriteFilterTags: 'select rb.id,urb.title as title,url,status,tags,datetime,score' +
+		, favoriteFilterTags: 'select rb.id,urb.title as title,url,status,tags,score,mark_datetime as datetime' +
 			' from reader_bookmark as rb,user_reader_bookmark as urb' +
-			' where user_id=:userId' +
-				' and status=1' +
-				' and tags regexp :tags' +
-				' and rb.id=urb.bookmark_id' +
+			' where' +
+				' user_id=:userId' +
+			' and' +
+				' status=1' +
+			' and' +
+				' tags regexp :tags' +
+			' and' +
+				' rb.id=urb.bookmark_id' +
 			' order by status,id desc' +
 			' limit :page,:size'
 		, favoriteFilterTagsCount: 'select count(*) as count' +
 			' from user_reader_bookmark' +
-			' where user_id=:userId' +
-				' and status=1' +
-				' and tags regexp :tags'
+			' where' +
+				' user_id=:userId' +
+			' and' +
+				' status=1' +
+			' and' +
+				' tags regexp :tags'
 	}
 	, Model = {
 		getReaderByPage: function(page, size){

@@ -25,7 +25,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 		}
 	})
 	, articleTpl   = emmetTpl({
-		template: 'article#readerArt%id%.reader_article.article[data-id=%id% data-bookmark-id=%bookmarkId% data-status=%data-status% data-score=%score%]' +
+		template: 'article#readerArt%id%.reader_article.article[data-id=%id% data-bookmark-id=%bookmarkId% data-status=%status% data-score=%score%]' +
 			'>a[href=%url% title=%title% target=_blank]' +
 				'>h3.article_title{%title%}' +
 			'^hr' +
