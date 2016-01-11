@@ -51,18 +51,6 @@
 		margin: 0 auto;
 		background: @module-main_toolbar_bg_c;
 		text-align: right;
-		
-		&-fixed{
-			position: fixed;
-			background: @module-main_toolbar-fixed_bg_c;
-
-			&:before{
-				background-image: -webkit-radial-gradient(bottom right, transparent 9px, @module-main_toolbar-fixed_bg_c 10px, @module-main_toolbar-fixed_bg_c 11px);
-			}
-			&:after{
-				background-image: -webkit-radial-gradient(bottom left, transparent 9px, @module-main_toolbar-fixed_bg_c 10px, @module-main_toolbar-fixed_bg_c 11px);
-			}
-		}
 
 		&:before,
 		&:after{
@@ -75,11 +63,23 @@
 		}
 		&:before{
 			left: 0;
-			background-image: -webkit-radial-gradient(bottom right, transparent 9px, #888 10px, #888 11px);
+			background-image: -webkit-radial-gradient(bottom right, transparent 9px, @module-main_toolbar_bg_c 10px, @module-main_toolbar_bg_c 11px);
 		}
 		&:after{
 			right: 0;
-			background-image: -webkit-radial-gradient(bottom left, transparent 9px, #888 10px, #888 11px);
+			background-image: -webkit-radial-gradient(bottom left, transparent 9px, @module-main_toolbar_bg_c 10px, @module-main_toolbar_bg_c 11px);
+		}
+
+		&-fixed{
+			position: fixed;
+			background: @module-main_toolbar-fixed_bg_c;
+
+			&:before{
+				background-image: -webkit-radial-gradient(bottom right, transparent 9px, @module-main_toolbar-fixed_bg_c 10px, @module-main_toolbar-fixed_bg_c 11px);
+			}
+			&:after{
+				background-image: -webkit-radial-gradient(bottom left, transparent 9px, @module-main_toolbar-fixed_bg_c 10px, @module-main_toolbar-fixed_bg_c 11px);
+			}
 		}
 
 		> li{

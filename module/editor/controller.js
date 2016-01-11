@@ -466,7 +466,7 @@ socket.register({
 			, execute
 			, user = User.getUserFromSession.fromSocket(socket)
 			;
-
+		console.log(id, typeof id)
 		query.userId = user.id;
 
 		if( id !== '0' ){

@@ -391,7 +391,7 @@
 				;
 
 			if( argc < 1 ){
-				log("参数设置错误");
+				log('参数设置错误');
 				result = false;
 			}
 			else{
@@ -411,8 +411,6 @@
 		 * @desc    检测当前标签与目标标签同时不为空，参数至少 1 个 为 jquery 选择器
 		 * */
 		, and: function(selector){
-			//
-
 			var required = Validator.validMethods.required
 				, result = required.apply( this )
 				, argc = arguments.length
@@ -420,7 +418,7 @@
 				;
 
 			if( argc < 1 ){
-				log("参数设置错误");
+				log('参数设置错误');
 				result = false;
 			}
 			else{
@@ -467,7 +465,7 @@
 			}
 			else{
 				// 不是 select 标签或 select 标签没有 multiple 属性
-				log("标签设置错误");
+				log('标签设置错误');
 			}
 
 			return result;
@@ -487,7 +485,7 @@
 				;
 
 			if( !this.is(':checkbox') ){
-				log("标签错误");
+				log('标签错误');
 			}
 			else{
 				argc = arguments.length;
@@ -731,8 +729,6 @@
 		 * @desc    检测是否小于等于目标 dom 对象的属性值，至少一个参数，参数 selector 为 jquery 选择器，method 为 jquery 方法名（attr,data,prop,text,html），name 为属性名，若只有一个参数则默认从 val 取值
 		 * */
 		, ltDOMProp: function(selector, equal, method, name){
-			// 检测是否小于目标 dom 对象的属性值，至少一个参数，参数 selector 为 jquery 选择器，method 为 jquery 方法名（attr,data,prop,text,html），name 为属性名，若只有一个参数则默认从 val 取值
-
 			var argc = arguments.length
 				, result = false
 				;
@@ -974,22 +970,38 @@
 			return (regexp || /^\d{6}(?:((?:19|20)\d{2})(?:0[1-9]|1[0-2])(?:0[1-9]|[1-2]\d|3[0-1])\d{3}(?:x|X|\d)|(?:\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[1-2]\d|3[0-1])\d{3}))$/).test( this.val() );
 		}
 		/**
-		 * @method  file
+		 * @method  fileType
 		 * @memberof    Validator.validMethods
-		 * @param   {string|string[]}   type    验证文件类型，字符串格式为逗号分隔，或为文件类型的数组
-		 * @param   {string|number} size    文件大小
+		 * @param   {string=}   type    参数至少为 1 个 为文件类型后缀名 不包含点
 		 * @return  {boolean}   验证结果
-		 * @desc    检测上传文件是否为合法的文件类型（未完成）
-		 * @todo    待完成
+		 * @desc    检测上传文件是否为合法类型
 		 * */
-		, file: function(type, size){
-			var result = false;
+		, fileType: function(type){
+			var result
+				, argc = arguments.length
+				, i = 0
+				, regexp
+				, val = this.val()
+				;
 
-			if( type ){
+			if( this.is(':file') ){
+				if( argc < 1 ){
+					log('参数设置错误');
+					result = false;
+				}
+				else{
+					for(; i < argc; i++){
+						if( !result ) break;
 
+						regexp = new Regexp('\.'+ arguments[i] +'$', i);
+
+						result = result && regexp.test( val );
+					}
+				}
 			}
 			else{
-				log('参数设置错误');
+				log('标签错误');
+				result = false;
 			}
 
 			return result;
