@@ -8,13 +8,17 @@ require(['../../config'], function(config){
 			e.preventDefault();
 				var $that = $(this)
 					, $parent = $that.parents('.article')
+					, $title = $parent.find('.article_title')
 					;
 
 				$readPopup.triggerHandler('setData', [{
 					id: $parent.data('id')
-					, title: $parent.find('h3.article_title').html()
+					, bookmarkId: $parent.data('bookmarkId')
+					, title: $title.html()
+					, url: $title.parent().attr('href')
 					, tags: $parent.find('div.tagsArea').html()
 					, score: $parent.data('score')
+					, status: $parent.data('status')
 				}]);
 
 				$readPopup.trigger('showDialog');
@@ -24,7 +28,7 @@ require(['../../config'], function(config){
 
 		tagsData = $.parseJSON( tagsData );
 
-		$readPopup = bookmarkRead($favorite, tagsData)
+		$readPopup = bookmarkRead($favorite, tagsData);
 
 		searchBar = searchBar();
 		searchBar.submit(function(e){

@@ -97,7 +97,7 @@ var db  = require('../db.js')
 		, userBookmarkUpdateRead: 'update user_reader_bookmark set title=:title,status=:status,tags=:tags,score=:score,read_datetime=now() where id=:id'
 		, userBookmarkUpdateInfo: 'update user_reader_bookmark set title=:title,tags=:tags,score=:score where id=:id'
 
-		, favoriteByPage: 'select rb.id as id,urb.title as title,url,status,score,tags,mark_datetime as datetime' +
+		, favoriteByPage: 'select urb.id as id,rb.id as bookmarkId,urb.title as title,url,status,score,tags,mark_datetime as datetime' +
 			' from reader_bookmark as rb,user_reader_bookmark as urb' +
 			' where' +
 				' user_id=:userId' +
@@ -111,7 +111,7 @@ var db  = require('../db.js')
 			' from user_reader_bookmark' +
 			' where status=1'
 
-		, favoriteSearchTitle: 'select rb.id,urb.title as title,url,status,score,tags,mark_datetime as datetime' +
+		, favoriteSearchTitle: 'select urb.id as id,rb.id as bookmarkId,urb.title as title,url,status,score,tags,mark_datetime as datetime' +
 			' from reader_bookmark as rb,user_reader_bookmark as urb' +
 			' where' +
 				' user_id=:userId' +
@@ -134,7 +134,7 @@ var db  = require('../db.js')
 			' and' +
 				' rb.id=urb.bookmark_id'
 
-		, favoriteFilterTags: 'select rb.id,urb.title as title,url,status,tags,score,mark_datetime as datetime' +
+		, favoriteFilterTags: 'select urb.id as id,rb.id as bookmarkId,urb.title as title,url,status,tags,score,mark_datetime as datetime' +
 			' from reader_bookmark as rb,user_reader_bookmark as urb' +
 			' where' +
 				' user_id=:userId' +
