@@ -46,7 +46,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 				return +d.status > 0 ? '已读' : '读过';
 			}
 			, tags: function(d){
-				return d.tags ? '<span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">'+ d.tags.split(',').join('</span><span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">') +'</span>' : '';
+				return d.tags ? '<span class="tag'+ (d.status > 0 ? ' tag-checked' : '') +'">'+ d.tags.split(',').join('</span><span class="tag'+ (d.status > 0 ? ' tag-checked' : '') +'">') +'</span>' : '';
 			}
 		}
 	})
