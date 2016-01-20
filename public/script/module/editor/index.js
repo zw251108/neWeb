@@ -82,6 +82,7 @@ require(['../../config'], function(config){
 			, search = decodeURI( location.search )
 			, searchObj = {}
 			, i, j
+			, $win
 			;
 
 		layout();
@@ -96,7 +97,7 @@ require(['../../config'], function(config){
 		}
 
 		searchBar = searchBar();
-		searchBar.submit(function(e){
+		searchBar.submit(function(){
 			//var $form = $(this)
 			//	, data = $form.serializeJSON()
 			//	;
@@ -108,11 +109,11 @@ require(['../../config'], function(config){
 		});
 
 		filterBox = filterBox( $.parseJSON(tagsData) );
-		filterBox.submit(function(e){
+		filterBox.submit(function(){
 			// todo 阻止表单提交，改为 web socket 获取数据
 		});
 
-		$(window).on({
+		$win = $(window).on({
 			resize: function(){
 				HEIGHT = doc.clientHeight;
 				layout();
@@ -162,6 +163,10 @@ require(['../../config'], function(config){
 				}
 			}
 		});
+
+		if( $editorContainer.height() < HEIGHT ){
+			$win.trigger('scroll');
+		}
 
 		socket.register({
 			editor: function(data){
