@@ -120,7 +120,7 @@ var db = require('mysql').createConnection({
 			})
 		});
 	}
-	, Promise = require('promise')
+	//, Promise = require('promise')
 	, dbQuery = function(sql, data){console.log(1230)
 		return new Promise(function(fulfill, reject){
 			db.query(sql, data, function(err, rs){
@@ -5562,11 +5562,13 @@ function saveOrUpdate(name, num){
 //}
 //console.log( JSON.stringify(rs) );
 
-db.query('insert into web(url) values(\'1\'),(\'2\')', function(e, rs){
-	console.log(arguments);
-	console.log(1)
-});
-db.query('insert into web(url) values(\'3\'),(\'4\'),(\'5\')', function(e, rs){
-	console.log(arguments);
-	console.log(2)
-});
+//db.query('insert into web(url) values(\'1\'),(\'2\')', function(e, rs){
+//	console.log(arguments);
+//	console.log(1)
+//});
+//db.query('insert into web(url) values(\'3\'),(\'4\'),(\'5\')', function(e, rs){
+//	console.log(arguments);
+//	console.log(2)
+//});
+
+console.log( Promise );

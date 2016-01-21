@@ -46,8 +46,7 @@ define(['jquery', 'socket', 'storage', 'template'], function($, socket, storage)
 			}
 		})
 
-		, $skinList = $skin.after('<span class="arrow hidden"></span><ul class="list tiny scrollBar skinList hidden"></ul>')
-			.nextAll('ul').append( listTpl($.map(SKIN_LIST, function(d){
+		, $skinList = $skin.after('<span class="arrow hidden"></span><ul class="list tiny scrollBar skinList hidden" role="listbox" aria-expanded="false"></ul>')			.nextAll('ul').append( listTpl($.map(SKIN_LIST, function(d){
 			var obj = {
 				name: d
 			};

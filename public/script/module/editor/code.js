@@ -65,7 +65,7 @@ define('editorLayout', ['jquery', 'global', 'template'], function($, g){
 		})
 		, $layoutList = $layout.after('<div>' +
 			layoutBtnTpl( FULL_SCREEN_LIST ).join('') +
-			'</div><span class="arrow hidden"></span><ul class="list tiny scrollBar layoutList hidden"></ul>')
+			'</div><span class="arrow hidden"></span><ul class="list tiny scrollBar layoutList hidden" role="listbox" aria-expanded="false"></ul>')
 			.nextAll('ul').append( layoutListTpl( LAYOUT_LIST.concat( FULL_SCREEN_LIST ) ).join('') )
 			.on('click', 'li', function(){
 			$layoutList.triggerHandler('setLayout', [this.dataset ? this.dataset.layout : this.getAttribute('data-layout')]);
@@ -173,10 +173,10 @@ define('editorLayout', ['jquery', 'global', 'template'], function($, g){
 define('uiLibPopup', ['jquery', 'socket', 'template'], function($, socket){
 	var // UI 库
 		pathTpl = $.template({
-			template: 'div>label>input[type=checkbox value=%path%]+span.left.icon.icon-checkbox[title=%path%]{%path%}'
+			template: 'div[role=treeitem]>label>input[type=checkbox value=%path%]+span.left.icon.icon-checkbox[title=%path%]{%path%}'
 		})
 		, uiLibTpl = $.template({
-			template: 'dt>label>span.right.icon.icon-down{%version%}+input[type=checkbox]+span.left.icon.icon-checkbox[title=%name%]{%name%}^^dd.hidden{%paths%}'
+			template: 'dt[role=treeitem]>label>span.right.icon.icon-down{%version%}+input[type=checkbox]+span.left.icon.icon-checkbox[title=%name%]{%name%}^^dd.hidden{%paths%}'
 			, filter: {
 				paths: function(d){
 					var css = d.css_path

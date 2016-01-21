@@ -33,8 +33,6 @@ script/plugin/codeMirror/addon/display/panel.js
 
 script/plugin/codeMirror/emmet/emmet.min.js
 
-script/module/time.js
-
 socket.io/socket.io.js
 
 style/style.css

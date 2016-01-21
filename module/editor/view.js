@@ -2,6 +2,7 @@
 
 var getEmmet    = require('../emmet/getEmmet.js')
 	, tpl       = require('../emmet/tpl.js')
+	, popup     = require('../emmet/popup.js')
 
 	, emmetTpl  = require('../emmetTpl/emmetTpl.js').template
 
@@ -133,12 +134,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						}]
 						, content: codeEditTpl( rs ).join('')
 					}
-					, modulePopup: [{
-						id: 'msgPopup'
-						, size: 'small'
-						, toolbar: ''
-						, content: '<div class="msg" id="msgContent"></div>'
-					}, {
+					, modulePopup: [popup.msgPopup, {
 						id: 'setMore'
 						, size: 'normal'
 						, toolbar: ''
@@ -148,7 +144,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						id: 'uiLib'
 						, size: 'normal'
 						, toolbar: ''
-						, content: '<dl class="list-tree" id="uiLibList"></dl>'
+						, content: '<dl class="list-tree" id="uiLibList" role="tree"></dl>'
 						, button: '<button type="button" id="sure" class="btn btn-submit">确定</button>'
 					}, {
 						id: 'demoImgLib'

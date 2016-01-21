@@ -2,6 +2,7 @@
 
 var getEmmet    = require('../emmet/getEmmet.js')
 	, tpl       = require('../emmet/tpl.js')
+	, popup     = require('../emmet/popup.js')
 
 	, emmetTpl  = require('../emmetTpl/emmetTpl.js').template
 
@@ -83,21 +84,9 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						}]
 						, content: articleTpl(rs).join('')
 					}
-					, modulePopup: [{
-						id: 'msgPopup', size: 'small', toolbar: ''
-						, content: '<div class="msg" id="msgContent"></div>'
-					//}, {
-					//	id: 'addPopup'
-					//	, size: 'normal'
-					//	, toolbar: ''
-					//	, content: '<form>' +
-					//			'<div class="formGroup">' +
-					//				'<label class="label" for="title">请添加标题</label>' +
-					//				'<input type="text" id="title" class="input" name="title"/>' +
-					//			'</div>' +
-					//		'</form>'
-					//	, button: '<button type="button" id="addData" class="btn">添加</button>'
-					}]
+					, modulePopup: [
+						popup.msgPopup
+					]
 				}
 				, script: {
 					main: '../../../script/admin/blog/article'

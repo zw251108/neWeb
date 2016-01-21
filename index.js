@@ -169,10 +169,10 @@ web.get('/', function(req, res){
 });
 
 // 用户登录
-web.get('/login', function(req, res){
+web.get('/login', function(){
 
 });
-web.post('/login', function(req, res){
+web.post('/login', function(){
 	// todo 登录功能
 });
 

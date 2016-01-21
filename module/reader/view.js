@@ -2,6 +2,7 @@
 
 var getEmmet    = require('../emmet/getEmmet.js')
 	, tpl       = require('../emmet/tpl.js')
+	, popup     = require('../emmet/popup.js')
 
 	, emmetTpl  = require('../emmetTpl/emmetTpl.js').template
 
@@ -112,11 +113,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						}]
 						, content: readerTpl( rs.data ).join('') + '<div id="pagination" class="pagination">'+ pagination(rs.index, rs.size, rs.count, rs.urlCallback) + '</div>'
 					}
-					, modulePopup: [{
-						id: 'msgPopup'
-						, size: 'small'
-						, content: '<div class="msg" id="msgContent"></div>'
-					}, {
+					, modulePopup: [popup.msgPopup, {
 						id: 'readPopup'
 						, size: 'normal'
 						, content: bookmarkReadFormTpl({})
@@ -152,11 +149,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						}]
 						, content: articleTpl( rs.data ).join('') + '<div class="pagination" id="pagination">' + pagination(rs.index, rs.size, rs.count, rs.urlCallback) + '</div>'
 					}
-					, modulePopup: [{
-						id: 'msgPopup'
-						, size: 'small'
-						, content: '<div class="msg" id="msgContent"></div>'
-					}, {
+					, modulePopup: [popup.msgPopup, {
 						id: 'readPopup'
 						, size: 'normal'
 						, content: bookmarkReadFormTpl({})
