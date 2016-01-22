@@ -168,6 +168,14 @@ var db  = require('../db.js')
 				' status=1' +
 			' and' +
 				' tags regexp :tags'
+
+		// 统计用户每天所标记、所读的文章数量
+		, statisticReadMarkByDate: 'select date_format(read_datetime,\'%Y-%m-%d\') as read_date,count(if(status=1,true,null)) as read_count,count(if(status=0,true,null)) as mark_count' +
+			' from user_reader_bookmark' +
+			' where' +
+				' user_id=:userId' +
+			' Group by' +
+				' date_format(read_datetime,\'%Y-%m-%d\')'
 	}
 	, Model = {
 		getReaderByPage: function(page, size){

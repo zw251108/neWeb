@@ -159,7 +159,45 @@ web.get('/', function(req, res){
 	res.send( tpl.html('index', {
 		title: '个人小站（开发测试中...）'
 		, user: ('user' in session) ? '/user' : '/login'
-		, modules: tpl.metroTpl( modules.modules ).join('')
+		, modules:
+			'<section id="user" class="module module-user metro small">\
+				<div class="module_content">\
+					<div class="user_avatar" style="float:left;width:100px;height:100px;"><img src="image/demo/gender_male.jpg" style="\
+	position: absolute;\
+	"></div>\
+					<form style="margin-left: 100px;">\
+						<div class="formGroup">\
+							<label class="label" for="username">用户名</label>\
+							<input type="text" class="input" id="username" name="username">\
+						</div>\
+						<div class="formGroup">\
+							<label class="label" for="password">密&emsp;码</label>\
+							<input type="text" class="input" id="password" name="password">\
+						</div>\
+					</form>\
+				</div>\
+			</section>'+
+			tpl.metroTpl( modules.modules ).join('') +
+			'<a href="" target="_blank">\
+				<section class="metro metro-tiny">\
+					<h2 class="metro_title icon icon-renren"></h2>\
+				</section>\
+			</a>\
+			<a href="" target="_blank">\
+				<section class="metro metro-tiny">\
+					<h2 class="metro_title icon icon-qq"></h2>\
+				</section>\
+			</a>\
+			<a href="" target="_blank">\
+				<section class="metro metro-tiny">\
+					<h2 class="metro_title icon icon-wechat"></h2>\
+				</section>\
+			</a>\
+			<a href="" target="_blank">\
+				<section class="metro metro-tiny">\
+					<h2 class="metro_title icon icon-weibo"></h2>\
+				</section>\
+			</a>'
 		, script: {
 			main: 'script/index'
 			, src: 'script/lib/require.min.js'
