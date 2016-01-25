@@ -160,18 +160,19 @@ web.get('/', function(req, res){
 		title: '个人小站（开发测试中...）'
 		, user: ('user' in session) ? '/user' : '/login'
 		, modules:
-			'<section id="user" class="module module-user metro small">\
+			'<section id="userModule" class="module module-user metro normal">\
 				<div class="module_content">\
-					<div class="user_avatar" style="float:left;width:100px;height:100px;"><img src="image/demo/gender_male.jpg" style="\
-	position: absolute;\
-	"></div>\
-					<form style="margin-left: 100px;">\
+					<div class="user_avatar">\
+						<img src="image/demo/gender_male.jpg" id="userAvatar" height="110" width="110">\
+					</div>\
+					<form action="/login">\
+						<button class="btn btn-submit" type="submit">登录</button>\
 						<div class="formGroup">\
-							<label class="label" for="username">用户名</label>\
-							<input type="text" class="input" id="username" name="username">\
+							<label class="label" for="email">电子邮箱</label>\
+							<input type="text" class="input" id="email" name="email">\
 						</div>\
 						<div class="formGroup">\
-							<label class="label" for="password">密&emsp;码</label>\
+							<label class="label" for="password">密&emsp;&emsp;码</label>\
 							<input type="text" class="input" id="password" name="password">\
 						</div>\
 					</form>\
@@ -204,6 +205,44 @@ web.get('/', function(req, res){
 		}
 	}) );
 	res.end();
+});
+
+
+var User = require('./module/user/model.js')
+	, UserError = require('./module/user/error.js');
+
+// 用户输入用户名 获取头像
+web.get('/getavatar', function(req, res){
+	var query = req.query || {}
+		, email = query.email
+		, execute
+		;
+
+	if( email ){
+		execute = User.userAvatarByEmail( email ).then(function(rs){
+			return {
+				success: true
+				, info: rs
+			};
+		});
+	}
+	else{
+		execute = Promise.reject( new UserError('缺少 email') );
+	}
+
+	execute.catch(function(e){
+		console.log( e );
+
+		return {
+			error: ''
+			, msg: e.message
+		};
+	}).then(function(rs){
+		console.log(rs);
+
+		res.send( JSON.stringify(rs) );
+		res.end();
+	});
 });
 
 // 用户登录

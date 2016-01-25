@@ -22,7 +22,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 		}
 	})
 	, articleTpl        = emmetTpl({
-		template: 'form[action=./save method=post]' +
+		template: 'form[action=./ method=post]' +
 			'>article.article[data-id=%id%]' +
 				'>h3.article_title>input#title.input[type=text name=title value=%title%]' +
 				'^div.article_content' +
@@ -31,7 +31,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 		, filter: TagView.tagEditorFilter
 	})
 	, articleAddFormTpl = emmetTpl({
-		template: 'form[method=post action=./add]' +
+		template: 'form[method=post action=./]' +
 			'>div.formGroup' +
 				'>label.label[for=title]{请添加标题}' +
 				'+input#title.input[type=text name=title data-validator=title]'

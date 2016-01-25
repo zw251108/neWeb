@@ -10,19 +10,56 @@ define('storage', function(){});
 
 //---------- 公用基础模块 ----------
 //----- 用户信息模块 user -----
-define('user', ['jquery', 'global', 'socket', 'header'], function($, g, socket, $header){
-	// 判断用户数据是否存在
+define('user', ['jquery', 'global', 'socket'], function($, g, socket){
+	var timeout = null
+		, $userAvatar = $('#userAvatar')
+		, $user = $('#userModule').on({
+			getAvatar: function(e, email){
+				$.ajax({
+					url: 'getavatar'
+					, data: {
+						email: email
+					}
+					, dataType: 'json'
+					, success: function(json){
+						if( !('error' in json) ){
+							if( json.info.avatar ){
+								$userAvatar.attr('src', json.info.avatar);
+							}
+						}
+					}
+				});
+			}
+		}).on('keyup', '#email', function(){
+			var val = this.value;
 
-	$header.find('.toolbar').prepend('<li><a href="/login/"></a></li>');
-	var $user = $('#user');
+			if( val ){
 
-	if( !$user.find('img').length ){
 
-	}
+				if( timeout ){
+					clearTimeout( timeout );
+				}
 
-	$user.on('click', function(){
-		$user.after('<div class="loginBar"><form action=""></form></div>');
-	});
+				timeout = setTimeout(function(){
+
+					$user.triggerHandler('getAvatar', [val]);
+
+					timeout = null;
+				}, 500);
+			}
+		})
+		;
+
+	//$header.find('.toolbar').prepend('<li><a href="/login/"></a></li>');
+	//var $user = $('#user');
+	//
+	//if( !$user.find('img').length ){
+	//
+	//}
+	//
+	//$user.on('click', function(){
+	//	$user.after('<div class="loginBar"><form action=""></form></div>');
+	//});
 });
 
 //---------- 应用模块 ----------
@@ -31,7 +68,7 @@ require(['config'], function(config){
 
 	var r = require.config(config.requireConfig);
 
-	r(['jquery', 'global', 'socket', 'time', 'login'], function($, g, socket, $time){
+	r(['jquery', 'global', 'socket', 'time', 'login', 'user'], function($, g, socket, $time){
 		var $container = g.$container
 			, $blog = $('#blog').data('width', 'big') // Blog 模块
 			, $document = $('#document').data('width', 'small') // Document 文档模块

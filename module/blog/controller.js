@@ -53,13 +53,13 @@ web.get('/blog/', function(req, res){
 		res.end();
 	});
 });
-web.get('/blog/detail', function(req, res){
-	var query = req.query || {}
-		, id = query.id
+web.get('/blog/:blogId/', function(req, res){
+	var param = req.params || {}
+		, blogId = param.blogId
 		, execute
 		;
-	if( id ){
-		execute = Model.getBlogById( id ).then( View.blog );
+	if( blogId ){
+		execute = Model.getBlogById( blogId ).then( View.blog );
 	}
 	else{
 		execute = Promise.reject( new BlogError('缺少参数 id') );
@@ -132,10 +132,10 @@ web.get('/admin/blog/:blogId/', function(req, res){
 });
 
 /**
- * /admin/blog/add              新建文章
- * /admin/blog/:blogId/save     保存文章内容
+ * post /admin/blog/         新建文章
+ * post /admin/blog/:blogId/ 保存文章内容
  * */
-web.post('/admin/blog/add', function(req, res){
+web.post('/admin/blog/', function(req, res){
 	var body = req.body || {}
 		, title = body.title
 		, user = User.getUserFromSession.fromReq(req)
@@ -178,7 +178,7 @@ web.post('/admin/blog/add', function(req, res){
 		res.end();
 	})
 });
-web.post('/admin/blog/:blogId/save', function(req, res){
+web.post('/admin/blog/:blogId/', function(req, res){
 	var body = req.body || {}
 		, title = body.title
 		, content = body.content

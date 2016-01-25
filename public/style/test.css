@@ -315,3 +315,29 @@
 	-moz-box-sizing: content-box;
 	box-sizing: content-box;
 }
+
+.module-user{
+	background: #fff !important;
+}
+.module-user .module_content{}
+.module-user .user_avatar{
+	float: left;
+	height: 110px;
+	width: 110px;
+	margin: 10px 5px;
+}
+.module-user .user_avatar img{
+	min-width: 100%;
+}
+.module-user .btn-submit{
+	float: right;
+	height: 110px;
+	width: 110px;
+	margin: 0 5px;
+	font-size: 24px;
+	font-weight: bold;
+	line-height: 110px;
+}
+.module-user .formGroup{
+	margin: 10px 120px;
+}

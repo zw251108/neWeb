@@ -31,7 +31,7 @@ require(['../../config'], function(config){
 				if( title ){
 					$.ajax({
 						url: 'add'
-						, type: 'POST'
+						, type: 'PUT'
 						, data: {
 							title: title
 							, order: $document.find('.document_section').length +1
@@ -69,7 +69,7 @@ require(['../../config'], function(config){
 
 				if( title ){
 					$.ajax({
-						url: sectionId +'/add'
+						url: sectionId +'/'
 						, type: 'POST'
 						, data: {
 							title: title
@@ -114,8 +114,8 @@ require(['../../config'], function(config){
 				;
 
 			$.ajax({
-				url: 'save'
-				, type: 'POST'
+				url: './'
+				, type: 'PUT'
 				, dataType: 'json'
 				, data: {
 					order: order
@@ -172,8 +172,8 @@ require(['../../config'], function(config){
 				;
 
 			$.ajax({
-				url: sectionId +'/save'
-				, type: 'POST'
+				url: sectionId +'/'
+				, type: 'PUT'
 				, dataType: 'json'
 				, data: {
 					order: order
@@ -253,8 +253,8 @@ require(['../../config'], function(config){
 				;
 
 			$.ajax({
-				url: sectionId +'/'+ contentId +'/save'
-				, type: 'POST'
+				url: sectionId +'/'+ contentId +'/'
+				, type: 'PUT'
 				, data: {
 					id: contentId
 					, content: code.getValue().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\$/g, '&#36;')
@@ -265,7 +265,7 @@ require(['../../config'], function(config){
 						msgPopup.showMsg('内容保存成功！');
 					}
 				}
-			})
+			});
 		});
 	});
 });

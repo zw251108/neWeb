@@ -8,6 +8,20 @@ var getEmmet    = require('../emmet/getEmmet.js')
 
 	, pagination    = require('../pagination.js')
 
+	, docList           = emmetTpl({
+		template: 'li.article[data-id=%id%]' +
+		'>a[href=./%id%/]' +
+		'>h3.article_title' +
+		'>span.icon.icon-edit{ }' +
+		'+{%title%}'
+	})
+	, docAddFormTpl     = emmetTpl({
+		template: 'form#newDoc[method=post action=./]' +
+			'>div.formGroup' +
+				'>label.label[for=title]{请添加标题}' +
+				'+input#title.input[type=text name=title data-validator=title]'
+	})
+
 	, sectionTpl        = emmetTpl({
 		template: 'section.document_section.section[data-section-id=%sectionId%]' +
 			'>h3.section_title{%sectionTitle%}' +
@@ -18,7 +32,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 			'^dl{%sectionList%}'
 		, filter: {
 			sectionList: function(d){
-				return sectionListTpl( d.sectionList ).join('')
+				return sectionListTpl( d.sectionList ).join('');
 			}
 		}
 	})
@@ -31,18 +45,19 @@ var getEmmet    = require('../emmet/getEmmet.js')
 				'+button.btn.btn-submit[type=button]{保存}'
 	})
 	, sectionAddFormTpl = emmetTpl({
-		template: 'form[method=post action=add]' +
-			'>div.formGroup' +
-				'>label.label[for=title]{请添加标题}' +
-				'+input#title.input[type=text name=title data-validator=title]'
+		template: 'form#newSection[method=post action=./]' +
+			'>input#documentId[type=hidden name=documentId]' +
+			'+div.formGroup' +
+				'>label.label[for=newSectionTitle]{请添加标题}' +
+				'+input#newSectionTitle.input[type=text name=newSectionTitle]'
 	})
-
-	, docList           = emmetTpl({
-		template: 'li.article[data-id=%id%]' +
-			'>a[href=./%id%/]' +
-				'>h3.article_title' +
-					'>span.icon.icon-edit{ }' +
-					'+{%title%}'
+	, contentAddFormTpl = emmetTpl({
+		template: 'form#newContent[method=post action=./]' +
+			'>input#sectionId[type=hidden name=sectionId]' +
+			'+input#sectionTilte[type=hidden name=sectionName]' +
+			'+div.formGroup' +
+				'>label.label[for=contentTitle]{请添加标题}' +
+				'+input#contentTItle.input[type=text name=contentTitle]'
 	})
 
 	, View = {
@@ -63,7 +78,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						id: 'addPopup'
 						, size: 'normal'
 						, toolbar: ''
-						, content: sectionAddFormTpl({}).join('')
+						, content: docAddFormTpl({}).join('')
 						, button: '<button type="button" id="addData" class="btn btn-submit">添加</button>'
 					}, popup.msgPopup]
 				}
@@ -93,25 +108,16 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						, content: sectionTpl( rs ).join('')
 					}
 					, modulePopup: [{
-						id: 'addSectionPopup', size: 'normal', toolbar: ''
-						, content: '<form>' +
-								'<input type="hidden" name="documentId" id="documentId"/>' +
-								'<div class="formGroup">' +
-								'<label class="label" for="newSectionTitle">请添加标题</label>' +
-								'<input type="text" id="newSectionTitle" class="input" name="newSectionTitle"/>' +
-								'</div>' +
-							'</form>'
+						id: 'addSectionPopup'
+						, size: 'normal'
+						, toolbar: ''
+						, content: sectionAddFormTpl({}).join('')
 						, button: '<button type="button" id="addSection" class="btn btn-submit">添加</button>'
 					}, {
-						id: 'addContentPopup', size: 'normal', toolbar: ''
-						, content: '<form>' +
-							'<input type="hidden" name="sectionId" id="sectionId"/>' +
-							'<input type="hidden" id="sectionTitle"/>' +
-							'<div class="formGroup">' +
-								'<label class="label" for="contentTitle">请添加标题</label>' +
-								'<input type="text" id="contentTitle" class="input" name="contentTitle"/>' +
-							'</div>' +
-						'</form>'
+						id: 'addContentPopup'
+						, size: 'normal'
+						, toolbar: ''
+						, content: contentAddFormTpl({}).join('')
 						, button: '<button type="button" id="addContent" class="btn btn-submit">添加</button>'
 					}
 					, popup.msgPopup

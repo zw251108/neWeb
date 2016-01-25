@@ -17,6 +17,7 @@ public/style/style.css
 # 图片文件夹
 #public/image/
 public/image/ugc/
+public/image/upload/
 
 # 多媒体文件夹（包括视频、音频、flash 等）
 public/media/

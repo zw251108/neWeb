@@ -104,14 +104,14 @@ web.get('/admin/document/:documentId/', function(req, res){
 });
 
 /**
- * /admin/document/add                                      新建文档
- * /admin/document/:documentId/add                          新建章节
- * /admin/document/:documentId/save                         保存章节排序
- * /admin/document/:documentId/:sectionId/add               新建内容
- * /admin/document/:documentId/:sectionId/save              保存内容排序
- * /admin/document/:documentId/:sectionId/:contentId/save   内容详细保存
+ * post /admin/document/                                    新建文档
+ * post /admin/document/:documentId/                        新建章节
+ * put  /admin/document/:documentId/                        保存章节排序
+ * post /admin/document/:documentId/:sectionId/             新建内容
+ * put  /admin/document/:documentId/:sectionId/             保存内容排序
+ * put  /admin/document/:documentId/:sectionId/:contentId/  内容详细保存
  * */
-web.post('/admin/document/add', function(req, res){
+web.post(   '/admin/document/', function(req, res){
 	var body = req.body || {}
 		, title = body.title
 		, execute
@@ -152,7 +152,7 @@ web.post('/admin/document/add', function(req, res){
 		res.end();
 	});
 });
-web.post('/admin/document/:documentId/add', function(req, res){
+web.post(   '/admin/document/:documentId/', function(req, res){
 	var param = req.params || {}
 		, documentId = param.documentId
 		, body = req.body || {}
@@ -199,7 +199,7 @@ web.post('/admin/document/:documentId/add', function(req, res){
 		res.end();
 	});
 });
-web.post('/admin/document/:documentId/save', function(req, res){
+web.put(    '/admin/document/:documentId/', function(req, res){
 	var param = req.params || {}
 		, documentId = param.documentId
 		, body = req.body || {}
@@ -237,7 +237,7 @@ web.post('/admin/document/:documentId/save', function(req, res){
 		res.end();
 	});
 });
-web.post('/admin/document/:documentId/:sectionId/add', function(req, res){
+web.post(   '/admin/document/:documentId/:sectionId/', function(req, res){
 	var param = req.params || {}
 		, documentId = param.documentId
 		, sectionId = param.sectionId
@@ -285,7 +285,7 @@ web.post('/admin/document/:documentId/:sectionId/add', function(req, res){
 		res.end();
 	});
 });
-web.post('/admin/document/:documentId/:sectionId/save', function(req, res){
+web.put(    '/admin/document/:documentId/:sectionId/', function(req, res){
 	var param = req.params || {}
 		, documentId = param.documentId
 		, sectionId = param.sectionId
@@ -324,7 +324,7 @@ web.post('/admin/document/:documentId/:sectionId/save', function(req, res){
 		res.end();
 	});
 });
-web.post('/admin/document/:documentId/:sectionId/:contentId/save', function(req, res){
+web.put(    '/admin/document/:documentId/:sectionId/:contentId/', function(req, res){
 	var param = req.params || {}
 		, documentId = param.documentId
 		, sectionId = param.sectionId
