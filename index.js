@@ -163,7 +163,7 @@ web.get('/', function(req, res){
 			'<section id="userModule" class="module module-user metro normal">\
 				<div class="module_content">\
 					<div class="user_avatar">\
-						<img src="image/demo/gender_male.jpg" id="userAvatar" height="110" width="110">\
+						<img src="image/default/avatar.png" id="userAvatar" height="110" width="110">\
 					</div>\
 					<form action="/login">\
 						<button class="btn btn-submit" type="submit">登录</button>\

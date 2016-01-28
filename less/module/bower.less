@@ -3,8 +3,120 @@
 
 @import "../config/color.config.less";
 
-.module-bower{}
+.module-bower{
+	.table_container{
+		overflow: hidden;
+		position: relative;
+		border-bottom: 1px solid #c0c0c0;
+	}
+	.table_wrap{
+		overflow: auto;
+		margin-left: 152px;
+		margin-right: 5px;
+	}
+}
 
 .icon-bower:before{
 	&:extend(.icon-lib:before);
+}
+
+.bower_list{
+	table-layout: fixed;
+
+	thead{
+		tr{
+			background: #fff !important;
+		}
+	}
+
+	tr{
+		&:nth-child(odd){
+			background: #efefef;
+		}
+		&:hover{
+			background: #c0c0c0;
+			td:nth-child(n+2){
+				color: #fff;
+			}
+		}
+	}
+
+	th,
+	td{
+		height: 100px;
+		min-width: 100px;
+		border-bottom: 1px solid #c0c0c0;
+		color: #000;
+
+		&:first-child{
+			position: absolute;
+			left: 0;
+			width: 150px;
+			border-right: 1px solid #c0c0c0;
+			margin-bottom: -1000px;
+			padding-bottom: 1000px;
+			padding-right: 1em;
+			background: #fff;
+			line-height: 100px;
+			text-align: right;
+		}
+	}
+	th{
+		text-indent: 2em;
+	}
+	td:first-child{
+		border-top: 1px solid #c0c0c0;
+	}
+	td:nth-child(n+2){
+		text-indent: 2em;
+		white-space: nowrap;
+	}
+
+	p{
+		width: 100%;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+}
+
+.bower_resultList{
+	overflow: auto;
+	height: 17em;
+	margin-bottom: 10px;
+
+	table{
+		width: 100%;
+	}
+	th,
+	td{
+		height: 100px;
+		min-width: 100px;
+		border: 1px solid #c0c0c0;
+		color: #000;
+		text-align: center;
+	}
+}
+
+.bower_level{
+	float: left;
+	min-width: 80px;
+	margin: 0 10px;
+	color: red;
+}
+.bower_level:before{
+	content: "["
+}
+.bower_level:after{
+	content: "]"
+}
+.bower_id{
+	float: left;
+	min-width: 120px;
+	margin: 0 10px;
+	color: green
+}
+.bower_message{
+	float: left;
+	margin: 0 0 0 20px;
 }

@@ -12,7 +12,8 @@ var config  = require('../../config.js')
 			return CodeModel.getEditorByName('admin/tag').then(function(rs){
 				return rs[0];
 			}).then(function(rs){
-				var code = {};
+				var code = {}
+					;
 
 				code.title = rs.name;
 

@@ -34,6 +34,8 @@ var config  = require('../../config.js')
 			DEFAULT_ID: 1
 			, EDITOR_PREVIEW_ID: 2
 			, EDITOR_DEMO_ID: 5
+			, AVATAR_ID: 3
+			, UGC_ID: 4
 		}
 	}
 	;

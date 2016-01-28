@@ -2,3 +2,34 @@
 	line-height: 4;
 	text-align: center;
 }
+
+.message{
+	position: relative;
+	border: 1px solid #fff;
+	border-radius: 5px;
+	margin-left: 50px;
+	padding: 10px;
+
+	&:before{
+		position: absolute;
+		top: 5px;
+		left: -20px;
+		height: 0;
+		width: 0;
+		border: 10px solid transparent;
+		border-right-color: #fff;
+
+		content: "";
+	}
+	&:after{
+		position: absolute;
+		top: 5px;
+		left: -19px;
+		height: 0;
+		width: 0;
+		border: 10px solid transparent;
+		border-right-color: #000;
+
+		content: "";
+	}
+}

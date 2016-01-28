@@ -42,14 +42,15 @@ font/font.svg
 font/font.ttf
 font/font.woff
 
-
 favicon.ico
 
 image/logo.png
 image/favicon.ico
-image/default/icon/menu.png
-image/default/icon/user.png
-image/default/icon/close.png
+
+image/default/avatar.png
+image/default/avatar-female.png
+image/default/avatar-male.png
+image/default/no-pic.png
 
 NETWORK:
 socket.io/
@@ -60,8 +61,9 @@ script/module/
 
 style/test.css
 
+image/avatar/
 image/preview/
 image/demo/
-image/upload/
+image/ugc/
 
 getavatar

@@ -26,7 +26,7 @@ web.get('/admin/address', function(req, res){
 admin.register({
 	id: 'basedata'
 	, metroSize: 'tiny'
-	, title: '基础数据 basedata'
+	, title: '基础数据 data'
 	, icon: 'tags'
 	, href: 'basedata/'
 });

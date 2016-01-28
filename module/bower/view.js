@@ -9,21 +9,22 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	, pagination    = require('../pagination.js')
 
 	, bowerListWrapTpl = emmetTpl({
-		template: 'div.wrap' +
-			'>table.lib_table' +
-				'>thead' +
-					'>tr' +
-						'>th{组件名称}' +
-						'+th{版本}' +
-						'+th{CSS 文件路径}' +
-						'+th{JS 文件路径}' +
-						'+th{demo 页面}' +
-						'+th{组件来源}' +
-						'+th{组件主页}' +
-						'+th{标签}' +
-						'+th{收录时间}' +
-				'^^tbody{%bowerList%}' +
-			'^^div#pagination.pagination{%pagination%}'
+		template: 'div.table_container' +
+			'>div.table_wrap' +
+				'>table.bower_list' +
+					'>thead' +
+						'>tr' +
+							'>th{组件名称}' +
+							'+th{版本}' +
+							'+th{CSS 文件路径}' +
+							'+th{JS 文件路径}' +
+							'+th{demo 页面}' +
+							'+th{组件来源}' +
+							'+th{组件主页}' +
+							'+th{标签}' +
+							'+th{收录时间}' +
+					'^^tbody{%bowerList%}' +
+		'^^^div#pagination.pagination{%pagination%}'
 	})
 	, bowerListTpl  = emmetTpl({
 		template: 'tr' +
