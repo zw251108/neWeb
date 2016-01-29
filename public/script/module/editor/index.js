@@ -64,7 +64,7 @@ require(['../../config'], function(config){
 			, moreData = false
 			, space = 10
 			, loading = function(){
-				$editorContainer.height( $editorContainer.height() + 192 );
+				$editorContainer.height( $editorContainer.height() + 82 );
 				$editorContainer.append('<article class="article article-block"><div class="loading loading-chasing"></div></article>');
 			}
 			, layout = function(){
@@ -131,7 +131,7 @@ require(['../../config'], function(config){
 						clearTimeout(socketTimeout);
 					}
 					else{
-						$editorContainer.append('<article class="article article-block"><div class="loading loading-chasing"></div></article>');
+						//$editorContainer.append('<article class="article article-block"><div class="loading loading-chasing"></div></article>');
 						loading();
 					}
 
@@ -179,16 +179,13 @@ require(['../../config'], function(config){
 				}
 				else{
 					moreData = true;
-					content = '<article class="article article-block article-block-noMore">沒有更多数据了...</article>';
+					content = '<article class="article article-block article-block"><p class="msg">沒有更多数据了...</p></article>';
 				}
 
 				$editorContainer.find('article.article-block').remove().end().append( content );
 
 				if( data.length ){
 					layout();
-				}
-				else{
-					$editorContainer.height( $editorContainer.height() -128);
 				}
 			}
 			, 'editor/search': function(data){
@@ -209,9 +206,6 @@ require(['../../config'], function(config){
 				if( data.length ){
 					layout();
 				}
-				else{
-					$editorContainer.height( $editorContainer.height() -128);
-				}
 			}
 			, 'editor/filter': function(data){
 				var content = '';
@@ -230,9 +224,6 @@ require(['../../config'], function(config){
 
 				if( data.length ){
 					layout();
-				}
-				else{
-					$editorContainer.height( $editorContainer.height() -128);
 				}
 			}
 		});
