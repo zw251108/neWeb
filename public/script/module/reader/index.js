@@ -75,8 +75,12 @@ require(['../../config'], function(config){
 				}
 			})
 			, $addFeedForm = $addPopup.find('form')
-			, $readPopup = bookmarkRead($reader, tagsData)
+			, $readPopup
 			;
+
+		tagsData = $.parseJSON(tagsData);
+
+		$readPopup = bookmarkRead($reader, tagsData);
 
 		$('#add').on('click', function(){
 			$addPopup.trigger('showDialog');
@@ -152,7 +156,7 @@ require(['../../config'], function(config){
 
 			var $parent = $(this).parents('.article')
 				, id = $parent.data('id') || 'readerArt' + (+new Date())
-				, $title = $parent.find(',article_title')
+				, $title = $parent.find('.article_title')
 				;
 
 			!$parent.attr('id') && $parent.attr('id', id);

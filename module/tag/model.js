@@ -2,6 +2,7 @@
 
 var db      = require('../db.js')
 	, error = require('../error.js')
+	, TagError = require('./error.js')
 
 	, SQL   = {
 		tag: 'select name,num from tag order by num'

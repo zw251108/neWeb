@@ -432,7 +432,7 @@ define('setMorePopup', ['jquery', 'socket', 'msgPopup', 'tag', 'template'], func
 		$name = name;
 		$form = form;
 
-		tag( $.parseJSON(tagsData) );
+		tag( tagsData);
 	};
 });
 
@@ -540,6 +540,8 @@ require(['../../config'], function(config){
 
 		skin = $.parseJSON( skin );
 		codeSkin = codeSkin(skin.skin, config.requireConfig.baseUrl, [html, css, js]);
+
+		tagsData = $.parseJSON( tagsData );
 
 		setMore($name, $form, tagsData);
 

@@ -21,7 +21,7 @@ define(['jquery', 'global', 'socket', 'tag', 'msgPopup', 'template'], function($
 				;
 
 			if( query.tags !== '' ){
-				query.id = query.bookmarkId;
+				//query.id = query.bookmarkId;
 				query.url = query.bookmarkUrl;
 				query.score = +query.score;
 
