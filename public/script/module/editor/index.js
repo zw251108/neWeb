@@ -79,6 +79,7 @@ require(['../../config'], function(config){
 					rowSpace: space
 				});
 			}
+			, NO_MORE = '<article class="article article-block article-block-noMore"><p class="msg">沒有更多数据了...</p></article>'
 			, search = decodeURI( location.search )
 			, searchObj = {}
 			, i, j
@@ -131,7 +132,6 @@ require(['../../config'], function(config){
 						clearTimeout(socketTimeout);
 					}
 					else{
-						//$editorContainer.append('<article class="article article-block"><div class="loading loading-chasing"></div></article>');
 						loading();
 					}
 
@@ -165,7 +165,9 @@ require(['../../config'], function(config){
 		});
 
 		if( $editorContainer.height() < HEIGHT ){
-			$win.trigger('scroll');
+			if( !search ){
+				$win.trigger('scroll');
+			}
 		}
 
 		socket.register({
@@ -179,7 +181,7 @@ require(['../../config'], function(config){
 				}
 				else{
 					moreData = true;
-					content = '<article class="article article-block article-block"><p class="msg">沒有更多数据了...</p></article>';
+					content = NO_MORE;
 				}
 
 				$editorContainer.find('article.article-block').remove().end().append( content );
@@ -198,7 +200,7 @@ require(['../../config'], function(config){
 				}
 				else{
 					moreData = true;
-					content = '<article class="article article-block article-block-noMore">沒有更多数据了...</article>';
+					content = NO_MORE;
 				}
 
 				$editorContainer.find('article.article-block').remove().end().append( content );
@@ -217,7 +219,7 @@ require(['../../config'], function(config){
 				}
 				else{
 					moreData = true;
-					content = '<article class="article article-block article-block-noMore">沒有更多数据了...</article>';
+					content = NO_MORE;
 				}
 
 				$editorContainer.find('article.article-block').remove().end().append( content );

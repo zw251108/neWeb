@@ -18,7 +18,7 @@ define('editorLayout', ['jquery', 'global', 'template'], function($, g){
 			name: '默认布局', layout: 'editor-default', on: 'on'}, {
 			name: '四行布局', layout: 'editor-4row'}, {
 			name: '四列布局', layout: 'editor-4col'}, {
-			name: '四角布局', layout: 'editor-4col'
+			name: '四角布局', layout: 'editor-4cor'
 		}]
 		, FULL_SCREEN_LIST = [{
 			name: '全屏 HTML', layout: 'editor-htmlFS', sp: 'sp', content: 'html'}, {
