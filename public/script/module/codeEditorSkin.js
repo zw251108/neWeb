@@ -1,4 +1,4 @@
-5/**
+/**
  * @module codeEditorSkin
  * */
 define(['jquery', 'socket', 'storage', 'template'], function($, socket, storage){
@@ -52,7 +52,7 @@ define(['jquery', 'socket', 'storage', 'template'], function($, socket, storage)
 			};
 
 			if( d === CURRENT_SKIN ){
-				obj.on = 'on';
+				obj.on = 'active';
 			}
 
 			return obj;
@@ -61,7 +61,7 @@ define(['jquery', 'socket', 'storage', 'template'], function($, socket, storage)
 
 			$skinList.trigger('setSkin', [this.innerHTML]);
 
-			$(this).addClass('on').siblings('.on').removeClass('on');
+			$(this).addClass('active').siblings('.active').removeClass('active');
 
 			skinList.hide();
 		}).on({

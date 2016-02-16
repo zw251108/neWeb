@@ -76,8 +76,8 @@ define('editorLayout', ['jquery', 'global', 'template'], function($, g){
 
 				$editor.removeClass('editor-4row editor-4col editor-4cor editor-htmlFS editor-cssFS editor-jsFS editor-rsFS').addClass( layout );
 
-				$layoutList.find('[data-layout="'+ layout +'"]').addClass('on').siblings('.on').removeClass('on');
-				$layoutBtns.find('[data-layout="'+ layout +'"]').addClass('on').siblings('.on').removeClass('on');
+				$layoutList.find('[data-layout="'+ layout +'"]').addClass('active').siblings('.active').removeClass('active');
+				$layoutBtns.find('[data-layout="'+ layout +'"]').addClass('active').siblings('.active').removeClass('active');
 
 				html.refresh();
 				css.refresh();

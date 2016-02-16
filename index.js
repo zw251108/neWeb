@@ -194,7 +194,7 @@ web.get('/', function(req, res){
 					<h2 class="metro_title icon icon-wechat"></h2>\
 				</section>\
 			</a>\
-			<a href="" target="_blank">\
+			<a href="http://weibo.com/2707826454/profile" target="_blank">\
 				<section class="metro metro-tiny">\
 					<h2 class="metro_title icon icon-weibo"></h2>\
 				</section>\
