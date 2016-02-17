@@ -20,13 +20,12 @@ body{
 	font-size: @default-font-size;
 	line-height: @default-line-height;
 
-	// 移动端触摸阴影
-	-webkit-tap-highlight-color: rgba(0, 0, 0, .0);
-
 	// 优化显示文本
 	-moz-osx-font-smoothing: grayscale;
 	-webkit-font-smoothing: antialiased;
 	text-rendering: optimizeLegibility;
+
+	-wekibt-text-size-adjust: 100%;
 }
 //a:-webkit-any-link:active{
 //	color: #fff;
@@ -47,6 +46,88 @@ b{
 	font-weight:400;
 }
 
+
+/**
+ * 排版布局
+ */
+//----- 去掉列表样式 -----
+ul{
+	margin:0;
+	padding:0;
+	list-style:none;
+}
+
+//----- 重置图片元素 -----
+img{
+	-ms-interpolation-mode: bicubic; // IE 下图片缩放不失真
+	border: 0;
+}
+
+//----- 重置表格元素 -----
+table{
+	border-collapse:collapse;
+	border-spacing:0;
+}
+caption,
+th,
+td{
+	//	/* float: none 阻止 span-想类破坏表格单元的显示 */
+	float: none !important;
+	font-weight: normal;
+	text-align: left;
+}
+
+//----- 引用 -----
+blockquote,
+q{
+	quotes: "\201C" "\201D";
+
+	&:before{
+		content: open-quote;
+	}
+	&:after{
+		content: close-quote;
+	}
+
+}
+
+sup{
+	vertical-align: text-top;
+}
+sub{
+	vertical-align: text-bottom;
+}
+
+//----- 标题 -----
+h1,
+h2,
+h3,
+h4,
+h5,
+h6{
+	margin:0 auto;
+	//    line-height:40px;
+}
+
+h1{
+	font-size: @h1-size;
+}
+h2{
+	font-size: @h2-size;
+}
+h3{
+	font-size: @h3-size;
+}
+
+hr{
+	border: none;
+	border-top: 1px solid @border-color;
+	margin: 0;
+}
+
+/**
+ * 交互
+ */
 //----- 重置超链接元素——未访问的链接，已访问的链接，鼠标移动到链接上，选定的链接 -----
 a,
 a:visited{
@@ -107,87 +188,21 @@ select{
 	line-height:18px;
 }
 
-//----- 去掉列表样式 -----
-ul{
-	margin:0;
-	padding:0;
-	list-style:none;
-}
+//----- 移动端去掉点击效果 -----
+a,
+button,
+input,
+textarea{
+	// iOS 移动端触摸阴影
+	-webkit-tap-highlight-color: rgba(0, 0, 0, .0);
 
-//----- 重置图片元素 -----
-img{
-	-ms-interpolation-mode: bicubic; // IE 下图片缩放不失真
-	border: 0;
+	// Android 点击边框
+	-webkit-user-modify: read-write-plaintext-only;
+	/**
+	 * -webkit-user-modify 有副作用
+	 *  输入法不再能够输入多个字符
+	 */
 }
-
-//----- 重置表格元素 -----
-table{
-	border-collapse:collapse;
-	border-spacing:0;
-}
-caption,
-th,
-td{
-//	/* float: none 阻止 span-想类破坏表格单元的显示 */
-	float: none !important;
-	font-weight: normal;
-	text-align: left;
-}
-
-//----- 引用 -----
-blockquote,
-q{
-	quotes: "\201C" "\201D";
-}
-blockquote:before,
-q:before{
-	//    content:"";
-	content: open-quote;
-}
-blockquote:after,
-q:after{
-	content: close-quote;
-}
-
-sup{
-	vertical-align: text-top;
-}
-sub{
-	vertical-align: text-bottom;
-}
-
-//----- 标题 -----
-h1,
-h2,
-h3,
-h4,
-h5,
-h6{
-	margin:0 auto;
-	//    line-height:40px;
-}
-h1{
-	font-size: @h1-size;
-}
-h2{
-	font-size: @h2-size;
-}
-h3{
-	font-size: @h3-size;
-}
-
-hr{
-	border: none;
-	border-top: 1px solid @border-color;
-	margin: 0;
-}
-
-/*
-caption,
-th{
-    text-align:left;
-}
-*/
 
 /*
 html, body, div, span, applet, object, iframe,
@@ -285,4 +300,19 @@ dialog::backdrop{
  */
 @-ms-viewport{
 	width: device-width;
+}
+
+/**
+ * 禁止 iOS 长按是不触发系统的菜单
+ * 禁止 iOS & Android 长按时下载图片
+ */
+.no-dl{
+	-webkit-touch-callout: none;
+}
+
+/**
+ * 禁止 iOS & Android 用户选中文字
+ */
+.no-select{
+	-webkit-user-select: none;
 }

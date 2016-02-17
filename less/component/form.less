@@ -34,6 +34,20 @@
 
 	.boxSizing(border-box);
 
+	/**
+	 * 禁用 PC 端表单输入框默认清除按钮
+	 */
+	&::-ms-clear{
+		display: none;
+	}
+
+	/**
+	 * Android 上去掉语音输入按钮
+	 */
+	&::-webkit-input-speech-button{
+		display: none;
+	}
+
 	// placeholder
 	&::-webkit-input-placeholder{ /* WebKit browsers */
 		color: @input_placeholder_c;
@@ -195,6 +209,14 @@
 [type="checkbox"],
 [type="radio"]{
 	display: none;
+
+	/**
+	 * 禁用 radio 和 checkbox 默认样式
+	 *  可使用背景图片
+	 */
+	&::-ms-check{
+		display: none;
+	}
 }
 :checked{
 
@@ -214,4 +236,14 @@
 select,
 option{
 	-webkit-appearance: none;
+}
+
+select{
+	/**
+	 * 禁用 select 默认下拉箭头
+	 *  可使用背景图片
+	 */
+	&::-ms-expand{
+		display: none;
+	}
 }
