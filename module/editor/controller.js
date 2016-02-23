@@ -51,6 +51,7 @@ web.get('/editor/', function(req, res){
 		, size = query.size || 20
 		, keyword = query.keyword || ''
 		, tags = query.tags || ''
+		, user = User.getUserFromSession.fromReq(req)
 		, execute
 		;
 

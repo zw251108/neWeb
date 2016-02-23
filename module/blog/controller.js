@@ -34,6 +34,7 @@ web.get('/blog/', function(req, res){
 	var query = req.query || {}
 		, page = query.page || 1
 		, size = query.size || 20
+		, user = User.getUserFromSession.fromReq(req)
 		;
 
 	Model.getBlogByPage(page, size).then(function(rs){
@@ -56,6 +57,7 @@ web.get('/blog/', function(req, res){
 web.get('/blog/:blogId/', function(req, res){
 	var param = req.params || {}
 		, blogId = param.blogId
+		, user = User.getUserFromSession.fromReq(req)
 		, execute
 		;
 	if( blogId ){

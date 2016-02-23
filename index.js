@@ -128,6 +128,8 @@ require('./module/reader/controller.js'     );  // 加载模块 reader
 
 require('./module/resume/controller.js'     );  // 加载模块 profile
 
+require('./module/task/controller.js'       );  // 加载模块 task
+
 require('./module/tag/controller.js'        );  // 加载模块 tag 功能
 
 //require('./module/image.js');       // 加载模块 image
