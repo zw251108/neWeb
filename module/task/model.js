@@ -4,38 +4,114 @@ var db = require('../db.js')
 	, error = require('../error.js')
 
 	, TABLE_NAME = 'task'
+	, USER_TASK = 'user_task'
+
+	, task = {
+		taskId: ''
+		, name: ''
+		, creatorId: ''
+		, score: ''
+		, type: ''
+		, times: ''
+		, timeConsume: ''
+		, hopeStartDate: ''
+		, hopeStartTime: ''
+		, hopeEndDate: ''
+		, hopeEndTime: ''
+		, target: ''
+		, tags: ''
+		, desc: ''
+		, lv: ''
+		, enable: ''
+	}
+
+	, userTask = {
+		userId: ''
+		, taskId: ''
+		, execStart: ''
+		, execEnd: ''
+		, status: ''
+	}
 
 	, SQL = {
-		taskById: 'select id,name,create_datetime as datetime,exec_start as start,exec_end as end,exec_status as status,type from '+ TABLE_NAME +
+		taskByCycleType: 'select id,' +
+				'name,' +
+				'create_datetime as datetime,' +
+				'score,' +
+				'type,' +
+				'times,' +
+				'time_consume as timeConsume,' +
+				'hope_start_date as hopeStartDate,' +
+				'hope_start_time as hopeStartTime,' +
+				'hope_end_date as hopeEndDate,' +
+				'hope_end_time as hopeEndTime,' +
+				'target,' +
+				'tags,' +
+				'`desc`,' +
+				'lv' +
+			' from task' +
+			' where creator_id=:userId' +
+			' and' +
+				' target=\'1\'' +
+			' and' +
+				' (' +
+					'type=\'2\'' +
+				' or' +
+					' type=\'3\'' +
+				')' +
+			' and enable=\'0\'' +
+			' order by create_datetime desc'
+
+		, userTaskAll: 'select ut.id as id,' +
+				'ut.task_id as taskId,' +
+				'name,' +
+				'create_datetime as datetime,' +
+				'score,' +
+				'type,' +
+				'times,' +
+				'time_consume as timeConsume,' +
+				'hope_start_date as hopeStartDate,' +
+				'hope_start_time as hopeStartTime,' +
+				'hope_end_date as hopeEndDate,' +
+				'hope_end_time as hopeEndTime,' +
+				'target,' +
+				'tags,' +
+				'`desc`,' +
+				'lv,' +
+				'exec_start as start,' +
+				'exec_end as end,' +
+				'status' +
+			' from task,user_task as ut' +
 			' where' +
-				' user_id=:userId'
-		, taskAll: 'select id,name,create_datetime as datetime,exec_start as start,exec_end as end,exec_status as status,type from '+ TABLE_NAME +
-			' where user_id=:userId' +
-			' order by exec_start'
-		, taskByType: 'select id,name,create_datetime as datetime,exec_start as start,exec_end as end,exec_status as status,type from '+ TABLE_NAME +
-			' where' +
-				' user_id=:userId and' +
-				' type=:type'
-		, taskByCreateDate: 'select id,name,create_datetime as datetime,exec_start as start,exec_end as end,exec_status as status,type from '+ TABLE_NAME +
-			' where' +
-				' user_id=:userId and' +
-				' date_format(create_datetime,\'%Y-%m-%d\')=:date'
-		, taskDoingBeforeDate: 'select id,name,create_datetime as datetime,exec_start as start,exec_end as end,exec_status as status,type from '+ TABLE_NAME +
-			' where' +
-				' user_id=:userId and' +
-				' exec_status=0 and' +
-				' date_format(exec_start,\'%Y-%m-%d\')<:date' +
-			' order by exec_start'
-		, taskByStartDate: 'select id,name,create_datetime as datetime,exec_start as start,exec_end as end,exec_status as status,type from '+ TABLE_NAME +
-			' where' +
-				' user_id=:userId and' +
-				' date_format(exec_start,\'%Y-%m-%d\')=:date' +
+				' user_id=:userId' +
+			' and' +
+				' task.id=ut.task_id' +
 			' order by exec_start'
 
-		, taskAdd: 'insert task(name,exec_start,exec_end,type,user_id) values(:taskName,:taskStartTime,:taskEndTime,:taskType,:userId)'
+		, taskAdd: 'insert task(' +
+				'name,' +
+				'creator_id,' +
+				'score,' +
+				'type,' +
+				'times,' +
+				'time_consume,' +
+				'hope_start_date,' +
+				'hope_start_time,' +
+				'hope_end_date,' +
+				'hope_end_time,' +
+				'target,' +
+				'tags,' +
+				'desc,' +
+				'lv)' +
+			' values(:taskName,:user_id,:taskScore,:taskType,:taskTimes,:taskTimeConsume,:taskHopeStartDate,:taskHopeStartTime,:taskHopeEndDate,:taskHopeEndTime,:taskTarget,:tags,:taskDesc,:taskLv)'
 
-		, taskDone: 'update '+ TABLE_NAME +' set done_datetime=now(),exec_status=1' +
-			' where id=:id'
+		, userTaskAdd: 'insert user_task(task_id,user_id) values(:taskId,:userId)'
+
+		, taskUnable: 'update task set enable=\'1\' where id=:taskId'
+		, taskMinusTimes: 'update task set times=times-1 where id=:taskId'
+
+		, userTaskStart: 'update user_task set execStart=now(),status=\'1\' where id=:id'
+		, userTaskEnd: 'update user_task set execEnd=now(),status=\'2\' where id=:id'
 	}
 
 	, Model = {
@@ -46,63 +122,73 @@ var db = require('../db.js')
 
 			return date.getFullYear() +'-'+ (m > 9 ? m : '0'+ m) +'-'+ (d > 9 ? d : '0'+ d);
 		}
+
+		, getCycleTask: function(userId){
+			return db.handle({
+				sql: SQL.taskByCycleType
+				, data: {
+					userId: userId
+				}
+			});
+		}
 		, getTaskAll: function(userId){
 			return db.handle({
-				sql: SQL.taskAll
+				sql: SQL.userTaskAll
 				, data: {
 					userId: userId
 				}
 			});
 		}
-		, getTaskByStartDate: function(userId, startDate){
-			var m
-				, d
-				;
 
-			if( !startDate ){
-				startDate = new Date();
-			}
-
-			startDate = this.dateFormat( startDate );
-
-			return db.handle({
-				sql: SQL.taskByStartDate
-				, data: {
-					userId: userId
-					, date: startDate
-				}
-			});
-		}
-		, getTaskDoingBeforeDate: function(userId, startDate){
-			var m
-				, d
-				;
-
-			if( !startDate ){
-				startDate = new Date();
-			}
-
-			startDate = this.dateFormat( startDate );
-
-			return db.handle({
-				sql: SQL.taskDoingBeforeDate
-				, data: {
-					userId: userId
-					, date: startDate
-				}
-			});
-		}
-		, add: function(userId, task){
-			task.userId = userId;
+		, addTaskByUser: function(userId, task){
+			task.creator_id = userId;
+			task.lv = 1;
 
 			return db.handle({
 				sql: SQL.taskAdd
 				, data: task
 			});
 		}
+		, addTaskByAdmin: function(){}
+
+		, unableTask: function(taskId){
+			return db.handle({
+				sql: SQL.taskUnable
+				, data: {
+					taskId: taskId
+				}
+			});
+		}
+		, minusTaskTimes: function(taskId){
+			return db.handle({
+				sql: SQL.taskMinusTimes
+				, data: {
+					taskId: taskId
+				}
+			});
+		}
+
+		, addUserTask: function(userId, taskId){
+			return db.handle({
+				sql: SQL.userTaskAdd
+				, data: {
+					userId: userId
+					, taskId: taskId
+				}
+			});
+		}
+
+		, execTask: function(id){
+			return db.handle({
+				sql: SQL.userTaskStart
+				, data: {
+					id: id
+				}
+			});
+		}
 		, doneTask: function(id){
 			return db.handle({
-				sql: SQL.taskDone
+				sql: SQL.userTaskEnd
 				, data: {
 					id: id
 				}
@@ -110,5 +196,11 @@ var db = require('../db.js')
 		}
 	}
 	;
+
+//db.handle({
+//	sql: 'show columns from '+ TABLE_NAME +' from destiny'
+//}).then(function(rs){
+//	console.log(rs)
+//})
 
 module.exports = Model;

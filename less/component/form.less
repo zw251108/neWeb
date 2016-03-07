@@ -85,7 +85,11 @@
 		}
 	}
 
-	/*textarea*/&-multiply{}
+	/*textarea*/&-multiply{
+        padding: 1em;
+        min-height: 9em;
+        text-indent: 0;
+    }
 
 	/**
 	 * 评分
@@ -210,6 +214,12 @@
 	border: 1px solid #c0c0c0;
 	border-radius: 10px;
 	margin: 10px;
+
+
+	&-half{
+		@margin: 10px *2 + 2px;
+		width: calc(~"50% - @{margin}");
+	}
 
 	/*div*/.formGroup{
 		position: relative;

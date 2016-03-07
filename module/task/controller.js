@@ -17,7 +17,7 @@ var web         = require('../web.js')
 
 	, User      = require('../user/user.js')
 
-	, Promise   = require('promise')
+	//, Promise   = require('promise')
 	;
 
 modules.register({
@@ -35,14 +35,19 @@ web.get('/task/', function(req, res){
 		, user = User.getUserFromSession.fromReq(req)
 		;
 
-	//Promise.all([
-	//	Model.getTaskDoingBeforeDate(user.id, date)
-	//	, Model.getTaskByStartDate(user.id, date)
-	//]).then(function(results){
-	//	return results[0].concat( results[1] );
-	//})
-	Model.getTaskAll( user.id )
-		.then( View.taskList ).then(function(html){
+	Promise.all([
+		Model.getCycleTask(user.id)
+		, Model.getTaskAll(user.id)
+	]).then(function(results){      console.log(results)
+		var rs = results[0]
+			;
+
+		rs = rs.concat( results[1] );
+		                   console.log(rs)
+		return rs;
+	}).then( View.taskList).catch(function(e){
+		console.log(e)
+	}).then(function(html){      console.log(html)
 		res.send( config.docType.html5 + html );
 		res.end();
 	});
@@ -53,22 +58,89 @@ web.post('/task/', function(req, res){
 		, user = User.getUserFromSession.fromReq(req)
 		;
 
-	body.taskStartTime = body.taskStartDate +' '+ body.taskStartTime + ':00';
-	body.taskEndTime = body.taskEndDate +' '+ body.taskEndTime + ':00';
+	//body.taskStartTime = body.taskStartDate +' '+ body.taskStartTime + ':00';
+	//body.taskEndTime = body.taskEndDate +' '+ body.taskEndTime + ':00';
 
-	Model.add(user.id, body).then(function(rs){
+	Model.addTaskByUser(user.id, body).then(function(rs){
 		var result;
 
 		if( rs && rs.insertId ){
-			result = body;
-			result.id = rs.insertId;
-
-			result = {
-				info: result
-			}
+			result = Model.addUserTask(user.id, rs.insertId);
 		}
 		else{
 			result = Promise.reject( new TaskError('创建任务失败') );
+		}
+
+		return result;
+	}).then(function(rs){
+		var result;
+
+		if( rs && rs.insertId ){
+			body.id = rs.insertId;
+
+			result = {
+				success: true
+				, info: {
+					info: body
+				}
+			};
+		}
+		else{
+			result = Promise.reject( new TaskError('用户任务创建失败') );
+		}
+
+		return result;
+	}).catch(function(e){
+		console.log( e );
+
+		return {
+			error: ''
+			, msg: e.message
+		};
+	}).then(function(send){
+		res.send( JSON.stringify(send) );
+		res.end();
+	});
+});
+
+web.post('/task/:taskId/start', function(req, res){
+	var param = req.params || {}
+		, id = param.id
+		, taskId = param.taskId
+		, type = param.type
+		, user = User.getUserFromSession.fromReq( req )
+		, result
+		;
+
+	// 判断是否有 id 是否为周期类型任务
+	if( id && (type === '2' || type === '3') ){
+		result = Model.execTask( id );
+	}
+	else{
+		result = Model.addUserTask(user.id, taskId).then(function(rs){
+			var result;
+
+			if( rs && rs.insertId ){
+				result = Model.execTask( rs.insertId );
+			}
+			else{
+				result = Promise.reject( new TaskError('用户任务创建失败') );
+			}
+
+			return result;
+		});
+	}
+
+	result.then(function(rs){
+		var result;
+
+		if( rs && rs.changedRows ){
+			result = {
+				success: true
+			};
+		}
+		else{
+			result = Promise.reject( new Error('用户任务接受失败') );
 		}
 
 		return result;
@@ -87,15 +159,104 @@ web.post('/task/', function(req, res){
 
 web.post('/task/:taskId/done', function(req, res){
 	var param = req.params || {}
+		, body = req.body || {}
+		, id = body.id
+		, type = body.type
 		, taskId = param.taskId
 		;
 
-	Model.doneTask(taskId).then(function(){
-		var json = {
-			success: true
-		};
+	Model.doneTask( id ).then(function(rs){
+		var result;
 
-		res.send( JSON.stringify(json) );
+		if( rs && rs.changedRows ){
+
+			if( type === '0' ){
+				result = Model.unableTask(taskId);
+			}
+			if( type === '1' ){
+				result = Model.minusTaskTimes(taskId);
+			}
+			else{
+				result = Promise.resolve(rs);
+			}
+		}
+		else{
+			result = Promise.reject( new TaskError('完成任务失败') );
+		}
+
+		return result;
+	}).then(function(rs){
+		var result;
+
+		if( rs && rs.changedRows ){
+			result = {
+				success: true
+				, info: {
+					id: id
+				}
+			};
+		}
+		else{
+			result = Promise.reject( new TaskError('数据库错误') );
+		}
+
+		return result;
+	}).catch(function(e){
+		console.log( e );
+
+		return {
+			error: ''
+			, msg: e.message
+		};
+	}).then(function(send){
+		res.send( JSON.stringify(send) );
+		res.end();
+	});
+});
+
+web.post('/task/:taskId/end', function(req, res){
+	var param = req.params || {}
+		, body = req.body || {}
+		, id = body.id
+		, taskId = param.taskId
+		;
+
+	Model.doneTask( id ).then(function(rs){
+		var result;
+
+		if( rs && rs.changedRows ){
+			result = Model.unableTask(taskId);
+		}
+		else{
+			result = Promise.reject( new TaskError('完成任务失败') );
+		}
+
+		return result;
+	}).then(function(rs){
+		var result;
+
+		if( rs && rs.changedRows ){
+			result = {
+				success: true
+				, info: {
+					id: id
+				}
+			};
+		}
+		else{
+			result = Promise.reject( new TaskError('结束周期任务失败') );
+		}
+
+		return result;
+	}).catch(function(e){
+		console.log( e );
+
+		return {
+			error: ''
+			, msg: e.message
+		}
+	}).then(function(send){
+		res.send( JSON.stringify(send) );
 		res.end();
 	});
 });

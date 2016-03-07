@@ -97,7 +97,24 @@
 	}
 
 	.formGroup{
+		clear: both;
 		margin: 30px 10px;
+
+		&-half{
+			clear: none;
+			float: left;
+
+			margin-top: 0;
+
+			&:before,
+			&:after{
+				content: "";
+				display: table;
+			}
+			&:after{
+				clear: both;
+			}
+		}
 
 		.formGroup{
 			margin: 0 10px;

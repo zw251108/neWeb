@@ -31,15 +31,22 @@
 	}
 	.task{
 
+		&-notReceived{}
+		&-notStart{}
+		&-doing{}
 		&-done{
 			color: #c0c0c0;
 		}
 
-		&-delay{
-			color: @c229;
-		}
+		//&-delay{
+		//	color: @c229;
+		//}
 
-		&_deadline{
+		&_datetime,
+		&_deadline,
+		&_timeConsume,
+		&_times,
+		&_desc{
 			font-size: 14px;
 			text-indent: 2em;
 		}

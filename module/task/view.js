@@ -7,6 +7,8 @@ var getEmmet    = require('../emmet/getEmmet.js')
 
 	, modules   = require('../module.js')
 
+	, TagView   = require('../tag/view.js')
+
 	, dateFormat = function(date){
 		var m = date.getMonth() +1
 			, d = date.getDate()
@@ -20,18 +22,99 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	})
 
 	, taskTpl = emmetTpl({
-		template: 'li.task.%status%[data-id=%id% data-status=%status% data-start=%start% data-end=%end%]' +
-			'>label.task_name' +
-				'>input[type=radio %checked%]' +
-				'+span.icon.icon-radio{ %name%}' +
-			'^div.task_deadline{%start% —— %end%}'
+		template: 'dt.task.%statusClass%[data-id=%id% data-status=%status% data-task-id=%taskId% data-type=%type% data-lv=%lv%]' +
+				'>span.task_status{%statusText%}' +
+				'+span.task_lv{%lvText%}' +
+				'+span.task_type{%typeText%}' +
+				'+span.task_name{%name%}+{%taskOperate%}' +
+				'+span.icon.icon-up' +
+			'^dd.hidden.task_detail' +
+				'>div.task_datetime{创建时间：%datetime%}' +
+				'+div.task_deadline{期望执行时间：%hopeStartDate% %hopeStartTime% —— %hopeEndDate% %hopeEndTime%}' +
+				'+div.task_timeConsume{预计花费时间：%timeConsume%}' +
+				'+div.task_times{可执行次数：%times% 次}' +
+				'+div.task_desc{%desc%}'
 		, filter: {
-			status: function(d){
-				var date = new Date();
-				return +d.status ? 'task-done' : (d.end < dateFormat(date) ? 'task-delay' : '');
+			statusClass: function(d){
+				var status = d.status || ''
+					, result = ''
+					;
+
+				if( !status ){  // 未接受
+					result = 'task-notReceived';
+				}
+				else if( status === '0' ){  // 未开始
+					result = 'task-notStart'
+				}
+				else if( status === '1' ){  // 进行中
+					result = 'task-doing'
+				}
+				else if( status === '2' ){  // 已完成
+					result = 'task-done'
+				}
+
+				return result;
 			}
-			, checked: function(d){
-				return +d.status ? ' checked="checked" disabled="disabled"' : ''
+			, statusText: function(d){
+				var text = ['未开始', '进行中', '已结束']
+					;
+
+				return ('['+ (d.status ? text[d.status] : '未接受') +']') || '';
+			}
+			, lvText: function(d){
+				var text = ['系统', '用户']
+					;
+
+				return ('['+ text[d.lv] +']') || '';
+			}
+			, typeText: function(d){
+				var text = ['单次', '多次', '每天', '每周']
+					;
+
+				return ('['+ text[d.type] +']') || '';
+			}
+			, taskOperate: function(d){
+				var status = d.status
+					, result = ''
+					;
+
+				if( !status || status === '0' ){  // 未接受 或 未开始
+					result = '<button type="button" class="btn task_start">开始</button>';
+				}
+				else if( status === '1' ){  // 已开始
+					result = '<button type="button" class="btn task_done">结束</button>';
+
+					if( d.lv === '1' && (d.type === '2' || d.type === '3') ){ // 为用户发布 周期任务
+						result += '<button type="button" class="btn task_end">永久结束</button>';
+					}
+				}
+
+				return result;
+			}
+			, hopeStartDate: function(d){
+				var date
+					, result = ''
+					, m, day
+					;
+
+				if( !d.hopeStartDate ){
+
+				}
+
+
+				if( d.type === '2' || d.type === '3' ){
+
+				}
+
+				return result;
+			}
+			, hopeStartTime: function(d){}
+			, hopeEndDate: function(d){}
+			, hopeEndTime: function(d){
+
+			}
+			, timeConsume: function(d){
+				return d.timeConsume ? (d.timeConsume +' 分钟') : '';
 			}
 		}
 	})
@@ -40,26 +123,59 @@ var getEmmet    = require('../emmet/getEmmet.js')
 		template: 'form#addTaskForm[action=./ method=post]' +
 			'div.formGroup' +
 				'>label.label[for=taskName]{请添加任务名称}' +
-				'+input#taskName.input[type=text name=taskName placeholder=任务名称 data-validator=name]' +
+				'+input#taskName.input[type=text name=name placeholder=任务名称 data-validator=name]' +
 			'^div.formGroup' +
-				'>label.label[for=taskStartDate]{请设置任务开始时间}' +
-				'+div.input-datetime' +
-					'>input#taskStartDate.input[type=date name=taskStartDate placeholder=开始日期 data-validator=date]' +
-					'+input#taskStartTime.input[type=time name=taskStartTime placeholder=开始时间 data-validator=time]' +
-			'^^div.formGroup' +
-				'>label.label[for=taskEndTime]{请设置任务结束时间}' +
-				'+div.input-datetime' +
-					'>input#taskEndDate.input[type=date name=taskEndDate placeholder=结束日期 data-validator=date]' +
-					'+input#taskEndTime.input[type=time name=taskEndTime placeholder=结束时间 data-validator=time]' +
-			'^^div.formGroup' +
-				'>label.label{请选择任务类型}' +
+				'>label.label[for=taskSelf]{请设置任务目标}' +
 				'+div.input.input-pickGroup' +
-					'>input#taskOnce[type=radio name=taskType value=0]' +
-					'+label.icon.icon-radio[for=taskOnce]{一次}' +
-					'+input#taskPerDay[type=radio name=taskType value=1]' +
+					'>input#taskSelf[type=radio name=target value=1]' +
+					'+label.icon.icon-radio[for=taskSelf]{自己}' +
+			'^^div.formGroup' +
+				'>label.label[for=taskOnce]{请选择任务类型}' +
+				'+div.input.input-pickGroup' +
+					'>input#taskOnce[type=radio name=type value=0]' +
+					'+label.icon.icon-radio[for=taskOnce]{单次}' +
+					'+input#taskMultiply[type=radio name=type value=1]' +
+					'+label.icon.icon-radio[for=taskMultiply]{多次}' +
+					'+input#taskPerDay[type=radio name=type value=2]' +
 					'+label.icon.icon-radio[for=taskPerDay]{每天}' +
-					'+input#taskPerWeek[type=radio name=taskType value=2]' +
-					'+label.icon.icon-radio[for=taskPerWeek]{每周}'
+					'+input#taskPerWeek[type=radio name=type value=3]' +
+					'+label.icon.icon-radio[for=taskPerWeek]{每周}' +
+			'^^div.formGroup' +
+				'>label.label[for=taskTimes]{请设置任务执行次数}' +
+				'+input#taskTimes.input[type=text name=times placeholder=执行次数 data-validator=number]' +
+			'^div.formGroup' +
+				'>label.label[for=taskTimeConsume]{请设置任务预估耗时}' +
+				'+input#taskTimeConsume.input[type=text name=timeConsume placeholder=预估耗时 data-validator=number]' +
+			'^div.formGroup.formGroup-half' +
+				'>label.label[for=taskHopeStartDate]{请设置任务期望开始日期}' +
+				'+input#taskHopeStartDate.input[type=date name=hopeStartDate placeholder=开始日期 data-validator=date]' +
+			'^div.formGroup.formGroup-half' +
+				'>label.label[for=taskHopeStartTime]{请设置任务期望开始时间}' +
+				'+input#taskHopeStartTime.input[type=time name=hopeStartTime placeholder=开始时间 data-validator=time]' +
+			'^div.formGroup.formGroup-half' +
+				'>label.label[for=taskHopeEndDate]{请设置任务期望结束日期}' +
+				'+input#taskhopeEndDate.input[type=date name=hopeEndDate placeholder=结束日期 data-validator=date]' +
+			'^div.formGroup.formGroup-half' +
+				'>label.label[for=taskHopeEndTime]{请设置任务期望结束时间}' +
+				'+input#taskhopeEndTime.input[type=time name=hopeEndTime placeholder=结束时间 data-validator=time]' +
+			'^div.formGroup' +
+				'>label.label[for=star1]{请评分}' +
+				'+div.input-score' +
+					'>input#star5[type=radio name=score value=5]' +
+					'+label.icon.icon-star[for=star5]' +
+					'+input#star4[type=radio name=score value=4]' +
+					'+label.icon.icon-star[for=star4]' +
+					'+input#star3[type=radio name=score value=3]' +
+					'+label.icon.icon-star[for=star3]' +
+					'+input#star2[type=radio name=score value=2]' +
+					'+label.icon.icon-star[for=star2]' +
+					'+input#star1[type=radio name=score value=1]' +
+					'+label.icon.icon-star[for=star1]' +
+				'^span.score_value' +
+			'^' + TagView.tagEditorEmmet +
+			'^^div.formGroup' +
+				'>label.label[for=taskDesc]{请添加任务描述}' +
+				'+textarea#taskDesc.input.input-multiply[name=desc placeholder=任务描述 data-validator=desc]'
 	})
 
 	, tabName = [{
@@ -81,7 +197,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 							type: 'button', id: 'add', icon: 'plus', title: '添加任务'
 						}]
 						, content: '<div class="tabWrap">'+ tabTpl(tabName).join('') +'</div>' +
-							'<ul class="taskList" id="taskList">'+ taskTpl(rs).join('') +'</ul>'
+							'<dl class="taskList" id="taskList">'+ taskTpl(rs).join('') +'</dl>'
 					}
 					, modulePopup: [{
 						id: 'addTaskPopup'

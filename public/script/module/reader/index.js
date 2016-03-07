@@ -115,7 +115,7 @@ require(['../../config'], function(config){
 				$that.nextAll('.reader_articleList').slideToggle();
 			}
 			else{
-				$that.nextAll('.reader_articleList').html('<li><div class="loading loading-chasing"></div></li>');
+				$that.nextAll('.reader_articleList').html('<li class="article"><div class="loading loading-chasing"></div></li>');
 				socket.emit('data', {
 					topic: 'reader/feed'
 					, query: {
