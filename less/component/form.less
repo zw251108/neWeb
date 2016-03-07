@@ -14,6 +14,9 @@
 
  div.formGroup
     div.input-tag
+
+ div.formGroup
+    div.input-pickGroup
  * */
 .input{
 
@@ -28,6 +31,7 @@
 	padding: 0;
 
 	font-size: 14px;
+
 	text-indent: 1em;
 
 	-webkit-appearance: none;
@@ -139,6 +143,52 @@
 				border-bottom: 1px solid @input-tag_pointOut_li_bd_c;
 				.boxSizing(border-box);
 			}
+		}
+	}
+	/**
+	 * 评分
+	 div.input-pickGroup
+		label.icon.icon-radio
+			input[type=radio]
+		label.icon.icon-radio
+			input[type=radio]
+
+	div.input-pickGroup
+		label.icon.icon-checkbox
+			input[type=checkbox]
+		label.icon.icon-checkbox
+			input[type=checkbox]
+	 */
+	/*div*/&-pickGroup{
+		float: left;
+
+		line-height: 46px;
+
+		.icon-radio,
+		.icon-checkbox{
+			float: left;
+			//margin-left: 14px;
+			color: #888;
+			//font-size: 24px;
+
+			&:before{
+				margin-right: 1.2em;
+			}
+		}
+	}
+
+	/**
+	 * 日期时间
+	 div.input.input-datetime
+	    input[type=date]
+        input[type=time]
+	 */
+	&-datetime{
+		[type="date"],
+		[type="time"]{
+			float: left;
+			width: 50%;
+			line-height: 46px;
 		}
 	}
 
