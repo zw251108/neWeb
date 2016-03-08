@@ -174,8 +174,10 @@ var db  = require('../db.js')
 			' from user_reader_bookmark' +
 			' where' +
 				' user_id=:userId' +
-			' Group by' +
-				' date_format(read_datetime,\'%Y-%m-%d\')'
+			' group by' +
+				' date_format(read_datetime,\'%Y-%m-%d\')' +
+			' order by' +
+				' read_date desc'
 	}
 	, Model = {
 		getReaderByPage: function(page, size){

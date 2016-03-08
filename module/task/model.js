@@ -34,7 +34,7 @@ var db = require('../db.js')
 	}
 
 	, SQL = {
-		taskByCycleType: 'select id,' +
+		taskByCycleType: 'select id as taskId,' +
 				'name,' +
 				'create_datetime as datetime,' +
 				'score,' +
@@ -101,17 +101,17 @@ var db = require('../db.js')
 				'hope_end_time,' +
 				'target,' +
 				'tags,' +
-				'desc,' +
+				'`desc`,' +
 				'lv)' +
-			' values(:taskName,:user_id,:taskScore,:taskType,:taskTimes,:taskTimeConsume,:taskHopeStartDate,:taskHopeStartTime,:taskHopeEndDate,:taskHopeEndTime,:taskTarget,:tags,:taskDesc,:taskLv)'
+			' values(:name,:userId,:score,:type,:times,:timeConsume,:hopeStartDate,:hopeStartTime,:hopeEndDate,:hopeEndTime,:target,:tags,:desc,:lv)'
 
 		, userTaskAdd: 'insert user_task(task_id,user_id) values(:taskId,:userId)'
 
 		, taskUnable: 'update task set enable=\'1\' where id=:taskId'
 		, taskMinusTimes: 'update task set times=times-1 where id=:taskId'
 
-		, userTaskStart: 'update user_task set execStart=now(),status=\'1\' where id=:id'
-		, userTaskEnd: 'update user_task set execEnd=now(),status=\'2\' where id=:id'
+		, userTaskStart: 'update user_task set exec_start=now(),status=\'1\' where id=:id'
+		, userTaskEnd: 'update user_task set exec_end=now(),status=\'2\' where id=:id'
 	}
 
 	, Model = {
@@ -141,8 +141,9 @@ var db = require('../db.js')
 		}
 
 		, addTaskByUser: function(userId, task){
-			task.creator_id = userId;
+			task.userId = userId;
 			task.lv = 1;
+			task.score = task.score || 0;
 
 			return db.handle({
 				sql: SQL.taskAdd

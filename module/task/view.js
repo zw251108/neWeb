@@ -22,18 +22,34 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	})
 
 	, taskTpl = emmetTpl({
-		template: 'dt.task.%statusClass%[data-id=%id% data-status=%status% data-task-id=%taskId% data-type=%type% data-lv=%lv%]' +
+		template: 'li.task.%statusClass%[data-id=%id% data-status=%status% data-task-id=%taskId% data-type=%type% data-lv=%lv%]' +
 				'>span.task_status{%statusText%}' +
 				'+span.task_lv{%lvText%}' +
 				'+span.task_type{%typeText%}' +
-				'+span.task_name{%name%}+{%taskOperate%}' +
-				'+span.icon.icon-up' +
-			'^dd.hidden.task_detail' +
-				'>div.task_datetime{创建时间：%datetime%}' +
-				'+div.task_deadline{期望执行时间：%hopeStartDate% %hopeStartTime% —— %hopeEndDate% %hopeEndTime%}' +
-				'+div.task_timeConsume{预计花费时间：%timeConsume%}' +
-				'+div.task_times{可执行次数：%times% 次}' +
-				'+div.task_desc{%desc%}'
+				'+span.task_name{%name%}' +
+				'+span.icon.icon-up+{%taskOperate%}' +
+			'+table.hidden.task_detail' +
+				'>thead' +
+					'>tr' +
+						'>th' +
+						'+th' +
+				'^^tbody' +
+					'>tr' +
+						'>td{创建时间}' +
+						'+td{%datetime%}' +
+					'^tr' +
+						'>td{期望执行时间}' +
+						'+td{%hopeStartDate% %hopeStartTime% —— %hopeEndDate% %hopeEndTime%}' +
+					'^tr' +
+						'>td{预计花费时间}' +
+						'+td{%timeConsume%}' +
+					'^tr' +
+						'>td{可执行次数}' +
+						'+td{%times% 次}' +
+					'^tr' +
+						'>td{任务描述}' +
+						'+td{%desc%}' +
+			'^^^div.tagsArea{%tags%}'
 		, filter: {
 			statusClass: function(d){
 				var status = d.status || ''
@@ -59,7 +75,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 				var text = ['未开始', '进行中', '已结束']
 					;
 
-				return ('['+ (d.status ? text[d.status] : '未接受') +']') || '';
+				return ('['+ ('status' in d ? text[d.status] : '未接受') +']') || '';
 			}
 			, lvText: function(d){
 				var text = ['系统', '用户']
@@ -85,7 +101,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					result = '<button type="button" class="btn task_done">结束</button>';
 
 					if( d.lv === '1' && (d.type === '2' || d.type === '3') ){ // 为用户发布 周期任务
-						result += '<button type="button" class="btn task_end">永久结束</button>';
+						result = '<button type="button" class="btn task_end">永久结束</button>'+ result;
 					}
 				}
 
@@ -94,27 +110,115 @@ var getEmmet    = require('../emmet/getEmmet.js')
 			, hopeStartDate: function(d){
 				var date
 					, result = ''
-					, m, day
+					, month, day, week
 					;
 
-				if( !d.hopeStartDate ){
-
+				if( d.hopeStartDate && d.hopeStartDate !== '0000-00-00' ){
+					result = d.hopeStartDate;
 				}
+				else{
+					if( d.type === '2' || d.type === '3' ){
+						date = new Date();
 
+						month = date.getMonth();
+						day = date.getDate();
 
-				if( d.type === '2' || d.type === '3' ){
+						if( d.type === '3' ){
+							week = date.getDay();
 
+							day = day - week +1;
+
+							date = new Date(date.getFullYear(), month, day);
+
+							day = date.getDate();
+							month = date.getMonth();
+						}
+
+						month += 1;
+						month = month > 10 ? month : '0'+ month;
+						day = day > 10 ? day : '0'+ day;
+
+						result = date.getFullYear() +'-'+ month +'-'+ day;
+					}
 				}
 
 				return result;
 			}
-			, hopeStartTime: function(d){}
-			, hopeEndDate: function(d){}
-			, hopeEndTime: function(d){
+			, hopeStartTime: function(d){
+				var result = ''
+					;
 
+				if( d.hopeStartTime && d.hopeStartTime !== '00:00:00' ){
+					result = d.hopeStartTime;
+				}
+				else{
+					if( d.type === '2' || d.type === '3' ){
+						result = '00:00:00';
+					}
+				}
+
+				return result;
+			}
+			, hopeEndDate: function(d){
+				var date
+					, result = ''
+					, month, day, week
+					;
+
+				if( d.hopeEndDate && d.hopeEndDate !== '0000-00-00' ){
+					result = d.hopeEndDate;
+				}
+				else{
+					if( d.type === '2' || d.type === '3' ){
+						date = new Date();
+
+						month = date.getMonth();
+						day = date.getDate();
+
+						if( d.type === '3' ){
+							week = date.getDay();
+
+							day = day - week + 7;
+
+							date = new Date(date.getFullYear(), month, day);
+
+							day = date.getDate();
+							month = date.getMonth();
+						}
+
+						month += 1;
+						month = month > 10 ? month : '0' + month;
+						day = day > 10 ? day : '0' + day;
+
+						result = date.getFullYear() + '-' + month + '-' + day;
+					}
+				}
+
+				return result;
+			}
+			, hopeEndTime: function(d){
+				var result = ''
+					;
+
+				if( d.hopeStartTime && d.hopeEndTime !== '00:00:00' ){
+					result = d.hopeStartTime;
+				}
+				else{
+					if( d.type === '2' || d.type === '3' ){
+						result = '23:59:59';
+					}
+				}
+
+				return result;
+			}
+			, times: function(d){
+				return d.times === 0 ? '-' : d.times;
 			}
 			, timeConsume: function(d){
 				return d.timeConsume ? (d.timeConsume +' 分钟') : '';
+			}
+			, tags: function(d){
+				return d.tags ? '<span class="tag'+ (d.status > 0 ? ' tag-checked' : '') +'">'+ d.tags.split(',').join('</span><span class="tag'+ (d.status > 0 ? ' tag-checked' : '') +'">') +'</span>' : '';
 			}
 		}
 	})
@@ -197,7 +301,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 							type: 'button', id: 'add', icon: 'plus', title: '添加任务'
 						}]
 						, content: '<div class="tabWrap">'+ tabTpl(tabName).join('') +'</div>' +
-							'<dl class="taskList" id="taskList">'+ taskTpl(rs).join('') +'</dl>'
+							'<ul class="taskList" id="taskList">'+ taskTpl(rs).join('') +'</ul>'
 					}
 					, modulePopup: [{
 						id: 'addTaskPopup'

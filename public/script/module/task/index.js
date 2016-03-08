@@ -1,20 +1,37 @@
 require(['../../config'], function(config){
 	var r= require.config(config.requireConfig);
-	r(['jquery', 'global', 'socket', 'template'], function($, g, socket){
+	r(['jquery', 'global', 'socket', 'tag', config.dataSource.tag, 'template'], function($, g, socket, tag, tagsData){
 		var $task = $('#task')
 			, $taskList = $task.find('#taskList')
 			, taskTpl = $.template({
-				template: 'dt.task.%statusClass%[data-id=%id% data-status=%status% data-task-id=%taskId% data-type=%type% data-lv=%lv%]' +
-						'>span.task_status{%statusText%}' +
-						'+span.task_lv{%lvText%}' +
-						'+span.task_type{%typeText%}' +
-						'+span.task_name{%name%}+{%taskOperate%}' +
-					'^dd.hidden.task_detail' +
-						'>div.task_datetime{创建时间：%datetime%}' +
-						'+div.task_deadline{期望执行时间：%hopeStartDate% %hopeStartTime% —— %hopeEndDate% %hopeEndTime%}' +
-						'+div.task_timeConsume{预计花费时间：%timeConsume% 分钟}' +
-						'+div.task_times{可执行次数：%times% 次}' +
-						'+div.task_desc{%desc%}'
+				template: 'li.task.%statusClass%[data-id=%id% data-status=%status% data-task-id=%taskId% data-type=%type% data-lv=%lv%]' +
+					'>span.task_status{%statusText%}' +
+					'+span.task_lv{%lvText%}' +
+					'+span.task_type{%typeText%}' +
+					'+span.task_name{%name%}' +
+					'+span.icon.icon-up+{%taskOperate%}' +
+					'+table.hidden.task_detail' +
+						'>thead' +
+							'>tr' +
+								'>th' +
+								'+th' +
+						'^^tbody' +
+							'>tr' +
+								'>td{创建时间}' +
+								'+td{%datetime%}' +
+							'^tr' +
+								'>td{期望执行时间}' +
+								'+td{%hopeStartDate% %hopeStartTime% —— %hopeEndDate% %hopeEndTime%}' +
+							'^tr' +
+								'>td{预计花费时间}' +
+								'+td{%timeConsume%}' +
+							'^tr' +
+								'>td{可执行次数}' +
+								'+td{%times% 次}' +
+							'^tr' +
+								'>td{任务描述}' +
+								'+td{%desc%}' +
+					'^^^div.tagsArea{%tags%}'
 				, filter: {
 					statusClass: function(d){
 						var status = d.status || ''
@@ -40,7 +57,7 @@ require(['../../config'], function(config){
 						var text = ['未开始', '进行中', '已结束']
 							;
 
-						return ('['+ (d.status ? text[d.status] : '未接受') +']') || '';
+						return ('['+ ('status' in d ? text[d.status] : '未接受') +']') || '';
 					}
 					, lvText: function(d){
 						var text = ['系统', '用户']
@@ -66,11 +83,124 @@ require(['../../config'], function(config){
 							result = '<button type="button" class="btn task_done">结束</button>';
 
 							if( d.lv === '1' && (d.type === '2' || d.type === '3') ){ // 为用户发布 周期任务
-								result += '<button type="button" class="btn task_end">永久结束</button>';
+								result = '<button type="button" class="btn task_end">永久结束</button>'+ result;
 							}
 						}
 
 						return result;
+					}
+					, hopeStartDate: function(d){
+						var date
+							, result = ''
+							, month, day, week
+							;
+
+						if( d.hopeStartDate && d.hopeStartDate !== '0000-00-00' ){
+							result = d.hopeStartDate;
+						}
+						else{
+							if( d.type === '2' || d.type === '3' ){
+								date = new Date();
+
+								month = date.getMonth();
+								day = date.getDate();
+
+								if( d.type === '3' ){
+									week = date.getDay();
+
+									day = day - week +1;
+
+									date = new Date(date.getFullYear(), month, day);
+
+									day = date.getDate();
+									month = date.getMonth();
+								}
+
+								month += 1;
+								month = month > 10 ? month : '0'+ month;
+								day = day > 10 ? day : '0'+ day;
+
+								result = date.getFullYear() +'-'+ month +'-'+ day;
+							}
+						}
+
+						return result;
+					}
+					, hopeStartTime: function(d){
+						var result = ''
+							;
+
+						if( d.hopeStartTime && d.hopeStartTime !== '00:00:00' ){
+							result = d.hopeStartTime;
+						}
+						else{
+							if( d.type === '2' || d.type === '3' ){
+								result = '00:00:00';
+							}
+						}
+
+						return result;
+					}
+					, hopeEndDate: function(d){
+						var date
+							, result = ''
+							, month, day, week
+							;
+
+						if( d.hopeEndDate && d.hopeEndDate !== '0000-00-00' ){
+							result = d.hopeEndDate;
+						}
+						else{
+							if( d.type === '2' || d.type === '3' ){
+								date = new Date();
+
+								month = date.getMonth();
+								day = date.getDate();
+
+								if( d.type === '3' ){
+									week = date.getDay();
+
+									day = day - week + 7;
+
+									date = new Date(date.getFullYear(), month, day);
+
+									day = date.getDate();
+									month = date.getMonth();
+								}
+
+								month += 1;
+								month = month > 10 ? month : '0' + month;
+								day = day > 10 ? day : '0' + day;
+
+								result = date.getFullYear() + '-' + month + '-' + day;
+							}
+						}
+
+						return result;
+					}
+					, hopeEndTime: function(d){
+						var result = ''
+							;
+
+						if( d.hopeStartTime && d.hopeEndTime !== '00:00:00' ){
+							result = d.hopeStartTime;
+						}
+						else{
+							if( d.type === '2' || d.type === '3' ){
+								result = '23:59:59';
+							}
+						}
+
+						return result;
+					}
+					, times: function(d){
+						return d.times === 0 ? '-' : d.times;
+					}
+					, timeConsume: function(d){
+						return d.timeConsume ? (d.timeConsume +' 分钟') : '';
+					}
+					, tags: function(d){
+						return d.tags ? '<span class="tag'+ (d.status > 0 ? ' tag-checked' : '') +'">'+ d.tags.split(',').join('</span><span class="tag'+ (d.status > 0 ? ' tag-checked' : '') +'">') +'</span>' : '';
 					}
 				}
 			})
@@ -78,35 +208,70 @@ require(['../../config'], function(config){
 			, $addTaskForm = $addTaskPopup.find('#addTaskForm')
 			;
 
-		$task.on('click', '.icon-up', function(){
+		$task.on('click', '.icon-up,.icon-down', function(){
 			var $that = $(this)
 				, $parent = $that.parents('.task')
 				;
 
 			$that.toggleClass('icon-up icon-down');
-			$parent.next().slideDown();
-		}).on('click', '.icon-down', function(){
-			var $that = $(this)
-				, $parent = $that.parents('.task')
+			$parent.find('.task_detail').toggle();
+		}).on('click', '.task_start', function(){
+			var $parent = $(this).parents('.task')
+				, id = $parent.data('id')
+				, taskId = $parent.data('taskId')
+				, type = $parent.data('type')
 				;
 
-			$that.toggleClass('icon-up icon-down');
-			$parent.next().slideUp();
-		}).on('click', 'input:radio', function(){
-			var $that = $(this).parents('.task')
-				, id = $that.data('id')
-				;
-
-			$that.addClass('task-done').removeClass('task-delay');
-			this.disabled = true;
+			$parent.addClass('task-doing').removeClass('task-notReceived task-notStart').find('.btn').remove();
 
 			$.ajax({
-				url: id +'/done'
+				url: taskId +'/start'
 				, type: 'POST'
-				, success: function(json){
-
+				, data: {
+					id: id
+					, type: type
 				}
-			})
+				, success: function(json){
+				}
+			});
+		}).on('click', '.task_done', function(){
+			var $parent = $(this).parents('.task')
+				, id = $parent.data('id')
+				, taskId = $parent.data('taskId')
+				, type = $parent.data('type')
+				;
+
+			$parent.addClass('task-done').removeClass('task-doing').find('.btn').remove();
+
+			$.ajax({
+				url: taskId +'/done'
+				, type: 'POST'
+				, data: {
+					id: id
+					, type: type
+				}
+				, success: function(json){
+				}
+			});
+		}).on('click', '.task_end', function(){
+			var $parent = $(this).parents('.task')
+				, id = $parent.data('id')
+				, taskId = $parent.data('taskId')
+				, type = $parent.data('type')
+				;
+
+			$parent.addClass('task-done').find('.btn').remove();
+
+			$.ajax({
+				url: taskId +'/end'
+				, type: 'POST'
+				, data: {
+					id: id
+					, type: type
+				}
+				, success: function(json){
+				}
+			});
 		});
 
 		$('#add').on('click', function(){
@@ -128,11 +293,17 @@ require(['../../config'], function(config){
 					else{
 						$taskList.prepend( taskTpl(json.info).join() );
 						$addTaskForm.get(0).reset();
+						$addTaskForm.find('.tag_area').empty();
 					}
 				}
 			});
 
 			$addTaskPopup.trigger('closeDialog');
 		});
+
+		tagsData = $.parseJSON(tagsData);
+
+		tag( tagsData );
+		tag.setAdd( $addTaskPopup );
 	});
 });

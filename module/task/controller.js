@@ -38,16 +38,16 @@ web.get('/task/', function(req, res){
 	Promise.all([
 		Model.getCycleTask(user.id)
 		, Model.getTaskAll(user.id)
-	]).then(function(results){      console.log(results)
+	]).then(function(results){
 		var rs = results[0]
 			;
 
 		rs = rs.concat( results[1] );
-		                   console.log(rs)
+
 		return rs;
 	}).then( View.taskList).catch(function(e){
 		console.log(e)
-	}).then(function(html){      console.log(html)
+	}).then(function(html){
 		res.send( config.docType.html5 + html );
 		res.end();
 	});
@@ -58,14 +58,32 @@ web.post('/task/', function(req, res){
 		, user = User.getUserFromSession.fromReq(req)
 		;
 
-	//body.taskStartTime = body.taskStartDate +' '+ body.taskStartTime + ':00';
-	//body.taskEndTime = body.taskEndDate +' '+ body.taskEndTime + ':00';
-
 	Model.addTaskByUser(user.id, body).then(function(rs){
 		var result;
 
 		if( rs && rs.insertId ){
-			result = Model.addUserTask(user.id, rs.insertId);
+
+			body.taskId = rs.insertId;
+
+			if( body.type === '2' || body.type === '3' ){
+				result = rs;
+			}
+			else{
+				result = Model.addUserTask(user.id, rs.insertId).then(function(rs){
+					var result;
+
+					if( rs && rs.insertId ){
+						body.id = rs.insertId;
+						body.status = 0;
+						result = rs;
+					}
+					else{
+						result = Promise.reject( new TaskError('用户任务创建失败') );
+					}
+
+					return result;
+				});
+			}
 		}
 		else{
 			result = Promise.reject( new TaskError('创建任务失败') );
@@ -76,13 +94,9 @@ web.post('/task/', function(req, res){
 		var result;
 
 		if( rs && rs.insertId ){
-			body.id = rs.insertId;
-
 			result = {
 				success: true
-				, info: {
-					info: body
-				}
+				, info: body
 			};
 		}
 		else{
