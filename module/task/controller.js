@@ -119,15 +119,16 @@ web.post('/task/', function(req, res){
 
 web.post('/task/:taskId/start', function(req, res){
 	var param = req.params || {}
-		, id = param.id
+		, body = req.body || {}
+		, id = body.id
+		, type = body.type
 		, taskId = param.taskId
-		, type = param.type
 		, user = User.getUserFromSession.fromReq( req )
 		, result
 		;
 
 	// 判断是否有 id 是否为周期类型任务
-	if( id && (type === '2' || type === '3') ){
+	if( id && !(type === '2' || type === '3') ){
 		result = Model.execTask( id );
 	}
 	else{
@@ -135,6 +136,7 @@ web.post('/task/:taskId/start', function(req, res){
 			var result;
 
 			if( rs && rs.insertId ){
+				id = rs.insertId;
 				result = Model.execTask( rs.insertId );
 			}
 			else{
@@ -151,6 +153,10 @@ web.post('/task/:taskId/start', function(req, res){
 		if( rs && rs.changedRows ){
 			result = {
 				success: true
+				, info: {
+					id: id
+					, status: 1
+				}
 			};
 		}
 		else{

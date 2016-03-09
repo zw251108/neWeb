@@ -54,7 +54,7 @@ require(['../../config'], function(config){
 						return result;
 					}
 					, statusText: function(d){
-						var text = ['未开始', '进行中', '已结束']
+						var text = ['未开始', '进行中', '已完成']
 							;
 
 						return ('['+ ('status' in d ? text[d.status] : '未接受') +']') || '';
@@ -80,7 +80,7 @@ require(['../../config'], function(config){
 							result = '<button type="button" class="btn task_start">开始</button>';
 						}
 						else if( status === '1' ){  // 已开始
-							result = '<button type="button" class="btn task_done">结束</button>';
+							result = '<button type="button" class="btn btn-submit task_done">完成</button>';
 
 							if( d.lv === '1' && (d.type === '2' || d.type === '3') ){ // 为用户发布 周期任务
 								result = '<button type="button" class="btn task_end">永久结束</button>'+ result;
@@ -222,7 +222,7 @@ require(['../../config'], function(config){
 				, type = $parent.data('type')
 				;
 
-			$parent.addClass('task-doing').removeClass('task-notReceived task-notStart').find('.btn').remove();
+			$parent.addClass('task-doing').removeClass('task-notReceived task-notStart').find('.btn').replaceWith((type=== '2' || type === '3' ? '<button type="button" class="btn task_end">永久结束</button>' : '') +'<button type="button" class="btn btn-submit task_done">完成</button>');
 
 			$.ajax({
 				url: taskId +'/start'
@@ -232,6 +232,13 @@ require(['../../config'], function(config){
 					, type: type
 				}
 				, success: function(json){
+
+					if( 'error' in json ){
+
+					}
+					else{
+						$parent.data( json.info );
+					}
 				}
 			});
 		}).on('click', '.task_done', function(){

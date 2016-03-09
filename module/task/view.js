@@ -72,7 +72,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 				return result;
 			}
 			, statusText: function(d){
-				var text = ['未开始', '进行中', '已结束']
+				var text = ['未开始', '进行中', '已完成']
 					;
 
 				return ('['+ ('status' in d ? text[d.status] : '未接受') +']') || '';
@@ -98,7 +98,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					result = '<button type="button" class="btn task_start">开始</button>';
 				}
 				else if( status === '1' ){  // 已开始
-					result = '<button type="button" class="btn task_done">结束</button>';
+					result = '<button type="button" class="btn btn-submit task_done">完成</button>';
 
 					if( d.lv === '1' && (d.type === '2' || d.type === '3') ){ // 为用户发布 周期任务
 						result = '<button type="button" class="btn task_end">永久结束</button>'+ result;
@@ -231,12 +231,12 @@ var getEmmet    = require('../emmet/getEmmet.js')
 			'^div.formGroup' +
 				'>label.label[for=taskSelf]{请设置任务目标}' +
 				'+div.input.input-pickGroup' +
-					'>input#taskSelf[type=radio name=target value=1]' +
+					'>input#taskSelf[type=radio name=target value=1 checked=checked]' +
 					'+label.icon.icon-radio[for=taskSelf]{自己}' +
 			'^^div.formGroup' +
 				'>label.label[for=taskOnce]{请选择任务类型}' +
 				'+div.input.input-pickGroup' +
-					'>input#taskOnce[type=radio name=type value=0]' +
+					'>input#taskOnce[type=radio name=type value=0 checked=checked]' +
 					'+label.icon.icon-radio[for=taskOnce]{单次}' +
 					'+input#taskMultiply[type=radio name=type value=1]' +
 					'+label.icon.icon-radio[for=taskMultiply]{多次}' +

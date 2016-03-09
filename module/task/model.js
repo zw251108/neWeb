@@ -86,7 +86,7 @@ var db = require('../db.js')
 				' user_id=:userId' +
 			' and' +
 				' task.id=ut.task_id' +
-			' order by exec_start'
+			' order by status,id desc'
 
 		, taskAdd: 'insert task(' +
 				'name,' +
