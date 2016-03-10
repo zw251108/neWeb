@@ -114,7 +114,7 @@ var db = require('../db.js')
 		, userTaskEnd: 'update user_task set exec_end=now(),status=\'2\' where id=:id'
 	}
 
-	, Model = {
+	, TaskModel = {
 		dateFormat: function(date){
 			var m = date.getMonth() +1
 				, d = date.getDate()
@@ -204,4 +204,4 @@ var db = require('../db.js')
 //	console.log(rs)
 //})
 
-module.exports = Model;
+module.exports = TaskModel;

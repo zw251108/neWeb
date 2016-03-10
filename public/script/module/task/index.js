@@ -117,8 +117,8 @@ require(['../../config'], function(config){
 								}
 
 								month += 1;
-								month = month > 10 ? month : '0'+ month;
-								day = day > 10 ? day : '0'+ day;
+								month = month > 9 ? month : '0'+ month;
+								day = day > 9 ? day : '0'+ day;
 
 								result = date.getFullYear() +'-'+ month +'-'+ day;
 							}
