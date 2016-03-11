@@ -208,7 +208,35 @@ require(['../../config'], function(config){
 			, $addTaskForm = $addTaskPopup.find('#addTaskForm')
 			;
 
-		$task.on('click', '.icon-up,.icon-down', function(){
+		$task.on('click', '.tab', function(){
+			var tab = $(this).data('tab')
+				, $taskList = $task.find('.task')
+				;
+
+			switch( tab ){
+				case 'taskCycle':
+					$taskList.filter('.task-cycle').show();
+					$taskList.not('.task-cycle').hide();
+					break;
+				case 'taskNotStart':
+					$taskList.filter('.task-notStart').show();
+					$taskList.not('.task-notStart').hide();
+					break;
+				case 'taskDoing':
+					$taskList.filter('.task-doing').show();
+					$taskList.not('.task-doing').hide();
+				    break;
+				case 'taskDone':
+					$taskList.filter('.task-done').show();
+					$taskList.not('.task-done').hide();
+					break;
+				case 'taskAll':
+				default:
+					$taskList.show();
+					break;
+			}
+
+		}).on('click', '.icon-up,.icon-down', function(){
 			var $that = $(this)
 				, $parent = $that.parents('.task')
 				;

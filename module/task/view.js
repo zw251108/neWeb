@@ -18,7 +18,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	}
 
 	, tabTpl    = emmetTpl({
-		template: 'a.tab{%tabName%}'
+		template: 'a.tab[data-tab=%tabData%]{%tabName%}'
 	})
 
 	, taskTpl = emmetTpl({
@@ -53,6 +53,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 		, filter: {
 			statusClass: function(d){
 				var status = d.status || ''
+					, type = d.type
 					, result = ''
 					;
 
@@ -67,6 +68,10 @@ var getEmmet    = require('../emmet/getEmmet.js')
 				}
 				else if( status === '2' ){  // 已完成
 					result = 'task-done'
+				}
+
+				if( type === '2' || type === '3' ){ // 为周期任务
+					result += ' task-cycle';
 				}
 
 				return result;
@@ -283,9 +288,11 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	})
 
 	, tabName = [{
-		tabName: '全部'}, {
-		tabName: '未完成'}, {
-		tabName: '已完成'
+		tabData: 'taskAll', tabName: '全部'}, {
+		tabData: 'taskCycle', tabName: '周期任务'}, {
+		tabData: 'taskNotStart', tabName: '未开始'}, {
+		tabData: 'taskDoing', tabName: '进行中'}, {
+		tabData: 'taskDone', tabName: '已完成'
 	}]
 	, taskStatus = ['进行中']
 
