@@ -12,13 +12,13 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	, tagView   = require('../tag/view.js')
 
 	, articleListTpl = emmetTpl({
-		template: getEmmet('blog/article.html')
+		template: getEmmet('blog/articleList.html')
 		, filter: {
 			tags: tagView.tagEditorFilter.tagsArea
 		}
 	})
 	, articleTpl = emmetTpl({
-		template: getEmmet('blog/articleDetail.html')
+		template: getEmmet('blog/article.html')
 		, filter: {
 			tags: tagView.tagEditorFilter.tagsArea
 		}

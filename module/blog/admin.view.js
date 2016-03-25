@@ -11,30 +11,18 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	, TagView   = require('../tag/view.js')
 
 	, articleListTpl    = emmetTpl({
-		template: 'article.article' +
-			'>a[href=./%id%/]' +
-				'>h3.article_title{%title%}' +
-			'^hr' +
-			'+time.article_date[pubdate=pubdate datetime=%datetime%]{%datetime%}' +
-			'+div.tags{%tags%}'
+		template: getEmmet('admin/blog/articleList.html')
 		, filter: {
 			tags: TagView.tagEditorFilter.tagsArea
 		}
 	})
 	, articleTpl        = emmetTpl({
-		template: 'form[action=./ method=post]' +
-			'>article.article[data-id=%id%]' +
-				'>h3.article_title>input#title.input[type=text name=title value=%title%]' +
-				'^div.article_content' +
-					'>textarea.hidden[name=content data-code-type=html]{%content%}' +
+		template: getEmmet('admin/blog/article.html') +
 					'+' + TagView.tagEditorEmmet
 		, filter: TagView.tagEditorFilter
 	})
 	, articleAddFormTpl = emmetTpl({
-		template: 'form[method=post action=./]' +
-			'>div.formGroup' +
-				'>label.label[for=title]{请添加标题}' +
-				'+input#title.input[type=text name=title data-validator=title]'
+		template: getEmmet('admin/blog/articleAddForm.html')
 	})
 
 	, View  = {
