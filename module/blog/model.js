@@ -6,14 +6,45 @@ var db = require('../db.js')
 	, TABLE_NAME = 'blog'
 
 	, SQL = {
-		blogList: 'select id,title,datetime,tags from '+ TABLE_NAME +' where status=1 order by Id desc'
-		, blogByPage: 'select id,title,datetime,tags from '+ TABLE_NAME +' ' +
-			//'where status=1 ' +
-			'order by id desc limit :page,:size'
-		, blogById: 'select id,title,content,datetime,tags from '+ TABLE_NAME +' where Id=:id'
-		//, adminBlogByPage: 'select id,title,datetime,tags from '+ TABLE_NAME +' order by Id desc limit :page,:size'
+		blogByPage: 'select id,title,datetime,tags from '+ TABLE_NAME +
+			' where' +
+				' user_id=:userId' +
+			' order by id desc' +
+			' limit :page,:size'
+		, countBlog: 'select count(*) as count from '+ TABLE_NAME +
+			' where' +
+				' user_id=:user_id'
 
-		, countBlog: 'select count(*) as count from '+ TABLE_NAME
+		, blogSearchTitle: 'select id,title,datetime,tags from '+ TABLE_NAME +
+			' where' +
+				' user_id=:userId' +
+			' and' +
+				' title like :keyword' +
+			' order by id desc' +
+			' limit :page,:size'
+		, blogSearchTitleCount: 'select count(*) as count from '+ TABLE_NAME +
+			' where' +
+				' user_id=:user_id' +
+			' and' +
+				' title like :keyword'
+		, blogFilterTags: 'select id,title,datetime,tags from '+ TABLE_NAME +
+			' where' +
+				' user_id=:userId' +
+			' and' +
+				' tags regexp :tags' +
+			' order by id desc' +
+			' limit :page,:size'
+		, blogFilterTagsCount: 'select count(*) as count from '+ TABLE_NAME +
+			' where' +
+				' user_id=:user_id' +
+			' and' +
+				' tags regexp :tags'
+
+		, blogById: 'select id,title,content,datetime,tags from '+ TABLE_NAME +'' +
+			' where' +
+				' id=:id'
+
+		//, adminBlogByPage: 'select id,title,datetime,tags from '+ TABLE_NAME +' order by Id desc limit :page,:size'
 
 		, blogAdd: 'insert into '+ TABLE_NAME +'(user_id,title,tags,content) values(:userId,:title,\'\',\'\')'
 		, blogSave: 'update '+ TABLE_NAME +' set title=:title,content=:content,tags=:tags where id=:id'
@@ -31,38 +62,22 @@ var db = require('../db.js')
 	}
 
 	, Model = {
-		getBlogAll: function(){}
-		, getBlogByPage: function(page, size){
+		getBlogByPage: function(userId, page, size){
 			return db.handle({
 				sql: SQL.blogByPage
 				, data: {
 					page: (page -1) * size
 					, size: size
+					, userId: userId
 				}
 			});
 		}
-		, getBlogById: function(id){
-			return db.handle({
-				sql: SQL.blogById
-				, data: {
-					id: id
-				}
-			});
-		}
-
-		//, getAdminBlogByPage: function(page, size){
-		//	return db.handle({
-		//		sql: SQL.blogByPage
-		//		, data: {
-		//			page: (page-1) * size
-		//			, size: size
-		//		}
-		//	});
-		//}
-
-		, countBlog: function(){
+		, countBlog: function(userId){
 			return db.handle({
 				sql: SQL.countBlog
+				, data: {
+					userId: userId
+				}
 			}).then(function(rs){
 				var count = 0;
 
@@ -71,6 +86,81 @@ var db = require('../db.js')
 				}
 
 				return count;
+			});
+		}
+
+		, searchBlogByTitle: function(userId, keyword, page, size){
+			return db.handle({
+				sql: SQL.blogSearchTitle
+				, data: {
+					userId: userId
+					, keyword: '%'+ keyword +'%'
+					, page: (page -1) * size
+					, size: size
+				}
+			});
+
+		}
+		, countSearchBlogByTitle: function(userId, keyword){
+			return db.handle({
+				sql: SQL.blogSearchTitleCount
+				, data: {
+					userId: userId
+					, keyword: '%'+ keyword +'%'
+				}
+			}).then(function(rs){
+				var result
+					;
+
+				if( rs && rs.length ){
+					result = +rs[0].count;
+				}
+				else{
+					result = 0
+				}
+
+				return result;
+			});
+		}
+
+		, filterBlogByTags: function(userId, tags, page, size){
+			return db.handle({
+				sql: SQL.blogFilterTags.replace(':tags', '\'(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join(')(,|$)\' and tags regexp \'(^|,)(') + ')(,|$)\'')
+				, data: {
+					userId: userId
+					, page: (page -1) * size
+					, size: size
+				}
+			});
+		}
+		, countFilterBlogByTags: function(userId, tags){
+			return db.handle({
+				sql: SQL.blogFilterTagsCount.replace(':tags', '\'(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join(')(,|$)\' and tags regexp \'(^|,)(') + ')(,|$)\'')
+				, data: {
+					userId: userId
+				}
+			}).then(function(rs){
+				var result
+					;
+
+				if( rs && rs.length ){
+					result = +rs[0].count;
+				}
+				else{
+					result = 0;
+				}
+
+				return result;
+			});
+
+		}
+
+		, getBlogById: function(id){
+			return db.handle({
+				sql: SQL.blogById
+				, data: {
+					id: id
+				}
 			});
 		}
 

@@ -32,7 +32,10 @@ var admin         = require('../admin.js')
 	, moduleMain    = emmetTpl({
 		template: getEmmet('module-main.html')
 		, filter: {
-			toolbar: function(d){
+			icon: function(d){
+				return d.icon || d.id;
+			}
+			, toolbar: function(d){
 				return  d.toolbar ? d.toolbar.map(function(t){
 					var html = '';
 					if( t.type === 'button' ){

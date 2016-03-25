@@ -1,9 +1,6 @@
 'use strict';
 
-var ModuleError = function(msg){
-		this.message = msg;
-	}
-	, Module = {
+var Module = {
 		modules: []
 		, index: {}
 		, register: function(){
@@ -39,6 +36,9 @@ var ModuleError = function(msg){
 				return d;
 			});
 		}
+	}
+	, ModuleError = function(msg){
+		this.message = msg;
 	}
 	;
 

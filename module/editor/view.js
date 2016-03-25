@@ -7,6 +7,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	, emmetTpl  = require('../emmetTpl/emmetTpl.js').template
 
 	, modules   = require('../module.js')
+	, menu      = require('../menu.js')
 	, pagination    = require('../pagination.js')
 
 	, TagView   = require('../tag/view.js')
@@ -99,6 +100,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 				, main: {
 					moduleMain: {
 						id: 'editor'
+						, icon: 'code'
 						, title: '编辑器 editor'
 						, toolbar: [{
 							type: 'link',   id: 'newCode',  icon: 'file-code',  title: '新建代码', href: 'code?id=0'}, {
@@ -109,7 +111,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					}
 				}
 				, footer: {
-					nav: modules.current('editor')
+					nav: menu.current('editor')
 				}
 				, script: {
 					main: '../script/module/editor/index'
@@ -154,7 +156,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					}]
 				}
 				, footer: {
-					nav: modules.current('code')
+					nav: menu.current('code')
 				}
 				, script: {
 					main: '../script/module/editor/code'

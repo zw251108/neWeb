@@ -209,9 +209,12 @@ require(['../../config'], function(config){
 			;
 
 		$task.on('click', '.tab', function(){
-			var tab = $(this).data('tab')
+			var $that = $(this)
+				, tab = $that.data('tab')
 				, $taskList = $task.find('.task')
 				;
+
+			$that.addClass('active').siblings('.active').removeClass('active');
 
 			switch( tab ){
 				case 'taskCycle':
@@ -308,6 +311,8 @@ require(['../../config'], function(config){
 				}
 			});
 		});
+
+		$task.find('.tab:first').addClass('active');
 
 		$('#add').on('click', function(){
 			$addTaskPopup.trigger('showDialog');

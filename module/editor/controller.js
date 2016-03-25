@@ -9,6 +9,7 @@ var web         = require('../web.js')
 	, modules   = require('../module.js')
 	, admin     = require('../admin.js')
 	, data      = require('../data.js')
+	, menu      = require('../menu.js')
 
 	, Model = require('./model.js')
 	, View  = require('./view.js')
@@ -45,6 +46,19 @@ modules.register({
 	, href: 'editor/code?id=0'
 	, hrefTitle: '新建代码'
 });
+
+menu.register({
+	id: 'editor'
+	, title: '代码 code'
+	, icon: 'code'
+	, href: 'editor/'
+}, {
+	id: 'code'
+	, title: '编辑器 editor'
+	, icon: 'editor'
+	, href: 'editor/code?id=0'
+});
+
 web.get('/editor/', function(req, res){
 	var query = req.query || {}
 		, page = query.page || 1

@@ -211,7 +211,8 @@ web.get('/', function(req, res){
 
 
 var User = require('./module/user/model.js')
-	, UserError = require('./module/user/error.js');
+	, UserError = require('./module/user/error.js')
+	;
 
 // 用户输入用户名 获取头像
 web.get('/getavatar', function(req, res){

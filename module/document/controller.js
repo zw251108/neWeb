@@ -9,6 +9,7 @@ var web         = require('../web.js')
 	, modules   = require('../module.js')
 	, admin     = require('../admin.js')
 	, data      = require('../data.js')
+	, menu      = require('../menu.js')
 
 	, Model = require('./model.js')
 	, View  = require('./view.js')
@@ -31,6 +32,14 @@ modules.register({
 	, icon: 'document'
 	, href: 'document/'
 });
+
+menu.register({
+	id: 'document'
+	, title: '文档 document'
+	, icon: 'document'
+	, href: 'document/'
+});
+
 web.get('/document/', function(req, res){
 	var query = req.query || {}
 		, documentId = query.id || DOCUMENT_ID

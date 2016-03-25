@@ -1,4 +1,4 @@
-'use strict';
+﻿'use strict';
 
 var getEmmet    = require('../emmet/getEmmet.js')
 	, tpl       = require('../emmet/tpl.js')
@@ -54,10 +54,10 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	, contentAddFormTpl = emmetTpl({
 		template: 'form#newContent[method=post action=./]' +
 			'>input#sectionId[type=hidden name=sectionId]' +
-			'+input#sectionTilte[type=hidden name=sectionName]' +
+			'+input#sectionTitle[type=hidden name=sectionTitle]' +
 			'+div.formGroup' +
 				'>label.label[for=contentTitle]{请添加标题}' +
-				'+input#contentTItle.input[type=text name=contentTitle]'
+				'+input#contentTitle.input[type=text name=contentTitle]'
 	})
 
 	, View = {

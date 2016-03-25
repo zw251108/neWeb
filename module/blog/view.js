@@ -6,6 +6,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	, emmetTpl  = require('../emmetTpl/emmetTpl.js').template
 
 	, modules   = require('../module.js')
+	, menu      = require('../menu.js')
 	, pagination    = require('../pagination.js')
 
 	, tagView   = require('../tag/view.js')
@@ -36,7 +37,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					}
 				}
 				, footer: {
-					nav: modules.current('blog')
+					nav: menu.current('blog')
 				}
 				//, script: {
 				//	main: '../script/module/blog/index'

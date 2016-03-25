@@ -7,6 +7,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	, emmetTpl  = require('../emmetTpl/emmetTpl.js').template
 
 	, modules   = require('../module.js')
+	, menu      = require('../menu.js')
 	, pagination    = require('../pagination.js')
 
 	, TagView   = require('../tag/view.js')
@@ -125,7 +126,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					}]
 				}
 				, footer: {
-					nav: modules.current('reader')
+					nav: menu.current('reader')
 				}
 				, script: {
 					main: '../script/module/reader/index'
@@ -162,7 +163,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					}]
 				}
 				, footer: {
-					nav: modules.current('bookmark')
+					nav: menu.current('bookmark')
 				}
 				, script: {
 					main: '../script/module/reader/bookmark'
@@ -176,6 +177,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 				, main: {
 					moduleMain: {
 						id: 'favorite'
+						, icon: 'star'
 						, title: '收藏文章 favorite'
 						, toolbar: [{
 							type: 'link', id: 'rss', icon: 'rss', title: '订阅列表', href: '/reader/'}, {
@@ -193,7 +195,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					}]
 				}
 				, footer: {
-					nav: modules.current('favorite')
+					nav: menu.current('favorite')
 				}
 				, script: {
 					main: '../script/module/reader/favorite'

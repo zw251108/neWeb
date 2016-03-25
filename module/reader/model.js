@@ -598,6 +598,15 @@ var db  = require('../db.js')
 				return result;
 			});
 		}
+
+		, statisticReadMarkByDate: function(userId){
+			return db.handle({
+				sql: SQL.statisticReadMarkByDate
+				, data: {
+					userId: userId
+				}
+			});
+		}
 	}
 	;
 

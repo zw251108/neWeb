@@ -28,7 +28,9 @@ var config  = require('../../config.js')
 
 				code.header = '';
 				code.main = rs.html ? {
-					content: rs.html
+					moduleMain: {
+						content: rs.html
+					}
 				} : '';
 
 				code.script = rs.js_lib ? rs.js_lib.split(',').map(function(d){

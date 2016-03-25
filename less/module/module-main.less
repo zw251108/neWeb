@@ -1,4 +1,5 @@
 @import "../config/color.config.less";
+@import "../lib/function.less";
 
 @module-main_min-height: 500px;
 @module-main_content_margin_top: 40px;
@@ -14,26 +15,51 @@
     div.module_content
  */
 /*main*/.module-main{
-	overflow: hidden;
+	//overflow: hidden;
+	//position: static;
 	float: none;
 
 	min-height: @module-main_min-height;
 
-	margin: 0 auto;
+	border-bottom: 10px solid #888;
+	border-radius: 0 0 10px 10px;
+	margin: 40px auto 0;
+
 	background: @module-main_bg_c;
 
-	> .module_title,
-	> .module_info{
+	//> .module_title,
+	> .module_info
+	{
 		display: none;
+	}
+
+	> .module_title{
+		line-height: 40px;
+		text-indent: 100px;
+		color: #fff;
+
+		&.icon:before{
+			position: absolute;
+			top: -40px;
+			left: 0;
+			height: 80px;
+			width: 80px;
+			border: 5px solid #888;
+
+			.boxSizing(border-box);
+
+			background-color: #fff;
+			border-radius: 50%;
+			color: #888;
+			font-size: 50px;
+			line-height: 70px;
+			text-indent: 0;
+		}
 	}
 
 	> .module_content{
 
 		min-height: @module-main_min-height - @module-main_content_margin_top - @module-main_content_margin_bottom;
-
-		margin-bottom: @module-main_content_margin_bottom;
-		margin-top: @module-main_content_margin_top;
-
 		background-color: #fff;
 	}
 
@@ -43,19 +69,20 @@
 
 	> .toolbar{
 		position: absolute;
-		top: 0;
+		top: -40px;
 		left: 0;
 		right: 0;
 		height: 40px;
 		//border-radius: 10px 10px 0 0;
 		margin: 0 auto;
-		background: @module-main_toolbar_bg_c;
+		//background: @module-main_toolbar_bg_c;
 		text-align: right;
 
 		&:before,
 		&:after{
 			position: absolute;
-			bottom: -10px;
+			//bottom: -10px;
+			top: 80px;
 			height: 10px;
 			width: 10px;
 
@@ -70,21 +97,41 @@
 			background-image: -webkit-radial-gradient(bottom left, transparent 9px, @module-main_toolbar_bg_c 10px, @module-main_toolbar_bg_c 11px);
 		}
 
-		&-fixed{
-			position: fixed;
-			background: @module-main_toolbar-fixed_bg_c;
-
-			&:before{
-				background-image: -webkit-radial-gradient(bottom right, transparent 9px, @module-main_toolbar-fixed_bg_c 10px, @module-main_toolbar-fixed_bg_c 11px);
-			}
-			&:after{
-				background-image: -webkit-radial-gradient(bottom left, transparent 9px, @module-main_toolbar-fixed_bg_c 10px, @module-main_toolbar-fixed_bg_c 11px);
-			}
-		}
-
 		> li{
 			display: inline-block;
 			position: relative;
+			background-color: #888;
+			padding-top: 5px;
+
+			&:first-child{
+				border-top-left-radius: 10px;
+				padding-left: 5px;
+			}
+
+			&:last-child{
+				border-top-right-radius: 10px;
+				padding-right: 5px;
+			}
+		}
+
+		&-fixed{
+			position: fixed;
+			top: 0;
+			background: @module-main_toolbar-fixed_bg_c;
+
+			&:before{
+				top: 40px;
+				background-image: -webkit-radial-gradient(bottom right, transparent 9px, @module-main_toolbar-fixed_bg_c 10px, @module-main_toolbar-fixed_bg_c 11px);
+			}
+			&:after{
+				top: 40px;
+				background-image: -webkit-radial-gradient(bottom left, transparent 9px, @module-main_toolbar-fixed_bg_c 10px, @module-main_toolbar-fixed_bg_c 11px);
+			}
+
+			> li{
+				padding-top: 0;
+				background: none;
+			}
 		}
 
 		.icon{

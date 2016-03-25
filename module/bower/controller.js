@@ -11,6 +11,7 @@ var web         = require('../web.js')
 	, modules   = require('../module.js')
 	, admin     = require('../admin.js')
 	, data      = require('../data.js')
+	, menu      = require('../menu.js')
 
 	, Model = require('./model.js')
 	, View  = require('./view.js')
@@ -27,6 +28,13 @@ var web         = require('../web.js')
 modules.register({
 	id: 'bower'
 	, metroSize: 'tiny'
+	, title: '组件 bower'
+	, icon: 'bower'
+	, href: 'bower/'
+});
+
+menu.register({
+	id: 'bower'
 	, title: '组件 bower'
 	, icon: 'bower'
 	, href: 'bower/'

@@ -9,6 +9,7 @@ var web         = require('../web.js')
 	, modules   = require('../module.js')
 	, admin     = require('../admin.js')
 	, data      = require('../data.js')
+	, menu      = require('../menu.js')
 
 	, Model = require('./model.js')
 	, View  = require('./view.js')
@@ -26,6 +27,14 @@ modules.register({
 	, href: 'resume/'
 	, hrefTitle: '个人简历'
 });
+
+menu.register({
+	id: 'resume'
+	, title: '简历 resume'
+	, icon: 'user'
+	, href: 'resume/'
+});
+
 web.get('/resume/', function(req, res){
 	Promise.resolve( View.resume() ).then(function(html){
 		res.send( config.docType.html5 + html );

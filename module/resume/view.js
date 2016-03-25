@@ -6,6 +6,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	, emmetTpl  = require('../emmetTpl/emmetTpl.js').template
 
 	, modules   = require('../module.js')
+	, menu      = require('../menu.js')
 
 	, resumeContent = emmetTpl({
 		template: 'section#score.section.resume_section' +
@@ -28,11 +29,12 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					moduleMain: {
 						id: 'resume'
 						, title: '个人简历 resume'
+						, icon: 'user'
 						, content: resumeContent({})
 					}
 				}
 				//, footer: {
-				//	nav: modules.current('resume')
+				//	nav: menu.current('resume')
 				//}
 				, script: {
 					main: '../script/module/resume/index'

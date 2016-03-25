@@ -6,6 +6,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	, emmetTpl  = require('../emmetTpl/emmetTpl.js').template
 
 	, modules   = require('../module.js')
+	, menu      = require('../menu.js')
 
 	, sectionTpl    = emmetTpl({
 		template: getEmmet('document/section.html')
@@ -36,7 +37,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					}
 				}
 				, footer: {
-					nav: modules.current('document')
+					nav: menu.current('document')
 				}
 				, script: {
 					main: '../script/module/document/index'

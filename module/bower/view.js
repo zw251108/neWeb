@@ -6,6 +6,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	, emmetTpl  = require('../emmetTpl/emmetTpl.js').template
 
 	, modules   = require('../module.js')
+	, menu      = require('../menu.js')
 	, pagination    = require('../pagination.js')
 
 	, bowerListWrapTpl = emmetTpl({
@@ -95,7 +96,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					}]
 				}
 				, footer: {
-					nav: modules.current('bower')
+					nav: menu.current('bower')
 				}
 				, script: {
 					main: '../script/bower'

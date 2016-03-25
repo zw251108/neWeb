@@ -6,6 +6,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	, emmetTpl  = require('../emmetTpl/emmetTpl.js').template
 
 	, modules   = require('../module.js')
+	, menu      = require('../menu.js')
 
 	, TagView   = require('../tag/view.js')
 
@@ -303,6 +304,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 				, main: {
 					moduleMain: {
 						id: 'task'
+						, icon: 'tasks'
 						, title: '待做任务 task'
 						, toolbar: [{
 							type: 'button', id: 'add', icon: 'plus', title: '添加任务'
@@ -318,7 +320,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					}]
 				}
 				, footer: {
-					nav: modules.current('task')
+					nav: menu.current('task')
 				}
 				, script: {
 					main: '../script/module/task/index'

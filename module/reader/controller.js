@@ -11,6 +11,7 @@ var web         = require('../web.js')
 	, modules   = require('../module.js')
 	, admin     = require('../admin.js')
 	, data      = require('../data.js')
+	, menu      = require('../menu.js')
 
 	, TagModel  = require('../tag/model.js')
 	, User      = require('../user/user.js')
@@ -18,6 +19,8 @@ var web         = require('../web.js')
 	, Model     = require('./model.js')
 	, View      = require('./view.js')
 	, Admin     = require('./admin.view.js')
+	, ReaderAdminView   = require('./admin.view.js')
+	, ReaderHandler = require('./handler.js')
 	, ReaderError   = require('./error.js')
 
 	, Reader    = require('./reader.js')
@@ -41,6 +44,23 @@ modules.register({
 }, {
 	id: 'favorite'
 	, metroSize: 'tiny'
+	, title: '收藏 favorite'
+	, icon: 'star'
+	, href: 'reader/favorite'
+});
+
+menu.register({
+	id: 'reader'
+	, title: '阅读 reader'
+	, icon: 'reader'
+	, href: 'reader/'
+}, {
+	id: 'bookmark'
+	, title: '书签 bookmark'
+	, icon: 'bookmark'
+	, href: 'reader/bookmark'
+}, {
+	id: 'favorite'
 	, title: '收藏 favorite'
 	, icon: 'star'
 	, href: 'reader/favorite'
@@ -559,9 +579,9 @@ socket.register({
 
 		// 检测 user
 		//if( User.isGuest(user) ){
-			if( url ){
-				execute = Model.isExistBookmark(url, true)
-					.then(function(rs){
+		if( url ){
+			execute = Model.isExistBookmark(url, true)
+				.then(function(rs){
 					var result
 						, bookmarkId
 						;
@@ -697,28 +717,28 @@ socket.register({
 
 					return result;
 				})
-					//// 判断 reader_bookmark 表中是否有该 url
-					//.then(function(bookmark){   // reader_bookmark 表中已有该 url
-					//	return Promise.reject(bookmark);
-					//}, function(){  // reader_bookmark 表中没有该 url
-					//	if( targetId ){ // 已有相关数据
-					//
-					//	}
-					//	else{   // 没有相关数据 抓取并整理
-					//
-					//	}
-					//})
-					//// 获取 url 对应数据
-					//.then(function(){}, function(){
-					//
-					//})
-					////
-					//.then(function(){}, function(){})
-				;
-			}
-			else{
-				execute = Promise.reject( new ReaderError('缺少参数') );
-			}
+				//// 判断 reader_bookmark 表中是否有该 url
+				//.then(function(bookmark){   // reader_bookmark 表中已有该 url
+				//	return Promise.reject(bookmark);
+				//}, function(){  // reader_bookmark 表中没有该 url
+				//	if( targetId ){ // 已有相关数据
+				//
+				//	}
+				//	else{   // 没有相关数据 抓取并整理
+				//
+				//	}
+				//})
+				//// 获取 url 对应数据
+				//.then(function(){}, function(){
+				//
+				//})
+				////
+				//.then(function(){}, function(){})
+			;
+		}
+		else{
+			execute = Promise.reject( new ReaderError('缺少参数') );
+		}
 		//}
 		//else{
 		//	execute = Promise.reject( new ReaderError('用户尚未登录') );
@@ -755,112 +775,112 @@ socket.register({
 
 		// 检测 user
 		//if( User.isGuest(user) ){
-			// 判断是否已有 id
-			if( id ){
-				if( /^\d+$/.test( id ) ){
-					// 合法数据库 id
-					// user_reader_bookmark 表中已有数据 操作为更新数据
-					// 更新 reader_bookmark 表 total_score num_reader 字段
+		// 判断是否已有 id
+		if( id ){
+			if( /^\d+$/.test( id ) ){
+				// 合法数据库 id
+				// user_reader_bookmark 表中已有数据 操作为更新数据
+				// 更新 reader_bookmark 表 total_score num_reader 字段
 
-					execute = Promise.all([
-						Model.updateBookmarkRead(bookmarkId, title, score - oldScore, +oldStatus? 0 : 1)
-						, Model.updateUserBookmarkRead(id, title, score, tags, 1, +oldStatus)
-					]).then(function(rs){
-						var r1 = rs[0]
-							, r2 = rs[1]
-							, result
+				execute = Promise.all([
+					Model.updateBookmarkRead(bookmarkId, title, score - oldScore, +oldStatus? 0 : 1)
+					, Model.updateUserBookmarkRead(id, title, score, tags, 1, +oldStatus)
+				]).then(function(rs){
+					var r1 = rs[0]
+						, r2 = rs[1]
+						, result
+						;
+
+					if( r1 && r1.changedRows && r2 && r2.changedRows ){
+						result = {
+							id: id
+							, bookmarkId: bookmarkId
+							, userId: user.id
+							, url: url
+							, title: title
+							, tags: tags
+							, score: score
+							, status: 1
+						};
+					}
+					else{
+						result = Promise.reject( new ReaderError('该文章已被读过') );
+					}
+
+					return result;
+				}).then(function(data){
+					send.info = data;
+
+					return send;
+				});
+			}
+			else if( url ){ // id 为 targetId，使用 url
+				source = Url.parse(url);
+				source = source.protocol + '//' + source.host;
+
+				bookmark = {
+					url: url
+					, title: title
+					, source: source
+					, tags: tags
+					, userId: user.id
+					, score: score
+					, status: 1
+				};
+
+				// 判断 reader_bookmark 表中是否存在该 url
+				if( bookmarkId ){   // 已存在
+					data.bookmarkId = bookmarkId;
+
+					execute = Promise.resolve( bookmark );
+				}
+				else{   // 没有相关数据 添加到 reader_bookmark 表中
+					execute = Model.addBookmark( bookmark ).then(function(rs){
+						var result
 							;
 
-						if( r1 && r1.changedRows && r2 && r2.changedRows ){
-							result = {
-								id: id
-								, bookmarkId: bookmarkId
-								, userId: user.id
-								, url: url
-								, title: title
-								, tags: tags
-								, score: score
-								, status: 1
-							};
+						if( rs && rs.insertId ){
+							bookmark.bookmarkId = rs.insertId;
+
+							result = bookmark;
 						}
 						else{
-							result = Promise.reject( new ReaderError('该文章已被读过') );
+							result = Promise.reject( new ReaderError('保存失败') );
 						}
 
 						return result;
-					}).then(function(data){
-						send.info = data;
-
-						return send;
 					});
 				}
-				else if( url ){ // id 为 targetId，使用 url
-					source = Url.parse(url);
-					source = source.protocol + '//' + source.host;
 
-					bookmark = {
-						url: url
-						, title: title
-						, source: source
-						, tags: tags
-						, userId: user.id
-						, score: score
-						, status: 1
-					};
+				execute = execute.then(function(bookmark){ // 添加到 user_reader_bookmark
+					return Model.addUserBookmark( bookmark ).then(function(rs){
+						var result
+							;
 
-					// 判断 reader_bookmark 表中是否存在该 url
-					if( bookmarkId ){   // 已存在
-						data.bookmarkId = bookmarkId;
+						if( rs && rs.insertId ){
+							data.id = rs.insertId;
 
-						execute = Promise.resolve( bookmark );
-					}
-					else{   // 没有相关数据 添加到 reader_bookmark 表中
-						execute = Model.addBookmark( bookmark ).then(function(rs){
-							var result
-								;
+							result = data;
+						}
+						else{
+							result = Promise.reject( new ReaderError('数据保存失败') );
+						}
 
-							if( rs && rs.insertId ){
-								bookmark.bookmarkId = rs.insertId;
-
-								result = bookmark;
-							}
-							else{
-								result = Promise.reject( new ReaderError('保存失败') );
-							}
-
-							return result;
-						});
-					}
-
-					execute = execute.then(function(bookmark){ // 添加到 user_reader_bookmark
-						return Model.addUserBookmark( bookmark ).then(function(rs){
-							var result
-								;
-
-							if( rs && rs.insertId ){
-								data.id = rs.insertId;
-
-								result = data;
-							}
-							else{
-								result = Promise.reject( new ReaderError('数据保存失败') );
-							}
-
-							return result;
-						});
-					}).then(function(data){ // 处理返回信息
-						send.info = data;
-
-						return send;
+						return result;
 					});
-				}
-				else{
-					execute = Promise.reject( new ReaderError('缺少参数') );
-				}
+				}).then(function(data){ // 处理返回信息
+					send.info = data;
+
+					return send;
+				});
 			}
 			else{
 				execute = Promise.reject( new ReaderError('缺少参数') );
 			}
+		}
+		else{
+			execute = Promise.reject( new ReaderError('缺少参数') );
+		}
 		//}
 		//else{
 		//	execute = Promise.reject( new ReaderError('用户尚未登录') );
@@ -934,4 +954,47 @@ socket.register({
 	, 'reader/bookmark/filter': function(){}
 
 	, 'reader/favorite': function(){}
+});
+
+/**
+ *
+ * */
+admin.register({
+	id: 'bookmark'
+	, metroSize: 'tiny'
+	, title: '书签 bookmark'
+	, icon: 'bookmark'
+	, href: 'reader/bookmark'
+});
+web.get('/admin/reader/bookmark', function(req, res){
+	var user = User.getUserFromSession.fromReq( req )
+		;
+
+	ReaderAdminView.bookmark().then(function(html){
+		res.send( config.docType.html5 + html );
+		res.end();
+	});
+	//ReaderHandler.getBookmarkReaderPerDay( user ).then(ReaderAdminView, function(){
+	//
+	//}).then(function(html){
+	//	res.send( config.docType.html5 + html );
+	//	res.end();
+	//});
+});
+
+web.get('/reader/bookmark/data', function(req, res){
+	var query = req.query || {}
+		, user = User.getUserFromSession.fromReq( req )
+		;
+
+	ReaderHandler.getBookmarkReaderPerDay( user ).catch(function(e){
+		console.log( e );
+
+		return [];
+	}).then(function(rs){
+		rs = JSON.stringify( rs );
+
+		res.send( rs );
+		res.end();
+	});
 });

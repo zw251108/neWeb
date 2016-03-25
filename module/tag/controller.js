@@ -33,7 +33,7 @@ admin.register({
 	, href: 'tag/'
 });
 web.get('/admin/tag/', function(req, res){
-	Admin.tag().then(function( html ){
+	Admin.tag().then(function(html){
 		res.send( config.docType.html5 + html );
 		res.end();
 	});

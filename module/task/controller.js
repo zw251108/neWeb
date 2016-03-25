@@ -9,6 +9,7 @@ var web         = require('../web.js')
 	, modules   = require('../module.js')
 	, admin     = require('../admin.js')
 	, data      = require('../data.js')
+	, menu      = require('../menu.js')
 
 	, Controller    = require('../controller.js')
 	, controller    = new Controller()
@@ -292,6 +293,13 @@ modules.register({
 	, hrefTitle: '待做任务'
 });
 
+menu.register({
+	id: 'task'
+	, title: '任务 task'
+	, icon: 'tasks'
+	, href: 'task/'
+});
+
 taskController.prototype = controller;
 
 web.get('/task/', function(req, res){
@@ -313,12 +321,12 @@ web.get('/task/', function(req, res){
 				, t
 				, s, e
 				;
-			                              console.log(d)
+
 			while( i-- ){
 				t = temp[i];
 
 				if( (t.type === '2' || t.type === '3') && d.taskId === +t.taskId && t.status ){ // 判断为周期任务且任务 taskId 相同
-					console.log(t)
+
 					if( t.type === '3' ){
 						s = taskHandler.weekStartDate() +' 00:00:00';
 						e = taskHandler.weekEndDate() +' 23:59:59';
@@ -328,8 +336,8 @@ web.get('/task/', function(req, res){
 						e = s +' 23:59:59';
 						s += ' 00:00:00';
 					}
-					console.log(s, e)
-					if( s <= t.start && e >= t.start ){console.log(t, 1)
+
+					if( s <= t.start && e >= t.start ){
 						break;
 					}
 				}
