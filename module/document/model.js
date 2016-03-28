@@ -1,9 +1,10 @@
 'use strict';
 
 var db  = require('../db.js')
+	, config = require('../../config.js')
 	, error = require('../error.js')
 
-	, TABLE_NAME = 'document'
+	, TABLE_NAME = config.db.dataTablePrefix +'document'
 
 	, SQL = {
 		documentById: 'select title,section_order from document where id=:id'
@@ -23,7 +24,7 @@ var db  = require('../db.js')
 		, contentAdd: 'insert into document_content(title,content,document_id,section_id,section_title,`order`) values(:title,\'\',:documentId,:sectionId,:sectionTitle,:order)'
 		, contentSaveContent: 'update document_content set content=:content where id=:id'
 	}
-	, Model = {
+	, DocumentModel = {
 
 		getDocumentById: function(id){
 			return db.handle({
@@ -63,10 +64,12 @@ var db  = require('../db.js')
 				, data: data
 			});
 		}
-		, addDocument: function(data){
+		, addDocument: function(title){
 			return db.handle({
 				sql: SQL.documentAdd
-				, data: data
+				, data: {
+					title: title
+				}
 			});
 		}
 
@@ -171,4 +174,4 @@ var db  = require('../db.js')
 	}
 	;
 
-module.exports = Model;
+module.exports = DocumentModel;

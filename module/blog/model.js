@@ -1,9 +1,10 @@
 'use strict';
 
 var db = require('../db.js')
+	, config = require('../../config.js')
 	, error = require('../error.js')
 
-	, TABLE_NAME = 'blog'
+	, TABLE_NAME = config.db.dataTablePrefix +'blog'
 
 	, SQL = {
 		blogByPage: 'select id,title,datetime,tags from '+ TABLE_NAME +
@@ -13,7 +14,7 @@ var db = require('../db.js')
 			' limit :page,:size'
 		, countBlog: 'select count(*) as count from '+ TABLE_NAME +
 			' where' +
-				' user_id=:user_id'
+				' user_id=:userId'
 
 		, blogSearchTitle: 'select id,title,datetime,tags from '+ TABLE_NAME +
 			' where' +
@@ -61,7 +62,7 @@ var db = require('../db.js')
 		}
 	}
 
-	, Model = {
+	, BlogModel = {
 		getBlogByPage: function(userId, page, size){
 			return db.handle({
 				sql: SQL.blogByPage
@@ -188,7 +189,7 @@ var db = require('../db.js')
 	}
 	;
 
-module.exports = Model;
+module.exports = BlogModel;
 
 //module.exports = function(param){
 //	var topic = param.topic

@@ -25,7 +25,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 		template: getEmmet('admin/blog/articleAddForm.html')
 	})
 
-	, View  = {
+	, BlogAdminView  = {
 		blogList: function(rs){
 			return tpl({
 				title: '文章'
@@ -85,4 +85,4 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	}
 	;
 
-module.exports = View;
+module.exports = BlogAdminView;

@@ -2,14 +2,14 @@
 
 var error = require('../error.js')
 
-	, DataError = function(msg){
-		this.type = '[Data Error]';
+	, BaseDataError = function(msg){
+		this.type = '[BaseData Error]';
 		this.message = msg;
 	}
 	;
 
-DataError.prototype = new Error();
+BaseDataError.prototype = new Error();
 
-error.register('DataError', '公共数据模块 错误');
+error.register('BaseDataError', '公共数据模块 错误');
 
-module.exports = DataError;
+module.exports = BaseDataError;

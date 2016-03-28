@@ -30,12 +30,6 @@ var Module = {
 				}
 			}
 		}
-		, current: function(curr){
-			return this.modules.map(function(d){
-				d.on = d.id === curr;
-				return d;
-			});
-		}
 	}
 	, ModuleError = function(msg){
 		this.message = msg;

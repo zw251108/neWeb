@@ -2,7 +2,6 @@
 
 var web         = require('../web.js')
 	, socket    = require('../socket.js')
-	, error     = require('../error.js')
 
 	, config    = require('../../config.js')
 
@@ -11,15 +10,12 @@ var web         = require('../web.js')
 	, data      = require('../data.js')
 	, menu      = require('../menu.js')
 
-	, Model = require('./model.js')
-	, View  = require('./view.js')
-	, Admin = require('./admin.view.js')
-	, Document  = require('./document.js')
-	, DocumentError = require('./error.js')
+	, DocumentView  = require('./view.js')
+	, DocumentAdminView = require('./admin.view.js')
+	, DocumentHandler   = require('./handler.js')
+	, DocumentError     = require('./error.js')
 
-	, Promise = require('promise')
-
-	, DOCUMENT_ID = 1
+	, UserHandler   = require('../user/handler.js')
 	;
 
 /**
@@ -42,13 +38,18 @@ menu.register({
 
 web.get('/document/', function(req, res){
 	var query = req.query || {}
-		, documentId = query.id || DOCUMENT_ID
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
-	Promise.all([Model.getDocumentById( documentId )
-		, Model.getSectionByDocumentId( documentId )
-		, Model.getContentByDocumentId( documentId )
-	]).then( Document.handleData ).then( View.document ).then(function( html ){
+	DocumentHandler.getDefaultDocument(user, query).then(DocumentView.document, function(e){
+		console.log( e );
+
+		// todo 错误页面
+	}).then(function(html){
+		// todo 页面其它部分
+
+		return html;
+	}).then(function(html){
 		res.send( config.docType.html5 + html );
 		res.end();
 	});
@@ -66,46 +67,35 @@ admin.register({
 });
 web.get('/admin/document/', function(req, res){
 	var query = req.query || {}
-		, page = query.page || 1
-		, size = query.size || 20
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
-	Model.getDocumentList(page, size).then(function(rs){
-		return Model.countDocument().then(function(count){
-			return {
-				data: rs
-				, count: count
-				, index: page
-				, size: size
-				, urlCallback: function(index){
-					return '?page='+ index
-				}
-			}
-		});
-	}).then( Admin.documentList ).then(function(html){
+	DocumentHandler.getDocumentList(user, query).then(DocumentAdminView.documentList, function(e){
+		console.log( e );
+
+		// todo 错误页面
+	}).then(function(html){
+		// todo 页面其它部分
+
+		return html;
+	}).then(function(html){
 		res.send( config.docType.html5 + html );
 		res.end();
 	});
 });
 web.get('/admin/document/:documentId/', function(req, res){
 	var param = req.params || {}
-		, documentId = param.documentId
-		, execute
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
-	if( documentId && /^\d+$/.test( documentId ) ){
-		execute = Promise.all([Model.getDocumentById( documentId )
-			, Model.getSectionByDocumentId( documentId )
-			, Model.getContentByDocumentId(documentId, true)
-		]).then( Document.handleData ).then( Admin.document );
-	}
-	else{
-		execute = Promise.reject( new DocumentError('缺少参数 documentId') );
-	}
 
-	execute.catch(function(e){
+	DocumentHandler.getDocument(user, query).then(DocumentAdminView.document, function(e){
 		console.log( e );
 
-		return '';
+		// todo 错误页面
+	}).then(function(html){
+		// todo 页面其它部分
+
+		return html;
 	}).then(function(html){
 		res.send( config.docType.html5 + html );
 		res.end();
@@ -114,93 +104,26 @@ web.get('/admin/document/:documentId/', function(req, res){
 
 /**
  * post /admin/document/                                    新建文档
- * post /admin/document/:documentId/                        新建章节
  * put  /admin/document/:documentId/                        保存章节排序
- * post /admin/document/:documentId/:sectionId/             新建内容
+ * post /admin/document/:documentId/                        新建章节
  * put  /admin/document/:documentId/:sectionId/             保存内容排序
+ * post /admin/document/:documentId/:sectionId/             新建内容
  * put  /admin/document/:documentId/:sectionId/:contentId/  内容详细保存
  * */
 web.post(   '/admin/document/', function(req, res){
 	var body = req.body || {}
-		, title = body.title
-		, execute
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
-	if( title ){
-		execute = Model.addDocument( body ).then(function(rs){
-			var result
-				;
-
-			if( rs.insertId ){
-				result = {
-					success: true
-					, id: rs.insertId
-				}
-			}
-			else{
-				result = Promise.reject( new DocumentError(title + ' 文档创建失败') );
-			}
-
-			return result;
-		});
-	}
-	else{
-		execute = Promise.reject( new DocumentError('缺少标题') );
-	}
-
-	execute.catch(function(e){
-		console.log( e );
-
+	DocumentHandler.newDocument(user, body).then(function(info){
 		return {
-			success: false
-			, error: ''
-			, msg: e.message
+			info: info
 		};
-	}).then(function(json){
-		res.send( JSON.stringify(json) );
-		res.end();
-	});
-});
-web.post(   '/admin/document/:documentId/', function(req, res){
-	var param = req.params || {}
-		, documentId = param.documentId
-		, body = req.body || {}
-		, title = body.title
-		, execute
-		;
-
-	if( documentId && /^\d+$/.test( documentId ) && title ){
-
-		body.documentId = documentId;
-
-		execute = Model.addSectionByDoc( body ).then(function(rs){
-			var result
-				, json = {}
-				;
-
-			if( rs.insertId ){
-				result = {
-					success: true
-					, id: rs.insertId
-				};
-			}
-			else{
-				result = Promise.reject( new DocumentError(title + ' 章节创建失败') );
-			}
-
-			return result;
-		});
-	}
-	else{
-		execute = Promise.reject( new DocumentError('缺少参数') );
-	}
-
-	execute.catch(function(e){
+	}, function(e){
 		console.log( e );
 
 		return {
-			success: false
-			, error: ''
+			error: ''
 			, msg: e.message
 		};
 	}).then(function(json){
@@ -213,32 +136,21 @@ web.put(    '/admin/document/:documentId/', function(req, res){
 		, documentId = param.documentId
 		, body = req.body || {}
 		, title = body.title
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		, execute
 		;
 
-	if( documentId && /^\d+$/.test( documentId ) ){
+	body.documentId = param.documentId;
 
-		body.documentId = documentId;
-
-		execute = Model.updateDocumentOrder({
-			documentId: documentId
-			, order: body.order
-		}).then(function(rs){
-			return {
-				success: true
-			};
-		});
-	}
-	else{
-		execute = Promise.reject( new DocumentError('缺少参数') );
-	}
-
-	execute.catch(function(e){
+	DocumentHandler.saveDocument(user, body).then(function(info){
+		return {
+			info: info
+		}
+	}, function(e){
 		console.log( e );
 
 		return {
-			success: false
-			, error: ''
+			error: ''
 			, msg: e.message
 		};
 	}).then(function(json){
@@ -246,47 +158,23 @@ web.put(    '/admin/document/:documentId/', function(req, res){
 		res.end();
 	});
 });
-web.post(   '/admin/document/:documentId/:sectionId/', function(req, res){
+web.post(   '/admin/document/:documentId/', function(req, res){
 	var param = req.params || {}
-		, documentId = param.documentId
-		, sectionId = param.sectionId
 		, body = req.body || {}
-		, title = body.title
-		, execute
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
-	if( documentId && /^\d+$/.test( documentId ) && sectionId && /^\d+$/.test( sectionId )  && title ){
+	body.documentId = param.documentId;
 
-		body.documentId = documentId;
-		body.sectionId = sectionId;
-
-		execute = Model.addContentBySec( body ).then(function(rs){
-			var result
-				, json = {}
-				;
-			if( rs.insertId ){
-				result = {
-					success: true
-					, id: rs.insertId
-				}
-			}
-			else{
-				result = Promise.reject( new DocumentError(title + ' 内容创建失败') );
-			}
-
-			return result;
-		});
-	}
-	else{
-		execute = Promise.reject( new DocumentError('缺少参数') );
-	}
-
-	execute.catch(function(e){
+	DocumentHandler.newSection(user, body).then(function(info){
+		return {
+			info: info
+		};
+	}, function(e){
 		console.log( e );
 
 		return {
-			success: false
-			, error: ''
+			error: ''
 			, msg: e.message
 		};
 	}).then(function(json){
@@ -296,36 +184,47 @@ web.post(   '/admin/document/:documentId/:sectionId/', function(req, res){
 });
 web.put(    '/admin/document/:documentId/:sectionId/', function(req, res){
 	var param = req.params || {}
-		, documentId = param.documentId
-		, sectionId = param.sectionId
 		, body = req.body || {}
-		, title = body.title
-		, execute
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
-	if( documentId && /^\d+$/.test( documentId ) && sectionId && /^\d+$/.test( sectionId ) ){
 
-		body.documentId = documentId;
-		body.sectionId = sectionId;
+	body.documentId = param.documentId;
+	body.sectionId = param.sectionId;
 
-		execute = Model.updateSectionOrder({
-			sectionId: sectionId
-			, order: body.order
-		}).then(function(rs){
-			return {
-				success: true
-			};
-		});
-	}
-	else{
-		execute = Promise.reject( new DocumentError('缺少参数') );
-	}
-
-	execute.catch(function(e){
+	DocumentHandler.saveSection(user, body).then(function(info){
+		return {
+			info: info
+		};
+	}, function(e){
 		console.log( e );
 
 		return {
-			success: false
-			, error: ''
+			error: ''
+			, msg: e.message
+		};
+	}).then(function(json){
+		res.send( JSON.stringify(json) );
+		res.end();
+	});
+});
+web.post(   '/admin/document/:documentId/:sectionId/', function(req, res){
+	var param = req.params || {}
+		, body = req.body || {}
+		, user = UserHandler.getUserFromSession.fromReq( req )
+		;
+
+	body.documentId = param.documentId;
+	body.sectionId = param.sectionId;
+
+	DocumentHandler.newContent(user, body).then(function(info){
+		return {
+			info: info
+		};
+	}, function(e){
+		console.log( e );
+
+		return {
+			error: ''
 			, msg: e.message
 		};
 	}).then(function(json){
@@ -335,33 +234,23 @@ web.put(    '/admin/document/:documentId/:sectionId/', function(req, res){
 });
 web.put(    '/admin/document/:documentId/:sectionId/:contentId/', function(req, res){
 	var param = req.params || {}
-		, documentId = param.documentId
-		, sectionId = param.sectionId
-		, contentId = param.contentId
 		, body = req.body || {}
-		, execute
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
-	if( documentId && /^\d+$/.test( documentId ) && sectionId && /^\d+$/.test( sectionId ) && contentId && /^\d+$/.test( contentId ) ){
+	body.documentId = param.documentId;
+	body.sectionId = param.sectionId;
+	body.contentId = param.contentId;
 
-		body.content = body.content.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
-
-		execute = Model.updateContent( body ).then(function(rs){
-			return {
-				success: true
-			}
-		});
-	}
-	else{
-		execute = Promise.reject( new DocumentError('缺少参数') );
-	}
-
-	execute.catch(function(e){
+	DocumentHandler.saveContent(user, body).then(function(info){
+		return {
+			info: info
+		};
+	}, function(e){
 		console.log( e );
 
 		return {
-			success: false
-			, error: ''
+			error: ''
 			, msg: e.message
 		};
 	}).then(function(json){

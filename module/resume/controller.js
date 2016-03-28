@@ -69,7 +69,7 @@ web.get('/resume/workHistory', function(req, res){
 		start: '2015-03'
 		, end: '2016-02'
 		, co: {
-			name: '大连面视科技有限公司'
+			name: '如是科技（大连）有限公司'
 			, href: ''
 		}
 		, job: {

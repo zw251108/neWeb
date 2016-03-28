@@ -11,13 +11,13 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	, sectionTpl    = emmetTpl({
 		template: getEmmet('document/section.html')
 		, filter: {
-			sectionList: function(d){
-				return sectionListTpl( d.sectionList ).join('')
+			contentList: function(d){
+				return contentListTpl( d.contentList ).join('')
 			}
 		}
 	})
-	, sectionListTpl = emmetTpl({
-		template: getEmmet('document/sectionList.html')
+	, contentListTpl = emmetTpl({
+		template: getEmmet('document/contentList.html')
 	})
 
 	, View = {

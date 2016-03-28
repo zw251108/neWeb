@@ -34,7 +34,7 @@ var web         = require('../web.js')
 modules.register({
 	id: 'editor'
 	, metroSize: 'tiny'
-	, title: '代码 code'
+	, title: '代码库 code'
 	, icon: 'code'
 	, href: 'editor/'
 	, hrefTitle: '代码列表'
@@ -49,7 +49,7 @@ modules.register({
 
 menu.register({
 	id: 'editor'
-	, title: '代码 code'
+	, title: '代码库 code'
 	, icon: 'code'
 	, href: 'editor/'
 }, {

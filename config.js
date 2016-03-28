@@ -19,6 +19,7 @@ var CONFIG = {
 		, password: 'zw251108'
 		, database: 'destiny'
 		, dateStrings: true
+		, dataTablePrefix: ''
 	}
 	, docType: {
 		html5: '<!DOCTYPE html>'

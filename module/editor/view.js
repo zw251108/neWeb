@@ -96,7 +96,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	, View = {
 		editorList: function(rs){
 			return tpl({
-				title: '编辑器 editor'
+				title: '代码库 code'
 				, main: {
 					moduleMain: {
 						id: 'editor'
