@@ -1,14 +1,15 @@
 @import "../config/color.config.less";
+@import "../config/zIndex.config.less";
 
 .toolbar{
 	float: right;
-	z-index: 130;
+	z-index: @toolbar_z;
 	font-size: 0;
 	line-height: 1em;
 
 	> li{
 		display: inline-block;
-		z-index: 10;
+		z-index: @toolbar_li_z;
 	}
 	.icon{
 		float: left;

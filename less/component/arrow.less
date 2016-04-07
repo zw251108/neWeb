@@ -1,6 +1,7 @@
 @import "../lib/color.less";
 @import "../lib/function.less";
 @import "../config/color.config.less";
+@import "../config/zIndex.config.less";
 
 /**
  * 箭头
@@ -26,7 +27,7 @@
 	&:before,
 	&:after{
 		position: absolute;
-		z-index: 10;
+		z-index: @arrow_z;
 		left: 0;
 		right: 0;
 

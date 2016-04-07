@@ -22,6 +22,8 @@ define(['jquery', 'tag', 'template'], function($, tag){
 					, $parent = $that.parent()
 					, parentWidth = $parent.width()
 					, parentLeft = $parent.offset().left
+					, parentPaddingL = parseInt($parent.css('paddingLeft'), 10)
+					, parentPaddingR = parseInt($parent.css('paddingRight'), 10)
 
 					, width = $filterBox.width()
 					, bdL = parseInt($filterBox.css('borderLeftWidth'), 10)
@@ -32,11 +34,11 @@ define(['jquery', 'tag', 'template'], function($, tag){
 					, toolbarLeft = $toolbar.offset().left
 					;
 
-				if( width + bdL + bdR === toolbarWidth ){
-					$filterBox.css('right', (parentLeft + parentWidth - (toolbarLeft + toolbarWidth) ) + 'px');
+				if( width + bdL + bdR === toolbarWidth ){ console.log(parentLeft, parentWidth, toolbarLeft, toolbarWidth)
+					$filterBox.css('right', (parentLeft + parentWidth + parentPaddingL + parentPaddingR - toolbarLeft - toolbarWidth) + 'px');
 				}
 				else if( parentLeft < width ){
-					$filterBox.css('right', (parentLeft + parentWidth - toolbarLeft - width) +'px');
+					$filterBox.css('right', (parentLeft + parentWidth + parentPaddingL + parentPaddingR - toolbarLeft - width) +'px');
 				}
 				else{
 					$filterBox.css('right', 0);

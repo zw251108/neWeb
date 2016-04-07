@@ -16,6 +16,8 @@ define(['jquery', 'template'], function($){
 					, $parent = $that.parent()
 					, parentWidth = $parent.width()
 					, parentLeft = $parent.offset().left
+					, parentPaddingL = parseInt($parent.css('paddingLeft'), 10)
+					, parentPaddingR = parseInt($parent.css('paddingRight'), 10)
 
 					, width = $searchBar.width()
 					, bdL = parseInt($searchBar.css('borderLeftWidth'), 10)
@@ -26,11 +28,11 @@ define(['jquery', 'template'], function($){
 					, toolbarLeft = $toolbar.offset().left
 					;
 
-				if( width + bdL + bdR === toolbarWidth ){
-					$searchBar.css('right', (parentLeft + parentWidth - (toolbarLeft + toolbarWidth) ) + 'px');
+				if( width + bdL + bdR === toolbarWidth ){console.log(parentLeft, parentWidth, toolbarLeft, toolbarWidth)
+					$searchBar.css('right', (parentLeft + parentWidth + parentPaddingL + parentPaddingR - toolbarLeft - toolbarWidth) + 'px');
 				}
 				else if( parentLeft < width ){
-					$searchBar.css('right', (parentLeft + parentWidth - toolbarLeft - width) + 'px');
+					$searchBar.css('right', (parentLeft + parentWidth + parentPaddingL + parentPaddingR - toolbarLeft - width) + 'px');
 				}
 				else{
 					$searchBar.css('right', 0);
