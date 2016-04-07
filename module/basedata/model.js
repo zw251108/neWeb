@@ -30,7 +30,7 @@ var db      = require('../db.js')
 			return db.handle({
 				sql: SQL.district
 				, data: {
-					province: city
+					city: city
 				}
 			});
 		}
@@ -38,7 +38,7 @@ var db      = require('../db.js')
 			return db.handle({
 				sql: SQL.town
 				, data: {
-					province: district
+					district: district
 				}
 			});
 		}
@@ -46,7 +46,7 @@ var db      = require('../db.js')
 			return db.handle({
 				sql: SQL.village
 				, data: {
-					province: town
+					town: town
 				}
 			});
 		}

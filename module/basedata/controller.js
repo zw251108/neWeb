@@ -25,97 +25,81 @@ web.get('/basedata/province/data', function(req, res){
 });
 web.get('/basedata/city/data', function(req, res){
 	var query = req.query || {}
-		, province = query.province
-		, execute
 		;
 
-	if( province ){
-		execute = BaseDataModel.city( province ).then(function(rs){
-			return JSON.stringify( rs );
-		});
-	}
-	else{
-		execute = Promise.reject( new BaseDataError('缺少参数 province') );
-	}
-
-	execute.catch(function(e){
+	BaseDataHandler.getCity( query ).then(function(rs){
+		return {
+			data: rs
+		};
+	}, function(e){
 		console.log( e );
 
-		return '[]';
-	}).then(function(rs){
-		res.send( rs );
+		return {
+			error: ''
+			, msg: e.message
+		};
+	}).then(function(json){
+		res.send( JSON.stringify(json) );
 		res.end();
 	});
 });
 web.get('/basedata/district/data', function(req, res){
 	var query = req.query || {}
-		, city = query.city
-		, execute
 		;
 
-	if( city ){
-		execute = BaseDataModel.district( city ).then(function(rs){
-			return JSON.stringify( rs );
-		});
-	}
-	else{
-		execute = Promise.reject( new BaseDataError('缺少参数 city') );
-	}
-
-	execute.catch(function(e){
+	BaseDataHandler.getDistrict( query ).then(function(rs){
+		return {
+			data: rs
+		};
+	}, function(e){
 		console.log( e );
 
-		return '[]';
-	}).then(function(rs){
-		res.send( rs );
+		return {
+			error: ''
+			, msg: e.message
+		};
+	}).then(function(json){
+		res.send( JSON.stringify(json) );
 		res.end();
 	});
 });
 web.get('/basedata/town/data', function(req, res){
 	var query = req.query || {}
-		, district = query.district
-		, execute
 		;
 
-	if( district ){
-		execute = BaseDataModel.town( district ).then(function(rs){
-			return JSON.stringify( rs );
-		});
-	}
-	else{
-		execute = Promise.reject( new BaseDataError('缺少参数 district') );
-	}
-
-	execute.catch(function(e){
+	BaseDataHandler.getTown( query ).then(function(rs){
+		return {
+			data: rs
+		};
+	}, function(e){
 		console.log( e );
 
-		return '[]';
-	}).then(function(rs){
-		res.send( rs );
+		return {
+			error: ''
+			, msg: e.message
+		};
+	}).then(function(json){
+		res.send( JSON.stringify(json) );
 		res.end();
 	});
 });
 web.get('/basedata/village/data', function(req, res){
 	var query = req.query || {}
-		, town = query.town
-		, execute
 		;
 
-	if( town ){
-		execute = BaseDataModel.village( town ).then(function(rs){
-			return JSON.stringify( rs );
-		});
-	}
-	else{
-		execute = Promise.reject( new BaseDataError('缺少参数 town') );
-	}
-
-	execute.catch(function(e){
+	BaseDataHandler.getVillage( query ).then(function(rs){
+		return {
+			data: rs
+		};
+	}, function(e){
 		console.log( e );
 
-		return '[]';
-	}).then(function(rs){
-		res.send( rs );
+		return {
+			error: ''
+			, msg: e.message
+		};
+	}).then(function(json){
+		res.send( JSON.stringify(json) );
 		res.end();
 	});
 });
@@ -123,27 +107,21 @@ web.get('/basedata/village/data', function(req, res){
 // 大学数据
 web.get('/basedata/university/data', function(req, res){
 	var query = req.query || {}
-		, province = query.province
-		, execute
 		;
 
-	if( province ){
-		execute = BaseDataModel.university( province ).then(function(rs){
-			rs = JSON.stringify( rs );
-
-			return callback +'('+ rs +')';
-		});
-	}
-	else{
-		execute = Promise.reject( new BaseDataError('缺少参数 province') );
-	}
-
-	execute.catch(function(e){
+	BaseDataHandler.getUniversity( query ).then(function(rs){
+		return {
+			data: rs
+		};
+	}, function(e){
 		console.log( e );
 
-		return '[]';
-	}).then(function(rs){
-		res.send( rs );
+		return {
+			error: ''
+			, msg: e.message
+		};
+	}).then(function(json){
+		res.send( JSON.stringify(json) );
 		res.end();
 	});
 });
@@ -174,152 +152,155 @@ data.push('province', 'city', 'district', 'town', 'village', 'university');
 web.get('/data/province', function(req, res){
 	var query = req.query || {}
 		, callback = query.callback
-		, execute
 		;
 
-	if( callback ){
-		execute = BaseDataHandler.getProvince().then(function(rs){
-			return callback +'('+ JSON.stringify( rs ) +')';
-		});
-	}
-	else{
-		execute = Promise.reject( new BaseDataError('不是 jsonp 格式调用') );
-	}
+	BaseDataHandler.getProvince().then(function(rs){
+		var execute
+			;
 
-	execute.catch(function(e){
-		console.log(e);
+		if( callback ){
+			execute = callback +'('+ JSON.stringify({
+				data: rs
+			}) +')';
+		}
+		else{
+			execute = Promise.reject( new BaseDataError('不是 jsonp 格式调用') );
+		}
 
-		return '';
+		return execute;
+	}).catch(function(e){
+		console.log( e );
+
+		return callback +'('+ JSON.stringify({
+			error: ''
+			, msg: e.message
+		}) +')';
 	}).then(function(rs){
-		rs && res.send( rs );
+		res.send( rs );
 		res.end();
 	});
 });
 web.get('/data/city', function(req, res){
 	var query = req.query || {}
-		, province = query.province
 		, callback = query.callback
-		, execute
 		;
 
-	if( province ){
-		if( callback ){
-			execute = BaseDataModel.city( province ).then(function(rs){
-				rs = JSON.stringify( rs );
+	BaseDataHandler.getCity( query ).then(function(rs){
+		var execute
+			;
 
-				return callback +'('+ rs +')';
-			});
+		if( callback ){
+			execute = callback +'('+ JSON.stringify({
+					data: rs
+				}) +')';
 		}
 		else{
 			execute = Promise.reject( new BaseDataError('不是 jsonp 格式调用') );
 		}
-	}
-	else{
-		execute = Promise.reject( new BaseDataError('缺少参数 province') );
-	}
 
-	execute.catch(function(e){
+		return execute;
+	}).catch(function(e){
 		console.log( e );
 
-		return '';
+		return callback +'('+ JSON.stringify({
+				error: ''
+				, msg: e.message
+			}) +')';
 	}).then(function(rs){
-		rs && res.send( rs );
+		res.send( rs );
 		res.end();
 	});
 });
 web.get('/data/district', function(req, res){
 	var query = req.query || {}
-		, city = query.city
 		, callback = query.callback
-		, execute
 		;
 
-	if( city ){
-		if( callback ){
-			execute = BaseDataModel.district( city ).then(function(rs){
-				rs = JSON.stringify( rs );
+	BaseDataHandler.getDistrict( query ).then(function(rs){
+		var execute
+			;
 
-				return callback +'('+ rs +')';
-			});
+		if( callback ){
+			execute = callback +'('+ JSON.stringify({
+					data: rs
+				}) +')';
 		}
 		else{
 			execute = Promise.reject( new BaseDataError('不是 jsonp 格式调用') );
 		}
-	}
-	else{
-		execute = Promise.reject( new BaseDataError('缺少参数 city') );
-	}
 
-	execute.catch(function(e){
+		return execute;
+	}).catch(function(e){
 		console.log( e );
 
-		return '';
+		return callback +'('+ JSON.stringify({
+				error: ''
+				, msg: e.message
+			}) +')';
 	}).then(function(rs){
-		rs && res.send( rs );
+		res.send( rs );
 		res.end();
 	});
 });
 web.get('/data/town', function(req, res){
 	var query = req.query || {}
-		, district = query.district
 		, callback = query.callback
-		, execute
 		;
 
-	if( district ){
-		if( callback ){
-			execute = BaseDataModel.town( district ).then(function(rs){
-				rs = JSON.stringify( rs );
+	BaseDataHandler.getTown( query ).then(function(rs){
+		var execute
+			;
 
-				return callback +'('+ rs +')';
-			});
+		if( callback ){
+			execute = callback +'('+ JSON.stringify({
+					data: rs
+				}) +')';
 		}
 		else{
 			execute = Promise.reject( new BaseDataError('不是 jsonp 格式调用') );
 		}
-	}
-	else{
-		execute = Promise.reject( new BaseDataError('缺少参数 district') );
-	}
 
-	execute.catch(function(e){
+		return execute;
+	}).catch(function(e){
 		console.log( e );
 
-		return '';
+		return callback +'('+ JSON.stringify({
+				error: ''
+				, msg: e.message
+			}) +')';
 	}).then(function(rs){
-		rs && res.send( rs );
+		res.send( rs );
 		res.end();
 	});
 });
 web.get('/data/village', function(req, res){
 	var query = req.query || {}
-		, town = query.town
 		, callback = query.callback
-		, execute
 		;
 
-	if( town ){
-		if( callback ){
-			execute = BaseDataModel.village( town ).then(function(rs){
-				rs = JSON.stringify( rs );
+	BaseDataHandler.getVillage( query ).then(function(rs){
+		var execute
+			;
 
-				return callback +'('+ rs +')';
-			});
+		if( callback ){
+			execute = callback +'('+ JSON.stringify({
+					data: rs
+				}) +')';
 		}
 		else{
 			execute = Promise.reject( new BaseDataError('不是 jsonp 格式调用') );
 		}
-	}
-	else{
-		execute = Promise.reject( new BaseDataError('缺少参数 town') );
-	}
 
-	execute.catch(function(e){
+		return execute;
+	}).catch(function(e){
 		console.log( e );
 
-		return '';
+		return callback +'('+ JSON.stringify({
+				error: ''
+				, msg: e.message
+			}) +')';
 	}).then(function(rs){
-		rs && res.send( rs );
+		res.send( rs );
 		res.end();
 	});
 });
