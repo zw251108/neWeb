@@ -88,7 +88,9 @@ web.get('/admin/document/:documentId/', function(req, res){
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
-	DocumentHandler.getDocument(user, query).then(DocumentAdminView.document, function(e){
+	param.id = param.documentId;
+
+	DocumentHandler.getDocument(user, param).then(DocumentAdminView.document, function(e){
 		console.log( e );
 
 		// todo 错误页面

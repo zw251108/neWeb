@@ -239,6 +239,8 @@ var DocumentModel   = require('./model.js')
 				, execute
 				;
 
+			data.content = data.content.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+
 			if( documentId && sectionId && contentId ){
 				execute = DocumentModel.updateContent( data ).then(function(rs){
 					return {
