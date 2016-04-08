@@ -239,7 +239,8 @@ var DocumentModel   = require('./model.js')
 				, execute
 				;
 
-			data.content = data.content.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+			// 过滤 style script iframe frameset frame 标签
+			data.content = data.content.replace(/<(style|script|iframe|frameset)([^>]*)>(.*?)<\/\1>/g, '&lt;$1$2&gt;$3&lt;/$1&gt;').replace(/<frame([^>]*)\/>/g, '&lt;frame$1/&gt;');
 
 			if( documentId && sectionId && contentId ){
 				execute = DocumentModel.updateContent( data ).then(function(rs){

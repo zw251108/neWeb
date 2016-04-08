@@ -1,5 +1,22 @@
 @import "../config/color.config.less";
 
+@list: list;
+
+/*ul,ol*/.@{list}{
+	list-style: none;
+
+	&-number{
+		list-style: decimal;
+	}
+
+	&_item{
+
+		&-check{
+
+		}
+	}
+
+}
 /*ul*/.list{
 	overflow: auto;
 	position: absolute;

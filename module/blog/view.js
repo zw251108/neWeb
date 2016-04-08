@@ -26,7 +26,6 @@ var getEmmet    = require('../emmet/getEmmet.js')
 
 	, BlogView = {
 		blogList: function(rs){
-			console.log(rs);
 			return tpl({
 				title: '博客 blog'
 				, main: {

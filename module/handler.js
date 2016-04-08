@@ -34,6 +34,8 @@ Handler.prototype = {
 				target[k] = ext[k];
 			}
 		}
+
+		return target;
 	}
 	// 变量格式转换
 	, varTranslate: function(s){

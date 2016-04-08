@@ -9,6 +9,8 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	, pagination    = require('../pagination.js')
 
 	, TagView   = require('../tag/view.js')
+	, Handler   = require('../handler.js')
+	, handler   = new Handler()
 
 	, articleListTpl    = emmetTpl({
 		template: getEmmet('admin/blog/articleList.html')
@@ -16,10 +18,16 @@ var getEmmet    = require('../emmet/getEmmet.js')
 			tags: TagView.tagEditorFilter.tagsArea
 		}
 	})
+
+	, articleFilter = handler.extend({}, TagView.tagEditorFilter)
 	, articleTpl        = emmetTpl({
 		template: getEmmet('admin/blog/article.html') +
 					'+' + TagView.tagEditorEmmet
-		, filter: TagView.tagEditorFilter
+		, filter: handler.extend(articleFilter, {
+			content: function(d){
+				return d.content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\$/g, '&#36;');
+			}
+		})
 	})
 	, articleAddFormTpl = emmetTpl({
 		template: getEmmet('admin/blog/articleAddForm.html')
@@ -35,6 +43,8 @@ var getEmmet    = require('../emmet/getEmmet.js')
 				, main: {
 					moduleMain: {
 						id: 'blog'
+						, icon: 'edit'
+						, title: '博客 blog'
 						, toolbar: [{
 							type: 'button', id: 'add', icon: 'plus', title: '新建'
 						}]
@@ -66,6 +76,8 @@ var getEmmet    = require('../emmet/getEmmet.js')
 				, main: {
 					moduleMain: {
 						id: 'blog'
+						, icon: 'edit'
+						, title: '博客 blog'
 						, toolbar: [{
 							type: 'button', id: 'save', icon: 'save', title: '保存'}, {
 							type: 'button', id: 'changeSkin',   icon: 'skin',   title: '更改皮肤'

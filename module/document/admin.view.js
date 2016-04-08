@@ -25,6 +25,11 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	})
 	, contentListTpl    = emmetTpl({
 		template: getEmmet('admin/document/contentList.html')
+		, filter: {
+			content: function(d){
+				return d.content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\$/g, '&#36;');
+			}
+		}
 	})
 	, sectionAddFormTpl = emmetTpl({
 		template: getEmmet('admin/document/sectionAddForm.html')
@@ -42,7 +47,10 @@ var getEmmet    = require('../emmet/getEmmet.js')
 				}
 				, main: {
 					moduleMain: {
-						toolbar: [{
+						id: 'document'
+						, title: '前端文档 document'
+						, size: 'large'
+						, toolbar: [{
 							type: 'button', id: 'add', icon: 'plus', title: '添加'
 						}]
 						, content: '<ul>' + documentList(rs.data).join('') + '</ul>' + '<div class="pagination" id="pagination">'+ pagination(rs.index, rs.size, rs.count, rs.urlCallback) +'</div>'

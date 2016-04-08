@@ -257,7 +257,7 @@ require(['../../config'], function(config){
 				, type: 'PUT'
 				, data: {
 					id: contentId
-					, content: code.getValue().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\$/g, '&#36;')
+					, content: code.getValue()
 				}
 				, dataType: 'json'
 				, success: function(json){

@@ -145,10 +145,12 @@ var BlogModel   = require('./model.js')
 			var title = data.title
 				, content = data.content
 				, tags = data.tags
-				, param = req.params || {}
-				, blogId = param.blogId
+				, blogId = data.blogId
 				, execute
 				;
+
+			// 过滤 style script iframe frame 标签
+			content = content.replace(/<(style|script|iframe|frameset)([^>]*)>(.*?)<\/\1>/g, '&lt;$1$2&gt;$3&lt;/$1&gt;').replace(/<frame([^>]*)\/>/g, '&lt;frame$1/&gt;');
 
 			if( blogId ){
 				execute = BlogModel.updateBlog(title, content, tags, blogId).then(function(rs){
