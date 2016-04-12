@@ -45,10 +45,23 @@ var db      = require('../db.js')
 		, codeByName: 'select id,name,tags,css_lib,js_lib,html,css,js from editor where name=:name'
 
 		, codeAdd: 'insert into editor(status,html,css,js,css_lib,js_lib,name,preview,create_time,user_id) values(1,:html,:css,:js,:cssLib,:jsLib,:name,\'../image/default/no-pic.png\',now(),:userId)'
-		, codeUpdate: 'update editor set name=:name,html=:html,css=:css,js=:js,css_lib=:cssLib,js_lib=:jsLib where id=:id'
+		, codeUpdate: 'update editor' +
+			' set name=:name,html=:html,css=:css,js=:js,css_lib=:cssLib,js_lib=:jsLib' +
+			' where' +
+				' id=:id' +
+			' and' +
+				' editable=\'0\''
 		// todo 设置 UI 组件
-		, codeSetMore: 'update editor set name=:name,tags=:tags where id=:id'
-		, codeSetMoreImg: 'update editor set name=:name,tags=:tags,preview=:preview where id=:id'
+		, codeSetMore: 'update editor set name=:name,tags=:tags' +
+			' where' +
+				' id=:id' +
+			' and' +
+				' editable=\'0\''
+		, codeSetMoreImg: 'update editor set name=:name,tags=:tags,preview=:preview' +
+			' where' +
+				' id=:id' +
+			' and' +
+				' editable=\'0\''
 	}
 	, Model = {
 		getEditorAll: function(){

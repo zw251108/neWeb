@@ -200,6 +200,11 @@ web.get('/', function(req, res){
 				<section class="metro metro-tiny">\
 					<h2 class="metro_title icon icon-weibo"></h2>\
 				</section>\
+			</a>\
+			<a href="https://github.com/zw251108" target="_blank">\
+				<section class="metro metro-tiny">\
+					<h2 class="metro_title icon icon-github"></h2>\
+				</section>\
 			</a>'
 		, script: {
 			main: 'script/index'
