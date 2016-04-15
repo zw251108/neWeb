@@ -51,6 +51,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 				, main: {
 					moduleMain: {
 						id: 'blog'
+						, icon: 'edit'
 						, title: '博客 blog'
 						, content : articleTpl( rs ).join('')
 					}
