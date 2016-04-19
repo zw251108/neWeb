@@ -95,22 +95,31 @@
 
 .module-user{
 	background: #fff !important;
+
+	-webkit-transition: width 1s;
+	-moz-transition: width 1s;
+	-ms-transition: width 1s;
+	-o-transition: width 1s;
+	transition: width 1s;
 }
-.module-user .module_content{}
+.module-user .module_content{
+	padding: 18px;
+}
 .module-user .user_avatar{
 	float: left;
 	height: 110px;
 	width: 110px;
-	margin: 10px 5px;
 }
 .module-user .user_avatar img{
 	min-width: 100%;
+}
+.module-user form{
+	margin-top: -10px;
 }
 .module-user .btn-submit{
 	float: right;
 	height: 110px;
 	width: 110px;
-	margin: 0 5px;
 	font-size: 24px;
 	font-weight: bold;
 	line-height: 110px;

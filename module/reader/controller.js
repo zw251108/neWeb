@@ -14,7 +14,7 @@ var web         = require('../web.js')
 	, menu      = require('../menu.js')
 
 	, TagModel  = require('../tag/model.js')
-	, User      = require('../user/user.js')
+	, UserHandler   = require('../user/handler.js')
 
 	, Model     = require('./model.js')
 	, View      = require('./view.js')
@@ -168,7 +168,7 @@ web.get('/reader/bookmark', function(req, res){
 		, size = query.size || 20
 		, keyword = query.keyword || ''
 		, tags = query.tags || ''
-		, user = User.getUserFromSession.fromReq(req)
+		, user = UserHandler.getUserFromSession.fromReq(req)
 		, execute
 		;
 console.log(user);
@@ -265,7 +265,7 @@ web.get('/reader/favorite', function(req, res){
 		, size = query.size || 20
 		, keyword = query.keyword || ''
 		, tags = query.tags || ''
-		, user = User.getUserFromSession.fromReq(req)
+		, user = UserHandler.getUserFromSession.fromReq(req)
 		, execute
 		;
 
@@ -570,7 +570,7 @@ socket.register({
 			, title = query.title
 			, tags = query.tags
 			, source
-			, user = User.getUserFromSession.fromSocket(socket)
+			, user = UserHandler.getUserFromSession.fromSocket(socket)
 			, execute
 			, bookmark = {} //
 			;
@@ -578,7 +578,7 @@ socket.register({
 		console.log('bookmark add url: ' + url);
 
 		// 检测 user
-		//if( User.isGuest(user) ){
+		//if( UserHandler.isGuest(user) ){
 		if( url ){
 			execute = Model.isExistBookmark(url, true)
 				.then(function(rs){
@@ -768,13 +768,13 @@ socket.register({
 			, oldScore = query.oldScore || 0
 			, oldStatus = query.oldStatus || 0
 			, title = query.title || ''
-			, user = User.getUserFromSession.fromSocket(socket)
+			, user = UserHandler.getUserFromSession.fromSocket(socket)
 			, bookmark
 			, execute
 			;
 
 		// 检测 user
-		//if( User.isGuest(user) ){
+		//if( UserHandler.isGuest(user) ){
 		// 判断是否已有 id
 		if( id ){
 			if( /^\d+$/.test( id ) ){
@@ -967,7 +967,7 @@ admin.register({
 	, href: 'reader/bookmark'
 });
 web.get('/admin/reader/bookmark', function(req, res){
-	var user = User.getUserFromSession.fromReq( req )
+	var user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
 	ReaderAdminView.bookmark().then(function(html){
@@ -984,7 +984,7 @@ web.get('/admin/reader/bookmark', function(req, res){
 
 web.get('/reader/bookmark/data', function(req, res){
 	var query = req.query || {}
-		, user = User.getUserFromSession.fromReq( req )
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
 	ReaderHandler.getBookmarkReaderPerDay( user ).catch(function(e){

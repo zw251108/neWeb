@@ -37,7 +37,7 @@ web.get('/blog/', function(req, res){
 	var query = req.query || {}
 		, user = UserHandler.getUserFromSession.fromReq(req)
 		;
-
+	console.log(user)
 	BlogHandler.getBlogList(user, query).then(BlogView.blogList, function(e){
 		console.log( e );
 		// todo 错误页面

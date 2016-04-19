@@ -33,6 +33,8 @@ var fs = require('fs')
 	, tpl       = require('./module/emmetTpl/tpl.js') // 模板库
 	, modules   = require('./module/module.js') // 首页模块
 	, admin     = require('./module/admin.js')   // 后台管理模块
+
+	, UserHandler   = require('./module/user/handler.js')
 	;
 
 log4js.configure({
@@ -126,8 +128,6 @@ require('./module/bower/controller.js'      );  // 加载模块 bower
 
 require('./module/reader/controller.js'     );  // 加载模块 reader
 
-require('./module/resume/controller.js'     );  // 加载模块 profile
-
 require('./module/task/controller.js'       );  // 加载模块 task
 
 require('./module/tag/controller.js'        );  // 加载模块 tag 功能
@@ -150,24 +150,20 @@ modules.register({
  * */
 web.get('/', function(req, res){
 	var user = req.session.user
+		, isGuest = UserHandler.isGuest( user )
 		;
-
-	if( !user ){
-		user = req.session.user = userInfo;
-	}
-
-	console.log(user);
 
 	res.send( tpl.html('index', {
 		title: '个人小站（开发测试中...）'
-		, user: ('user' in session) ? '/user' : '/login'
+		, user: isGuest ? '/user/login' : '/user/center'
 		, modules:
 			'<section id="userModule" class="module module-user metro normal">\
 				<div class="module_content">\
 					<div class="user_avatar">\
 						<img src="image/default/avatar.png" id="userAvatar" height="110" width="110">\
-					</div>\
-					<form action="/login">\
+					</div>' +
+				(isGuest ?
+					'<form id="userLoginForm" action="user/login" method="post">\
 						<button class="btn btn-submit" type="submit">登录</button>\
 						<div class="formGroup">\
 							<label class="label" for="email">电子邮箱</label>\
@@ -177,8 +173,8 @@ web.get('/', function(req, res){
 							<label class="label" for="password">密&emsp;&emsp;码</label>\
 							<input type="text" class="input" id="password" name="password">\
 						</div>\
-					</form>\
-				</div>\
+					</form>' : '') +
+				'</div>\
 			</section>'+
 			tpl.metroTpl( modules.modules ).join('') +
 			'<a href="" target="_blank">\
@@ -205,7 +201,16 @@ web.get('/', function(req, res){
 				<section class="metro metro-tiny">\
 					<h2 class="metro_title icon icon-github"></h2>\
 				</section>\
-			</a>'
+			</a>\
+			<dialog id="msgPopup" class="module module-popup small hidden" open="open">\
+				<ul class="toolbar" role="toolbar">\
+					<li><button id="msgPopupClose" class="icon icon-cancel module_close" type="button" title="关闭"></button></li>\
+				</ul>\
+				<div class="module_content scrollBar">\
+					<div class="msg" id="msgContent" role="alert"></div>\
+				</div>\
+				<div class="btnGroup"></div>\
+			</dialog>'
 		, script: {
 			main: 'script/index'
 			, src: 'script/lib/require.min.js'
@@ -264,12 +269,11 @@ web.post('/login', function(){
 // 编码工具皮肤设置与获取
 web.get('/skin', function(req, res){
 	var session = req.session || {}
-		, user = session.user
+		, user = session.user || {}
 		, skin
 		;
 
 	if( !user ){
-		user = req.session.user = userInfo;
 		user.skin = 'default';
 	}
 

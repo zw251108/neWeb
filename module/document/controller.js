@@ -135,11 +135,8 @@ web.post(   '/admin/document/', function(req, res){
 });
 web.put(    '/admin/document/:documentId/', function(req, res){
 	var param = req.params || {}
-		, documentId = param.documentId
 		, body = req.body || {}
-		, title = body.title
 		, user = UserHandler.getUserFromSession.fromReq( req )
-		, execute
 		;
 
 	body.documentId = param.documentId;

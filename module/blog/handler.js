@@ -40,7 +40,7 @@ var BlogModel   = require('./model.js')
 
 	, BlogHandler = {
 		getBlogList: function(user, query){
-			var result
+			var execute
 				, page = query.page || 1
 				, size = query.size || 20
 				, keyword = query.keyword
@@ -48,7 +48,7 @@ var BlogModel   = require('./model.js')
 				;
 
 			if( keyword ){
-				result = BlogModel.searchBlogByTitle(user.id, keyword, page, size).then(function(rs){
+				execute = BlogModel.searchBlogByTitle(user.id, keyword, page, size).then(function(rs){
 					return BlogModel.countSearchBlogByTitle(user.id, keyword).then(function(count){
 						return {
 							data: rs
@@ -63,7 +63,7 @@ var BlogModel   = require('./model.js')
 				});
 			}
 			else if( tags ){
-				result = BlogModel.filterBlogByTags(user.id, tags, page, size).then(function(rs){
+				execute = BlogModel.filterBlogByTags(user.id, tags, page, size).then(function(rs){
 					return BlogModel.countFilterBlogByTags(user.id, tags).then(function(count){
 						return {
 							data: rs
@@ -78,7 +78,7 @@ var BlogModel   = require('./model.js')
 				});
 			}
 			else{
-				result = BlogModel.getBlogByPage(user.id, page, size).then(function(rs){
+				execute = BlogModel.getBlogByPage(user.id, page, size).then(function(rs){
 					return BlogModel.countBlog( user.id ).then(function(count){
 						return {
 							data: rs
@@ -93,7 +93,7 @@ var BlogModel   = require('./model.js')
 				});
 			}
 
-			return result;
+			return execute;
 		}
 		, getBlog: function(user, query){
 			var blogId = query.blogId || ''

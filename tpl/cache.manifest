@@ -67,4 +67,5 @@ image/preview/
 image/demo/
 image/ugc/
 
-getavatar
+user/login
+user/avatar

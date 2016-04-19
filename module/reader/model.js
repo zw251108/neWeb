@@ -122,8 +122,12 @@ var db  = require('../db.js')
 			' order by score desc,datetime desc' +
 			' limit :page,:size'
 		, favoriteCount: 'select count(*) as count' +
-			' from user_reader_bookmark' +
-			' where status=1'
+			' from' +
+				' user_reader_bookmark' +
+			' where' +
+				' user_id=:userId' +
+			' and' +
+				' status=1'
 
 		, favoriteSearchTitle: 'select urb.id as id,rb.id as bookmarkId,urb.title as title,url,status,score,tags,mark_datetime as datetime' +
 			' from reader_bookmark as rb,user_reader_bookmark as urb' +

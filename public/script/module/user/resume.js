@@ -1,6 +1,3 @@
-/**
- *
- * */
 //----- 绘制雷达图 -----
 define('radarChart', ['jquery', 'global', 'd3'], function($, g, d3){
 	var defaults = {
@@ -97,8 +94,8 @@ define('radarChart', ['jquery', 'global', 'd3'], function($, g, d3){
 			return valPointY(d, i) - 3;
 		}).attr('width', 6).attr('height', 6)
 			.attr('transform', function(d, i){
-			return 'rotate(45, '+ valPointX(d, i) +' '+ valPointY(d, i) +')';
-		});
+				return 'rotate(45, '+ valPointX(d, i) +' '+ valPointY(d, i) +')';
+			});
 
 		// todo 添加交互效果
 	};

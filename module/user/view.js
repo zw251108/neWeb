@@ -1,6 +1,4 @@
-/**
- *
- * */
+'use strict';
 
 var getEmmet    = require('../emmet/getEmmet.js')
 	, tpl       = require('../emmet/tpl.js')
@@ -11,7 +9,32 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	, menu      = require('../menu.js')
 	, pagination    = require('../pagination.js')
 
-	, View = {}
+	, resume = emmetTpl({
+		template: getEmmet('user/resume.html')
+	})
+
+	, View = {
+		resume: function(){
+			return tpl({
+				title: '个人简历 resume'
+				, main: {
+					moduleMain: {
+						id: 'resume'
+						, title: '个人简历 resume'
+						, icon: 'user'
+						, content: resume({})
+					}
+				}
+				//, footer: {
+				//	nav: menu.current('resume')
+				//}
+				, script: {
+					main: '../script/module/user/resume'
+					, src: '../script/lib/require.min.js'
+				}
+			});
+		}
+	}
 	;
 
 module.exports = View;

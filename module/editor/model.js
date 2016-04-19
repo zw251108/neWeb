@@ -48,20 +48,23 @@ var db      = require('../db.js')
 		, codeUpdate: 'update editor' +
 			' set name=:name,html=:html,css=:css,js=:js,css_lib=:cssLib,js_lib=:jsLib' +
 			' where' +
-				' id=:id' +
-			' and' +
-				' editable=\'0\''
+				' id=:id'
+		//+
+			//' and' +
+			//	' editable=\'0\''
 		// todo 设置 UI 组件
 		, codeSetMore: 'update editor set name=:name,tags=:tags' +
 			' where' +
-				' id=:id' +
-			' and' +
-				' editable=\'0\''
+				' id=:id'
+		//+
+		//	' and' +
+		//		' editable=\'0\''
 		, codeSetMoreImg: 'update editor set name=:name,tags=:tags,preview=:preview' +
 			' where' +
-				' id=:id' +
-			' and' +
-				' editable=\'0\''
+				' id=:id'
+		//+
+		//	' and' +
+		//		' editable=\'0\''
 	}
 	, Model = {
 		getEditorAll: function(){

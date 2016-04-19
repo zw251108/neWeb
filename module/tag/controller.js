@@ -14,7 +14,7 @@ var web         = require('../web.js')
 	, Admin = require('./admin.view.js')
 	, TagError = require('./error.js')
 
-	, User  = require('../user/user.js')
+	, UserHandler  = require('../user/handler.js')
 
 	, Promise = require('promise')
 
@@ -112,7 +112,7 @@ socket.register({
 			}
 			, query = data.query || {}
 			, name = query.name
-			, user = User.getUserFromSession.fromSocket(socket)
+			, user = UserHandler.getUserFromSession.fromSocket(socket)
 			, execute
 			;
 

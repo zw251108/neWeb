@@ -26,7 +26,7 @@ var web         = require('../web.js')
 		'/task/': {
 			get: function(req, res){
 				var query = req.query || {}
-					, user = User.getUserFromSession.fromReq(req)
+					, user = UserHandler.getUserFromSession.fromReq(req)
 					;
 
 				Promise.all([
@@ -48,7 +48,7 @@ var web         = require('../web.js')
 			}
 			, post: function(req, res){
 				var body = req.body || {}
-					, user = User.getUserFromSession.fromReq(req)
+					, user = UserHandler.getUserFromSession.fromReq(req)
 					;
 
 				TaskModel.addTaskByUser(user.id, body).then(function(rs){
@@ -117,7 +117,7 @@ var web         = require('../web.js')
 					, id = body.id
 					, type = body.type
 					, taskId = param.taskId
-					, user = User.getUserFromSession.fromReq( req )
+					, user = UserHandler.getUserFromSession.fromReq( req )
 					, result
 					;
 
@@ -279,7 +279,7 @@ var web         = require('../web.js')
 		}
 	}
 
-	, User      = require('../user/user.js')
+	, UserHandler      = require('../user/handler.js')
 
 	//, Promise   = require('promise')
 	;
@@ -305,7 +305,7 @@ taskController.prototype = controller;
 web.get('/task/', function(req, res){
 	var query = req.query || {}
 		, date = query.date || ''
-		, user = User.getUserFromSession.fromReq(req)
+		, user = UserHandler.getUserFromSession.fromReq(req)
 		;
 
 	Promise.all([
@@ -359,7 +359,7 @@ web.get('/task/', function(req, res){
 
 web.post('/task/', function(req, res){
 	var body = req.body || {}
-		, user = User.getUserFromSession.fromReq(req)
+		, user = UserHandler.getUserFromSession.fromReq(req)
 		;
 
 	TaskModel.addTaskByUser(user.id, body).then(function(rs){
@@ -427,7 +427,7 @@ web.post('/task/:taskId/start', function(req, res){
 		, id = body.id
 		, type = body.type
 		, taskId = param.taskId
-		, user = User.getUserFromSession.fromReq( req )
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		, result
 		;
 

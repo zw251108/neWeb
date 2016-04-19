@@ -10,13 +10,14 @@ define('storage', function(){});
 
 //---------- 公用基础模块 ----------
 //----- 用户信息模块 user -----
-define('user', ['jquery', 'global', 'socket'], function($, g, socket){
+define('user', ['jquery', 'global', 'socket', 'msgPopup'], function($, g, socket, msgPopup){
 	var timeout = null
 		, $userAvatar = $('#userAvatar')
 		, $user = $('#userModule').on({
 			getAvatar: function(e, email){
 				$.ajax({
-					url: 'getavatar'
+					url: 'user/avatar'
+					, type: 'POST'
 					, data: {
 						email: email
 					}
@@ -27,8 +28,14 @@ define('user', ['jquery', 'global', 'socket'], function($, g, socket){
 								$userAvatar.attr('src', json.info.avatar);
 							}
 						}
+						else{
+							$userAvatar.attr('src', 'image/default/avatar.png');
+						}
 					}
 				});
+			}
+			, setDefaultAvatar: function(){
+				$userAvatar.attr('src', 'image/default/avatar.png');
 			}
 		}).on('keyup', '#email', function(){
 			var val = this.value;
@@ -36,17 +43,39 @@ define('user', ['jquery', 'global', 'socket'], function($, g, socket){
 			if( val ){
 
 
-				if( timeout ){
-					clearTimeout( timeout );
-				}
-
+				timeout && clearTimeout( timeout );
 				timeout = setTimeout(function(){
 
 					$user.triggerHandler('getAvatar', [val]);
 
 					timeout = null;
-				}, 500);
+				}, 800);
 			}
+			else{
+				$user.triggerHandler('setDefaultAvatar');
+			}
+		}).on('submit', '#userLoginForm', function(e){
+			e.preventDefault();
+
+			var $form = $(this)
+				, data = $form.serializeJSON()
+				;
+
+			$.ajax({
+				url: this.action
+				, type: this.method
+				, data: data
+				, success: function(json){
+					if( !('error' in json) ){
+						$userAvatar.attr('src', json.info.avatar);
+						$form.remove();
+						$user.toggleClass('normal tiny');
+					}
+					else{
+						msgPopup.showMsg( json.msg );
+					}
+				}
+			})
 		})
 		;
 

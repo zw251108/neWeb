@@ -19,7 +19,7 @@ var web         = require('../web.js')
 	// 外部数据模块引用
 	, LibModel      = require('../bower/model.js')
 	, TagModel      = require('../tag/model.js')
-	, User          = require('../user/user.js')
+	, UserHandler   = require('../user/handler.js')
 
 	, Image         = require('../image/image.js')
 	, ImageModel    = require('../image/model.js')
@@ -65,7 +65,7 @@ web.get('/editor/', function(req, res){
 		, size = query.size || 20
 		, keyword = query.keyword || ''
 		, tags = query.tags || ''
-		, user = User.getUserFromSession.fromReq(req)
+		, user = UserHandler.getUserFromSession.fromReq(req)
 		, execute
 		;
 
@@ -479,7 +479,7 @@ socket.register({
 		var query = data.query
 			, id = query.id || ''
 			, execute
-			, user = User.getUserFromSession.fromSocket(socket)
+			, user = UserHandler.getUserFromSession.fromSocket(socket)
 			;
 		console.log(id, typeof id)
 		query.userId = user.id;
