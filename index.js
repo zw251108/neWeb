@@ -171,7 +171,7 @@ web.get('/', function(req, res){
 						</div>\
 						<div class="formGroup">\
 							<label class="label" for="password">密&emsp;&emsp;码</label>\
-							<input type="text" class="input" id="password" name="password">\
+							<input type="password" class="input" id="password" name="password">\
 						</div>\
 					</form>' : '') +
 				'</div>\

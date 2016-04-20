@@ -38,6 +38,9 @@
 var BlogModel   = require('./model.js')
 	, BlogError = require('./error.js')
 
+	, UserError = require('../user/error.js')
+	, UserHandler   = require('../user/handler.js')
+
 	, BlogHandler = {
 		getBlogList: function(user, query){
 			var execute
@@ -45,68 +48,80 @@ var BlogModel   = require('./model.js')
 				, size = query.size || 20
 				, keyword = query.keyword
 				, tags = query.tags
+				, isGuest = UserHandler.isGuest( user )
 				;
 
-			if( keyword ){
-				execute = BlogModel.searchBlogByTitle(user.id, keyword, page, size).then(function(rs){
-					return BlogModel.countSearchBlogByTitle(user.id, keyword).then(function(count){
-						return {
-							data: rs
-							, index: page
-							, size: size
-							, count: count
-							, urlCallback: function(index){
-								return '??keyword='+ keyword +'&page='+ index;
-							}
-						}
-					});
-				});
-			}
-			else if( tags ){
-				execute = BlogModel.filterBlogByTags(user.id, tags, page, size).then(function(rs){
-					return BlogModel.countFilterBlogByTags(user.id, tags).then(function(count){
-						return {
-							data: rs
-							, index: page
-							, size: size
-							, count: count
-							, urlCallback: function(index){
-								return '??tags='+ tags +'&page='+ index;
-							}
-						}
-					});
-				});
+			if( isGuest ){
+				execute = Promise.reject( new UserError('用户尚未登录') );
 			}
 			else{
-				execute = BlogModel.getBlogByPage(user.id, page, size).then(function(rs){
-					return BlogModel.countBlog( user.id ).then(function(count){
-						return {
-							data: rs
-							, index: page
-							, size: size
-							, count: count
-							, urlCallback: function(index){
-								return '?page='+ index;
+				if( keyword ){
+					execute = BlogModel.searchBlogByTitle(user.id, keyword, page, size).then(function(rs){
+						return BlogModel.countSearchBlogByTitle(user.id, keyword).then(function(count){
+							return {
+								data: rs
+								, index: page
+								, size: size
+								, count: count
+								, urlCallback: function(index){
+									return '??keyword='+ keyword +'&page='+ index;
+								}
 							}
-						}
+						});
 					});
-				});
+				}
+				else if( tags ){
+					execute = BlogModel.filterBlogByTags(user.id, tags, page, size).then(function(rs){
+						return BlogModel.countFilterBlogByTags(user.id, tags).then(function(count){
+							return {
+								data: rs
+								, index: page
+								, size: size
+								, count: count
+								, urlCallback: function(index){
+									return '??tags='+ tags +'&page='+ index;
+								}
+							}
+						});
+					});
+				}
+				else{
+					execute = BlogModel.getBlogByPage(user.id, page, size).then(function(rs){
+						return BlogModel.countBlog( user.id ).then(function(count){
+							return {
+								data: rs
+								, index: page
+								, size: size
+								, count: count
+								, urlCallback: function(index){
+									return '?page='+ index;
+								}
+							}
+						});
+					});
+				}
 			}
 
 			return execute;
 		}
 		, getBlog: function(user, query){
-			var blogId = query.blogId || ''
-				, execute
+			var execute
+				, blogId = query.blogId || ''
+				, isGuest = UserHandler.isGuest( user )
 				;
 
 			// todo 验证 blogId
 
-			if( blogId ){
-				execute = BlogModel.getBlogById( blogId );
+			if( isGuest ){
+				execute = Promise.reject( new UserError('用户尚未登录') );
 			}
 			else{
-				execute = Promise.reject( new BlogError('缺少参数 id') );
+				if( blogId ){
+					execute = BlogModel.getBlogById( blogId );
+				}
+				else{
+					execute = Promise.reject( new BlogError('缺少参数 id') );
+				}
 			}
 
 			return execute;

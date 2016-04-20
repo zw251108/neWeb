@@ -28,7 +28,7 @@ var UserModel   = require('./model.js')
 
 			// todo 通用接口开发 username email phone 都可以作为参数
 			if( email ){
-				execute = UserModel.getUserAvatarByEmail( email).then(function(rs){
+				execute = UserModel.getUserAvatarByEmail( email ).then(function(rs){
 					var result
 						;
 
@@ -38,7 +38,7 @@ var UserModel   = require('./model.js')
 						};
 					}
 					else{
-						result = Promise.reject( new UserError('email 涓嶅瓨鍦�') );
+						result = Promise.reject( new UserError('email 不存在') );
 					}
 
 					return result;
@@ -65,7 +65,7 @@ var UserModel   = require('./model.js')
 					if( rs && rs.length ){
 						result = rs[0];
 					}
-					else{console.log(1)
+					else{
 						result = Promise.reject( new UserError('用户不存在') );
 					}
 
@@ -78,7 +78,7 @@ var UserModel   = require('./model.js')
 					if( password === pwd ){
 						result = rs;
 					}
-					else{console.log(2)
+					else{
 						result = Promise.reject( new UserError('用户密码错误') );
 					}
 
