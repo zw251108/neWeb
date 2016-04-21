@@ -91,7 +91,6 @@
 			right: 0;
 			background-image: -webkit-radial-gradient(bottom left, transparent 9px, @module-main_toolbar_bg_c 10px, @module-main_toolbar_bg_c 11px);
 		}
-
 		> li{
 			display: inline-block;
 			position: relative;
@@ -107,6 +106,28 @@
 				border-top-right-radius: 10px;
 				padding-right: 5px;
 			}
+		}
+
+		.icon{
+			width: 30px;
+			height: 30px;
+			background: #888;
+
+			&:hover{
+				color: #d35400;
+				background-color: #fff;
+			}
+
+		}
+		.btn{
+			outline: 0;
+
+			&:active{
+				background: #999;
+			}
+		}
+		.list{
+			top: 46px;
 		}
 
 		&-fixed{
@@ -127,24 +148,9 @@
 				padding-top: 0;
 				background: none;
 			}
-		}
 
-		.icon{
-			width: 30px;
-			height: 30px;
-			background: #888;
-
-			&:hover{
-				color: #d35400;
-				background-color: #fff;
-			}
-
-		}
-		.btn{
-			outline: 0;
-
-			&:active{
-				background: #999;
+			.list{
+				top: 41px;
 			}
 		}
 	}
