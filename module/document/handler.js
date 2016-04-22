@@ -101,8 +101,11 @@ var DocumentModel   = require('./model.js')
 
 				result.push( obj );
 			}
-
-			return result;
+			console.log(result)
+			return {
+				title: document.title
+				, sectionList: result
+			};
 		}
 
 		, newDocument: function(user, data){

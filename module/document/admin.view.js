@@ -15,16 +15,24 @@ var getEmmet    = require('../emmet/getEmmet.js')
 		template: getEmmet('admin/document/documentAddForm.html')
 	})
 
+	, articleTpl        = emmetTpl({
+		template: getEmmet('admin/document/article.html')
+		, filter: {
+			sectionList: function(d){
+				return sectionTpl( d.sectionList ).join('');
+			}
+		}
+	})
 	, sectionTpl        = emmetTpl({
 		template: getEmmet('admin/document/section.html')
 		, filter: {
 			contentList: function(d){
-				return contentListTpl( d.contentList ).join('');
+				return contentTpl( d.contentList ).join('');
 			}
 		}
 	})
-	, contentListTpl    = emmetTpl({
-		template: getEmmet('admin/document/contentList.html')
+	, contentTpl        = emmetTpl({
+		template: getEmmet('admin/document/content.html')
 		, filter: {
 			content: function(d){
 				return d.content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\$/g, '&#36;');
@@ -86,7 +94,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 							type: 'button', id: 'add', icon: 'plus', title: '添加章节'}, {
 							type: 'button', id: 'changeSkin',   icon: 'skin',   title: '更改皮肤'
 						}]
-						, content: sectionTpl( rs ).join('')
+						, content: articleTpl( rs ).join('')
 					}
 					, modulePopup: [{
 						id: 'addSectionPopup'

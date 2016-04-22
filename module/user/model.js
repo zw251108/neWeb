@@ -12,8 +12,8 @@ var db = require('../db.js')
 		//userTag: 'insert into user_tag(user_id,tags) values(:userId,:tags)'
 		//,
 
-		userAvatarByEmail: 'select avatar from user where email=:email'
-		, userByEmail: 'select id,email,password,username from user where email=:email'
+		userAvatarByEmail: 'select avatar from '+ TABLE_NAME +' where email=:email'
+		, userByEmail: 'select id,email,password,username,avatar from '+ TABLE_NAME +' where email=:email'
 	}
 	, UserModel = {
 	/**
