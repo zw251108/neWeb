@@ -4,6 +4,8 @@ var db  = require('../db.js')
 	, config = require('../../config.js')
 	, error = require('../error.js')
 
+	, DocumentError = require('./error.js')
+
 	, TABLE_NAME = config.db.dataTablePrefix +'document'
 
 	, SQL = {
@@ -171,6 +173,50 @@ var db  = require('../db.js')
 				, data: data
 			});
 		}
+	}
+
+	, Content   = function(data){
+
+	}
+	, Section   = function(data){
+
+	}
+	, Document  = function(data){
+		var k
+			, t
+			;
+
+		for( k in documentData ) if( documentData.hasOwnProperty(k) ){
+			if( k in data ){
+				t = documentData[k];
+
+				// todo
+				if( typeof t === 'object' && Array.isArray( t ) ){
+					this[k] = [];
+				}
+				else{
+					this[k] = data[k];
+				}
+			}
+			else{
+				console.log( new DocumentError('Document Data 缺少'+ k) )
+			}
+		}
+	}
+
+	, documentData = {
+		title: ''
+		, sectionList: [Section]
+	}
+	, sectionData = {
+		sectionId: ''
+		, sectionTitle: ''
+		, contentList: [Content]
+	}
+	, contentData = {
+		id: ''
+		, title: ''
+		, content: ''
 	}
 	;
 
