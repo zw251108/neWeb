@@ -71,7 +71,31 @@ web.post('/user/login', function(req, res){
 	UserHandler.userLogin( query ).then(function(rs){
 		// 将 user 放入 session
 		user.id = rs.id;
-		req.session.user = user;
+		UserHandler.setUserToSession(user, session);
+
+		return {
+			info: rs
+		};
+	}, function(e){
+		console.log( e );
+
+		return {
+			error: ''
+			, msg: e.message
+		};
+	}).then(function(send){
+		res.send( JSON.stringify(send) );
+		res.end();
+	});
+});
+web.post('/user/verify', function(req, res){
+	var query = req.body
+		, session = req.session
+		;
+
+	UserHandler.verifyToken( query).then(function(rs){
+		// 通过验证
+		UserHandler.setUserToSession(query, session);
 
 		return {
 			info: rs

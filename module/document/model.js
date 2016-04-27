@@ -23,7 +23,7 @@ var db  = require('../db.js')
 		, contentById: 'select id,title,content,section_title from document_content where id=:id'
 		, contentBySection: 'select id,title,content,section_title from document_content where section_id=:sectionId order by `order`'
 		, contentByDocument: 'select id,title,content,section_id,section_title from document_content where document_id=:documentId order by section_id,`order`'
-		, contentAdd: 'insert into document_content(title,content,document_id,section_id,section_title,`order`) values(:title,\'\',:documentId,:sectionId,:sectionTitle,:order)'
+		, contentAdd: 'insert into document_content(title,content,document_id,section_id,section_title,`order`,user_id) values(:title,\'\',:documentId,:sectionId,:sectionTitle,:order,:userId)'
 		, contentSaveContent: 'update document_content set content=:content where id=:id'
 	}
 	, DocumentModel = {

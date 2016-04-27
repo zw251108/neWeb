@@ -5,12 +5,10 @@
 //---------- 工具模块 ----------
 //----- 地理定位 -----
 define('location', function(){});
-//----- 本地存储 模块 -----
-define('storage', function(){});
 
 //---------- 公用基础模块 ----------
 //----- 用户信息模块 user -----
-define('user', ['jquery', 'global', 'socket', 'msgPopup'], function($, g, socket, msgPopup){
+define('user', ['jquery', 'global', 'socket', 'msgPopup', 'storage'], function($, g, socket, msgPopup, storage){
 	var timeout = null
 		, $userAvatar = $('#userAvatar')
 		, $user = $('#userModule').on({
@@ -23,26 +21,29 @@ define('user', ['jquery', 'global', 'socket', 'msgPopup'], function($, g, socket
 					}
 					, dataType: 'json'
 					, success: function(json){
+						var avatar = ''
+							;
 						if( !('error' in json) ){
 							if( json.info.avatar ){
-								$userAvatar.attr('src', json.info.avatar);
+								avatar = json.info.avatar;
 							}
 						}
-						else{
-							$userAvatar.attr('src', 'image/default/avatar.png');
-						}
+
+						$user.triggerHandler('setAvatar', [avatar]);
 					}
 				});
 			}
-			, setDefaultAvatar: function(){
-				$userAvatar.attr('src', 'image/default/avatar.png');
+			, setAvatar: function(e, avatar){
+				$userAvatar.attr('src', avatar || 'image/default/avatar.png');
+			}
+			, switchLogin: function(){
+				$userLoginForm.remove();
+				$user.toggleClass('normal tiny');
 			}
 		}).on('keyup', '#email', function(){
 			var val = this.value;
 
 			if( val ){
-
-
 				timeout && clearTimeout( timeout );
 				timeout = setTimeout(function(){
 
@@ -52,13 +53,12 @@ define('user', ['jquery', 'global', 'socket', 'msgPopup'], function($, g, socket
 				}, 800);
 			}
 			else{
-				$user.triggerHandler('setDefaultAvatar');
+				$user.triggerHandler('setAvatar');
 			}
 		}).on('submit', '#userLoginForm', function(e){
 			e.preventDefault();
 
-			var $form = $(this)
-				, data = $form.serializeJSON()
+			var data = $userLoginForm.serializeJSON()
 				;
 
 			$.ajax({
@@ -66,19 +66,35 @@ define('user', ['jquery', 'global', 'socket', 'msgPopup'], function($, g, socket
 				, type: this.method
 				, data: data
 				, success: function(json){
+					var info
+						, date
+						, m, d
+						;
+
 					if( !('error' in json) ){
-						$userAvatar.attr('src', json.info.avatar);
-						$form.remove();
-						$user.toggleClass('normal tiny');
+						info = json.info;
+
+						date = new Date();
+						m = date.getMonth() +1;
+						d = date.getDate();
+						info.date = date.getFullYear() +'-'+ (m > 9 ? m : '0'+ m) +'-'+ (d > 9 ? d : '0'+d);
+						storage.setItem('user', JSON.stringify(info) );
+
+						$user.triggerHandler('setAvatar', [info.avatar]);
+						$user.triggerHandler('switchLogin');
 					}
 					else{
+						$user.triggerHandler('setAvatar');
 						msgPopup.showMsg( json.msg );
 					}
 				}
 			})
 		})
+		, $userLoginForm = $('#userLoginForm')
+		, user = storage.getItem('user')
 		;
 
+	// todo header 导航登录功能
 	//$header.find('.toolbar').prepend('<li><a href="/login/"></a></li>');
 	//var $user = $('#user');
 	//
@@ -89,6 +105,19 @@ define('user', ['jquery', 'global', 'socket', 'msgPopup'], function($, g, socket
 	//$user.on('click', function(){
 	//	$user.after('<div class="loginBar"><form action=""></form></div>');
 	//});
+
+	user = user ? $.parseJSON(user) : {};
+	$.ajax({
+		url: 'user/verify'
+		, type: 'POST'
+		, data: user
+		, success: function(json){
+			if( !('error' in json) ){
+				$user.triggerHandler('setAvatar', [user.avatar]);
+				$user.triggerHandler('switchLogin');
+			}
+		}
+	})
 });
 
 //---------- 应用模块 ----------

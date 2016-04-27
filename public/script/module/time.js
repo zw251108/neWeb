@@ -52,7 +52,7 @@ define(['jquery', 'global', 'd3'], function($, g, d3){
 			hour.transition().duration(1000).attr('transform', 'rotate('+ 360/12 * h +', '+ width/2 +' '+ height/2 +')');
 			minute.transition().duration(1000).attr('transform', 'rotate('+ 360/60 * m +', '+ width/2 +' '+ height/2 +')');
 			second.transition().duration(1000).attr('transform', 'rotate('+ 360/60 * s +', '+ width/2 +' '+ height/2 +')');
-		}
+		};
 
 		// todo 改变 metro 模块大小时 watch 的大小跟随变化
 	}

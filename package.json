@@ -32,7 +32,8 @@
     "segment": "0.0.6",
     "socket.io": "~1.1.0",
     "sockjs": "~0.3.15",
-    "superagent": "~1.3.0"
+    "superagent": "~1.3.0",
+    "utility": "^1.7.0"
   },
   "devDependencies": {
     "babel-loader": "^6.2.0",
@@ -70,5 +71,16 @@
     "url-loader": "^0.5.7",
     "webpack-dev-middleware": "^1.4.0",
     "webpack-dev-server": "^1.14.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zw251108/neWeb.git"
+  },
+  "keywords": [
+    "web"
+  ],
+  "bugs": {
+    "url": "https://github.com/zw251108/neWeb/issues"
+  },
+  "homepage": "https://github.com/zw251108/neWeb#readme"
 }

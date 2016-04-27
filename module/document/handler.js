@@ -101,7 +101,7 @@ var DocumentModel   = require('./model.js')
 
 				result.push( obj );
 			}
-			console.log(result)
+
 			return {
 				title: document.title
 				, sectionList: result
@@ -211,6 +211,8 @@ var DocumentModel   = require('./model.js')
 				, title = data.title
 				, execute
 				;
+
+			data.userId = user.id;
 
 			if( documentId && sectionId && title ){
 				execute = DocumentModel.addContentBySec( data ).then(function(rs){

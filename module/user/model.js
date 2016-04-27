@@ -14,6 +14,8 @@ var db = require('../db.js')
 
 		userAvatarByEmail: 'select avatar from '+ TABLE_NAME +' where email=:email'
 		, userByEmail: 'select id,email,password,username,avatar from '+ TABLE_NAME +' where email=:email'
+		, updateUserToken: 'update user set last_online_date=:date,token=:token where id=:id'
+		, userTokenById: 'select last_online_date,token from user where id=:id'
 	}
 	, UserModel = {
 	/**
@@ -58,6 +60,19 @@ var db = require('../db.js')
 				, data: {
 					email: email
 				}
+			});
+		}
+
+		, getUserToken: function(user){
+			return db.handle({
+				sql: SQL.userTokenById
+				, data: user
+			});
+		}
+		, updateUserToken: function(user){
+			return db.handle({
+				sql: SQL.updateUserToken
+				, data: user
 			});
 		}
 	}

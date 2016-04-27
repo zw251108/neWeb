@@ -38,12 +38,12 @@ require(['../../config'], function(config){
 						}
 						, dataType: 'json'
 						, success: function(json){
-							if( json.success ){
+							if( !('error' in json) ){
 
 								$title.val('');
 
 								$document.find('.module_content').append( sectionTpl({
-									sectionId: json.id
+									sectionId: json.info.id
 									, sectionTitle: title
 									, dl: []
 								}).join('') );
@@ -79,12 +79,12 @@ require(['../../config'], function(config){
 						}
 						, dataType: 'json'
 						, success: function(json){
-							if( json.success ){
+							if( !('error' in json) ){
 
 								$title.val('');
 
 								$section.find('dl').append( sectionListTpl({
-									id: json.id
+									id: json.info.id
 									, title: title
 								}).join('') );
 								$addContentPopup.trigger('closeDialog');
@@ -121,7 +121,7 @@ require(['../../config'], function(config){
 					order: order
 				}
 				, success: function(json){
-					if( json.success ){
+					if( !('error' in json) ){
 						!hideMsg && msgPopup.showMsg('章节排序，保存成功！');
 					}
 				}
@@ -179,7 +179,7 @@ require(['../../config'], function(config){
 					order: order
 				}
 				, success: function(json){
-					if( json.success ){
+					if( !('error' in json) ){
 						!hideMsg && msgPopup.showMsg('内容排序，保存成功！');
 					}
 				}
@@ -261,7 +261,7 @@ require(['../../config'], function(config){
 				}
 				, dataType: 'json'
 				, success: function(json){
-					if( json.success ){
+					if( !('error' in json) ){
 						msgPopup.showMsg('内容保存成功！');
 					}
 				}
