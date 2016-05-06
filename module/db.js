@@ -4,7 +4,6 @@
  * 数据处理接口
  * */
 var mysql = require('mysql')
-	, Promise = require('promise')
 
 	, config = require('../config.js')
 	, error = require('./error.js')

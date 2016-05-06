@@ -27,8 +27,6 @@ var web         = require('../web.js')
 
 	, DEMO_IMG_UPLOAD   = '/editor/demoImgUpload'
 	, SET_MORE          = '/editor/setMore'
-
-	, Promise = require('promise')
 	;
 
 modules.register({

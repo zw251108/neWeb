@@ -16,8 +16,6 @@ var web         = require('../web.js')
 
 	, UserHandler  = require('../user/handler.js')
 
-	, Promise = require('promise')
-
 	, TAG_INDEX = {}
 	, TAG_CACHE = []
 	;

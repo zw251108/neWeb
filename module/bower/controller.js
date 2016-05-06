@@ -6,8 +6,6 @@ var web         = require('../web.js')
 
 	, config    = require('../../config.js')
 
-	, Promise   = require('promise')
-
 	, modules   = require('../module.js')
 	, admin     = require('../admin.js')
 	, data      = require('../data.js')

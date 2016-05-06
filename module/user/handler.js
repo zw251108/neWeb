@@ -2,21 +2,27 @@
 
 var utils = require('utility')
 
+	, MODULE_ID = '001'
+
 	, UserModel   = require('./model.js')
 	, UserError = require('./error.js')
 	, UserHandler = {
 		getUserFromSession: {
 			fromReq: function(req){
-				var session = req.session || {}
+				var session = req.session
 					;
 
-				return session.user || {};
+				session.user = session.user || {};
+
+				return session.user;
 			}
 			, fromSocket: function(socket){
 				var session = socket.handshake.session
 					;
 
-				return session.user || {};
+				session.user = session.user || {};
+
+				return session.user;
 			}
 		}
 		, setUserToSession: function(user, session){
@@ -164,5 +170,7 @@ var utils = require('utility')
 		}
 	}
 	;
+
+//UserError.register(MODULE_ID);
 
 module.exports = UserHandler;

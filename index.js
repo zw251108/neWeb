@@ -23,7 +23,7 @@ var fs = require('fs')
 	, cookieParser  = require('cookie-parser')
 	//, multer        = require('multer')
 	, log4js        = require('log4js')
-	, logger        //= require('morgan')
+	, logger
 	, session       = require('express-session')
 	, sessionStore  = new session.MemoryStore()
 
@@ -64,10 +64,7 @@ console.log('cache.mainfest has reset');
 web.use( bodyParser.json() );
 web.use( bodyParser.urlencoded({extended: true}) );
 web.use( cookieParser() );
-web.use(
-	//logger('dev')
-	log4js.connectLogger(logger, {format: ':method :url :remote-addr'})
-);
+web.use( log4js.connectLogger(logger, {format: ':method :url :remote-addr'}) );
 
 // 设置 session
 session = session({
@@ -78,10 +75,6 @@ session = session({
 	, saveUninitialized: true
 });
 web.use( session );
-
-var userInfo = {
-	id: 1
-};
 
 // 判断浏览器类型，操作系统
 //web.use(function(req, res, next){
@@ -149,7 +142,7 @@ modules.register({
 	/
  * */
 web.get('/', function(req, res){
-	var user = req.session.user
+	var user = UserHandler.getUserFromSession.fromReq( req )
 		, isGuest = UserHandler.isGuest( user )
 		;
 
@@ -219,63 +212,11 @@ web.get('/', function(req, res){
 	res.end();
 });
 
-
-var User = require('./module/user/model.js')
-	, UserError = require('./module/user/error.js')
-	;
-
-// 用户输入用户名 获取头像
-web.get('/getavatar', function(req, res){
-	var query = req.query || {}
-		, email = query.email
-		, execute
-		;
-
-	if( email ){
-		execute = User.userAvatarByEmail( email ).then(function(rs){
-			return {
-				success: true
-				, info: rs
-			};
-		});
-	}
-	else{
-		execute = Promise.reject( new UserError('缺少 email') );
-	}
-
-	execute.catch(function(e){
-		console.log( e );
-
-		return {
-			error: ''
-			, msg: e.message
-		};
-	}).then(function(rs){
-		console.log(rs);
-
-		res.send( JSON.stringify(rs) );
-		res.end();
-	});
-});
-
-// 用户登录
-web.get('/login', function(){
-
-});
-web.post('/login', function(){
-	// todo 登录功能
-});
-
 // 编码工具皮肤设置与获取
 web.get('/skin', function(req, res){
-	var session = req.session || {}
-		, user = session.user || {}
+	var user = UserHandler.getUserFromSession.fromReq( req )
 		, skin
 		;
-
-	if( !user ){
-		user.skin = 'default';
-	}
 
 	user.skin = skin = user.skin || 'default';
 
@@ -286,15 +227,11 @@ web.get('/skin', function(req, res){
 	res.end();
 });
 web.post('/skin', function(req, res){   // 设置皮肤功能
-	var session = req.session || {}
-		, user = session.user
+	var user = UserHandler.getUserFromSession.fromReq( req )
 		, body = req.body || {}
 		, skin = body.skin
 		;
 
-	if( !user ){
-		user = req.session.user = userInfo;
-	}
 	if( skin ){
 		user.skin = skin;
 	}
@@ -310,12 +247,13 @@ web.post('/skin', function(req, res){   // 设置皮肤功能
 	admin/
  * */
 web.get('/admin/', function(req, res){
-	var user = req.session.user
+	var user = UserHandler.getUserFromSession.fromReq( req )
+		, isGuest = UserHandler.isGuest( user )
 		;
 
-	if( !user ){
-		req.session.user = userInfo;
-	}
+	//if( isGuest ){
+	//	req.session.user = userInfo;
+	//}
 
 	res.send( tpl.html('admin', {
 		title: '个人小站（开发测试中...）'
@@ -329,7 +267,6 @@ webServer = web.listen( CONFIG.web.port
 	//, CONFIG.web.ip
 );
 console.log('Web Server is listening...');
-
 
 //----- socket 服务器 -----
 socketServer = socket.listen( webServer );

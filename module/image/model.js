@@ -3,8 +3,6 @@
 var db      = require('../db.js')
 	, error = require('../error.js')
 
-	, Promise   = require('promise')
-
 	, ImageError = require('./error.js')
 
 	, TABLE_NAME = 'image'

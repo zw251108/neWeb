@@ -2,9 +2,7 @@
  *
  * */
 
-var Promise     = require('promise')
-
-	, Url       = require('url')
+var Url       = require('url')
 
 	, superAgent    = require('superagent')
 
@@ -133,6 +131,8 @@ var Promise     = require('promise')
 
 				// 读标题进行分词
 				segmentResult = segment.doSegment( title );
+
+				//$('script,style').remove();
 
 				// todo 根据不同网站 获取不同内容
 				// 获取页面主内容

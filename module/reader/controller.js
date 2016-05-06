@@ -24,8 +24,6 @@ var web         = require('../web.js')
 	, ReaderError   = require('./error.js')
 
 	, Reader    = require('./reader.js')
-
-	, Promise = require('promise')
 	;
 
 // 注册首页 metro 模块

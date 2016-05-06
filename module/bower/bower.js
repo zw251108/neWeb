@@ -1,8 +1,6 @@
 'use strict';
 
-var Promise = require('promise')
-
-	, bower = require('bower')
+var bower = require('bower')
 
 	, Bower = {
 		/**

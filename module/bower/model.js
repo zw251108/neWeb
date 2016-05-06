@@ -3,8 +3,6 @@
 var db      = require('../db.js')
 	, error = require('../error.js')
 
-	, Promise   = require('promise')
-
 	, BowerError    = require('./error.js')
 
 	, TABLE_NAME    = 'ui_lib'
