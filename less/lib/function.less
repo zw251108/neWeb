@@ -25,17 +25,18 @@
 //    background-color: @bgColor;
 //}
 
-//----- CSS3 背景 线性渐变 linear-gradient -----
-//.bgLinearGradient(@lineGradient){
-//	background: linear-gradient(@lineGradient);
-//	background: -ms-linear-gradient(@lineGradient);
-//}
-
 //----- CSS3 盒模型 box-sizing -----
 .boxSizing(@boxSizing){
 	-webkit-box-sizing: @boxSizing;
 	-moz-box-sizing: @boxSizing;
 	box-sizing: @boxSizing;
+}
+
+//----- 边框 border -----
+.border(@border){
+    border: @border;
+
+    .boxSizing(border-box);
 }
 
 //----- CSS3 盒子阴影 box-shadow -----
@@ -122,6 +123,11 @@
     transform: rotate(@deg);
 }
 
+//----- CSS3 背景 线性渐变 linear-gradient -----
+//.bgLinearGradient(@lineGradient){
+//	background: linear-gradient(@lineGradient);
+//	background: -ms-linear-gradient(@lineGradient);
+//}
 //----- 线性渐变 -----
 .linear-gradient{
 
