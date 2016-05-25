@@ -1,8 +1,28 @@
 'use strict';
 
 /**
- *
+ * 设置 log
  * */
+var log4js        = require('log4js')
+	, logger
+	;
+
+log4js.configure({
+	appenders: [{
+		type: "console"
+	}, {
+		type: 'file'
+		, filename: __dirname + '/log/access.log'
+		, maxLogSize: 1024 * 1024 * 1000
+		, backups: 4
+		, category: 'normal'
+	}]
+	, replaceConsole: true
+});
+logger = log4js.getLogger('normal');
+logger.setLevel('INFO');
+
+//---------- APP ----------
 var fs = require('fs')
 
 	// 全局配置信息
@@ -22,8 +42,7 @@ var fs = require('fs')
 	, cookie        = require('cookie')
 	, cookieParser  = require('cookie-parser')
 	//, multer        = require('multer')
-	, log4js        = require('log4js')
-	, logger
+
 	, session       = require('express-session')
 	, sessionStore  = new session.MemoryStore()
 
@@ -35,25 +54,11 @@ var fs = require('fs')
 	, admin     = require('./module/admin.js')   // 后台管理模块
 
 	, UserHandler   = require('./module/user/handler.js')
+
+	, i, j, t
+	//数据库操作
+	//, db     = require('./module/db.js')
 	;
-
-log4js.configure({
-	appenders: [{
-		type: "console"
-	}, {
-		type: 'file'
-		, filename: __dirname + '/log/access.log'
-		, maxLogSize: 1024 * 1024 * 1000
-		, backups: 4
-		, category: 'normal'
-	}]
-	, replaceConsole: true
-});
-logger = log4js.getLogger('normal');
-logger.setLevel('INFO');
-
-var // 数据库操作
-	db     = require('./module/db.js');
 
 //----- 重置 manifest 版本代号 -----
 var manifest = fs.readFileSync(__dirname + '/tpl/cache.manifest').toString();
@@ -105,29 +110,40 @@ web.use('/requirement',     express.static(__dirname + '/requirement'));
 
 web.use('/test.html',    express.static(__dirname + '/test.html') );  //
 
+/**
+ * 自动设置静态目录 主要用于测试 demo
+ * */
+for( i = 0, j = CONFIG.works.length; i < j; i++){
+	t = CONFIG.works[i];
+
+	web.use('/'+ t, express.static(__dirname + '/work/'+ t));
+}
 
 /**
- * 加载模块
+ * 自动加载模块
  * */
-require('./module/user/controller.js'       );  // 加载模块 user
-
-require('./module/blog/controller.js'       );  // 加载模块 blog
-
-require('./module/document/controller.js'   );  // 加载模块 document
-
-require('./module/editor/controller.js'     );  // 加载模块 editor
-
-require('./module/bower/controller.js'      );  // 加载模块 bower
-
-require('./module/reader/controller.js'     );  // 加载模块 reader
-
-require('./module/task/controller.js'       );  // 加载模块 task
-
-require('./module/tag/controller.js'        );  // 加载模块 tag 功能
-
-//require('./module/image.js');       // 加载模块 image
-
-require('./module/basedata/controller.js'   );  // 加载模块 基础数据
+for( i = 0, j = CONFIG.modules.length; i < j; i++ ){
+	require('./module/'+ CONFIG.modules[i] +'/controller.js' );
+}
+//require('./module/user/controller.js'       );  // 加载模块 user
+//
+//require('./module/blog/controller.js'       );  // 加载模块 blog
+//
+//require('./module/document/controller.js'   );  // 加载模块 document
+//
+//require('./module/editor/controller.js'     );  // 加载模块 editor
+//
+//require('./module/bower/controller.js'      );  // 加载模块 bower
+//
+//require('./module/reader/controller.js'     );  // 加载模块 reader
+//
+//require('./module/task/controller.js'       );  // 加载模块 task
+//
+//require('./module/tag/controller.js'        );  // 加载模块 tag 功能
+//
+////require('./module/image.js');       // 加载模块 image
+//
+//require('./module/basedata/controller.js'   );  // 加载模块 基础数据
 
 modules.register({
 	id: 'time'
@@ -275,31 +291,5 @@ socketServer = socket.listen( webServer );
 socketServer.use( sharedSession(session, {
 	autoSave: true
 }) );
-//socketServer.use(function(socket, next){
-//	var data = socket.handshake || socket.request
-//		, cookieData = data.headers.cookie
-//		;
-//
-//	if( cookieData ){
-//
-//		data.cookie = cookie.parse( cookieData );
-//		data.sessionID = cookieParser.signedCookie(data.cookie[CONFIG.web.cookieKey], CONFIG.web.cookieSecret);
-//		data.sessionStore = sessionStore;
-//
-//		sessionStore.get(data.sessionID, function(err, session){
-//			if( err || !session ){
-//				next( new Error('session not found') );
-//			}
-//			else{
-//				data.session = session;
-//				data.session.id = data.sessionID;
-//				next();
-//			}
-//		});
-//	}
-//	else{
-//		next( new Error('missing cookie headers') );
-//	}
-//});
 
 console.log('Socket Server is listening...');

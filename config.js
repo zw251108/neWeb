@@ -25,5 +25,19 @@ var CONFIG = {
 		html5: '<!DOCTYPE html>'
 	}
 	, baseUrl: '../'
+
+	, modules: [
+		'user'
+		, 'blog'
+		, 'document'
+		, 'editor'
+		, 'bower'
+		, 'reader'
+		, 'task'
+		, 'tag'
+		//, 'image'
+		, 'basedata'
+	]
+	, works: []
 };
 module.exports = CONFIG;

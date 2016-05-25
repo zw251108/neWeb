@@ -82,19 +82,20 @@ var getEmmet    = require('../emmet/getEmmet.js')
 				'+input#bookmarkTitle.input[type=text name=title placeholder=重新设置标题 data-validator=title]' +
 			'^div.formGroup' +
 				'>label.label[for=star1]{请评分}' +
-				'+div.input-score' +
-					'>input#star5[type=radio name=score value=5]' +
-					'+label.icon.icon-star[for=star5]' +
-					'+input#star4[type=radio name=score value=4]' +
-					'+label.icon.icon-star[for=star4]' +
-					'+input#star3[type=radio name=score value=3]' +
-					'+label.icon.icon-star[for=star3]' +
-					'+input#star2[type=radio name=score value=2]' +
-					'+label.icon.icon-star[for=star2]' +
-					'+input#star1[type=radio name=score value=1]' +
-					'+label.icon.icon-star[for=star1]' +
-				'^span.score_value' +
-			'^' + TagView.tagEditorEmmet
+				'+div.input.input-score' +
+					'>span.scoreList' +
+						'>input#star5[type=radio name=score value=5]' +
+						'+label.icon.icon-star[for=star5]' +
+						'+input#star4[type=radio name=score value=4]' +
+						'+label.icon.icon-star[for=star4]' +
+						'+input#star3[type=radio name=score value=3]' +
+						'+label.icon.icon-star[for=star3]' +
+						'+input#star2[type=radio name=score value=2]' +
+						'+label.icon.icon-star[for=star2]' +
+						'+input#star1[type=radio name=score value=1]' +
+						'+label.icon.icon-star[for=star1]' +
+					'^^span.scoreValue' +
+			'^^' + TagView.tagEditorEmmet
 	})
 
 	, View = {

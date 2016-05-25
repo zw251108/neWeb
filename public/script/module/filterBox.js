@@ -6,9 +6,9 @@ define(['jquery', 'tag', 'template'], function($, tag){
 			template: 'div.filterBox.small' +
 				'>form#filterForm' +
 					'>div.formGroup' +
-						'>div.input-tag' +
+						'>div.input.input-tag' +
 							'>div.formGroup' +
-								'>input.input[type=text name=tag]' +
+								'>input.tag_name[type=text name=tag]' +
 								'+button.btn.icon.icon-plus.tag_add[type=button]' +
 								'+ul.hidden.list.scrollBar.tag_pointOut' +
 							'^div.tag_area' +

@@ -300,7 +300,7 @@ define(['jquery', 'socket', 'jquery.extends'], function($){
 		$container.removeClass('main-show').addClass('fadeOut');
 	})
 		.on('click', '.input-score :radio', function(){
-			$(this).parent().nextAll('.score_value').html( SCORE_VALUE[this.value] );
+			$(this).parent().nextAll('.scoreValue').html( SCORE_VALUE[this.value] );
 		});
 
 	g.$container = $container;
