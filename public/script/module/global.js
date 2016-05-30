@@ -174,6 +174,15 @@ define(['jquery', 'socket', 'jquery.extends'], function($){
 		animationEnd: ANIMATION_END
 	};
 
+	g.$eventBus = $({});
+
+	g.eventRegister = function(type, callback){
+		g.$eventBus.on(type, callback);
+	};
+	g.eventTrigger = function(type, args){
+		return g.$eventBus.triggerHandler(type, args);
+	};
+
 	// 全局事件代理
 	var $container = $('#container')
 		, target
@@ -311,8 +320,8 @@ define(['jquery', 'socket', 'jquery.extends'], function($){
 	// 兼容 console
 	if( !('console' in window) || !('log' in console) || (typeof console.log !== 'function') ){
 		window.console = {
-			logStack:[],
-			log:function(value){
+			logStack:[]
+			, log:function(value){
 				this.logStack.push(value);
 			}
 		}

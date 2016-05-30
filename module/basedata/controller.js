@@ -30,13 +30,13 @@ web.get('/basedata/city/data', function(req, res){
 	BaseDataHandler.getCity( query ).then(function(rs){
 		return {
 			data: rs
+			, msg: 'success'
 		};
 	}, function(e){
 		console.log( e );
 
 		return {
-			error: ''
-			, msg: e.message
+			msg: e.message
 		};
 	}).then(function(json){
 		res.send( JSON.stringify(json) );
@@ -50,13 +50,13 @@ web.get('/basedata/district/data', function(req, res){
 	BaseDataHandler.getDistrict( query ).then(function(rs){
 		return {
 			data: rs
+			, msg: 'success'
 		};
 	}, function(e){
 		console.log( e );
 
 		return {
-			error: ''
-			, msg: e.message
+			msg: e.message
 		};
 	}).then(function(json){
 		res.send( JSON.stringify(json) );
@@ -70,13 +70,13 @@ web.get('/basedata/town/data', function(req, res){
 	BaseDataHandler.getTown( query ).then(function(rs){
 		return {
 			data: rs
+			, msg: 'success'
 		};
 	}, function(e){
 		console.log( e );
 
 		return {
-			error: ''
-			, msg: e.message
+			msg: e.message
 		};
 	}).then(function(json){
 		res.send( JSON.stringify(json) );
@@ -90,13 +90,13 @@ web.get('/basedata/village/data', function(req, res){
 	BaseDataHandler.getVillage( query ).then(function(rs){
 		return {
 			data: rs
+			, msg: 'success'
 		};
 	}, function(e){
 		console.log( e );
 
 		return {
-			error: ''
-			, msg: e.message
+			msg: e.message
 		};
 	}).then(function(json){
 		res.send( JSON.stringify(json) );
@@ -112,13 +112,13 @@ web.get('/basedata/university/data', function(req, res){
 	BaseDataHandler.getUniversity( query ).then(function(rs){
 		return {
 			data: rs
+			, msg: 'success'
 		};
 	}, function(e){
 		console.log( e );
 
 		return {
-			error: ''
-			, msg: e.message
+			msg: e.message
 		};
 	}).then(function(json){
 		res.send( JSON.stringify(json) );
@@ -161,6 +161,7 @@ web.get('/data/province', function(req, res){
 		if( callback ){
 			execute = callback +'('+ JSON.stringify({
 				data: rs
+				, msg: 'success'
 			}) +')';
 		}
 		else{
@@ -172,8 +173,7 @@ web.get('/data/province', function(req, res){
 		console.log( e );
 
 		return callback +'('+ JSON.stringify({
-			error: ''
-			, msg: e.message
+			msg: e.message
 		}) +')';
 	}).then(function(rs){
 		res.send( rs );
@@ -191,8 +191,9 @@ web.get('/data/city', function(req, res){
 
 		if( callback ){
 			execute = callback +'('+ JSON.stringify({
-					data: rs
-				}) +')';
+				data: rs
+				, msg: 'success'
+			}) +')';
 		}
 		else{
 			execute = Promise.reject( new BaseDataError('不是 jsonp 格式调用') );
@@ -203,9 +204,8 @@ web.get('/data/city', function(req, res){
 		console.log( e );
 
 		return callback +'('+ JSON.stringify({
-				error: ''
-				, msg: e.message
-			}) +')';
+			msg: e.message
+		}) +')';
 	}).then(function(rs){
 		res.send( rs );
 		res.end();
@@ -222,8 +222,9 @@ web.get('/data/district', function(req, res){
 
 		if( callback ){
 			execute = callback +'('+ JSON.stringify({
-					data: rs
-				}) +')';
+				data: rs
+				, msg: 'success'
+			}) +')';
 		}
 		else{
 			execute = Promise.reject( new BaseDataError('不是 jsonp 格式调用') );
@@ -234,8 +235,7 @@ web.get('/data/district', function(req, res){
 		console.log( e );
 
 		return callback +'('+ JSON.stringify({
-				error: ''
-				, msg: e.message
+				msg: e.message
 			}) +')';
 	}).then(function(rs){
 		res.send( rs );
@@ -253,8 +253,9 @@ web.get('/data/town', function(req, res){
 
 		if( callback ){
 			execute = callback +'('+ JSON.stringify({
-					data: rs
-				}) +')';
+				data: rs
+				, msg: 'success'
+			}) +')';
 		}
 		else{
 			execute = Promise.reject( new BaseDataError('不是 jsonp 格式调用') );
@@ -265,9 +266,8 @@ web.get('/data/town', function(req, res){
 		console.log( e );
 
 		return callback +'('+ JSON.stringify({
-				error: ''
-				, msg: e.message
-			}) +')';
+			msg: e.message
+		}) +')';
 	}).then(function(rs){
 		res.send( rs );
 		res.end();
@@ -284,8 +284,9 @@ web.get('/data/village', function(req, res){
 
 		if( callback ){
 			execute = callback +'('+ JSON.stringify({
-					data: rs
-				}) +')';
+				data: rs
+				, msg: 'success'
+			}) +')';
 		}
 		else{
 			execute = Promise.reject( new BaseDataError('不是 jsonp 格式调用') );
@@ -296,9 +297,8 @@ web.get('/data/village', function(req, res){
 		console.log( e );
 
 		return callback +'('+ JSON.stringify({
-				error: ''
-				, msg: e.message
-			}) +')';
+			msg: e.message
+		}) +')';
 	}).then(function(rs){
 		res.send( rs );
 		res.end();

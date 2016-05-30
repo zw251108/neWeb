@@ -11,8 +11,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	, articleTpl    = emmetTpl({
 		template: getEmmet('document/article.html')
 		, filter: {
-			sectionList: function(d){console.log(d)
-				console.log(sectionTpl( d.sectionList ).join(''))
+			sectionList: function(d){
 				return sectionTpl( d.sectionList ).join('')
 			}
 		}

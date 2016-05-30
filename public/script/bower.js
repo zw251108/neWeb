@@ -195,7 +195,7 @@ require(['config'], function(config){
 							return '<li>' +
 								'<label>' +
 									'<input type="radio" name="pickId" value="'+ i +'" />' +
-									'<span class="icon icon-radio">'+ d.name + ' ' + d.version +'</span>' +
+									'<i class="icon icon-radio">'+ d.name + ' ' + d.version +'</i>' +
 								'</label> required by ' +
 								$.map(d.required, function(d){
 									return d.name + ' ' + d.version;
@@ -245,7 +245,7 @@ require(['config'], function(config){
 						return '<li>' +
 								'<label>' +
 									'<input type="checkbox" name="choose" value="'+ i +'" />' +
-									'<span class="icon icon-checkbox">'+ d.name + ' ' + d.version +'</span>' +
+									'<i class="icon icon-checkbox">'+ d.name + ' ' + d.version +'</i>' +
 								'</label>' +
 							'</li>';
 					}).join('') +

@@ -15,7 +15,7 @@ require(['../../config'], function(config){
 				template: 'dt.icon.icon-right{%title%}+dd{%content%}'
 			})
 			, sectionTpl = $.template({
-				template: 'section.document_section.section>h3.section_title{%section_title%}>span.icon.icon-down^dl{%dl%}'
+				template: 'section.document_section.section>h3.section_title{%section_title%}>i.icon.icon-down^dl{%dl%}'
 				, filter: {
 					dl: function(d){
 						return dlTpl(d.dl).join('');

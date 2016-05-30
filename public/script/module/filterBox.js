@@ -10,7 +10,7 @@ define(['jquery', 'tag', 'template'], function($, tag){
 							'>div.formGroup' +
 								'>input.tag_name[type=text name=tag]' +
 								'+button.btn.icon.icon-plus.tag_add[type=button]' +
-								'+ul.hidden.list.scrollBar.tag_pointOut' +
+								'+ul.hidden.list.list-inline.scrollBar.tag_pointOut' +
 							'^div.tag_area' +
 							'+textarea.hidden[name=tags]' +
 					'^^div.btnGroup' +

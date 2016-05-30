@@ -9,7 +9,7 @@ require(['../../config'], function(config){
 					'+span.task_lv{%lvText%}' +
 					'+span.task_type{%typeText%}' +
 					'+span.task_name{%name%}' +
-					'+span.icon.icon-up+{%taskOperate%}' +
+					'+i.icon.icon-up+{%taskOperate%}' +
 					'+table.hidden.task_detail' +
 						'>thead' +
 							'>tr' +
@@ -264,10 +264,7 @@ require(['../../config'], function(config){
 				}
 				, success: function(json){
 
-					if( 'error' in json ){
-
-					}
-					else{
+					if( json.msg === 'success' ){
 						$parent.data( json.info );
 					}
 				}
@@ -327,10 +324,7 @@ require(['../../config'], function(config){
 				, type: $addTaskForm.attr('method')
 				, data: formData
 				, success: function(json){
-					if( 'error' in json ){
-
-					}
-					else{
+					if( json.msg === 'success' ){
 						$taskList.prepend( taskTpl(json.info).join() );
 						$addTaskForm.get(0).reset();
 						$addTaskForm.find('.tag_area').empty();

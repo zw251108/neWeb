@@ -22,7 +22,7 @@ define(['../../config'], function(config){
 					, type: form.method
 					, data: data
 					, success: function(json){
-						if( json.success ){
+						if( json.msg === 'success' ){
 							msgPopup.showMsg('保存成功');
 						}
 					}

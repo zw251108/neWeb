@@ -51,7 +51,7 @@ require(['../../config'], function(config){
 				template: 'section#reader_%id%.reader_section.section' +
 					'>a[href=%html_url% data-feed=%xml_url% data-id=%id%]' +
 						'>h3.section_title{%name%}' +
-							'>span.icon.icon-up' +
+							'>i.icon.icon-up' +
 					'^^hr' +
 					'+ul.reader_articleList' +
 					'+div.tagsArea{%tags%}'

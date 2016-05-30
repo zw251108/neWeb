@@ -21,9 +21,12 @@ define(['jquery', 'global'], function($){
 				, type: form.method
 				, data: data
 				, success: function(json){
-					afterSend && afterSend(data, json);
+					if( json.msg === 'success' ){
 
-					form.reset();
+						afterSend && afterSend(data, json);
+
+						form.reset();
+					}
 				}
 			});
 		}).on('submit', 'form', function(e){

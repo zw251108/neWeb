@@ -120,13 +120,13 @@ web.post(   '/admin/document/', function(req, res){
 	DocumentHandler.newDocument(user, body).then(function(info){
 		return {
 			info: info
+			, msg: 'success'
 		};
 	}, function(e){
 		console.log( e );
 
 		return {
-			error: ''
-			, msg: e.message
+			msg: e.message
 		};
 	}).then(function(json){
 		res.send( JSON.stringify(json) );
@@ -144,13 +144,13 @@ web.put(    '/admin/document/:documentId/', function(req, res){
 	DocumentHandler.saveDocument(user, body).then(function(info){
 		return {
 			info: info
+			, msg: 'success'
 		}
 	}, function(e){
 		console.log( e );
 
 		return {
-			error: ''
-			, msg: e.message
+			msg: e.message
 		};
 	}).then(function(json){
 		res.send( JSON.stringify(json) );
@@ -168,13 +168,13 @@ web.post(   '/admin/document/:documentId/', function(req, res){
 	DocumentHandler.newSection(user, body).then(function(info){
 		return {
 			info: info
+			, msg: 'success'
 		};
 	}, function(e){
 		console.log( e );
 
 		return {
-			error: ''
-			, msg: e.message
+			msg: e.message
 		};
 	}).then(function(json){
 		res.send( JSON.stringify(json) );
@@ -193,13 +193,13 @@ web.put(    '/admin/document/:documentId/:sectionId/', function(req, res){
 	DocumentHandler.saveSection(user, body).then(function(info){
 		return {
 			info: info
+			, msg: 'success'
 		};
 	}, function(e){
 		console.log( e );
 
 		return {
-			error: ''
-			, msg: e.message
+			msg: e.message
 		};
 	}).then(function(json){
 		res.send( JSON.stringify(json) );
@@ -218,13 +218,13 @@ web.post(   '/admin/document/:documentId/:sectionId/', function(req, res){
 	DocumentHandler.newContent(user, body).then(function(info){
 		return {
 			info: info
+			, msg: 'success'
 		};
 	}, function(e){
 		console.log( e );
 
 		return {
-			error: ''
-			, msg: e.message
+			msg: e.message
 		};
 	}).then(function(json){
 		res.send( JSON.stringify(json) );
@@ -244,13 +244,13 @@ web.put(    '/admin/document/:documentId/:sectionId/:contentId/', function(req, 
 	DocumentHandler.saveContent(user, body).then(function(info){
 		return {
 			info: info
+			, msg: 'success'
 		};
 	}, function(e){
 		console.log( e );
 
 		return {
-			error: ''
-			, msg: e.message
+			msg: e.message
 		};
 	}).then(function(json){
 		res.send( JSON.stringify(json) );

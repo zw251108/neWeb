@@ -127,13 +127,13 @@ web.post('/admin/blog/', function(req, res){
 	BlogHandler.newBlog(user, body).then(function(rs){
 		return {
 			info: rs
+			, msg: 'success'
 		};
 	}, function(e){
 		console.log( e );
 
 		return {
-			error: ''
-			, msg: e.message
+			msg: e.message
 		}
 	}).then(function(json){
 		res.send( JSON.stringify(json) );
@@ -151,13 +151,13 @@ web.post('/admin/blog/:blogId/', function(req, res){
 	BlogHandler.saveBlog(user, body).then(function(rs){
 		return {
 			info: rs
+			, msg: 'success'
 		};
 	}, function(e){
 		console.log( e );
 
 		return {
-			error: ''
-			, msg: e.message
+			msg: e.message
 		};
 	}).then(function(json){
 		res.send( JSON.stringify(json) );

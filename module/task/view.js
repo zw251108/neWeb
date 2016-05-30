@@ -28,7 +28,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 				'+span.task_lv{%lvText%}' +
 				'+span.task_type{%typeText%}' +
 				'+span.task_name{%name%}' +
-				'+span.icon.icon-up+{%taskOperate%}' +
+				'+i.icon.icon-up+{%taskOperate%}' +
 			'+table.hidden.task_detail' +
 				'>thead' +
 					'>tr' +
@@ -283,7 +283,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						'+input#star1[type=radio name=score value=1]' +
 						'+label.icon.icon-star[for=star1]' +
 					'^^span.scoreValue' +
-			'^^' + TagView.tagEditorEmmet +
+			'^' + TagView.tagEditorEmmet +
 			'^^div.formGroup' +
 				'>label.label[for=taskDesc]{请添加任务描述}' +
 				'+textarea#taskDesc.input.input-multiply[name=desc placeholder=任务描述 data-validator=desc]'

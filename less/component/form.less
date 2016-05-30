@@ -134,7 +134,7 @@
 	    div.formGroup
 	        input.tag_name[type=text name=tag placeholder=请输入标签 data-validator=tag]
 	        button.btn.tag_add[type=button]{添加}
-	        ul.hidden.list.scrollBar.tag_pointOut
+	        ul.hidden.list.list-inline.scrollBar.tag_pointOut
         div.tag_area
         textarea.hidden[name=tags]
 	 */
@@ -159,6 +159,7 @@
 		.tag_area{
 			min-height: 48px;
 			margin: 0 5px;
+			text-indent: 0;
 		}
 
 		.tag_pointOut{
@@ -171,10 +172,12 @@
 			max-height: 172px;
 			border: 1px solid @input-tag_pointOut_bd_c;
 			background: @input-tag_pointOut_bg_c;
+			text-indent: 0;
 
 			li{
 				height: auto;
 				border-bottom: 1px solid @input-tag_pointOut_li_bd_c;
+				padding: 0;
 				.boxSizing(border-box);
 			}
 		}

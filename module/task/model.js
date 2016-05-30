@@ -1,6 +1,7 @@
 'use strict';
 
 var db = require('../db.js')
+	, config    = require('../../config.js')
 	, error = require('../error.js')
 
 	, TABLE_NAME = 'task'
@@ -123,6 +124,9 @@ var db = require('../db.js')
 			return date.getFullYear() +'-'+ (m > 9 ? m : '0'+ m) +'-'+ (d > 9 ? d : '0'+ d);
 		}
 
+		/**
+		 * 获取周期性任务
+		 * */
 		, getCycleTask: function(userId){
 			return db.handle({
 				sql: SQL.taskByCycleType

@@ -89,7 +89,7 @@ define(['jquery', 'socket', 'storage', 'template'], function($, socket, storage)
 					//	}
 					//	, type: 'POST'
 					//	, success: function(json){
-					//		if( json.success ){
+					//		if( json.msg === 'success' ){
 					//			//CURRENT_SKIN = json.skin;
 					//		}
 					//	}

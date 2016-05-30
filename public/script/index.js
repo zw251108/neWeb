@@ -23,7 +23,7 @@ define('user', ['jquery', 'global', 'socket', 'msgPopup', 'storage'], function($
 					, success: function(json){
 						var avatar = ''
 							;
-						if( !('error' in json) ){
+						if( json.msg === 'success' ){
 							if( json.info.avatar ){
 								avatar = json.info.avatar;
 							}
@@ -71,7 +71,7 @@ define('user', ['jquery', 'global', 'socket', 'msgPopup', 'storage'], function($
 						, m, d
 						;
 
-					if( !('error' in json) ){
+					if( json.msg === 'success' ){
 						info = json.info;
 
 						date = new Date();
@@ -112,7 +112,7 @@ define('user', ['jquery', 'global', 'socket', 'msgPopup', 'storage'], function($
 		, type: 'POST'
 		, data: user
 		, success: function(json){
-			if( !('error' in json) ){
+			if( json.msg === 'success' ){
 				$user.triggerHandler('setAvatar', [user.avatar]);
 				$user.triggerHandler('switchLogin');
 			}

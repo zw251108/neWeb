@@ -230,7 +230,7 @@ web.post('/editor/setMore', Image.uploadMiddle.single('preview'), function(req, 
 
 			if( rs && rs.changedRows ){
 				result = {
-					success: true
+					msg: 'success'
 				};
 			}
 			else{
@@ -253,9 +253,7 @@ web.post('/editor/setMore', Image.uploadMiddle.single('preview'), function(req, 
 		console.log(e);
 
 		return {
-			success: false
-			, error: ''
-			, msg: e.message
+			msg: e.message
 		};
 	}).then(function(json){
 		res.send( JSON.stringify(json) );
@@ -282,8 +280,8 @@ web.post('/editor/demoImgUpload', Image.uploadMiddle.single('image'), function(r
 			imgData.id = rs.insertId;
 
 			result = {
-				success: true
-				, info: imgData
+				info: imgData
+				, msg: 'success'
 			};
 		}
 		else{
@@ -295,9 +293,7 @@ web.post('/editor/demoImgUpload', Image.uploadMiddle.single('image'), function(r
 		console.log( e );
 
 		return {
-			success: false
-			, error: ''
-			, msg: e.message
+			msg: e.message
 		};
 	}).then(function(json){
 		res.send( JSON.stringify(json) );

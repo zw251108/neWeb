@@ -8,7 +8,7 @@ require(['../../config'], function(config){
 				return !!data.title;
 			}, function(data, json){
 				if( json.success ){
-					$mainList.append('<li class="article" data-id="'+ json.id +'"><a href="'+ json.id +'/"><h3 class="article_title"><span class="icon icon-edit"> </span>'+ data.title +'</h3></a></li>');
+					$mainList.append('<li class="article" data-id="'+ json.id +'"><a href="'+ json.id +'/"><h3 class="article_title"><i class="icon icon-edit"> </i>'+ data.title +'</h3></a></li>');
 					$addPopup.trigger('closeDialog');
 
 					msgPopup.showMsg(data.title +' 文档建立成功！');

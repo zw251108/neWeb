@@ -173,10 +173,10 @@ define('editorLayout', ['jquery', 'global', 'template'], function($, g){
 define('uiLibPopup', ['jquery', 'socket', 'template'], function($, socket){
 	var // UI 库
 		pathTpl = $.template({
-			template: 'div[role=treeitem]>label>input[type=checkbox value=%path%]+span.left.icon.icon-checkbox[title=%path%]{%path%}'
+			template: 'div[role=treeitem]>label>input[type=checkbox value=%path%]+i.left.icon.icon-checkbox[title=%path%]{%path%}'
 		})
 		, uiLibTpl = $.template({
-			template: 'dt[role=treeitem]>label>span.right.icon.icon-down{%version%}+input[type=checkbox]+span.left.icon.icon-checkbox[title=%name%]{%name%}^^dd.hidden{%paths%}'
+			template: 'dt[role=treeitem]>label>i.right.icon.icon-down{%version%}+input[type=checkbox]+i.left.icon.icon-checkbox[title=%name%]{%name%}^^dd.hidden{%paths%}'
 			, filter: {
 				paths: function(d){
 					var css = d.css_path

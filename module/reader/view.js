@@ -16,7 +16,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 		template: 'section#reader_%id%.reader_section.section' +
 			'>a[href=%html_url% data-feed=%xml_url% data-id=%id%]' +
 				'>h3.section_title{%name%}' +
-					'>span.icon.icon-up' +
+					'>i.icon.icon-up' +
 				'^^hr' +
 				'+ul.reader_articleList' +
 				'+div.tagsArea{%tags%}'
@@ -95,7 +95,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						'+input#star1[type=radio name=score value=1]' +
 						'+label.icon.icon-star[for=star1]' +
 					'^^span.scoreValue' +
-			'^^' + TagView.tagEditorEmmet
+			'^' + TagView.tagEditorEmmet
 	})
 
 	, View = {

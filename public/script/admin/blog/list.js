@@ -8,7 +8,8 @@ require(['../../config'], function(config){
 			, $addPopup = addPopup(function(data){
 				return !!data.title;
 			}, function(data, json){
-				if( json.success ){
+				if( json.msg === 'success' ){
+					json = json.info;
 					$blog.find('.module_content').prepend('<article class="article" data-id="'+ json.id +'"><a href="./'+ json.id +'/"><h3 class="article_title">'+ data.title +'</h3></a></article>');
 					$addPopup.trigger('closeDialog');
 				}

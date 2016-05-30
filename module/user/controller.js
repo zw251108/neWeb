@@ -75,13 +75,13 @@ web.post('/user/login', function(req, res){
 
 		return {
 			info: rs
+			, msg: 'success'
 		};
 	}, function(e){
 		console.log( e );
 
 		return {
-			error: ''
-			, msg: e.message
+			msg: e.message
 		};
 	}).then(function(send){
 		res.send( JSON.stringify(send) );
@@ -99,13 +99,13 @@ web.post('/user/verify', function(req, res){
 
 		return {
 			info: rs
+			, msg: 'success'
 		};
 	}, function(e){
 		console.log( e );
 
 		return {
-			error: ''
-			, msg: e.message
+			msg: e.message
 		};
 	}).then(function(send){
 		res.send( JSON.stringify(send) );
@@ -119,13 +119,13 @@ web.post('/user/avatar', function(req, res){
 	UserHandler.getUserAvatar( query ).then(function(rs){
 		return {
 			info: rs
+			, msg: 'success'
 		};
 	}, function(e){
 		console.log( e );
 
 		return {
-			error: ''
-			, msg: e.message
+			msg: e.message
 		};
 	}).then(function(send){
 		res.send( JSON.stringify(send) );
