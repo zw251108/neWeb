@@ -24,7 +24,7 @@ var web         = require('../web.js')
 	, UserHandler   = require('../user/handler.js')
 
 //
-	, taskHandler = new TaskHandler()
+//	, taskHandler = new TaskHandler()
 
 	, TaskController = function(){}
 	, taskController = {

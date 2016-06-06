@@ -39,7 +39,7 @@ var db = require('../db.js')
 					result.id = rs.insertId;
 				}
 				else{
-					result = Promise.reject(new TagError('未知错误'));
+					result = Promise.reject(new UserError('未知错误'));
 				}
 
 				return result;

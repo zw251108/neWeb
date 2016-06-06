@@ -109,7 +109,7 @@ var utils = require('utility')
 						, d = date.getDate()
 						;
 
-					date = date.getFullYear() +'-'+ (m > 9 ? m : '0'+ m) +'-'+ (d > 9 ? d : '0'+ d);
+					rs.date = date.getFullYear() +'-'+ (m > 9 ? m : '0'+ m) +'-'+ (d > 9 ? d : '0'+ d);
 
 					rs.token = utils.md5(rs.email + rs.username + rs.password + date);
 					delete rs.password;

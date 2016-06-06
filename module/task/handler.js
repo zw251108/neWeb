@@ -190,7 +190,7 @@ var TaskModel   = require('./model.js')
 			});
 
 
-			cycle = cycle.concat( temp );
+			cycle = cycle.concat( all );
 
 			return cycle;
 		}
