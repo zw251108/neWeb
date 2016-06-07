@@ -42,6 +42,9 @@ var fs = require('fs')
 	, cookie        = require('cookie')
 	, cookieParser  = require('cookie-parser')
 	//, multer        = require('multer')
+	, cors          = require('cors')
+	, compression   = require('compression')
+	, helmet        = require('helmet')
 
 	, session       = require('express-session')
 	, sessionStore  = new session.MemoryStore()
@@ -70,6 +73,13 @@ web.use( bodyParser.json() );
 web.use( bodyParser.urlencoded({extended: true}) );
 web.use( cookieParser() );
 web.use( log4js.connectLogger(logger, {format: ':method :url :remote-addr'}) );
+//web.use( cors({ // 允许跨域
+//	origin: ['http://localhost:'+ CONFIG.web.port]
+//	, methods: ['GET', 'POST']
+//	, allowedHeaders: ['Content-Type', 'Authorization']
+//}) );
+//web.use( compression() );   // GZIP 压缩
+//web.use( helmet() );    // 安全性
 
 // 设置 session
 session = session({

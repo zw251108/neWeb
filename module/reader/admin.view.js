@@ -1,9 +1,6 @@
 'use strict';
 
-var config  = require('../../config.js')
-	, db    = require('../db.js')
-
-	, getEmmet    = require('../emmet/getEmmet.js')
+var getEmmet    = require('../emmet/getEmmet.js')
 	, tpl       = require('../emmet/tpl.js')
 	, popup     = require('../emmet/popup.js')
 

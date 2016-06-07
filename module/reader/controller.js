@@ -2,9 +2,6 @@
 
 var web         = require('../web.js')
 	, socket    = require('../socket.js')
-	, error     = require('../error.js')
-
-	, Url       = require('url')
 
 	, config    = require('../../config.js')
 
@@ -13,20 +10,24 @@ var web         = require('../web.js')
 	, data      = require('../data.js')
 	, menu      = require('../menu.js')
 
-	, TagModel  = require('../tag/model.js')
+	, ReaderView    = require('./view.js')
+	, ReaderAdminView   = require('./admin.view.js')
+	, ReaderHandler     = require('./handler.js')
+	, ReaderError       = require('./error.js')
+
 	, UserHandler   = require('../user/handler.js')
+
+	, Url       = require('url')
+
+	, TagModel  = require('../tag/model.js')
 
 	, Model     = require('./model.js')
 	, View      = require('./view.js')
 	, Admin     = require('./admin.view.js')
-	, ReaderAdminView   = require('./admin.view.js')
-	, ReaderHandler = require('./handler.js')
-	, ReaderError   = require('./error.js')
 
 	, Reader    = require('./reader.js')
 	;
 
-// 注册首页 metro 模块
 modules.register({
 	id: 'reader'
 	, metroSize: 'tiny'
@@ -66,12 +67,26 @@ menu.register({
 
 web.get('/reader/', function(req, res){
 	var query = req.query || {}
+		, user = UserHandler.getUserFromSession.fromReq(req)
 		, page = query.page || 1
 		, size = query.size || 20
 		, keyword = query.keyword || ''
 		, tags = query.tags || ''
 		, execute
 		;
+
+	ReaderHandler.getReaderList(user, query).then(Reader.readerList, function(e){
+		console.log( e );
+
+		// todo 错误页面
+	}).then(function(html){
+		// todo 页面其它部分
+
+		return html;
+	}).then(function(html){
+		res.send( config.docType.html5 + html );
+		res.end();
+	});
 
 	if( keyword ){
 		execute = Model.searchReaderByName(keyword, page, size).then(function(rs){

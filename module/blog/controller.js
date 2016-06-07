@@ -10,10 +10,10 @@ var web         = require('../web.js')
 	, data      = require('../data.js')
 	, menu      = require('../menu.js')
 
-	, BlogError = require('./error.js')
 	, BlogView  = require('./view.js')
 	, BlogAdminView = require('./admin.view.js')
 	, BlogHandler   = require('./handler.js')
+	, BlogError     = require('./error.js')
 
 	, UserHandler   = require('../user/handler.js')
 	;
@@ -37,7 +37,7 @@ web.get('/blog/', function(req, res){
 	var query = req.query || {}
 		, user = UserHandler.getUserFromSession.fromReq(req)
 		;
-	console.log(user)
+
 	BlogHandler.getBlogList(user, query).then(BlogView.blogList, function(e){
 		console.log( e );
 		// todo 错误页面
