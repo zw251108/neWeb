@@ -26,6 +26,9 @@ var CONFIG = {
 	}
 	, baseUrl: '../'
 
+	, params: {
+		PAGE_SIZE: 20
+	}
 	, modules: [
 		'user'
 		, 'blog'

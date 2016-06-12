@@ -1,6 +1,7 @@
 'use strict';
 
-var DocumentModel   = require('./model.js')
+var CONFIG = require('../../config.js')
+	, DocumentModel   = require('./model.js')
 	, DocumentError = require('./error.js')
 
 	, Document_Default_ID = 1
@@ -8,7 +9,7 @@ var DocumentModel   = require('./model.js')
 	, DocumentHandler = {
 		getDocumentList: function(user, query){
 			var page = query.page || 1
-				, size = query.size || 20
+				, size = query.size || CONFIG.params.PAGE_SIZE
 				;
 
 			return DocumentModel.getDocumentList(page, size).then(function(rs){

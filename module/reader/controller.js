@@ -68,14 +68,10 @@ menu.register({
 web.get('/reader/', function(req, res){
 	var query = req.query || {}
 		, user = UserHandler.getUserFromSession.fromReq(req)
-		, page = query.page || 1
-		, size = query.size || 20
-		, keyword = query.keyword || ''
-		, tags = query.tags || ''
 		, execute
 		;
 
-	ReaderHandler.getReaderList(user, query).then(Reader.readerList, function(e){
+	ReaderHandler.getReaderList(user, query).then(ReaderView.readerList, function(e){
 		console.log( e );
 
 		// todo 错误页面
@@ -87,288 +83,45 @@ web.get('/reader/', function(req, res){
 		res.send( config.docType.html5 + html );
 		res.end();
 	});
-
-	if( keyword ){
-		execute = Model.searchReaderByName(keyword, page, size).then(function(rs){
-			var result
-				;
-
-			if( rs && rs.length ){
-				result = Model.countSearchReaderByName(keyword).then(function(count){
-					return {
-						data: rs
-						, index: page
-						, size: size
-						, count: count
-						, urlCallback: function(index){
-							return '?keyword='+ keyword +'&page='+ index;
-						}
-					};
-				});
-			}
-			else{
-				result = {
-					data: []
-					, index: 1
-					, size: size
-					, count: 0
-					, urlCallback: function(index){
-						return '?keyword='+ keyword +'&page='+ index;
-					}
-				};
-			}
-
-			return result;
-		});
-	}
-	else if( tags ){
-		execute = Model.filterReaderByTag(tags, page, size).then(function(rs){
-			var result
-				;
-
-			if( rs && rs.length ){
-				result = Model.countFilterReaderByTag(tags).then(function(count){
-					return {
-						data: rs
-						, index: page
-						, size: size
-						, count: count
-						, urlCallback: function(index){
-							return '?tags='+ tags + '&page='+ index;
-						}
-					};
-				});
-			}
-			else{
-				result = {
-					data: []
-					, index: 1
-					, size: size
-					, count: 0
-					, urlCallback: function(index){
-						return '?tags='+ tags + '&page='+ index;
-					}
-				};
-			}
-
-			return result;
-		});
-	}
-	else{
-		execute = Model.getReaderByPage(page, size).then(function(rs){
-			return Model.countReader().then(function(count){
-				return {
-					data: rs
-					, index: page
-					, size: size
-					, count: count
-					, urlCallback: function(index){
-						return '?page='+ index;
-					}
-				}
-			});
-		});
-	}
-
-	execute.then( View.readerList ).then(function(html){
-		res.send( config.docType.html5 + html );
-		res.end();
-	});
 });
 web.get('/reader/bookmark', function(req, res){
 	var query = req.query || {}
-		, page = query.page || 1
-		, size = query.size || 20
-		, keyword = query.keyword || ''
-		, tags = query.tags || ''
 		, user = UserHandler.getUserFromSession.fromReq(req)
 		, execute
 		;
-console.log(user);
-	if( keyword ){
-		execute = Model.searchBookmarkByTitle(user.id, keyword, page, size).then(function(rs){
-			var result
-				;
 
-			if( rs && rs.length ){
-				result = Model.countSearchBookmarkByTitle(user.id, keyword).then(function(count){
-					return {
-						data: rs
-						, index: page
-						, size: size
-						, count: count
-						, urlCallback: function(index){
-							return '?keyword='+ keyword +'&page='+ index;
-						}
-					};
-				});
-			}
-			else{
-				result = {
-					data: []
-					, index: 1
-					, size: size
-					, count: 0
-					, urlCallback: function(index){
-						return '?keyword='+ keyword +'&page='+ index;
-					}
-				};
-			}
+	query.status = 0;
 
-			return result;
-		});
-	}
-	else if( tags ){
-		execute = Model.filterBookmarkByTags(user.id, tags, page, size).then(function(rs){
-			var result
-				;
+	ReaderHandler.getBookmarkList(user, query).then(ReaderView.bookmarkList, function(e){
+		console.log( e );
 
-			if( rs && rs.length ){
-				result = Model.countFilterBookmarkByTags(user.id, tags).then(function(count){
-					return {
-						data: rs
-						, index: page
-						, size: size
-						, count: count
-						, urlCallback: function(index){
-							return '?tags='+ tags + '&page='+ index;
-						}
-					};
-				});
-			}
-			else{
-				result = {
-					data: []
-					, index: 1
-					, size: size
-					, count: 0
-					, urlCallback: function(index){
-						return '?tags='+ tags + '&page='+ index;
-					}
-				};
-			}
+		// todo 错误页面
+	}).then(function(html){
+		// todo 页面其它部分
 
-			return result;
-		});
-	}
-	else{
-		execute = Model.getBookmarkByPage(user.id, page, size).then(function(rs){
-			return Model.countBookmark(user.id).then(function(count){
-				return {
-					data: rs
-					, index: page
-					, size: size
-					, count: count
-					, urlCallback: function(index){
-						return '?page='+ index;
-					}
-				};
-			});
-		})
-	}
-
-	execute.then( View.bookmarkList ).then(function(html){
+		return html;
+	}).then(function(html){
 		res.send( config.docType.html5 + html );
 		res.end();
 	});
 });
 web.get('/reader/favorite', function(req, res){
 	var query = req.query || {}
-		, page = query.page || 1
-		, size = query.size || 20
-		, keyword = query.keyword || ''
-		, tags = query.tags || ''
 		, user = UserHandler.getUserFromSession.fromReq(req)
 		, execute
 		;
 
-	if( keyword ){
-		execute = Model.searchFavoriteByTitle(user.id, keyword, page, size).then(function(rs){
-			var result
-				;
+	query.status = 1;
 
-			if( rs && rs.length ){
-				result = Model.countSearchFavoriteByTitle(user.id, keyword).then(function(count){
-					return {
-						data: rs
-						, index: page
-						, size: size
-						, count: count
-						, urlCallback: function(index){
-							return '?keyword='+ keyword +'&page='+ index;
-						}
-					};
-				});
-			}
-			else{
-				result = {
-					data: []
-					, index: 1
-					, size: size
-					, count: 0
-					, urlCallback: function(index){
-						return '?keyword='+ keyword +'&page='+ index;
-					}
-				};
-			}
+	ReaderHandler.getBookmarkList(user, query).then(ReaderView.favoriteList, function(e){
+		console.log( e );
 
-			return result;
-		});
-	}
-	else if( tags ){
-		execute = Model.filterFavoriteByTags(user.id, tags, page, size).then(function(rs){
-			var result
-				;
+		// todo 错误页面
+	}).then(function(html){
+		// todo 页面其它部分
 
-			if( rs && rs.length ){
-				result = Model.countFilterFavoriteByTags(user.id, tags).then(function(count){
-					return {
-						data: rs
-						, index: page
-						, size: size
-						, count: count
-						, urlCallback: function(index){
-							return '?tags='+ tags + '&page='+ index;
-						}
-					};
-				});
-			}
-			else{
-				result = {
-					data: []
-					, index: 1
-					, size: size
-					, count: 0
-					, urlCallback: function(index){
-						return '?tags='+ tags + '&page='+ index;
-					}
-				};
-			}
-
-			return result;
-		});
-	}
-	else{
-		execute = Model.getFavoriteByPage(user.id, page, size).then(function(rs){
-			return Model.countFavorite(user.id).then(function(count){
-				return {
-					data: rs
-					, index: page
-					, size: size
-					, count: count
-					, urlCallback: function(index){
-						return '?page='+ index;
-					}
-				};
-			});
-		});
-	}
-
-	execute.catch(function(e){
-		console.log(e);
-
-		return [];
-	}).then( View.favoriteList ).then(function(html){
+		return html;
+	}).then(function(html){
 		res.send( config.docType.html5 + html );
 		res.end();
 	});

@@ -22,7 +22,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	, articleFilter = handler.extend({}, TagView.tagEditorFilter)
 	, articleTpl        = emmetTpl({
 		template: getEmmet('admin/blog/article.html') +
-					'+' + TagView.tagEditorEmmet
+			'+' + TagView.tagEditorEmmet
 		, filter: handler.extend(articleFilter, {
 			content: function(d){
 				return d.content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\$/g, '&#36;');

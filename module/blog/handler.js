@@ -35,7 +35,8 @@
 //	}
 //}, this, 'blog');
 
-var BlogModel   = require('./model.js')
+var CONFIG = require('../../config.js')
+	, BlogModel   = require('./model.js')
 	, BlogError = require('./error.js')
 
 	, UserError = require('../user/error.js')
@@ -45,7 +46,7 @@ var BlogModel   = require('./model.js')
 		getBlogList: function(user, query){
 			var execute
 				, page = query.page || 1
-				, size = query.size || 20
+				, size = query.size || CONFIG.params.PAGE_SIZE
 				, keyword = query.keyword
 				, tags = query.tags
 				, isGuest = UserHandler.isGuest( user )
@@ -57,32 +58,68 @@ var BlogModel   = require('./model.js')
 			else{
 				if( keyword ){
 					execute = BlogModel.searchBlogByTitle(user.id, keyword, page, size).then(function(rs){
-						return BlogModel.countSearchBlogByTitle(user.id, keyword).then(function(count){
-							return {
+						var result
+							;
+
+						if( rs && rs.length ){
+							result = BlogModel.countSearchBlogByTitle(user.id, keyword).then(function(count){
+								return {
+									data: rs
+									, index: page
+									, size: size
+									, count: count
+									, urlCallback: function(index){
+										return '?keyword='+ keyword +'&page='+ index;
+									}
+								};
+							});
+						}
+						else{
+							result = {
 								data: rs
 								, index: page
 								, size: size
-								, count: count
+								, count: 0
 								, urlCallback: function(index){
 									return '??keyword='+ keyword +'&page='+ index;
 								}
-							}
-						});
+							};
+						}
+
+						return result;
 					});
 				}
 				else if( tags ){
 					execute = BlogModel.filterBlogByTags(user.id, tags, page, size).then(function(rs){
-						return BlogModel.countFilterBlogByTags(user.id, tags).then(function(count){
-							return {
-								data: rs
+						var result
+							;
+
+						if( rs && rs.length ){
+							result = BlogModel.countFilterBlogByTags(user.id, tags).then(function(count){
+								return {
+									data: rs
+									, index: page
+									, size: size
+									, count: count
+									, urlCallback: function(index){
+										return '?tags='+ tags +'&page='+ index;
+									}
+								};
+							});
+						}
+						else{
+							result = {
+								data: []
 								, index: page
 								, size: size
 								, count: count
 								, urlCallback: function(index){
-									return '??tags='+ tags +'&page='+ index;
+									return '?tags='+ tags +'&page='+ index;
 								}
 							}
-						});
+						}
+
+						return result;
 					});
 				}
 				else{

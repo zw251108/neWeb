@@ -13,27 +13,20 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	, TagView   = require('../tag/view.js')
 
 	, readerTpl    = emmetTpl({
-		template: 'section#reader_%id%.reader_section.section' +
-			'>a[href=%html_url% data-feed=%xml_url% data-id=%id%]' +
-				'>h3.section_title{%name%}' +
-					'>i.icon.icon-up' +
-				'^^hr' +
-				'+ul.reader_articleList' +
-				'+div.tagsArea{%tags%}'
+		template: getEmmet('reader/reader.html')
 		, filter: {
 			tags: function(d){
 				return d.tags ? '<span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">'+ d.tags.split(',').join('</span><span class="tag'+ (d.status > 1 ? ' tag-checked' : '') +'">') +'</span>' : '';
 			}
 		}
 	})
-	, articleTpl   = emmetTpl({
-		template: 'article#readerArt%id%.reader_article.article[data-id=%id% data-bookmark-id=%bookmarkId% data-status=%status% data-score=%score%]' +
-			'>a[href=%url% title=%title% target=_blank]' +
-				'>h3.article_title{%title%}' +
-			'^hr' +
-			'+a.icon.icon-checkbox%readStatus%[href=./read title=%readTitle%]{%readText%}' +
-			'+time.article_date[pubdate=pubdate datetime=%datetime%]{%datetime%}' +
-			'+div.tagsArea{%tags%}'
+	, readerAddFormTpl        = emmetTpl({
+		template: getEmmet('reader/readerAddFrom.html')
+	})
+
+
+	, bookmarkArticleTpl   = emmetTpl({
+		template: getEmmet('reader/bookmarkArticle.html')
 		, filter: {
 			title: function(d){
 				return d.title || d.url;
@@ -52,49 +45,11 @@ var getEmmet    = require('../emmet/getEmmet.js')
 			}
 		}
 	})
-	, feedAddFormTpl        = emmetTpl({
-		template: 'form' +
-			'>div.formGroup' +
-				'>label.label[for=name]{请输入网站名称}' +
-				'+input#name.input[type=text name=name placeholder=请输入网站名称 data-validator=name]' +
-			'^div.formGroup' +
-				'>label.label[for=url]{请输入网站链接}' +
-				'+input#url.input[type=text name=url placeholder=请输入网站链接 data-validator=url]' +
-			'^div.formGroup' +
-				'>label.label[for=xml]{请输入订阅链接}' +
-				'+input#feed.input[type=text name=feed placeholder=请输入订阅链接 data-validator=feed]'
-	})
 	, bookmarkAddFormTpl    = emmetTpl({
-		template: 'form' +
-			'>div.formGroup' +
-				'>label.label[for=url]{请输入链接}' +
-				'+input#url.input[type=text placeholder=请输入链接 data-validator=url]'
+		template: getEmmet('reader/bookmarkAddForm.html')
 	})
 	, bookmarkReadFormTpl   = emmetTpl({
-		template: 'form#readForm' +
-			'>input#ubId[type=hidden name=id]' +
-			'+input#bookmarkId[type=hidden name=bookmarkId]' +
-			'+input#bookmarkUrl[type=hidden name=bookmarkUrl]' +
-			'+input#oldScore[type=hidden name=oldScore value=%score%]' +
-			'+input#oldStatus[type=hidden name=oldStatus value=%status%]' +
-			'+div.formGroup' +
-				'>label.label[for=bookmarkTitle]{请设置标题}' +
-				'+input#bookmarkTitle.input[type=text name=title placeholder=重新设置标题 data-validator=title]' +
-			'^div.formGroup' +
-				'>label.label[for=star1]{请评分}' +
-				'+div.input.input-score' +
-					'>span.scoreList' +
-						'>input#star5[type=radio name=score value=5]' +
-						'+label.icon.icon-star[for=star5]' +
-						'+input#star4[type=radio name=score value=4]' +
-						'+label.icon.icon-star[for=star4]' +
-						'+input#star3[type=radio name=score value=3]' +
-						'+label.icon.icon-star[for=star3]' +
-						'+input#star2[type=radio name=score value=2]' +
-						'+label.icon.icon-star[for=star2]' +
-						'+input#star1[type=radio name=score value=1]' +
-						'+label.icon.icon-star[for=star1]' +
-					'^^span.scoreValue' +
+		template: getEmmet('reader/bookmarkReadForm.html') +
 			'^' + TagView.tagEditorEmmet
 	})
 
@@ -122,7 +77,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						, button: '<button type="button" id="readBookmark" class="btn btn-submit">确定</button>'
 					}, {
 						id: 'addPopup', size: 'normal'
-						, content: feedAddFormTpl({})
+						, content: readerAddFormTpl({})
 						, button: '<button type="button" id="addFeed" class="btn btn-submit">确定</button>'
 					}]
 				}
@@ -149,7 +104,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 							type: 'button', id: 'filter', icon: 'filter', title: '过滤'}, {
 							type: 'button', id: 'search', icon: 'search', title: '搜索'
 						}]
-						, content: articleTpl( rs.data ).join('') + '<div class="pagination" id="pagination">' + pagination(rs.index, rs.size, rs.count, rs.urlCallback) + '</div>'
+						, content: bookmarkArticleTpl( rs.data ).join('') + '<div class="pagination" id="pagination">' + pagination(rs.index, rs.size, rs.count, rs.urlCallback) + '</div>'
 					}
 					, modulePopup: [popup.msgPopup, {
 						id: 'readPopup'
@@ -186,7 +141,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 							type: 'button', id: 'filter', icon: 'filter', title: '过滤'}, {
 							type: 'button', id: 'search', icon: 'search', title: '搜索'
 						}]
-						, content: articleTpl( rs.data ).join('') + '<div class="pagination" id="pagination">' + pagination(rs.index, rs.size, rs.count, rs.urlCallback) + '</div>'
+						, content: bookmarkArticleTpl( rs.data ).join('') + '<div class="pagination" id="pagination">' + pagination(rs.index, rs.size, rs.count, rs.urlCallback) + '</div>'
 					}
 					, modulePopup: [{
 						id: 'readPopup'

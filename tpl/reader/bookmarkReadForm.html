@@ -1,27 +1,28 @@
 <form id="readForm">
-	<input type="hidden" id="bookmarkId" name="bookmarkId"/>
-
+	<input type="hidden" id="ubId" name="id"/><input type="hidden" id="bookmarkId" name="bookmarkId"/>
+	<input type="hidden" id="bookmarkUrl" name="bookmarkUrl"/>
+	<input type="hidden" id="oldScore" name="oldScore" value="%score%"/>
+	<input type="hidden" id="oldStatus" name="oldStatus" value="%status%"/>
 	<div class="formGroup">
 		<label for="bookmarkTitle" class="label">请设置标题</label>
 		<input type="text" id="bookmarkTitle" class="input" name="title" placeholder="重新设置标题" data-validator="title"/>
 	</div>
 	<div class="formGroup">
 		<label for="star1" class="label">请评分</label>
-
 		<div class="input input-score">
-			<input type="radio" id="star5" name="score" value="5"/>
-			<label for="star5" class="icon icon-star"></label>
-			<input type="radio" id="star4" name="score" value="4"/>
-			<label for="star4" class="icon icon-star"></label>
-			<input type="radio" id="star3" name="score" value="3"/>
-			<label for="star3" class="icon icon-star"></label>
-			<input type="radio" id="star2" name="score" value="2"/>
-			<label for="star2" class="icon icon-star"></label>
-			<input type="radio" id="star1" name="score" value="1"/>
-			<label for="star1" class="icon icon-star"></label>
+			<span class="scoreList">
+				<input type="radio" id="star5" name="score" value="5"/>
+				<label for="star5" class="icon icon-star"></label>
+				<input type="radio" id="star4" name="score" value="4"/>
+				<label for="star4" class="icon icon-star"></label>
+				<input type="radio" id="star3" name="score" value="3"/>
+				<label for="star3" class="icon icon-star"></label>
+				<input type="radio" id="star2" name="score" value="2"/>
+				<label for="star2" class="icon icon-star"></label>
+				<input type="radio" id="star1" name="score" value="1"/>
+				<label for="star1" class="icon icon-star"></label>
+			</span>
 		</div>
 		<span class="scoreValue"></span>
 	</div>
-	<component data-name="tagEditor"></component>
-	%tagEditor%
 </form>

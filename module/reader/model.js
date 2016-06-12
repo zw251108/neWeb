@@ -42,7 +42,7 @@ var db  = require('../db.js')
 			' where' +
 				' urb.user_id=:userId' +
 			' and' +
-				' status=0' +
+				' status=:status' +
 			' and' +
 				' rb.id=urb.bookmark_id' +
 			' order by rb.id desc' +
@@ -51,14 +51,14 @@ var db  = require('../db.js')
 			' where' +
 				' user_id=:userId' +
 			' and' +
-				' status=0'
+				' status=:status'
 
 		, bookmarkSearchTitle: 'select urb.id as id,rb.id as bookmarkId,urb.title as title,url,status,tags,mark_datetime as datetime,score' +
 			' from reader_bookmark as rb,user_reader_bookmark as urb' +
 			' where' +
 				' user_id=:userId' +
 			' and' +
-				' status=0' +
+				' status=:status' +
 			' and' +
 				' urb.title like :keyword' +
 			' and' +
@@ -70,7 +70,7 @@ var db  = require('../db.js')
 			' where' +
 				' user_id=:userId' +
 			' and' +
-				' status=0' +
+				' status=:status' +
 			' and' +
 				' urb.title like :keyword' +
 			' and' +
@@ -81,7 +81,7 @@ var db  = require('../db.js')
 			' where' +
 				' user_id=:userId' +
 			' and' +
-				' status=0' +
+				' status=:status' +
 			' and' +
 				' tags regexp :tags' +
 			' and' +
@@ -93,7 +93,7 @@ var db  = require('../db.js')
 			' where' +
 				' user_id=:userId' +
 			' and' +
-				' status=0' +
+				' status=:status' +
 			' and' +
 				' tags regexp :tags'
 
