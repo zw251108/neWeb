@@ -76,6 +76,29 @@ var db  = require('../db.js')
 			' and' +
 				' rb.id=urb.bookmark_id'
 
+		, bookmarkSearchUrl: 'select urb.id as id,rb.id as bookmarkId,urb.title as title,url,status,tags,mark_datetime as datetime,score' +
+			' from reader_bookmark as rb,user_reader_bookmark as urb' +
+			' where' +
+				' user_id=:userId' +
+			' and' +
+				' status=:status' +
+			' and' +
+				' url like :url' +
+			' and' +
+				' rb.id=urb.bookmark_id' +
+			' order by id desc' +
+			' limit :page,:size'
+		, bookmarkSearchUrlCount: 'select count(*) as count' +
+			' from reader_bookmark as rb,user_reader_bookmark as urb' +
+			' where' +
+				' user_id=:userId' +
+			' and' +
+				' status=:status' +
+			' and' +
+				' url like :url' +
+			' and' +
+				' rb.id=urb.bookmark_id'
+
 		, bookmarkFilterTags: 'select urb.id as id,rb.id as bookmarkId,urb.title as title,url,status,tags,mark_datetime as datetime,score' +
 			' from reader_bookmark as rb,user_reader_bookmark as urb' +
 			' where' +
@@ -111,67 +134,67 @@ var db  = require('../db.js')
 		, userBookmarkUpdateRead: 'update user_reader_bookmark set title=:title,status=:status,tags=:tags,score=:score,read_datetime=now() where id=:id'
 		, userBookmarkUpdateInfo: 'update user_reader_bookmark set title=:title,tags=:tags,score=:score where id=:id'
 
-		, favoriteByPage: 'select urb.id as id,rb.id as bookmarkId,urb.title as title,url,status,score,tags,mark_datetime as datetime' +
-			' from reader_bookmark as rb,user_reader_bookmark as urb' +
-			' where' +
-				' user_id=:userId' +
-			' and' +
-				' status=1' +
-			' and' +
-				' rb.id=urb.bookmark_id' +
-			' order by score desc,datetime desc' +
-			' limit :page,:size'
-		, favoriteCount: 'select count(*) as count' +
-			' from' +
-				' user_reader_bookmark' +
-			' where' +
-				' user_id=:userId' +
-			' and' +
-				' status=1'
-
-		, favoriteSearchTitle: 'select urb.id as id,rb.id as bookmarkId,urb.title as title,url,status,score,tags,mark_datetime as datetime' +
-			' from reader_bookmark as rb,user_reader_bookmark as urb' +
-			' where' +
-				' user_id=:userId' +
-			' and' +
-				' status=1' +
-			' and' +
-				' urb.title like :keyword' +
-			' and' +
-				' rb.id=urb.bookmark_id' +
-			' order by status,id desc' +
-			' limit :page,:size'
-		, favoriteSearchTitleCount: 'select count(*) as count' +
-			' from reader_bookmark as rb,user_reader_bookmark as urb' +
-			' where' +
-				' user_id=:userId' +
-			' and' +
-				' status=1' +
-			' and' +
-				' urb.title like :keyword' +
-			' and' +
-				' rb.id=urb.bookmark_id'
-
-		, favoriteFilterTags: 'select urb.id as id,rb.id as bookmarkId,urb.title as title,url,status,tags,score,mark_datetime as datetime' +
-			' from reader_bookmark as rb,user_reader_bookmark as urb' +
-			' where' +
-				' user_id=:userId' +
-			' and' +
-				' status=1' +
-			' and' +
-				' tags regexp :tags' +
-			' and' +
-				' rb.id=urb.bookmark_id' +
-			' order by status,id desc' +
-			' limit :page,:size'
-		, favoriteFilterTagsCount: 'select count(*) as count' +
-			' from user_reader_bookmark' +
-			' where' +
-				' user_id=:userId' +
-			' and' +
-				' status=1' +
-			' and' +
-				' tags regexp :tags'
+		//, favoriteByPage: 'select urb.id as id,rb.id as bookmarkId,urb.title as title,url,status,score,tags,mark_datetime as datetime' +
+		//	' from reader_bookmark as rb,user_reader_bookmark as urb' +
+		//	' where' +
+		//		' user_id=:userId' +
+		//	' and' +
+		//		' status=1' +
+		//	' and' +
+		//		' rb.id=urb.bookmark_id' +
+		//	' order by score desc,datetime desc' +
+		//	' limit :page,:size'
+		//, favoriteCount: 'select count(*) as count' +
+		//	' from' +
+		//		' user_reader_bookmark' +
+		//	' where' +
+		//		' user_id=:userId' +
+		//	' and' +
+		//		' status=1'
+		//
+		//, favoriteSearchTitle: 'select urb.id as id,rb.id as bookmarkId,urb.title as title,url,status,score,tags,mark_datetime as datetime' +
+		//	' from reader_bookmark as rb,user_reader_bookmark as urb' +
+		//	' where' +
+		//		' user_id=:userId' +
+		//	' and' +
+		//		' status=1' +
+		//	' and' +
+		//		' urb.title like :keyword' +
+		//	' and' +
+		//		' rb.id=urb.bookmark_id' +
+		//	' order by status,id desc' +
+		//	' limit :page,:size'
+		//, favoriteSearchTitleCount: 'select count(*) as count' +
+		//	' from reader_bookmark as rb,user_reader_bookmark as urb' +
+		//	' where' +
+		//		' user_id=:userId' +
+		//	' and' +
+		//		' status=1' +
+		//	' and' +
+		//		' urb.title like :keyword' +
+		//	' and' +
+		//		' rb.id=urb.bookmark_id'
+		//
+		//, favoriteFilterTags: 'select urb.id as id,rb.id as bookmarkId,urb.title as title,url,status,tags,score,mark_datetime as datetime' +
+		//	' from reader_bookmark as rb,user_reader_bookmark as urb' +
+		//	' where' +
+		//		' user_id=:userId' +
+		//	' and' +
+		//		' status=1' +
+		//	' and' +
+		//		' tags regexp :tags' +
+		//	' and' +
+		//		' rb.id=urb.bookmark_id' +
+		//	' order by status,id desc' +
+		//	' limit :page,:size'
+		//, favoriteFilterTagsCount: 'select count(*) as count' +
+		//	' from user_reader_bookmark' +
+		//	' where' +
+		//		' user_id=:userId' +
+		//	' and' +
+		//		' status=1' +
+		//	' and' +
+		//		' tags regexp :tags'
 
 		// 统计用户每天所标记、所读的文章数量
 		, statisticReadMarkByDate: 'select date_format(read_datetime,\'%Y-%m-%d\') as read_date,count(if(status=1,true,null)) as read_count,count(status) as mark_count' +
@@ -183,7 +206,7 @@ var db  = require('../db.js')
 			' order by' +
 				' read_date desc'
 	}
-	, Model = {
+	, ReaderModel = {
 		getReaderByPage: function(page, size){
 			return db.handle({
 				sql: SQL.readerByPage
@@ -222,6 +245,7 @@ var db  = require('../db.js')
 				return isExist;
 			});
 		}
+
 		, searchReaderByName: function(keyword, page, size){
 			return db.handle({
 				sql: SQL.readerSearchName
@@ -252,6 +276,7 @@ var db  = require('../db.js')
 				return result;
 			});
 		}
+
 		, filterReaderByTag: function(tags, page, size){
 			return db.handle({
 				sql: SQL.readerFilterTags.replace(':page', (page -1) * size).replace(':size', size).replace(':tags', '\'(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join(')(,|$)\' and tags regexp \'(^|,)(') + ')(,|$)\'')
@@ -282,6 +307,7 @@ var db  = require('../db.js')
 				return result;
 			});
 		}
+
 		, addReader: function(data){
 			return db.handle({
 				sql: SQL.readerAdd
@@ -298,21 +324,24 @@ var db  = require('../db.js')
 			});
 		}
 
-		, getBookmarkByPage: function(userId, page, size){
+
+		, getBookmarkByPage: function(userId, status, page, size){
 			return db.handle({
 				sql: SQL.userBookmarkByPage
 				, data: {
 					userId: userId
+					, status: status
 					, page: (page -1) * size
 					, size: size
 				}
 			});
 		}
-		, countBookmark: function(userId){
+		, countBookmark: function(userId, status){
 			return db.handle({
 				sql: SQL.userBookmarkCount
 				, data: {
 					userId: userId
+					, status: status
 				}
 			}).then(function(rs){
 				var count = 0;
@@ -325,22 +354,24 @@ var db  = require('../db.js')
 			});
 		}
 
-		, searchBookmarkByTitle: function(userId, keyword, page, size){
+		, searchBookmarkByTitle: function(userId, keyword, status, page, size){
 			return db.handle({
 				sql: SQL.bookmarkSearchTitle
 				, data: {
 					userId: userId
 					, keyword: '%'+ keyword +'%'
+					, status: status
 					, page: (page -1) * size
 					, size: size
 				}
 			});
 		}
-		, countSearchBookmarkByTitle: function(userId, keyword){
+		, countSearchBookmarkByTitle: function(userId, keyword, status){
 			return db.handle({
 				sql: SQL.bookmarkSearchTitleCount
 				, data: {
 					userId: userId
+					, status: status
 					, keyword: '%'+ keyword +'%'
 				}
 			}).then(function(rs){
@@ -358,21 +389,58 @@ var db  = require('../db.js')
 			});
 		}
 
-		, filterBookmarkByTags: function(userId, tags, page, size){
+		, searchBookmarkByUrl: function(userId, url, status, page, size){
 			return db.handle({
-				sql: SQL.bookmarkFilterTags.replace(':tags', '\'(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join(')(,|$)\' and tags regexp \'(^|,)(') + ')(,|$)\'')
+				sql: SQL.bookmarkSearchUrl
 				, data: {
 					userId: userId
+					, url: '%'+ url +'%'
+					, status: status
 					, page: (page -1) * size
 					, size: size
 				}
 			});
 		}
-		, countFilterBookmarkByTags: function(userId, tags){
+		, countSearchBookmarkByUrl: function(userId, url, status){
+			return db.handle({
+				sql: SQL.bookmarkSearchUrlCount
+				, data: {
+					userId: userId
+					, url: '%'+ url +'%'
+					, status: status
+				}
+			}).then(function(rs){
+				var result
+					;
+
+				if( rs && rs.length ){
+					result = +rs[0].count;
+				}
+				else{
+					result = 0
+				}
+
+				return result;
+			});
+		}
+
+		, filterBookmarkByTags: function(userId, tags, status, page, size){
+			return db.handle({
+				sql: SQL.bookmarkFilterTags.replace(':tags', '\'(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join(')(,|$)\' and tags regexp \'(^|,)(') + ')(,|$)\'')
+				, data: {
+					userId: userId
+					, status: status
+					, page: (page -1) * size
+					, size: size
+				}
+			});
+		}
+		, countFilterBookmarkByTags: function(userId, tags, status){
 			return db.handle({
 				sql: SQL.bookmarkFilterTagsCount.replace(':tags', '\'(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join(')(,|$)\' and tags regexp \'(^|,)(') + ')(,|$)\'')
 				, data: {
 					userId: userId
+					, status: status
 				}
 			}).then(function(rs){
 				var result
@@ -391,24 +459,11 @@ var db  = require('../db.js')
 
 		, isExistBookmark: function(url, returnData){
 			var result = db.handle({
-				sql: SQL.bookmarkIsExist
-				, data: {
-					url: url
-				}
-			})
-			//	.then(function(rs){
-			//	var result
-			//		;
-			//
-			//	if( rs && rs.length ){
-			//		result = Promise.resolve(rs[0]);
-			//	}
-			//	else{
-			//		result = Promise.reject();
-			//	}
-			//
-			//	return result;
-			//})
+					sql: SQL.bookmarkIsExist
+					, data: {
+						url: url
+					}
+				})
 				;
 
 			if( !returnData ){
@@ -614,4 +669,4 @@ var db  = require('../db.js')
 	}
 	;
 
-module.exports = Model;
+module.exports = ReaderModel;

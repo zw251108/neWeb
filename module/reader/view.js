@@ -21,7 +21,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 		}
 	})
 	, readerAddFormTpl        = emmetTpl({
-		template: getEmmet('reader/readerAddFrom.html')
+		template: getEmmet('reader/readerAddForm.html')
 	})
 
 

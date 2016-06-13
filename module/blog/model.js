@@ -1,10 +1,9 @@
 'use strict';
 
 var db = require('../db.js')
-	, config = require('../../config.js')
-	, error = require('../error.js')
+	, CONFIG = require('../../config.js')
 
-	, TABLE_NAME = config.db.dataTablePrefix +'blog'
+	, TABLE_NAME = CONFIG.db.dataTablePrefix +'blog'
 
 	, SQL = {
 		blogByPage: 'select id,title,datetime,tags from '+ TABLE_NAME +

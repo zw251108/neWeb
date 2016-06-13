@@ -13,14 +13,10 @@ var web         = require('../web.js')
 	, DocumentView  = require('./view.js')
 	, DocumentAdminView = require('./admin.view.js')
 	, DocumentHandler   = require('./handler.js')
-	, DocumentError     = require('./error.js')
 
 	, UserHandler   = require('../user/handler.js')
 	;
 
-/**
- *
- * */
 modules.register({
 	id: 'document'
 	, metroSize: 'tiny'

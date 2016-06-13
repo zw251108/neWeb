@@ -36,107 +36,93 @@
 //}, this, 'blog');
 
 var CONFIG = require('../../config.js')
-	, BlogModel   = require('./model.js')
-	, BlogError = require('./error.js')
-
-	, UserError = require('../user/error.js')
 	, UserHandler   = require('../user/handler.js')
 
+	, BlogModel = require('./model.js')
+	, BlogError = require('./error.js')
 	, BlogHandler = {
-		getBlogList: function(user, query){
+		// 错误处理
+		getError: function(msg){
+			return Promise.reject( new BlogError(msg) );
+		}
+
+		, getBlogList: function(user, query){
 			var execute
-				, page = query.page || 1
-				, size = query.size || CONFIG.params.PAGE_SIZE
-				, keyword = query.keyword
-				, tags = query.tags
+				, page      = query.page || 1
+				, size      = query.size || CONFIG.params.PAGE_SIZE
+				, keyword   = query.keyword
+				, tags      = query.tags
+				, urlCallback
 				, isGuest = UserHandler.isGuest( user )
 				;
 
 			if( isGuest ){
-				execute = Promise.reject( new UserError('用户尚未登录') );
+				execute = UserHandler.getError('用户尚未登录');
 			}
 			else{
 				if( keyword ){
-					execute = BlogModel.searchBlogByTitle(user.id, keyword, page, size).then(function(rs){
-						var result
-							;
-
-						if( rs && rs.length ){
-							result = BlogModel.countSearchBlogByTitle(user.id, keyword).then(function(count){
-								return {
-									data: rs
-									, index: page
-									, size: size
-									, count: count
-									, urlCallback: function(index){
-										return '?keyword='+ keyword +'&page='+ index;
-									}
-								};
-							});
-						}
-						else{
-							result = {
-								data: rs
-								, index: page
-								, size: size
-								, count: 0
-								, urlCallback: function(index){
-									return '??keyword='+ keyword +'&page='+ index;
-								}
-							};
-						}
-
-						return result;
-					});
+					execute = BlogModel.searchBlogByTitle(user.id, keyword, page, size);
+					urlCallback = function(index){
+						return '?keyword='+ keyword +'&page='+ index;
+					};
 				}
 				else if( tags ){
-					execute = BlogModel.filterBlogByTags(user.id, tags, page, size).then(function(rs){
-						var result
-							;
-
-						if( rs && rs.length ){
-							result = BlogModel.countFilterBlogByTags(user.id, tags).then(function(count){
-								return {
-									data: rs
-									, index: page
-									, size: size
-									, count: count
-									, urlCallback: function(index){
-										return '?tags='+ tags +'&page='+ index;
-									}
-								};
-							});
-						}
-						else{
-							result = {
-								data: []
-								, index: page
-								, size: size
-								, count: count
-								, urlCallback: function(index){
-									return '?tags='+ tags +'&page='+ index;
-								}
-							}
-						}
-
-						return result;
-					});
+					execute = BlogModel.filterBlogByTags(user.id, tags, page, size);
+					urlCallback = function(index){
+						return '?tags='+ tags +'&page='+ index;
+					};
 				}
 				else{
-					execute = BlogModel.getBlogByPage(user.id, page, size).then(function(rs){
-						return BlogModel.countBlog( user.id ).then(function(count){
-							return {
-								data: rs
-								, index: page
-								, size: size
-								, count: count
-								, urlCallback: function(index){
-									return '?page='+ index;
-								}
-							}
-						});
-					});
+					execute = BlogModel.getBlogByPage(user.id, page, size);
+					urlCallback = function(index){
+						return '?page='+ index;
+					};
 				}
+
+				execute.then(function(rs){
+					var result
+						;
+
+					if( rs && rs.length ){
+						result = rs;
+					}
+					else{
+						result = Promise.reject({
+							data: rs
+							, index: page
+							, size: size
+							, count: 0
+							, urlCallback: urlCallback
+						});
+					}
+
+					return result;
+				}).then(function(rs){
+					var result
+						;
+
+					if( keyword ){
+						result = BlogModel.countSearchBlogByTitle(user.id, keyword);
+					}
+					else if( tags ){
+						result = BlogModel.countFilterBlogByTags(user.id, tags);
+					}
+					else{
+						result = BlogModel.countBlog( user.id );
+					}
+
+					return result.then(function(count){
+						return {
+							data: rs
+							, index: page
+							, size: size
+							, count: count
+							, urlCallback: urlCallback
+						};
+					});
+				}, function(rs){
+					return rs;
+				});
 			}
 
 			return execute;
@@ -150,14 +136,14 @@ var CONFIG = require('../../config.js')
 			// todo 验证 blogId
 
 			if( isGuest ){
-				execute = Promise.reject( new UserError('用户尚未登录') );
+				execute = UserHandler.getError('用户尚未登录');
 			}
 			else{
 				if( blogId ){
 					execute = BlogModel.getBlogById( blogId );
 				}
 				else{
-					execute = Promise.reject( new BlogError('缺少参数 id') );
+					execute = BlogHandler.getError('缺少参数 id');
 				}
 			}
 
@@ -188,7 +174,7 @@ var CONFIG = require('../../config.js')
 				});
 			}
 			else{
-				execute = Promise.reject( new BlogError('缺少参数 title') );
+				execute = BlogHandler.getError('缺少参数 title');
 			}
 
 			return execute;
@@ -212,7 +198,7 @@ var CONFIG = require('../../config.js')
 				});
 			}
 			else{
-				execute = Promise.reject( new BlogError('缺少参数 id') );
+				execute = BlogHandler.getError('缺少参数 id');
 			}
 
 			return execute;

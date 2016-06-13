@@ -1,13 +1,14 @@
 'use strict';
 
-var web         = require('../web.js')
+var CONFIG  = require('../../config.js')
+	, web       = require('../web.js')
 	, socket    = require('../socket.js')
-	, error     = require('../error.js')
 
-	, admin = require('../admin.js')
-	, data  = require('../data.js')
+	, modules   = require('../module.js')
+	, admin     = require('../admin.js')
+	, data      = require('../data.js')
+	, menu      = require('../menu.js')
 
-	, BaseDataError = require('./error.js')
 	, BaseDataModel = require('./model.js')
 	, BaseDataAdminView = require('./admin.view.js')
 	, BaseDataHandler   = require('./handler.js')
@@ -165,7 +166,7 @@ web.get('/data/province', function(req, res){
 			}) +')';
 		}
 		else{
-			execute = Promise.reject( new BaseDataError('不是 jsonp 格式调用') );
+			execute = BaseDataHandler.getError('不是 jsonp 格式调用');
 		}
 
 		return execute;
@@ -196,7 +197,7 @@ web.get('/data/city', function(req, res){
 			}) +')';
 		}
 		else{
-			execute = Promise.reject( new BaseDataError('不是 jsonp 格式调用') );
+			execute = BaseDataHandler.getError('不是 jsonp 格式调用');
 		}
 
 		return execute;
@@ -227,7 +228,7 @@ web.get('/data/district', function(req, res){
 			}) +')';
 		}
 		else{
-			execute = Promise.reject( new BaseDataError('不是 jsonp 格式调用') );
+			execute = BaseDataHandler.getError('不是 jsonp 格式调用');
 		}
 
 		return execute;
@@ -258,7 +259,7 @@ web.get('/data/town', function(req, res){
 			}) +')';
 		}
 		else{
-			execute = Promise.reject( new BaseDataError('不是 jsonp 格式调用') );
+			execute = BaseDataHandler.getError('不是 jsonp 格式调用');
 		}
 
 		return execute;
@@ -289,7 +290,7 @@ web.get('/data/village', function(req, res){
 			}) +')';
 		}
 		else{
-			execute = Promise.reject( new BaseDataError('不是 jsonp 格式调用') );
+			execute = BaseDataHandler.getError('不是 jsonp 格式调用');
 		}
 
 		return execute;
@@ -322,11 +323,11 @@ web.get('/data/university', function(req, res){
 			});
 		}
 		else{
-			execute = Promise.reject( new BaseDataError('不是 jsonp 格式调用') );
+			execute = BaseDataHandler.getError('不是 jsonp 格式调用');
 		}
 	}
 	else{
-		execute = Promise.reject( new BaseDataError('缺少参数 province') );
+		execute = BaseDataHandler.getError('缺少参数 province');
 	}
 
 	execute.catch(function(e){
@@ -368,7 +369,7 @@ socket.register({
 			});
 		}
 		else{
-			execute = Promise.reject( new BaseDataError('缺少参数 province') );
+			execute = BaseDataHandler.getError('缺少参数 province');
 		}
 
 		execute.catch(function(e){
@@ -399,7 +400,7 @@ socket.register({
 			});
 		}
 		else{
-			execute = Promise.reject( new BaseDataError('缺少参数 city') );
+			execute = BaseDataHandler.getError('缺少参数 city');
 		}
 
 		execute.catch(function(e){
@@ -430,7 +431,7 @@ socket.register({
 			});
 		}
 		else{
-			execute = Promise.reject( new BaseDataError('缺少参数 district') );
+			execute = BaseDataHandler.getError('缺少参数 district');
 		}
 
 		execute.catch(function(e){
@@ -461,7 +462,7 @@ socket.register({
 			});
 		}
 		else{
-			execute = Promise.reject( new BaseDataError('缺少参数 town') );
+			execute = BaseDataHandler.getError('缺少参数 town');
 		}
 
 		execute.catch(function(e){
@@ -493,7 +494,7 @@ socket.register({
 			});
 		}
 		else{
-			execute = Promise.reject( new BaseDataError('缺少参数 province') );
+			execute = BaseDataHandler.getError('缺少参数 province');
 		}
 
 		execute.catch(function(e){

@@ -145,7 +145,7 @@ require(['../../config'], function(config){
 				//topic: 'reader/article/bookmark'
 				topic: 'reader/bookmark/add'
 				, query: {
-					targetId: id
+					tempId: id
 					, url: href
 					, tags: tags
 					, title: $title.html()
@@ -215,8 +215,8 @@ require(['../../config'], function(config){
 			}
 			//, 'reader/article/bookmark': function(data){
 			//	var info = data.info || {}
-			//		, targetId = info.targetId
-			//		, $target = targetId ? $reader.find('#'+ targetId) : null
+			//		, tempId = info.tempId
+			//		, $target = tempId ? $reader.find('#'+ tempId) : null
 			//		;
 			//
 			//	if( $target ){
@@ -231,13 +231,13 @@ require(['../../config'], function(config){
 			//}
 			, 'reader/bookmark/add': function(data){
 				var info = data.info
-					, targetId
+					, tempId
 					, $target
 					;
 
 				if( info ){
-					targetId = info.targetId;
-					$target = targetId ? $reader.find('#'+ targetId) : null;
+					tempId = info.tempId;
+					$target = tempId ? $reader.find('#'+ tempId) : null;
 
 					if( $target ){
 						$target.data( info ).attr('id', 'readerArt'+ info.id)

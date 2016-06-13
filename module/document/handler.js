@@ -1,13 +1,17 @@
 'use strict';
 
 var CONFIG = require('../../config.js')
-	, DocumentModel   = require('./model.js')
+	, UserHandler   = require('../user/handler.js')
+
+	, DocumentModel = require('./model.js')
 	, DocumentError = require('./error.js')
-
-	, Document_Default_ID = 1
-
 	, DocumentHandler = {
-		getDocumentList: function(user, query){
+		// 错误处理
+		getError: function(msg){
+			return Promise.reject( new DocumentError(msg) );
+		}
+
+		, getDocumentList: function(user, query){
 			var page = query.page || 1
 				, size = query.size || CONFIG.params.PAGE_SIZE
 				;
@@ -30,7 +34,8 @@ var CONFIG = require('../../config.js')
 		, getDefaultDocument: function(user, query){
 			var documentId = query.id
 				;
-			query.id = documentId || Document_Default_ID;
+
+			query.id = documentId || CONFIG.params.DOCUMENT_DEFAULT_ID;
 
 			return DocumentHandler.getDocument(user, query);
 		}
@@ -46,7 +51,7 @@ var CONFIG = require('../../config.js')
 				]).then( DocumentHandler.handleData );
 			}
 			else{
-				execute = Promise.reject( new DocumentError('缺少参数 id') );
+				execute = DocumentHandler.getError('缺少参数 id');
 			}
 
 			return execute;
@@ -132,7 +137,7 @@ var CONFIG = require('../../config.js')
 				});
 			}
 			else{
-				execute = Promise.reject( new DocumentError('缺少参数 title') );
+				execute = DocumentHandler.getError('缺少参数 title');
 			}
 
 			return execute;
@@ -150,7 +155,7 @@ var CONFIG = require('../../config.js')
 				});
 			}
 			else{
-				execute = Promise.reject( new DocumentError('缺少参数 documentId') );
+				execute = DocumentHandler.getError('缺少参数 documentId');
 			}
 
 			return execute;
@@ -180,7 +185,7 @@ var CONFIG = require('../../config.js')
 				});
 			}
 			else{
-				execute = Promise.reject( new DocumentError('缺少参数 documentId || title') );
+				execute = DocumentHandler.getError('缺少参数 documentId || title');
 			}
 
 			return execute;
@@ -200,7 +205,7 @@ var CONFIG = require('../../config.js')
 				});
 			}
 			else{
-				execute = Promise.reject( new DocumentError('缺少参数 documentId || sectionId') );
+				execute = DocumentHandler.getError('缺少参数 documentId || sectionId');
 			}
 
 			return execute;
@@ -233,7 +238,7 @@ var CONFIG = require('../../config.js')
 				});
 			}
 			else{
-				execute = Promise.reject( new DocumentError('缺少参数 documentId || sectionId || title') );
+				execute = DocumentHandler.getError('缺少参数 documentId || sectionId || title');
 			}
 
 			return execute;
@@ -258,7 +263,7 @@ var CONFIG = require('../../config.js')
 				})
 			}
 			else{
-				execute = Promise.reject( new DocumentError('缺少参数 documentId || sectionId || contentId') );
+				execute = DocumentHandler.getError('缺少参数 documentId || sectionId || contentId');
 			}
 
 			return execute;

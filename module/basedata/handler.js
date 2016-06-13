@@ -1,11 +1,19 @@
 'use strict';
 
-var BaseDataModel = require('./model.js')
-	, BaseDataError   = require('./error.js')
+var CONFIG = require('../../config.js')
+	, UserHandler   = require('../user/handler.js')
 
 	, Default_Country_ID = 1
+
+	, BaseDataModel = require('./model.js')
+	, BaseDataError = require('./error.js')
 	, BaseDataHandler = {
-		getProvince: function(country){
+		// 错误处理
+		getError: function(msg){
+			return Promise.reject( new BaseDataError(msg) );
+		}
+
+		, getProvince: function(country){
 			return BaseDataModel.province();
 		}
 		, getCity: function(province){
@@ -17,7 +25,7 @@ var BaseDataModel = require('./model.js')
 				execute = BaseDataModel.city( provinceCode );
 			}
 			else{
-				execute = Promise.reject( new BaseDataError('缺少参数 provinceCode') );
+				execute = BaseDataHandler.getError('缺少参数 provinceCode');
 			}
 
 			return execute;
@@ -31,7 +39,7 @@ var BaseDataModel = require('./model.js')
 				execute = BaseDataModel.district( cityCode );
 			}
 			else{
-				execute = Promise.reject( new BaseDataError('缺少参数 cityCode') );
+				execute = BaseDataHandler.getError('缺少参数 cityCode');
 			}
 
 			return execute;
@@ -45,7 +53,7 @@ var BaseDataModel = require('./model.js')
 				execute = BaseDataModel.town( districtCode );
 			}
 			else{
-				execute = Promise.reject( new BaseDataError('缺少参数 districtCode') );
+				execute = BaseDataHandler.getError('缺少参数 districtCode');
 			}
 
 			return execute;
@@ -59,7 +67,7 @@ var BaseDataModel = require('./model.js')
 				execute = BaseDataModel.village( townCode );
 			}
 			else{
-				execute = Promise.reject( new BaseDataError('缺少参数 townCode') );
+				execute = BaseDataHandler.getError('缺少参数 townCode');
 			}
 
 			return execute;
@@ -73,7 +81,7 @@ var BaseDataModel = require('./model.js')
 				execute = BaseDataModel.university( provinceCode );
 			}
 			else{
-				execute = Promise.reject( new BaseDataError('缺少参数 provinceCode') );
+				execute = BaseDataHandler.getError('缺少参数 provinceCode');
 			}
 
 			return execute;

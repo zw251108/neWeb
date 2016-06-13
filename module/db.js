@@ -158,9 +158,6 @@ db.handle = function(query){
 		if( e instanceof DBError){
 			console.log('[DBError]', e.message);
 		}
-		else{
-			throw e;
-		}
 
 		return Promise.reject( e );
 	});

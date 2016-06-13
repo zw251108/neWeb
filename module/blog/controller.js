@@ -13,7 +13,6 @@ var web         = require('../web.js')
 	, BlogView  = require('./view.js')
 	, BlogAdminView = require('./admin.view.js')
 	, BlogHandler   = require('./handler.js')
-	, BlogError     = require('./error.js')
 
 	, UserHandler   = require('../user/handler.js')
 	;

@@ -2,12 +2,17 @@
 
 var utils = require('utility')
 
-	, MODULE_ID = '001'
-
 	, UserModel   = require('./model.js')
 	, UserError = require('./error.js')
+
 	, UserHandler = {
-		getUserFromSession: {
+		// 错误处理
+		getError: function(msg){
+			return Promise.reject( new UserError(msg) );
+		}
+
+		// 获取 session
+		, getUserFromSession: {
 			fromReq: function(req){
 				var session = req.session
 					;
@@ -25,6 +30,7 @@ var utils = require('utility')
 				return session.user;
 			}
 		}
+		// 保存 session
 		, setUserToSession: function(user, session){
 			var u = session.user || {}
 				, k
@@ -36,6 +42,8 @@ var utils = require('utility')
 
 			session.user = u;
 		}
+
+		// 权限判断
 		, isGuest: function(user){
 			return !(user && user.id);
 		}
@@ -57,14 +65,14 @@ var utils = require('utility')
 						};
 					}
 					else{
-						result = Promise.reject( new UserError('email 不存在') );
+						result = UserHandler.getError('email 不存在');
 					}
 
 					return result;
 				});
 			}
 			else{
-				execute = Promise.reject( new UserError('缺少参数 email') );
+				execute = UserHandler.getError('缺少参数 email');
 			}
 
 			return execute;
@@ -85,7 +93,7 @@ var utils = require('utility')
 						result = rs[0];
 					}
 					else{
-						result = Promise.reject( new UserError('用户不存在') );
+						result = UserHandler.getError('用户不存在');
 					}
 
 					return result;
@@ -98,7 +106,7 @@ var utils = require('utility')
 						result = rs;
 					}
 					else{
-						result = Promise.reject( new UserError('用户密码错误') );
+						result = UserHandler.getError('用户密码错误');
 					}
 
 					return result;
@@ -120,7 +128,7 @@ var utils = require('utility')
 				});
 			}
 			else{
-				execute = Promise.reject( new UserError('缺少参数 email') );
+				execute = UserHandler.getError('缺少参数 email');
 			}
 
 			return execute;
@@ -152,25 +160,23 @@ var utils = require('utility')
 							});
 						}
 						else{
-							execute = Promise.reject( new UserError('token 验证错误') );
+							execute = UserHandler.getError('token 验证错误');
 						}
 					}
 					else{
-						execute = Promise.reject( new UserError('用户不存在') );
+						execute = UserHandler.getError('用户不存在');
 					}
 
 					return execute;
 				});
 			}
 			else{
-				execute = Promise.reject( new UserError('缺少参数 id token') );
+				execute = UserHandler.getError('缺少参数 id token');
 			}
 
 			return execute;
 		}
 	}
 	;
-
-//UserError.register(MODULE_ID);
 
 module.exports = UserHandler;

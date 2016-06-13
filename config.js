@@ -28,6 +28,7 @@ var CONFIG = {
 
 	, params: {
 		PAGE_SIZE: 20
+		, DOCUMENT_DEFAULT_ID: 1
 	}
 	, modules: [
 		'user'
@@ -43,4 +44,5 @@ var CONFIG = {
 	]
 	, works: []
 };
+
 module.exports = CONFIG;

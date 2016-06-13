@@ -68,7 +68,6 @@ menu.register({
 web.get('/reader/', function(req, res){
 	var query = req.query || {}
 		, user = UserHandler.getUserFromSession.fromReq(req)
-		, execute
 		;
 
 	ReaderHandler.getReaderList(user, query).then(ReaderView.readerList, function(e){
@@ -86,10 +85,10 @@ web.get('/reader/', function(req, res){
 });
 web.get('/reader/bookmark', function(req, res){
 	var query = req.query || {}
-		, user = UserHandler.getUserFromSession.fromReq(req)
-		, execute
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
+	// 设置状态为未读
 	query.status = 0;
 
 	ReaderHandler.getBookmarkList(user, query).then(ReaderView.bookmarkList, function(e){
@@ -108,9 +107,9 @@ web.get('/reader/bookmark', function(req, res){
 web.get('/reader/favorite', function(req, res){
 	var query = req.query || {}
 		, user = UserHandler.getUserFromSession.fromReq(req)
-		, execute
 		;
 
+	// 设置状态为已读
 	query.status = 1;
 
 	ReaderHandler.getBookmarkList(user, query).then(ReaderView.favoriteList, function(e){
@@ -137,6 +136,8 @@ socket.register({
 			, feed = query.feed
 			, execute
 			;
+
+
 
 		query.tags = '';
 		if( feed ){
@@ -330,18 +331,35 @@ socket.register({
 		var send = {
 				topic: 'reader/bookmark/add'
 			}
+			, topic = 'reader/bookmark/add'
 			, query = data.query || {}
 			, url = query.url
-			, targetId = query.targetId
+			, tempId = query.tempId
 			, title = query.title
 			, tags = query.tags
 			, source
-			, user = UserHandler.getUserFromSession.fromSocket(socket)
+			, user = UserHandler.getUserFromSession.fromSocket( socket )
 			, execute
 			, bookmark = {} //
 			;
 
 		console.log('bookmark add url: ' + url);
+
+		//ReaderHandler.newBookmark(user, query).then(function(data){
+		//	return {
+		//		topic: topic
+		//		, data: data
+		//	};
+		//}, function(e){
+		//	console.log( e );
+		//
+		//	return {
+		//		topic: topic
+		//		, msg: e.message
+		//	}
+		//}).then(function(json){
+		//	socket.emit('data', json);
+		//});
 
 		// 检测 user
 		//if( UserHandler.isGuest(user) ){
@@ -363,7 +381,7 @@ socket.register({
 							if( rs && rs.length ){  // user_reader_bookmark 表中已有数据
 								result = rs[0];
 								result.bookmarkId = bookmarkId;
-								result.targetId = targetId;
+								result.tempId = tempId;
 
 								send.info = result;
 
@@ -401,7 +419,7 @@ socket.register({
 						});
 					}
 					else{   // reader_bookmark 表中不存在该 url
-						if( targetId ){ // 已有相关数据 添加到 reader_bookmark 表中
+						if( tempId ){ // 已有相关数据 添加到 reader_bookmark 表中
 							source = Url.parse(url);
 							source = source.protocol + '//' + source.host;
 
@@ -413,7 +431,7 @@ socket.register({
 								, userId: user.id
 								, score: 0
 								, status: 0
-								, targetId: targetId
+								, tempId: tempId
 							});
 						}
 						else{   // 没有相关数据 抓取 整理数据
@@ -487,7 +505,7 @@ socket.register({
 				//.then(function(bookmark){   // reader_bookmark 表中已有该 url
 				//	return Promise.reject(bookmark);
 				//}, function(){  // reader_bookmark 表中没有该 url
-				//	if( targetId ){ // 已有相关数据
+				//	if( tempId ){ // 已有相关数据
 				//
 				//	}
 				//	else{   // 没有相关数据 抓取并整理
@@ -580,7 +598,7 @@ socket.register({
 					return send;
 				});
 			}
-			else if( url ){ // id 为 targetId，使用 url
+			else if( url ){ // id 为 tempId，使用 url
 				source = Url.parse(url);
 				source = source.protocol + '//' + source.host;
 
