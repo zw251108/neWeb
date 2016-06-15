@@ -1,7 +1,24 @@
 'use strict';
 
-var getEmmet      = require('./getEmmet.js')
-	, emmetTpl      = require('../emmetTpl/emmetTpl.js').template
+var CONFIG  = require('../config.js')
+
+	, fs    = require('fs')
+	, path  = require('path')
+
+	, htmlTpl = fs.readFileSync(__dirname +'../tpl/'+ dir).toString()
+
+	, getTpl = function(){
+
+	}
+
+	, htmlEngine = function(data){
+		return Object.keys(data).reduce(function(tpl, d){
+			return tpl.replace(d, data[d]);
+		}, htmlTpl);
+	}
+
+	, getEmmet      = require('./emmet/getEmmet.js')
+	, emmetTpl      = require('./emmetTpl/emmetTpl.js').template
 
 	, stylesheet    = emmetTpl({
 		template: getEmmet('stylesheet.html')
@@ -65,10 +82,10 @@ var getEmmet      = require('./getEmmet.js')
 				}).join('') : '';
 
 				return temp + toolbarBtn({
-					id: d.id ? (d.id + 'Close') : ''
-					, icon: 'cancel module_close'
-					, title: '关闭'
-				}).join('');
+						id: d.id ? (d.id + 'Close') : ''
+						, icon: 'cancel module_close'
+						, title: '关闭'
+					}).join('');
 			}
 		}
 	})
@@ -125,7 +142,14 @@ var getEmmet      = require('./getEmmet.js')
 				return d.header ? header(d.header) : '';
 			}
 			, main: function(d){
-				return d.main ? (typeof d.main === 'object' ? main(d.main) : d.main) : '';
+				//return d.main ? (typeof d.main === 'object' ? main(d.main) : d.main) : '';
+				var result = '';
+				if( !d.main ){
+					result += d.moduleMain ? moduleMain( d.moduleMain ) : '';
+					result += d.modulePopup ? moduleMain( d.modulePopup ) : '';
+				}
+
+				return result;
 			}
 			, footer: function(d){
 				return d.footer ? footer(d.footer) : '';
@@ -152,6 +176,17 @@ var getEmmet      = require('./getEmmet.js')
 
 		return pageTpl(page).join('');
 	}
+
+	, View = {
+		page: function(page){
+			return tpl({
+				title: ''
+			})
+		}
+		, render: function(data){
+
+		}
+	}
 	;
-//console.log(getEmmet('footer.html'))
-module.exports = page;
+
+module.exports = View;

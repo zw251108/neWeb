@@ -1,18 +1,20 @@
 'use strict';
 
-var config    = require('../../config.js')
-	, db        = require('../db.js')
-
+var CONFIG  = require('../../config.js')
+	, getEmmet  = require('../emmet/getEmmet.js')
 	, tpl       = require('../emmet/tpl.js')
+	, popup     = require('../emmet/popup.js')
 
-	, CodeModel = require('../editor/model.js')
+	, emmetTpl  = require('../emmetTpl/emmetTpl.js').template
 
-	, Model         = require('./model.js')
+	, pagination    = require('../pagination.js')
 
-	, View = {
+	, CodeHandler   = require('../editor/handler.js')
+
+	, BaseDataAdminView = {
 		province: function(){
-			return CodeModel.getEditorByName('admin/basedata/province').then(function(rs){
-				return rs[0];
+			return CodeHandler.getCode({}, {
+				name: 'admin/basedata/province'
 			}).then(function(rs){
 				var code = {}
 					;
@@ -48,27 +50,13 @@ var config    = require('../../config.js')
 				return tpl( code );
 			});
 		}
-		, city: function( province ){
-			var rs;
-
-			if( province ){
-				rs = Model.city( province )
-				//	.then(function(rs){
-				//
-				//});
-			}
-			else{
-				rs = Promise.reject([]);
-			}
-
-			return rs;
-		}
-		, district: function( city ){}
-		, town: function( town ){}
-		, village: function( village ){}
+		, city: function(province){}
+		, district: function(city){}
+		, town: function(town){}
+		, village: function(village){}
 
 		, university: function( university ){}
 	}
 	;
 
-module.exports = View;
+module.exports = BaseDataAdminView;

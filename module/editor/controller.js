@@ -21,9 +21,9 @@ var web         = require('../web.js')
 	, TagModel      = require('../tag/model.js')
 	, UserHandler   = require('../user/handler.js')
 
+	, ImageHandler  = require('../image/handler.js')
 	, Image         = require('../image/image.js')
 	, ImageModel    = require('../image/model.js')
-	, ImageError    = require('../image/error.js')
 
 	, DEMO_IMG_UPLOAD   = '/editor/demoImgUpload'
 	, SET_MORE          = '/editor/setMore'
@@ -180,7 +180,7 @@ web.get('/editor/code', function(req, res){
 	});
 });
 
-web.post('/editor/setMore', Image.uploadMiddle.single('preview'), function(req, res){
+web.post('/editor/setMore', ImageHandler.uploadMiddle.single('preview'), function(req, res){
 	var body = req.body || {}
 		, type = body.type
 		, id = body.id
@@ -193,7 +193,7 @@ web.post('/editor/setMore', Image.uploadMiddle.single('preview'), function(req, 
 
 	if( id ){
 		if( file ){
-			size = Image.sizeOf( req.file.path );
+			size = ImageHandler.getSizeOf( req.file.path );
 			imgData = {
 				src: file.path.replace(/\\/g, '/').replace('public', '..')
 				, type: type === 'preview' ? Image.ALBUM.EDITOR_PREVIEW_ID : Image.ALBUM.DEFAULT_ID
@@ -260,11 +260,11 @@ web.post('/editor/setMore', Image.uploadMiddle.single('preview'), function(req, 
 		res.end();
 	});
 });
-web.post('/editor/demoImgUpload', Image.uploadMiddle.single('image'), function(req, res){
+web.post('/editor/demoImgUpload', ImageHandler.uploadMiddleware.single('image'), function(req, res){
 	var body = req.body || {}
 		, type = body.type
 		, file = req.file
-		, size = Image.sizeOf( req.file.path )
+		, size = ImageHandler.getSizeOf( req.file.path )
 		, imgData = {
 			src: file.path.replace(/\\/g, '/').replace('public', '..')
 			, type: type === 'demo' ? Image.ALBUM.EDITOR_DEMO_ID : Image.ALBUM.DEFAULT_ID
@@ -285,7 +285,7 @@ web.post('/editor/demoImgUpload', Image.uploadMiddle.single('image'), function(r
 			};
 		}
 		else{
-			result = Promise.reject( new ImageError('图片已存在') );
+			result = ImageHandler.getError('图片已存在');
 		}
 
 		return result;

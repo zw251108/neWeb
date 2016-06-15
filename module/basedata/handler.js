@@ -1,9 +1,8 @@
 'use strict';
 
 var CONFIG = require('../../config.js')
-	, UserHandler   = require('../user/handler.js')
 
-	, Default_Country_ID = 1
+	, UserHandler   = require('../user/handler.js')
 
 	, BaseDataModel = require('./model.js')
 	, BaseDataError = require('./error.js')
@@ -13,14 +12,19 @@ var CONFIG = require('../../config.js')
 			return Promise.reject( new BaseDataError(msg) );
 		}
 
-		, getProvince: function(country){
-			return BaseDataModel.province();
-		}
-		, getCity: function(province){
-			var provinceCode = province.code
-				, execute
+		, getProvince: function(user, query){
+			var countryCode = query.code || CONFIG.params.COUNTRY_DEFAULT_CODE
 				;
 
+			// todo 用户权限判断，按国家查询
+			return BaseDataModel.province( countryCode );
+		}
+		, getCity: function(user, query){
+			var execute
+				, provinceCode = query.code
+				;
+
+			// todo 用户权限判断
 			if( provinceCode ){
 				execute = BaseDataModel.city( provinceCode );
 			}
@@ -30,11 +34,12 @@ var CONFIG = require('../../config.js')
 
 			return execute;
 		}
-		, getDistrict: function(city){
-			var cityCode = city.code
-				, execute
+		, getDistrict: function(user, query){
+			var execute
+				, cityCode = query.code
 				;
 
+			// todo 用户权限判断
 			if( cityCode ){
 				execute = BaseDataModel.district( cityCode );
 			}
@@ -44,11 +49,12 @@ var CONFIG = require('../../config.js')
 
 			return execute;
 		}
-		, getTown: function(district){
-			var districtCode = district.code
-				, execute
+		, getTown: function(user, query){
+			var execute
+				, districtCode = query.code
 				;
 
+			// todo 用户权限判断
 			if( districtCode ){
 				execute = BaseDataModel.town( districtCode );
 			}
@@ -58,11 +64,12 @@ var CONFIG = require('../../config.js')
 
 			return execute;
 		}
-		, getVillage: function(town){
-			var townCode = town.code
-				, execute
+		, getVillage: function(user, query){
+			var execute
+				, townCode = query.code
 				;
 
+			// todo 用户权限判断
 			if( townCode ){
 				execute = BaseDataModel.village( townCode );
 			}
@@ -72,11 +79,12 @@ var CONFIG = require('../../config.js')
 
 			return execute;
 		}
-		, getUniversity: function(province){
-			var provinceCode = province.code
-				, execute
+		, getUniversity: function(user, query){
+			var execute
+				, provinceCode = query.code
 				;
 
+			// todo 用户权限判断
 			if( provinceCode ){
 				execute = BaseDataModel.university( provinceCode );
 			}

@@ -1,55 +1,11 @@
 'use strict';
 
-var db = require('../db.js')
-	, CONFIG = require('../../config.js')
+var CONFIG = require('../../config.js')
+	, db = require('../db.js')
 
 	, TABLE_NAME = CONFIG.db.dataTablePrefix +'blog'
 
-	, SQL = {
-		blogByPage: 'select id,title,datetime,tags from '+ TABLE_NAME +
-			' where' +
-				' user_id=:userId' +
-			' order by id desc' +
-			' limit :page,:size'
-		, countBlog: 'select count(*) as count from '+ TABLE_NAME +
-			' where' +
-				' user_id=:userId'
-
-		, blogSearchTitle: 'select id,title,datetime,tags from '+ TABLE_NAME +
-			' where' +
-				' user_id=:userId' +
-			' and' +
-				' title like :keyword' +
-			' order by id desc' +
-			' limit :page,:size'
-		, blogSearchTitleCount: 'select count(*) as count from '+ TABLE_NAME +
-			' where' +
-				' user_id=:user_id' +
-			' and' +
-				' title like :keyword'
-		, blogFilterTags: 'select id,title,datetime,tags from '+ TABLE_NAME +
-			' where' +
-				' user_id=:userId' +
-			' and' +
-				' tags regexp :tags' +
-			' order by id desc' +
-			' limit :page,:size'
-		, blogFilterTagsCount: 'select count(*) as count from '+ TABLE_NAME +
-			' where' +
-				' user_id=:user_id' +
-			' and' +
-				' tags regexp :tags'
-
-		, blogById: 'select id,title,content,datetime,tags from '+ TABLE_NAME +'' +
-			' where' +
-				' id=:id'
-
-		//, adminBlogByPage: 'select id,title,datetime,tags from '+ TABLE_NAME +' order by Id desc limit :page,:size'
-
-		, blogAdd: 'insert into '+ TABLE_NAME +'(user_id,title,tags,content) values(:userId,:title,\'\',\'\')'
-		, blogSave: 'update '+ TABLE_NAME +' set title=:title,content=:content,tags=:tags where id=:id'
-	}
-
+	// todo 表结构
 	, Table = {
 		name: 'article'
 		, column: {
@@ -59,6 +15,51 @@ var db = require('../db.js')
 				, isRequired: true
 			}
 		}
+	}
+
+	, SQL = {
+		blogByPage: 'select id,title,datetime,tags from '+ TABLE_NAME +
+		' where' +
+		' user_id=:userId' +
+		' order by id desc' +
+		' limit :page,:size'
+		, countBlog: 'select count(*) as count from '+ TABLE_NAME +
+		' where' +
+		' user_id=:userId'
+
+		, blogSearchTitle: 'select id,title,datetime,tags from '+ TABLE_NAME +
+		' where' +
+		' user_id=:userId' +
+		' and' +
+		' title like :keyword' +
+		' order by id desc' +
+		' limit :page,:size'
+		, blogSearchTitleCount: 'select count(*) as count from '+ TABLE_NAME +
+		' where' +
+		' user_id=:user_id' +
+		' and' +
+		' title like :keyword'
+		, blogFilterTags: 'select id,title,datetime,tags from '+ TABLE_NAME +
+		' where' +
+		' user_id=:userId' +
+		' and' +
+		' tags regexp :tags' +
+		' order by id desc' +
+		' limit :page,:size'
+		, blogFilterTagsCount: 'select count(*) as count from '+ TABLE_NAME +
+		' where' +
+		' user_id=:user_id' +
+		' and' +
+		' tags regexp :tags'
+
+		, blogById: 'select id,title,content,datetime,tags from '+ TABLE_NAME +'' +
+		' where' +
+		' id=:id'
+
+		//, adminBlogByPage: 'select id,title,datetime,tags from '+ TABLE_NAME +' order by Id desc limit :page,:size'
+
+		, blogAdd: 'insert into '+ TABLE_NAME +'(user_id,title,tags,content) values(:userId,:title,\'\',\'\')'
+		, blogSave: 'update '+ TABLE_NAME +' set title=:title,content=:content,tags=:tags where id=:id'
 	}
 
 	, BlogModel = {
@@ -99,7 +100,6 @@ var db = require('../db.js')
 					, size: size
 				}
 			});
-
 		}
 		, countSearchBlogByTitle: function(userId, keyword){
 			return db.handle({
@@ -152,7 +152,6 @@ var db = require('../db.js')
 
 				return result;
 			});
-
 		}
 
 		, getBlogById: function(id){
@@ -171,7 +170,7 @@ var db = require('../db.js')
 					userId: userId
 					, title: title
 				}
-			})
+			});
 		}
 
 		, updateBlog: function(title, content, tags, id){
@@ -183,22 +182,9 @@ var db = require('../db.js')
 					, content: content
 					, tags: tags
 				}
-			})
+			});
 		}
 	}
 	;
 
 module.exports = BlogModel;
-
-//module.exports = function(param){
-//	var topic = param.topic
-//		;
-//
-//	if( topic ){
-//		if( topic in SQL ){
-//			db.handle({
-//				sql: SQL[topic]
-//			})
-//		}
-//	}
-//};

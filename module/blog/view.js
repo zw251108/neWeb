@@ -5,7 +5,6 @@ var getEmmet    = require('../emmet/getEmmet.js')
 
 	, emmetTpl  = require('../emmetTpl/emmetTpl.js').template
 
-	, modules   = require('../module.js')
 	, menu      = require('../menu.js')
 	, pagination    = require('../pagination.js')
 
@@ -26,7 +25,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 
 	, BlogView = {
 		blogList: function(rs){
-			return tpl({
+			return {
 				title: '博客 blog'
 				, main: {
 					moduleMain: {
@@ -36,27 +35,46 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						, content: articleListTpl( rs.data ).join('') + '<div class="pagination" id="pagination">'+ pagination(rs.index, rs.size, rs.count, rs.urlCallback) +'</div>'
 					}
 				}
-				, footer: {
-					nav: menu.current('blog')
+				, script: {
+					main: '../script/module/blog/index'
+					, src: '../script/lib/require.min.js'
 				}
-				//, script: {
-				//	main: '../script/module/blog/index'
-				//	, src: '../script/lib/require.min.js'
-				//}
-			});
+			};
+			//return tpl({
+			//	title: '博客 blog'
+			//	, main: {
+			//		moduleMain: {
+			//			id: 'blog'
+			//			, icon: 'edit'
+			//			, title: '博客 blog'
+			//			, content: articleListTpl( rs.data ).join('') + '<div class="pagination" id="pagination">'+ pagination(rs.index, rs.size, rs.count, rs.urlCallback) +'</div>'
+			//		}
+			//	}
+			//	, footer: {
+			//		nav: menu.current('blog')
+			//	}
+			//	//, script: {
+			//	//	main: '../script/module/blog/index'
+			//	//	, src: '../script/lib/require.min.js'
+			//	//}
+			//});
 		}
 		, blog: function(rs){
-			return tpl({
+			return {
+			//tpl(
+			//	{
 				title: '博客 blog'
 				, main: {
 					moduleMain: {
 						id: 'blog'
 						, icon: 'edit'
 						, title: '博客 blog'
-						, content : articleTpl( rs ).join('')
+						, content: articleTpl( rs ).join('')
 					}
 				}
-			})
+			}
+			//)
+			;
 		}
 	}
 	;

@@ -1,39 +1,4 @@
 'use strict';
-///**
-// * todo 前后端通用 数据控制接口
-// * */
-//(function(factory, global, namespace){
-//	// 后端
-//	if( typeof module === 'object' && module.exports ){
-//		module.exports = factory;
-//	}
-//	// 前端 AMD 规范
-//	else if( typeof define === 'function' && define.amd ){
-//		define(factory);
-//	}
-//	// 前端全局
-//	else{
-//		global[namespace] = factory;
-//	}
-//})(function(model){
-//	'use strict';
-//
-//	return {
-//		getList: function(){
-//			return model({
-//				topic: 'blog/list'
-//			});
-//		}
-//		, getArticle: function(articleId){
-//			return model({
-//				topic: 'blog/article'
-//				, data: {
-//					articleId: articleId
-//				}
-//			});
-//		}
-//	}
-//}, this, 'blog');
 
 var CONFIG = require('../../config.js')
 	, UserHandler   = require('../user/handler.js')
@@ -44,6 +9,14 @@ var CONFIG = require('../../config.js')
 		// 错误处理
 		getError: function(msg){
 			return Promise.reject( new BlogError(msg) );
+		}
+
+		/**
+		 * 过滤特殊标签
+		 *  过滤 style script iframe frame 标签
+		 * */
+		, filterSpecialHTMLTag: function(content){
+			return content.replace(/<(style|script|iframe|frameset)([^>]*)>(.*?)<\/\1>/g, '&lt;$1$2&gt;$3&lt;/$1&gt;').replace(/<frame([^>]*)\/>/g, '&lt;frame$1/&gt;');
 		}
 
 		, getBlogList: function(user, query){
@@ -79,7 +52,7 @@ var CONFIG = require('../../config.js')
 					};
 				}
 
-				execute.then(function(rs){
+				execute = execute.then(function(rs){
 					var result
 						;
 
@@ -151,54 +124,74 @@ var CONFIG = require('../../config.js')
 		}
 
 		, newBlog: function(user, data){
-			var title = data.title
-				, execute
+			var execute
+				, title = data.title
+				, isGuest = UserHandler.isGuest( user )
 				;
 
-			if( title ){
-				execute = BlogModel.addBlog(user.id, title).then(function(rs){
-					var result
-						;
-
-					if( rs.insertId ){
-						result = {
-							success: true
-							, id: rs.insertId
-						};
-					}
-					else{
-						result = Promise.reject( new BlogError(title + ' 文章创建失败') );
-					}
-
-					return result;
-				});
+			if( isGuest ){
+				execute = UserHandler.getError('用户尚未登录');
 			}
 			else{
-				execute = BlogHandler.getError('缺少参数 title');
+				if( title ){
+					execute = BlogModel.addBlog(user.id, title).then(function(rs){
+						var result
+							;
+
+						if( rs.insertId ){
+							result = {
+								id: rs.insertId
+							};
+						}
+						else{
+							result = BlogHandler.getError(title + ' 文章创建失败');
+						}
+
+						return result;
+					});
+				}
+				else{
+					execute = BlogHandler.getError('缺少参数 title');
+				}
 			}
 
 			return execute;
 		}
 		, saveBlog: function(user, data){
-			var title = data.title
-				, content = data.content
-				, tags = data.tags
-				, blogId = data.blogId
-				, execute
+			var execute
+				, title     = data.title
+				, content   = data.content
+				, tags      = data.tags
+				, blogId    = data.blogId
+				, isGuest = UserHandler.isGuest( user )
 				;
 
-			// 过滤 style script iframe frame 标签
-			content = content.replace(/<(style|script|iframe|frameset)([^>]*)>(.*?)<\/\1>/g, '&lt;$1$2&gt;$3&lt;/$1&gt;').replace(/<frame([^>]*)\/>/g, '&lt;frame$1/&gt;');
-
-			if( blogId ){
-				execute = BlogModel.updateBlog(title, content, tags, blogId).then(function(rs){
-					return {
-						id: blogId
-					};
-				});
+			if( isGuest ){
+				execute = UserHandler.getError('用户尚未登录');
 			}
 			else{
-				execute = BlogHandler.getError('缺少参数 id');
+				if( blogId ){
+					content = BlogHandler.filterSpecialHTMLTag( content );
+
+					execute = BlogModel.updateBlog(title, content, tags, blogId).then(function(rs){
+						var result
+							;
+
+						if( rs && rs.changedRows ){
+							result = {
+								id: blogId
+							};
+						}
+						else{
+							result = BlogHandler.getError('数据保存失败');
+						}
+
+						return result;
+					});
+				}
+				else{
+					execute = BlogHandler.getError('缺少参数 id');
+				}
 			}
 
 			return execute;

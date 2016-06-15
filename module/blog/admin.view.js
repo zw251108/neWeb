@@ -8,9 +8,8 @@ var getEmmet    = require('../emmet/getEmmet.js')
 
 	, pagination    = require('../pagination.js')
 
+	, Tools     = require('../tools.js')
 	, TagView   = require('../tag/view.js')
-	, Handler   = require('../handler.js')
-	, handler   = new Handler()
 
 	, articleListTpl    = emmetTpl({
 		template: getEmmet('admin/blog/articleList.html')
@@ -19,15 +18,13 @@ var getEmmet    = require('../emmet/getEmmet.js')
 		}
 	})
 
-	, articleFilter = handler.extend({}, TagView.tagEditorFilter)
+	, articleFilter     = Tools.extend({
+		content: Tools.encodeHTML
+	}, TagView.tagEditorFilter)
 	, articleTpl        = emmetTpl({
 		template: getEmmet('admin/blog/article.html') +
 			'+' + TagView.tagEditorEmmet
-		, filter: handler.extend(articleFilter, {
-			content: function(d){
-				return d.content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\$/g, '&#36;');
-			}
-		})
+		, filter: articleFilter
 	})
 	, articleAddFormTpl = emmetTpl({
 		template: getEmmet('admin/blog/articleAddForm.html')

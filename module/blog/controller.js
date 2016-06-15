@@ -1,20 +1,21 @@
 'use strict';
 
-var web         = require('../web.js')
+var CONFIG  = require('../../config.js')
+	, web       = require('../web.js')
 	, socket    = require('../socket.js')
-
-	, config    = require('../../config.js')
 
 	, modules   = require('../module.js')
 	, admin     = require('../admin.js')
 	, data      = require('../data.js')
 	, menu      = require('../menu.js')
 
-	, BlogView  = require('./view.js')
-	, BlogAdminView = require('./admin.view.js')
-	, BlogHandler   = require('./handler.js')
+	, tpl       = require('../emmet/tpl.js')
 
 	, UserHandler   = require('../user/handler.js')
+
+	, BlogView      = require('./view.js')
+	, BlogAdminView = require('./admin.view.js')
+	, BlogHandler   = require('./handler.js')
 	;
 
 modules.register({
@@ -34,24 +35,28 @@ menu.register({
 
 web.get('/blog/', function(req, res){
 	var query = req.query || {}
-		, user = UserHandler.getUserFromSession.fromReq(req)
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
 	BlogHandler.getBlogList(user, query).then(BlogView.blogList, function(e){
 		console.log( e );
 		// todo 错误页面
-	}).then(function(html){
+	}).then(function(page){
 		// todo 页面其它部分
 
-		return html;
+		page.footer = {
+			nav: menu.current('blog')
+		};
+
+		return tpl( page );
 	}).then(function(html){
-		res.send( config.docType.html5 + html );
+		res.send( CONFIG.docType.html5 + html );
 		res.end();
 	});
 });
 web.get('/blog/:blogId/', function(req, res){
 	var param = req.params || {}
-		, user = UserHandler.getUserFromSession.fromReq(req)
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
 	BlogHandler.getBlog(user, param).then(BlogView.blog, function(e){
@@ -63,7 +68,7 @@ web.get('/blog/:blogId/', function(req, res){
 
 		return html;
 	}).then(function(html){
-		res.send( config.docType.html5 + html );
+		res.send( CONFIG.docType.html5 + html );
 		res.end();
 	});
 });
@@ -91,13 +96,13 @@ web.get('/admin/blog/', function(req, res){
 
 		return html;
 	}).then(function(html){
-		res.send( config.docType.html5 + html );
+		res.send( CONFIG.docType.html5 + html );
 		res.end();
 	});
 });
 web.get('/admin/blog/:blogId/', function(req, res){
 	var param = req.params || {}
-		, user = UserHandler.getUserFromSession.fromReq(req)
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
 	BlogHandler.getBlog(user, param).then(BlogAdminView.blog, function(e){
@@ -109,7 +114,7 @@ web.get('/admin/blog/:blogId/', function(req, res){
 
 		return html;
 	}).then(function(html){
-		res.send( config.docType.html5 + html );
+		res.send( CONFIG.docType.html5 + html );
 		res.end();
 	});
 });
@@ -125,8 +130,8 @@ web.post('/admin/blog/', function(req, res){
 
 	BlogHandler.newBlog(user, body).then(function(rs){
 		return {
-			info: rs
-			, msg: 'success'
+			data: [rs]
+			, msg: 'Done'
 		};
 	}, function(e){
 		console.log( e );
@@ -149,7 +154,7 @@ web.post('/admin/blog/:blogId/', function(req, res){
 
 	BlogHandler.saveBlog(user, body).then(function(rs){
 		return {
-			info: rs
+			data: [rs]
 			, msg: 'success'
 		};
 	}, function(e){

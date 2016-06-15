@@ -9,7 +9,8 @@ var CONFIG  = require('../../config.js')
 	, data      = require('../data.js')
 	, menu      = require('../menu.js')
 
-	, BaseDataModel = require('./model.js')
+	, UserHandler   = require('../user/handler.js')
+
 	, BaseDataAdminView = require('./admin.view.js')
 	, BaseDataHandler   = require('./handler.js')
 	;
@@ -19,19 +20,27 @@ var CONFIG  = require('../../config.js')
  * */
 // 地区数据
 web.get('/basedata/province/data', function(req, res){
-	BaseDataHandler.getProvince().then(function(rs){
-		res.send( JSON.stringify(rs) );
+	var query = req.query || {}
+		, user = UserHandler.getUserFromSession.fromReq( req )
+		;
+
+	BaseDataHandler.getProvince(user, query).then(function(rs){
+		res.send( JSON.stringify({
+			data: rs
+			, msg: 'Done'
+		}) );
 		res.end();
 	});
 });
 web.get('/basedata/city/data', function(req, res){
 	var query = req.query || {}
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
-	BaseDataHandler.getCity( query ).then(function(rs){
+	BaseDataHandler.getCity(user, query).then(function(rs){
 		return {
 			data: rs
-			, msg: 'success'
+			, msg: 'Done'
 		};
 	}, function(e){
 		console.log( e );
@@ -46,12 +55,13 @@ web.get('/basedata/city/data', function(req, res){
 });
 web.get('/basedata/district/data', function(req, res){
 	var query = req.query || {}
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
-	BaseDataHandler.getDistrict( query ).then(function(rs){
+	BaseDataHandler.getDistrict(user, query).then(function(rs){
 		return {
 			data: rs
-			, msg: 'success'
+			, msg: 'Done'
 		};
 	}, function(e){
 		console.log( e );
@@ -66,12 +76,13 @@ web.get('/basedata/district/data', function(req, res){
 });
 web.get('/basedata/town/data', function(req, res){
 	var query = req.query || {}
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
-	BaseDataHandler.getTown( query ).then(function(rs){
+	BaseDataHandler.getTown(user, query).then(function(rs){
 		return {
 			data: rs
-			, msg: 'success'
+			, msg: 'Done'
 		};
 	}, function(e){
 		console.log( e );
@@ -86,12 +97,13 @@ web.get('/basedata/town/data', function(req, res){
 });
 web.get('/basedata/village/data', function(req, res){
 	var query = req.query || {}
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
-	BaseDataHandler.getVillage( query ).then(function(rs){
+	BaseDataHandler.getVillage(user, query).then(function(rs){
 		return {
 			data: rs
-			, msg: 'success'
+			, msg: 'Done'
 		};
 	}, function(e){
 		console.log( e );
@@ -108,12 +120,13 @@ web.get('/basedata/village/data', function(req, res){
 // 大学数据
 web.get('/basedata/university/data', function(req, res){
 	var query = req.query || {}
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
-	BaseDataHandler.getUniversity( query ).then(function(rs){
+	BaseDataHandler.getUniversity(user, query).then(function(rs){
 		return {
 			data: rs
-			, msg: 'success'
+			, msg: 'Done'
 		};
 	}, function(e){
 		console.log( e );
@@ -139,169 +152,306 @@ admin.register({
 });
 web.get('/admin/address', function(req, res){
 	BaseDataAdminView.province().then(function(html){
-		res.send();
+		res.send( CONFIG.docType.html5 + html );
+		res.end();
 	});
 });
 
 
 /**
- * 全局 Web 数据接口 只支持 jsonp 格式，回调函数名为 callback
+ * Web Socket 数据接口
+ * */
+socket.register({
+	province: function(socket, data){
+		var topic = 'province'
+			, query = data.query || {}
+			, user = UserHandler.getUserFromSession.fromSocket( socket )
+			;
+
+		BaseDataHandler.getProvince(user, query).then(function(rs){
+			socket.emit('data', {
+				topic: topic
+				, data: rs
+				, msg: 'Done'
+			});
+		});
+	}
+	, city: function(socket, data){
+		var topic = 'city'
+			, query = data.query || {}
+			, user = UserHandler.getUserFromSession.fromSocket( socket )
+			;
+
+		BaseDataHandler.getCity(user, query).then(function(rs){
+			return {
+				topic: topic
+				, data: rs
+				, msg: 'Done'
+			};
+		}, function(e){
+			console.log( e );
+
+			return {
+				topic: topic
+				, msg: e.message
+			};
+		}).then(function(json){
+			socket.emit('data', json);
+		});
+	}
+	, district: function(socket, data){
+		var topic = 'district'
+			, query = data.query || {}
+			, user = UserHandler.getUserFromSession.fromSocket( socket )
+			;
+
+		BaseDataHandler.getDistrict(user, query).then(function(rs){
+			return {
+				topic: topic
+				, data: rs
+				, msg: 'Done'
+			};
+		}, function(e){
+			console.log( e );
+
+			return {
+				topic: topic
+				, msg: e.message
+			};
+		}).then(function(json){
+			socket.emit('data', json);
+		});
+	}
+	, town: function(socket, data){
+		var topic = 'town'
+			, query = data.query || {}
+			, user = UserHandler.getUserFromSession.fromSocket( socket )
+			;
+
+		BaseDataHandler.getTown(user, query).then(function(rs){
+			return {
+				topic: topic
+				, data: rs
+				, msg: 'Done'
+			};
+		}, function(e){
+			console.log( e );
+
+			return {
+				topic: topic
+				, msg: e.message
+			};
+		}).then(function(json){
+			socket.emit('data', json);
+		});
+	}
+	, village: function(socket, data){
+		var topic = 'village'
+			, query = data.query || {}
+			, user = UserHandler.getUserFromSession.fromSocket( socket )
+			;
+
+		BaseDataHandler.getVillage(user, query).then(function(rs){
+			return {
+				topic: topic
+				, data: rs
+				, msg: 'Done'
+			};
+		}, function(e){
+			console.log( e );
+
+			return {
+				topic: topic
+				, msg: e.message
+			};
+		}).then(function(json){
+			socket.emit('data', json);
+		});
+	}
+
+	, university: function(socket, data){
+		var topic = 'university'
+			, query = data.query || {}
+			, user = UserHandler.getUserFromSession.fromSocket( socket )
+			;
+
+		BaseDataHandler.getUniversity(user, query).then(function(rs){
+			return {
+				topic: topic
+				, data: rs
+				, msg: 'Done'
+			};
+		}, function(e){
+			console.log( e );
+
+			return {
+				topic: topic
+				, msg: e.message
+			};
+		}).then(function(json){
+			socket.emit('data', json);
+		});
+	}
+});
+
+/**
+ * 全局 Web 数据接口 只支持 jsonp 格式，回调函数参数名为 callback
  * */
 data.push('province', 'city', 'district', 'town', 'village', 'university');
 
 // 地区数据
 web.get('/data/province', function(req, res){
 	var query = req.query || {}
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		, callback = query.callback
+		, execute
 		;
 
-	BaseDataHandler.getProvince().then(function(rs){
-		var execute
-			;
+	if( callback ){
+		execute = BaseDataHandler.getProvince(user, query);
+	}
+	else{
+		execute = BaseDataHandler.getError('不是 jsonp 格式调用');
+		callback = 'console.log';
+	}
 
-		if( callback ){
-			execute = callback +'('+ JSON.stringify({
-				data: rs
-				, msg: 'success'
-			}) +')';
-		}
-		else{
-			execute = BaseDataHandler.getError('不是 jsonp 格式调用');
-		}
-
-		return execute;
-	}).catch(function(e){
+	execute.then(function(rs){
+		return {
+			data: rs
+			, msg: 'Done'
+		};
+	}, function(e){
 		console.log( e );
 
-		return callback +'('+ JSON.stringify({
+		return {
 			msg: e.message
-		}) +')';
-	}).then(function(rs){
-		res.send( rs );
+		};
+	}).then(function(json){
+		res.send( callback +'('+ JSON.stringify(json) +')' );
 		res.end();
 	});
 });
 web.get('/data/city', function(req, res){
 	var query = req.query || {}
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		, callback = query.callback
+		, execute
 		;
 
-	BaseDataHandler.getCity( query ).then(function(rs){
-		var execute
-			;
+	if( callback ){
+		execute = BaseDataHandler.getCity(user, query);
+	}
+	else{
+		execute = BaseDataHandler.getError('不是 jsonp 格式调用');
+		callback = 'console.log';
+	}
 
-		if( callback ){
-			execute = callback +'('+ JSON.stringify({
-				data: rs
-				, msg: 'success'
-			}) +')';
-		}
-		else{
-			execute = BaseDataHandler.getError('不是 jsonp 格式调用');
-		}
-
-		return execute;
-	}).catch(function(e){
+	execute.then(function(rs){
+		return {
+			data: rs
+			, msg: 'Done'
+		};
+	}, function(e){
 		console.log( e );
 
-		return callback +'('+ JSON.stringify({
+		return {
 			msg: e.message
-		}) +')';
-	}).then(function(rs){
-		res.send( rs );
+		};
+	}).then(function(json){
+		res.send( callback +'('+ JSON.stringify(json) +')' );
 		res.end();
 	});
 });
 web.get('/data/district', function(req, res){
 	var query = req.query || {}
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		, callback = query.callback
+		, execute
 		;
 
-	BaseDataHandler.getDistrict( query ).then(function(rs){
-		var execute
-			;
+	if( callback ){
+		execute = BaseDataHandler.getDistrict(user, query);
+	}
+	else{
+		execute = BaseDataHandler.getError('不是 jsonp 格式调用');
+		callback = 'console.log';
+	}
 
-		if( callback ){
-			execute = callback +'('+ JSON.stringify({
-				data: rs
-				, msg: 'success'
-			}) +')';
-		}
-		else{
-			execute = BaseDataHandler.getError('不是 jsonp 格式调用');
-		}
-
-		return execute;
-	}).catch(function(e){
+	execute.then(function(rs){
+		return {
+			data: rs
+			, msg: 'Done'
+		};
+	}, function(e){
 		console.log( e );
 
-		return callback +'('+ JSON.stringify({
-				msg: e.message
-			}) +')';
-	}).then(function(rs){
-		res.send( rs );
+		return {
+			msg: e.message
+		};
+	}).then(function(json){
+		res.send( callback +'('+ JSON.stringify(json) +')' );
 		res.end();
 	});
 });
 web.get('/data/town', function(req, res){
 	var query = req.query || {}
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		, callback = query.callback
+		, execute
 		;
 
-	BaseDataHandler.getTown( query ).then(function(rs){
-		var execute
-			;
+	if( callback ){
+		execute = BaseDataHandler.getTown(user, query);
+	}
+	else{
+		execute = BaseDataHandler.getError('不是 jsonp 格式调用');
+		callback = 'console.log';
+	}
 
-		if( callback ){
-			execute = callback +'('+ JSON.stringify({
-				data: rs
-				, msg: 'success'
-			}) +')';
-		}
-		else{
-			execute = BaseDataHandler.getError('不是 jsonp 格式调用');
-		}
-
-		return execute;
-	}).catch(function(e){
+	execute.then(function(rs){
+		return {
+			data: rs
+			, msg: 'Done'
+		};
+	}, function(e){
 		console.log( e );
 
-		return callback +'('+ JSON.stringify({
+		return {
 			msg: e.message
-		}) +')';
-	}).then(function(rs){
-		res.send( rs );
+		};
+	}).then(function(json){
+		res.send( callback +'('+ JSON.stringify(json) +')' );
 		res.end();
 	});
 });
 web.get('/data/village', function(req, res){
 	var query = req.query || {}
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		, callback = query.callback
+		, execute
 		;
 
-	BaseDataHandler.getVillage( query ).then(function(rs){
-		var execute
-			;
+	if( callback ){
+		execute = BaseDataHandler.getVillage(user, query);
+	}
+	else{
+		execute = BaseDataHandler.getError('不是 jsonp 格式调用');
+		callback = 'console.log';
+	}
 
-		if( callback ){
-			execute = callback +'('+ JSON.stringify({
-				data: rs
-				, msg: 'success'
-			}) +')';
-		}
-		else{
-			execute = BaseDataHandler.getError('不是 jsonp 格式调用');
-		}
-
-		return execute;
-	}).catch(function(e){
+	execute.then(function(rs){
+		return {
+			data: rs
+			, msg: 'Done'
+		};
+	}, function(e){
 		console.log( e );
 
-		return callback +'('+ JSON.stringify({
+		return {
 			msg: e.message
-		}) +')';
-	}).then(function(rs){
-		res.send( rs );
+		};
+	}).then(function(json){
+		res.send( callback +'('+ JSON.stringify(json) +')' );
 		res.end();
 	});
 });
@@ -309,203 +459,32 @@ web.get('/data/village', function(req, res){
 // 大学数据
 web.get('/data/university', function(req, res){
 	var query = req.query || {}
-		, province = query.province
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		, callback = query.callback
 		, execute
 		;
 
-	if( province ){
-		if( callback ){
-			execute = BaseDataModel.university( province ).then(function(rs){
-				rs = JSON.stringify( rs );
-
-				return callback +'('+ rs +')';
-			});
-		}
-		else{
-			execute = BaseDataHandler.getError('不是 jsonp 格式调用');
-		}
+	if( callback ){
+		execute = BaseDataHandler.university(user, query);
 	}
 	else{
-		execute = BaseDataHandler.getError('缺少参数 province');
+		execute = BaseDataHandler.getError('不是 jsonp 格式调用');
+		callback = 'console.log';
 	}
 
-	execute.catch(function(e){
+	execute.then(function(rs){
+		return {
+			data: rs
+			, msg: 'Done'
+		};
+	}, function(e){
 		console.log( e );
 
-		return '';
-	}).then(function(rs){
-		res.send( rs );
+		return {
+			msg: e.message
+		};
+	}).then(function(json){
+		res.send( callback +'('+ JSON.stringify(json) +')' );
 		res.end();
 	});
-});
-
-/**
- * Web Socket 数据接口
- * */
-socket.register({
-	province: function(socket){
-		BaseDataModel.province().then(function(rs){
-			socket.emit('data', {
-				topic: 'province'
-				, data: rs
-			});
-		});
-	}
-	, city: function(socket, data){
-		var send = {
-				topic: 'city'
-			}
-			, query = data.query || {}
-			, province = query.province
-			, execute
-			;
-
-		if( province ){
-			execute = BaseDataModel.city( province ).then(function(rs){
-				send.data = rs;
-
-				return send;
-			});
-		}
-		else{
-			execute = BaseDataHandler.getError('缺少参数 province');
-		}
-
-		execute.catch(function(e){
-			console.log( e );
-
-			send.error = '';
-			send.msg = e.message;
-
-			return send;
-		}).then(function(send){
-			socket.emit('data', send);
-		});
-	}
-	, district: function(socket, data){
-		var send = {
-				topic: 'district'
-			}
-			, query = data.query || {}
-			, city = query.city
-			, execute
-			;
-
-		if( city ){
-			execute = BaseDataModel.district( city ).then(function(rs){
-				send.data = rs;
-
-				return send;
-			});
-		}
-		else{
-			execute = BaseDataHandler.getError('缺少参数 city');
-		}
-
-		execute.catch(function(e){
-			console.log( e );
-
-			send.error = '';
-			send.msg = e.message;
-
-			return send;
-		}).then(function(send){
-			socket.emit('data', send);
-		});
-	}
-	, town: function(socket, data){
-		var send = {
-				topic: 'town'
-			}
-			, query = data.query || {}
-			, district = query.district
-			, execute
-			;
-
-		if( district ){
-			execute = BaseDataModel.town( district ).then(function(rs){
-				send.data = rs;
-
-				return send;
-			});
-		}
-		else{
-			execute = BaseDataHandler.getError('缺少参数 district');
-		}
-
-		execute.catch(function(e){
-			console.log( e );
-
-			send.error = '';
-			send.msg = e.message;
-
-			return send;
-		}).then(function(send){
-			socket.emit('data', send);
-		});
-	}
-	, village: function(socket, data){
-		var send = {
-				topic: 'village'
-			}
-			, query = data.query || {}
-			, town = query.town
-			, execute
-			;
-
-		if( town ){
-			execute = BaseDataModel.village( town ).then(function(rs){
-				send.data = rs;
-
-				return send;
-			});
-		}
-		else{
-			execute = BaseDataHandler.getError('缺少参数 town');
-		}
-
-		execute.catch(function(e){
-			console.log( e );
-
-			send.error = '';
-			send.msg = e.message;
-
-			return send;
-		}).then(function(send){
-			socket.emit('data', send);
-		});
-	}
-
-	, university: function(socket, data){
-		var send = {
-				topic: 'university'
-			}
-			, query = data.query || {}
-			, province = query.province
-			, execute
-			;
-
-		if( province ){
-			execute = BaseDataModel.university( province ).then(function(rs){
-				send.data = rs;
-
-				return send;
-			});
-		}
-		else{
-			execute = BaseDataHandler.getError('缺少参数 province');
-		}
-
-		execute.catch(function(e){
-			console.log( e );
-
-			send.error = '';
-			send.msg = e.message;
-
-			return send;
-		}).then(function(send){
-			socket.emit('data', send);
-		});
-	}
 });

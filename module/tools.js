@@ -1,13 +1,6 @@
 'use strict';
 
-/**
- *
- * */
-var Handler = function(){
-
-};
-
-Handler.prototype = {
+var Tools = {
 	// 处理时间格式
 	dateFormat: function(date){
 		var m = date.getMonth() + 1
@@ -43,6 +36,14 @@ Handler.prototype = {
 			return i.toUpperCase();
 		});
 	}
+	// HTML 转码
+	, encodeHTML: function(html){
+		return html.replace(/&/g, '&amp;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;')
+			.replace(/\$/, '&#36;')
+			;
+	}
 };
 
-module.exports = Handler;
+module.exports = Tools;

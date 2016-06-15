@@ -135,25 +135,6 @@ for( i = 0, j = CONFIG.works.length; i < j; i++){
 for( i = 0, j = CONFIG.modules.length; i < j; i++ ){
 	require('./module/'+ CONFIG.modules[i] +'/controller.js' );
 }
-//require('./module/user/controller.js'       );  // 加载模块 user
-//
-//require('./module/blog/controller.js'       );  // 加载模块 blog
-//
-//require('./module/document/controller.js'   );  // 加载模块 document
-//
-//require('./module/editor/controller.js'     );  // 加载模块 editor
-//
-//require('./module/bower/controller.js'      );  // 加载模块 bower
-//
-//require('./module/reader/controller.js'     );  // 加载模块 reader
-//
-//require('./module/task/controller.js'       );  // 加载模块 task
-//
-//require('./module/tag/controller.js'        );  // 加载模块 tag 功能
-//
-////require('./module/image.js');       // 加载模块 image
-//
-//require('./module/basedata/controller.js'   );  // 加载模块 基础数据
 
 modules.register({
 	id: 'time'

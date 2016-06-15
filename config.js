@@ -28,6 +28,7 @@ var CONFIG = {
 
 	, params: {
 		PAGE_SIZE: 20
+		, COUNTRY_DEFAULT_CODE: 1
 		, DOCUMENT_DEFAULT_ID: 1
 	}
 	, modules: [

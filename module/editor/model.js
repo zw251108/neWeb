@@ -64,7 +64,7 @@ var db      = require('../db.js')
 		//	' and' +
 		//		' editable=\'0\''
 	}
-	, Model = {
+	, CodeModel = {
 		getEditorAll: function(){
 			return db.handle({
 				sql: SQL.editor
@@ -109,6 +109,8 @@ var db      = require('../db.js')
 				, data: {
 					name: name
 				}
+			}).then(function(rs){
+				return rs[0];
 			});
 		}
 
@@ -288,4 +290,4 @@ var db      = require('../db.js')
 	}
 	;
 
-module.exports = Model;
+module.exports = CodeModel;

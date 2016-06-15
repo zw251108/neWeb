@@ -3,6 +3,8 @@
 var CONFIG = require('../../config.js')
 	, UserHandler   = require('../user/handler.js')
 
+	, Tools = require('../tools.js')
+
 	, TaskModel = require('./model.js')
 	, TaskError = require('./error.js')
 	, TaskHandler = {
@@ -12,13 +14,7 @@ var CONFIG = require('../../config.js')
 		}
 
 		// 时间格式处理
-		, dateFormat: function(date){
-			var m = date.getMonth() +1
-				, d = date.getDate()
-				;
-
-			return date.getFullYear() +'-'+ (m > 9 ? m : '0'+ m) +'-'+ (d > 9 ? d : '0'+ d);
-		}
+		, dateFormat: Tools.dateFormat
 		, weekStartDate: function(){
 			var date = new Date()
 				, month = date.getMonth()
