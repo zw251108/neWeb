@@ -294,7 +294,6 @@ var Url = require('url')
 					return result;
 				}).then(function(rs){
 					var result
-						, urlCallback
 						;
 
 					if( keyword ){

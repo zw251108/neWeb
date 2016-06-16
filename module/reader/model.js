@@ -205,6 +205,12 @@ var db  = require('../db.js')
 				' date_format(read_datetime,\'%Y-%m-%d\')' +
 			' order by' +
 				' read_date desc'
+		, update: 'delete from reader_bookmark where id=:id;\
+					update reader_bookmark set id=id-1 where id>:id;\
+					alter table reader_bookmark auto_increment=:all;\
+					delete from user_reader_bookmark where id=:id;\
+					update user_reader_bookmark set id=id-1,bookmark_id=bookmark_id-1 where id>:id;\
+					alter table user_reader_bookmark auto_increment=:all;'
 	}
 	, ReaderModel = {
 		getReaderByPage: function(page, size){

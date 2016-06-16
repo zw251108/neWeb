@@ -13,8 +13,6 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	, ReaderAdminView = {
 		bookmark: function(){
 			return CodeModel.getEditorByName('admin/reader/bookmark').then(function(rs){
-				return rs[0];
-			}).then(function(rs){
 				var code = {}
 					;
 

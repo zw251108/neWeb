@@ -180,7 +180,7 @@ web.get('/editor/code', function(req, res){
 	});
 });
 
-web.post('/editor/setMore', ImageHandler.uploadMiddle.single('preview'), function(req, res){
+web.post('/editor/setMore', ImageHandler.uploadMiddleware.single('preview'), function(req, res){
 	var body = req.body || {}
 		, type = body.type
 		, id = body.id
