@@ -452,6 +452,30 @@ var Url = require('url')
 			});
 		}
 
+		, newUserBookmark: function(user, data){
+			var execute
+				, isGuest = UserHandler.isGuest( user )
+				;
+
+			if( isGuest ){
+				execute = UserHandler.getError('用户尚未登录');
+			}
+			else{
+				execute = ReaderModel.addUserBookmark( data ).then(function(rs){
+					var result
+						;
+
+					if( rs && rs.insertId ){
+
+					}
+					else{
+						result = ReaderHandler.getError('')
+					}
+				});
+			}
+
+			return execute;
+		}
 		, newBookmark: function(user, data){
 			var execute
 				, url = data.url
@@ -500,7 +524,7 @@ var Url = require('url')
 			return execute;
 		}
 
-		, getBookmarkReaderPerDay: function(user){
+		, getBookmarkReadPerDay: function(user){
 			return ReaderModel.statisticReadMarkByDate( user.id );
 		}
 	}

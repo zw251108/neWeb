@@ -5571,4 +5571,10 @@ function saveOrUpdate(name, num){
 //	console.log(2)
 //});
 
-console.log( Promise );
+//console.log( Promise );
+
+var cheerio = require('cheerio')
+	;
+
+console.log( cheerio('template', '<template id="123" class="12311"><div></div><div></div><div></div><div></div><div></div></template>').attr() )
+

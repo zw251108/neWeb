@@ -754,16 +754,10 @@ web.get('/admin/reader/bookmark', function(req, res){
 	var user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
-	ReaderAdminView.bookmark().then(function(html){console.log(html)
+	ReaderAdminView.bookmark().then(function(html){
 		res.send( config.docType.html5 + html );
 		res.end();
 	});
-	//ReaderHandler.getBookmarkReaderPerDay( user ).then(ReaderAdminView, function(){
-	//
-	//}).then(function(html){
-	//	res.send( config.docType.html5 + html );
-	//	res.end();
-	//});
 });
 
 web.get('/reader/bookmark/data', function(req, res){
@@ -771,7 +765,7 @@ web.get('/reader/bookmark/data', function(req, res){
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
-	ReaderHandler.getBookmarkReaderPerDay( user ).catch(function(e){
+	ReaderHandler.getBookmarkReadPerDay( user ).catch(function(e){
 		console.log( e );
 
 		return [];

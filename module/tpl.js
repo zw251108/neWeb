@@ -5,7 +5,9 @@ var CONFIG  = require('../config.js')
 	, fs    = require('fs')
 	, path  = require('path')
 
-	, htmlTpl = fs.readFileSync(__dirname +'../tpl/'+ dir).toString()
+	, HTML_DEFAULT_TPL = 'tpl/page.html'
+
+	, htmlTpl = fs.readFileSync(__dirname +'../'+ HTML_DEFAULT_TPL).toString()
 
 	, getTpl = function(){
 
@@ -19,6 +21,10 @@ var CONFIG  = require('../config.js')
 
 	, getEmmet      = require('./emmet/getEmmet.js')
 	, emmetTpl      = require('./emmetTpl/emmetTpl.js').template
+
+	, TPL_CACHE = {}
+	, TPL_DIR = 'tpl/'
+	, TPL_KEY = '%'
 
 	, stylesheet    = emmetTpl({
 		template: getEmmet('stylesheet.html')
@@ -186,6 +192,25 @@ var CONFIG  = require('../config.js')
 		, render: function(data){
 
 		}
+		, html: function(){}
+		, metroTpl: emmetTpl({
+			template: 'a[href=%href%]' +
+				'>section#%id%.metro.metro-%id%.%metroSize%[title=%hrefTitle%]' +
+				'>h2.metro_title.icon.icon-%icon%{%title%}' +
+				'+div.m_info{%info%}' +
+				'+span.metro_info'
+			, filter: {
+				icon: function(d){
+					return d.icon || d.id;
+				}
+				, href: function(d){
+					return d.href || d.id + '/';
+				}
+				, hrefTitle: function(d){
+					return d.hrefTitle || d.title;
+				}
+			}
+		})
 	}
 	;
 

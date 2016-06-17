@@ -22,7 +22,7 @@
 	html = html.replace(/\t|\r|\n/g, '');
 
 	var $html = $('<template>'+ html +'</template>')
-		, $children = $html('template').children()
+		, $children = $html.children()
 		, k, i, j, t, $t
 		, attribs, attr, text
 		, index, $node, $temp

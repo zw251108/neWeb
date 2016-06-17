@@ -52,9 +52,10 @@ var fs = require('fs')
 	, sharedSession = require('express-socket.io-session')
 
 	//----- 自定义模块 -----
-	, tpl       = require('./module/emmetTpl/tpl.js') // 模板库
+	, tpl       = require('./module/emmetTpl/tpl.js')   // 模板库
 	, modules   = require('./module/module.js') // 首页模块
-	, admin     = require('./module/admin.js')   // 后台管理模块
+	, admin     = require('./module/admin.js')  // 后台管理模块
+	, moduleTpl = require('./module/tpl.js')    // 全局模板引擎
 
 	, UserHandler   = require('./module/user/handler.js')
 
@@ -144,6 +145,22 @@ modules.register({
 	, href: '#'
 });
 
+var userSNS = [{
+	icon: 'renren'
+	, url: '#'
+}, {
+	icon: 'qq'
+	, url: '#'
+}, {
+	icon: 'wechat'
+}, {
+	icon: 'weibo'
+	, url: 'http://weibo.com/2707826454/profile'
+}, {
+	icon: 'github'
+	, url: 'https://github.com/zw251108'
+}];
+
 /**
  * 访问主页
 	/
@@ -151,6 +168,9 @@ modules.register({
 web.get('/', function(req, res){
 	var user = UserHandler.getUserFromSession.fromReq( req )
 		, isGuest = UserHandler.isGuest( user )
+		, userData = {
+			avatar: 'image/default/avatar.png'
+		}
 		;
 
 	res.send( tpl.html('index', {

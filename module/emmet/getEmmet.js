@@ -7,7 +7,7 @@ var fs = require('fs')
 
 	, getEmmet  = function( dir ){
 		console.log('read file: tpl/', dir);
-		return htmlToEmmet( Cheerio.load, fs.readFileSync(__dirname +'/../../tpl/'+ dir).toString() );
+		return htmlToEmmet( Cheerio, fs.readFileSync(__dirname +'/../../tpl/'+ dir).toString() );
 	}
 	;
 

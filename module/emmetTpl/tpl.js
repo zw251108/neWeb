@@ -6,9 +6,6 @@
 var fs = require('fs')
 	, path = require('path')
 	, emmetTpl = require('./emmetTpl.js').template
-	, TPL_CACHE = {}
-	, TPL_DIR = 'tpl/'
-	, TPL_KEY = '%'
 	, readTpl = function(filePath){
 		var rs = '';
 		if( filePath in TPL_CACHE ){
