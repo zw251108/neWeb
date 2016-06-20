@@ -1,15 +1,13 @@
 'use strict';
 
-var Url = require('url')
+var CONFIG  = require('../../config.js')
+	, Url   = require('url')
 	, SuperAgent    = require('superagent')
 	, Cheerio       = require('cheerio')
 	, segment       = require('../segment/segment.js')
 
-	, CONFIG = require('../../config.js')
 	, UserHandler   = require('../user/handler.js')
 	, TagHandler    = require('../tag/handler.js')
-	, TAG_CACHE
-	, TAG_INDEX
 
 	, ReaderModel = require('./model.js')
 	, ReaderError   = require('./error.js')
@@ -19,6 +17,11 @@ var Url = require('url')
 			return Promise.reject( new ReaderError(msg) );
 		}
 
+		, getSource: function(url){
+			var source = Url.parse( url );
+
+			return source.protocol +'//'+ source.host;
+		}
 		/**
 		 * @param   url     String
 		 * @return  Object
@@ -133,15 +136,12 @@ var Url = require('url')
 				, j
 				, w, p
 
-				, tagsData = TAG_CACHE || TagHandler.TAG_CACHE || []
-				, tagsIndex = TAG_INDEX || TagHandler.TAG_INDEX || {}
+				, tagsData = TagHandler.TAG_CACHE
+				, tagsIndex = TagHandler.TAG_INDEX
 				, tagsRs
 
 				, result
 				;
-
-			TAG_CACHE = tagsData;
-			TAG_INDEX = tagsIndex;
 
 			if( html ){
 				if( !charset || charset.toUpperCase() !== 'UTF-8' ){
@@ -239,6 +239,10 @@ var Url = require('url')
 			}
 
 			return result;
+		}
+
+		, crawlerArticle: function(url){
+			return ReaderHandler.crawler( url ).then( ReaderHandler.handleArticle );
 		}
 
 		, getReaderList: function(user, query){
@@ -416,42 +420,113 @@ var Url = require('url')
 			return execute;
 		}
 
-		/**
-		 * @param   userId  String|Number   用户 Id
-		 * @param   url     String          bookmark 的 url
-		 * @return Object
-		 *      Promise.resolve( Object )   该条数据
-		 *      Promise.resolve( false )    该条
-		 *      Promise.reject( false )     该条 url 不存在于 reader_bookmark 表中
-		 * */
-		, isExistUserBookmark: function(userId, url){
-			return ReaderModel.isExistBookmark(url, true).then(function(rs){
-				var result
-					;
 
-				if( rs && rs.length ){
-					result = ReaderModel.isExistUserBookmark(rs[0].id, userId, true).then(function(rs){
-						var	result
-							;
+		, isExistBookmark: function(user, query, returnInfo){
+			var execute = ReaderHandler.isExistBookmark(query.url, true);
 
-						if( rs && rs.length ){
-							result = Promise.resolve( rs[0] );
-						}
-						else{
-							result = Promise.resolve( false );
-						}
+			if( !returnInfo ){
+				execute = execute.then(function(rs){
+					var result = false
+						;
 
-						return result;
-					});
-				}
-				else{
-					result = Promise.reject( false );
-				}
+					if( rs && rs.length ){
+						result = true;
+					}
 
-				return result;
-			});
+					return result;
+				});
+			}
+
+			return execute;
+		}
+		, isExistUserBookmark: function(user, query, returnInfo){
+			var execute = ReaderModel.isExistUserBookmark(query.id, user.id, true);
+
+			if( !returnInfo ){
+				execute = execute.then(function(rs){
+					var result = false
+						;
+
+					if( rs && rs.length ){
+						result = true;
+					}
+
+					return result;
+				});
+			}
+
+			return execute;
 		}
 
+		///**
+		// * @param   userId  String|Number   用户 Id
+		// * @param   url     String          bookmark 的 url
+		// * @return Object
+		// *      Promise.resolve( Object )   该条数据
+		// *      Promise.resolve( false )    该条
+		// *      Promise.reject( false )     该条 url 不存在于 reader_bookmark 表中
+		// * */
+		//, isExistUserBookmark: function(user, query){
+		//	return ReaderModel.isExistBookmark(query.url, true).then(function(rs){
+		//		var result
+		//			;
+		//
+		//		if( rs && rs.length ){
+		//			result = ReaderModel.isExistUserBookmark(rs[0].id, user.id, true).then(function(rs){
+		//				var	result
+		//					;
+		//
+		//				if( rs && rs.length ){
+		//					result = Promise.resolve( rs[0] );
+		//				}
+		//				else{
+		//					result = Promise.resolve( false );
+		//				}
+		//
+		//				return result;
+		//			});
+		//		}
+		//		else{
+		//			result = Promise.reject( false );
+		//		}
+		//
+		//		return result;
+		//	});
+		//}
+
+		, newBookmark: function(user, data){
+			var execute
+				, isGuest = UserHandler.isGuest( user )
+				;
+
+			if( isGuest ){
+				execute = UserHandler.getError('用户尚未登录');
+			}
+			else{
+				data.userId = user.id;
+
+				if( !data.source ){
+					data.source = ReaderHandler.getSource( data.url );
+				}
+
+				execute = ReaderModel.addBookmark( data ).then(function(rs){
+					var result
+						;
+
+					if( rs && rs.insertId ){
+						data.bookmarkId = rs.insertId;
+						result = data;
+					}
+					else{
+						result = ReaderHandler.getError('user bookmark 保存失败');
+					}
+
+					return result;
+				});
+			}
+
+			return execute;
+		}
 		, newUserBookmark: function(user, data){
 			var execute
 				, isGuest = UserHandler.isGuest( user )
@@ -461,27 +536,32 @@ var Url = require('url')
 				execute = UserHandler.getError('用户尚未登录');
 			}
 			else{
+				data.userId = user.id;
 				execute = ReaderModel.addUserBookmark( data ).then(function(rs){
 					var result
 						;
 
 					if( rs && rs.insertId ){
-
+						data.id = rs.insertId;
+						result = data
 					}
 					else{
-						result = ReaderHandler.getError('')
+						result = ReaderHandler.getError('bookmark 保存失败');
 					}
+
+					return result;
 				});
 			}
 
 			return execute;
 		}
-		, newBookmark: function(user, data){
+
+		, addBookmark: function(user, data){
 			var execute
-				, url = data.url
-				, tempId = data.tempId
-				, title
-				, tags
+				, url       = data.url
+				, tempId    = data.tempId
+				, title     = data.title
+				, tags      = data.tags
 				, isGuest = UserHandler.isGuest( user )
 				, source
 				;
@@ -492,32 +572,55 @@ var Url = require('url')
 			else{
 				// todo 验证 url
 				if( url ){
-					execute = ReaderHandler.isExistBookmark(user.id, url).then(function(info){  // 存在数据
-						if( !info ){    // 用户已
-
-						}
-						else{   // 用户未添加该 url 添加到 user_reader_bookmark 表中
-							source = Url.parse( url );
-							source = source.protocol +'//'+ source.host;
-
-
-						}
-					}, function(isExist){   // reader_bookmark 表中不存在该 url
+					execute = ReaderHandler.isExistBookmark(user, data, true).then(function(rs){
 						var result
 							;
 
-						if( tempId ){   // 已有相关数据 添加到 reader_bookmark 表中
-							result = Promise.resolve()
+						if( rs && rs.length ){
+							result = rs[0];
 						}
-						else{   // 没有相关数据 抓取 整理数据
-							result = ReaderHandler.crawler( url ).then( ReaderHandler.handleArticle ).then(function(data){
+						else{   // 不存在 reader_bookmark 数据
 
+							// 判断是否有临时数据
+							if( tempId ){   // 已有临时数据 添加到 reader_bookmark 表中
+								result = Promise.resolve({
+									url: url
+									, title: title
+									, source: source
+									, tags: tags
+									, userId: user.id
+									, score: 0
+									, status: 0
+								});
+							}
+							else{   // 没有相关数据 抓取 整理数据
+								result = ReaderHandler.crawlerArticle( url );
+							}
+
+							result = result.then(function(rs){
+								return ReaderHandler.newBookmark(user, rs);
 							});
 						}
+
+						return result;
+					}).then(function(data){ // 判断是否有 user_reader_bookmark 数据，有返回异常操作，没有保存
+						return ReaderHandler.isExistUserBookmark(user, data).then(function(rs){
+							var result
+								;
+
+							if( rs && rs.length ){
+								result = ReaderHandler.getError('该数据已存在');
+							}
+							else{
+								result = ReaderHandler.newUserBookmark(user, data);
+							}
+
+							return result;
+						});
 					});
 				}
 				else{
-					execute = Promise.reject( new ReaderError('缺少参数') );
+					execute = Promise.reject( new ReaderError('缺少参数 url') );
 				}
 			}
 

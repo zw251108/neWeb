@@ -1,9 +1,8 @@
 'use strict';
 
-var web         = require('../web.js')
+var CONFIG      = require('../../config.js')
+	, web       = require('../web.js')
 	, socket    = require('../socket.js')
-
-	, config    = require('../../config.js')
 
 	, modules   = require('../module.js')
 	, admin     = require('../admin.js')
@@ -47,7 +46,7 @@ web.get('/task/', function(req, res){
 
 		return html;
 	}).then(function(html){
-		res.send( config.docType.html5 + html );
+		res.send( CONFIG.docType.html5 + html );
 		res.end();
 	});
 
@@ -95,7 +94,7 @@ web.get('/task/', function(req, res){
 	//}).then( TaskView.taskList ).catch(function(e){
 	//	console.log(e)
 	//}).then(function(html){
-	//	res.send( config.docType.html5 + html );
+	//	res.send( CONFIG.docType.html5 + html );
 	//	res.end();
 	//});
 });

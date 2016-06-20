@@ -9,8 +9,6 @@ var CONFIG  = require('../../config.js')
 	, data      = require('../data.js')
 	, menu      = require('../menu.js')
 
-	, tpl       = require('../emmet/tpl.js')
-
 	, UserHandler   = require('../user/handler.js')
 
 	, BlogView      = require('./view.js')
@@ -41,14 +39,15 @@ web.get('/blog/', function(req, res){
 	BlogHandler.getBlogList(user, query).then(BlogView.blogList, function(e){
 		console.log( e );
 		// todo 错误页面
-	}).then(function(page){
+	}).then(function(html){
 		// todo 页面其它部分
 
-		page.footer = {
-			nav: menu.current('blog')
-		};
+		//page.footer = {
+		//	nav: menu.current('blog')
+		//};
 
-		return tpl( page );
+		return html;
+		//tpl( page );
 	}).then(function(html){
 		res.send( CONFIG.docType.html5 + html );
 		res.end();

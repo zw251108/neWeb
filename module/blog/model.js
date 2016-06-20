@@ -19,33 +19,33 @@ var CONFIG = require('../../config.js')
 
 	, SQL = {
 		blogByPage: 'select id,title,datetime,tags from '+ TABLE_NAME +
-		' where' +
-		' user_id=:userId' +
-		' order by id desc' +
-		' limit :page,:size'
+			' where' +
+				' user_id=:userId' +
+			' order by id desc' +
+			' limit :page,:size'
 		, countBlog: 'select count(*) as count from '+ TABLE_NAME +
-		' where' +
-		' user_id=:userId'
+			' where' +
+				' user_id=:userId'
 
 		, blogSearchTitle: 'select id,title,datetime,tags from '+ TABLE_NAME +
-		' where' +
-		' user_id=:userId' +
-		' and' +
-		' title like :keyword' +
-		' order by id desc' +
-		' limit :page,:size'
+			' where' +
+				' user_id=:userId' +
+			' and' +
+				' title like :keyword' +
+			' order by id desc' +
+			' limit :page,:size'
 		, blogSearchTitleCount: 'select count(*) as count from '+ TABLE_NAME +
-		' where' +
-		' user_id=:user_id' +
-		' and' +
-		' title like :keyword'
+			' where' +
+				' user_id=:user_id' +
+			' and' +
+				' title like :keyword'
 		, blogFilterTags: 'select id,title,datetime,tags from '+ TABLE_NAME +
-		' where' +
-		' user_id=:userId' +
-		' and' +
-		' tags regexp :tags' +
-		' order by id desc' +
-		' limit :page,:size'
+			' where' +
+				' user_id=:userId' +
+			' and' +
+				' tags regexp :tags' +
+			' order by id desc' +
+			' limit :page,:size'
 		, blogFilterTagsCount: 'select count(*) as count from '+ TABLE_NAME +
 		' where' +
 		' user_id=:user_id' +

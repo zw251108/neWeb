@@ -125,9 +125,8 @@ var CONFIG = require('../../config.js')
 						;
 
 					if( rs.insertId ){
-						result = {
-							id: rs.insertId
-						}
+						data.id = rs.insertId;
+						result = data;
 					}
 					else{
 						result = Promise.reject( new DocumentError(title + ' 文档创建失败') );
@@ -168,14 +167,13 @@ var CONFIG = require('../../config.js')
 				;
 
 			if( documentId && title ){
-				execute = DocumentModel.addSectionByDoc( data).then(function(rs){
+				execute = DocumentModel.addSectionByDoc( data ).then(function(rs){
 					var result
 						;
 
 					if( rs.insertId ){
-						result = {
-							id: rs.insertId
-						};
+						data.id = rs.insertId;
+						result = data;
 					}
 					else{
 						result = Promise.reject( new DocumentError(title +' 章创建失败') );
@@ -226,9 +224,8 @@ var CONFIG = require('../../config.js')
 						;
 
 					if( rs.insertId ){
-						result = {
-							id: rs.insertId
-						};
+						data.id = rs.insertId;
+						result = data;
 					}
 					else{
 						result = Promise.reject( new DocumentError(title +'节创建失败') );

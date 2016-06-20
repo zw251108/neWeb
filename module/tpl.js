@@ -7,7 +7,7 @@ var CONFIG  = require('../config.js')
 
 	, HTML_DEFAULT_TPL = 'tpl/page.html'
 
-	, htmlTpl = fs.readFileSync(__dirname +'../'+ HTML_DEFAULT_TPL).toString()
+	, htmlTpl = fs.readFileSync(__dirname +'/../'+ HTML_DEFAULT_TPL).toString()
 
 	, getTpl = function(){
 

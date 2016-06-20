@@ -463,67 +463,82 @@ var db  = require('../db.js')
 			});
 		}
 
-		, isExistBookmark: function(url, returnData){
-			var result = db.handle({
-					sql: SQL.bookmarkIsExist
-					, data: {
-						url: url
-					}
-				})
-				;
+		, isExistBookmark: function(url
+			//, returnData
+		){
+			//var result = db.handle({
+			//		sql: SQL.bookmarkIsExist
+			//		, data: {
+			//			url: url
+			//		}
+			//	})
+			//	;
+			//
+			//if( !returnData ){
+			//	result = result.then(function(rs){
+			//		var isExist = false
+			//			;
+			//
+			//		if( rs && rs.length ){
+			//			isExist = true;
+			//		}
+			//
+			//		return isExist;
+			//	});
+			//}
 
-			if( !returnData ){
-				result = result.then(function(rs){
-					var isExist = false
-						;
-
-					if( rs && rs.length ){
-						isExist = true;
-					}
-
-					return isExist;
-				});
-			}
-
-			return result;
+			return db.handle({
+				sql: SQL.bookmarkIsExist
+				, data: {
+					url: url
+				}
+			});
 		}
-		, isExistUserBookmark: function(bookmarkId, userId, returnData){
-			var result = db.handle({
+		, isExistUserBookmark: function(bookmarkId, userId
+			//, returnData
+		){
+			//var result = db.handle({
+			//	sql: SQL.userBookmarkIsExist
+			//	, data: {
+			//		bookmarkId: bookmarkId
+			//		, userId: userId
+			//	}
+			//})
+			////	.then(function(rs){
+			////	var result
+			////		;
+			////
+			////	if( rs && rs.length ){
+			////		result = Promise.resolve(rs[0]);
+			////	}
+			////	else{
+			////		result = Promise.reject();
+			////	}
+			////
+			////	return result;
+			////})
+			//	;
+			//
+			//if( !returnData ){
+			//	result = result.then(function(rs){
+			//		var isExist = false
+			//			;
+			//
+			//		if( rs && rs.length ){
+			//			isExist = true;
+			//		}
+			//
+			//		return isExist;
+			//	});
+			//}
+
+			return db.handle({
 				sql: SQL.userBookmarkIsExist
 				, data: {
 					bookmarkId: bookmarkId
 					, userId: userId
 				}
-			})
-			//	.then(function(rs){
-			//	var result
-			//		;
-			//
-			//	if( rs && rs.length ){
-			//		result = Promise.resolve(rs[0]);
-			//	}
-			//	else{
-			//		result = Promise.reject();
-			//	}
-			//
-			//	return result;
-			//})
-				;
-
-			if( !returnData ){
-				result = result.then(function(rs){
-					var isExist = false
-						;
-
-					if( rs && rs.length ){
-						isExist = true;
-					}
-
-					return isExist;
-				});
-			}
-
-			return result;
+			});
 		}
 
 		, addBookmark: function(data){
@@ -570,97 +585,6 @@ var db  = require('../db.js')
 					, tags: tags
 					, status: status
 				}
-			});
-		}
-
-		, getFavoriteByPage: function(userId, page, size){console.log(page, size);
-			return db.handle({
-				sql: SQL.favoriteByPage
-				, data: {
-					userId: userId
-					, page: (page -1) * size
-					, size: size
-				}
-			});
-		}
-		, countFavorite: function(userId){
-			return db.handle({
-				sql: SQL.favoriteCount
-				, data: {
-					userId: userId
-				}
-			}).then(function(rs){
-				var count = 0;
-
-				if( rs && rs.length ){
-					count = rs[0].count;
-				}
-
-				return count;
-			});
-		}
-
-		, searchFavoriteByTitle: function(userId, keyword, page, size){
-			return db.handle({
-				sql: SQL.favoriteSearchTitle
-				, data: {
-					userId: userId
-					, keyword: '%'+ keyword +'%'
-					, page: (page -1) * size
-					, size: size
-				}
-			});
-		}
-		, countSearchFavoriteByTitle: function(userId, keyword){
-			return db.handle({
-				sql: SQL.favoriteSearchTitleCount
-				, data: {
-					userId: userId
-					, keyword: '%'+ keyword +'%'
-				}
-			}).then(function(rs){
-				var result
-					;
-
-				if( rs && rs.length ){
-					result = +rs[0].count;
-				}
-				else{
-					result = 0
-				}
-
-				return result;
-			});
-		}
-
-		, filterFavoriteByTags: function(userId, tags, page, size){
-			return db.handle({
-				sql: SQL.favoriteFilterTags.replace(':tags', '\'(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join(')(,|$)\' and tags regexp \'(^|,)(') + ')(,|$)\'')
-				, data: {
-					userId: userId
-					, page: (page -1) * size
-					, size: size
-				}
-			});
-		}
-		, countFilterFavoriteByTags: function(userId, tags){
-			return db.handle({
-				sql: SQL.favoriteFilterTagsCount.replace(':tags', '\'(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join(')(,|$)\' and tags regexp \'(^|,)(') + ')(,|$)\'')
-				, data: {
-					userId: userId
-				}
-			}).then(function(rs){
-				var result
-					;
-
-				if( rs && rs.length ){
-					result = +rs[0].length;
-				}
-				else{
-					result = 0;
-				}
-
-				return result;
 			});
 		}
 

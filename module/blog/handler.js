@@ -1,6 +1,7 @@
 'use strict';
 
 var CONFIG = require('../../config.js')
+
 	, UserHandler   = require('../user/handler.js')
 
 	, BlogModel = require('./model.js')
@@ -139,9 +140,8 @@ var CONFIG = require('../../config.js')
 							;
 
 						if( rs.insertId ){
-							result = {
-								id: rs.insertId
-							};
+							data.id = rs.insertId;
+							result = data;
 						}
 						else{
 							result = BlogHandler.getError(title + ' 文章创建失败');

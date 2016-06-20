@@ -1,29 +1,24 @@
 'use strict';
 
-var web         = require('../web.js')
+var CONFIG      = require('../../config.js')
+	, web       = require('../web.js')
 	, socket    = require('../socket.js')
-
-	, config    = require('../../config.js')
 
 	, modules   = require('../module.js')
 	, admin     = require('../admin.js')
 	, data      = require('../data.js')
 	, menu      = require('../menu.js')
 
+	, UserHandler   = require('../user/handler.js')
+
 	, ReaderView    = require('./view.js')
 	, ReaderAdminView   = require('./admin.view.js')
 	, ReaderHandler     = require('./handler.js')
 	, ReaderError       = require('./error.js')
 
-	, UserHandler   = require('../user/handler.js')
-
 	, Url       = require('url')
 
-	, TagModel  = require('../tag/model.js')
-
 	, Model     = require('./model.js')
-	, View      = require('./view.js')
-	, Admin     = require('./admin.view.js')
 
 	, Reader    = require('./reader.js')
 	;
@@ -79,7 +74,7 @@ web.get('/reader/', function(req, res){
 
 		return html;
 	}).then(function(html){
-		res.send( config.docType.html5 + html );
+		res.send( CONFIG.docType.html5 + html );
 		res.end();
 	});
 });
@@ -100,7 +95,7 @@ web.get('/reader/bookmark', function(req, res){
 
 		return html;
 	}).then(function(html){
-		res.send( config.docType.html5 + html );
+		res.send( CONFIG.docType.html5 + html );
 		res.end();
 	});
 });
@@ -121,7 +116,7 @@ web.get('/reader/favorite', function(req, res){
 
 		return html;
 	}).then(function(html){
-		res.send( config.docType.html5 + html );
+		res.send( CONFIG.docType.html5 + html );
 		res.end();
 	});
 });
@@ -345,21 +340,21 @@ socket.register({
 
 		console.log('bookmark add url: ' + url);
 
-		//ReaderHandler.newBookmark(user, query).then(function(data){
-		//	return {
-		//		topic: topic
-		//		, data: data
-		//	};
-		//}, function(e){
-		//	console.log( e );
-		//
-		//	return {
-		//		topic: topic
-		//		, msg: e.message
-		//	}
-		//}).then(function(json){
-		//	socket.emit('data', json);
-		//});
+		ReaderHandler.newBookmark(user, query).then(function(data){
+			return {
+				topic: topic
+				, data: data
+			};
+		}, function(e){
+			console.log( e );
+
+			return {
+				topic: topic
+				, msg: e.message
+			}
+		}).then(function(json){
+			socket.emit('data', json);
+		});
 
 		// 检测 user
 		//if( UserHandler.isGuest(user) ){
@@ -755,7 +750,7 @@ web.get('/admin/reader/bookmark', function(req, res){
 		;
 
 	ReaderAdminView.bookmark().then(function(html){
-		res.send( config.docType.html5 + html );
+		res.send( CONFIG.docType.html5 + html );
 		res.end();
 	});
 });
