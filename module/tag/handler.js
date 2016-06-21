@@ -24,7 +24,9 @@ TagHandler.getTagList().then(function(rs){
 
 	rs.reduce(function(all, d, i){
 		all[d.name] = i;
-	}, Model.TAG_INDEX);
+
+		return all;
+	}, TagHandler.TAG_INDEX);
 
 	TagHandler.TAG_CACHE = rs;
 });

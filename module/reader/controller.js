@@ -340,10 +340,11 @@ socket.register({
 
 		console.log('bookmark add url: ' + url);
 
-		ReaderHandler.newBookmark(user, query).then(function(data){
+		ReaderHandler.addBookmark(user, query).then(function(data){
 			return {
 				topic: topic
-				, data: data
+				, data: [data]
+				, msg: 'Done'
 			};
 		}, function(e){
 			console.log( e );
@@ -356,183 +357,183 @@ socket.register({
 			socket.emit('data', json);
 		});
 
-		// 检测 user
-		//if( UserHandler.isGuest(user) ){
-		if( url ){
-			execute = Model.isExistBookmark(url, true)
-				.then(function(rs){
-					var result
-						, bookmarkId
-						;
-
-					if( rs && rs.length ){  // reader_bookmark 表中已存在该 url
-						bookmarkId = rs[0].id;
-
-						// 在 user_reader_bookmark 表中查找该用户是否已有该 bookmark
-						result = Model.isExistUserBookmark(bookmarkId, user.id, true).then(function(rs){
-							var result
-								;
-
-							if( rs && rs.length ){  // user_reader_bookmark 表中已有数据
-								result = rs[0];
-								result.bookmarkId = bookmarkId;
-								result.tempId = tempId;
-
-								send.info = result;
-
-								result = Promise.reject( new ReaderError('该文章已在您的书签中已存在') );
-							}
-							else{   // 没有该数据 添加
-								result = {
-									bookmarkId: bookmarkId
-									, userId: user.id
-									, title: title
-									, tags: tags
-									, score: 0
-									, status: 0
-								};
-							}
-
-							return result;
-						}).then(function(data){
-							return Model.addUserBookmark( data ).then(function(rs){
-								var result;
-
-								if( rs && rs.insertId ){
-									data.id = rs.insertId;
-
-									send.info = data;
-
-									result = send;
-								}
-								else{
-									result = Promise.reject( new ReaderError('数据保存失败') );
-								}
-
-								return result;
-							});
-						});
-					}
-					else{   // reader_bookmark 表中不存在该 url
-						if( tempId ){ // 已有相关数据 添加到 reader_bookmark 表中
-							source = Url.parse(url);
-							source = source.protocol + '//' + source.host;
-
-							result = Promise.resolve({
-								url: url
-								, title: title
-								, source: source
-								, tags: tags
-								, userId: user.id
-								, score: 0
-								, status: 0
-								, tempId: tempId
-							});
-						}
-						else{   // 没有相关数据 抓取 整理数据
-							result = Reader.crawler( url ).then( Reader.handleArticle ).then(function(data){
-								var result
-									;
-
-								if( data ){
-									data.userId = user.id;
-									data.score = 0;
-									data.status = 0;
-									result = data;
-								}
-								else{
-									result = Promise.reject( new ReaderError('抓取数据失败') );
-								}
-
-								return result;
-							});
-						}
-
-						result = result.then(function(data){ // 添加到 reader_bookmark
-							console.log(data);
-
-							return Model.addBookmark({
-								url: data.url
-								, title: data.title
-								, source: data.source
-								, userId: data.userId
-							}).then(function(rs){
-								var result
-									;
-
-								if( rs && rs.insertId ){
-									data.bookmarkId = rs.insertId;
-
-									result = data;
-								}
-								else{
-									result = Promise.reject( new ReaderError('保存失败') );
-								}
-
-								return result;
-							});
-						}).then(function(data){ // 添加到 user_reader_bookmark
-							return Model.addUserBookmark( data ).then(function(rs){
-								var result
-									;
-
-								if( rs && rs.insertId ){
-									data.id = rs.insertId;
-
-									result = data;
-								}
-								else{
-									result = Promise.reject( new ReaderError('数据保存失败') );
-								}
-
-								return result;
-							});
-						}).then(function(data){ // 处理返回信息
-							send.info = data;
-
-							return send;
-						});
-					}
-
-					return result;
-				})
-				//// 判断 reader_bookmark 表中是否有该 url
-				//.then(function(bookmark){   // reader_bookmark 表中已有该 url
-				//	return Promise.reject(bookmark);
-				//}, function(){  // reader_bookmark 表中没有该 url
-				//	if( tempId ){ // 已有相关数据
-				//
-				//	}
-				//	else{   // 没有相关数据 抓取并整理
-				//
-				//	}
-				//})
-				//// 获取 url 对应数据
-				//.then(function(){}, function(){
-				//
-				//})
-				////
-				//.then(function(){}, function(){})
-			;
-		}
-		else{
-			execute = Promise.reject( new ReaderError('缺少参数') );
-		}
+		//// 检测 user
+		////if( UserHandler.isGuest(user) ){
+		//if( url ){
+		//	execute = Model.isExistBookmark(url, true)
+		//		.then(function(rs){
+		//			var result
+		//				, bookmarkId
+		//				;
+		//
+		//			if( rs && rs.length ){  // reader_bookmark 表中已存在该 url
+		//				bookmarkId = rs[0].id;
+		//
+		//				// 在 user_reader_bookmark 表中查找该用户是否已有该 bookmark
+		//				result = Model.isExistUserBookmark(bookmarkId, user.id, true).then(function(rs){
+		//					var result
+		//						;
+		//
+		//					if( rs && rs.length ){  // user_reader_bookmark 表中已有数据
+		//						result = rs[0];
+		//						result.bookmarkId = bookmarkId;
+		//						result.tempId = tempId;
+		//
+		//						send.info = result;
+		//
+		//						result = Promise.reject( new ReaderError('该文章已在您的书签中已存在') );
+		//					}
+		//					else{   // 没有该数据 添加
+		//						result = {
+		//							bookmarkId: bookmarkId
+		//							, userId: user.id
+		//							, title: title
+		//							, tags: tags
+		//							, score: 0
+		//							, status: 0
+		//						};
+		//					}
+		//
+		//					return result;
+		//				}).then(function(data){
+		//					return Model.addUserBookmark( data ).then(function(rs){
+		//						var result;
+		//
+		//						if( rs && rs.insertId ){
+		//							data.id = rs.insertId;
+		//
+		//							send.info = data;
+		//
+		//							result = send;
+		//						}
+		//						else{
+		//							result = Promise.reject( new ReaderError('数据保存失败') );
+		//						}
+		//
+		//						return result;
+		//					});
+		//				});
+		//			}
+		//			else{   // reader_bookmark 表中不存在该 url
+		//				if( tempId ){ // 已有相关数据 添加到 reader_bookmark 表中
+		//					source = Url.parse(url);
+		//					source = source.protocol + '//' + source.host;
+		//
+		//					result = Promise.resolve({
+		//						url: url
+		//						, title: title
+		//						, source: source
+		//						, tags: tags
+		//						, userId: user.id
+		//						, score: 0
+		//						, status: 0
+		//						, tempId: tempId
+		//					});
+		//				}
+		//				else{   // 没有相关数据 抓取 整理数据
+		//					result = Reader.crawler( url ).then( Reader.handleArticle ).then(function(data){
+		//						var result
+		//							;
+		//
+		//						if( data ){
+		//							data.userId = user.id;
+		//							data.score = 0;
+		//							data.status = 0;
+		//							result = data;
+		//						}
+		//						else{
+		//							result = Promise.reject( new ReaderError('抓取数据失败') );
+		//						}
+		//
+		//						return result;
+		//					});
+		//				}
+		//
+		//				result = result.then(function(data){ // 添加到 reader_bookmark
+		//					console.log(data);
+		//
+		//					return Model.addBookmark({
+		//						url: data.url
+		//						, title: data.title
+		//						, source: data.source
+		//						, userId: data.userId
+		//					}).then(function(rs){
+		//						var result
+		//							;
+		//
+		//						if( rs && rs.insertId ){
+		//							data.bookmarkId = rs.insertId;
+		//
+		//							result = data;
+		//						}
+		//						else{
+		//							result = Promise.reject( new ReaderError('保存失败') );
+		//						}
+		//
+		//						return result;
+		//					});
+		//				}).then(function(data){ // 添加到 user_reader_bookmark
+		//					return Model.addUserBookmark( data ).then(function(rs){
+		//						var result
+		//							;
+		//
+		//						if( rs && rs.insertId ){
+		//							data.id = rs.insertId;
+		//
+		//							result = data;
+		//						}
+		//						else{
+		//							result = Promise.reject( new ReaderError('数据保存失败') );
+		//						}
+		//
+		//						return result;
+		//					});
+		//				}).then(function(data){ // 处理返回信息
+		//					send.info = data;
+		//
+		//					return send;
+		//				});
+		//			}
+		//
+		//			return result;
+		//		})
+		//		//// 判断 reader_bookmark 表中是否有该 url
+		//		//.then(function(bookmark){   // reader_bookmark 表中已有该 url
+		//		//	return Promise.reject(bookmark);
+		//		//}, function(){  // reader_bookmark 表中没有该 url
+		//		//	if( tempId ){ // 已有相关数据
+		//		//
+		//		//	}
+		//		//	else{   // 没有相关数据 抓取并整理
+		//		//
+		//		//	}
+		//		//})
+		//		//// 获取 url 对应数据
+		//		//.then(function(){}, function(){
+		//		//
+		//		//})
+		//		////
+		//		//.then(function(){}, function(){})
+		//	;
 		//}
 		//else{
-		//	execute = Promise.reject( new ReaderError('用户尚未登录') );
+		//	execute = Promise.reject( new ReaderError('缺少参数') );
 		//}
-
-		execute.catch(function(e){
-			console.log( e );
-
-			send.error = '';
-			send.msg = e.message;
-
-			return send;
-		}).then(function(send){
-			socket.emit('data', send);
-		});
+		////}
+		////else{
+		////	execute = Promise.reject( new ReaderError('用户尚未登录') );
+		////}
+		//
+		//execute.catch(function(e){
+		//	console.log( e );
+		//
+		//	send.error = '';
+		//	send.msg = e.message;
+		//
+		//	return send;
+		//}).then(function(send){
+		//	socket.emit('data', send);
+		//});
 	}
 	, 'reader/bookmark/read': function(socket, data){
 		var send = {

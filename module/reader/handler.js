@@ -422,7 +422,7 @@ var CONFIG  = require('../../config.js')
 
 
 		, isExistBookmark: function(user, query, returnInfo){
-			var execute = ReaderHandler.isExistBookmark(query.url, true);
+			var execute = ReaderModel.isExistBookmark(query.url, true);
 
 			if( !returnInfo ){
 				execute = execute.then(function(rs){
@@ -440,7 +440,7 @@ var CONFIG  = require('../../config.js')
 			return execute;
 		}
 		, isExistUserBookmark: function(user, query, returnInfo){
-			var execute = ReaderModel.isExistUserBookmark(query.id, user.id, true);
+			var execute = ReaderModel.isExistUserBookmark(query.bookmarkId, user.id, true);
 
 			if( !returnInfo ){
 				execute = execute.then(function(rs){
@@ -457,42 +457,6 @@ var CONFIG  = require('../../config.js')
 
 			return execute;
 		}
-
-		///**
-		// * @param   userId  String|Number   用户 Id
-		// * @param   url     String          bookmark 的 url
-		// * @return Object
-		// *      Promise.resolve( Object )   该条数据
-		// *      Promise.resolve( false )    该条
-		// *      Promise.reject( false )     该条 url 不存在于 reader_bookmark 表中
-		// * */
-		//, isExistUserBookmark: function(user, query){
-		//	return ReaderModel.isExistBookmark(query.url, true).then(function(rs){
-		//		var result
-		//			;
-		//
-		//		if( rs && rs.length ){
-		//			result = ReaderModel.isExistUserBookmark(rs[0].id, user.id, true).then(function(rs){
-		//				var	result
-		//					;
-		//
-		//				if( rs && rs.length ){
-		//					result = Promise.resolve( rs[0] );
-		//				}
-		//				else{
-		//					result = Promise.resolve( false );
-		//				}
-		//
-		//				return result;
-		//			});
-		//		}
-		//		else{
-		//			result = Promise.reject( false );
-		//		}
-		//
-		//		return result;
-		//	});
-		//}
 
 		, newBookmark: function(user, data){
 			var execute
@@ -563,7 +527,7 @@ var CONFIG  = require('../../config.js')
 				, title     = data.title
 				, tags      = data.tags
 				, isGuest = UserHandler.isGuest( user )
-				, source
+				, source = ReaderHandler.getSource( url )
 				;
 
 			if( isGuest ){
@@ -578,40 +542,52 @@ var CONFIG  = require('../../config.js')
 
 						if( rs && rs.length ){
 							result = rs[0];
+							result.bookmarkId = result.id
 						}
 						else{   // 不存在 reader_bookmark 数据
 
 							// 判断是否有临时数据
 							if( tempId ){   // 已有临时数据 添加到 reader_bookmark 表中
-								result = Promise.resolve({
+								result = {
 									url: url
 									, title: title
 									, source: source
 									, tags: tags
 									, userId: user.id
-									, score: 0
-									, status: 0
-								});
+								};
 							}
 							else{   // 没有相关数据 抓取 整理数据
 								result = ReaderHandler.crawlerArticle( url );
 							}
 
 							result = result.then(function(rs){
+								rs.url = url;
+								rs.source = source;
+
 								return ReaderHandler.newBookmark(user, rs);
 							});
 						}
 
 						return result;
 					}).then(function(data){ // 判断是否有 user_reader_bookmark 数据，有返回异常操作，没有保存
-						return ReaderHandler.isExistUserBookmark(user, data).then(function(rs){
+						return ReaderHandler.isExistUserBookmark(user, data, true).then(function(rs){
 							var result
 								;
 
 							if( rs && rs.length ){
-								result = ReaderHandler.getError('该数据已存在');
+								result = ReaderHandler.getError('bookmark 已存在');
 							}
 							else{
+								if( !data.score ){
+									data.score = 0;
+								}
+								if( !data.status ){
+									data.status = 0;
+								}
+								if( !data.tags ){
+									data.tags = '';
+								}
+
 								result = ReaderHandler.newUserBookmark(user, data);
 							}
 

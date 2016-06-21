@@ -27,16 +27,17 @@ define('bookmarkAdd', ['jquery', 'global', 'socket', 'msgPopup', 'template'], fu
 
 	socket.register('reader/bookmark/add', function(data){
 
-		if( 'error' in data ){
+		if( data.msg !== 'Done' ){
 			msgPopup.showMsg( data.msg );
 			//alert( data.msg );
 
 			$bookmark.find('.module_content article.article[data-target]:eq(0)').remove();
 		}
 		else{
-			data = data.info;
-
-			$bookmark.find('.module_content article.article[data-target="'+ data.url +'"]').replaceWith( $( articleTpl(data).join('') ).data(data) );
+			// todo 数组
+			$.each(data.data, function(i, d){
+				$bookmark.find('.module_content article.article[data-target="'+ d.url +'"]').replaceWith( $( articleTpl(d).join('') ).data(d) );
+			});
 		}
 	});
 

@@ -34,7 +34,8 @@ define(['jquery', 'tag', 'template'], function($, tag){
 					, toolbarLeft = $toolbar.offset().left
 					;
 
-				if( width + bdL + bdR === toolbarWidth ){ console.log(parentLeft, parentWidth, toolbarLeft, toolbarWidth)
+				if( width + bdL + bdR === toolbarWidth ){
+					//console.log(parentLeft, parentWidth, toolbarLeft, toolbarWidth)
 					$filterBox.css('right', (parentLeft + parentWidth + parentPaddingL + parentPaddingR - toolbarLeft - toolbarWidth) + 'px');
 				}
 				else if( parentLeft < width ){
