@@ -548,23 +548,22 @@ var CONFIG  = require('../../config.js')
 
 							// 判断是否有临时数据
 							if( tempId ){   // 已有临时数据 添加到 reader_bookmark 表中
-								result = {
-									url: url
-									, title: title
-									, source: source
-									, tags: tags
-									, userId: user.id
-								};
+								data.source = source;
+								result = data;
 							}
 							else{   // 没有相关数据 抓取 整理数据
 								result = ReaderHandler.crawlerArticle( url );
 							}
 
-							result = result.then(function(rs){
-								rs.url = url;
-								rs.source = source;
+							result = result.then(function(data){
+								if( !data.url ){
+									data.url = url;
+								}
+								if( !data.source ){
+									data.source = source;
+								}
 
-								return ReaderHandler.newBookmark(user, rs);
+								return ReaderHandler.newBookmark(user, data);
 							});
 						}
 

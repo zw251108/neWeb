@@ -176,7 +176,7 @@ web.get('/user/resume/workHistory', function(req, res){
 		}
 		, job: {
 			title: 'Web 前端工程师'
-			, desc: ''
+			, summary: '正在努力'
 		}
 	}, {
 		start: '2015-03'
@@ -187,7 +187,7 @@ web.get('/user/resume/workHistory', function(req, res){
 		}
 		, job: {
 			title: 'Web 前端工程师'
-			, desc: ''
+			, summary: '公司出问题，每个人都是有责任的，但是权利越大，责任越大'
 		}
 	}, {
 		start: '2014-11'
@@ -198,7 +198,7 @@ web.get('/user/resume/workHistory', function(req, res){
 		}
 		, job: {
 			title: 'Web 前端工程师'
-			, desc: ''
+			, desc: '不重视技术的人，也不会有远见'
 		}
 	}, {
 		start: '2013-04'
@@ -209,7 +209,7 @@ web.get('/user/resume/workHistory', function(req, res){
 		}
 		, job: {
 			title: 'Web 前端工程师'
-			, desc: ''
+			, desc: 'talk less,do more'
 		}
 	}, {
 		start: '2012-04'
@@ -220,7 +220,7 @@ web.get('/user/resume/workHistory', function(req, res){
 		}
 		, job: {
 			title: 'Web 前端工程师'
-			, desc: ''
+			, desc: '不要盲目扩张，至少要保证资金链'
 		}
 	}, {
 		start: '2009-10'
@@ -231,7 +231,7 @@ web.get('/user/resume/workHistory', function(req, res){
 		}
 		, job: {
 			title: 'PHP 开发工程师'
-			, desc: ''
+			, desc: '创业很艰难，没有目标的创业是不可能的'
 		}
 	}]);
 	res.end();
