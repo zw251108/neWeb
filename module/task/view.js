@@ -10,13 +10,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 
 	, TagView   = require('../tag/view.js')
 
-	, dateFormat = function(date){
-		var m = date.getMonth() +1
-			, d = date.getDate()
-			;
-
-		return date.getFullYear() +'-'+ (m > 9 ? m : '0'+ m) +'-'+ (d > 9 ? d : '0'+ d)
-	}
+	, Tools     = require('../tools.js')
 
 	, tabTpl    = emmetTpl({
 		template: 'a.tab[data-tab=%tabData%]{%tabName%}'
@@ -135,16 +129,9 @@ var getEmmet    = require('../emmet/getEmmet.js')
 							day = day - week +1;
 
 							date = new Date(date.getFullYear(), month, day);
-
-							day = date.getDate();
-							month = date.getMonth();
 						}
 
-						month += 1;
-						month = month > 9 ? month : '0'+ month;
-						day = day > 9 ? day : '0'+ day;
-
-						result = date.getFullYear() +'-'+ month +'-'+ day;
+						result = Tools.dateFormat( date );
 					}
 				}
 
@@ -187,16 +174,9 @@ var getEmmet    = require('../emmet/getEmmet.js')
 							day = day - week + 7;
 
 							date = new Date(date.getFullYear(), month, day);
-
-							day = date.getDate();
-							month = date.getMonth();
 						}
 
-						month += 1;
-						month = month > 10 ? month : '0' + month;
-						day = day > 10 ? day : '0' + day;
-
-						result = date.getFullYear() + '-' + month + '-' + day;
+						result = Tools.dateFormat( date );
 					}
 				}
 

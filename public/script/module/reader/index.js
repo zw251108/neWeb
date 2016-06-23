@@ -49,7 +49,7 @@ require(['../../config'], function(config){
 			})
 			, feedTpl = $.template({
 				template: 'section#reader_%id%.reader_section.section' +
-					'>a[href=%html_url% data-feed=%xml_url% data-id=%id%]' +
+					'>a[href=%url% data-feed=%feed% data-id=%id%]' +
 						'>h3.section_title{%name%}' +
 							'>i.icon.icon-up' +
 					'^^hr' +
@@ -177,78 +177,59 @@ require(['../../config'], function(config){
 		socket.register({
 			'reader/add': function(data){
 
-				if( 'error' in data ){
+				if( data.msg !== 'Done' ){
 					msgPopup.showMsg( data.msg );
 				}
 				else{
-					$reader.find('[data-feed="'+ data.info.xml_url +'"]').replaceWith( feedTpl(data.info).join('') );
+					// todo 数组
+					$.each(data.data, function(i, d){
+						$reader.find('[data-feed="'+ d.feed +'"]').replaceWith( feedTpl(d).join('') );
+					});
 				}
 			}
 			, 'reader/feed': function(data){
-				var id
-					;
 
-				if( 'error' in data ){
+				if( data.msg !== 'Done' ){
 					msgPopup.showMsg( data.msg );
 				}
 				else{
-					data = data.info;
-					id = data.id;
-					data = data.data;
-
-					$reader.find('#reader_'+ id).find('ul').html( articleTpl(data).join('') );
+					// todo 数组
+					$.each(data.data, function(i, d){
+						$reader.find('#reader_'+ d.id).find('ul').html( articleTpl(d.data).join('') );
+					});
 				}
 			}
 			, 'reader/search': function(data){
-				var count = data.count
-					;
 
-				data = data.data;
-
-				if( count ){
-					$reader.find('.module_content').html( feedTpl(data).join('') );
-					// todo 重置页码
+				if( data.msg !== 'Done' ){
+					msgPopup.showMsg( data.msg );
 				}
 				else{
-					// todo 显示未搜索到结果
+					// todo 数组
+					$reader.find('.module_content').html( feedTpl(data.data).join('') );
 				}
 			}
-			//, 'reader/article/bookmark': function(data){
-			//	var info = data.info || {}
-			//		, tempId = info.tempId
-			//		, $target = tempId ? $reader.find('#'+ tempId) : null
-			//		;
-			//
-			//	if( $target ){
-			//		$target.data('bookmarkId', info.id).attr('id', 'readerArt'+ info.id);
-			//		$target.find('.icon-bookmark').toggleClass('icon-bookmark icon-bookmark-full').text('已加书签');
-			//		$target.find('div.tagsArea').html(info.tags ? '<span class="tag">'+ info.tags.split(',').join('</span><span class="tag">') +'</span>' : '');
-			//	}
-			//
-			//	if( 'error' in data ){
-			//		msgPopup.showMsg( data.msg );
-			//	}
-			//}
 			, 'reader/bookmark/add': function(data){
-				var info = data.info
-					, tempId
+				var tempId
 					, $target
 					;
 
-				if( info ){
-					tempId = info.tempId;
-					$target = tempId ? $reader.find('#'+ tempId) : null;
-
-					if( $target ){
-						$target.data( info ).attr('id', 'readerArt'+ info.id)
-							.find('.icon-bookmark').toggleClass('icon-bookmark icon-bookmark-full').text('已加书签')
-							.end()
-							.find('div.tagsArea').html(info.tags ? '<span class="tag">'+ info.tags.split(',').join('</span><span class="tag">') +'</span>' : '');
-					}
-				}
-
-				if( 'error' in data ){
+				if( data.msg !== 'Done' ){
 					msgPopup.showMsg( data.msg );
+				}
+				else{
+					// todo 数组
+					$.each(data.data, function(i, d){
+						tempId = d.tempId;
+						$target = tempId ? $reader.find('#'+ tempId) : null;
+
+						if( $target ){
+							$target.data( d ).attr('id', 'readerArt'+ d.id)
+								.find('.icon-bookmark').toggleClass('icon-bookmark icon-bookmark-full').text('已加书签')
+								.end()
+								.find('div.tagsArea').html(d.tags ? '<span class="tag">'+ d.tags.split(',').join('</span><span class="tag">') +'</span>' : '');
+						}
+					});
 				}
 			}
 		});

@@ -241,14 +241,6 @@ var db  = require('../db.js')
 				, data: {
 					xmlUrl: url
 				}
-			}).then(function(rs){
-				var isExist = false;
-
-				if( rs && rs.length ){
-					isExist = true;
-				}
-
-				return isExist;
 			});
 		}
 
@@ -463,30 +455,7 @@ var db  = require('../db.js')
 			});
 		}
 
-		, isExistBookmark: function(url
-			//, returnData
-		){
-			//var result = db.handle({
-			//		sql: SQL.bookmarkIsExist
-			//		, data: {
-			//			url: url
-			//		}
-			//	})
-			//	;
-			//
-			//if( !returnData ){
-			//	result = result.then(function(rs){
-			//		var isExist = false
-			//			;
-			//
-			//		if( rs && rs.length ){
-			//			isExist = true;
-			//		}
-			//
-			//		return isExist;
-			//	});
-			//}
-
+		, isExistBookmark: function(url){
 			return db.handle({
 				sql: SQL.bookmarkIsExist
 				, data: {
@@ -494,44 +463,7 @@ var db  = require('../db.js')
 				}
 			});
 		}
-		, isExistUserBookmark: function(bookmarkId, userId
-			//, returnData
-		){
-			//var result = db.handle({
-			//	sql: SQL.userBookmarkIsExist
-			//	, data: {
-			//		bookmarkId: bookmarkId
-			//		, userId: userId
-			//	}
-			//})
-			////	.then(function(rs){
-			////	var result
-			////		;
-			////
-			////	if( rs && rs.length ){
-			////		result = Promise.resolve(rs[0]);
-			////	}
-			////	else{
-			////		result = Promise.reject();
-			////	}
-			////
-			////	return result;
-			////})
-			//	;
-			//
-			//if( !returnData ){
-			//	result = result.then(function(rs){
-			//		var isExist = false
-			//			;
-			//
-			//		if( rs && rs.length ){
-			//			isExist = true;
-			//		}
-			//
-			//		return isExist;
-			//	});
-			//}
-
+		, isExistUserBookmark: function(bookmarkId, userId){
 			return db.handle({
 				sql: SQL.userBookmarkIsExist
 				, data: {

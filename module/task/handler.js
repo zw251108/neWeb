@@ -26,14 +26,7 @@ var CONFIG = require('../../config.js')
 
 			date = new Date(date.getFullYear(), month, day);
 
-			day = date.getDate();
-			month = date.getMonth();
-
-			month += 1;
-			month = month > 9 ? month : '0' + month;
-			day = day > 9 ? day : '0' + day;
-
-			return date.getFullYear() + '-' + month + '-' + day;
+			return TaskHandler.dateFormat( date );
 		}
 		, weekEndDate: function(){
 			var date = new Date()
@@ -46,14 +39,7 @@ var CONFIG = require('../../config.js')
 
 			date = new Date(date.getFullYear(), month, day);
 
-			day = date.getDate();
-			month = date.getMonth();
-
-			month += 1;
-			month = month > 9 ? month : '0' + month;
-			day = day > 9 ? day : '0' + day;
-
-			return date.getFullYear() + '-' + month + '-' + day;
+			return TaskHandler.dateFormat( date );
 		}
 		, todayDate: function(d){
 			var date = new Date()

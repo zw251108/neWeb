@@ -29,7 +29,6 @@ define('bookmarkAdd', ['jquery', 'global', 'socket', 'msgPopup', 'template'], fu
 
 		if( data.msg !== 'Done' ){
 			msgPopup.showMsg( data.msg );
-			//alert( data.msg );
 
 			$bookmark.find('.module_content article.article[data-target]:eq(0)').remove();
 		}

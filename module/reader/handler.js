@@ -9,6 +9,8 @@ var CONFIG  = require('../../config.js')
 	, UserHandler   = require('../user/handler.js')
 	, TagHandler    = require('../tag/handler.js')
 
+	, Tools = require('../tools.js')
+
 	, ReaderModel = require('./model.js')
 	, ReaderError   = require('./error.js')
 	, ReaderHandler = {
@@ -16,6 +18,8 @@ var CONFIG  = require('../../config.js')
 		getError: function(msg){
 			return Promise.reject( new ReaderError(msg) );
 		}
+
+		, datetimeFormat: Tools.datetimeFormat
 
 		, getSource: function(url){
 			var source = Url.parse( url );
@@ -235,7 +239,7 @@ var CONFIG  = require('../../config.js')
 				};
 			}
 			else{
-				result = Promise.reject( new ReaderError('获取内容失败') );
+				result = ReaderHandler.getError('获取内容失败');
 			}
 
 			return result;
@@ -256,7 +260,7 @@ var CONFIG  = require('../../config.js')
 				;
 
 			if( isGuest ){
-				execute = ReaderHandler.getError('用户尚未登录');
+				execute = UserHandler.getError('用户尚未登录');
 			}
 			else{
 				if( keyword ){
@@ -326,6 +330,64 @@ var CONFIG  = require('../../config.js')
 
 			return execute;
 		}
+		, getFeedList: function(user, query){
+			var execute
+				, feed = query.feed
+				, isGuest = UserHandler.isGuest( user )
+				;
+
+			if( isGuest ){
+				execute = UserHandler.getError('用户尚未登录');
+			}
+			else{
+				// todo 验证 feed
+				if( feed ){
+					execute = ReaderHandler.crawler( feed ).then( ReaderHandler.handleFeed ).then(function(rs){
+						var datetime
+							, today
+							, type
+							, result
+							;
+
+						if( rs && rs.length ){
+							datetime = rs[0].datetime;
+							today = datetime ? datetime : new Date();
+							type = typeof today;
+
+							if( type === 'string' || type === 'number' ){
+								today = new Date( datetime );
+							}
+
+							if( !(today instanceof Date) || today.toString() === 'Invalid Date' ){
+								today = new Date();
+							}
+
+							datetime = ReaderHandler.datetimeFormat( today );
+
+							// 更新最后发布时间 为异步操作 不关心结果
+							ReaderModel.updateReaderPubById(datetime, query.id);
+
+							result = rs;
+						}
+						else{
+							result = ReaderHandler.getError('数据分析失败');
+						}
+
+						return result;
+					}).then(function(rs){
+						return {
+							id: query.id
+							, data: rs
+						};
+					});
+				}
+				else{
+					execute = ReaderHandler.getError('缺少参数 feed');
+				}
+			}
+
+			return execute;
+		}
 
 		, getBookmarkList: function(user, query){
 			var execute
@@ -340,7 +402,7 @@ var CONFIG  = require('../../config.js')
 				;
 
 			if( isGuest ){
-				execute = ReaderHandler.getError('用户尚未登录');
+				execute = UserHandler.getError('用户尚未登录');
 			}
 			else{
 				if( keyword ){
@@ -420,9 +482,27 @@ var CONFIG  = require('../../config.js')
 			return execute;
 		}
 
+		, isExistReader: function(user, query, returnInfo){
+			var execute = ReaderModel.isExistReader(query.feed);
+
+			if( !returnInfo ){
+				execute = execute.then(function(rs){
+					var result = false
+						;
+
+					if( rs && rs.length ){
+						result = true;
+					}
+
+					return result;
+				});
+			}
+
+			return execute;
+		}
 
 		, isExistBookmark: function(user, query, returnInfo){
-			var execute = ReaderModel.isExistBookmark(query.url, true);
+			var execute = ReaderModel.isExistBookmark( query.url );
 
 			if( !returnInfo ){
 				execute = execute.then(function(rs){
@@ -440,7 +520,7 @@ var CONFIG  = require('../../config.js')
 			return execute;
 		}
 		, isExistUserBookmark: function(user, query, returnInfo){
-			var execute = ReaderModel.isExistUserBookmark(query.bookmarkId, user.id, true);
+			var execute = ReaderModel.isExistUserBookmark(query.bookmarkId, user.id);
 
 			if( !returnInfo ){
 				execute = execute.then(function(rs){
@@ -458,6 +538,34 @@ var CONFIG  = require('../../config.js')
 			return execute;
 		}
 
+		, newReader: function(user, data){
+			var execute
+				, isGuest = UserHandler.isGuest( user )
+				;
+
+			if( isGuest ){
+				execute = UserHandler.getError('用户尚未登录');
+			}
+			else{
+				data.userId = user.id;
+				execute = ReaderModel.addReader(data).then(function(rs){
+					var result
+						;
+
+					if( rs && rs.length ){
+						data.id = rs.insertId;
+						result = data;
+					}
+					else{
+						result = ReaderHandler.getError('reader 保存失败');
+					}
+
+					return result;
+				});
+			}
+
+			return execute;
+		}
 		, newBookmark: function(user, data){
 			var execute
 				, isGuest = UserHandler.isGuest( user )
@@ -520,12 +628,47 @@ var CONFIG  = require('../../config.js')
 			return execute;
 		}
 
+		, addReader: function(user, data){
+			var execute
+				, feed = data.feed
+				, isGuest = UserHandler.isGuest( user )
+				;
+
+			if( isGuest ){
+				execute = ReaderHandler.getError('用户尚未登录');
+			}
+			else{
+				// todo 验证 feed
+				if( feed ){
+					execute = ReaderModel.isExistReader(feed, true).then(function(exist){
+						var result
+							;
+
+						if( exist ){
+							result = ReaderHandler.getError('reader 数据已存在');
+						}
+						else{
+							if( !data.tags ){
+								data.tags = '';
+							}
+
+							result = ReaderHandler.newReader(user, data);
+						}
+
+						return result;
+					});
+				}
+				else{
+					execute = ReaderHandler.getError('缺少参数 feed');
+				}
+			}
+
+			return execute;
+		}
 		, addBookmark: function(user, data){
 			var execute
 				, url       = data.url
 				, tempId    = data.tempId
-				, title     = data.title
-				, tags      = data.tags
 				, isGuest = UserHandler.isGuest( user )
 				, source = ReaderHandler.getSource( url )
 				;
@@ -595,7 +738,76 @@ var CONFIG  = require('../../config.js')
 					});
 				}
 				else{
-					execute = Promise.reject( new ReaderError('缺少参数 url') );
+					execute = ReaderHandler.getError('缺少参数 url');
+				}
+			}
+
+			return execute;
+		}
+
+		, updateBookmarkRead: function(user, data){
+			var execute
+				, id            = data.id
+				, bookmarkId    = data.bookmarkId
+				, url           = data.url
+				, tags          = data.tags || ''
+				, score         = data.score || 0
+				, oldScore      = data.oldScore || 0
+				, oldStatus     = data.oldStatus || 0
+				, title         = data.title || ''
+				, isGuest = UserHandler.isGuest( user )
+				;
+
+			if( isGuest ){
+				execute = UserHandler.getError('用户尚未登录')
+			}
+			else{
+				if( id ){
+					if( /^\d+$/.test(id) ){
+						// 合法数据库 id
+						// user_reader_bookmark 表中已有数据 操作为更新数据
+						// 更新 reader_bookmark 表 total_score num_reader 字段
+
+						execute = Promise.all([
+							ReaderModel.updateBookmarkRead(bookmarkId, title, score - oldScore, +oldStatus? 0 : 1)
+							, ReaderModel.updateUserBookmarkRead(id, title, score, tags, 1, +oldStatus)
+						]).then(function(rs){
+							var result
+								, r1 = rs[0]
+								, r2 = rs[1]
+								;
+
+							if( r1 && r1.changedRows && r2 && r2.changedRows ){
+								data.userId = user.id;
+								result = data;
+							}
+							else{
+								result = ReaderHandler.getError('该文章已被读过');
+							}
+
+							return result;
+						});
+					}
+					else if( url ){ // id 为 tempId，使用 url
+
+						// 判断 reader_bookmark 表中是否存在该 url
+						if( bookmarkId ){   // 已存在
+							execute = Promise.resolve( data );
+						}
+						else{
+							execute = ReaderHandler.newBookmark(user, data);
+						}
+
+						execute = execute.then(function(data){
+							return ReaderHandler.newUserBookmark(user, data);
+						});
+					}
+					else{
+						execute = ReaderHandler.getError('缺少参数 id || url');
+					}
+				}
+				else{
+					execute = ReaderHandler.getError('缺少参数 id');
 				}
 			}
 

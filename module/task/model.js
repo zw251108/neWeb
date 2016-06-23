@@ -4,6 +4,8 @@ var db = require('../db.js')
 	, config    = require('../../config.js')
 	, error = require('../error.js')
 
+	, Tools = require('../tools.js')
+
 	, TABLE_NAME = 'task'
 	, USER_TASK = 'user_task'
 
@@ -116,13 +118,7 @@ var db = require('../db.js')
 	}
 
 	, TaskModel = {
-		dateFormat: function(date){
-			var m = date.getMonth() +1
-				, d = date.getDate()
-				;
-
-			return date.getFullYear() +'-'+ (m > 9 ? m : '0'+ m) +'-'+ (d > 9 ? d : '0'+ d);
-		}
+		dateFormat: Tools.dateFormat
 
 		/**
 		 * 获取周期性任务

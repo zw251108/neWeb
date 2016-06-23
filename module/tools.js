@@ -1,17 +1,38 @@
 'use strict';
 
 var Tools = {
+	prefixZero: function(num){
+		return num > 9 ? num : '0'+ num;
+	}
+
 	// 处理时间格式
-	dateFormat: function(date){
-		var m = date.getMonth() + 1
-			, d = date.getDate()
+	, dateFormat: function(date){
+		var m, d
 			;
 
 		if( !date || !(date instanceof Date) ){
 			date = new Date();
 		}
 
-		return date.getFullYear() + '-' + (m > 9 ? m : '0' + m) + '-' + (d > 9 ? d : '0' + d);
+		m = date.getMonth() +1;
+		d = date.getDate();
+
+		return date.getFullYear() +'-'+ Tools.prefixZero( m ) +'-'+ Tools.prefixZero( d );
+	}
+	, datetimeFormat: function(date){
+		var m, d, h, mm, s;
+
+		if( !date || !(date instanceof Date) ){
+			date = new Date();
+		}
+
+		m = date.getMonth() +1;
+		d = date.getDate();
+		h = date.getHours();
+		mm = date.getMinutes();
+		s = date.getSeconds();
+
+		return date.getFullYear() +'-'+ Tools.prefixZero( m ) +'-'+ Tools.prefixZero( d ) +' '+ Tools.prefixZero( h ) +':'+ Tools.prefixZero( mm ) +':'+ Tools.prefixZero( s );
 	}
 	// 复制继承对象
 	, extend: function(target, ext){

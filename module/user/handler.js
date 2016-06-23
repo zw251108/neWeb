@@ -2,6 +2,8 @@
 
 var utils = require('utility')
 
+	, Tools = require('../tools.js')
+
 	, UserModel   = require('./model.js')
 	, UserError = require('./error.js')
 
@@ -10,6 +12,8 @@ var utils = require('utility')
 		getError: function(msg){
 			return Promise.reject( new UserError(msg) );
 		}
+
+		, dateFormat: Tools.dateFormat
 
 		// 获取 session
 		, getUserFromSession: {
@@ -113,11 +117,9 @@ var utils = require('utility')
 				}).then(function(rs){
 					// 基于 email + 用户名 + 密码 + 日期 生成 md5 值
 					var date = new Date()
-						, m = date.getMonth() +1
-						, d = date.getDate()
 						;
 
-					rs.date = date.getFullYear() +'-'+ (m > 9 ? m : '0'+ m) +'-'+ (d > 9 ? d : '0'+ d);
+					rs.date = UserHandler.dateFormat( date );
 
 					rs.token = utils.md5(rs.email + rs.username + rs.password + date);
 					delete rs.password;
