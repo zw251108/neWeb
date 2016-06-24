@@ -59,7 +59,10 @@ define(['jquery', 'global', 'socket', 'tag', 'msgPopup', 'template'], function($
 			, id = info.id
 			;
 
-		if( !('error' in data) ){
+		if( data.msg !== 'Done' ){
+
+		}
+		else{
 			$bookmark
 				.find('#'+ (tempId || 'readerArt'+ id)).data('bookmarkId', id).attr('id', 'readerArt'+ id)
 				.find('.icon-checkbox').toggleClass('icon-checkbox icon-checkbox-checked').attr('title', '已读').text('已读')

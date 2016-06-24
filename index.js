@@ -108,6 +108,7 @@ web.use('/script/ui/jquery.emmetTpl.js', express.static(__dirname + '/module/emm
 web.use('/font',    express.static(__dirname + '/public/font') );   // 字体图标
 web.use('/image',   express.static(__dirname + '/public/image') );  // 图片
 web.use('/style',   express.static(__dirname + '/public/style') );  // 样式
+web.use('/less',    express.static(__dirname + '/less') );  // 样式 source map
 web.use('/media',   express.static(__dirname + '/public/media') );  // 多媒体文件
 
 //web.use('/validator.html',    express.static(__dirname + '/validator.html') );  //

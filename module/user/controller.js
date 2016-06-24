@@ -198,7 +198,7 @@ web.get('/user/resume/workHistory', function(req, res){
 		}
 		, job: {
 			title: 'Web 前端工程师'
-			, desc: '不重视技术的人，也不会有远见'
+			, summary: '不重视技术的人，也不会有远见'
 		}
 	}, {
 		start: '2013-04'
@@ -209,7 +209,7 @@ web.get('/user/resume/workHistory', function(req, res){
 		}
 		, job: {
 			title: 'Web 前端工程师'
-			, desc: 'talk less,do more'
+			, summary: 'talk less,do more'
 		}
 	}, {
 		start: '2012-04'
@@ -220,7 +220,7 @@ web.get('/user/resume/workHistory', function(req, res){
 		}
 		, job: {
 			title: 'Web 前端工程师'
-			, desc: '不要盲目扩张，至少要保证资金链'
+			, summary: '不要盲目扩张，至少要保证资金链'
 		}
 	}, {
 		start: '2009-10'
@@ -231,7 +231,7 @@ web.get('/user/resume/workHistory', function(req, res){
 		}
 		, job: {
 			title: 'PHP 开发工程师'
-			, desc: '创业很艰难，没有目标的创业是不可能的'
+			, summary: '创业很艰难，没有目标的创业是不可能的'
 		}
 	}]);
 	res.end();

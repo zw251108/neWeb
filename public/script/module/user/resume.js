@@ -123,12 +123,15 @@ define('timeline', ['jquery', 'global', 'd3'], function($, g, d3){
 			})
 			, time = d3.time.scale().domain([start, end]).range([h -10, 0])
 			, $timeline = $('<div class="timeline_content"></div>').appendTo(opts.selector).height(h)
+			, $line
 			, $timeNodes
 			;
 
 		$timeline.append('<div class="timeline_line"></div>' +
 			'<div class="timeline_end">至今</div>' +
 			'<div class="timeline_start">'+ start.getFullYear() +'-'+ $.fillZero(start.getMonth() + 1, 2) +'</div>');
+
+		$line = $timeline.find('.timeline_line')
 
 		//$timeline.append(
 		$.each(data, function(i, d){
@@ -147,18 +150,29 @@ define('timeline', ['jquery', 'global', 'd3'], function($, g, d3){
 			e = e.split('-');
 
 			d.start = new Date(s[0], s[1]-1);
-			d.end = d.end ? new Date(e[0], e[1]-1) : new Date();
+
+			if( d.end ){
+				d.end = d.end ? new Date(e[0], e[1]-1) : new Date();
 
 
-			top = Math.ceil( time( d.end ) -10 );
-			$node.css('top', top +'px').height( Math.ceil( time(d.start) - top + 10 ) );
+				top = Math.ceil( time( d.end ) -10 );
+				console.log(top, time(d.start))
+				$('<i class="timeline_point"></i>').data('datetime', e).css('top', (top + 38) +'px').appendTo( $line );
+			}
+
+			$('<i class="timeline_point"></i>').data('datetime', s).css('top', (time(d.start) +38) +'px').appendTo( $line );
+
+			$node.css('top', (top ) +'px')
+				//.height( Math.ceil( time(d.start) - top + 10 ) );
 
 			!$node.data('end') && $node.addClass('timeline_now');
 
 			$node.append('<h4>'+ d.job.title +'<span class="subTitle">'+ d.co.name +'</span></h4>' +
 				'<div class="datetime datetime-start">'+ $node.data('start') +'</div>' +
-				($node.data('end') ? '<div class="datetime datetime-end">'+ $node.data('end') +'</div>' : '') +
-				'<div class="desc">'+ d.job.desc +'</div>');
+				($node.data('end') ? '<div class="datetime datetime-end">'+ $node.data('end') +'</div>' : '')
+				+
+				'<blockquote class="summary">'+ d.job.summary +'</blockquote>'
+			);
 
 
 			//return html +

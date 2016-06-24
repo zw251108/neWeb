@@ -338,6 +338,10 @@ module.exports = function(grunt){
 					//, strictMath: true
 
 					compress: true
+					, sourceMap: true
+					, sourceMapURL: '/style/style.css.map'
+					, sourceMapRootpath: '/'
+					, sourceMapFilename: 'public/style/style.css.map'
 				},
 				files: {
 					'public/style/style.css': 'less/style.less'
