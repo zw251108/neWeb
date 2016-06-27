@@ -1,47 +1,48 @@
 'use strict';
 
-var web         = require('../web.js')
+var CONFIG    = require('../../config.js')
+	, web         = require('../web.js')
 	, socket    = require('../socket.js')
-	, error     = require('../error.js')
-
-	, config    = require('../../config.js')
 
 	, modules   = require('../module.js')
 	, admin     = require('../admin.js')
 	, data      = require('../data.js')
 	, menu      = require('../menu.js')
 
-	, Model = require('./model.js')
-	, View  = require('./view.js')
-	, Admin = require('./admin.view.js')
-	, EditorError   = require('./error.js')
+	, UserHandler   = require('../user/handler.js')
 
 	// 外部数据模块引用
+	, TagHandler    = require('../tag/handler.js')
 	, LibModel      = require('../bower/model.js')
-	, TagModel      = require('../tag/model.js')
-	, UserHandler   = require('../user/handler.js')
 
 	, ImageHandler  = require('../image/handler.js')
 	, Image         = require('../image/image.js')
 	, ImageModel    = require('../image/model.js')
+
+
+	, Model = require('./model.js')
+	, CodeView  = require('./view.js')
+	, CodeAdminView = require('./admin.view.js')
+	, CodeHandler   = require('./handler.js')
+	, EditorError   = require('./error.js')
 
 	, DEMO_IMG_UPLOAD   = '/editor/demoImgUpload'
 	, SET_MORE          = '/editor/setMore'
 	;
 
 modules.register({
-	id: 'editor'
+	id: 'code'
 	, metroSize: 'tiny'
 	, title: '代码库 code'
 	, icon: 'code'
-	, href: 'editor/'
+	, href: 'code/'
 	, hrefTitle: '代码列表'
 }, {
-	id: 'code'
+	id: 'editor'
 	, metroSize: 'tiny'
 	, title: '编辑器 editor'
 	, icon: 'editor'
-	, href: 'editor/code?id=0'
+	, href: 'code/editor?id=0'
 	, hrefTitle: '新建代码'
 });
 
@@ -49,15 +50,15 @@ menu.register({
 	id: 'editor'
 	, title: '代码库 code'
 	, icon: 'code'
-	, href: 'editor/'
+	, href: 'code/'
 }, {
 	id: 'code'
 	, title: '编辑器 editor'
 	, icon: 'editor'
-	, href: 'editor/code?id=0'
+	, href: 'code/editor?id=0'
 });
 
-web.get('/editor/', function(req, res){
+web.get('/code/', function(req, res){
 	var query = req.query || {}
 		, page = query.page || 1
 		, size = query.size || 20
@@ -148,12 +149,12 @@ web.get('/editor/', function(req, res){
 			});
 		});
 	}
-	execute.then( View.editorList ).then(function(html){
-		res.send( config.docType.html5 + html );
+	execute.then( CodeView.editorList ).then(function(html){
+		res.send( CONFIG.docType.html5 + html );
 		res.end();
 	});
 });
-web.get('/editor/code', function(req, res){
+web.get('/code/editor', function(req, res){
 	var query = req.query || {}
 		, id = query.id
 		, execute
@@ -174,13 +175,13 @@ web.get('/editor/code', function(req, res){
 		});
 	}
 
-	execute.then( View.editor ).then(function(html){
-		res.send( config.docType.html5 + html );
+	execute.then( CodeView.editor ).then(function(html){
+		res.send( CONFIG.docType.html5 + html );
 		res.end();
 	});
 });
 
-web.post('/editor/setMore', ImageHandler.uploadMiddleware.single('preview'), function(req, res){
+web.post('/code/setMore', ImageHandler.uploadMiddleware.single('preview'), function(req, res){
 	var body = req.body || {}
 		, type = body.type
 		, id = body.id
@@ -260,7 +261,7 @@ web.post('/editor/setMore', ImageHandler.uploadMiddleware.single('preview'), fun
 		res.end();
 	});
 });
-web.post('/editor/demoImgUpload', ImageHandler.uploadMiddleware.single('image'), function(req, res){
+web.post('/code/demoImgUpload', ImageHandler.uploadMiddleware.single('image'), function(req, res){
 	var body = req.body || {}
 		, type = body.type
 		, file = req.file

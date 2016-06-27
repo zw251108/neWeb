@@ -8,11 +8,13 @@ var getEmmet    = require('../emmet/getEmmet.js')
 
 	, pagination    = require('../pagination.js')
 
-	, CodeModel = require('../editor/model.js')
+	, CodeHandler = require('../code/handler.js')
 
 	, ReaderAdminView = {
 		bookmark: function(){
-			return CodeModel.getEditorByName('admin/reader/bookmark').then(function(rs){
+			return CodeHandler.getCode(user, {
+				name: 'admin/tag'
+			}).then(function(rs){
 				var code = {}
 					;
 

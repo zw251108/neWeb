@@ -1,23 +1,20 @@
 'use strict';
 
-var web         = require('../web.js')
+var CONFIG    = require('../../config.js')
+	, web         = require('../web.js')
 	, socket    = require('../socket.js')
-	, error     = require('../error.js')
 
-	, config    = require('../../config.js')
-
+	, modules   = require('../module.js')
 	, admin     = require('../admin.js')
 	, data      = require('../data.js')
-
-	, Model = require('./model.js')
-	, View  = require('./view.js')
-	, Admin = require('./admin.view.js')
-	, TagError = require('./error.js')
+	, menu      = require('../menu.js')
 
 	, UserHandler  = require('../user/handler.js')
 
-	, TAG_INDEX = {}
-	, TAG_CACHE = []
+	, Model = require('./model.js')
+	, TagView       = require('./view.js')
+	, TagAdminView  = require('./admin.view.js')
+	, TagHandler    = require('./handler.js')
 	;
 
 /**
@@ -31,8 +28,11 @@ admin.register({
 	, href: 'tag/'
 });
 web.get('/admin/tag/', function(req, res){
-	Admin.tag().then(function(html){
-		res.send( config.docType.html5 + html );
+	var user = UserHandler.getUserFromSession.fromReq( req )
+		;
+
+	TagAdminView.tag( user ).then(function(html){
+		res.send( CONFIG.docType.html5 + html );
 		res.end();
 	});
 });
@@ -55,7 +55,7 @@ web.get('/data/tag', function(req, res){
 		});
 	}
 	else{
-		execute = Promise.reject( new TagError('不是 jsonp 格式调用') );
+		execute = TagHandler.getError('不是 jsonp 格式调用');
 	}
 
 	execute.catch(function(e){
@@ -121,7 +121,7 @@ socket.register({
 			});
 		}
 		else{
-			execute = Promise.reject( new TagError('缺少参数') );
+			execute = TagHandler.getError('缺少参数');
 		}
 
 		execute.catch(function(e){
@@ -158,8 +158,8 @@ socket.register({
 					};
 
 					// 标签数量添加
-					if( name in TAG_INDEX ){
-						TAG_CACHE[TAG_INDEX[name]] += 1;
+					if( name in TagHandler.TAG_INDEX ){
+						TagHandler.TAG_CACHE[TagHandler.TAG_INDEX[name]] += 1;
 					}
 					else{
 						// todo 加 1
@@ -167,14 +167,14 @@ socket.register({
 					execute = send;
 				}
 				else{   // 该标签不存在
-					execute = Promise.reject( new TagError(name + ' 标签不存在') );
+					execute = TagHandler.getError(name + ' 标签不存在');
 				}
 
 				return execute;
 			});
 		}
 		else{
-			execute = Promise.reject( new TagError('缺少参数') );
+			execute = TagHandler.getError('缺少参数');
 		}
 
 		execute.catch(function(e){

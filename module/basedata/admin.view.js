@@ -9,11 +9,11 @@ var CONFIG  = require('../../config.js')
 
 	, pagination    = require('../pagination.js')
 
-	, CodeHandler   = require('../editor/handler.js')
+	, CodeHandler   = require('../code/handler.js')
 
 	, BaseDataAdminView = {
-		province: function(){
-			return CodeHandler.getCode({}, {
+		province: function(user){
+			return CodeHandler.getCode(user, {
 				name: 'admin/basedata/province'
 			}).then(function(rs){
 				var code = {}

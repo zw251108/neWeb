@@ -151,6 +151,8 @@ admin.register({
 	, href: 'basedata/'
 });
 web.get('/admin/address', function(req, res){
+	var user = UserHandler.getUserFromSession.fromReq( req )
+		;
 	BaseDataAdminView.province().then(function(html){
 		res.send( CONFIG.docType.html5 + html );
 		res.end();

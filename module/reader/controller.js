@@ -14,13 +14,6 @@ var CONFIG      = require('../../config.js')
 	, ReaderView    = require('./view.js')
 	, ReaderAdminView   = require('./admin.view.js')
 	, ReaderHandler     = require('./handler.js')
-	, ReaderError       = require('./error.js')
-
-	, Url       = require('url')
-
-	, Model     = require('./model.js')
-
-	, Reader    = require('./reader.js')
 	;
 
 modules.register({
@@ -173,13 +166,6 @@ socket.register({
 		var topic = 'reader/search'
 			, query = data.query || {}
 			, user = UserHandler.getUserFromSession.fromSocket( socket )
-			, send = {
-				topic: 'reader/search'
-			}
-			, keyword = query.keyword
-			, page = query.page || 1
-			, size = query.size || 20
-			, execute
 			;
 
 		ReaderHandler.getReaderList(user, query).then(function(rs){
@@ -396,53 +382,29 @@ socket.register({
 		//});
 	}
 	, 'reader/bookmark/search': function(socket, data){
-		var send = {
-				topic: 'reader/bookmark/search'
-			}
+		var topic = 'reader/bookmark/search'
 			, query = data.query || {}
-			, keyword = query.keyword
-			, page = query.page || 1
-			, size = query.size || 20
-			, execute
+			, user = UserHandler.getUserFromSession.fromSocket( req )
 			;
 
-		if( keyword ){
-			execute = Model.searchBookmarkByTitle(keyword, page, size).then(function(rs){
-				var result
-					;
+		// 设置状态为未读
+		query.status = 0;
 
-				if( rs && rs.length ){
-					send.data = rs;
-
-					result = Model.countSearchBookmarkByTitle(keyword).then(function(count){
-						send.count = count;
-
-						return send;
-					});
-				}
-				else{
-					send.data = [];
-					send.count = 0;
-
-					result = send;
-				}
-
-				return result;
-			});
-		}
-		else{
-			execute = Promise.reject( new ReaderError('缺少参数') );
-		}
-
-		execute.catch(function(e){
+		ReaderHandler.getBookmarkList(user, query).then(function(data){
+			return {
+				topic: topic
+				, data: data.data
+				, msg: 'Done'
+			};
+		}, function(e){
 			console.log( e );
 
-			send.error = '';
-			send.msg = e.message;
-
-			return send;
-		}).then(function(send){
-			socket.emit('data', send);
+			return {
+				topic: topic
+				, msg: e.message
+			};
+		}).then(function(json){
+			socket.emit('data', json);
 		});
 	}
 	, 'reader/bookmark/filter': function(){}

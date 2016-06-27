@@ -9,11 +9,11 @@ var CONFIG      = require('../../config.js')
 	, data      = require('../data.js')
 	, menu      = require('../menu.js')
 
+	, UserHandler   = require('../user/handler.js')
+
 	, DocumentView  = require('./view.js')
 	, DocumentAdminView = require('./admin.view.js')
 	, DocumentHandler   = require('./handler.js')
-
-	, UserHandler   = require('../user/handler.js')
 	;
 
 modules.register({

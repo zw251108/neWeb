@@ -5,12 +5,12 @@ var config  = require('../../config.js')
 
 	, tpl   = require('../emmet/tpl.js')
 
-	, CodeModel  = require('../editor/model.js')
+	, CodeHandler = require('../code/handler.js')
 
 	, View = {
-		tag: function(){
-			return CodeModel.getEditorByName('admin/tag').then(function(rs){
-				return rs[0];
+		tag: function(user){
+			return CodeHandler.getCode(user, {
+				name: 'admin/tag'
 			}).then(function(rs){
 				var code = {}
 					;
