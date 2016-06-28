@@ -54,19 +54,19 @@ define(['jquery', 'global', 'socket', 'tag', 'msgPopup', 'template'], function($
 	tag.setAdd( $readPopup );
 
 	socket.register('reader/bookmark/read', function(data){
-		var info = data.info || {}
-			, tempId = info.tempId
-			, id = info.id
-			;
 
 		if( data.msg !== 'Done' ){
 
 		}
 		else{
-			$bookmark
-				.find('#'+ (tempId || 'readerArt'+ id)).data('bookmarkId', id).attr('id', 'readerArt'+ id)
-				.find('.icon-checkbox').toggleClass('icon-checkbox icon-checkbox-checked').attr('title', '已读').text('已读')
-				.end().find('.icon-bookmark').toggleClass('icon-bookmark icon-bookmark-full').text('已加书签');
+			// todo 数组
+			$.each(data.data, function(i, d){
+				$bookmark
+					.find('#'+ (d.tempId || 'readerArt'+ d.id)).data('bookmarkId', d.bookmarkId).attr('id', 'readerArt'+ d.id)
+					.find('.icon-checkbox').toggleClass('icon-checkbox icon-checkbox-checked').attr('title', '已读').text('已读')
+					.end().find('.icon-bookmark').toggleClass('icon-bookmark icon-bookmark-full').text('已加书签');
+			});
+
 		}
 	});
 

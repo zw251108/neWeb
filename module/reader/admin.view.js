@@ -11,9 +11,9 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	, CodeHandler = require('../code/handler.js')
 
 	, ReaderAdminView = {
-		bookmark: function(){
+		bookmark: function(user){
 			return CodeHandler.getCode(user, {
-				name: 'admin/tag'
+				name: 'admin/reader/bookmark'
 			}).then(function(rs){
 				var code = {}
 					;

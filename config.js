@@ -35,7 +35,7 @@ var CONFIG = {
 		'user'
 		, 'blog'
 		, 'document'
-		, 'editor'
+		, 'code'
 		, 'bower'
 		, 'reader'
 		, 'task'

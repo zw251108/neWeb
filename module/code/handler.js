@@ -20,7 +20,7 @@ var CONFIG = require('../../config.js')
 				;
 
 			// todo 权限判断
-			if( id !== '0' ){
+			if( id && id !== '0' ){
 				execute = CodeModel.getEditorById( id );
 			}
 			//else if( id === '0' ){

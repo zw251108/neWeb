@@ -15,7 +15,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	, PREVIEW_SIZE = 128
 
 	, codeTpl = emmetTpl({
-		template: getEmmet('editor/code.html')
+		template: getEmmet('code/code.html')
 		, filter: {
 			width: function(d){
 				var w = d.width
@@ -58,10 +58,10 @@ var getEmmet    = require('../emmet/getEmmet.js')
 		}
 	})
 	, codeEditTpl = emmetTpl({
-		template: getEmmet('editor/codeEdit.html')
+		template: getEmmet('code/codeEdit.html')
 	})
 	, demoImgUploadFormTpl = emmetTpl({
-		template: getEmmet('editor/demoImgUploadForm.html')
+		template: getEmmet('code/demoImgUploadForm.html')
 	})
 	, codeSetMoreFormTpl = emmetTpl({
 		template: 'form#setMoreForm[method=post action=%setMore% target=editorSetMoreRs enctype=multipart/form-data]' +
@@ -94,14 +94,14 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	})
 
 	, View = {
-		editorList: function(rs){
+		codeList: function(rs){
 			return tpl({
 				title: '代码库 code'
 				, main: {
 					moduleMain: {
-						id: 'editor'
+						id: 'code'
 						, icon: 'code'
-						, title: '编辑器 editor'
+						, title: '代码库 code'
 						, toolbar: [{
 							type: 'link',   id: 'newCode',  icon: 'file-code',  title: '新建代码', href: 'code?id=0'}, {
 							type: 'button', id: 'filter',   icon: 'filter',     title: '过滤'}, {
@@ -111,10 +111,10 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					}
 				}
 				, footer: {
-					nav: menu.current('editor')
+					nav: menu.current('code')
 				}
 				, script: {
-					main: '../script/module/editor/index'
+					main: '../script/module/code/index'
 					, src: '../script/lib/require.min.js'
 				}
 			});
@@ -159,7 +159,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					nav: menu.current('code')
 				}
 				, script: {
-					main: '../script/module/editor/code'
+					main: '../script/module/code/editor'
 					, src: '../script/lib/require.min.js'
 				}
 			});

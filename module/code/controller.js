@@ -149,7 +149,7 @@ web.get('/code/', function(req, res){
 			});
 		});
 	}
-	execute.then( CodeView.editorList ).then(function(html){
+	execute.then( CodeView.codeList ).then(function(html){
 		res.send( CONFIG.docType.html5 + html );
 		res.end();
 	});
@@ -303,10 +303,10 @@ web.post('/code/demoImgUpload', ImageHandler.uploadMiddleware.single('image'), f
 });
 
 // 编辑器 demo API
-web.get('/editor/demo/', function(req, res){
+web.get('/code/demo/', function(req, res){
 	res.end();
 });
-web.post('/editor/demo/', function(req, res){
+web.post('/code/demo/', function(req, res){
 	var body = req.body
 		, html = body.html
 		, css = body.css
@@ -340,14 +340,14 @@ web.post('/editor/demo/', function(req, res){
 		'</html>');
 	res.end();
 });
-web.get('/editor/demo/get', function(req, res){
+web.get('/code/demo/get', function(req, res){
 	var query = req.query
 		;
 
 	res.send( JSON.stringify(query) );
 	res.end();
 });
-web.post('/editor/demo/set', function(req, res){
+web.post('/code/demo/set', function(req, res){
 	var body = req.body
 		;
 

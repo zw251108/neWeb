@@ -426,7 +426,7 @@ web.get('/admin/reader/bookmark', function(req, res){
 	var user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
-	ReaderAdminView.bookmark().then(function(html){
+	ReaderAdminView.bookmark( user ).then(function(html){
 		res.send( CONFIG.docType.html5 + html );
 		res.end();
 	});
