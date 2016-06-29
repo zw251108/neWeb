@@ -53,10 +53,31 @@ require(['../../config'], function(config){
 	var r = require(config.requireConfig);
 	r(['jquery', 'global', 'socket', 'bookmarkAdd', 'bookmarkRead', 'searchBar', 'filterBox', config.dataSource.tag, 'template'], function($, g, socket, bookmarkAdd, bookmarkRead, searchBar, filterBox, tagsData){
 		var articleTpl = $.template({
-				template: 'article#readerArt%id%.article.reader_article>a[href=%url% title=%url% target=_blank]>h3.article_title{%title%}^hr+a.icon.icon-checkbox%readStatus%[href=read title=%readTitle%]{%readText%}+time.article_date[pubdate=pubdate datetime=%datetime%]{%datetime%}+div.tagsArea{%tags%}'
+				template: 'article#readerArt%id%.article.reader_article' +
+					'>a[href=%url% title=%url% target=_blank]' +
+						'>h3.article_title.icon.icon-document{%title%}' +
+					'^hr' +
+					'+div.article_score.%article_score_value%{%article_score%}' +
+					'+a.icon.icon-checkbox%readStatus%[href=read title=%readTitle%]{%readText%}' +
+					'+time.article_date[pubdate=pubdate datetime=%datetime%]{%datetime%}' +
+					'+div.tagsArea{%tags%}'
 				, filter: {
 					title: function(d){
 						return d.title || d.url;
+					}
+					, article_score: function(d){
+						var i = 0
+							, j = 5
+							, h = []
+							;
+						for(; i < j; i++){
+							h.push('<i class="icon icon-star'+ ( i < d.score ? '-full' : '' ) +'"></i>');
+						}
+
+						return h.join('');
+					}
+					, article_score_value: function(d){
+						return +d.status ? 'article_score_value' : '';
 					}
 					, readStatus: function(d){
 						return +d.status > 0 ? '-checked' : '';

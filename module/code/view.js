@@ -93,7 +93,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 		, filter: TagView.tagEditorFilter
 	})
 
-	, View = {
+	, CodeView = {
 		codeList: function(rs){
 			return tpl({
 				title: '代码库 code'
@@ -167,4 +167,4 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	}
 	;
 
-module.exports = View;
+module.exports = CodeView;

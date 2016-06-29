@@ -24,7 +24,7 @@ var CONFIG    = require('../../config.js')
 	, CodeView  = require('./view.js')
 	, CodeAdminView = require('./admin.view.js')
 	, CodeHandler   = require('./handler.js')
-	, EditorError   = require('./error.js')
+	, CodeError   = require('./error.js')
 
 	, DEMO_IMG_UPLOAD   = '/editor/demoImgUpload'
 	, SET_MORE          = '/editor/setMore'
@@ -235,14 +235,14 @@ web.post('/code/setMore', ImageHandler.uploadMiddleware.single('preview'), funct
 				};
 			}
 			else{
-				result = Promise.reject( new EditorError('设置失败') );
+				result = Promise.reject( new CodeError('设置失败') );
 			}
 
 			return result;
 		});
 	}
 	else{
-		execute = Promise.reject( new EditorError('缺少参数') );
+		execute = Promise.reject( new CodeError('缺少参数') );
 	}
 
 	// todo 处理 tag 数据
@@ -405,7 +405,7 @@ socket.register({
 			});
 		}
 		else{
-			execute = Promise.reject( new EditorError('缺少参数') );
+			execute = Promise.reject( new CodeError('缺少参数') );
 		}
 
 		execute.catch(function(e){
@@ -455,7 +455,7 @@ socket.register({
 			});
 		}
 		else{
-			execute = Promise.reject( new EditorError('缺少参数') );
+			execute = Promise.reject( new CodeError('缺少参数') );
 		}
 
 		execute.catch(function(e){

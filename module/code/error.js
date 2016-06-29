@@ -2,14 +2,14 @@
 
 var error = require('../error.js')
 
-	, EditorError = function(msg){
+	, CodeError = function(msg){
 		this.type = '[Editor Error]';
 		this.message = msg;
 	}
 	;
 
-EditorError.prototype = new Error();
+CodeError.prototype = new Error();
 
-error.register('EditorError', '开发模块 错误');
+error.register('CodeError', '开发模块 错误');
 
-module.exports = EditorError;
+module.exports = CodeError;

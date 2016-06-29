@@ -62,12 +62,14 @@
 
 .reader_articleList{}
 .reader_article{
-	overflow: hidden;
+	//overflow: hidden;
 	position: relative;
 
+	border-radius: 0 10px 10px 10px;
+	margin-top: 40px;
 	//margin: 5px;    //10px;
 
-	.icon{
+	a.icon{
 		position: absolute;
 		//top: 45px;
 		right: 0;
@@ -87,8 +89,46 @@
 		}
 	}
 
+	.article_score{
+		position: absolute;
+		top: -1em;
+		right: 0;
+		border-radius: 10px 10px 0 0;
+		padding: 5px 1em;
+		background: #f7f7f7;
+		color: #c1c1c1;
+		line-height: 1em;
+
+		&_value{
+			color: #d35400;
+		}
+
+		.icon{
+			position: static;
+			float: left;
+			min-width: 1em;
+		}
+	}
+
 	.article_title:extend(.link){
-		//margin-right: 60px;
+		position: relative;
+		text-align: left;
+		text-indent: 60px;
+
+		&:before{
+			position: absolute;
+			top: -35px;
+			left: -10px;
+			height: 60px;
+			width: 60px;
+			border: 5px solid #f7f7f7;
+			border-radius: 50%;
+			box-sizing: border-box;
+			background: #fff;
+			font-size: 25px;
+			line-height: 50px;
+			text-indent: 0;
+		}
 	}
 	.article_content{
 		overflow: hidden;

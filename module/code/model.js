@@ -3,7 +3,7 @@
 var db      = require('../db.js')
 	, error = require('../error.js')
 
-	, EditorError   = require('./error.js')
+	, CodeError   = require('./error.js')
 
 	, SQL = {
 		editor: 'select editor.id,editor.name,preview,tags,width,height from editor,image' +
@@ -98,7 +98,7 @@ var db      = require('../db.js')
 				});
 			}
 			else{
-				rs = Promise.reject( new EditorError('缺少 id') );
+				rs = Promise.reject( new CodeError('缺少 id') );
 			}
 
 			return rs;

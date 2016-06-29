@@ -1,13 +1,11 @@
 'use strict';
 
 var config  = require('../../config.js')
-	, db    = require('../db.js')
-
 	, tpl   = require('../emmet/tpl.js')
 
 	, CodeHandler = require('../code/handler.js')
 
-	, View = {
+	, TagAdminView = {
 		tag: function(user){
 			return CodeHandler.getCode(user, {
 				name: 'admin/tag'
@@ -51,4 +49,4 @@ var config  = require('../../config.js')
 	}
 	;
 
-module.exports = View;
+module.exports = TagAdminView;

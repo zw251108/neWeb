@@ -31,6 +31,20 @@ var getEmmet    = require('../emmet/getEmmet.js')
 			title: function(d){
 				return d.title || d.url;
 			}
+			, article_score: function(d){
+				var i = 0
+					, j = 5
+					, h = []
+					;
+				for(; i < j; i++){
+					h.push('<i class="icon icon-star'+ ( i < d.score ? '-full' : '' ) +'"></i>');
+				}
+
+				return h.join('');
+			}
+			, article_score_value: function(d){
+				return +d.status ? 'article_score_value' : '';
+			}
 			, readStatus: function(d){
 				return +d.status > 0 ? '-checked' : '';
 			}

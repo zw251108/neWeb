@@ -8,8 +8,9 @@ require(['../../config'], function(config){
 			, articleTpl = $.template({
 				template: 'li.reader_article.article' +
 					'>a[href=%url% title=%title% target=_blank]' +
-						'>h4.article_title{%title%}' +
+						'>h4.article_title.icon.icon-document{%title%}' +
 					'^hr' +
+					'+div.article_score.%article_score_value%{%article_score%}' +
 					'+a.icon.icon-bookmark[href=bookmark/add title=稍后再读]{添加书签}' +
 					'+a.icon.icon-checkbox[href=bookmark/read title=读过]{读过}' +
 					'+time.article_date[pubdate=pubdate datetime=%datetime%]{%datetime%}' +
@@ -18,6 +19,20 @@ require(['../../config'], function(config){
 				, filter:{
 					datetime: function(d){
 						return g.datetime( d.datetime );
+					}
+					, article_score: function(d){
+						var i = 0
+							, j = 5
+							, h = []
+							;
+						for(; i < j; i++){
+							h.push('<i class="icon icon-star'+ ( i < d.score ? '-full' : '' ) +'"></i>');
+						}
+
+						return h.join('');
+					}
+					, article_score_value: function(d){
+						return +d.status ? 'article_score_value' : '';
 					}
 					, tags: tag.tagTpl
 					, content: function(d){

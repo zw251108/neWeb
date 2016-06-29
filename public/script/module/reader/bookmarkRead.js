@@ -61,10 +61,10 @@ define(['jquery', 'global', 'socket', 'tag', 'msgPopup', 'template'], function($
 		else{
 			// todo 数组
 			$.each(data.data, function(i, d){
-				$bookmark
-					.find('#'+ (d.tempId || 'readerArt'+ d.id)).data('bookmarkId', d.bookmarkId).attr('id', 'readerArt'+ d.id)
-					.find('.icon-checkbox').toggleClass('icon-checkbox icon-checkbox-checked').attr('title', '已读').text('已读')
-					.end().find('.icon-bookmark').toggleClass('icon-bookmark icon-bookmark-full').text('已加书签');
+				$bookmark.find('#'+ (d.tempId || 'readerArt'+ d.id)).data('bookmarkId', d.bookmarkId).attr('id', 'readerArt'+ d.id)
+							.find('.icon-checkbox').toggleClass('icon-checkbox icon-checkbox-checked').attr('title', '已读').text('已读')
+						.end().find('.icon-bookmark').toggleClass('icon-bookmark icon-bookmark-full').text('已加书签')
+						.end().find('.article_score').addClass('article_score_value').find('.icon:lt('+ d.score +')').toggleClass('icon-start icon-start-full');
 			});
 
 		}
