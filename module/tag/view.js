@@ -1,7 +1,7 @@
 'use strict';
 
-var getEmmet  = require('../emmet/getEmmet.js')
-	, View  = {
+var getEmmet    = require('../emmet/getEmmet.js')
+	, TagView   = {
 		tagEditorEmmet: getEmmet('tag/tagEditor.html')
 		, tagEditorFilter: {
 			tags: function(d){
@@ -16,4 +16,4 @@ var getEmmet  = require('../emmet/getEmmet.js')
 	}
 	;
 
-module.exports = View;
+module.exports = TagView;

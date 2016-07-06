@@ -1,6 +1,6 @@
 'use strict';
 
-var config  = require('../../config.js')
+var getEmmet    = require('../emmet/getEmmet.js')
 	, tpl   = require('../emmet/tpl.js')
 
 	, CodeHandler = require('../code/handler.js')

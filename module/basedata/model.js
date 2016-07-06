@@ -12,7 +12,7 @@ var db      = require('../db.js')
 
 		, university:   'select * from basedata_edu_university where province=:province'
 	}
-	, Model = {
+	, BaseDataModel = {
 		province: function(){
 			return db.handle({
 				sql: SQL.province
@@ -65,4 +65,4 @@ var db      = require('../db.js')
 /**
  * 服务器端 数据接口
  * */
-module.exports = Model;
+module.exports = BaseDataModel;

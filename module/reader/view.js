@@ -67,7 +67,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 			'^' + TagView.tagEditorEmmet
 	})
 
-	, View = {
+	, ReaderView = {
 		readerList: function(rs){
 			return tpl({
 				title: '阅读 reader'
@@ -176,4 +176,4 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	}
 	;
 
-module.exports = View;
+module.exports = ReaderView;

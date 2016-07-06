@@ -11,7 +11,7 @@ var db      = require('../db.js')
 		, tagIncrease: 'update tag set num=num+:increase where name=:name'
 		, tagIsExist: 'select * from tag where name=:name'
 	}
-	, Model = {
+	, TagModel = {
 		/**
 		 * @method  获取全部标签
 		 * @return  {object(Promise)}   数据库返回结果
@@ -101,18 +101,4 @@ var db      = require('../db.js')
 	}
 	;
 
-db.handle({
-	sql: SQL.tagAll
-}).then(function(rs){
-	var index = {}
-		;
-
-	rs.forEach(function(d, i){
-		return index[d.name] = i;
-	});
-
-	Model.TAG_CACHE = rs;
-	Model.TAG_INDEX = index;
-});
-
-module.exports = Model;
+module.exports = TagModel;

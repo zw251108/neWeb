@@ -16,7 +16,7 @@ var CONFIG    = require('../../config.js')
 	, LibModel      = require('../bower/model.js')
 
 	, ImageHandler  = require('../image/handler.js')
-	, Image         = require('../image/image.js')
+	//, Image         = require('../image/image.js')
 	, ImageModel    = require('../image/model.js')
 
 
@@ -192,40 +192,59 @@ web.post('/code/setMore', ImageHandler.uploadMiddleware.single('preview'), funct
 		, execute
 		;
 
+	ImageHandler.uploadImage(user, req);
+
 	if( id ){
-		if( file ){
-			size = ImageHandler.getSizeOf( req.file.path );
-			imgData = {
-				src: file.path.replace(/\\/g, '/').replace('public', '..')
-				, type: type === 'preview' ? Image.ALBUM.EDITOR_PREVIEW_ID : Image.ALBUM.DEFAULT_ID
-				, height: size.height
-				, width: size.width
-			};
 
-			ImageModel.addImage( imgData ).then(function(rs){
-				if( rs && rs.insertId ){
-					console.log(imgData.src + '同名图片已存在');
-				}
-
-				return Promise.resolve('');
-			});
-
-			execute = Model.updateEditorSetImg({
+		execute = ImageHandler.uploadImage(user, req).then(function(data){
+			return Model.updateEditorSetImg({
 				id: id
 				, name: body.name
 				, tags: tags
-				, preview: imgData.src
+				, preview: data.src
 			});
-		}
-		else{
-			execute = Model.updateEditorSet({
+		}, function(e){
+			return Model.updateEditorSet({
 				id: id
 				, name: body.name
 				, tags: tags
 			});
-		}
+		})
+		//if( file ){
+		//
+		//
+		//	size = ImageHandler.getSize( req.file.path );
+		//	imgData = {
+		//		src: file.path.replace(/\\/g, '/').replace('public', '..')
+		//		, type: type === 'preview' ? ImageHandler.ALBUM.EDITOR_PREVIEW_ID : ImageHandler.ALBUM.DEFAULT_ID
+		//		, height: size.height
+		//		, width: size.width
+		//	};
+		//
+		//	ImageModel.addImage( imgData ).then(function(rs){
+		//		if( rs && rs.insertId ){
+		//			console.log(imgData.src + '同名图片已存在');
+		//		}
+		//
+		//		return Promise.resolve('');
+		//	});
+		//
+		//	execute = Model.updateEditorSetImg({
+		//		id: id
+		//		, name: body.name
+		//		, tags: tags
+		//		, preview: imgData.src
+		//	});
+		//}
+		//else{
+		//	execute = Model.updateEditorSet({
+		//		id: id
+		//		, name: body.name
+		//		, tags: tags
+		//	});
+		//}
 
-		execute = execute.then(function(rs){
+		.then(function(rs){
 			var result
 				;
 
@@ -263,34 +282,15 @@ web.post('/code/setMore', ImageHandler.uploadMiddleware.single('preview'), funct
 });
 web.post('/code/demoImgUpload', ImageHandler.uploadMiddleware.single('image'), function(req, res){
 	var body = req.body || {}
-		, type = body.type
-		, file = req.file
-		, size = ImageHandler.getSizeOf( req.file.path )
-		, imgData = {
-			src: file.path.replace(/\\/g, '/').replace('public', '..')
-			, type: type === 'demo' ? Image.ALBUM.EDITOR_DEMO_ID : Image.ALBUM.DEFAULT_ID
-			, height: size.height
-			, width: size.width
-		}
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
-	ImageModel.addImage( imgData ).then(function(rs){
-		var result;
-
-		if( rs && rs.insertId ){
-			imgData.id = rs.insertId;
-
-			result = {
-				info: imgData
-				, msg: 'success'
-			};
-		}
-		else{
-			result = ImageHandler.getError('图片已存在');
-		}
-
-		return result;
-	}).catch(function(e){
+	ImageHandler.uploadImage(user, req).then(function(data){
+		return {
+			data: [data]
+			, msg: 'Done'
+		};
+	}, function(e){
 		console.log( e );
 
 		return {
@@ -504,11 +504,27 @@ socket.register({
 		});
 	}
 	, 'editor/demoImgLib': function(socket){
-		ImageModel.getImageByAlbum( Image.ALBUM.EDITOR_DEMO_ID ).then(function(rs){
-			socket.emit('data', {
-				topic: 'editor/demoImgLib'
-				, data: rs
-			});
+		var topic = 'editor/demoImgLib'
+			, user = UserHandler.getUserFromSession.fromSocket( socket )
+			;
+
+		ImageHandler.getImageList(user, {
+			albumId: ImageHandler.ALBUM.demo
+		}).then(function(data){
+			return {
+				topic: topic
+				, data: data
+				, msg: 'Done'
+			};
+		}, function(e){
+			console.log( e );
+
+			return {
+				topic: topic
+				, msg: e.message
+			};
+		}).then(function(json){
+			socket.emit('data', json);
 		});
 	}
 });

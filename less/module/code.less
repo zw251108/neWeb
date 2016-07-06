@@ -1,0 +1,49 @@
+@charset "utf-8";
+
+@import "../config/color.config.less";
+
+@import "../lib/function.less";
+@import "../lib/grid.less";
+
+//---------- Code 代码库 ----------
+.module-code{
+	.article{
+		float: left;
+		width: 150px;
+		margin-left: 5px;
+		margin-right: 5px;
+
+		.boxSizing(border-box);
+
+		&_title{
+			font-size: 18px;
+			line-height: 1.2;
+			text-align: center;
+		}
+		&_preview{
+			display: block;
+			//height: auto;
+			max-width: 100%;
+			margin: 10px auto 0;
+		}
+		&-block{
+			position: absolute;
+			bottom: 0;
+
+			left: 0;
+			right: 5px;
+
+			height: auto;
+			width: auto;
+			margin-right: 0;
+			text-align: center;
+
+			.msg{
+				height: 50px;
+				margin: 0;
+				line-height: 50px;
+				text-align: center;
+			}
+		}
+	}
+}

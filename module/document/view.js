@@ -28,7 +28,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 		template: getEmmet('document/content.html')
 	})
 
-	, View = {
+	, DocumentView = {
 		documentList: function(rs){}
 		, document: function(rs){console.log(getEmmet('document/article.html'))
 			var document = {
@@ -58,4 +58,4 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	}
 	;
 
-module.exports = View;
+module.exports = DocumentView;

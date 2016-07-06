@@ -67,7 +67,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 				'^^tbody'
 	})
 
-	, View = {
+	, BowerView = {
 		bowerList: function(rs){
 			return tpl({
 				title: '组件 bower'
@@ -107,4 +107,4 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	}
 	;
 
-module.exports = View;
+module.exports = BowerView;

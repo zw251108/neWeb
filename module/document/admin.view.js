@@ -46,7 +46,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 		template: getEmmet('admin/document/contentAddForm.html')
 	})
 
-	, View = {
+	, DocumentAdminView = {
 		documentList: function(rs){
 			return tpl({
 				title: '全部文档'
@@ -123,4 +123,4 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	}
 	;
 
-module.exports = View;
+module.exports = DocumentAdminView;

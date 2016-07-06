@@ -18,7 +18,7 @@ var db      = require('../db.js')
 		, bowerAdd: 'insert into '+ TABLE_NAME +'(name,version,css_path,js_path,source,homepage,tags,receipt_time) values(:name,:version,:css_path,:js_path,:source,:homepage,:tags,now())'
 	}
 
-	, Model = {
+	, BowerModel = {
 		getBowerAll: function(){
 			return db.handle({
 				sql: SQL.bower
@@ -74,4 +74,4 @@ var db      = require('../db.js')
 	}
 	;
 
-module.exports = Model;
+module.exports = BowerModel;

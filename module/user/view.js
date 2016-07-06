@@ -13,7 +13,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 		template: getEmmet('user/resume.html')
 	})
 
-	, View = {
+	, UserView = {
 		resume: function(){
 			return tpl({
 				title: '个人简历 resume'
@@ -37,4 +37,4 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	}
 	;
 
-module.exports = View;
+module.exports = UserView;
