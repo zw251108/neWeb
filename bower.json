@@ -35,7 +35,7 @@
     "bootstrap": "~3.3.5",
     "moment": "~2.10.6",
     "fullcalendar": "~2.3.2",
-    "jquery": "~2.1.4",
+    "jquery": "^3.0.0",
     "stagejs": "~0.8.2",
     "PhysicsJS": "~0.7.0",
     "kiwijs": "~1.2.1",
@@ -76,7 +76,7 @@
     "director": "~1.2.8",
     "pure": "~0.6.0",
     "immutable": "~3.7.5",
-    "vue": "~1.0.11",
+    "vue": "^1.0.26",
     "foundation": "~5.5.3"
   },
   "resolutions": {

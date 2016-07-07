@@ -296,14 +296,19 @@ web.get('/reader/bookmark/data', function(req, res){
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
-	ReaderHandler.getBookmarkReadPerDay( user ).catch(function(e){
+	ReaderHandler.getBookmarkReadPerDay( user).then(function(rs){
+		return {
+			data: rs
+			, msg: 'Done'
+		}
+	}, function(e){
 		console.log( e );
 
-		return [];
-	}).then(function(rs){
-		rs = JSON.stringify( rs );
-
-		res.send( rs );
+		return {
+			msg: e.message
+		};
+	}).then(function(json){
+		res.send( JSON.stringify(json) );
 		res.end();
 	});
 });

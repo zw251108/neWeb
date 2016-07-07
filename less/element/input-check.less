@@ -1,0 +1,21 @@
+@import "../config/color.config.less";
+
+/**
+ * 单选框 复选框
+ * */
+[type="radio"],
+[type="checkbox"]{
+	display: none;
+
+	/**
+	 * 禁用 radio 和 checkbox 默认样式
+	 *  可使用背景图片
+	 */
+	&::-ms-check{
+		display: none;
+	}
+
+	&:checked{
+
+	}
+}

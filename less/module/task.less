@@ -32,12 +32,28 @@
 	}
 	.task{
 
-		&-notReceived{}
+		&-notReceived{
+			//.task_name{
+			//	&:before{
+			//		content: "[未接受][用户][单次]";
+			//	}
+			//}
+		}
 		&-notStart{}
 		&-doing{}
 		&-done{
 			color: #c0c0c0;
 		}
+
+		&-notReceived{
+			//&.task-
+		}
+
+		//&_name{
+		//	&:before{
+		//		content: "";
+		//	}
+		//}
 
 		//&-delay{
 		//	color: @c229;

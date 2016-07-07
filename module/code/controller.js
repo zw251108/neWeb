@@ -1,7 +1,7 @@
 'use strict';
 
 var CONFIG    = require('../../config.js')
-	, web         = require('../web.js')
+	, web       = require('../web.js')
 	, socket    = require('../socket.js')
 
 	, modules   = require('../module.js')
@@ -9,16 +9,11 @@ var CONFIG    = require('../../config.js')
 	, data      = require('../data.js')
 	, menu      = require('../menu.js')
 
-	, UserHandler   = require('../user/handler.js')
-
 	// 外部数据模块引用
-	, TagHandler    = require('../tag/handler.js')
-	, LibModel      = require('../bower/model.js')
-
+	, UserHandler   = require('../user/handler.js')
 	, ImageHandler  = require('../image/handler.js')
-	//, Image         = require('../image/image.js')
-	, ImageModel    = require('../image/model.js')
 
+	, LibModel      = require('../bower/model.js')
 
 	, Model = require('./model.js')
 	, CodeView  = require('./view.js')
@@ -204,6 +199,8 @@ web.post('/code/setMore', ImageHandler.uploadMiddleware.single('preview'), funct
 				, preview: data.src
 			});
 		}, function(e){
+			console.log( e );
+
 			return Model.updateEditorSet({
 				id: id
 				, name: body.name

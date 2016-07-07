@@ -337,7 +337,7 @@ require(['../../config'], function(config){
 
 		tagsData = $.parseJSON(tagsData);
 
-		tag( tagsData );
+		tag( tagsData.data || [] );
 		tag.setAdd( $addTaskPopup );
 	});
 });

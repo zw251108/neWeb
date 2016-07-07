@@ -41,7 +41,7 @@ define(['../../config'], function(config){
 		skin = $.parseJSON( skin );
 		codeSkin = codeSkin(skin.skin, config.requireConfig.baseUrl, [content]);
 
-		tag( $.parseJSON(tagsData) );
+		tag( $.parseJSON(tagsData).data || [] );
 		tag.setAdd( $form );
 	});
 });

@@ -1,13 +1,7 @@
 'use strict';
 
-var CONFIG  = require('../../config.js')
-	, getEmmet  = require('../emmet/getEmmet.js')
+var getEmmet  = require('../emmet/getEmmet.js')
 	, tpl       = require('../emmet/tpl.js')
-	, popup     = require('../emmet/popup.js')
-
-	, emmetTpl  = require('../emmetTpl/emmetTpl.js').template
-
-	, pagination    = require('../pagination.js')
 
 	, CodeHandler   = require('../code/handler.js')
 
@@ -30,12 +24,14 @@ var CONFIG  = require('../../config.js')
 					style: rs.css
 				} : '';
 
-				code.heaer = '';
+				code.header = '';
 				code.main = rs.html ? {
-					content: rs.html
+					moduleMain: {
+						content: rs.html
+					}
 				} : '';
 
-				code.script = rs.js_lib ? rs.js_lib.split('m').map(function(d){
+				code.script = rs.js_lib ? rs.js_lib.split(',').map(function(d){
 					return {
 						main: ''
 						, src: '../../lib/'+ d

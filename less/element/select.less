@@ -1,0 +1,19 @@
+@import "../config/color.config.less";
+
+/**
+ * 下拉选择框
+ * */
+select{
+	-webkit-appearance: none;
+
+	/**
+	 * 禁用 select 默认下拉箭头
+	 *  可使用背景图片
+	 */
+	&::-ms-expand{
+		display: none;
+	}
+}
+option{
+	-webkit-appearance: none;
+}

@@ -64,6 +64,7 @@ web.post('/image/imageUpload', upload.single('image'), function(req, res){
 web.post('/image/imagesUpload', upload.array(), function(req, res){
 	var body = req.body || {}
 		, type = body.type
+		;
 });
 
 //web.post('/image/demoUpload', upload.single('image'), function(req, res){
@@ -93,8 +94,6 @@ web.post('/image/imagesUpload', upload.array(), function(req, res){
 //	})
 //});
 
-web.get('/data/image', function(req, res){});
-
 web.get('/admin/image', function(req, res){
 
 });
@@ -102,3 +101,5 @@ web.get('/admin/image', function(req, res){
 socket.register({
 	image: function(socket, data){}
 });
+
+web.get('/data/image', function(req, res){});

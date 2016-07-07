@@ -95,7 +95,7 @@ require(['../../config'], function(config){
 
 		tagsData = $.parseJSON(tagsData);
 
-		$readPopup = bookmarkRead($reader, tagsData);
+		$readPopup = bookmarkRead($reader, tagsData.data || []);
 
 		$('#add').on('click', function(){
 			$addPopup.trigger('showDialog');
@@ -113,7 +113,7 @@ require(['../../config'], function(config){
 			//});
 		});
 
-		filterBox = filterBox( tagsData );
+		filterBox = filterBox( tagsData.data || [] );
 		filterBox.submit(function(){
 			// todo 阻止表单提交，改为 web socket 获取数据
 		});

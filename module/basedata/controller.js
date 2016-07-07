@@ -148,12 +148,13 @@ admin.register({
 	, metroSize: 'tiny'
 	, title: '基础数据 data'
 	, icon: 'tags'
-	, href: 'basedata/'
+	, href: 'address/'
 });
-web.get('/admin/address', function(req, res){
+web.get('/admin/address/', function(req, res){
 	var user = UserHandler.getUserFromSession.fromReq( req )
 		;
-	BaseDataAdminView.province().then(function(html){
+
+	BaseDataAdminView.province( user ).then(function(html){
 		res.send( CONFIG.docType.html5 + html );
 		res.end();
 	});

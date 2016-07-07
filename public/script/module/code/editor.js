@@ -432,7 +432,7 @@ define('setMorePopup', ['jquery', 'socket', 'msgPopup', 'tag', 'template'], func
 		$name = name;
 		$form = form;
 
-		tag( tagsData);
+		tag( tagsData );
 	};
 });
 
@@ -543,7 +543,7 @@ require(['../../config'], function(config){
 
 		tagsData = $.parseJSON( tagsData );
 
-		setMore($name, $form, tagsData);
+		setMore($name, $form, tagsData.data || []);
 
 		uiLibPopup($jsLib, $cssLib);
 

@@ -44,6 +44,31 @@
 	&::-ms-clear{
 		display: none;
 	}
+	&::-ms-value{
+
+	}
+
+	/**
+	 * 验证
+	 */
+	&::-webkit-validation-bubble{   // 整个弹出框区域
+
+	}
+	&::-webkit-validation-bubble-arrow{ // 弹出框箭头
+
+	}
+	&::-webkit-validation-bubble-arrow-clipper{ // 弹出框箭头所在块状区域
+
+	}
+	&::-webkit-validation-bubble-heading{   // 文字标题所占区域
+
+	}
+	&::-webkit-validation-bubble-message{   // 文字提示的整个方形的信息框
+
+	}
+	&::-webkit-validation-bubble-text-block{    // 文字所在 block 块区域
+
+	}
 
 	/**
 	 * Android 上去掉语音输入按钮
@@ -297,46 +322,4 @@
 }
 :checked ~ .icon-star:before{
 	&:extend(.icon-star-full:before);
-}
-
-[type="checkbox"],
-[type="radio"]{
-	display: none;
-
-	/**
-	 * 禁用 radio 和 checkbox 默认样式
-	 *  可使用背景图片
-	 */
-	&::-ms-check{
-		display: none;
-	}
-}
-:checked{
-
-}
-
-//// textarea
-//textarea::-webkit-input-placeholder:after{
-//	display:block;
-//	content:"line@ \A line#";/* \A 表示换行 */
-//	color:red;
-//};
-//textarea::-moz-placeholder:after{
-//	content:"line@ \A line#";/* \A 表示换行 */
-//	color:red;
-//};
-
-select,
-option{
-	-webkit-appearance: none;
-}
-
-select{
-	/**
-	 * 禁用 select 默认下拉箭头
-	 *  可使用背景图片
-	 */
-	&::-ms-expand{
-		display: none;
-	}
 }

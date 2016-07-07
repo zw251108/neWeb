@@ -28,7 +28,7 @@ require(['../../config'], function(config){
 
 		tagsData = $.parseJSON( tagsData );
 
-		$readPopup = bookmarkRead($favorite, tagsData);
+		$readPopup = bookmarkRead($favorite, tagsData.data || []);
 
 		searchBar = searchBar();
 		searchBar.submit(function(e){
@@ -42,7 +42,7 @@ require(['../../config'], function(config){
 			//});
 		});
 
-		filterBox = filterBox( tagsData );
+		filterBox = filterBox( tagsData.data || [] );
 		filterBox.submit(function(e){
 			// todo 阻止表单提交，改为 web socket 获取数据
 		});
