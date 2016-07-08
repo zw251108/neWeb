@@ -312,3 +312,40 @@ web.get('/reader/bookmark/data', function(req, res){
 		res.end();
 	});
 });
+
+/**
+ *
+ * */
+web.post('/data/reader/bookmark/', function(req, res){
+	var body = req.body || {}
+		, session = req.session
+		, user = UserHandler.getUserFromSession.fromReq( req )
+		, isGuest = UserHandler.isGuest( user )
+		, execute = Promise.resolve()
+		;
+
+	if( isGuest ){
+		execute = UserHandler.userLogin( body ).then(function(rs){
+			// 将 user 放入 session
+			user.id = rs.id;
+			UserHandler.setUserToSession(user, session);
+
+			return user;
+		});
+	}
+
+	execute.then(function(user){
+
+		ReaderHandler.addBookmark(user, body).then(function(rs){
+			res.end();
+		}, function(e){
+			console.log( e );
+
+			res.end();
+		});
+	}, function(e){
+		console.log( e );
+
+		res.end();
+	});
+});

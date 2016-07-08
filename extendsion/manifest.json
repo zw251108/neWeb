@@ -1,0 +1,20 @@
+{
+  "name": "书签添加器"
+  , "version": "0.0.1"
+  , "manifest_version": 2
+  , "icons": {
+    "128": "image/favicon.png"
+  }
+  , "browser_action": {
+    "default_icon":  "image/favicon.png"
+    , "default_title": "书签加载器"
+    , "default_popup": "popup.html"
+  }
+  , "permissions": [
+    "http://location:9001/"
+    , "http://new.zw150026.com/"
+    , "tabs"
+    , "activeTab"
+    , "storage"
+  ]
+}
