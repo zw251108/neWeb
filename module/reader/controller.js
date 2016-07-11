@@ -336,16 +336,26 @@ web.post('/data/reader/bookmark/', function(req, res){
 
 	execute.then(function(user){
 
-		ReaderHandler.addBookmark(user, body).then(function(rs){
-			res.end();
+		return ReaderHandler.addBookmark(user, body).then(function(rs){
+			return {
+				data: [rs]
+				, msg: 'Done'
+			};
 		}, function(e){
 			console.log( e );
 
-			res.end();
+			return {
+				msg: e.message
+			};
 		});
 	}, function(e){
 		console.log( e );
 
+		return {
+			msg: e.message
+		};
+	}).then(function(json){
+		res.send( JSON.stringify(json) );
 		res.end();
 	});
 });

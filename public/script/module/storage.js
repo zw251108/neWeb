@@ -15,11 +15,17 @@ define(['jquery'], function(){
 				return this[key];
 			}
 			, setItem: function(key, value){
+				this.__index.push( key );
 				this[key] = value;
 
 			}
 			, clear: function(){
+				var that = this
+					;
 
+				$.each(this.__index, function(i, d){
+					delete that[d];
+				});
 			}
 		}
 	}
