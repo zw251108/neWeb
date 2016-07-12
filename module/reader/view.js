@@ -25,11 +25,15 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	})
 
 
-	, bookmarkArticleTpl   = emmetTpl({
+	, bookmarkArticleTpl    = emmetTpl({
 		template: getEmmet('reader/bookmarkArticle.html')
 		, filter: {
 			title: function(d){
 				return d.title || d.url;
+			}
+			, icon: function(d){
+				console.log(d.ico);
+				return d.ico ? 'background-image:url(\''+ d.ico +'\');' : '';
 			}
 			, article_score: function(d){
 				var i = 0

@@ -55,8 +55,11 @@ require(['../../config'], function(config){
 		var articleTpl = $.template({
 				template: 'article#readerArt%id%.article.reader_article' +
 					'>a[href=%url% title=%url% target=_blank]' +
-						'>h3.article_title.icon.icon-document{%title%}' +
-					'^hr' +
+						'>h3.article_title' +
+							'>i.icon.icon-document{%title%}' +
+								'>img[src=%ico% onerror=this.style.display=\'none\';this.parentNode.className=this.parentNode.className.replace(\'hasIcon\',\'\');]' +
+							'^div{%title%}' +
+					'^^hr' +
 					'+div.article_score.%article_score_value%{%article_score%}' +
 					'+a.icon.icon-checkbox%readStatus%[href=read title=%readTitle%]{%readText%}' +
 					'+time.article_date[pubdate=pubdate datetime=%datetime%]{%datetime%}' +
@@ -107,7 +110,7 @@ require(['../../config'], function(config){
 				$readPopup.triggerHandler('setData', [{
 					id: $parent.data('id')
 					, bookmarkId: $parent.data('bookmarkId')
-					, title: $title.html()
+					, title: $title.find('div').html()
 					, url: $title.parent().attr('href')
 					, tags: $parent.find('div.tagsArea').html()
 					, score: $parent.data('score')

@@ -115,7 +115,7 @@
 		text-align: left;
 		text-indent: 60px;
 
-		&:before{
+		.icon-document{
 			position: absolute;
 			top: -35px;
 			left: -10px;
@@ -124,10 +124,33 @@
 			border: 5px solid #f7f7f7;
 			border-radius: 50%;
 			box-sizing: border-box;
-			background: #fff;
-			font-size: 25px;
-			line-height: 50px;
+			background: #fff no-repeat center/contain;
 			text-indent: 0;
+
+			&:before{
+				display: block;
+				width: 100%;
+				font-size: 25px;
+				line-height: 50px;
+			}
+			&.hasIcon{
+				&:before{
+					content: "";
+				}
+			}
+
+			img{
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				max-height: 35px;
+				min-height: 24px;
+				max-width: 35px;
+				min-width: 24px;
+				margin: auto;
+			}
 		}
 	}
 	.article_content{

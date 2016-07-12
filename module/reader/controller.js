@@ -325,7 +325,7 @@ web.post('/data/reader/bookmark/', function(req, res){
 		;
 
 	if( isGuest ){
-		execute = UserHandler.userLogin( body ).then(function(rs){
+		execute = UserHandler.userLogin(body, true).then(function(rs){
 			// 将 user 放入 session
 			user.id = rs.id;
 			UserHandler.setUserToSession(user, session);
@@ -334,8 +334,7 @@ web.post('/data/reader/bookmark/', function(req, res){
 		});
 	}
 
-	execute.then(function(user){
-
+	execute.then(function(user){    // 登录成功
 		return ReaderHandler.addBookmark(user, body).then(function(rs){
 			return {
 				data: [rs]
@@ -348,7 +347,7 @@ web.post('/data/reader/bookmark/', function(req, res){
 				msg: e.message
 			};
 		});
-	}, function(e){
+	}, function(e){ // 登录失败
 		console.log( e );
 
 		return {

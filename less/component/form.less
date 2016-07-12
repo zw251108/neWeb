@@ -117,43 +117,6 @@
     }
 
 	/**
-	 * 评分
-	 div.input.input-score
-	    span.scoreList
-			input#star5[type=radio name=score value=5]
-			label.icon.icon-star[for=star5]
-			input#star4[type=radio name=score value=4]
-			label.icon.icon-star[for=star4]
-			input#star3[type=radio name=score value=3]
-			label.icon.icon-star[for=star3]
-			input#star2[type=radio name=score value=2]
-			label.icon.icon-star[for=star2]
-			input#star1[type=radio name=score value=1]
-			label.icon.icon-star[for=star1]
-		span.scoreValue
-	 */
-	/*div*/&-score{
-       //float: left;
-
-		.scoreList{
-			float: left;
-		}
-			.icon-star{
-				float: right;
-				//margin-left: 14px;
-				color: #888;
-				font-size: 24px;
-			}
-
-		.scoreValue{
-			float: right;
-			margin-right: 10px;
-			color: #888;
-			line-height: 46px;
-		}
-	}
-
-	/**
 	 * 标签
 	 div.input.input-tag
 	    div.formGroup
@@ -207,8 +170,46 @@
 			}
 		}
 	}
+
 	/**
 	 * 评分
+	 div.input.input-score
+	    span.scoreList
+			input#star5[type=radio name=score value=5]
+			label.icon.icon-star[for=star5]
+			input#star4[type=radio name=score value=4]
+			label.icon.icon-star[for=star4]
+			input#star3[type=radio name=score value=3]
+			label.icon.icon-star[for=star3]
+			input#star2[type=radio name=score value=2]
+			label.icon.icon-star[for=star2]
+			input#star1[type=radio name=score value=1]
+			label.icon.icon-star[for=star1]
+		span.scoreValue
+	 */
+	/*div*/&-score{
+		       //float: left;
+
+		       .scoreList{
+			       float: left;
+		       }
+		       .icon-star{
+			       float: right;
+			       //margin-left: 14px;
+			       color: #888;
+			       font-size: 24px;
+		       }
+
+		       .scoreValue{
+			       float: right;
+			       margin-right: 10px;
+			       color: #888;
+			       line-height: 46px;
+		       }
+	       }
+
+	/**
+	 * 选项集
 	 div.input.input-pickGroup
 		label.icon.icon-radio
 			input[type=radio]
@@ -320,6 +321,10 @@
 :checked + .icon-checkbox:before{
 	&:extend(.icon-checkbox-checked:before);
 }
+:indeterminate + .icon-checkbox:before{
+	&:extend(.icon-checkbox-half:before);
+}
+
 :checked ~ .icon-star:before{
 	&:extend(.icon-star-full:before);
 }

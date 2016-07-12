@@ -156,6 +156,7 @@ var db = require('mysql').createConnection({
 			console.log(rs.insertId);
 		}
 	}
+	, path  = require('path')
 	;
 
 //db.query('select * from bookmark', function(err, rs){
@@ -5576,5 +5577,102 @@ function saveOrUpdate(name, num){
 var cheerio = require('cheerio')
 	;
 
-console.log( cheerio('template', '<template id="123" class="12311"><div></div><div></div><div></div><div></div><div></div></template>').attr() )
+//console.log( cheerio('template', '<template id="123" class="12311"><div></div><div></div><div></div><div></div><div></div></template>').attr() )
 
+//db.query('select id,url from web', function(e, rs){
+//	if( e ){
+//		return;
+//	}
+//
+//	console.log(rs.length)
+//
+//	rs.forEach(function(d){
+//		console.log('获取 ', d.url);
+//		superAgent.get( d.url ).buffer( true ).end(function(e, res){
+//			if( !e ){
+//				var html = res.text
+//					, $
+//					, $link
+//					, i, t
+//					;
+//				if( html ){
+//					$ = cheerio.load(html, {
+//						decodeEntities: false
+//					});
+//
+//					$link = $('link');
+//
+//					i = $link.length;
+//
+//					while( i-- ){
+//						if( $link.eq(i).attr('rel') === 'shortcut icon' ){
+//							t =  $link.eq(i).attr('href');
+//							console.log(d.url, ' icon ', t);
+//
+//							if( !/^http/.test( t ) ){
+//								if( /data:/.test( t ) ){
+//								}
+//								else if( /\/\//.test( t ) ){
+//									t = 'http:'+ t;
+//								}
+//								else if( /^[^\/]/.test( t ) ){
+//									t = d.url +'\/'+ t;
+//								}
+//								else{
+//									t = d.url + t;
+//								}
+//							}
+//
+//							console.log(d.url, '保存 icon ', t );
+//							db.query('update web set ico=\''+ t +'\' where id='+ d.id, function(e){
+//								if( e ){
+//									console.log(e);
+//								}
+//							});
+//							break;
+//						}
+//					}
+//				}
+//			}
+//			else{
+//				console.log(d.url, '获取失败')
+//			}
+//		});
+//	});
+//});
+
+//db.query('select url from web', function(e, rs){
+//	if( e ){
+//		return;
+//	}
+//
+//	var obj = rs.reduce(function(all, d){
+//		all[d.url] = 1;
+//
+//		return all;
+//	}, {});
+//
+//	db.query('select source from reader_bookmark group by source', function(e, rs){
+//		if( e ){
+//			return;
+//		}
+//
+//		rs.forEach(function(d){
+//			if( d.source in obj ){}
+//			else{
+//				console.log('插入', d.source)
+//				db.query('insert into web(url) value(\''+ d.source +'\')');
+//			}
+//		});
+//	});
+//});
+
+db.query('select * from web where ico=\'0\'', function(e, rs){
+	if( e ){
+		return;
+	}
+
+	rs.forEach(function(d){
+		db.query('update web set ico=\''+ d.url +'/favicon.ico\' where id='+ d.id)
+	});
+});

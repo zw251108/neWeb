@@ -11,8 +11,17 @@ $(function(){
 					, email: 'zw150026@163.com'
 					, password: 'zw251108'
 				}
-				, success: function(data){}
+				, dataType: 'json'
+				, success: function(json){
+
+					if( json.msg === 'Done' ){
+
+					}
+					else{
+						alert( json.msg );
+					}
+				}
 			});
 		});
-	})
+	});
 });

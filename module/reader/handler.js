@@ -581,6 +581,7 @@ var CONFIG  = require('../../config.js')
 					data.source = ReaderHandler.getSource( data.url );
 				}
 
+				ReaderModel.addWeb( data.source );
 				execute = ReaderModel.addBookmark( data ).then(function(rs){
 					var result
 						;

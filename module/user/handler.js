@@ -81,7 +81,7 @@ var utils = require('utility')
 
 			return execute;
 		}
-		, userLogin: function(query){
+		, userLogin: function(query, notSaveToken){
 			var execute
 				, email = query.email
 				, password = query.password
@@ -124,7 +124,7 @@ var utils = require('utility')
 					rs.token = utils.md5(rs.email + rs.username + rs.password + date);
 					delete rs.password;
 
-					UserHandler.updateToken(rs);
+					!notSaveToken &&　UserHandler.updateToken(rs);
 
 					return rs;
 				});

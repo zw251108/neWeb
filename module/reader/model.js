@@ -37,14 +37,16 @@ var db  = require('../db.js')
 			' and' +
 				' tags regexp :tags'
 
-		, userBookmarkByPage: 'select urb.id as id,rb.id as bookmarkId,urb.title as title,url,status,tags,mark_datetime as datetime,score' +
-			' from reader_bookmark as rb,user_reader_bookmark as urb' +
+		, userBookmarkByPage: 'select urb.id as id,rb.id as bookmarkId,urb.title as title,rb.url,status,tags,mark_datetime as datetime,score,ico' +
+			' from reader_bookmark as rb,user_reader_bookmark as urb,web' +
 			' where' +
 				' urb.user_id=:userId' +
 			' and' +
 				' status=:status' +
 			' and' +
 				' rb.id=urb.bookmark_id' +
+			' and' +
+				' web.url=rb.source' +
 			' order by rb.id desc' +
 			' limit :page,:size'
 		, userBookmarkCount: 'select count(*) as count from user_reader_bookmark' +
@@ -53,8 +55,8 @@ var db  = require('../db.js')
 			' and' +
 				' status=:status'
 
-		, bookmarkSearchTitle: 'select urb.id as id,rb.id as bookmarkId,urb.title as title,url,status,tags,mark_datetime as datetime,score' +
-			' from reader_bookmark as rb,user_reader_bookmark as urb' +
+		, bookmarkSearchTitle: 'select urb.id as id,rb.id as bookmarkId,urb.title as title,rb.url,status,tags,mark_datetime as datetime,score,ico' +
+			' from reader_bookmark as rb,user_reader_bookmark as urb,web' +
 			' where' +
 				' user_id=:userId' +
 			' and' +
@@ -63,6 +65,8 @@ var db  = require('../db.js')
 				' urb.title like :keyword' +
 			' and' +
 				' rb.id=urb.bookmark_id' +
+			' and' +
+				' web.url=rb.source' +
 			' order by id desc' +
 			' limit :page,:size'
 		, bookmarkSearchTitleCount: 'select count(*) as count' +
@@ -76,16 +80,18 @@ var db  = require('../db.js')
 			' and' +
 				' rb.id=urb.bookmark_id'
 
-		, bookmarkSearchUrl: 'select urb.id as id,rb.id as bookmarkId,urb.title as title,url,status,tags,mark_datetime as datetime,score' +
-			' from reader_bookmark as rb,user_reader_bookmark as urb' +
+		, bookmarkSearchUrl: 'select urb.id as id,rb.id as bookmarkId,urb.title as title,rb.url,status,tags,mark_datetime as datetime,score,ico' +
+			' from reader_bookmark as rb,user_reader_bookmark as urb,web' +
 			' where' +
 				' user_id=:userId' +
 			' and' +
 				' status=:status' +
 			' and' +
-				' url like :url' +
+				' rb.url like :url' +
 			' and' +
 				' rb.id=urb.bookmark_id' +
+			' and' +
+				' web.url=rb.source' +
 			' order by id desc' +
 			' limit :page,:size'
 		, bookmarkSearchUrlCount: 'select count(*) as count' +
@@ -99,8 +105,8 @@ var db  = require('../db.js')
 			' and' +
 				' rb.id=urb.bookmark_id'
 
-		, bookmarkFilterTags: 'select urb.id as id,rb.id as bookmarkId,urb.title as title,url,status,tags,mark_datetime as datetime,score' +
-			' from reader_bookmark as rb,user_reader_bookmark as urb' +
+		, bookmarkFilterTags: 'select urb.id as id,rb.id as bookmarkId,urb.title as title,rb.url,status,tags,mark_datetime as datetime,score,ico' +
+			' from reader_bookmark as rb,user_reader_bookmark as urb,web' +
 			' where' +
 				' user_id=:userId' +
 			' and' +
@@ -109,6 +115,8 @@ var db  = require('../db.js')
 				' tags regexp :tags' +
 			' and' +
 				' rb.id=urb.bookmark_id' +
+			' and' +
+				' web.url=rb.source' +
 			' order by id desc' +
 			' limit :page,:size'
 		, bookmarkFilterTagsCount: 'select count(*) as count' +
@@ -211,6 +219,9 @@ var db  = require('../db.js')
 					delete from user_reader_bookmark where id=:id;\
 					update user_reader_bookmark set id=id-1,bookmark_id=bookmark_id-1 where id>:id;\
 					alter table user_reader_bookmark auto_increment=:all;'
+
+		, webAdd: 'insert into web(url,ico)' +
+			' select :url,:ico from dual where not exists (select * from web where url=:url)'
 	}
 	, ReaderModel = {
 		getReaderByPage: function(page, size){
@@ -516,6 +527,16 @@ var db  = require('../db.js')
 					, score: score
 					, tags: tags
 					, status: status
+				}
+			});
+		}
+
+		, addWeb: function(url, ico){
+			return db.handle({
+				sql: SQL.webAdd
+				, data: {
+					url: url
+					, ico: url + (ico || '/favicon.ico')
 				}
 			});
 		}

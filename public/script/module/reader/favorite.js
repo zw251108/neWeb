@@ -14,7 +14,7 @@ require(['../../config'], function(config){
 				$readPopup.triggerHandler('setData', [{
 					id: $parent.data('id')
 					, bookmarkId: $parent.data('bookmarkId')
-					, title: $title.html()
+					, title: $title.find('div').html()
 					, url: $title.parent().attr('href')
 					, tags: $parent.find('div.tagsArea').html()
 					, score: $parent.data('score')
