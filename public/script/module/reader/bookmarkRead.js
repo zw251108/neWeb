@@ -33,7 +33,7 @@ define(['jquery', 'global', 'socket', 'tag', 'msgPopup', 'template'], function($
 				$bookmark
 					.find('#'+ (/^\d+$/.test(query.id) ? 'readerArt' + query.id : query.id) )
 					.find('div.tagsArea').html( '<span class="tag tag-checked">'+ query.tags.split(',').join('</span><span class="tag tag-checked">') +'</span>')
-					.end().find('.article_title').html( $bookmarkTitle.val() );
+					.end().find('.article_title div').html( $bookmarkTitle.val() );
 				$readPopup.trigger('closeDialog').find('form')[0].reset();
 			}
 			else{

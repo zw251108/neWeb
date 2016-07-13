@@ -5,6 +5,8 @@ var CONFIG  = require('../config.js')
 	, fs    = require('fs')
 	, path  = require('path')
 
+	, tools = require('./tools.js')
+
 	, HTML_DEFAULT_TPL = 'tpl/page.html'
 
 	, htmlTpl = fs.readFileSync(__dirname +'/../'+ HTML_DEFAULT_TPL).toString()
@@ -212,6 +214,66 @@ var CONFIG  = require('../config.js')
 			}
 		})
 	}
+
+	/**
+	 * @param   options Object
+	 * @param   options.template    String
+	 * @param   options.filter      Object
+	 * */
+	, Tpl = function(options){
+		this.template = options.template;
+		this.filter = options.filter;
+		this.key = options.tplKey || '%';
+		this.keyList = this.template
+	}
 	;
+
+tools.extend(Tpl.prototype, {
+
+	render: function(data){
+		var i = 0, j, temp, html
+			, replace
+			, key
+			, tplKey = this.tplKey
+			, keyList = this.keyList
+			, filter = this.filter
+			, result = []
+			;
+
+		if( !Array.isArray( data ) ){
+			data = [data];
+		}
+
+		for(j = data.length; i < j; i++){
+
+			temp = data[i];
+			html = this.template;
+
+			for( key in keyList ) if( keyList.hasOwnProperty(key) ){
+
+				if( key in filter ){
+					if( filter[key] instanceof Tpl ){
+						replace = filter[key].render( temp[key] || []);
+					}
+					else{
+						replace = filter[key](temp, i);
+					}
+				}
+				else if( key in t ){
+					replace = temp[key];
+				}
+				else{
+					replace = '';
+				}
+
+				html = html.replace(new RegExp(tplKey + key + tplKey, 'g'), replace);
+			}
+
+			result.push( h );
+		}
+
+		return result.join('');
+	}
+});
 
 module.exports = View;
