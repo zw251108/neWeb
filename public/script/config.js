@@ -41,6 +41,12 @@ define({
 			, adminAddDataPopup: 'admin/addPopup'
 		}
 		, baseUrl: '../script/'
+		// , map: {
+		// 	'*': {
+		// 		css: 'lib/css.js'
+		// 		, text: 'lib/text.js'
+		// 	}
+		// }
 	}
 	, dataSource: {
 		json: 'text!../data/example'

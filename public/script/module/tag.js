@@ -32,18 +32,18 @@ define(['jquery', 'socket'], function($, socket){
 		'tag/add': function(data){
 			var id;
 
-			if( 'error' in data ){
+			if( data.msg !== 'Done' ){
 
 			}
 			else{
-				id = data.info.id;
+				// id = data.info.id;
 
 				// todo
 			}
 		}
 		, 'tag/increase': function(data){
 
-			if( 'error' in data ){
+			if( data.msg !== 'Done' ){
 
 			}
 			else{

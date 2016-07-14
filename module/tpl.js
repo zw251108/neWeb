@@ -219,6 +219,7 @@ var CONFIG  = require('../config.js')
 	 * @param   options Object
 	 * @param   options.template    String
 	 * @param   options.filter      Object
+	 * @param   options.tplKey
 	 * */
 	, Tpl = function(options){
 		this.template = options.template;
@@ -259,7 +260,7 @@ tools.extend(Tpl.prototype, {
 						replace = filter[key](temp, i);
 					}
 				}
-				else if( key in t ){
+				else if( key in temp ){
 					replace = temp[key];
 				}
 				else{
