@@ -96,12 +96,11 @@ define('jquery.extends', ['jquery'], function($){
 //----- 全局模块 -----
 define(['jquery', 'socket', 'jquery.extends'], function($){
 
-	// 全局图片加载错误处理
-	$(document).on('error', 'img', function(){
-		this.src = location.original +'/image/default/no-pic.png';
-	});
-
-	var ANIMATION_END = 'webkitAnimationEnd mozAnimationEnd msAnimationEnd animationEnd';
+	/**
+	 * 常量
+	 * */
+	var ANIMATION_END = 'webkitAnimationEnd mozAnimationEnd msAnimationEnd animationEnd'
+		, MOUSE_WHEEL = 'mousewheel DOMMouseScroll';
 
 	// 单全局变量
 	var g =  window.GLOBAL || {}
@@ -176,11 +175,47 @@ define(['jquery', 'socket', 'jquery.extends'], function($){
 
 	g.$eventBus = $({});
 
+	g.$event = $({});
+	g.emit = function(eventName, params, next){
+		var argv = arguments.length
+			, emitResult
+			;
+
+		switch( argv ){
+			case 1:
+				params = [];
+				next = function(){};
+				break;
+			case 2:
+				next = params;
+				params = [];
+				break;
+			case 3:
+				break;
+			default:
+				break;
+		}
+
+		g.$event.triggerHandler(eventName, params);
+	};
+
 	g.eventRegister = function(type, callback){
 		g.$eventBus.on(type, callback);
 	};
 	g.eventTrigger = function(type, args){
-		return g.$eventBus.triggerHandler(type, args);
+		var deferr = $.Deferred()
+			, emitRs = g.$eventBus.triggerHandler(type, args)
+			, rs
+			;
+
+		if( emitRs || emitRs === undefined ){
+			rs = deferr.resolve( emitRs || '' );
+		}
+		if( emitRs === false ){
+			rs = deferr.reject();
+		}
+
+		return rs;
 	};
 
 	// 全局事件代理
@@ -276,7 +311,7 @@ define(['jquery', 'socket', 'jquery.extends'], function($){
 		.on('click', '.module-popup .module_close', function(){
 			$(this).parents('.module-popup').addClass('hidden');
 		})
-		.on('mousewheel DOMMouseScroll', '.module-popup .module_content', function(e){
+		.on(MOUSE_WHEEL, '.module-popup .module_content', function(e){
 			var delta = e.originalEvent.wheelDelta || -e.originalEvent.detail
 				, $that = $(this)
 				, h = $that.height()
@@ -298,16 +333,16 @@ define(['jquery', 'socket', 'jquery.extends'], function($){
 			}
 		})
 		.on('click', '.module-main .module_close', function(e){
-		e.preventDefault();
-		e.stopImmediatePropagation();
+			e.preventDefault();
+			e.stopImmediatePropagation();
 
-		if( $container.hasClass('fadeOut') || $container.hasClass('fadeIn') ) return;
+			if( $container.hasClass('fadeOut') || $container.hasClass('fadeIn') ) return;
 
-		var $t = $(this).parents('.module');
-		target = $t.attr('id');
+			var $t = $(this).parents('.module');
+			target = $t.attr('id');
 
-		$container.removeClass('main-show').addClass('fadeOut');
-	})
+			$container.removeClass('main-show').addClass('fadeOut');
+		})
 		.on('click', '.input-score :radio', function(){
 			$(this).parent().nextAll('.scoreValue').html( SCORE_VALUE[this.value] );
 		});

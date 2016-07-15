@@ -3,10 +3,7 @@
 /**
  * 后台模块
  * */
-var AdminError = function(msg){
-		this.message = msg;
-	}
-	, Admin = {
+var Admin = {
 		modules: []
 		, index: {}
 		, register: function(){
@@ -42,6 +39,9 @@ var AdminError = function(msg){
 				return d;
 			});
 		}
+	}
+	, AdminError = function(msg){
+		this.message = msg;
 	}
 	;
 

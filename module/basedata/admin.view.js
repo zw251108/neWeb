@@ -1,6 +1,10 @@
 'use strict';
 
-var getEmmet  = require('../emmet/getEmmet.js')
+var Tpl = require('../tpl.js')
+	// , tpl = new Tpl({
+	// })
+
+	, getEmmet  = require('../emmet/getEmmet.js')
 	, tpl       = require('../emmet/tpl.js')
 
 	, CodeHandler   = require('../code/handler.js')

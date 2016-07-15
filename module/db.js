@@ -67,7 +67,7 @@ var mysql = require('mysql')
 							d = d.toString().slice(1, -1);
 						}
 
-						return r = col + ' regexp \''+ d +'\'';
+						return rs = col + ' regexp \''+ d +'\'';
 					}).join(or ? ' and ' : ' or ');
 				}
 			}

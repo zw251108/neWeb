@@ -38,4 +38,12 @@ var Module = {
 
 ModuleError.prototype = new Error();
 
+var Module = function(){
+
+	};
+
+Module.list = [];
+Module.index = {};
+
+
 module.exports = Module;
