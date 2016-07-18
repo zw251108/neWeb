@@ -93,7 +93,7 @@ web.post('/user/verify', function(req, res){
 		, session = req.session
 		;
 
-	UserHandler.verifyToken( query).then(function(rs){
+	UserHandler.verifyToken( query ).then(function(rs){
 		// 通过验证
 		UserHandler.setUserToSession(query, session);
 

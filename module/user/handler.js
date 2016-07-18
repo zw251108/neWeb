@@ -4,8 +4,10 @@ var utils = require('utility')
 
 	, Tools = require('../tools.js')
 
-	, UserModel   = require('./model.js')
+	, UserModel = require('./model.js')
 	, UserError = require('./error.js')
+
+	, USER_SESSION_LIST = {}
 
 	, UserHandler = {
 		// 错误处理
@@ -45,6 +47,24 @@ var utils = require('utility')
 			}
 
 			session.user = u;
+
+			if( u.id in USER_SESSION_LIST ){
+				USER_SESSION_LIST[u.id].push( session.id );
+			}
+			else{
+				USER_SESSION_LIST[u.id] = [session.id];
+			}
+		}
+
+		, getUserAllSession: function(userId){
+			var rs = []
+				;
+
+			if( userId in USER_SESSION_LIST ){
+				rs = USER_SESSION_LIST[userId];
+			}
+
+			return rs;
 		}
 
 		// 权限判断

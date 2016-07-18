@@ -321,11 +321,13 @@ web.post('/data/reader/bookmark/', function(req, res){
 		, session = req.session
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		, isGuest = UserHandler.isGuest( user )
-		, execute = Promise.resolve()
+		, execute = Promise.resolve( user )
 		;
 
 	if( isGuest ){
 		execute = UserHandler.userLogin(body, true).then(function(rs){
+
+			// todo 处理 session
 			// 将 user 放入 session
 			user.id = rs.id;
 			UserHandler.setUserToSession(user, session);
@@ -336,10 +338,17 @@ web.post('/data/reader/bookmark/', function(req, res){
 
 	execute.then(function(user){    // 登录成功
 		return ReaderHandler.addBookmark(user, body).then(function(rs){
-			return {
-				data: [rs]
-				, msg: 'Done'
-			};
+			var json = {
+					topic: 'reader/bookmark/new'
+					, data: [rs]
+					, msg: 'Done'
+				}
+				;
+
+			socket.sendDataBySession(UserHandler.getUserAllSession( user.id ), json);
+			console.log('通过 chrome 插件添加了一条 bookmark，', body.url);
+
+			return json;
 		}, function(e){
 			console.log( e );
 

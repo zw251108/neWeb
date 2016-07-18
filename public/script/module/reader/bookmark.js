@@ -53,10 +53,10 @@ require(['../../config'], function(config){
 	var r = require(config.requireConfig);
 	r(['jquery', 'global', 'socket', 'bookmarkAdd', 'bookmarkRead', 'searchBar', 'filterBox', config.dataSource.tag, 'template'], function($, g, socket, bookmarkAdd, bookmarkRead, searchBar, filterBox, tagsData){
 		var articleTpl = $.template({
-				template: 'article#readerArt%id%.article.reader_article' +
+				template: 'article#readerArt%id%.article.reader_article[data-id=%id% data-bookmark-id=%id% data-status=%status% data-score=%score%]' +
 					'>a[href=%url% title=%url% target=_blank]' +
 						'>h3.article_title' +
-							'>i.icon.icon-document{%title%}' +
+							'>i.icon.icon-document' +
 								'>img[src=%ico% onerror=this.style.display=\'none\';this.parentNode.className=this.parentNode.className.replace(\'hasIcon\',\'\');]' +
 							'^div{%title%}' +
 					'^^hr' +
@@ -119,6 +119,7 @@ require(['../../config'], function(config){
 
 				$readPopup.trigger('showDialog');
 			})
+			, $bookmarkList = $bookmark.find('.module_content')
 			, $addPopup = bookmarkAdd( $bookmark, articleTpl)
 			, $readPopup
 			;
@@ -148,18 +149,25 @@ require(['../../config'], function(config){
 			// todo 阻止表单提交，改为 web socket 获取数据
 		});
 
-		socket.register('reader/bookmark/search', function(data){
-			var count = data.count
-				;
+		socket.register({
+			'reader/bookmark/search': function(data){
+				var count = data.count
+					;
 
-			data = data.data;
+				data = data.data;
 
-			if( count ){
-				$bookmark.find('.module_content').html( articleTpl(data).join('') );
-				// todo 重置页码
+				if( count ){
+					$bookmark.find('.module_content').html(articleTpl(data).join(''));
+					// todo 重置页码
+				}
+				else{
+					// todo 显示未搜索到结果
+				}
 			}
-			else{
-				// todo 显示未搜索到结果
+			, 'reader/bookmark/new': function(data){
+				if( data.msg === 'Done' ){
+					$bookmarkList.prepend( articleTpl(data.data).join('') );
+				}
 			}
 		});
 	});

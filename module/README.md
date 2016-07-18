@@ -47,6 +47,18 @@
 #handler
 ##操作 model 进行数据库保存
 	将穿进来的数据全部返回，而不仅仅是 id
+
+#调用关系
+##controller 可以调用 handler view
+controller 层决定页面的输入输出，session 处理，socket 数据发送
+
+##handler 可以调用 handler model
+handler 层决定业务逻辑，对 model 处理，提供从 session 或数据库中获取数据的接口
+todo 从缓存中获取数据
+
+##view 可以调用 view
+view 层决定页面展示
+todo 前后端通用
 	
 ##模块
 Tag Image BaseData 作为工具模块供其它模块使用
