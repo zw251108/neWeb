@@ -11,8 +11,7 @@
     , "default_popup": "popup.html"
   }
   , "permissions": [
-    "http://location:9001/"
-    , "http://new.zw150026.com/"
+    "http://localhost:9001/*/*"
     , "tabs"
     , "activeTab"
     , "storage"

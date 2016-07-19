@@ -316,54 +316,57 @@ web.get('/reader/bookmark/data', function(req, res){
 /**
  *
  * */
-web.post('/data/reader/bookmark/', function(req, res){
-	var body = req.body || {}
+web.get('/data/reader/bookmark/add', function(req, res){
+	var query = req.query || {}
+		, callback = query.callback
 		, session = req.session
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		, isGuest = UserHandler.isGuest( user )
 		, execute = Promise.resolve( user )
 		;
 
-	if( isGuest ){
-		execute = UserHandler.userLogin(body, true).then(function(rs){
+	if( callback ){
+		if( isGuest ){
+			execute = UserHandler.userLogin(query, true).then(function(rs){
 
-			// todo 处理 session
-			// 将 user 放入 session
-			user.id = rs.id;
-			UserHandler.setUserToSession(user, session);
+				// todo 处理 session
+				// 将 user 放入 session
+				user.id = rs.id;
+				UserHandler.setUserToSession(user, session);
 
-			return user;
+				return user;
+			});
+		}
+
+		execute = execute.then(function(user){    // 登录成功
+			return ReaderHandler.addBookmark(user, query);
 		});
 	}
+	else{
+		execute = ReaderHandler.getError('不是 jsonp 格式调用');
+		callback = 'console.log';
+	}
 
-	execute.then(function(user){    // 登录成功
-		return ReaderHandler.addBookmark(user, body).then(function(rs){
-			var json = {
-					topic: 'reader/bookmark/new'
-					, data: [rs]
-					, msg: 'Done'
-				}
-				;
+	execute.then(function(rs){
+		var json = {
+				topic: 'reader/bookmark/new'
+				, data: [rs]
+				, msg: 'Done'
+			}
+			;
 
-			socket.sendDataBySession(UserHandler.getUserAllSession( user.id ), json);
-			console.log('通过 chrome 插件添加了一条 bookmark，', body.url);
+		socket.sendDataBySession(UserHandler.getUserAllSession( user.id ), json);
+		console.log('通过 chrome 插件添加了一条 bookmark，', body.url);
 
-			return json;
-		}, function(e){
-			console.log( e );
-
-			return {
-				msg: e.message
-			};
-		});
-	}, function(e){ // 登录失败
+		return json;
+	}, function(e){
 		console.log( e );
 
 		return {
 			msg: e.message
 		};
 	}).then(function(json){
-		res.send( JSON.stringify(json) );
+		res.send( callback +'('+ JSON.stringify(json) +')' );
 		res.end();
 	});
 });

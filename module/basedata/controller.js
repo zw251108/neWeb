@@ -305,8 +305,8 @@ data.push('province', 'city', 'district', 'town', 'village', 'university');
 // 地区数据
 web.get('/data/province', function(req, res){
 	var query = req.query || {}
-		, user = UserHandler.getUserFromSession.fromReq( req )
 		, callback = query.callback
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		, execute
 		;
 
@@ -336,8 +336,8 @@ web.get('/data/province', function(req, res){
 });
 web.get('/data/city', function(req, res){
 	var query = req.query || {}
-		, user = UserHandler.getUserFromSession.fromReq( req )
 		, callback = query.callback
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		, execute
 		;
 
@@ -367,8 +367,8 @@ web.get('/data/city', function(req, res){
 });
 web.get('/data/district', function(req, res){
 	var query = req.query || {}
-		, user = UserHandler.getUserFromSession.fromReq( req )
 		, callback = query.callback
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		, execute
 		;
 
@@ -398,8 +398,8 @@ web.get('/data/district', function(req, res){
 });
 web.get('/data/town', function(req, res){
 	var query = req.query || {}
-		, user = UserHandler.getUserFromSession.fromReq( req )
 		, callback = query.callback
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		, execute
 		;
 
@@ -429,8 +429,8 @@ web.get('/data/town', function(req, res){
 });
 web.get('/data/village', function(req, res){
 	var query = req.query || {}
-		, user = UserHandler.getUserFromSession.fromReq( req )
 		, callback = query.callback
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		, execute
 		;
 
@@ -462,8 +462,8 @@ web.get('/data/village', function(req, res){
 // 大学数据
 web.get('/data/university', function(req, res){
 	var query = req.query || {}
-		, user = UserHandler.getUserFromSession.fromReq( req )
 		, callback = query.callback
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		, execute
 		;
 

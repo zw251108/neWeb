@@ -143,8 +143,8 @@ socket.register({
 data.push('tag');
 web.get('/data/tag', function(req, res){
 	var query = req.query || {}
-		, user = UserHandler.getUserFromSession.fromReq( req )
 		, callback = query.callback
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		, execute
 		;
 
