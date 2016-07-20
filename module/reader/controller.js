@@ -316,10 +316,11 @@ web.get('/reader/bookmark/data', function(req, res){
 /**
  *
  * */
-web.get('/data/reader/bookmark/add', function(req, res){
+data.push('bookmark')
+
+web.get('/data/reader/bookmark', function(req, res){
 	var query = req.query || {}
 		, callback = query.callback
-		, session = req.session
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		, isGuest = UserHandler.isGuest( user )
 		, execute = Promise.resolve( user )
@@ -338,8 +339,8 @@ web.get('/data/reader/bookmark/add', function(req, res){
 			});
 		}
 
-		execute = execute.then(function(user){    // 登录成功
-			return ReaderHandler.addBookmark(user, query);
+		execute = execute.then(function(user){
+			return ReaderHandler.getBookmarkList(user, query);
 		});
 	}
 	else{
@@ -348,6 +349,43 @@ web.get('/data/reader/bookmark/add', function(req, res){
 	}
 
 	execute.then(function(rs){
+		return {
+			data: rs
+			, msg: 'Done'
+		};
+	}, function(e){
+		console.log( e );
+
+		return {
+			msg: e.message
+		};
+	}).then(function(json){
+		res.send( callback +'('+ JSON.stringify(json) +')' );
+	})
+});
+web.post('/data/reader/bookmark', function(req, res){
+	var body = req.body || {}
+		, session = req.session
+		, user = UserHandler.getUserFromSession.fromReq( req )
+		, isGuest = UserHandler.isGuest( user )
+		, execute = Promise.resolve( user )
+		;
+
+	if( isGuest ){
+		execute = UserHandler.userLogin(body, true).then(function(rs){
+
+			// todo 处理 session
+			// 将 user 放入 session
+			user.id = rs.id;
+			UserHandler.setUserToSession(user, session);
+
+			return user;
+		});
+	}
+
+	execute.then(function(user){    // 登录成功
+		return ReaderHandler.addBookmark(user, body);
+	}).then(function(rs){
 		var json = {
 				topic: 'reader/bookmark/new'
 				, data: [rs]
@@ -366,7 +404,7 @@ web.get('/data/reader/bookmark/add', function(req, res){
 			msg: e.message
 		};
 	}).then(function(json){
-		res.send( callback +'('+ JSON.stringify(json) +')' );
+		res.send( JSON.stringify(json) );
 		res.end();
 	});
 });

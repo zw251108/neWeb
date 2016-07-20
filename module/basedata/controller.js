@@ -19,7 +19,7 @@ var CONFIG  = require('../../config.js')
  * Web 数据接口
  * */
 // 地区数据
-web.get('/basedata/province/data', function(req, res){
+web.get('/basedata/province/data',  function(req, res){
 	var query = req.query || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
@@ -32,7 +32,7 @@ web.get('/basedata/province/data', function(req, res){
 		res.end();
 	});
 });
-web.get('/basedata/city/data', function(req, res){
+web.get('/basedata/city/data',      function(req, res){
 	var query = req.query || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
@@ -53,7 +53,7 @@ web.get('/basedata/city/data', function(req, res){
 		res.end();
 	});
 });
-web.get('/basedata/district/data', function(req, res){
+web.get('/basedata/district/data',  function(req, res){
 	var query = req.query || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
@@ -74,7 +74,7 @@ web.get('/basedata/district/data', function(req, res){
 		res.end();
 	});
 });
-web.get('/basedata/town/data', function(req, res){
+web.get('/basedata/town/data',      function(req, res){
 	var query = req.query || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
@@ -95,7 +95,7 @@ web.get('/basedata/town/data', function(req, res){
 		res.end();
 	});
 });
-web.get('/basedata/village/data', function(req, res){
+web.get('/basedata/village/data',   function(req, res){
 	var query = req.query || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
@@ -298,12 +298,12 @@ socket.register({
 });
 
 /**
- * 全局 Web 数据接口 只支持 jsonp 格式，回调函数参数名为 callback
+ * 全局 Web 数据接口 获取数据只支持 jsonp 格式，回调函数参数名为 callback
  * */
 data.push('province', 'city', 'district', 'town', 'village', 'university');
 
 // 地区数据
-web.get('/data/province', function(req, res){
+web.get('/data/province',   function(req, res){
 	var query = req.query || {}
 		, callback = query.callback
 		, user = UserHandler.getUserFromSession.fromReq( req )
@@ -334,7 +334,7 @@ web.get('/data/province', function(req, res){
 		res.end();
 	});
 });
-web.get('/data/city', function(req, res){
+web.get('/data/city',       function(req, res){
 	var query = req.query || {}
 		, callback = query.callback
 		, user = UserHandler.getUserFromSession.fromReq( req )
@@ -365,7 +365,7 @@ web.get('/data/city', function(req, res){
 		res.end();
 	});
 });
-web.get('/data/district', function(req, res){
+web.get('/data/district',   function(req, res){
 	var query = req.query || {}
 		, callback = query.callback
 		, user = UserHandler.getUserFromSession.fromReq( req )
@@ -396,7 +396,7 @@ web.get('/data/district', function(req, res){
 		res.end();
 	});
 });
-web.get('/data/town', function(req, res){
+web.get('/data/town',       function(req, res){
 	var query = req.query || {}
 		, callback = query.callback
 		, user = UserHandler.getUserFromSession.fromReq( req )
@@ -427,7 +427,7 @@ web.get('/data/town', function(req, res){
 		res.end();
 	});
 });
-web.get('/data/village', function(req, res){
+web.get('/data/village',    function(req, res){
 	var query = req.query || {}
 		, callback = query.callback
 		, user = UserHandler.getUserFromSession.fromReq( req )

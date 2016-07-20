@@ -108,7 +108,8 @@ socket.register({
 				, msg: e.message
 			};
 		}).then(function(json){
-			socket.emit('data', json);
+			socket.sendDataBySession(UserHandler.getUserAllSession( user.id ), json);
+			// socket.emit('data', json);
 		});
 	}
 	, 'tag/increase': function(socket, data){

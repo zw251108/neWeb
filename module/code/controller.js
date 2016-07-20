@@ -21,8 +21,8 @@ var CONFIG    = require('../../config.js')
 	, CodeHandler   = require('./handler.js')
 	, CodeError   = require('./error.js')
 
-	, DEMO_IMG_UPLOAD   = '/editor/demoImgUpload'
-	, SET_MORE          = '/editor/setMore'
+	, DEMO_IMG_UPLOAD   = '/code/demoImgUpload'
+	, SET_MORE          = '/code/setMore'
 	;
 
 modules.register({
@@ -178,12 +178,9 @@ web.get('/code/editor', function(req, res){
 
 web.post('/code/setMore', ImageHandler.uploadMiddleware.single('preview'), function(req, res){
 	var body = req.body || {}
-		, type = body.type
 		, id = body.id
 		, tags = body.tags
-		, file = req.file
-		, size
-		, imgData
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		, execute
 		;
 
@@ -473,7 +470,7 @@ socket.register({
 			, execute
 			, user = UserHandler.getUserFromSession.fromSocket(socket)
 			;
-		console.log(id, typeof id)
+
 		query.userId = user.id;
 
 		if( id !== '0' ){

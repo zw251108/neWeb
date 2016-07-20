@@ -4,7 +4,9 @@ var CONFIG = require('../config.js')
 
 	, fs = require('fs')
 
-	, Tpl = require('./tpl.js')
+	, tools = require('./tools.js')
+
+	, Tpl   = require('./tpl.js')
 
 	, TPL_CACHE = {}
 	, getTpl = function(path){
@@ -24,41 +26,62 @@ var CONFIG = require('../config.js')
 		return html;
 	}
 
+	/**
+	 * 外部样式
+	 * */
 	, stylesheet    = new Tpl({
 		template: '<link rel="stylesheet" href="%path%"/>'
 	})
-	, style     = new Tpl({
+	, style         = new Tpl({
 		template: '<style>%style%</style>'
 	})
-	, header    = new Tpl({
-		template: getTpl('header.html')
+
+	/**
+	 * 外部脚本
+	 * */
+	, script        = new Tpl({
+		template: '<script data-main="%main%" src="%src%"></script>'
 	})
-	, main      = new Tpl({
-		template: getTpl('main.html')
+	, scriptCode    = new Tpl({
+		template: '<script>%scriptCode%</script>'
 	})
 
+	/**
+	 * 页头
+	 * */
+	, header        = new Tpl({
+		template: getTpl('header.html')
+	})
+
+	/**
+	 * 页脚
+	 * */
+	, footer        = new Tpl({
+		template: getTpl('footer.html')
+		, filter: {
+			nav: nav
+		}
+	})
+
+	/**
+	 * 页面内容
+	 * */
+	// 工具条
 	, toolbarBtn    = new Tpl({
 		template: '<button id="%id%" type="button" class="icon icon-%icon%" title="%title%">%text%</button>'
 	})
 	, toolbarLink   = new Tpl({
 		template: '<a href="%href%" id="%id%" class="icon icon-%icon%" title="%title%">%text%</a>'
 	})
-	, toolbar   = new Tpl({
+	, toolbar       = new Tpl({
 		template: '<li></li>'
 		, filter: {
-
+			btn: toolbarBtn
+			, link: toolbarLink
 		}
 	})
 
-	, nav       = new Tpl({
-		template: '<li><a href="../%href%" class="icon icon-%icon% %on%"></a>'
-		, filter: {
-			on: function(d){
-				return d.on ? 'on' : '';
-			}
-		}
-	})
-
+	// 主体模块
 	, moduleMain    = new Tpl({
 		template: getTpl('module-main.html')
 		, filter: {
@@ -68,25 +91,29 @@ var CONFIG = require('../config.js')
 			, toolbar: toolbar
 		}
 	})
+	// 弹窗模块
 	, modulePopup   = new Tpl({
 		template: getTpl('module-popup.html')
 		, filter: {
 			toolbar: toolbar
 		}
 	})
-
-	, footer    = new Tpl({
-		template: getTpl('footer.html')
+	, main          = new Tpl({
+		template: getTpl('main.html')
 		, filter: {
-			nav: nav
+			moduleMain: moduleMain
+			, modulePopup: modulePopup
 		}
 	})
 
-	, script    = new Tpl({
-		template: '<script data-main="%main%" src="%src%"></script>'
-	})
-	, scriptCode    = new Tpl({
-		template: '<script>%scriptCode%</script>'
+	// 导航
+	, nav           = new Tpl({
+		template: '<li><a href="../%href%" class="icon icon-%icon% %on%"></a>'
+		, filter: {
+			on: function(d){
+				return d.on ? 'on' : '';
+			}
+		}
 	})
 
 	, page = new Tpl({
@@ -101,8 +128,29 @@ var CONFIG = require('../config.js')
 			, scriptCode: scriptCode
 		}
 	})
+	, defaults = {
+		stylesheet: [{
+			path: '/style/style.css'
+		}, {
+			path: '/style/test.css'
+		}]
+	    , style: {}
+	    , header: {}
+		, main: {
+			moduleMain: {}
+			, modulePopup: []
+		}
+		, footer: {}
+		, script: [{
+
+		}]
+		, scriptCode: {}
+	}
 	;
 
 module.exports = {
-
+	getTpl: getTpl
+	, renderPage: function(pageData){
+		return CONFIG.docType.html5 + page.render( tools.extend(tools.extend({}, defaults), pageData) );
+	}
 };

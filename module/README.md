@@ -46,7 +46,7 @@
 	
 #handler
 ##操作 model 进行数据库保存
-	将穿进来的数据全部返回，而不仅仅是 id
+	将传进来的数据全部返回，而不仅仅是 id
 
 #调用关系
 ##controller 可以调用 handler view

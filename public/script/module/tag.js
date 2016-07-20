@@ -15,38 +15,20 @@ define(['jquery', 'socket'], function($, socket){
 		}
 		, TAG_DATA = []
 		;
-	//socket.emit('data', {
-	//	topic: 'tag'
-	//	, receive: 'getTagData'
-	//});
-
-	//socket.on('getTagData', function(data){
-	//	Tag.data = data;
-	//}).on('addTag', function(){
-	//	socket.emit('addTag', {
-	//		name: ''
-	//	});
-	//});
 
 	socket.register({
 		'tag/add': function(data){
-			var id;
 
-			if( data.msg !== 'Done' ){
-
-			}
-			else{
-				// id = data.info.id;
+			if( data.msg === 'Done' ){
 
 				// todo
+				TAG_DATA.push.apply(TAG_DATA, data.data);
 			}
 		}
 		, 'tag/increase': function(data){
 
-			if( data.msg !== 'Done' ){
+			if( data.msg === 'Done' ){
 
-			}
-			else{
 				// todo
 			}
 		}
