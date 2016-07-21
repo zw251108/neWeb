@@ -1,6 +1,6 @@
-require(['../../config'], function(config){
-	var r= require.config(config.requireConfig);
-	r(['jquery', 'global', 'socket', 'tag', config.dataSource.tag, 'template'], function($, g, socket, tag, tagsData){
+require(['/script/config.js'], function(config){
+	var r= require.config( config );
+	r(['jquery', 'global', 'socket', 'tag', 'text!data-tag', 'template'], function($, g, socket, tag, tagsData){
 		var $task = $('#task')
 			, $taskList = $task.find('#taskList')
 			, taskTpl = $.template({

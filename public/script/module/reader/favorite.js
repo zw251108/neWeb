@@ -1,9 +1,9 @@
 /**
  *
  * */
-require(['../../config'], function(config){
-	var r = require(config.requireConfig);
-	r(['jquery', 'global', 'socket', 'bookmarkRead', 'searchBar', 'filterBox', config.dataSource.tag, 'template'], function($, g, socket, bookmarkRead, searchBar, filterBox, tagsData){
+require(['/script/config.js'], function(config){
+	var r = require( config );
+	r(['jquery', 'global', 'socket', 'bookmarkRead', 'searchBar', 'filterBox', 'text!data-tag', 'template'], function($, g, socket, bookmarkRead, searchBar, filterBox, tagsData){
 		var $favorite = $('#favorite').on('click', '.icon-checkbox-checked', function(e){
 			e.preventDefault();
 				var $that = $(this)

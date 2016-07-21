@@ -1,7 +1,6 @@
-require(['../../config'], function(config){
-	config.requireConfig.baseUrl = location.origin + '/script/';
+require(['/script/config.js'], function(config){
 
-	var r = require.config(config.requireConfig);
+	var r = require.config( config );
 	r(['jquery', 'global', 'adminAddDataPopup', 'template'], function($, g, addPopup, template){
 		var $blog = $('#blog')
 

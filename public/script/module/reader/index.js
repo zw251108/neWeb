@@ -1,9 +1,9 @@
 /**
  *
  * */
-require(['../../config'], function(config){
-	var r = require(config.requireConfig);
-	r(['jquery', 'global', 'socket', 'bookmarkRead', 'searchBar', 'filterBox', 'tag', config.dataSource.tag, 'msgPopup', 'pagination', 'template'], function($, g, socket, bookmarkRead, searchBar, filterBox, tag, tagsData, msgPopup, pagination){
+require(['/script/config.js'], function(config){
+	var r = require( config );
+	r(['jquery', 'global', 'socket', 'bookmarkRead', 'searchBar', 'filterBox', 'tag', 'text!data-tag', 'msgPopup', 'pagination', 'template'], function($, g, socket, bookmarkRead, searchBar, filterBox, tag, tagsData, msgPopup, pagination){
 		var $reader = $('#reader')
 			, articleTpl = $.template({
 				template: 'li.reader_article.article' +

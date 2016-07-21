@@ -1,13 +1,11 @@
 /**
  *
  * */
-define(['../../config'], function(config){
-	config.requireConfig.baseUrl = location.origin +'/script/';
-
-	var r = require(config.requireConfig);
+define(['/script/config.js'], function(config){
+	var r = require(config);
 	r(['jquery', 'global', 'socket'
-		, config.dataSource.skin, 'codeEditor', 'codeEditorSkin'
-		, config.dataSource.tag, 'tag'
+		, 'text!data-skin', 'codeEditor', 'codeEditorSkin'
+		, 'text!data-tag', 'tag'
 		, 'msgPopup'
 		, 'template'
 	], function($, g, socket, skin, code, codeSkin, tagsData, tag, msgPopup){
@@ -39,7 +37,7 @@ define(['../../config'], function(config){
 		$codeArea.nextAll('.CodeMirror').addClass('edit_CodeMirror');
 
 		skin = $.parseJSON( skin );
-		codeSkin = codeSkin(skin.skin, config.requireConfig.baseUrl, [content]);
+		codeSkin = codeSkin(skin.skin, config.baseUrl, [content]);
 
 		tag( $.parseJSON(tagsData).data || [] );
 		tag.setAdd( $form );

@@ -3,7 +3,7 @@
  * @desc    标签 Tag 相关操作
  * */
 //-----  -----
-define(['jquery', 'socket'], function($, socket){
+define(['jquery', 'global', 'socket', 'text!data-tag'], function($, g, socket, TAG_DATA){
 	var Tag = function(tagsData){
 			TAG_DATA = tagsData;
 		}
@@ -13,8 +13,9 @@ define(['jquery', 'socket'], function($, socket){
 		, tagCheckedTpl = function(d){
 			return d.tags ? '<span class="tag tag-checked">'+ d.tags.split(',').join('</span><span class="tag tag-checked">') +'</span>' : '';
 		}
-		, TAG_DATA = []
 		;
+
+	TAG_DATA = $.parseJSON( TAG_DATA );
 
 	socket.register({
 		'tag/add': function(data){

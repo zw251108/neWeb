@@ -1,5 +1,5 @@
-require(['../../config'], function(config){
-	var r = require( config.requireConfig );
+require(['/script/config.js'], function(config){
+	var r = require( config );
 	r(['blog'], function(blog){
 		//data({
 		//	topic: 'blog/list'

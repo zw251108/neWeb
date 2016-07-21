@@ -49,9 +49,9 @@ define('bookmarkAdd', ['jquery', 'global', 'socket', 'msgPopup', 'template'], fu
 	}
 });
 
-require(['../../config'], function(config){
-	var r = require(config.requireConfig);
-	r(['jquery', 'global', 'socket', 'bookmarkAdd', 'bookmarkRead', 'searchBar', 'filterBox', config.dataSource.tag, 'template'], function($, g, socket, bookmarkAdd, bookmarkRead, searchBar, filterBox, tagsData){
+require(['/script/config.js'], function(config){
+	var r = require( config );
+	r(['jquery', 'global', 'socket', 'bookmarkAdd', 'bookmarkRead', 'searchBar', 'filterBox', 'text!data-tag', 'notice', 'template'], function($, g, socket, bookmarkAdd, bookmarkRead, searchBar, filterBox, tagsData, notice){
 		var articleTpl = $.template({
 				template: 'article#readerArt%id%.article.reader_article[data-id=%id% data-bookmark-id=%id% data-status=%status% data-score=%score%]' +
 					'>a[href=%url% title=%url% target=_blank]' +
@@ -167,6 +167,9 @@ require(['../../config'], function(config){
 			, 'reader/bookmark/new': function(data){
 				if( data.msg === 'Done' ){
 					$bookmarkList.prepend( articleTpl(data.data).join('') );
+					notice('bookmark 有更新', '新加入文章：'+ $.map(data.data, function(d){
+						return d.title
+					}).join('\n'));
 				}
 			}
 		});

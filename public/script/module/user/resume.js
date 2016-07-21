@@ -185,15 +185,13 @@ define('timeline', ['jquery', 'global', 'd3'], function($, g, d3){
 	};
 });
 
-require(['../../config'], function(config){
-	var r = require.config(config.requireConfig)
-		, ds = config.dataSource
-		;
+require(['/script/config.js'], function(config){
+	var r = require.config( config );
 
 	r(['jquery', 'global', 'socket'
-		, 'radarChart', ds.resumeSkill, ds.resumeBasicData
-		, 'timeline', ds.resumeWorkHistory
-		, ds.resumeTags
+		, 'radarChart', 'text!data-resume/skill', 'text!data-resume/basicData'
+		, 'timeline', 'text!data-resume/workHistory'
+		, 'text!data-resume/tags'
 	], function($, g, socket
 		, chart, skill, basic
 		, timeline, workHistory

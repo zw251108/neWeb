@@ -3,13 +3,8 @@
  * */
 //----- web socket 模块 目前基于 socket.io -----
 define(['/socket.io/socket.io.js'], function(io){
-	var
-		//io = require('/socket.io/socket.io.js')
-		//,
-		origin = location.origin
-		, socket = io(origin
-			//+(location.protocol==='http'?':8000':':8443')
-		)
+	var origin = location.origin
+		, socket = io( origin )
 		, EVENT_LIST = {}
 		, EVENT_INDEX_LIST = []
 		;

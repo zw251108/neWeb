@@ -19,11 +19,11 @@
 /**
  * @module
  * */
-require(['config'], function(config){
+require(['/script/config.js'], function(config){
 
 	//config.requireConfig.baseUrl = '../script/';
 
-	var r = require.config(config.requireConfig);
+	var r = require.config( config );
 	r(['jquery', 'global', 'socket', 'template'], function($, g, socket){
 		var tableTpl = $.template({
 				template: 'tr>td>button[type=button]{安装}+input[type=hidden value=%name%]^td[title=%name%]{%name%}+td[title=%url%]{%url%}'

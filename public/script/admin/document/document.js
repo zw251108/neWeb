@@ -1,12 +1,10 @@
 /**
  *
  * */
-require(['../../config'], function(config){
-	config.requireConfig.baseUrl = location.origin +'/script/';
-
-	var r = require(config.requireConfig);
+require(['/script/config.js'], function(config){
+	var r = require(config);
 	r(['jquery', 'global', 'socket'
-		, config.dataSource.skin, 'codeEditor', 'codeEditorSkin'
+		, 'text!data-skin', 'codeEditor', 'codeEditorSkin'
 		, 'msgPopup'
 		, 'template'
 	], function($, g, socket, skin, code, codeSkin, msgPopup){
@@ -105,7 +103,7 @@ require(['../../config'], function(config){
 			;
 
 		skin = $.parseJSON( skin );
-		codeSkin = codeSkin(skin.skin, config.requireConfig.baseUrl, codeList);
+		codeSkin = codeSkin(skin.skin, config.baseUrl, codeList);
 
 		$document.on('click', '#save', function(e, hideMsg){
 			var order = $document.find('.section').map(function(){

@@ -1,9 +1,9 @@
 /**
  *
  */
-require(['../../config'], function(config){
-	var r = require.config(config.requireConfig);
-	r(['jquery', 'global', 'socket', 'searchBar', 'filterBox', 'tag', config.dataSource.tag, 'template',  'layout'], function($, g, socket, searchBar, filterBox, tag, tagsData){
+require(['/script/config.js'], function(config){
+	var r = require.config( config );
+	r(['jquery', 'global', 'socket', 'searchBar', 'filterBox', 'tag', 'text!data-tag', 'template',  'layout'], function($, g, socket, searchBar, filterBox, tag, tagsData){
 		var $editor = $('#code')
 			, $editorContainer = $editor.find('.module_content')
 			, PREVIEW_SIZE = 128

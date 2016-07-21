@@ -1,7 +1,7 @@
 'use strict';
 
-var CONFIG    = require('../../config.js')
-	, web         = require('../web.js')
+var CONFIG      = require('../../config.js')
+	, web       = require('../web.js')
 	, socket    = require('../socket.js')
 
 	, modules   = require('../module.js')

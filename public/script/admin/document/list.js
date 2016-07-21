@@ -1,8 +1,6 @@
-require(['../../config'], function(config){
+require(['/script/config.js'], function(config){
 
-	config.requireConfig.baseUrl = location.origin + '/script/';
-
-	var r = require.config(config.requireConfig);
+	var r = require.config( config );
 	r(['jquery', 'global', 'adminAddDataPopup', 'msgPopup'], function($, g, addPopup, msgPopup){
 		var $addPopup = addPopup(function(data){
 				return !!data.title;

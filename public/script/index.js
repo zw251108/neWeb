@@ -121,11 +121,9 @@ define('user', ['jquery', 'global', 'socket', 'msgPopup', 'storage'], function($
 });
 
 //---------- 应用模块 ----------
-require(['config'], function(config){
-	config.requireConfig.baseUrl = 'script/';
+require(['/script/config.js'], function(config){
 
-	var r = require.config(config.requireConfig);
-
+	var r = require.config( config );
 	r(['jquery', 'global', 'socket', 'time', 'login', 'user'], function($, g, socket, $time){
 		var $container = g.$container
 			, $blog = $('#blog').data('width', 'big') // Blog 模块

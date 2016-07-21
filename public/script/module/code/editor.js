@@ -436,12 +436,12 @@ define('setMorePopup', ['jquery', 'socket', 'msgPopup', 'tag', 'template'], func
 	};
 });
 
-require(['../../config'], function(config){
-	var r = require.config(config.requireConfig);
+require(['/script/config.js'], function(config){
+	var r = require.config( config );
 	r(['jquery', 'global', 'socket'
-		, config.dataSource.skin, 'codeEditor', 'codeEditorSkin'
+		, 'text!data-skin', 'codeEditor', 'codeEditorSkin'
 		, 'editorLayout'
-		, config.dataSource.tag, 'setMorePopup'
+		, 'text!data-tag', 'setMorePopup'
 		, 'uiLibPopup'
 		, 'msgPopup'
 		, 'demoImgLibPopup'
@@ -539,7 +539,7 @@ require(['../../config'], function(config){
 		layoutList = layoutList($editor, html, css, js);
 
 		skin = $.parseJSON( skin );
-		codeSkin = codeSkin(skin.skin, config.requireConfig.baseUrl, [html, css, js]);
+		codeSkin = codeSkin(skin.skin, config.baseUrl, [html, css, js]);
 
 		tagsData = $.parseJSON( tagsData );
 
