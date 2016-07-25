@@ -251,11 +251,11 @@ define('uiLibPopup', ['jquery', 'socket', 'template'], function($, socket){
 
 	$('#getUiLib').on('click', function(){
 		$uiLibPopup.data('data') ? $uiLibPopup.trigger('showDialog') : socket.emit('data', {
-			topic: 'editor/lib'
+			topic: 'code/lib'
 		});
 	});
 
-	socket.register('editor/lib', function( data){
+	socket.register('code/lib', function( data){
 		var cssLib = $cssLib.val()
 			, jsLib = $jsLib.val()
 			;
@@ -331,7 +331,7 @@ define('demoImgLibPopup', ['jquery', 'socket', 'msgPopup', 'template'], function
 
 	$('#getDemoImg').on('click', function(){
 		$demoImgLibPopup.data('data') ? $demoImgLibPopup.trigger('showDialog') : socket.emit('data', {
-			topic: 'editor/demoImgLib'
+			topic: 'code/demoImgLib'
 		});
 	});
 
@@ -351,7 +351,7 @@ define('demoImgLibPopup', ['jquery', 'socket', 'msgPopup', 'template'], function
 		}
 	});
 
-	socket.register('editor/demoImgLib', function(data){
+	socket.register('code/demoImgLib', function(data){
 		$demoImgLibPopup.data('data', true).find('#demoImgList').html( demoImgLibTpl(data.data).join('') ).end().trigger('showDialog');
 	});
 });
@@ -514,7 +514,7 @@ require(['/script/config.js'], function(config){
 				;
 
 			socket.emit('data', {
-				topic: 'editor/code/save'
+				topic: 'code/code/save'
 				, query: data
 			});
 		});
@@ -553,7 +553,7 @@ require(['/script/config.js'], function(config){
 			}
 		});
 
-		socket.register('editor/code/save', function(data){
+		socket.register('code/code/save', function(data){
 
 			if( 'error' in data ){
 				msgPopup.showMsg('保存失败' + data.msg);

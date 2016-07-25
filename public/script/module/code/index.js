@@ -104,7 +104,7 @@ require(['/script/config.js'], function(config){
 			//	;
 			//
 			//socket.emit('data', {
-			//	topic: 'editor/search'
+			//	topic: 'code/search'
 			//	, query: data
 			//});
 		});
@@ -147,11 +147,11 @@ require(['/script/config.js'], function(config){
 
 						if( search ){
 							if( searchObj.keyword ){
-								send.topic = 'editor/search';
+								send.topic = 'code/search';
 								send.query.keyword = searchObj.keyword;
 							}
 							else if( searchObj.tags ){
-								send.topic = 'editor/filter';
+								send.topic = 'code/filter';
 								send.query.tags = searchObj.tags
 							}
 						}
@@ -171,7 +171,7 @@ require(['/script/config.js'], function(config){
 		}
 
 		socket.register({
-			editor: function(data){
+			code: function(data){
 				var content = '';
 
 				data = data.data;
@@ -190,7 +190,7 @@ require(['/script/config.js'], function(config){
 					layout();
 				}
 			}
-			, 'editor/search': function(data){
+			, 'code/search': function(data){
 				var content = '';
 
 				data = data.data;
@@ -209,7 +209,7 @@ require(['/script/config.js'], function(config){
 					layout();
 				}
 			}
-			, 'editor/filter': function(data){
+			, 'code/filter': function(data){
 				var content = '';
 
 				data = data.data;

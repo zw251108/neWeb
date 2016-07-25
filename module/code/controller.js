@@ -297,10 +297,10 @@ web.post('/code/demoImgUpload', ImageHandler.uploadMiddleware.single('image'), f
 });
 
 // 编辑器 demo API
-web.get('/code/demo/', function(req, res){
+web.get('/code/demo/',      function(req, res){
 	res.end();
 });
-web.post('/code/demo/', function(req, res){
+web.post('/code/demo/',     function(req, res){
 	var body = req.body
 		, html = body.html
 		, css = body.css
@@ -334,14 +334,14 @@ web.post('/code/demo/', function(req, res){
 		'</html>');
 	res.end();
 });
-web.get('/code/demo/get', function(req, res){
+web.get('/code/demo/get',   function(req, res){
 	var query = req.query
 		;
 
 	res.send( JSON.stringify(query) );
 	res.end();
 });
-web.post('/code/demo/set', function(req, res){
+web.post('/code/demo/set',  function(req, res){
 	var body = req.body
 		;
 
@@ -350,7 +350,7 @@ web.post('/code/demo/set', function(req, res){
 });
 
 socket.register({
-	editor: function(socket, data){
+	code: function(socket, data){
 		var query = data.query || {}
 			, page = query.page || 1
 			, size = query.size || 20
@@ -363,9 +363,9 @@ socket.register({
 			});
 		});
 	}
-	, 'editor/search': function(socket, data){
+	, 'code/search': function(socket, data){
 		var send = {
-				topic: 'editor/search'
+				topic: 'code/search'
 			}
 			, query = data.query || {}
 			, keyword = query.keyword
@@ -413,9 +413,9 @@ socket.register({
 			socket.emit('data', send);
 		});
 	}
-	, 'editor/filter': function(socket, data){
+	, 'code/filter': function(socket, data){
 		var send = {
-				topic: 'editor/filter'
+				topic: 'code/filter'
 			}
 			, query = data.query || {}
 			, tags = query.tags
@@ -463,8 +463,8 @@ socket.register({
 			socket.emit('data', send);
 		});
 	}
-	, 'editor/code': function(socket, data){}
-	, 'editor/code/save': function(socket, data){
+	, 'code/code': function(socket, data){}
+	, 'code/code/save': function(socket, data){
 		var query = data.query
 			, id = query.id || ''
 			, execute
@@ -482,23 +482,23 @@ socket.register({
 
 		execute.then(function(rs){
 			socket.emit('data', {
-				topic: 'editor/code/save'
+				topic: 'code/code/save'
 				, info: {
 					id: rs.insertId || id
 				}
 			});
 		});
 	}
-	, 'editor/lib': function(socket){
+	, 'code/lib': function(socket){
 		LibModel.getBowerAll().then(function(rs){
 			socket.emit('data', {
-				topic: 'editor/lib'
+				topic: 'code/lib'
 				, data: rs
 			});
 		});
 	}
-	, 'editor/demoImgLib': function(socket){
-		var topic = 'editor/demoImgLib'
+	, 'code/demoImgLib': function(socket){
+		var topic = 'code/demoImgLib'
 			, user = UserHandler.getUserFromSession.fromSocket( socket )
 			;
 
