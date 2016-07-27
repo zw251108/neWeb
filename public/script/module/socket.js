@@ -10,7 +10,7 @@ define(['/socket.io/socket.io.js'], function(io){
 		;
 
 	socket.on('error', function(err){
-
+		console.log(err)
 		if( err === 'session not found' ){
 			/**
 			 * session 失效
@@ -24,7 +24,7 @@ define(['/socket.io/socket.io.js'], function(io){
 	}).on('data', function(data){
 		var topic = data.topic;
 
-		if( 'error' in data ){
+		if( data.msg !== 'Done' ){
 			// todo 错误
 			console.log('socket error: ', data.msg);
 		}
@@ -35,6 +35,14 @@ define(['/socket.io/socket.io.js'], function(io){
 		else{
 			// todo 未存在主题
 		}
+	}).on('disconnect', function(err){  // 断开连接
+		console.log('与服务器断开连接', err);
+	}).on('reconnecting', function(){   // 重连中
+		console.log('正在与服务器重新建立连接');
+	}).on('reconnect', function(){  // 重连成功
+		console.log('与服务器重新建立连接');
+	}).on('reconnect_failed', function(err){    // 重连失败
+		console.log('与服务器重新建立连接失败', err);
 	});
 
 	socket.register = function(topic, event){

@@ -93,9 +93,17 @@ session = session({
 web.use( session );
 
 // 判断浏览器类型，操作系统
-//web.use(function(req, res, next){
-//
-//});
+web.use(function(req, res, next){
+	var session = req.session
+		;
+
+	if( !('ua' in session) ){
+		console.log('设备 UA: ', req.headers['user-agent'] );
+		session.ua = req.headers['user-agent'];
+	}
+
+	next();
+});
 
 //----- 静态资源 重定向 -----
 web.use('/cache.manifest', express.static(__dirname + '/public/cache.manifest') );  // 离线缓存配置文件
@@ -198,32 +206,10 @@ web.get('/', function(req, res){
 				'</div>\
 			</section>'+
 			tpl.metroTpl( modules.modules ).join('') +
-			'<a href="" target="_blank">\
-				<section class="metro metro-tiny">\
-					<h2 class="metro_title icon icon-renren"></h2>\
-				</section>\
-			</a>\
-			<a href="" target="_blank">\
-				<section class="metro metro-tiny">\
-					<h2 class="metro_title icon icon-qq"></h2>\
-				</section>\
-			</a>\
-			<a href="" target="_blank">\
-				<section class="metro metro-tiny">\
-					<h2 class="metro_title icon icon-wechat"></h2>\
-				</section>\
-			</a>\
-			<a href="http://weibo.com/2707826454/profile" target="_blank">\
-				<section class="metro metro-tiny">\
-					<h2 class="metro_title icon icon-weibo"></h2>\
-				</section>\
-			</a>\
-			<a href="https://github.com/zw251108" target="_blank">\
-				<section class="metro metro-tiny">\
-					<h2 class="metro_title icon icon-github"></h2>\
-				</section>\
-			</a>\
-			<dialog id="msgPopup" class="module module-popup small hidden" open="open">\
+			userSNS.map(function(d){
+				return '<a href="'+ d.url +'" target="_blank"><section class="metro metro-tiny"><h2 class="metro_title icon icon-'+ d.icon +'"></h2></section></a>';
+			}).join('') +
+			'<dialog id="msgPopup" class="module module-popup small hidden" open="open">\
 				<ul class="toolbar" role="toolbar">\
 					<li><button id="msgPopupClose" class="icon icon-cancel module_close" type="button" title="关闭"></button></li>\
 				</ul>\

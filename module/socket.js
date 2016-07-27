@@ -18,12 +18,14 @@ socketServer.on('connection', function(socket){
 	// todo 应该获取 session
  	var session = socket.handshake.session
 		, sessionId = session.id
+	    , index
 	    ;
 
 	if( sessionId in SESSION_LIST ){
-		SESSION_LIST[sessionId].push( socket );
+		index = SESSION_LIST[sessionId].push( socket );
 	}
 	else{
+		index = 0;
 		SESSION_LIST[sessionId] = [socket];
 	}
 
@@ -50,8 +52,6 @@ socketServer.on('connection', function(socket){
 	}).on('message', function(data){    // 即时通信接口
 		console.log('user chat');
 	}).on('disconnect', function(){ // 断开连接
-		var index = SESSION_LIST[sessionId].indexOf( socket )
-			;
 
 		SESSION_LIST[sessionId].splice(index, 1);
 		console.log('socket: session id ', sessionId, 'disconnect');
