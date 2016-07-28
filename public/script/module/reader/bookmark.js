@@ -56,7 +56,7 @@ require(['/script/config.js'], function(config){
 				template: 'article#readerArt%id%.article.reader_article[data-id=%id% data-bookmark-id=%id% data-status=%status% data-score=%score%]' +
 					'>a[href=%url% title=%url% target=_blank]' +
 						'>h3.article_title' +
-							'>i.icon.icon-document' +
+							'>i.icon.icon-document.hasIcon' +
 								'>img[src=%ico% onerror=this.style.display=\'none\';this.parentNode.className=this.parentNode.className.replace(\'hasIcon\',\'\');]' +
 							'^div{%title%}' +
 					'^^hr' +

@@ -581,7 +581,7 @@ var CONFIG  = require('../../config.js')
 					data.source = ReaderHandler.getSource( data.url );
 				}
 
-				ReaderModel.addWeb( data.source );
+				ReaderModel.addWeb(data.source, data.ico);
 				execute = ReaderModel.addBookmark( data ).then(function(rs){
 					var result
 						;
@@ -669,6 +669,8 @@ var CONFIG  = require('../../config.js')
 		, addBookmark: function(user, data){
 			var execute
 				, url       = data.url
+				, title     = data.title || ''
+				, ico       = data.ico || ''
 				, tempId    = data.tempId
 				, isGuest = UserHandler.isGuest( user )
 				, source = ReaderHandler.getSource( url )
@@ -706,6 +708,9 @@ var CONFIG  = require('../../config.js')
 								if( !data.source ){
 									data.source = source;
 								}
+
+								data.title = title || data.title;
+								data.ico = ico;
 
 								return ReaderHandler.newBookmark(user, data);
 							});

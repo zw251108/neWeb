@@ -536,7 +536,7 @@ var db  = require('../db.js')
 				sql: SQL.webAdd
 				, data: {
 					url: url
-					, ico: url + (ico || '/favicon.ico')
+					, ico: ico || url + '/favicon.ico'
 				}
 			});
 		}
