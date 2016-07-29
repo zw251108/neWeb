@@ -19,7 +19,9 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	})
 
 	, articleFilter     = Tools.extend({
-		content: Tools.encodeHTML
+		content: function(d){
+			return Tools.encodeHTML( d.content );
+		}
 	}, TagView.tagEditorFilter)
 	, articleTpl        = emmetTpl({
 		template: getEmmet('admin/blog/article.html') +

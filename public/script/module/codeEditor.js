@@ -31,7 +31,7 @@ define(['plugin/codeMirror/lib/codemirror'
 	/**
 	 * @constructor
 	 * */
-	var codeEditor = function(target, type, readOnly){
+	var codeEditor = function(target, type, readOnly, lineWrapping){
 		var options = {
 			lineNumbers : true
 			, foldGutter: true
@@ -65,6 +65,7 @@ define(['plugin/codeMirror/lib/codemirror'
 		}
 
 		readOnly && (options.readOnly = !!readOnly);
+		lineWrapping && (options.lineWrapping = !!lineWrapping);
 
 		return cm.fromTextArea(target, options);
 	};

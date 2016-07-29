@@ -19,18 +19,23 @@ var getEmmet    = require('../emmet/getEmmet.js')
 	, sectionTpl    = emmetTpl({
 		template: getEmmet('document/section.html')
 		, filter: {
-			contentList: function(d){
+			contentList: function(d, i){
 				return contentTpl( d.contentList ).join('')
 			}
 		}
 	})
 	, contentTpl    = emmetTpl({
 		template: getEmmet('document/content.html')
+		, filter: {
+			contentIndex: function(d, i){
+				return i;
+			}
+		}
 	})
 
 	, DocumentView = {
 		documentList: function(rs){}
-		, document: function(rs){console.log(getEmmet('document/article.html'))
+		, document: function(rs){
 			var document = {
 				title: '文档 Document'
 				, main: {

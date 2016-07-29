@@ -24,6 +24,7 @@ require(['/script/config.js'], function(config){
 			})
 			, $container = g.$container
 			, codeList = []
+			, hash = location.hash
 			;
 
 		skin = $.parseJSON( skin );
@@ -43,6 +44,8 @@ require(['/script/config.js'], function(config){
 			$temp.add(this)
 				.find('.icon').toggleClass('icon-up icon-down').end()
 				.next('dl').slideToggle();
+
+			location.hash = $temp.add(this).find('a').attr('name');
 		}).on('click', 'dt', function(){
 			if( $curr ){
 				$curr.toggleClass('icon-right icon-down');
@@ -57,6 +60,8 @@ require(['/script/config.js'], function(config){
 			$curr && $curr.next().hide();
 			$curr = $temp.add(this);
 
+			location.hash = $temp.add(this).find('a').attr('name');
+
 			g.$body.animate({
 				scrollTop: this.offsetTop + $toolbar.height()
 			}, function(){
@@ -69,7 +74,22 @@ require(['/script/config.js'], function(config){
 					codeSkin.setSkin();
 				});
 			});
-		})
-		;
+		});
+
+		// hash change
+		if( hash ){
+			hash = hash.split('-');
+
+			if( hash[1] ){
+				// $document.find('section:not(:eq('+ hash[1] +')) .section_title').trigger('click');
+
+				if( hash[2] ){
+					$document.find('section:eq('+ (hash[1] -1) +') dt:eq('+ hash[2] +')').trigger('click');
+				}
+				else{
+					$document.find('section:eq('+ hash[1] +') dt:eq(0)').trigger('click');
+				}
+			}
+		}
 	});
 });

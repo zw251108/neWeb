@@ -32,7 +32,7 @@ define(['/script/config.js'], function(config){
 			, content
 			;
 
-		content = code($codeArea[0], $codeArea.data('codeType'));
+		content = code($codeArea[0], $codeArea.data('codeType'), false, true);
 
 		$codeArea.nextAll('.CodeMirror').addClass('edit_CodeMirror');
 

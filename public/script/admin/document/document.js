@@ -204,7 +204,7 @@ require(['/script/config.js'], function(config){
 
 				if( !$curr.data('codeMirror') ){
 					$curr.next().find('textarea').each(function(){
-						var c = code(this, this.dataset ? this.dataset.codeType : this.getAttribute('data-code-type'));
+						var c = code(this, this.dataset ? this.dataset.codeType : this.getAttribute('data-code-type'), false, true);
 
 						codeList.push( c );
 						codeSkin.setSkin();
