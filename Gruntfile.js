@@ -352,9 +352,22 @@ module.exports = function(grunt){
 			destiny: {
 				options: {
 					outputStyle: 'compressed'
-				},
-				files: {
-					'build/sass/style.css': 'test/sass/style.scss'
+				}
+				, dist: {
+					files: {
+						'build/sass/style.css': 'test/sass/style.scss'
+					}
+				}
+			}
+
+			, test: {
+				options: {
+					outputStyle: 'compressed'
+				}
+				, dist: {
+					files: {
+						'build/animate.css': 'test/animate.scss'
+					}
 				}
 			}
 		}
@@ -554,7 +567,7 @@ module.exports = function(grunt){
 	 * */
 	grunt.loadNpmTasks('grunt-contrib-cssmin');
 	grunt.loadNpmTasks('grunt-contrib-less');   // less 编译
-//	grunt.loadNpmTasks('grunt-sass');   // sass 编辑（基于 node-sass，不是基于 ruby）
+	grunt.loadNpmTasks('grunt-sass');   // sass 编辑（基于 node-sass，不是基于 ruby）
 	/**
 	 * js 打包及压缩
 	 * */

@@ -155,11 +155,15 @@ db.handle = function(query){
 	}).then(function(rs){
 		return rs;
 	}, function(e){
-		if( e instanceof DBError){
-			console.log('[DBError]', e.message);
-		}
+		console.log( e );
 
-		return Promise.reject( e );
+		// if( e instanceof DBError){
+		// 	console.log('[DBError]', e.message);
+		// }
+		//
+		// return Promise.reject( e );
+
+		return [];
 	});
 };
 

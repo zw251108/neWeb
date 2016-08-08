@@ -101,6 +101,9 @@ web.use(function(req, res, next){
 		console.log('设备 UA: ', req.headers['user-agent'] );
 		session.ua = req.headers['user-agent'];
 	}
+	else{
+		console.log(session.id)
+	}
 
 	next();
 });

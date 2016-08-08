@@ -633,7 +633,7 @@ function saveOrUpdate(name, num){
 //	return emmet.replace(/([^\^])(\^*)$/, '$1');
 //};
 //
-//var fs = require('fs')
+var fs = require('fs')
 //	, html = fs.readFileSync(__dirname + '/tpl/page.html').toString()
 //	;
 //
@@ -5667,12 +5667,45 @@ var cheerio = require('cheerio')
 //	});
 //});
 
-db.query('select * from web where ico=\'0\'', function(e, rs){
-	if( e ){
-		return;
-	}
+// db.query('select * from web where ico=\'0\'', function(e, rs){
+// 	if( e ){
+// 		return;
+// 	}
+//
+// 	rs.forEach(function(d){
+// 		db.query('update web set ico=\''+ d.url +'/favicon.ico\' where id='+ d.id)
+// 	});
+// });
 
-	rs.forEach(function(d){
-		db.query('update web set ico=\''+ d.url +'/favicon.ico\' where id='+ d.id)
-	});
+// db.query('select count(*) as count from user_reader_bookmark', function(e, rs){console.log(rs)
+// 	var l = rs[0].count
+// 		;
+//
+// 	for(let i = 0; i < l; i++ ){
+// 		db.query('select * from user_reader_bookmark where id='+i, function(e, rs){
+// 			if( rs && rs.length ){
+//
+// 			}
+// 			else{
+// 				console.log('缺少 ', i)
+// 			}
+// 		})
+// 	}
+// })
+
+var sass = require('node-sass');
+
+sass.render({
+	file: 'test/animate.scss'
+	, outFile: 'build/animate.css'
+	, sourceMap: true
+}, function(e, rs){
+	if( e ){
+		console.log(0, e );
+	}
+	else{
+		console.log(1, rs );
+
+		fs.writeFileSync(__dirname + '/public/style/animate.css', new Buffer(rs.css) );
+	}
 });
