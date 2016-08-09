@@ -5698,7 +5698,6 @@ var sass = require('node-sass');
 sass.render({
 	file: 'test/animate.scss'
 	, outFile: 'build/animate.css'
-	, sourceMap: true
 }, function(e, rs){
 	if( e ){
 		console.log(0, e );
