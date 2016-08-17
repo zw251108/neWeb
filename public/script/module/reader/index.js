@@ -8,8 +8,10 @@ require(['/script/config.js'], function(config){
 			, articleTpl = $.template({
 				template: 'li.reader_article.article' +
 					'>a[href=%url% title=%title% target=_blank]' +
-						'>h4.article_title.icon.icon-document{%title%}' +
-					'^hr' +
+						'>h4.article_title' +
+							'>i.icon.icon-document' +
+							'+div{%title%}' +
+					'^^hr' +
 					'+div.article_score.%article_score_value%{%article_score%}' +
 					'+a.icon.icon-bookmark[href=bookmark/add title=稍后再读]{添加书签}' +
 					'+a.icon.icon-checkbox[href=bookmark/read title=读过]{读过}' +
