@@ -514,7 +514,7 @@ require(['/script/config.js'], function(config){
 				;
 
 			socket.emit('data', {
-				topic: 'code/code/save'
+				topic: 'code/editor/save'
 				, query: data
 			});
 		});
@@ -553,7 +553,7 @@ require(['/script/config.js'], function(config){
 			}
 		});
 
-		socket.register('code/code/save', function(data){
+		socket.register('code/editor/save', function(data){
 
 			if( 'error' in data ){
 				msgPopup.showMsg('保存失败' + data.msg);

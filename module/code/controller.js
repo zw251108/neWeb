@@ -55,125 +55,135 @@ menu.register({
 
 web.get('/code/', function(req, res){
 	var query = req.query || {}
+		, user = UserHandler.getUserFromSession.fromReq(req)
 		, page = query.page || 1
 		, size = query.size || 20
 		, keyword = query.keyword || ''
 		, tags = query.tags || ''
-		, user = UserHandler.getUserFromSession.fromReq(req)
 		, execute
 		;
 
-	if( keyword ){
-		execute = Model.searchEditorByName(keyword, page, size).then(function(rs){
-			var result
-				;
-
-			if( rs && rs.length ){
-				result = Model.countSearchEditorByName(keyword).then(function(count){
-					return {
-						data: rs
-						, index: page
-						, size: size
-						, count: count
-						, urlCallback: function(index){
-							return '?keyword='+ keyword +'&page='+ index;
-						}
-					};
-				});
-			}
-			else{
-				result = {
-					data: []
-					, index: 1
-					, size: size
-					, count: 0
-					, urlCallback: function(index){
-						return '?keyword='+ keyword +'&page='+ index;
-					}
-				};
-			}
-
-			return result;
-		});
-	}
-	else if( tags ){
-		execute = Model.filterEditorByTag(tags, page, size).then(function(rs){
-			var result
-				;
-
-			if( rs && rs.length ){
-				result = Model.countFilterEditorByTag(tags).then(function(count){
-					return {
-						data: rs
-						, index: page
-						, size: size
-						, count: count
-						, urlCallback: function(index){
-							return '?tags='+ tags +'&page='+ index;
-						}
-					}
-				});
-			}
-			else{
-				result = {
-					data: []
-					, index: 1
-					, size: size
-					, count: 0
-					, urlCallback: function(index){
-						return '?tags='+ tags + '&page='+ index;
-					}
-				}
-			}
-
-			return result;
-		});
-	}
-	else{
-		execute = Model.getEditorByPage(page, size).then(function(rs){
-			return Model.countEditor().then(function(count){
-				return {
-					data: rs
-					, index: page
-					, size: size
-					, count: count
-					, urlCallback: function(index){
-						return '?page='+ index;
-					}
-				};
-			});
-		});
-	}
-	execute.then( CodeView.codeList ).then(function(html){
+	CodeHandler.getCodeList(user, query).then( CodeView.codeList ).then(function(html){
 		res.send( CONFIG.docType.html5 + html );
 		res.end();
 	});
+	//
+	// if( keyword ){
+	// 	execute = Model.searchCodeByName(keyword, page, size).then(function(rs){
+	// 		var result
+	// 			;
+	//
+	// 		if( rs && rs.length ){
+	// 			result = Model.countSearchCodeByName(keyword).then(function(count){
+	// 				return {
+	// 					data: rs
+	// 					, index: page
+	// 					, size: size
+	// 					, count: count
+	// 					, urlCallback: function(index){
+	// 						return '?keyword='+ keyword +'&page='+ index;
+	// 					}
+	// 				};
+	// 			});
+	// 		}
+	// 		else{
+	// 			result = {
+	// 				data: []
+	// 				, index: 1
+	// 				, size: size
+	// 				, count: 0
+	// 				, urlCallback: function(index){
+	// 					return '?keyword='+ keyword +'&page='+ index;
+	// 				}
+	// 			};
+	// 		}
+	//
+	// 		return result;
+	// 	});
+	// }
+	// else if( tags ){
+	// 	execute = Model.filterCodeByTag(tags, page, size).then(function(rs){
+	// 		var result
+	// 			;
+	//
+	// 		if( rs && rs.length ){
+	// 			result = Model.countFilterCodeByTag(tags).then(function(count){
+	// 				return {
+	// 					data: rs
+	// 					, index: page
+	// 					, size: size
+	// 					, count: count
+	// 					, urlCallback: function(index){
+	// 						return '?tags='+ tags +'&page='+ index;
+	// 					}
+	// 				}
+	// 			});
+	// 		}
+	// 		else{
+	// 			result = {
+	// 				data: []
+	// 				, index: 1
+	// 				, size: size
+	// 				, count: 0
+	// 				, urlCallback: function(index){
+	// 					return '?tags='+ tags + '&page='+ index;
+	// 				}
+	// 			}
+	// 		}
+	//
+	// 		return result;
+	// 	});
+	// }
+	// else{
+	// 	execute = Model.getCodeByPage(page, size).then(function(rs){
+	// 		return Model.countCode().then(function(count){
+	// 			return {
+	// 				data: rs
+	// 				, index: page
+	// 				, size: size
+	// 				, count: count
+	// 				, urlCallback: function(index){
+	// 					return '?page='+ index;
+	// 				}
+	// 			};
+	// 		});
+	// 	});
+	// }
+	// execute.then( CodeView.codeList ).then(function(html){
+	// 	res.send( CONFIG.docType.html5 + html );
+	// 	res.end();
+	// });
 });
 web.get('/code/editor', function(req, res){
 	var query = req.query || {}
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		, id = query.id
 		, execute
 		;
 
-	if( id !== '0' ){
-		execute = Model.getEditorById(id).then(function(rs){
-			rs.setMore = SET_MORE;
-			rs.demoImgUpload = DEMO_IMG_UPLOAD;
-
-			return rs;
-		});
-	}
-	else{
-		execute = Promise.resolve({
-			id: 0
-			, js_lib: 'jquery/dist/jquery.js'
-		});
-	}
-
-	execute.then( CodeView.editor ).then(function(html){
+	CodeHandler.getCode(user, query).then( CodeView.editor ).then(function(html){
 		res.send( CONFIG.docType.html5 + html );
 		res.end();
 	});
+	// if( id !== '0' ){
+	// 	execute = Model.getCodeById(id).then(function(rs){
+	// 		rs.setMore = SET_MORE;
+	// 		rs.demoImgUpload = DEMO_IMG_UPLOAD;
+	//
+	// 		return rs;
+	// 	});
+	// }
+	// else{
+	// 	execute = Promise.resolve({
+	// 		id: 0
+	// 		, js_lib: 'jquery/dist/jquery.js'
+	// 	});
+	// }
+	//
+	// execute.then( CodeView.editor ).then(function(html){
+	// 	res.send( CONFIG.docType.html5 + html );
+	// 	res.end();
+	// });
 });
 
 web.post('/code/setMore', ImageHandler.uploadMiddleware.single('preview'), function(req, res){
@@ -189,7 +199,7 @@ web.post('/code/setMore', ImageHandler.uploadMiddleware.single('preview'), funct
 	if( id ){
 
 		execute = ImageHandler.uploadImage(user, req).then(function(data){
-			return Model.updateEditorSetImg({
+			return Model.updateCodeSetImg({
 				id: id
 				, name: body.name
 				, tags: tags
@@ -198,7 +208,7 @@ web.post('/code/setMore', ImageHandler.uploadMiddleware.single('preview'), funct
 		}, function(e){
 			console.log( e );
 
-			return Model.updateEditorSet({
+			return Model.updateCodeSet({
 				id: id
 				, name: body.name
 				, tags: tags
@@ -223,7 +233,7 @@ web.post('/code/setMore', ImageHandler.uploadMiddleware.single('preview'), funct
 		//		return Promise.resolve('');
 		//	});
 		//
-		//	execute = Model.updateEditorSetImg({
+		//	execute = Model.updateCodeSetImg({
 		//		id: id
 		//		, name: body.name
 		//		, tags: tags
@@ -231,7 +241,7 @@ web.post('/code/setMore', ImageHandler.uploadMiddleware.single('preview'), funct
 		//	});
 		//}
 		//else{
-		//	execute = Model.updateEditorSet({
+		//	execute = Model.updateCodeSet({
 		//		id: id
 		//		, name: body.name
 		//		, tags: tags
@@ -356,7 +366,7 @@ socket.register({
 			, size = query.size || 20
 			;
 
-		Model.getEditorByPage(page, size).then(function(rs){
+		Model.getCodeByPage(page, size).then(function(rs){
 			socket.emit('data', {
 				topic: 'editor'
 				, data: rs
@@ -375,14 +385,14 @@ socket.register({
 			;
 
 		if( keyword ){
-			execute = Model.searchEditorByName(keyword, page, size).then(function(rs){
+			execute = Model.searchCodeByName(keyword, page, size).then(function(rs){
 				var result
 					;
 
 				if( rs && rs.length ){
 					send.data = rs;
 
-					result = Model.countSearchEditorByName(keyword).then(function(count){
+					result = Model.countSearchCodeByName(keyword).then(function(count){
 						send.count = count;
 
 						return send;
@@ -425,14 +435,14 @@ socket.register({
 			;
 
 		if( tags ){
-			execute = Model.filterEditorByTag(tags, page, size).then(function(rs){
+			execute = Model.filterCodeByTag(tags, page, size).then(function(rs){
 				var result
 					;
 
 				if( rs && rs.length ){
 					send.data = rs;
 
-					result = Model.countFilterEditorByTag(tags).then(function(count){
+					result = Model.countFilterCodeByTag(tags).then(function(count){
 						send.count = count;
 
 						return send;
@@ -464,30 +474,47 @@ socket.register({
 		});
 	}
 	, 'code/code': function(socket, data){}
-	, 'code/code/save': function(socket, data){
-		var query = data.query
+	, 'code/editor/save': function(socket, data){
+		var topic = 'code/editor/save'
+			, query = data.query
+			, user = UserHandler.getUserFromSession.fromSocket(socket)
 			, id = query.id || ''
 			, execute
-			, user = UserHandler.getUserFromSession.fromSocket(socket)
 			;
 
-		query.userId = user.id;
+		CodeHandler.saveCode(user, query).then(function(data){
+			return {
+				topic: topic
+				, data: [data]
+				, msg: 'Done'
+			};
+		}, function(e){
+			console.log( e );
 
-		if( id !== '0' ){
-			execute = Model.updateEditor(query);
-		}
-		else{
-			execute = Model.addEditor(query);
-		}
-
-		execute.then(function(rs){
-			socket.emit('data', {
-				topic: 'code/code/save'
-				, info: {
-					id: rs.insertId || id
-				}
-			});
+			return {
+				topic: topic
+				, msg: e.message
+			};
+		}).then(function(json){
+			socket.emit('data', json);
 		});
+		// query.userId = user.id;
+		//
+		// if( id !== '0' ){
+		// 	execute = Model.updateCode(query);
+		// }
+		// else{
+		// 	execute = Model.addCode(query);
+		// }
+		//
+		// execute.then(function(rs){
+		// 	socket.emit('data', {
+		// 		topic: 'code/editor/save'
+		// 		, info: {
+		// 			id: rs.insertId || id
+		// 		}
+		// 	});
+		// });
 	}
 	, 'code/lib': function(socket){
 		LibModel.getBowerAll().then(function(rs){

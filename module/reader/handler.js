@@ -249,6 +249,7 @@ var CONFIG  = require('../../config.js')
 			return ReaderHandler.crawler( url ).then( ReaderHandler.handleArticle );
 		}
 
+		// todo 与 user 相关
 		, getReaderList: function(user, query){
 			var execute
 				, page      = query.page || 1
@@ -282,49 +283,34 @@ var CONFIG  = require('../../config.js')
 					};
 				}
 
-				execute = execute.then(function(rs){
+				execute = Promise.all([execute, execute.then(function(rs){
 					var result
 						;
 
-					if( rs && rs.length ){
-						result = rs;
+					if( rs.length ){
+						if( keyword ){
+							result = ReaderModel.countSearchReaderByName( keyword );
+						}
+						else if( tags ){
+							result = ReaderModel.countFilterReaderByTag( tags );
+						}
+						else{
+							result = ReaderModel.countReader();
+						}
 					}
 					else{
-						result = Promise.reject({
-							data: rs
-							, index: page
-							, size: size
-							, count: 0
-							, urlCallback: urlCallback
-						});
+						result = Promise.resolve(0);
 					}
 
 					return result;
-				}).then(function(rs){
-					var result
-						;
-
-					if( keyword ){
-						result = ReaderModel.countSearchReaderByName(keyword, page, size);
-					}
-					else if( tags ){
-						result = ReaderModel.countFilterReaderByTag(tags, page, size);
-					}
-					else{
-						result = ReaderModel.countReader(page, size);
-					}
-
-					return result.then(function(count){
-						return {
-							data: rs
-							, index: page
-							, size: size
-							, count: count
-							, urlCallback: urlCallback
-						};
-					});
-				}, function(rs){
-					return rs;
+				})]).then(function(all){
+					return {
+						data: all[0]
+						, count: all[1]
+						, index: page
+						, size: size
+						, urlCallback: urlCallback
+					};
 				});
 			}
 
@@ -430,52 +416,37 @@ var CONFIG  = require('../../config.js')
 					};
 				}
 
-				execute = execute.then(function(rs){
+				execute = Promise.all([execute, execute.then(function(rs){
 					var result
 						;
 
-					if( rs && rs.length ){
-						result = rs;
+					if( rs.length ){
+						if( keyword ){
+							result = ReaderModel.countSearchBookmarkByTitle(user.id, keyword, status);
+						}
+						else if( tags ){
+							result = ReaderModel.countFilterBookmarkByTags(user.id, tags, status);
+						}
+						else if( url ){
+							result = ReaderModel.countSearchBookmarkByUrl(user.id, url, status);
+						}
+						else{
+							result = ReaderModel.countBookmark(user.id, status);
+						}
 					}
 					else{
-						result = Promise.reject({
-							data: rs
-							, index: page
-							, size: size
-							, count: 0
-							, urlCallback: urlCallback
-						});
+						result = Promise.resolve(0);
 					}
 
 					return result;
-				}).then(function(rs){
-					var result
-						;
-
-					if( keyword ){
-						result = ReaderModel.countSearchBookmarkByTitle(user.id, keyword, status);
-					}
-					else if( tags ){
-						result = ReaderModel.countFilterBookmarkByTags(user.id, tags, status);
-					}
-					else if( url ){
-						result = ReaderModel.countSearchBookmarkByUrl(user.id, url, status);
-					}
-					else{
-						result = ReaderModel.countBookmark(user.id, status);
-					}
-
-					return result.then(function(count){
-						return {
-							data: rs
-							, index: page
-							, size: size
-							, count: count
-							, urlCallback: urlCallback
-						};
-					});
-				}, function(rs){
-					return rs;
+				})]).then(function(all){
+					return {
+						data: all[0]
+						, count: all[1]
+						, index: page
+						, size: size
+						, urlCallback: urlCallback
+					};
 				});
 			}
 
@@ -616,7 +587,7 @@ var CONFIG  = require('../../config.js')
 
 					if( rs && rs.insertId ){
 						data.id = rs.insertId;
-						result = data
+						result = data;
 					}
 					else{
 						result = ReaderHandler.getError('bookmark 保存失败');

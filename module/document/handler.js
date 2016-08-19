@@ -12,23 +12,38 @@ var CONFIG = require('../../config.js')
 		}
 
 		, getDocumentList: function(user, query){
-			var page = query.page || 1
+			var execute
+				, page = query.page || 1
 				, size = query.size || CONFIG.params.PAGE_SIZE
 				;
 
-			return DocumentModel.getDocumentList(page, size).then(function(rs){
-				return DocumentModel.countDocument().then(function(count){
-					return {
-						data: rs
-						, count: count
-						, index: page
-						, size: size
-						, urlCallback: function(index){
-							return '?page='+ index;
-						}
-					};
-				});
+			execute = DocumentModel.getDocumentList(page, size);
+
+			execute = Promise.all([execute, execute.then(function(rs){
+				var result
+					;
+
+				if( rs.length ){
+					result = DocumentModel.countDocument()
+				}
+				else{
+					result = Promise.resolve(0);
+				}
+
+				return result;
+			})]).then(function(all){
+				return {
+					data: all[0]
+					, count: all[1]
+					, index: page
+					, size: size
+					, urlCallback: function(index){
+						return '?page='+ index;
+					}
+				};
 			});
+
+			return execute;
 		}
 
 		, getDefaultDocument: function(user, query){

@@ -53,49 +53,34 @@ var CONFIG = require('../../config.js')
 					};
 				}
 
-				execute = execute.then(function(rs){
+				execute = Promise.all([execute, execute.then(function(rs){
 					var result
 						;
 
-					if( rs && rs.length ){
-						result = rs;
+					if( rs.length ){
+						if( keyword ){
+							result = BlogModel.countSearchBlogByTitle(user.id, keyword);
+						}
+						else if( tags ){
+							result = BlogModel.countFilterBlogByTags(user.id, tags);
+						}
+						else{
+							result = BlogModel.countBlog( user.id );
+						}
 					}
 					else{
-						result = Promise.reject({
-							data: rs
-							, index: page
-							, size: size
-							, count: 0
-							, urlCallback: urlCallback
-						});
+						result = Promise.resolve(0);
 					}
 
 					return result;
-				}).then(function(rs){
-					var result
-						;
-
-					if( keyword ){
-						result = BlogModel.countSearchBlogByTitle(user.id, keyword);
-					}
-					else if( tags ){
-						result = BlogModel.countFilterBlogByTags(user.id, tags);
-					}
-					else{
-						result = BlogModel.countBlog( user.id );
-					}
-
-					return result.then(function(count){
-						return {
-							data: rs
-							, index: page
-							, size: size
-							, count: count
-							, urlCallback: urlCallback
-						};
-					});
-				}, function(rs){
-					return rs;
+				})]).then(function(all){
+					return {
+						data: all[0]
+						, count: all[1]
+						, index: page
+						, size: size
+						, urlCallback: urlCallback
+					};
 				});
 			}
 

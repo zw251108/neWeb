@@ -65,12 +65,12 @@ var db      = require('../db.js')
 		//		' editable=\'0\''
 	}
 	, CodeModel = {
-		getEditorAll: function(){
+		getCodeAll: function(){
 			return db.handle({
 				sql: SQL.editor
 			});
 		}
-		, getEditorByPage: function(page, size){
+		, getCodeByPage: function(page, size){
 			return db.handle({
 				sql: SQL.editorPage
 				, data: {
@@ -79,7 +79,7 @@ var db      = require('../db.js')
 				}
 			});
 		}
-		, getEditorById: function(id){
+		, getCodeById: function(id){
 			var rs;
 
 			if( id ){
@@ -103,7 +103,7 @@ var db      = require('../db.js')
 
 			return rs;
 		}
-		, getEditorByName: function(name){
+		, getCodeByName: function(name){
 			return db.handle({
 				sql: SQL.codeByName
 				, data: {
@@ -114,7 +114,7 @@ var db      = require('../db.js')
 			});
 		}
 
-		, countEditor: function(){
+		, countCode: function(){
 			return db.handle({
 				sql: SQL.editorCount
 			}).then(function(rs){
@@ -127,7 +127,7 @@ var db      = require('../db.js')
 			});
 		}
 
-		, searchEditorByName: function(keyword, page, size){
+		, searchCodeByName: function(keyword, page, size){
 			return db.handle({
 				sql: SQL.editorSearchName
 				, data: {
@@ -137,7 +137,7 @@ var db      = require('../db.js')
 				}
 			});
 		}
-		, countSearchEditorByName: function(keyword){
+		, countSearchCodeByName: function(keyword){
 			return db.handle({
 				sql: SQL.editorSearchNameCount
 				, data: {
@@ -157,7 +157,7 @@ var db      = require('../db.js')
 				return result;
 			})
 		}
-		, filterEditorByTag: function(tags, page, size){
+		, filterCodeByTag: function(tags, page, size){
 			return db.handle({
 				sql: SQL.editorFilterTag.replace(':page', (page -1) * size).replace(':size', size).replace(':tags', '\'(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join(')(,|$)\' and tags regexp \'(^|,)(') + ')(,|$)\'')
 				//, data: {
@@ -167,7 +167,7 @@ var db      = require('../db.js')
 				//}
 			});
 		}
-		, countFilterEditorByTag: function(tags){
+		, countFilterCodeByTag: function(tags){
 			return db.handle({
 				sql: SQL.editorFilterTagCount.replace(':tags', '\'(^|,)(' + tags.replace('.', '\\\.').replace('(', '\\\(').replace(')', '\\\)').split(',').join(')(,|$)\' and tags regexp \'(^|,)(') + ')(,|$)\'')
 				//, data: {
@@ -188,26 +188,26 @@ var db      = require('../db.js')
 			})
 		}
 
-		, addEditor: function(data){
+		, addCode: function(data){
 			return db.handle({
 				sql: SQL.codeAdd
 				, data: data
 			});
 		}
 
-		, updateEditor: function(data){
+		, updateCode: function(data){
 			return db.handle({
 				sql: SQL.codeUpdate
 				, data: data
 			});
 		}
-		, updateEditorSet: function(data){
+		, updateCodeSet: function(data){
 			return db.handle({
 				sql: SQL.codeSetMore
 				, data: data
 			});
 		}
-		, updateEditorSetImg: function(data){
+		, updateCodeSetImg: function(data){
 			return db.handle({
 				sql: SQL.codeSetMoreImg
 				, data: data
