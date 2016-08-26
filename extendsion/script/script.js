@@ -15,8 +15,11 @@ $(function(){
 				}
 				, dataType: 'json'
 				, success: function(json){
-					if( json.msg === 'Done' ){
-
+					if( json.msg !== 'Done' ){
+						$('body').html('<p class="error">'+ json.msg +'</p>');
+					}
+					else{
+						$('body').html('<p class="success">添加成功</p>')
 					}
 				}
 			});

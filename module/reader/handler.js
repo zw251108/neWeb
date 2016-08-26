@@ -694,7 +694,8 @@ var CONFIG  = require('../../config.js')
 								;
 
 							if( rs && rs.length ){
-								result = ReaderHandler.getError('bookmark 已存在');
+
+								result = ReaderHandler.getError('bookmark 已存在' + (rs[0].status === 0 ? '' : '，并且已经读过'));
 							}
 							else{
 								if( !data.score ){
