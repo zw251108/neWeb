@@ -16,7 +16,7 @@ var CONFIG = require('../../config.js')
 			var execute
 				, page      = query.page || 1
 				, size      = query.size || CONFIG.params.PAGE_SIZE
-				, keyword   = query.keywords || ''
+				, keyword   = query.keyword || ''
 				, tags      = query.tags || ''
 				, isGuest = UserHandler.isGuest( user )
 				;
@@ -51,7 +51,7 @@ var CONFIG = require('../../config.js')
 						}
 					}
 					else{
-						result = Promise.resolve(0);
+						result = 0;
 					}
 
 					return result;
@@ -85,10 +85,10 @@ var CONFIG = require('../../config.js')
 					execute = CodeModel.getCodeById( id );
 				}
 				else if( id === '0' ){
-					execute = Promise.resolve({
+					execute = {
 						id: 0
 						, js_lib: 'jquery/dist/jquery.js'
-					});
+					};
 				}
 				else{
 					execute = CodeHandler.getError('缺少参数');
@@ -178,8 +178,82 @@ var CONFIG = require('../../config.js')
 
 			return execute;
 		}
-		, setMoreCode: function(){
 
+		, setMoreCode: function(user, data){
+			var execute
+				, imgId = data.imgId
+				, isGuest = UserHandler.isGuest( user )
+				;
+
+			if( isGuest ){
+				execute = UserHandler.getError('用户尚未登录');
+			}
+			else{
+				data.userId = user.id;
+
+				if( imgId ){   // 有图片更新
+					execute = CodeHandler.updateMoreImgCode(user, data);
+				}
+				else{
+					execute = CodeHandler.updateMoreCode(user, data);
+				}
+			}
+
+			return execute;
+		}
+		, updateMoreCode: function(user, data){
+			var execute
+				, isGuest = UserHandler.isGuest( user )
+				;
+
+			if( isGuest ){
+				execute = UserHandler.getError('用户尚未登录');
+			}
+			else{
+				execute = CodeModel.updateCodeSet( data ).then(function(rs){
+					var result
+						;
+
+					if( rs && rs.changedRows ){
+						result = data;
+					}
+					else{
+						result = CodeHandler.getError('code 保存失败');
+					}
+
+					return result;
+				});
+			}
+
+			return execute;
+		}
+		, updateMoreImgCode: function(user, data){
+			var execute
+				, isGuest = UserHandler.isGuest( user )
+				;
+
+			if( isGuest ){
+				execute = UserHandler.getError('用户尚未登录');
+			}
+			else{
+				data.preview = data.src;
+
+				execute = CodeModel.updateCodeSetImg( data ).then(function(rs){
+					var result
+						;
+
+					if( rs && rs.changedRows ){
+						result = data;
+					}
+					else{
+						result = CodeHandler.getError('code 保存失败');
+					}
+
+					return result;
+				});
+			}
+
+			return execute;
 		}
 	}
 	;

@@ -69,7 +69,7 @@ var CONFIG = require('../../config.js')
 						}
 					}
 					else{
-						result = Promise.resolve(0);
+						result = 0;
 					}
 
 					return result;

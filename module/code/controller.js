@@ -1,6 +1,6 @@
 'use strict';
 
-var CONFIG    = require('../../config.js')
+var CONFIG  = require('../../config.js')
 	, web       = require('../web.js')
 	, socket    = require('../socket.js')
 
@@ -12,14 +12,13 @@ var CONFIG    = require('../../config.js')
 	// 外部数据模块引用
 	, UserHandler   = require('../user/handler.js')
 	, ImageHandler  = require('../image/handler.js')
+	, TagHandler    = require('../tag/handler.js')
 
 	, LibModel      = require('../bower/model.js')
 
-	, Model = require('./model.js')
-	, CodeView  = require('./view.js')
+	, CodeView      = require('./view.js')
 	, CodeAdminView = require('./admin.view.js')
 	, CodeHandler   = require('./handler.js')
-	, CodeError   = require('./error.js')
 
 	, DEMO_IMG_UPLOAD   = '/code/demoImgUpload'
 	, SET_MORE          = '/code/setMore'
@@ -55,226 +54,48 @@ menu.register({
 
 web.get('/code/', function(req, res){
 	var query = req.query || {}
-		, user = UserHandler.getUserFromSession.fromReq(req)
-		, page = query.page || 1
-		, size = query.size || 20
-		, keyword = query.keyword || ''
-		, tags = query.tags || ''
-		, execute
+		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
 	CodeHandler.getCodeList(user, query).then( CodeView.codeList ).then(function(html){
 		res.send( CONFIG.docType.html5 + html );
 		res.end();
 	});
-	//
-	// if( keyword ){
-	// 	execute = Model.searchCodeByName(keyword, page, size).then(function(rs){
-	// 		var result
-	// 			;
-	//
-	// 		if( rs && rs.length ){
-	// 			result = Model.countSearchCodeByName(keyword).then(function(count){
-	// 				return {
-	// 					data: rs
-	// 					, index: page
-	// 					, size: size
-	// 					, count: count
-	// 					, urlCallback: function(index){
-	// 						return '?keyword='+ keyword +'&page='+ index;
-	// 					}
-	// 				};
-	// 			});
-	// 		}
-	// 		else{
-	// 			result = {
-	// 				data: []
-	// 				, index: 1
-	// 				, size: size
-	// 				, count: 0
-	// 				, urlCallback: function(index){
-	// 					return '?keyword='+ keyword +'&page='+ index;
-	// 				}
-	// 			};
-	// 		}
-	//
-	// 		return result;
-	// 	});
-	// }
-	// else if( tags ){
-	// 	execute = Model.filterCodeByTag(tags, page, size).then(function(rs){
-	// 		var result
-	// 			;
-	//
-	// 		if( rs && rs.length ){
-	// 			result = Model.countFilterCodeByTag(tags).then(function(count){
-	// 				return {
-	// 					data: rs
-	// 					, index: page
-	// 					, size: size
-	// 					, count: count
-	// 					, urlCallback: function(index){
-	// 						return '?tags='+ tags +'&page='+ index;
-	// 					}
-	// 				}
-	// 			});
-	// 		}
-	// 		else{
-	// 			result = {
-	// 				data: []
-	// 				, index: 1
-	// 				, size: size
-	// 				, count: 0
-	// 				, urlCallback: function(index){
-	// 					return '?tags='+ tags + '&page='+ index;
-	// 				}
-	// 			}
-	// 		}
-	//
-	// 		return result;
-	// 	});
-	// }
-	// else{
-	// 	execute = Model.getCodeByPage(page, size).then(function(rs){
-	// 		return Model.countCode().then(function(count){
-	// 			return {
-	// 				data: rs
-	// 				, index: page
-	// 				, size: size
-	// 				, count: count
-	// 				, urlCallback: function(index){
-	// 					return '?page='+ index;
-	// 				}
-	// 			};
-	// 		});
-	// 	});
-	// }
-	// execute.then( CodeView.codeList ).then(function(html){
-	// 	res.send( CONFIG.docType.html5 + html );
-	// 	res.end();
-	// });
 });
 web.get('/code/editor', function(req, res){
 	var query = req.query || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
-		, id = query.id
-		, execute
 		;
 
 	CodeHandler.getCode(user, query).then( CodeView.editor ).then(function(html){
 		res.send( CONFIG.docType.html5 + html );
 		res.end();
 	});
-	// if( id !== '0' ){
-	// 	execute = Model.getCodeById(id).then(function(rs){
-	// 		rs.setMore = SET_MORE;
-	// 		rs.demoImgUpload = DEMO_IMG_UPLOAD;
-	//
-	// 		return rs;
-	// 	});
-	// }
-	// else{
-	// 	execute = Promise.resolve({
-	// 		id: 0
-	// 		, js_lib: 'jquery/dist/jquery.js'
-	// 	});
-	// }
-	//
-	// execute.then( CodeView.editor ).then(function(html){
-	// 	res.send( CONFIG.docType.html5 + html );
-	// 	res.end();
-	// });
 });
 
 web.post('/code/setMore', ImageHandler.uploadMiddleware.single('preview'), function(req, res){
 	var body = req.body || {}
-		, id = body.id
-		, tags = body.tags
 		, user = UserHandler.getUserFromSession.fromReq( req )
-		, execute
 		;
 
-	ImageHandler.uploadImage(user, req);
+	ImageHandler.uploadImage(user, req).then(function(data){
+		body.imgId = data.id;
+		body.src = data.src;
 
-	if( id ){
+		return body;
+	}, function(e){
+		console.log( e );
 
-		execute = ImageHandler.uploadImage(user, req).then(function(data){
-			return Model.updateCodeSetImg({
-				id: id
-				, name: body.name
-				, tags: tags
-				, preview: data.src
-			});
-		}, function(e){
-			console.log( e );
-
-			return Model.updateCodeSet({
-				id: id
-				, name: body.name
-				, tags: tags
-			});
-		})
-		//if( file ){
-		//
-		//
-		//	size = ImageHandler.getSize( req.file.path );
-		//	imgData = {
-		//		src: file.path.replace(/\\/g, '/').replace('public', '..')
-		//		, type: type === 'preview' ? ImageHandler.ALBUM.EDITOR_PREVIEW_ID : ImageHandler.ALBUM.DEFAULT_ID
-		//		, height: size.height
-		//		, width: size.width
-		//	};
-		//
-		//	ImageModel.addImage( imgData ).then(function(rs){
-		//		if( rs && rs.insertId ){
-		//			console.log(imgData.src + '同名图片已存在');
-		//		}
-		//
-		//		return Promise.resolve('');
-		//	});
-		//
-		//	execute = Model.updateCodeSetImg({
-		//		id: id
-		//		, name: body.name
-		//		, tags: tags
-		//		, preview: imgData.src
-		//	});
-		//}
-		//else{
-		//	execute = Model.updateCodeSet({
-		//		id: id
-		//		, name: body.name
-		//		, tags: tags
-		//	});
-		//}
-
-		.then(function(rs){
-			var result
-				;
-
-			if( rs && rs.changedRows ){
-				result = {
-					msg: 'success'
-				};
-			}
-			else{
-				result = Promise.reject( new CodeError('设置失败') );
-			}
-
-			return result;
-		});
-	}
-	else{
-		execute = Promise.reject( new CodeError('缺少参数') );
-	}
-
-	// todo 处理 tag 数据
-	//Promise.all( tags.split(',').map(function(d){
-	//	return TagModel.increaseByName(d, 1);
-	//}) );
-
-	execute.catch(function(e){
-		console.log(e);
+		return body;
+	}).then(function(data){
+		return CodeHandler.setMoreCode(user, data);
+	}).then(function(data){
+		return {
+			data: [data]
+			, msg: 'Done'
+		};
+	}, function(e){
+		console.log( e );
 
 		return {
 			msg: e.message
@@ -285,8 +106,7 @@ web.post('/code/setMore', ImageHandler.uploadMiddleware.single('preview'), funct
 	});
 });
 web.post('/code/demoImgUpload', ImageHandler.uploadMiddleware.single('image'), function(req, res){
-	var body = req.body || {}
-		, user = UserHandler.getUserFromSession.fromReq( req )
+	var user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
 	ImageHandler.uploadImage(user, req).then(function(data){
@@ -311,12 +131,12 @@ web.get('/code/demo/',      function(req, res){
 	res.end();
 });
 web.post('/code/demo/',     function(req, res){
-	var body = req.body
-		, html = body.html
-		, css = body.css
-		, cssLib = body.cssLib
-		, js = body.js
-		, jsLib = body.jsLib
+	var body        = req.body
+		, html      = body.html
+		, css       = body.css
+		, cssLib    = body.cssLib
+		, js        = body.js
+		, jsLib     = body.jsLib
 		;
 
 	// todo 处理 html 相关
@@ -361,116 +181,72 @@ web.post('/code/demo/set',  function(req, res){
 
 socket.register({
 	code: function(socket, data){
-		var query = data.query || {}
-			, page = query.page || 1
-			, size = query.size || 20
+		var topic = 'code'
+			, query = data.query || {}
+			, user = UserHandler.getUserFromSession.fromSocket( socket )
 			;
 
-		Model.getCodeByPage(page, size).then(function(rs){
-			socket.emit('data', {
-				topic: 'editor'
-				, data: rs
-			});
+		CodeHandler.getCodeList(user, query).then(function(data){
+			return {
+				topic: topic
+				, data: data
+				, msg: 'Done'
+			};
+		}, function(e){
+			console.log( e );
+
+			return {
+				topic: topic
+				, msg: e.message
+			};
+		}).then(function(json){
+			socket.emit('data', json);
 		});
 	}
 	, 'code/search': function(socket, data){
-		var send = {
-				topic: 'code/search'
-			}
+		var topic = 'code/search'
 			, query = data.query || {}
-			, keyword = query.keyword
-			, page = query.page || 1
-			, size = query.size || 20
-			, execute
+			, user = UserHandler.getUserFromSession.fromSocket( socket )
 			;
 
-		if( keyword ){
-			execute = Model.searchCodeByName(keyword, page, size).then(function(rs){
-				var result
-					;
-
-				if( rs && rs.length ){
-					send.data = rs;
-
-					result = Model.countSearchCodeByName(keyword).then(function(count){
-						send.count = count;
-
-						return send;
-					});
-				}
-				else{
-					send.data = [];
-					send.count = 0;
-
-					result = send;
-				}
-
-				return result;
-			});
-		}
-		else{
-			execute = Promise.reject( new CodeError('缺少参数') );
-		}
-
-		execute.catch(function(e){
+		CodeHandler.getCodeList(user, query).then(function(data){
+			return {
+				topic: topic
+				, data: data
+				, msg: 'Done'
+			};
+		}, function(e){
 			console.log( e );
 
-			send.error = '';
-			send.msg = e.message;
-
-			return send;
-		}).then(function(send){
-			socket.emit('data', send);
+			return {
+				topic: topic
+				, msg: e.message
+			};
+		}).then(function(json){
+			socket.emit('data', json);
 		});
 	}
 	, 'code/filter': function(socket, data){
-		var send = {
-				topic: 'code/filter'
-			}
+		var topic = 'code/search'
 			, query = data.query || {}
-			, tags = query.tags
-			, page = query.page || 1
-			, size = query.size || 20
-			, execute
+			, user = UserHandler.getUserFromSession.fromSocket( socket )
 			;
 
-		if( tags ){
-			execute = Model.filterCodeByTag(tags, page, size).then(function(rs){
-				var result
-					;
-
-				if( rs && rs.length ){
-					send.data = rs;
-
-					result = Model.countFilterCodeByTag(tags).then(function(count){
-						send.count = count;
-
-						return send;
-					});
-				}
-				else{
-					send.data = [];
-					send.count = 0;
-
-					result = send;
-				}
-
-				return result;
-			});
-		}
-		else{
-			execute = Promise.reject( new CodeError('缺少参数') );
-		}
-
-		execute.catch(function(e){
+		CodeHandler.getCodeList(user, query).then(function(data){
+			return {
+				topic: topic
+				, data: data
+				, msg: 'Done'
+			};
+		}, function(e){
 			console.log( e );
 
-			send.error = '';
-			send.msg = e.message;
-
-			return send;
-		}).then(function(send){
-			socket.emit('data', send);
+			return {
+				topic: topic
+				, msg: e.message
+			};
+		}).then(function(json){
+			socket.emit('data', json);
 		});
 	}
 	, 'code/code': function(socket, data){}
@@ -478,8 +254,6 @@ socket.register({
 		var topic = 'code/editor/save'
 			, query = data.query
 			, user = UserHandler.getUserFromSession.fromSocket(socket)
-			, id = query.id || ''
-			, execute
 			;
 
 		CodeHandler.saveCode(user, query).then(function(data){
@@ -498,23 +272,6 @@ socket.register({
 		}).then(function(json){
 			socket.emit('data', json);
 		});
-		// query.userId = user.id;
-		//
-		// if( id !== '0' ){
-		// 	execute = Model.updateCode(query);
-		// }
-		// else{
-		// 	execute = Model.addCode(query);
-		// }
-		//
-		// execute.then(function(rs){
-		// 	socket.emit('data', {
-		// 		topic: 'code/editor/save'
-		// 		, info: {
-		// 			id: rs.insertId || id
-		// 		}
-		// 	});
-		// });
 	}
 	, 'code/lib': function(socket){
 		LibModel.getBowerAll().then(function(rs){

@@ -27,7 +27,7 @@ var CONFIG = require('../../config.js')
 					result = DocumentModel.countDocument()
 				}
 				else{
-					result = Promise.resolve(0);
+					result = 0;
 				}
 
 				return result;

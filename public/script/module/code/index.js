@@ -137,7 +137,7 @@ require(['/script/config.js'], function(config){
 
 					socketTimeout = setTimeout(function(){
 						var send = {
-								topic: 'editor'
+								topic: 'code'
 								, query: {
 									page: ++page
 									, size: PAGE_SIZE

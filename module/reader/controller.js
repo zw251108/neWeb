@@ -323,7 +323,7 @@ web.get('/data/reader/bookmark', function(req, res){
 		, callback = query.callback
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		, isGuest = UserHandler.isGuest( user )
-		, execute = Promise.resolve( user )
+		, execute
 		;
 
 	if( callback ){
@@ -337,6 +337,9 @@ web.get('/data/reader/bookmark', function(req, res){
 
 				return user;
 			});
+		}
+		else{
+			execute = Promise.resolve( user );
 		}
 
 		execute = execute.then(function(user){
@@ -368,7 +371,7 @@ web.post('/data/reader/bookmark', function(req, res){
 		, session = req.session
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		, isGuest = UserHandler.isGuest( user )
-		, execute = Promise.resolve( user )
+		, execute
 		;
 
 	if( isGuest ){
@@ -381,6 +384,9 @@ web.post('/data/reader/bookmark', function(req, res){
 
 			return user;
 		});
+	}
+	else{
+		execute = Promise.resolve( user );
 	}
 
 	execute.then(function(user){    // 登录成功

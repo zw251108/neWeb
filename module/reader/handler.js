@@ -299,7 +299,7 @@ var CONFIG  = require('../../config.js')
 						}
 					}
 					else{
-						result = Promise.resolve(0);
+						result = 0;
 					}
 
 					return result;
@@ -435,7 +435,7 @@ var CONFIG  = require('../../config.js')
 						}
 					}
 					else{
-						result = Promise.resolve(0);
+						result = 0;
 					}
 
 					return result;
@@ -770,7 +770,7 @@ var CONFIG  = require('../../config.js')
 
 						// 判断 reader_bookmark 表中是否存在该 url
 						if( bookmarkId ){   // 已存在
-							execute = Promise.resolve( data );
+							execute = data;
 						}
 						else{
 							execute = ReaderHandler.newBookmark(user, data);

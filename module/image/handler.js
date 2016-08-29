@@ -26,6 +26,7 @@ var CONFIG = require('../../config.js')
 				callback(null, CONFIG.web.uploadDir + (type in dirList ? dirList[type] : 'upload/'));
 			}
 			, filename: function(req, file, callback){
+				// todo 生成文件名
 				callback(null, file.originalname);
 			}
 		})
@@ -79,6 +80,10 @@ var CONFIG = require('../../config.js')
 			return ImageModel
 		}
 
+		/**
+		 * @param   user
+		 * @param   {Request}   req
+		 * */
 		, uploadImage: function(user, req){
 			var body = req.body || {}
 				, file = req.file

@@ -52,9 +52,12 @@
 ##controller 可以调用 handler view
 controller 层决定页面的输入输出，session 处理，socket 数据发送
 
+controller 层负责从 Request 中提取数据，传递给各个 handler
+
 ##handler 可以调用 handler model
 handler 层决定业务逻辑，对 model 处理，提供从 session 或数据库中获取数据的接口
-todo 从缓存中获取数据
+
+// todo 从缓存中获取数据
 
 ##view 可以调用 view
 view 层决定页面展示
