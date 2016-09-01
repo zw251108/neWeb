@@ -174,20 +174,22 @@ require(['/script/config.js'], function(config){
 			code: function(data){
 				var content = '';
 
-				data = data.data;
+				if( data.msg === 'Done' ){
+					data = data.data;
 
-				if( data.length ){
-					content = editorTpl( data ).join('');
-				}
-				else{
-					moreData = true;
-					content = NO_MORE;
-				}
+					if( data.length ){
+						content = editorTpl( data ).join('');
+					}
+					else{
+						moreData = true;
+						content = NO_MORE;
+					}
 
-				$editorContainer.find('article.article-block').remove().end().append( content );
+					$editorContainer.find('article.article-block').remove().end().append( content );
 
-				if( data.length ){
-					layout();
+					if( data.length ){
+						layout();
+					}
 				}
 			}
 			, 'code/search': function(data){

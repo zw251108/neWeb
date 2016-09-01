@@ -38,7 +38,9 @@ web.get('/blog/', function(req, res){
 
 	BlogHandler.getBlogList(user, query).then(BlogView.blogList, function(e){
 		console.log( e );
+
 		// todo 错误页面
+		return '<p class="icon icon-warming msg">'+ e.message +'</p>';
 	}).then(function(html){
 		// todo 页面其它部分
 
@@ -62,6 +64,7 @@ web.get('/blog/:blogId/', function(req, res){
 		console.log( e );
 
 		// todo 错误页面
+		return '<p class="icon icon-warming msg">'+ e.message +'</p>';
 	}).then(function(html){
 		// todo 页面其它部分
 
@@ -89,7 +92,9 @@ web.get('/admin/blog/', function(req, res){
 
 	BlogHandler.getBlogList(user, query).then(BlogAdminView.blogList, function(e){
 		console.log( e );
+
 		// todo 错误页面
+		return '<p class="icon icon-warming msg">'+ e.message +'</p>';
 	}).then(function(html){
 		// todo 页面其它部分
 
@@ -108,6 +113,7 @@ web.get('/admin/blog/:blogId/', function(req, res){
 		console.log( e );
 
 		// todo 错误页面
+		return '<p class="icon icon-warming msg">'+ e.message +'</p>';
 	}).then(function(html){
 		// todo 页面其它部分
 

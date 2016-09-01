@@ -41,6 +41,7 @@ web.get('/todo/', function(req, res){
 		console.log( e );
 
 		// todo 错误页面
+		return '<p class="icon icon-warming msg">'+ e.message +'</p>';
 	}).then(function(html){
 		// todo 页面其它部分
 

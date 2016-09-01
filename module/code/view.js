@@ -75,8 +75,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					'^label.label[for=preview]{请添加预览图片}' +
 					'+input[type=hidden name=type value=preview]' +
 					'+input#preview.input[type=file name=preview]' +
-				'^' + TagView.tagEditorEmmet +
-				'^^fieldset' +
+				'^%tagEditor%^^fieldset' +
 					'>legend' +
 						'>label' +
 							'>input[type=checkbox name=setUI value=1]' +
@@ -91,6 +90,12 @@ var getEmmet    = require('../emmet/getEmmet.js')
 							'+label.label[for=uiNam2]{请设置 UI 组件名称}' +
 			'^^^iframe#editorSetMoreRs.hidden[name=editorSetMoreRs]'
 		, filter: TagView.tagEditorFilter
+		// template: getEmmet('code/codeSetMoreForm.html')
+		// , filter: {
+		// 	tagEditor: function(d){console.log(d, TagView.tagEditorTpl(d).join(''))
+		// 		return TagView.tagEditorTpl(d).join('');
+		// 	}
+		// }
 	})
 
 	, CodeView = {

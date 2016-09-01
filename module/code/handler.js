@@ -67,6 +67,32 @@ var CONFIG = require('../../config.js')
 
 			return execute;
 		}
+		, getCodePage: function(user, query){
+			var execute
+				, page      = query.page || 1
+				, size      = query.size || CONFIG.params.PAGE_SIZE
+				, keyword   = query.keyword || ''
+				, tags      = query.tags || ''
+				, isGuest = UserHandler.isGuest( user )
+				;
+
+			if( isGuest ){
+				execute = UserHandler.getError('用户尚未登录');
+			}
+			else{
+				if( keyword ){
+					execute = CodeModel.searchCodeByName(keyword, page, size);
+				}
+				else if( tags ){
+					execute = CodeModel.filterCodeByTag(tags, page, size);
+				}
+				else{
+					execute = CodeModel.getCodeByPage(page, size);
+				}
+			}
+
+			return execute;
+		}
 		, getCode: function(user, query){
 			var execute
 				, id    = query.id

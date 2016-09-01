@@ -57,7 +57,16 @@ web.get('/code/', function(req, res){
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
-	CodeHandler.getCodeList(user, query).then( CodeView.codeList ).then(function(html){
+	CodeHandler.getCodeList(user, query).then(CodeView.codeList, function(e){
+		console.log( e );
+
+		// todo 错误页面
+		return '<p class="icon icon-warming msg">'+ e.message +'</p>';
+	}).then(function(html){
+		// todo 页面其它部分
+
+		return html;
+	}).then(function(html){
 		res.send( CONFIG.docType.html5 + html );
 		res.end();
 	});
@@ -67,7 +76,12 @@ web.get('/code/editor', function(req, res){
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
-	CodeHandler.getCode(user, query).then( CodeView.editor ).then(function(html){
+	CodeHandler.getCode(user, query).then(CodeView.editor, function(e){
+		console.log( e );
+
+		// todo 错误页面
+		return '<p class="icon icon-warming msg">'+ e.message +'</p>';
+	}).then(function(html){
 		res.send( CONFIG.docType.html5 + html );
 		res.end();
 	});
@@ -186,7 +200,7 @@ socket.register({
 			, user = UserHandler.getUserFromSession.fromSocket( socket )
 			;
 
-		CodeHandler.getCodeList(user, query).then(function(data){
+		CodeHandler.getCodePage(user, query).then(function(data){
 			return {
 				topic: topic
 				, data: data

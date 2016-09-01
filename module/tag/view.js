@@ -1,6 +1,8 @@
 'use strict';
 
 var getEmmet    = require('../emmet/getEmmet.js')
+	, emmetTpl  = require('../emmetTpl/emmetTpl.js').template
+
 	, TagView   = {
 		tagEditorEmmet: getEmmet('tag/tagEditor.html')
 		, tagEditorFilter: {
@@ -15,5 +17,10 @@ var getEmmet    = require('../emmet/getEmmet.js')
 		}
 	}
 	;
+
+TagView.tagEditorTpl = emmetTpl({
+	template: TagView.tagEditorEmmet
+	, filter: TagView.tagEditorFilter
+});
 
 module.exports = TagView;

@@ -88,6 +88,54 @@ define('jquery.extends', ['jquery'], function($){
 
 		return num;
 	};
+
+	/**
+	 * @method  sortBy
+	 * @param   array   {Array}
+	 * @param   condition   {Array|Function}
+	 * @desc    对 json 数组多条件排序，只针对所有条件为同一级别，若 json 对象不存在该属性则默认值为 0
+	 * @example
+	 * var a = [{a:1,b:2,c:3,d:2}
+	 , {a:2,b:1,c:3}
+	 , {a:0, b:1,c:1}
+	 , {a:1,b:1,c:3,d:1}
+	 , {a:1, b:1,c: 1}
+	 ]
+	 sortBy(a, ['a', 'c'])
+	 * */
+	$.sortBy = function(array, condition){
+
+		if( Array.isArray( array ) ){
+			if( condition ){
+				if( typeof condition === 'function' ){
+					array.sort( condition );
+				}
+				else if( Array.isArray( condition ) ){
+					array.sort(function(a, b){
+						var t = condition[0]
+							, i = 1
+							, l = condition.length
+							, rs = a[t] - b[t]
+							;
+
+						if( rs === 0 ){
+							for(; i < l; i++ ){
+								t = condition[i];
+								rs = (a[t] || 0) - (b[t] || 0);
+
+								if( rs !== 0 ){
+									break;
+								}
+							}
+						}
+
+						return rs;
+					});
+				}
+			}
+		}
+		return array;
+	};
 });
 
 /**
@@ -394,12 +442,12 @@ define(['jquery', 'socket', 'jquery.extends'], function($){
 				, h = document.documentElement.clientHeight
 				;
 
-			if( scrollTop > h && ($footer.is(':hidden') || !$footer.is(':animated')) ){
-				$footer.fadeIn();
-			}
-			else if( scrollTop <= h ){
-				$footer.fadeOut();
-			}
+			// if( scrollTop > h && ($footer.is(':hidden') || !$footer.is(':animated')) ){
+			// 	$footer.fadeIn();
+			// }
+			// else if( scrollTop <= h ){
+			// 	$footer.fadeOut();
+			// }
 
 			if( scrollTop >= offset.top ){
 				$mainToolbar.addClass('toolbar-fixed').width( width );
