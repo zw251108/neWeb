@@ -111,10 +111,10 @@ var CONFIG = require('../../config.js')
 					execute = CodeModel.getCodeById( id );
 				}
 				else if( id === '0' ){
-					execute = {
+					execute = Promise.resolve({
 						id: 0
 						, js_lib: 'jquery/dist/jquery.js'
-					};
+					});
 				}
 				else{
 					execute = CodeHandler.getError('缺少参数');
@@ -190,8 +190,8 @@ var CONFIG = require('../../config.js')
 				execute = CodeModel.updateCode( data ).then(function(rs){
 					var result
 						;
-
-					if( rs && rs.changedRows ){
+					console.log(rs)
+					if( rs && (rs.changedRows || rs.affectedRows) ){
 						result = data;
 					}
 					else{
@@ -240,7 +240,7 @@ var CONFIG = require('../../config.js')
 					var result
 						;
 
-					if( rs && rs.changedRows ){
+					if( rs && (rs.changedRows || rs.affectedRows) ){
 						result = data;
 					}
 					else{
@@ -268,7 +268,7 @@ var CONFIG = require('../../config.js')
 					var result
 						;
 
-					if( rs && rs.changedRows ){
+					if( rs && (rs.changedRows || rs.affectedRows) ){
 						result = data;
 					}
 					else{

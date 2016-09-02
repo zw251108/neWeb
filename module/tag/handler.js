@@ -76,7 +76,7 @@ var CONFIG = require('../../config.js')
 						var result
 							;
 
-						if( rs && rs.changedRows ){
+						if( rs && (rs.changedRows || rs.affectedRows) ){
 							result = {
 								name: name
 							};

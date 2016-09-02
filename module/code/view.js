@@ -75,7 +75,8 @@ var getEmmet    = require('../emmet/getEmmet.js')
 					'^label.label[for=preview]{请添加预览图片}' +
 					'+input[type=hidden name=type value=preview]' +
 					'+input#preview.input[type=file name=preview]' +
-				'^%tagEditor%^^fieldset' +
+				'^'+ TagView.tagEditorEmmet +
+				'^^fieldset' +
 					'>legend' +
 						'>label' +
 							'>input[type=checkbox name=setUI value=1]' +
@@ -108,7 +109,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						, icon: 'code'
 						, title: '代码库 code'
 						, toolbar: [{
-							type: 'link',   id: 'newCode',  icon: 'file-code',  title: '新建代码', href: 'code?id=0'}, {
+							type: 'link',   id: 'newCode',  icon: 'file-code',  title: '新建代码', href: 'editor?id=0'}, {
 							type: 'button', id: 'filter',   icon: 'filter',     title: '过滤'}, {
 							type: 'button', id: 'search',   icon: 'search',     title: '搜索'
 						}]

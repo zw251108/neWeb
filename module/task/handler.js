@@ -237,7 +237,7 @@ var CONFIG = require('../../config.js')
 					var result
 						;
 
-					if( rs && rs.changedRows ){
+					if( rs && (rs.changedRows || rs.affectedRows) ){
 						result = {
 							info: {
 								id: id
@@ -267,7 +267,7 @@ var CONFIG = require('../../config.js')
 				var result
 					;
 
-				if( rs && rs.changedRows ){
+				if( rs && (rs.changedRows || rs.affectedRows) ){
 					if( type === '0' ){
 						result = TaskModel.unableTask(taskId);
 					}
@@ -286,7 +286,7 @@ var CONFIG = require('../../config.js')
 			}).then(function(rs){
 				var result;
 
-				if( rs && rs.changedRows ){
+				if( rs && (rs.changedRows || rs.affectedRows) ){
 					result = {
 						info: {
 							id: id
@@ -314,7 +314,7 @@ var CONFIG = require('../../config.js')
 				var result
 					;
 
-				if( rs && rs.changedRows ){
+				if( rs && (rs.changedRows || rs.affectedRows) ){
 					result = TaskModel.unableTask( taskId );
 				}
 				else{
@@ -325,7 +325,7 @@ var CONFIG = require('../../config.js')
 			}).then(function(rs){
 				var result;
 
-				if( rs && rs.changedRows ){
+				if( rs && (rs.changedRows || rs.affectedRows) ){
 					result = {
 						info: {
 							id: id

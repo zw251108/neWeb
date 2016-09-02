@@ -755,7 +755,7 @@ var CONFIG  = require('../../config.js')
 								, r2 = rs[1]
 								;
 
-							if( r1 && r1.changedRows && r2 && r2.changedRows ){
+							if( r1 && (r1.changedRows || r1.affectedRows) && r2 && (r2.changedRows || r2.affectedRows) ){
 								data.userId = user.id;
 								result = data;
 							}

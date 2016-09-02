@@ -555,14 +555,14 @@ require(['/script/config.js'], function(config){
 
 		socket.register('code/editor/save', function(data){
 
-			if( 'error' in data ){
-				msgPopup.showMsg('保存失败' + data.msg);
+			if( data.msg !== 'Done' ){
+				msgPopup.showMsg( data.msg );
 			}
 			else{
 				isEdit = false;
 
-				if( location.search !== '?id='+ data.info.id ){
-					location.search = '?id='+ data.info.id;
+				if( location.search !== '?id='+ data.data[0].id ){
+					location.search = '?id='+ data.data[0].id;
 				}
 				else{
 					msgPopup.showMsg('保存成功');

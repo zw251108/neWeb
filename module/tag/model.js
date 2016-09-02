@@ -72,7 +72,7 @@ var db      = require('../db.js')
 			}).then(function(rs){
 				var result;
 
-				if( rs && rs.changedRows ){
+				if( rs && (rs.changedRows || rs.affectedRows) ){
 					result = true;
 				}
 				else{
