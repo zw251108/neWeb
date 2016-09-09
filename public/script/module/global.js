@@ -136,6 +136,37 @@ define('jquery.extends', ['jquery'], function($){
 		}
 		return array;
 	};
+
+	/**
+	 * @method setZeroTimeout
+	 * */
+	$.setZeroTimeout = (function(){
+		if( 'setImmediate' in window ){ // Chrome FireFox IE9 不可用
+			return function(exec){
+				return window.setImmediate(exec);
+			};
+		}
+		else if( 'onreadystatechange' in document.createElement('script') ){    // Chrome FireFox 不可用
+			return function(){
+				var t = document.createElement('script')
+					;
+
+				t.onreadystatechange = exec;
+				document.documentElement.appendChild( t );
+			}
+		}
+		else if( 'postMessage' in window ){
+			return function(exec){
+				window.addEventListener('message', exec, true);
+				window.postMessage('', '*');
+			};
+		}
+		else{
+			return function(exec){
+				return window.setTimeout(exec, 0);
+			};
+		}
+	})();
 });
 
 /**
