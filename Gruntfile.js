@@ -146,7 +146,7 @@ var jsFiles = {
 	//* bower 目前未收录
 	//* */
 	//// facedetection
-	//, 'public/script/plugin/facedetection/jquery.facedetection.js': ['bower_components/facedetection/jquery.facedetection.js']
+	//, 'public/script/plugin/facedetection/jquery.facedetection.min.js': ['bower_components/facedetection/jquery.facedetection.min.js']
 	//, 'public/script/plugin/facedetection/facedetection/ccv.js': ['bower_components/facedetection/facedetection/ccv.js']
 	//, 'public/script/plugin/facedetection/facedetection/face.js': ['bower_components/facedetection/facedetection/face.js']
 	//// harmony
@@ -420,7 +420,7 @@ module.exports = function(grunt){
 		}
 		, rjs: {
 			destiny: {
-				opitons: {
+				options: {
 				// https://www.npmjs.com/package/grunt-croc-requirejs
 				}
 			}

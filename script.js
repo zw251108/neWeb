@@ -5695,16 +5695,46 @@ var cheerio = require('cheerio')
 
 var sass = require('node-sass');
 
-sass.render({
-	file: 'test/animate.scss'
-	, outFile: 'build/animate.css'
-}, function(e, rs){
-	if( e ){
-		console.log(0, e );
-	}
-	else{
-		console.log(1, rs );
+// sass.render({
+// 	file: 'test/animate.scss'
+// 	, outFile: 'build/animate.css'
+// }, function(e, rs){
+// 	if( e ){
+// 		console.log(0, e );
+// 	}
+// 	else{
+// 		console.log(1, rs );
+//
+// 		fs.writeFileSync(__dirname + '/public/style/animate.css', new Buffer(rs.css) );
+// 	}
+// });
 
-		fs.writeFileSync(__dirname + '/public/style/animate.css', new Buffer(rs.css) );
-	}
+var FtpClient = require('ftp')
+	, client = new FtpClient()
+	;
+
+client.on('ready', function(){
+	client.cwd('tgou2/img2', function(err, list){
+		if( !err ){
+			client.list(function(err, list){
+				if( err ){
+					console.log('error ', err);
+				}
+				else{
+					console.log('[\''+ list.filter(d=>d.type==='d').map(d=>'/'+d.name).sort().join('\',\'') +'\']');
+				}
+
+				client.end();
+			});
+		}
+		else{
+			console.log(err)
+		}
+	});
+});
+
+client.connect({
+	host: 'v0.ftp.upyun.com'
+	, user: 'tgouadmin/tg-image'
+	, password: 'tgouadmin@'
 });

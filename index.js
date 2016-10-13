@@ -133,6 +133,8 @@ web.use('/requirement',     express.static(__dirname + '/requirement'));
 
 web.use('/test.html',    express.static(__dirname + '/test.html') );  //
 
+web.use('/static', express.static(__dirname + '/static'));  // 静态页面目录，实验性页面
+
 /**
  * 自动设置静态目录 主要用于测试 demo
  * */

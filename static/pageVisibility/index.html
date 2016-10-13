@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+<meta http-equiv="pragma" content="no-cache"/>
+<meta http-equiv="cache-control" content="no-cache,no-store"/>
+<title>首页</title>
+</head>
+<body>
+<a href="./next.html">去下一页面</a>
+
+<script src="/script/lib/jquery.min.js"></script>
+<script>
+var num
+	, hiddenKey = ['hidden', 'webkitHidden', 'msHidden'].filter(function(d){
+		return d in document;
+	})[0] || ''
+	, eventList = {
+		hidden: 'visibilitychange'
+		, webkitHidden: 'webkitvisibilitychange'
+		, msHidden: 'msvisibilitychange'
+		,
+	}
+	, stateList = {
+		hidden: 'visibilityState'
+		, webkitHidden: 'webkitVisibilityState'
+		, msHidden: 'msVisibilityState'
+		,
+	}
+	;
+if( 'localStorage' in window ){
+	num = parseInt(localStorage.getItem('num'), 10) || 1;
+	if( !num ){
+		localStorage.setItem('num', 1);
+	}
+	else{
+		localStorage.setItem('num', num +1);
+	}
+
+	$('body').append('<p>第 '+ num +' 次访问</p>');
+//	alert(hiddenKey +' '+ eventList[hiddenKey])
+//	if( 'hidden' in document ){
+//		hiddenKey = 'hidden';
+//	}
+//	if( '' in document ){
+//		alert(11123111);
+//	}
+//	                          alert(document[stateList[hiddenKey]] +' '+ document[hiddenKey])
+	var pageChange = function(){alert(12312)
+		var isHidden = document[hiddenKey]
+				, visibilityState
+				;
+
+		if( isHidden ){
+			// 页面被隐藏
+			alert(1112323232323);
+		}
+		else{
+			visibilityState = document[stateList[hiddenKey]];
+			alert(visibilityState);
+			switch( visibilityState ){
+				case 'hidden':	// 页面在后台标签中或浏览器最小化
+					// 页面刷新
+					location.reload();
+					break;
+				case 'visible':	// 页面可见
+					alert(111111)
+					break;
+				case 'prerender':	// 页面在屏幕外执行预渲染处理 document.hidden 的值为 true
+					break;
+				case 'unloaded':	// 页面正在从内存中卸载
+						alert('asdfasdf')
+					break;
+				default:
+					alert(visibilityState)
+					location.reload();
+					break;
+			}
+			// 页面刷新
+//			location.reload();
+		}
+	};
+
+//	document.addEventListener(eventList[hiddenKey], pageChange);
+//	document[eventList[hiddenKey]] = pageChange;
+
+//	$(function(){
+//		$('body').on('beforeunload', function(){
+//			alert(11111);
+//		})
+//	})
+//	alert('onbeforeunload' in window)
+//	window.addEventListener('')
+//	window.onbeforeunload = function(){     alert(111)
+////		alert(111);
+//		window.onload = function(){
+//			location.reload()
+//		}
+//
+//		window.onpageshow = function(){
+//			alert(11111242334234);
+//			location.reload();
+//		};
+//	}
+
+//	window.onunload = function(){     alert(222)
+//		alert(11123111);
+//		window.onload = function(){
+//			location.reload()
+//		}
+//		window.onpageshow = function(){
+//			alert(444);
+//			location.reload();
+//		};
+//	}
+	window.onpagehide = function(){
+//		alert(111222)
+		window.onpageshow = function(){
+//			alert(11111242334234);
+			location.reload();
+		};
+	}
+
+//	window.onpageshow = function(){
+//		alert(11111242334234);
+//		location.reload();
+//	};
+}
+</script>
+</body>
+</html>
