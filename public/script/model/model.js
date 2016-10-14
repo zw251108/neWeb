@@ -8,17 +8,17 @@ class Model{
 	 * @constructor
 	 * */
 	constructor(){
-		this.__index = [];
-		this.__value = {};
+		this._index = [];
+		this._value = {};
 	}
 	/**
 	 * @desc    设置数据索引
 	 * @protected
 	 * @param   {String}    key
 	 * */
-	__setIndex(key){
-		if( !(key in this.__index) ){
-			this.__index.push( key );
+	_setIndex(key){
+		if( !(key in this._index) ){
+			this._index.push( key );
 		}
 	}
 	/**
@@ -26,12 +26,12 @@ class Model{
 	 * @protected
 	 * @param   {String}    key
 	 * */
-	__removeIndex(key){
-		var i = this.__index.indexOf( key )
+	_removeIndex(key){
+		var i = this._index.indexOf( key )
 			;
 
 		if( i !== -1 ){
-			this.__index.splice(i, 1);
+			this._index.splice(i, 1);
 		}
 	}
 
@@ -42,9 +42,9 @@ class Model{
 	 * @return  {Promise}
 	 * */
 	setData(key, value){
-		this.__setIndex( key );
+		this._setIndex( key );
 
-		this.__value[key] = value;
+		this._value[key] = value;
 
 		return Promise.resolve(true);
 	}
@@ -55,7 +55,7 @@ class Model{
 	 * */
 	getData(key){
 		// todo 若不存在该数据 返回 reject ?
-		return Promise.resolve(this.__value[key] || '');
+		return Promise.resolve(this._value[key] || '');
 	}
 	/**
 	 * @desc    将数据从缓存中删除
@@ -65,10 +65,10 @@ class Model{
 	removeData(key){
 		var rs
 			;
-		this.__removeIndex( key );
+		this._removeIndex( key );
 
 		try {
-			delete this.__value[key];
+			delete this._value[key];
 			rs = Promise.resolve(true);
 		}
 		catch(e){
@@ -82,7 +82,7 @@ class Model{
 	 * @return  {Promise}
 	 * */
 	clearData(){
-		return Promise.all(this.__index.map( d=>this.removeData(d) ));
+		return Promise.all(this._index.map( d=>this.removeData(d) ));
 	}
 }
 
@@ -93,7 +93,7 @@ class Model{
  * */
 Model.register = function(type, model){
 
-	if( type in Model && type in Model.__modelCache ){
+	if( type in Model && type in Model._modelCache ){
 		console.log('type', ' 重复注册，并已生成实例，不能覆盖');
 	}
 	else{
@@ -101,7 +101,7 @@ Model.register = function(type, model){
 	}
 };
 
-Model.__modelCache = {};
+Model._modelCache = {};
 
 /**
  * @desc    获取或生成 type 类型的 model 对象
@@ -112,12 +112,12 @@ Model.factory = function(type, notCache){
 	var model
 		;
 	if( type in Model ){
-		if( !notCache && type in Model.__modelCache ){
-			model = Model.__modelCache[type];
+		if( !notCache && type in Model._modelCache ){
+			model = Model._modelCache[type];
 		}
 		else{
 			model = new Model[type]();
-			Model.__modelCache[type] = model;
+			Model._modelCache[type] = model;
 		}
 	}
 	else{

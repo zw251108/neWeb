@@ -2,7 +2,13 @@
 
 import Model from './model.js';
 
+/**
+ * @class   IndexedDBModel
+ * */
 class IndexedDBModel extends Model{
+	/**
+	 * @constructor
+	 * */
 	constructor(){
 		super();
 	}

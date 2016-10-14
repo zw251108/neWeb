@@ -12,7 +12,7 @@ class LocalStorageModel extends Model{
 	constructor(){
 		super();
 
-		this.__eventList = {};
+		this._eventList = {};
 		this.localStorage = window.localStorage;
 
 		// // todo 监控事件
@@ -23,8 +23,8 @@ class LocalStorageModel extends Model{
 		// 		, rs = true
 		// 		;
 		//
-		// 	if( key in this.__eventList ){
-		// 		rs = this.__eventList[key].reduce((a, d)=>{
+		// 	if( key in this._eventList ){
+		// 		rs = this._eventList[key].reduce((a, d)=>{
 		// 			return a && d(newVal, oldVal);
 		// 		}, rs);
 		// 	}
@@ -40,7 +40,11 @@ class LocalStorageModel extends Model{
 	 * @return  {Promise}
 	 * */
 	setData(key, value){
-		this.__setIndex( key );
+		this._setIndex( key );
+
+		if( typeof value === 'object' ){
+			value = JSON.stringify( value );
+		}
 
 		return Promise.resolve( this.localStorage.setItem(key, value) );
 	}
@@ -50,7 +54,7 @@ class LocalStorageModel extends Model{
 	 * @return  {Promise}
 	 * */
 	getData(key){
-		this.__setIndex( key );
+		this._setIndex( key );
 
 		return Promise.resolve( this.localStorage.getItem(key) );
 	}
@@ -67,7 +71,7 @@ class LocalStorageModel extends Model{
 	 * @return  {Promise}
 	 * */
 	clearData(){
-		this.__index.forEach( d=>this.__removeIndex(d) );
+		this._index.forEach( d=>this._removeIndex(d) );
 		this.localStorage.clear();
 	}
 
@@ -77,11 +81,11 @@ class LocalStorageModel extends Model{
 	 * @param   {Function}  callback    事件触发函数
 	 * */
 	on(key, callback){
-		if( !(key in this.__eventList) ){
-			this.__eventList[key] = [];
+		if( !(key in this._eventList) ){
+			this._eventList[key] = [];
 		}
 
-		this.__eventList[key].push( callback );
+		this._eventList[key].push( callback );
 	}
 }
 

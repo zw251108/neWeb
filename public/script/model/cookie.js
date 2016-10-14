@@ -117,13 +117,36 @@ class CookieModel extends Model{
 	 * @variation
 	 * @param   {String}    key
 	 * @param   {*}         value
-	 * @param   {Object?}    options 相关配置
+	 * @param   {Object|Number|String}  options 相关配置
 	 * @return  {Promise}
 	 * */
 	setData(key, value, options={}){
-		var opts = {
 
-		};
+		if (value !== undefined && !$.isFunction(value)){
+			options = $.extend({}, config.defaults, options);
+
+			if (typeof options.expires === 'number') {
+				let days = options.expires, t = options.expires = new Date();
+				t.setTime(+t + days * 864e+5);
+			}
+
+			return (document.cookie = [
+				encode(key), '=', stringifyCookieValue(value),
+				options.expires ? '; expires=' + options.expires.toUTCString() : '', // use expires attribute, max-age is not supported by IE
+				options.path    ? '; path=' + options.path : '',
+				options.domain  ? '; domain=' + options.domain : '',
+				options.secure  ? '; secure' : ''
+			].join(''));
+		}
+
+		Object.keys( CookieModel._defaults ).reduce((a,d)=>{
+
+			if( !(d in options) ){
+				a[d] = CookieModel._defaults[d];
+			}
+
+			return a;
+		}, options);
 
 		$.cookie(key, value, opts);
 	}
@@ -173,17 +196,20 @@ class CookieModel extends Model{
 	}
 }
 
-CookieModel.__defaults = {
+// 默认参数
+CookieModel._defaults = {
 	path: '/'
 	, domain: ''
 	, expires: ''
 	, secure: ''
 };
-CookieModel.__config = {
+// 配置
+CookieModel._config = {
 	raw: true   // 是否编码
+	, json: true
 };
 CookieModel.setRaw = function(){
-	CookieModel.__config.raw = false;
+	CookieModel._config.raw = false;
 };
 
 Model.register('cookie', CookieModel);
