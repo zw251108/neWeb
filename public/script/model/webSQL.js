@@ -8,13 +8,16 @@ import Model from './model.js';
 class WebSQLModel extends Model{
 	/**
 	 * @constructor
-	 * @param   {Object}    config
+	 * @param   {Object?}    config
 	 * @param   {String}    config.dbName
 	 * @param   {String}    config.tableName
-	 * @param   {String}    config.dbVersion
-	 * @param   {Number}    config.dbSize
+	 * @param   {Number}    config.dbVersion
+	 * @param   {Number}    config.dbSize   单位字节
 	 * */
-	constructor(config){
+	constructor(config={}){
+		var that = this
+			;
+
 		super();
 
 		this._config = Object.keys( WebSQLModel._config ).reduce((all, d)=>{
@@ -31,12 +34,12 @@ class WebSQLModel extends Model{
 		// 打开数据库，若不存在则创建
 		var db = openDatabase(this._config.dbName, this._config.dbVersion, this._config.dbName, this._config.dbSize);
 
-		this.db = new Promise(function(resolve, reject){
+		this._db = new Promise(function(resolve, reject){
 			db.transaction(function(tx){
-				tx.executeSql('create table if not exists ' + this._config.tableName + '(id integer primary key autoincrement,topic varchar(255) unique,value text)', [], function(){
+				tx.executeSql('create table if not exists ' + that._config.tableName + '(id integer primary key autoincrement,topic varchar(255) unique,value text)', [], function(){
 					resolve(db);
 				}, function(tx, e){
-					console.log(e);
+					console.log( e );
 					reject(e);
 				});
 			});
@@ -49,16 +52,15 @@ class WebSQLModel extends Model{
 	 * @return  {Promise}
 	 * */
 	_select(key){
-		var db = this.db
-			;
-
-		return new Promise(function(resolve, reject){
-			db.transaction(function(tx){
-				tx.executeSql('select * from '+ this._config.tableName +' where topic=?', [key], function(tx, rs){
-					resolve(rs);
-				}, function(tx, e){
-					console.log( e );
-					reject(e);
+		return this._db.then(function(db){
+			return new Promise(function(resolve, reject){
+				db.transaction(function(tx){
+					tx.executeSql('select * from '+ this._config.tableName +' where topic=?', [key], function(tx, rs){
+						resolve(rs);
+					}, function(tx, e){
+						console.log( e );
+						reject(e);
+					});
 				});
 			});
 		});
@@ -71,16 +73,15 @@ class WebSQLModel extends Model{
 	 * @return  {Promise}
 	 * */
 	_update(key, value){
-		var db = this.db
-			;
-
-		return new Promise(function(resolve, reject){
-			db.transaction(function(tx){
-				tx.executeSql('update '+ this._config.tableName +' set value=? where key=?', [value, key], function(tx, rs){
-					resolve( !!rs.rowsAffected );
-				}, function(tx, e){
-					console.log( e );
-					reject(e);
+		return this._db.then(function(db){
+			return new Promise(function(resolve, reject){
+				db.transaction(function(tx){
+					tx.executeSql('update ' + this._config.tableName + ' set value=? where key=?', [value, key], function(tx, rs){
+						resolve(!!rs.rowsAffected);
+					}, function(tx, e){
+						console.log(e);
+						reject(e);
+					});
 				});
 			});
 		});
@@ -92,17 +93,16 @@ class WebSQLModel extends Model{
 	 * @return  {Promise}
 	 * */
 	_insert(key, value){
-		var db = this.db
-			;
-
-		return new Promise(function(resolve, reject){
-			db.transaction(function(tx){
-				tx.executeSql('insert into '+ this._config.tableName +'(topic,value) values(?,?)', [key, value], function(tx, rs){
-					resolve( !!rs.insertId );
-				}, function(tx, e){
-					console.log( e );
-					reject(e);
-				})
+		return this._db.then(function(db){
+			return new Promise(function(resolve, reject){
+				db.transaction(function(tx){
+					tx.executeSql('insert into ' + this._config.tableName + '(topic,value) values(?,?)', [key, value], function(tx, rs){
+						resolve(!!rs.insertId);
+					}, function(tx, e){
+						console.log(e);
+						reject(e);
+					})
+				});
 			});
 		});
 	}
@@ -112,7 +112,7 @@ class WebSQLModel extends Model{
 	 * @return  {Promise}
 	 * */
 	_delete(key){
-		var db = this.db
+		var db = this._db
 			;
 
 		return new Promise(function(resolve, reject){
@@ -131,16 +131,15 @@ class WebSQLModel extends Model{
 	 * @return  {Promise}
 	 * */
 	_clearTable(){
-		var db = this.db
-			;
-
-		return new Promise(function(resolve, reject){
-			db.transaction(function(tx){
-				tx.executeSql('delete from '+ this._config.tableName, [], function(tx, rs){
-					resolve(rs);
-				}, function(tx, e){
-					console.log( e );
-					reject(e);
+		return this._db.then(function(db){
+			return new Promise(function(resolve, reject){
+				db.transaction(function(tx){
+					tx.executeSql('delete from ' + this._config.tableName, [], function(tx, rs){
+						resolve(rs);
+					}, function(tx, e){
+						console.log(e);
+						reject(e);
+					});
 				});
 			});
 		});
@@ -215,7 +214,7 @@ class WebSQLModel extends Model{
 WebSQLModel._config = {
 	dbName: 'storage'
 	, tableName: 'storage'
-	, dbVersion: '1.0'
+	, dbVersion: 1
 	, dbSize: 2 * 1024 * 1024
 };
 
