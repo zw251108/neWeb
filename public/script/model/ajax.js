@@ -2,6 +2,8 @@
 
 import Model from './model.js';
 
+// todo 有 fetch 优先使用 fetch
+
 class AjaxModel extends Model{
 	constructor(){
 		super();
