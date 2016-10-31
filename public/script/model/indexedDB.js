@@ -29,7 +29,7 @@ class IndexedDBModel extends Model{
 			return all;
 		}, {});
 
-		var indexedDB = window.indexedDB || window.mozIndexedDB || window.webbkitIndexedDB || window.msIndexedDB || null
+		var indexedDB = window.indexedDB || window.mozIndexedDB || window.webbkitIndexedDB || window.msIndexedDB
 			, dbRequest = indexedDB.open(this._config.dbName, this._config.dbVersion)
 			;
 
@@ -44,12 +44,9 @@ class IndexedDBModel extends Model{
 
 				// 创建存储对象
 				store = db.createObjectStore(that._config.tableName, {
-					keyPath: 'id'
+					keyPath: 'topic'
 				});
 
-				store.createIndex('topic', 'topic', {
-					unique: true
-				});
 				store.createIndex('value', 'value', {
 					unique: false
 				});
@@ -58,7 +55,7 @@ class IndexedDBModel extends Model{
 
 		this._db = new Promise(function(resolve, reject){
 			dbRequest.onsuccess = function(e){
-				resovle(e.target.result);
+				resolve(e.target.result);
 			};
 			dbRequest.onerror = function(e){
 				console.log( e );
@@ -71,46 +68,55 @@ class IndexedDBModel extends Model{
 	 * @param   {String}    key
 	 * */
 	_select(key){
+		var that = this
+			;
+
 		return this._db.then(function(db){
-			db.get()
+			return new Promise(function(resolve, reject){
+				var objectStore = db.transaction([that._config.tableName], 'readwrite').objectStore(that._config.tableName)
+					, result = objectStore.get(key)
+					;
+
+				result.onsuccess = function(e){
+					var rs = e.target.result
+						;
+
+					resolve( rs && rs.value );
+				};
+				result.onerror = function(e){
+					console.log( e );
+					reject(e);
+				};
+			});
 		});
 	}
 	/**
-	 * @desc    更新
+	 * @desc    新建或更新
 	 * @param   {String}    key
 	 * @param   {String}    value
 	 * @return  {Promise}
 	 * */
-	_update(key, value){
-
-	}
-	/**
-	 * @desc    新建
-	 * @param   {String}    key
-	 * @param   {String}    value
-	 * @return  {Promise}
-	 * */
-	_insert(key, value){
-		var tableName = this._config.tableName
-			, store = this._db.transaction([tableName], 'readwrite').objectStore(tableName)
+	_put(key, value){
+		var that = this
 			;
 
-		return new Promise(function(resolve, reject){
-			var result = store.add({
-				topic: key
-				, value: value
-			});
-
-			result.onsuccess = function(e){
-				var result = e.target.result
+		return this._db.then(function(db){
+			return new Promise(function(resolve, reject){
+				var objectStore = db.transaction([that._config.tableName], 'readwrite').objectStore(that._config.tableName)
+					, result = objectStore.put({
+						topic: key
+						, value: value
+					})
 					;
 
-				resolve(result);
-			};
-			result.onerror = function(e){
-				console.log( e );
-				reject(e);
-			};
+				result.onsuccess = function(e){
+					resolve(!!e.target.result);
+				};
+				result.onerror = function(e){
+					console.log( e );
+					reject(e);
+				};
+			});
 		});
 	}
 	/**
@@ -119,7 +125,47 @@ class IndexedDBModel extends Model{
 	 * @return  {Promise}
 	 * */
 	_delete(key){
+		var that = this
+			;
 
+		return this._db.then(function(db){
+			return new Promise(function(resolve, reject){
+				var objectStore = db.transaction([that._config.tableName], 'readwrite').objectStore(that._config.tableName)
+					, result = objectStore.delete(key)
+					;
+
+				result.onsuccess = function(e){
+					resolve(true);
+				};
+				result.onerror = function(e){
+					console.log( e );
+					reject(e);
+				};
+			});
+		});
+	}
+	/**
+	 * @desc    清空
+	 * */
+	_clear(){
+		var that = this
+			;
+
+		return this._db.then(function(db){
+			return new Promise(function(resolve, reject){
+				var objectStore = db.transaction([that._config.tableName], 'readwrite').objectStore(that._config.tableName)
+					, result = objectStore.clear()
+					;
+
+				result.onsuccess = function(e){
+					resolve(true);
+				};
+				result.onerror = function(e){
+					console.log( e );
+					reject(e);
+				}
+			});
+		});
 	}
 
 	/**
@@ -129,12 +175,7 @@ class IndexedDBModel extends Model{
 	 * @return  {Promise}
 	 * */
 	setData(key, value){
-		var that = this
-			;
-
-		return this._select(key).then(function(){
-
-		});
+		return this._put(key, value);
 	}
 	/**
 	 * @desc    获取数据
@@ -142,7 +183,7 @@ class IndexedDBModel extends Model{
 	 * @return  {Promise}
 	 * */
 	getData(key){
-
+		return this._select(key);
 	}
 	/**
 	 * @desc    将数据从缓存中删除
@@ -150,14 +191,14 @@ class IndexedDBModel extends Model{
 	 * @return  {Promise}
 	 * */
 	removeData(key){
-
+		return this._delete(key);
 	}
 	/**
 	 * @desc    清空数据
 	 * @return  {Promise}
 	 * */
 	clearData(){
-
+		return this._clear();
 	}
 }
 

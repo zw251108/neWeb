@@ -15,10 +15,10 @@ class WebSQLModel extends Model{
 	 * @param   {Number}    config.dbSize   单位字节
 	 * */
 	constructor(config={}){
+		super();
+
 		var that = this
 			;
-
-		super();
 
 		this._config = Object.keys( WebSQLModel._config ).reduce((all, d)=>{
 			if( d in config ){
@@ -52,11 +52,14 @@ class WebSQLModel extends Model{
 	 * @return  {Promise}
 	 * */
 	_select(key){
+		var that = this
+			;
+
 		return this._db.then(function(db){
 			return new Promise(function(resolve, reject){
 				db.transaction(function(tx){
-					tx.executeSql('select * from '+ this._config.tableName +' where topic=?', [key], function(tx, rs){
-						resolve(rs);
+					tx.executeSql('select * from '+ that._config.tableName +' where topic=?', [key], function(tx, rs){
+						resolve(rs.rows);
 					}, function(tx, e){
 						console.log( e );
 						reject(e);
@@ -73,13 +76,16 @@ class WebSQLModel extends Model{
 	 * @return  {Promise}
 	 * */
 	_update(key, value){
+		var that = this
+			;
+
 		return this._db.then(function(db){
 			return new Promise(function(resolve, reject){
 				db.transaction(function(tx){
-					tx.executeSql('update ' + this._config.tableName + ' set value=? where key=?', [value, key], function(tx, rs){
+					tx.executeSql('update ' + that._config.tableName + ' set value=? where topic=?', [value, key], function(tx, rs){
 						resolve(!!rs.rowsAffected);
 					}, function(tx, e){
-						console.log(e);
+						console.log( e );
 						reject(e);
 					});
 				});
@@ -93,13 +99,16 @@ class WebSQLModel extends Model{
 	 * @return  {Promise}
 	 * */
 	_insert(key, value){
+		var that = this
+			;
+
 		return this._db.then(function(db){
 			return new Promise(function(resolve, reject){
 				db.transaction(function(tx){
-					tx.executeSql('insert into ' + this._config.tableName + '(topic,value) values(?,?)', [key, value], function(tx, rs){
+					tx.executeSql('insert into ' + that._config.tableName + '(topic,value) values(?,?)', [key, value], function(tx, rs){
 						resolve(!!rs.insertId);
 					}, function(tx, e){
-						console.log(e);
+						console.log( e );
 						reject(e);
 					})
 				});
@@ -112,16 +121,18 @@ class WebSQLModel extends Model{
 	 * @return  {Promise}
 	 * */
 	_delete(key){
-		var db = this._db
+		var that = this
 			;
 
-		return new Promise(function(resolve, reject){
-			db.transaction(function(tx){
-				tx.executeSql('delete from '+ this._config.tableName +' where topic=?', [key], function(tx, rs){
-					resolve( !!rs.rowsAffected );
-				}, function(tx, e){
-					console.log( e );
-					reject();
+		return this._db.then(function(db){
+			return new Promise(function(resolve, reject){
+				db.transaction(function(tx){
+					tx.executeSql('delete from '+ that._config.tableName +' where topic=?', [key], function(tx, rs){
+						resolve( !!rs.rowsAffected );
+					}, function(tx, e){
+						console.log( e );
+						reject();
+					});
 				});
 			});
 		});
@@ -131,13 +142,16 @@ class WebSQLModel extends Model{
 	 * @return  {Promise}
 	 * */
 	_clearTable(){
+		var that = this
+			;
+
 		return this._db.then(function(db){
 			return new Promise(function(resolve, reject){
 				db.transaction(function(tx){
-					tx.executeSql('delete from ' + this._config.tableName, [], function(tx, rs){
+					tx.executeSql('delete from ' + that._config.tableName, [], function(tx, rs){
 						resolve(rs);
 					}, function(tx, e){
-						console.log(e);
+						console.log( e );
 						reject(e);
 					});
 				});

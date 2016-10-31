@@ -5,7 +5,7 @@ import Cookie from './cookie.js';
 import LocalStorage from './loaclStorage.js';
 import SessionStorage from './sessionStorage.js';
 import IndexedDB from './indexedDB.js';
-import WebSQL from './webSQL.js';
+import webSQL from './webSQL.js';
 
 // 网络请求
 import Ajax from'./ajax.js';
