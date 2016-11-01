@@ -64,6 +64,8 @@ class LocalStorageModel extends Model{
 	 * @return  {Promise}
 	 * */
 	removeData(key){
+		this._removeIndex( key );
+
 		return Promise.resolve( this.localStorage.removeItem(key) );
 	}
 	/**
@@ -88,5 +90,12 @@ class LocalStorageModel extends Model{
 		this._eventList[key].push( callback );
 	}
 }
+
+// todo 全局 storage 事件监听
+LocalStorageModel.eventListener = function(){
+
+};
+
+Model.register('localStorage', LocalStorageModel);
 
 export default LocalStorageModel;

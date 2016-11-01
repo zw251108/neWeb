@@ -34,6 +34,20 @@ class Model{
 			this._index.splice(i, 1);
 		}
 	}
+	/**
+	 * @desc    转为字符串
+	 * @protected
+	 * @param   {*}     value
+	 * @return  {String}
+	 * todo ?
+	 * */
+	_stringify(value){
+		if( typeof value === 'object' ){
+			return JSON.stringify( value );
+		}
+
+		return value;
+	}
 
 	/**
 	 * @desc    设置数据
@@ -101,14 +115,16 @@ Model.register = function(type, model){
 	}
 };
 
+// 缓存
 Model._modelCache = {};
 
 /**
  * @desc    获取或生成 type 类型的 model 对象
  * @param   {String}    type
  * @param   {Boolean?}  notCache
+ * @param   {Object?}   options
  * */
-Model.factory = function(type, notCache){
+Model.factory = function(type, notCache=false, options={}){
 	var model
 		;
 	if( type in Model ){
@@ -116,12 +132,12 @@ Model.factory = function(type, notCache){
 			model = Model._modelCache[type];
 		}
 		else{
-			model = new Model[type]();
+			model = new Model[type](options);
 			Model._modelCache[type] = model;
 		}
 	}
 	else{
-		model = new Model();
+		model = new Model(options);
 	}
 
 	return model;

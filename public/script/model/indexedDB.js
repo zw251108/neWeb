@@ -34,13 +34,14 @@ class IndexedDBModel extends Model{
 			;
 
 		// DB 版本设置或升级时回调
+		// createObjectStore deleteObjectStore 只能在 onupgradeneeded 事件中使用
 		dbRequest.onupgradeneeded = function(e){
 			var db = e.target.result
 				, store
 				;
 
 			// 创建表
-			if( !db.objectStoreNames.contains( that._config.tableName) ){
+			if( !db.objectStoreNames.contains(that._config.tableName) ){
 
 				// 创建存储对象
 				store = db.createObjectStore(that._config.tableName, {
@@ -53,6 +54,7 @@ class IndexedDBModel extends Model{
 			}
 		};
 
+		// this._db 为 Promise 类型，会在 this._db.then() 中传入 db 实例，因为要保证数据库打开成功才可以操作
 		this._db = new Promise(function(resolve, reject){
 			dbRequest.onsuccess = function(e){
 				resolve(e.target.result);

@@ -8,16 +8,18 @@ import Model from './model.js';
 class WebSQLModel extends Model{
 	/**
 	 * @constructor
-	 * @param   {Object?}    config
+	 * @param   {Object?}   config
 	 * @param   {String}    config.dbName
 	 * @param   {String}    config.tableName
 	 * @param   {Number}    config.dbVersion
 	 * @param   {Number}    config.dbSize   单位字节
+	 * @desc
 	 * */
 	constructor(config={}){
 		super();
 
 		var that = this
+			, db
 			;
 
 		this._config = Object.keys( WebSQLModel._config ).reduce((all, d)=>{
@@ -32,10 +34,12 @@ class WebSQLModel extends Model{
 		}, {});
 
 		// 打开数据库，若不存在则创建
-		var db = openDatabase(this._config.dbName, this._config.dbVersion, this._config.dbName, this._config.dbSize);
+		db = openDatabase(this._config.dbName, this._config.dbVersion, this._config.dbName, this._config.dbSize);
 
+		// this._db 为 Promise 类型，会在 this._db.then() 中传入 db 实例，因为要保证数据表存在才可以操作
 		this._db = new Promise(function(resolve, reject){
 			db.transaction(function(tx){
+				// 若没有数据表则创建
 				tx.executeSql('create table if not exists ' + that._config.tableName + '(id integer primary key autoincrement,topic varchar(255) unique,value text)', [], function(){
 					resolve(db);
 				}, function(tx, e){
@@ -94,6 +98,7 @@ class WebSQLModel extends Model{
 	}
 	/**
 	 * @desc    新建
+	 * @private
 	 * @param   {String}    key
 	 * @param   {String}    value
 	 * @return  {Promise}
@@ -117,6 +122,7 @@ class WebSQLModel extends Model{
 	}
 	/**
 	 * @desc    删除
+	 * @private
 	 * @param   {String}    key
 	 * @return  {Promise}
 	 * */
@@ -139,6 +145,7 @@ class WebSQLModel extends Model{
 	}
 	/**
 	 * @desc    清空表
+	 * @private
 	 * @return  {Promise}
 	 * */
 	_clearTable(){
@@ -174,7 +181,7 @@ class WebSQLModel extends Model{
 		return this._select(key).then(function(rs){
 			var result;
 
-			if( rs.length ){    // key 已存在
+			if( rs !== undefined ){    // key 已存在
 				result = that._update(key, value);
 			}
 			else{
@@ -195,7 +202,9 @@ class WebSQLModel extends Model{
 		return this._select(key).then(function(rs){
 			var result
 				;
+
 			if( rs.length ){
+				// 只返回第一条数据
 				result = Promise.resolve( rs[0].value );
 			}
 			else{
