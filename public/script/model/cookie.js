@@ -117,7 +117,7 @@ class CookieModel extends Model{
 	 * @variation
 	 * @param   {String}    key
 	 * @param   {*}         value
-	 * @param   {Object|Number|String}  options 相关配置
+	 * @param   {Object|Number|String?}  options 相关配置
 	 * @return  {Promise}
 	 * */
 	setData(key, value, options={}){
@@ -204,12 +204,12 @@ CookieModel._defaults = {
 	, secure: ''
 };
 // 配置
-CookieModel._config = {
+CookieModel._CONFIG = {
 	raw: true   // 是否编码
 	, json: true
 };
 CookieModel.setRaw = function(){
-	CookieModel._config.raw = false;
+	CookieModel._CONFIG.raw = false;
 };
 
 Model.register('cookie', CookieModel);

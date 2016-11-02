@@ -18,11 +18,10 @@ class WebSQLModel extends Model{
 	constructor(config={}){
 		super();
 
-		var that = this
-			, db
+		var db
 			;
 
-		this._config = Object.keys( WebSQLModel._config ).reduce((all, d)=>{
+		this._config = Object.keys( WebSQLModel._CONFIG ).reduce((all, d)=>{
 			if( d in config ){
 				all[d] = config[d];
 			}
@@ -37,10 +36,10 @@ class WebSQLModel extends Model{
 		db = openDatabase(this._config.dbName, this._config.dbVersion, this._config.dbName, this._config.dbSize);
 
 		// this._db 为 Promise 类型，会在 this._db.then() 中传入 db 实例，因为要保证数据表存在才可以操作
-		this._db = new Promise(function(resolve, reject){
+		this._db = new Promise((resolve, reject)=>{
 			db.transaction(function(tx){
 				// 若没有数据表则创建
-				tx.executeSql('create table if not exists ' + that._config.tableName + '(id integer primary key autoincrement,topic varchar(255) unique,value text)', [], function(){
+				tx.executeSql('create table if not exists ' + this._config.tableName + '(id integer primary key autoincrement,topic varchar(255) unique,value text)', [], function(){
 					resolve(db);
 				}, function(tx, e){
 					console.log( e );
@@ -56,13 +55,10 @@ class WebSQLModel extends Model{
 	 * @return  {Promise}
 	 * */
 	_select(key){
-		var that = this
-			;
-
-		return this._db.then(function(db){
-			return new Promise(function(resolve, reject){
+		return this._db.then(db=>{
+			return new Promise((resolve, reject)=>{
 				db.transaction(function(tx){
-					tx.executeSql('select * from '+ that._config.tableName +' where topic=?', [key], function(tx, rs){
+					tx.executeSql('select * from '+ this._config.tableName +' where topic=?', [key], function(tx, rs){
 						resolve(rs.rows);
 					}, function(tx, e){
 						console.log( e );
@@ -80,13 +76,10 @@ class WebSQLModel extends Model{
 	 * @return  {Promise}
 	 * */
 	_update(key, value){
-		var that = this
-			;
-
-		return this._db.then(function(db){
-			return new Promise(function(resolve, reject){
+		return this._db.then(db=>{
+			return new Promise((resolve, reject)=>{
 				db.transaction(function(tx){
-					tx.executeSql('update ' + that._config.tableName + ' set value=? where topic=?', [value, key], function(tx, rs){
+					tx.executeSql('update ' + this._config.tableName + ' set value=? where topic=?', [value, key], function(tx, rs){
 						resolve(!!rs.rowsAffected);
 					}, function(tx, e){
 						console.log( e );
@@ -104,13 +97,10 @@ class WebSQLModel extends Model{
 	 * @return  {Promise}
 	 * */
 	_insert(key, value){
-		var that = this
-			;
-
-		return this._db.then(function(db){
-			return new Promise(function(resolve, reject){
+		return this._db.then(db=>{
+			return new Promise((resolve, reject)=>{
 				db.transaction(function(tx){
-					tx.executeSql('insert into ' + that._config.tableName + '(topic,value) values(?,?)', [key, value], function(tx, rs){
+					tx.executeSql('insert into ' + this._config.tableName + '(topic,value) values(?,?)', [key, value], function(tx, rs){
 						resolve(!!rs.insertId);
 					}, function(tx, e){
 						console.log( e );
@@ -127,13 +117,10 @@ class WebSQLModel extends Model{
 	 * @return  {Promise}
 	 * */
 	_delete(key){
-		var that = this
-			;
-
-		return this._db.then(function(db){
-			return new Promise(function(resolve, reject){
+		return this._db.then(db=>{
+			return new Promise((resolve, reject)=>{
 				db.transaction(function(tx){
-					tx.executeSql('delete from '+ that._config.tableName +' where topic=?', [key], function(tx, rs){
+					tx.executeSql('delete from '+ this._config.tableName +' where topic=?', [key], function(tx, rs){
 						resolve( !!rs.rowsAffected );
 					}, function(tx, e){
 						console.log( e );
@@ -149,13 +136,10 @@ class WebSQLModel extends Model{
 	 * @return  {Promise}
 	 * */
 	_clearTable(){
-		var that = this
-			;
-
-		return this._db.then(function(db){
-			return new Promise(function(resolve, reject){
+		return this._db.then(db=>{
+			return new Promise((resolve, reject)=>{
 				db.transaction(function(tx){
-					tx.executeSql('delete from ' + that._config.tableName, [], function(tx, rs){
+					tx.executeSql('delete from ' + this._config.tableName, [], function(tx, rs){
 						resolve(rs);
 					}, function(tx, e){
 						console.log( e );
@@ -173,19 +157,18 @@ class WebSQLModel extends Model{
 	 * @return  {Promise}
 	 * */
 	setData(key, value){
-		var that = this
-			;
-
 		this._setIndex( key );
 
-		return this._select(key).then(function(rs){
+		value = this._stringify(value);
+
+		return this._select(key).then(rs=>{
 			var result;
 
 			if( rs !== undefined ){    // key 已存在
-				result = that._update(key, value);
+				result = this._update(key, value);
 			}
 			else{
-				result = that._insert(key, value);
+				result = this._insert(key, value);
 			}
 
 			return result;
@@ -200,18 +183,20 @@ class WebSQLModel extends Model{
 		this._setIndex( key );
 
 		return this._select(key).then(function(rs){
-			var result
+			var value = ''
 				;
 
 			if( rs.length ){
 				// 只返回第一条数据
-				result = Promise.resolve( rs[0].value );
-			}
-			else{
-				result = Promise.resolve('');
+				value = rs[0].value;
 			}
 
-			return result;
+			try{
+				value = JSON.parse( value );
+			}
+			catch(e){}
+
+			return value;
 		});
 	}
 	/**
@@ -234,7 +219,7 @@ class WebSQLModel extends Model{
 	}
 }
 
-WebSQLModel._config = {
+WebSQLModel._CONFIG = {
 	dbName: 'storage'
 	, tableName: 'storage'
 	, dbVersion: 1

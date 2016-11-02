@@ -12,25 +12,9 @@ class LocalStorageModel extends Model{
 	constructor(){
 		super();
 
-		this._eventList = {};
 		this.localStorage = window.localStorage;
 
-		// // todo 监控事件
-		// window.addEventListener('storage', function(e){
-		// 	var key = e.key
-		// 		, newVal = e.newValue
-		// 		, oldVal = e.oldValue
-		// 		, rs = true
-		// 		;
-		//
-		// 	if( key in this._eventList ){
-		// 		rs = this._eventList[key].reduce((a, d)=>{
-		// 			return a && d(newVal, oldVal);
-		// 		}, rs);
-		// 	}
-		//
-		// 	return rs;
-		// });
+		!LocalStorageModel._LISTENER_ON && LocalStorageModel._listen();
 	}
 
 	/**
@@ -42,11 +26,7 @@ class LocalStorageModel extends Model{
 	setData(key, value){
 		this._setIndex( key );
 
-		if( typeof value === 'object' ){
-			value = JSON.stringify( value );
-		}
-
-		return Promise.resolve( this.localStorage.setItem(key, value) );
+		return Promise.resolve( this.localStorage.setItem(key, this._stringify(value)) );
 	}
 	/**
 	 * @desc    获取数据
@@ -54,9 +34,17 @@ class LocalStorageModel extends Model{
 	 * @return  {Promise}
 	 * */
 	getData(key){
+		var value = this.localStorage.getItem(key)
+			;
+
 		this._setIndex( key );
 
-		return Promise.resolve( this.localStorage.getItem(key) );
+		try{
+			value = JSON.parse(value);
+		}
+		catch(e){}
+
+		return Promise.resolve( value );
 	}
 	/**
 	 * @desc    将数据从缓存中删除
@@ -83,17 +71,39 @@ class LocalStorageModel extends Model{
 	 * @param   {Function}  callback    事件触发函数
 	 * */
 	on(key, callback){
-		if( !(key in this._eventList) ){
-			this._eventList[key] = [];
+		if( !(key in LocalStorageModel._EVENT_LIST) ){
+			LocalStorageModel._EVENT_LIST[key] = [];
 		}
 
-		this._eventList[key].push( callback );
+		LocalStorageModel._EVENT_LIST[key].push( callback );
 	}
 }
 
-// todo 全局 storage 事件监听
-LocalStorageModel.eventListener = function(){
+// 保存的事件队列
+LocalStorageModel._EVENT_LIST = {};
 
+// 全局 localStorage
+LocalStorageModel._LISTENER_ON = false;
+
+// todo 全局 storage 事件监听
+LocalStorageModel._listen = function(){
+	window.addEventListener('storage', function(e){
+		var key = e.key
+			, newVal = e.newValue
+			, oldVal = e.oldValue
+			, rs = true
+			;
+
+		if( key in this._EVENT_LIST ){
+			rs = this._EVENT_LIST[key].reduce((a, d)=>{
+				return a && d(newVal, oldVal);
+			}, rs);
+		}
+
+		return rs;
+	});
+
+	LocalStorageModel._LISTENER_ON = true;
 };
 
 Model.register('localStorage', LocalStorageModel);

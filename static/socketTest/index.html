@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+	<title>web socket 测试</title>
+</head>
+<body>
+
+<script>
+try{
+	var socket = new WebSocket('ws://localhost:9001/socket.io/?EIO=3&transport=websocket&sid=GhlpTUlbQU7nbfifAAAR');
+
+	socket.onclose = function(e){
+		console.log(e);
+	};
+	socket.onopen = function(){
+		console.log(1123)
+	};
+}
+catch(e){
+	console.log(e)
+}
+</script>
+</body>
+</html>

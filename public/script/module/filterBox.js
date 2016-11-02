@@ -8,7 +8,7 @@ define(['jquery', 'tag', 'template'], function($, tag){
 					'>div.formGroup' +
 						'>div.input.input-tag' +
 							'>div.formGroup' +
-								'>input.tag_name[type=text name=tag]' +
+								'>input.tag_name[type=text name=tag autocomplete=off]' +
 								'+button.btn.icon.icon-plus.tag_add[type=button]' +
 								'+ul.hidden.list.list-inline.scrollBar.tag_pointOut' +
 							'^div.tag_area' +

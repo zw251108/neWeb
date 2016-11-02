@@ -9,6 +9,6 @@ import webSQL from './webSQL.js';
 
 // 网络请求
 import Ajax from'./ajax.js';
-import Socket from './socket.js';
+import Socket from './webSocket.js';
 
 export default Model;

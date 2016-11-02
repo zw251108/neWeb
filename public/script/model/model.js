@@ -45,8 +45,9 @@ class Model{
 		if( typeof value === 'object' ){
 			return JSON.stringify( value );
 		}
-
-		return value;
+		else{
+			return value.toString();
+		}
 	}
 
 	/**

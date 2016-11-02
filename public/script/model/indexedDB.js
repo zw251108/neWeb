@@ -8,43 +8,43 @@ import Model from './model.js';
 class IndexedDBModel extends Model{
 	/**
 	 * @constructor
-	 * @param   {Object?}    config
+	 * @param   {Object?}   config
 	 * @param   {String}    config.dbName
 	 * @param   {String}    config.tableName
 	 * @param   {Number}    config.dbVersion
 	 * */
 	constructor(config={}){
 		super();
-		var that = this
+
+		var indexedDB = window.indexedDB || window.mozIndexedDB || window.webbkitIndexedDB || window.msIndexedDB
+			, dbRequest
 			;
 
-		this._config = Object.keys( IndexedDBModel._config ).reduce((all, d)=>{
+		this._config = Object.keys( IndexedDBModel._CONFIG ).reduce((all, d)=>{
 			if( d in config ){
 				all[d] = config[d];
 			}
 			else{
-				all[d] = IndexedDBModel._config[d];
+				all[d] = IndexedDBModel._CONFIG[d];
 			}
 
 			return all;
 		}, {});
 
-		var indexedDB = window.indexedDB || window.mozIndexedDB || window.webbkitIndexedDB || window.msIndexedDB
-			, dbRequest = indexedDB.open(this._config.dbName, this._config.dbVersion)
-			;
+		dbRequest = indexedDB.open(this._config.dbName, this._config.dbVersion);
 
 		// DB 版本设置或升级时回调
 		// createObjectStore deleteObjectStore 只能在 onupgradeneeded 事件中使用
-		dbRequest.onupgradeneeded = function(e){
+		dbRequest.onupgradeneeded = e=>{
 			var db = e.target.result
 				, store
 				;
 
 			// 创建表
-			if( !db.objectStoreNames.contains(that._config.tableName) ){
+			if( !db.objectStoreNames.contains(this._config.tableName) ){
 
 				// 创建存储对象
-				store = db.createObjectStore(that._config.tableName, {
+				store = db.createObjectStore(this._config.tableName, {
 					keyPath: 'topic'
 				});
 
@@ -70,12 +70,9 @@ class IndexedDBModel extends Model{
 	 * @param   {String}    key
 	 * */
 	_select(key){
-		var that = this
-			;
-
-		return this._db.then(function(db){
-			return new Promise(function(resolve, reject){
-				var objectStore = db.transaction([that._config.tableName], 'readwrite').objectStore(that._config.tableName)
+		return this._db.then(db=>{
+			return new Promise((resolve, reject)=>{
+				var objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore(this._config.tableName)
 					, result = objectStore.get(key)
 					;
 
@@ -99,12 +96,9 @@ class IndexedDBModel extends Model{
 	 * @return  {Promise}
 	 * */
 	_put(key, value){
-		var that = this
-			;
-
-		return this._db.then(function(db){
-			return new Promise(function(resolve, reject){
-				var objectStore = db.transaction([that._config.tableName], 'readwrite').objectStore(that._config.tableName)
+		return this._db.then(db=>{
+			return new Promise((resolve, reject)=>{
+				var objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore(this._config.tableName)
 					, result = objectStore.put({
 						topic: key
 						, value: value
@@ -127,12 +121,9 @@ class IndexedDBModel extends Model{
 	 * @return  {Promise}
 	 * */
 	_delete(key){
-		var that = this
-			;
-
-		return this._db.then(function(db){
-			return new Promise(function(resolve, reject){
-				var objectStore = db.transaction([that._config.tableName], 'readwrite').objectStore(that._config.tableName)
+		return this._db.then(db=>{
+			return new Promise((resolve, reject)=>{
+				var objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore(this._config.tableName)
 					, result = objectStore.delete(key)
 					;
 
@@ -150,12 +141,9 @@ class IndexedDBModel extends Model{
 	 * @desc    清空
 	 * */
 	_clear(){
-		var that = this
-			;
-
-		return this._db.then(function(db){
-			return new Promise(function(resolve, reject){
-				var objectStore = db.transaction([that._config.tableName], 'readwrite').objectStore(that._config.tableName)
+		return this._db.then(db=>{
+			return new Promise((resolve, reject)=>{
+				var objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore(this._config.tableName)
 					, result = objectStore.clear()
 					;
 
@@ -177,7 +165,7 @@ class IndexedDBModel extends Model{
 	 * @return  {Promise}
 	 * */
 	setData(key, value){
-		return this._put(key, value);
+		return this._put(key, this._stringify(value));
 	}
 	/**
 	 * @desc    获取数据
@@ -185,7 +173,14 @@ class IndexedDBModel extends Model{
 	 * @return  {Promise}
 	 * */
 	getData(key){
-		return this._select(key);
+		return this._select(key).then(function(value){
+			try{
+				value = JSON.parse( value );
+			}
+			catch(e){}
+
+			return value;
+		});
 	}
 	/**
 	 * @desc    将数据从缓存中删除
@@ -204,7 +199,7 @@ class IndexedDBModel extends Model{
 	}
 }
 
-IndexedDBModel._config = {
+IndexedDBModel._CONFIG = {
 	dbName: 'storage'
 	, tableName: 'storage'
 	, dbVersion: 1

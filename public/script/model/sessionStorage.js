@@ -28,7 +28,7 @@ class SessionStorageModel extends Model{
 			value = JSON.stringify( value );
 		}
 
-		return Promise.resolve( this.sessionStorage.setItem(key, value) );
+		return Promise.resolve( this.sessionStorage.setItem(key, this._stringify(value)) );
 	}
 	/**
 	 * @desc    获取数据
@@ -36,9 +36,17 @@ class SessionStorageModel extends Model{
 	 * @return
 	 * */
 	getData(key){
+		var value = this.sessionStorage.getItem(key)
+			;
+
 		this._setIndex( key );
 
-		return Promise.resolve( this.sessionStorage.getItem(key) );
+		try{
+			value = JSON.parse(value);
+		}
+		catch(e){}
+
+		return Promise.resolve( value );
 	}
 	/**
 	 * @desc    将数据从缓存中删除
@@ -63,3 +71,7 @@ class SessionStorageModel extends Model{
 Model.register('sessionStorage', SessionStorageModel);
 
 export default SessionStorageModel;
+
+var a = (
+	a , b
+)=>{}
