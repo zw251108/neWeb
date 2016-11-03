@@ -111,6 +111,7 @@ class CookieModel extends Model{
 		super();
 	}
 
+
 	/**
 	 * @desc    设置数据
 	 * @override
@@ -122,33 +123,29 @@ class CookieModel extends Model{
 	 * */
 	setData(key, value, options={}){
 
-		if (value !== undefined && !$.isFunction(value)){
-			options = $.extend({}, config.defaults, options);
+		this._setIndex( key );
 
-			if (typeof options.expires === 'number') {
-				let days = options.expires, t = options.expires = new Date();
-				t.setTime(+t + days * 864e+5);
-			}
-
-			return (document.cookie = [
-				encode(key), '=', stringifyCookieValue(value),
-				options.expires ? '; expires=' + options.expires.toUTCString() : '', // use expires attribute, max-age is not supported by IE
-				options.path    ? '; path=' + options.path : '',
-				options.domain  ? '; domain=' + options.domain : '',
-				options.secure  ? '; secure' : ''
-			].join(''));
+		if( options.expires ){
+			options.expires = CookieModel._transDate( options.expires );
 		}
 
-		Object.keys( CookieModel._defaults ).reduce((a,d)=>{
+		document.cookie = '='+ this._stringify(value) + Object.keys( CookieModel._DEFAULT ).reduce((a, d)=>{    // 整理配置
 
-			if( !(d in options) ){
-				a[d] = CookieModel._defaults[d];
-			}
+				a += '; '+ d +'=';
 
-			return a;
-		}, options);
+				if( d in options ){
+					a += options[d];
+				}
+				else{
+					a += CookieModel._DEFAULT[d];
+				}
 
-		$.cookie(key, value, opts);
+				return a;
+			}, '');
+
+		// $.cookie(key, value, opts);
+
+		return Promise.resolve(true);
 	}
 	/**
 	 * @desc    获取数据
@@ -197,7 +194,7 @@ class CookieModel extends Model{
 }
 
 // 默认参数
-CookieModel._defaults = {
+CookieModel._DEFAULT = {
 	path: '/'
 	, domain: ''
 	, expires: ''
@@ -210,6 +207,26 @@ CookieModel._CONFIG = {
 };
 CookieModel.setRaw = function(){
 	CookieModel._CONFIG.raw = false;
+};
+// 转换时间数据格式
+CookieModel._transDate = function(date){
+	var temp
+		, expr = /^(-?\d+)(y|m|d)$/i
+		;
+	if( date instanceof Date){}
+	else if( typeof date === 'number' ){
+		temp = new Date();
+		temp.setTime( +temp + date *864e+5 );
+		date = temp;
+	}
+	else if( expr.test( date ) ){
+		temp = expr.exec( date );
+	}
+	else{
+		date = '';
+	}
+
+	return date && date.toUTCString();
 };
 
 Model.register('cookie', CookieModel);

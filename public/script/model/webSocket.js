@@ -9,7 +9,7 @@ class WebSocketModel extends Model{
 	/**
 	 * @constructor
 	 * @param   {Object}    config
-	 * @param   {String}    config.url
+	 * @param   {String}    config.url  服务器地址必须
 	 * @param   {String|Array?} config.protocols
 	 * */
 	constructor(config={}){
@@ -19,6 +19,7 @@ class WebSocketModel extends Model{
 			;
 
 		this._config = Object( WebSocketModel._CONFIG ).reduce((all, d)=>{
+
 			if( d in config ){
 				all[d] = config[d];
 			}
@@ -29,10 +30,19 @@ class WebSocketModel extends Model{
 			return all;
 		}, {});
 
+		this._EVENT_LIST = {};
+		this.CONN_ON = false;
+
 		socket = new WebSocket(this._config.url, this._config.protocols);
 
-		this._db = new Promise(function(resolve, reject){
-			socket.onopen = function(socket){
+		this._conn = new Promise((resolve, reject)=>{
+			// web socket 建立连接成功
+			socket.onopen = function(){
+
+				this.CONN_ON = true;
+
+				socket.onmessage = this._receive;
+
 				resolve( socket );
 			};
 			socket.onclose = function(e){
@@ -40,18 +50,57 @@ class WebSocketModel extends Model{
 			};
 		});
 	}
+	_receive(){
+
+	}
+
+	/**
+	 * @desc    设置数据
+	 * @param   {String}    key
+	 * @param   {*}         value
+	 * @return  {Promise}
+	 * */
 	setData(key, value){
+		return this._conn.then((socket)=>{
+			socket.send( this._stringify({
+				key: value
+			}) );
 
+			return true;
+		});
 	}
-	getData(key){
+	/**
+	 * todo ?
+	 * @desc    获取数据，实际与 setData 接口相同，并不会返回数据
+	 * @param   {String}    key
+	 * @param   {*}         value
+	 * @return  {Promise}
+	 * */
+	getData(key, value=''){
+		return this.setData(key, value);
+	}
 
+	removeData(key){}
+	clearData(){}
+
+	/**
+	 * @desc    关闭连接
+	 * */
+	close(){
+		return this._conn.then((socket)=>{
+			this.CONN_ON = false;
+
+			socket.close();
+		});
 	}
-	clearData(){
+	on(key, callback){
 
 	}
 }
 
 WebSocketModel._CONFIG = {
+	url: ''
+	, protocols: ''
 };
 
 Model.register('webSocket', WebSocketModel);

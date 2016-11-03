@@ -8,19 +8,25 @@
 <body>
 
 <script>
-try{
-	var socket = new WebSocket('ws://localhost:9001/socket.io/?EIO=3&transport=websocket&sid=GhlpTUlbQU7nbfifAAAR');
 
-	socket.onclose = function(e){
-		console.log(e);
-	};
-	socket.onopen = function(){
-		console.log(1123)
-	};
+function cre(){
+	try{
+		var socket = new WebSocket('ws://localhost:9001/socket.io/?EIO=3&transport=websocket&sid=32B7dTI0angy-a6GAAAD');
+
+		socket.onclose = function(e){
+			console.log(e);
+		};
+		socket.onopen = function(e){
+			console.log(e)
+
+			socket.send(123123123)
+		};
+	}
+	catch(e){
+		console.log(e)
+	}
 }
-catch(e){
-	console.log(e)
-}
+cre()
 </script>
 </body>
 </html>

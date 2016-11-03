@@ -9,10 +9,10 @@ class WebSQLModel extends Model{
 	/**
 	 * @constructor
 	 * @param   {Object?}   config
-	 * @param   {String}    config.dbName
-	 * @param   {String}    config.tableName
-	 * @param   {Number}    config.dbVersion
-	 * @param   {Number}    config.dbSize   单位字节
+	 * @param   {String?}   config.dbName
+	 * @param   {String?}   config.tableName
+	 * @param   {Number?}   config.dbVersion
+	 * @param   {Number?}   config.dbSize   单位字节
 	 * @desc
 	 * */
 	constructor(config={}){

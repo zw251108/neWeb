@@ -9,9 +9,9 @@ class IndexedDBModel extends Model{
 	/**
 	 * @constructor
 	 * @param   {Object?}   config
-	 * @param   {String}    config.dbName
-	 * @param   {String}    config.tableName
-	 * @param   {Number}    config.dbVersion
+	 * @param   {String?}   config.dbName
+	 * @param   {String?}   config.tableName
+	 * @param   {Number?}   config.dbVersion
 	 * */
 	constructor(config={}){
 		super();
