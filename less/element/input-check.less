@@ -5,7 +5,13 @@
  * */
 [type="radio"],
 [type="checkbox"]{
-	display: none;
+	/**
+	 * 不使用 display: none; 会把该元素从键盘 tab 键切换焦点的队列中完全删除
+	 */
+
+	//display: none;
+	position: absolute;
+	clip: rect(0, 0, 0, 0);
 
 	/**
 	 * 禁用 radio 和 checkbox 默认样式

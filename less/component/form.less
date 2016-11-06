@@ -319,6 +319,17 @@
 
 }
 
+
+:focus{
+	& + .icon-radio:before,
+	& + .icon-checkbox:before{
+		-webkit-box-shadow: 0 0 .1em .1em #58a;
+		-moz-box-shadow: 0 0 .1em .1em #58a;
+		box-shadow: 0 0 .1em .1em #58a;
+	}
+}
+
+
 :checked + .icon-radio:before{
 	&:extend(.icon-radio-checked:before);
 }
