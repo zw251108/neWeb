@@ -322,10 +322,18 @@
 
 :focus{
 	& + .icon-radio:before,
-	& + .icon-checkbox:before{
-		-webkit-box-shadow: 0 0 .1em .1em #58a;
-		-moz-box-shadow: 0 0 .1em .1em #58a;
-		box-shadow: 0 0 .1em .1em #58a;
+	& + .icon-checkbox:before,
+	& ~ .icon-star:before{
+		filter: drop-box();
+		//-webkit-box-shadow: 0 0 .1em .1em #58a;
+		//-moz-box-shadow: 0 0 .1em .1em #58a;
+		//box-shadow: 0 0 .1em .1em #58a;
+
+		-webkit-filter: drop-shadow(2px 2px 5px #58a);
+		-moz-filter: drop-shadow(2px 2px 5px #58a);
+		-ms-filter: drop-shadow(2px 2px 5px #58a);
+		-o-filter: drop-shadow(2px 2px 5px #58a);
+		filter: drop-shadow(2px 2px 5px #58a);
 	}
 }
 
