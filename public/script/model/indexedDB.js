@@ -68,6 +68,7 @@ class IndexedDBModel extends Model{
 	/**
 	 * @desc    查询
 	 * @param   {String}    key
+	 * @return  {Promise}   resolve 时传回查询出来的 value
 	 * */
 	_select(key){
 		return this._db.then(db=>{
@@ -90,10 +91,10 @@ class IndexedDBModel extends Model{
 		});
 	}
 	/**
-	 * @desc    新建或更新
+	 * @desc    新建或更新，add 接口要求数据库中不能已经有相同键的对象存在，因此统一使用 put 接口
 	 * @param   {String}    key
 	 * @param   {String}    value
-	 * @return  {Promise}
+	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	_put(key, value){
 		return this._db.then(db=>{
@@ -118,7 +119,7 @@ class IndexedDBModel extends Model{
 	/**
 	 * @desc    删除
 	 * @param   {String}    key
-	 * @return  {Promise}
+	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	_delete(key){
 		return this._db.then(db=>{
@@ -139,6 +140,7 @@ class IndexedDBModel extends Model{
 	}
 	/**
 	 * @desc    清空
+	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	_clear(){
 		return this._db.then(db=>{
@@ -162,7 +164,7 @@ class IndexedDBModel extends Model{
 	 * @desc    设置数据
 	 * @param   {String}    key
 	 * @param   {*}         value
-	 * @return  {Promise}
+	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	setData(key, value){
 		return this._put(key, this._stringify(value));
@@ -170,7 +172,7 @@ class IndexedDBModel extends Model{
 	/**
 	 * @desc    获取数据
 	 * @param   {String}    key
-	 * @return  {Promise}
+	 * @return  {Promise}   resolve 时传回查询出来的 value
 	 * */
 	getData(key){
 		return this._select(key).then(function(value){
@@ -185,14 +187,14 @@ class IndexedDBModel extends Model{
 	/**
 	 * @desc    将数据从缓存中删除
 	 * @param   {String}    key
-	 * @return  {Promise}
+	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	removeData(key){
 		return this._delete(key);
 	}
 	/**
 	 * @desc    清空数据
-	 * @return  {Promise}
+	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	clearData(){
 		return this._clear();

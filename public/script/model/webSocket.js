@@ -31,25 +31,30 @@ class WebSocketModel extends Model{
 		}, {});
 
 		this._EVENT_LIST = {};
-		this.CONN_ON = false;
+		this._CONN_ON = false;
 
+		// if( this._config.url ){
 		socket = new WebSocket(this._config.url, this._config.protocols);
 
 		this._conn = new Promise((resolve, reject)=>{
-			// web socket 建立连接成功
-			socket.onopen = function(){
+				// web socket 建立连接成功
+				socket.onopen = function(){
 
-				this.CONN_ON = true;
+					this.CONN_ON = true;
 
-				socket.onmessage = this._receive;
+					socket.onmessage = this._receive;
 
-				resolve( socket );
-			};
-			socket.onclose = function(e){
-				reject(e);
-			};
-		});
+					resolve( socket );
+				};
+				socket.onclose = function(e){
+					reject(e);
+				};
+			});
+		// }
 	}
+	/**
+	 *
+	 * */
 	_receive(){
 
 	}
@@ -70,11 +75,11 @@ class WebSocketModel extends Model{
 		});
 	}
 	/**
-	 * todo ?
 	 * @desc    获取数据，实际与 setData 接口相同，并不会返回数据
 	 * @param   {String}    key
 	 * @param   {*}         value
 	 * @return  {Promise}
+	 * todo ?
 	 * */
 	getData(key, value=''){
 		return this.setData(key, value);
@@ -88,7 +93,7 @@ class WebSocketModel extends Model{
 	 * */
 	close(){
 		return this._conn.then((socket)=>{
-			this.CONN_ON = false;
+			this._CONN_ON = false;
 
 			socket.close();
 		});

@@ -19,21 +19,19 @@ class SessionStorageModel extends Model{
 	 * @desc    设置数据
 	 * @param   {String}    key
 	 * @param   {*}         value
-	 * @return  {Promise}
+	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	setData(key, value){
 		this._setIndex( key );
 
-		if( typeof value === 'object' ){
-			value = JSON.stringify( value );
-		}
+		this.sessionStorage.setItem(key, this._stringify(value));
 
-		return Promise.resolve( this.sessionStorage.setItem(key, this._stringify(value)) );
+		return Promise.resolve(true);
 	}
 	/**
 	 * @desc    获取数据
 	 * @param   {String}    key
-	 * @return
+	 * @return  {Promise}   resolve 时传回查询出来的 value
 	 * */
 	getData(key){
 		var value = this.sessionStorage.getItem(key)
@@ -46,32 +44,33 @@ class SessionStorageModel extends Model{
 		}
 		catch(e){}
 
-		return Promise.resolve( value );
+		return Promise.resolve(value);
 	}
 	/**
 	 * @desc    将数据从缓存中删除
 	 * @param   {String}    key
-	 * @return  {Promise}
+	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	removeData(key){
 		this._removeIndex( key );
 
-		return Promise.resolve( this.sessionStorage.removeItem(key) );
+		this.sessionStorage.removeItem(key);
+
+		return Promise.resolve(true);
 	}
 	/**
 	 * @desc    清空数据
-	 * @return  {Promise}
+	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	clearData(){
 		this._index.forEach( d=>this._removeIndex(d) );
+
 		this.sessionStorage.clear();
+
+		return Promise.resolve(true);
 	}
 }
 
 Model.register('sessionStorage', SessionStorageModel);
 
 export default SessionStorageModel;
-
-var a = (
-	a , b
-)=>{}

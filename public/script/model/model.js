@@ -54,7 +54,7 @@ class Model{
 	 * @desc    设置数据
 	 * @param   {String}    key
 	 * @param   {*}         value
-	 * @return  {Promise}
+	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	setData(key, value){
 		this._setIndex( key );
@@ -66,7 +66,7 @@ class Model{
 	/**
 	 * @desc    获取数据
 	 * @param   {String}    key
-	 * @return  {Promise}
+	 * @return  {Promise}   resolve 时传回查询出来的 value
 	 * */
 	getData(key){
 		// todo 若不存在该数据 返回 reject ?
@@ -75,7 +75,7 @@ class Model{
 	/**
 	 * @desc    将数据从缓存中删除
 	 * @param   {String}    key
-	 * @return  {Promise}
+	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	removeData(key){
 		var rs
@@ -94,10 +94,12 @@ class Model{
 	}
 	/**
 	 * @desc    清空数据
-	 * @return  {Promise}
+	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	clearData(){
-		return Promise.all(this._index.map( d=>this.removeData(d) ));
+		this._index.map(d=>this.removeData(d));
+
+		return Promise.resolve(true);
 	}
 }
 
@@ -108,7 +110,7 @@ class Model{
  * */
 Model.register = function(type, model){
 
-	if( type in Model && type in Model._modelCache ){
+	if( type in Model && type in Model._MODEL_CACHE ){
 		console.log('type', ' 重复注册，并已生成实例，不能覆盖');
 	}
 	else{
@@ -117,7 +119,7 @@ Model.register = function(type, model){
 };
 
 // 缓存
-Model._modelCache = {};
+Model._MODEL_CACHE = {};
 
 /**
  * @desc    获取或生成 type 类型的 model 对象
@@ -128,13 +130,14 @@ Model._modelCache = {};
 Model.factory = function(type, notCache=false, options={}){
 	var model
 		;
+
 	if( type in Model ){
-		if( !notCache && type in Model._modelCache ){
-			model = Model._modelCache[type];
+		if( !notCache && type in Model._MODEL_CACHE ){
+			model = Model._MODEL_CACHE[type];
 		}
 		else{
 			model = new Model[type](options);
-			Model._modelCache[type] = model;
+			Model._MODEL_CACHE[type] = model;
 		}
 	}
 	else{

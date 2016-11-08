@@ -26,7 +26,7 @@ class WebSQLModel extends Model{
 				all[d] = config[d];
 			}
 			else{
-				all[d] = WebSQLModel._config[d];
+				all[d] = WebSQLModel._CONFIG[d];
 			}
 
 			return all;
@@ -37,7 +37,7 @@ class WebSQLModel extends Model{
 
 		// this._db 为 Promise 类型，会在 this._db.then() 中传入 db 实例，因为要保证数据表存在才可以操作
 		this._db = new Promise((resolve, reject)=>{
-			db.transaction(function(tx){
+			db.transaction(tx=>{
 				// 若没有数据表则创建
 				tx.executeSql('create table if not exists ' + this._config.tableName + '(id integer primary key autoincrement,topic varchar(255) unique,value text)', [], function(){
 					resolve(db);
@@ -52,12 +52,12 @@ class WebSQLModel extends Model{
 	 * @desc    查询
 	 * @private
 	 * @param   {String}    key
-	 * @return  {Promise}
+	 * @return  {Promise}   resolve 时传回查询出来的数组
 	 * */
 	_select(key){
 		return this._db.then(db=>{
 			return new Promise((resolve, reject)=>{
-				db.transaction(function(tx){
+				db.transaction(tx=>{
 					tx.executeSql('select * from '+ this._config.tableName +' where topic=?', [key], function(tx, rs){
 						resolve(rs.rows);
 					}, function(tx, e){
@@ -73,12 +73,12 @@ class WebSQLModel extends Model{
 	 * @private
 	 * @param   {String}    key
 	 * @param   {String}    value
-	 * @return  {Promise}
+	 * @return  {Promise}   resolve 时传回影响行数的 boolean 值
 	 * */
 	_update(key, value){
 		return this._db.then(db=>{
 			return new Promise((resolve, reject)=>{
-				db.transaction(function(tx){
+				db.transaction(tx=>{
 					tx.executeSql('update ' + this._config.tableName + ' set value=? where topic=?', [value, key], function(tx, rs){
 						resolve(!!rs.rowsAffected);
 					}, function(tx, e){
@@ -94,12 +94,12 @@ class WebSQLModel extends Model{
 	 * @private
 	 * @param   {String}    key
 	 * @param   {String}    value
-	 * @return  {Promise}
+	 * @return  {Promise}   resolve 时传回新插入行 id 的 boolean 值
 	 * */
 	_insert(key, value){
 		return this._db.then(db=>{
 			return new Promise((resolve, reject)=>{
-				db.transaction(function(tx){
+				db.transaction(tx=>{
 					tx.executeSql('insert into ' + this._config.tableName + '(topic,value) values(?,?)', [key, value], function(tx, rs){
 						resolve(!!rs.insertId);
 					}, function(tx, e){
@@ -114,12 +114,12 @@ class WebSQLModel extends Model{
 	 * @desc    删除
 	 * @private
 	 * @param   {String}    key
-	 * @return  {Promise}
+	 * @return  {Promise}   resolve 时传回影响行数的 boolean 值
 	 * */
 	_delete(key){
 		return this._db.then(db=>{
 			return new Promise((resolve, reject)=>{
-				db.transaction(function(tx){
+				db.transaction(tx=>{
 					tx.executeSql('delete from '+ this._config.tableName +' where topic=?', [key], function(tx, rs){
 						resolve( !!rs.rowsAffected );
 					}, function(tx, e){
@@ -133,14 +133,14 @@ class WebSQLModel extends Model{
 	/**
 	 * @desc    清空表
 	 * @private
-	 * @return  {Promise}
+	 * @return  {Promise}   resolve 时传回影响行数的 boolean 值
 	 * */
 	_clearTable(){
 		return this._db.then(db=>{
 			return new Promise((resolve, reject)=>{
-				db.transaction(function(tx){
+				db.transaction(tx=>{
 					tx.executeSql('delete from ' + this._config.tableName, [], function(tx, rs){
-						resolve(rs);
+						resolve(!!rs.rowsAffected);
 					}, function(tx, e){
 						console.log( e );
 						reject(e);
@@ -154,7 +154,7 @@ class WebSQLModel extends Model{
 	 * @desc    设置数据
 	 * @param   {String}    key
 	 * @param   {*}         value
-	 * @return  {Promise}
+	 * @return  {Promise}   resolve 时传回影响行数的 boolean 值
 	 * */
 	setData(key, value){
 		this._setIndex( key );
@@ -177,7 +177,7 @@ class WebSQLModel extends Model{
 	/**
 	 * @desc    获取数据
 	 * @param   {String}    key
-	 * @return  {Promise}
+	 * @return  {Promise}   resolve 时传回查询出来的 value
 	 * */
 	getData(key){
 		this._setIndex( key );
@@ -202,7 +202,7 @@ class WebSQLModel extends Model{
 	/**
 	 * @desc    将数据从缓存中删除
 	 * @param   {String}    key
-	 * @return  {Promise}
+	 * @return  {Promise}   resolve 时传回影响行数的 boolean 值
 	 * */
 	removeData(key){
 		this._removeIndex( key );
@@ -211,10 +211,11 @@ class WebSQLModel extends Model{
 	}
 	/**
 	 * @desc    清空数据
-	 * @return  {Promise}
+	 * @return  {Promise}   resolve 时传回影响行数的 boolean 值
 	 * */
 	clearData(){
 		this._index.forEach( d=>this._removeIndex(d) );
+
 		return this._clearTable();
 	}
 }

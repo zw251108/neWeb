@@ -1,104 +1,6 @@
 'use strict';
 
-import $ from 'jquery';
 import Model from './model.js';
-
-const pluses = /\+/g;
-
-function encode(s) {
-	return config.raw ? s : encodeURIComponent(s);
-}
-
-function decode(s) {
-	return config.raw ? s : decodeURIComponent(s);
-}
-
-function stringifyCookieValue(value) {
-	return encode(config.json ? JSON.stringify(value) : String(value));
-}
-
-function parseCookieValue(s) {
-	if (s.indexOf('"') === 0) {
-		// This is a quoted cookie as according to RFC2068, unescape...
-		s = s.slice(1, -1).replace(/\\"/g, '"').replace(/\\\\/g, '\\');
-	}
-
-	try {
-		// Replace server-side written pluses with spaces.
-		// If we can't decode the cookie, ignore it, it's unusable.
-		// If we can't parse the cookie, ignore it, it's unusable.
-		s = decodeURIComponent(s.replace(pluses, ' '));
-		return config.json ? JSON.parse(s) : s;
-	} catch(e) {}
-}
-
-function read(s, converter) {
-	let value = config.raw ? s : parseCookieValue(s);
-	return $.isFunction(converter) ? converter(value) : value;
-}
-
-let config = $.cookie = function (key, value, options) {
-
-	// Write
-
-	if (value !== undefined && !$.isFunction(value)){
-		options = $.extend({}, config.defaults, options);
-
-		if (typeof options.expires === 'number') {
-			let days = options.expires, t = options.expires = new Date();
-			t.setTime(+t + days * 864e+5);
-		}
-
-		return (document.cookie = [
-			encode(key), '=', stringifyCookieValue(value),
-			options.expires ? '; expires=' + options.expires.toUTCString() : '', // use expires attribute, max-age is not supported by IE
-			options.path    ? '; path=' + options.path : '',
-			options.domain  ? '; domain=' + options.domain : '',
-			options.secure  ? '; secure' : ''
-		].join(''));
-	}
-
-	// Read
-
-	let result = key ? undefined : {};
-
-	// To prevent the for loop in the first place assign an empty array
-	// in case there are no cookies at all. Also prevents odd result when
-	// calling $.cookie().
-	let cookies = document.cookie ? document.cookie.split('; ') : [];
-
-	for (let i = 0, l = cookies.length; i < l; i++) {
-
-		let parts = cookies[i].split('=');
-		let name = decode(parts.shift());
-		let cookie = parts.join('=');
-
-		if (key && key === name) {
-			// If second argument (value) is a function it's a converter...
-			result = read(cookie, value);
-			//break;
-		}
-
-		// Prevent storing a cookie that we couldn't decode.
-		if (!key && (cookie = read(cookie)) !== undefined) {
-			result[name] = cookie;
-		}
-	}
-	return result;
-};
-
-config.defaults = {};
-
-$.removeCookie = function (key, options) {
-	if ($.cookie(key) === undefined) {
-		return false;
-	}
-
-	// Must not alter options, thus extending a fresh object...
-	$.cookie(key, '', $.extend({}, options, { expires: -1 }));
-	return !$.cookie(key);
-};
-/*---------- copy jquery.cookie end----------------*/
 
 /**
  * @class   CookieModel
@@ -111,85 +13,88 @@ class CookieModel extends Model{
 		super();
 	}
 
-
 	/**
 	 * @desc    设置数据
-	 * @override
-	 * @variation
 	 * @param   {String}    key
 	 * @param   {*}         value
-	 * @param   {Object|Number|String?}  options 相关配置
-	 * @return  {Promise}
+	 * @param   {Object|Number|String?} options 相关配置
+	 * @return  {Promise}   resolve 时传回 true
 	 * */
-	setData(key, value, options={}){
+	setData(key, value, options){
 
 		this._setIndex( key );
+
+		if( typeof options !== 'object' ){
+			options = {
+				expires: options
+			};
+		}
 
 		if( options.expires ){
 			options.expires = CookieModel._transDate( options.expires );
 		}
 
-		document.cookie = '='+ this._stringify(value) + Object.keys( CookieModel._DEFAULT ).reduce((a, d)=>{    // 整理配置
+		document.cookie = encodeURIComponent(key) +'='+ encodeURIComponent( this._stringify(value) ) + Object.keys( CookieModel._DEFAULT ).reduce((a, d)=>{    // 整理配置
+			if( d in options ){
+				a += '; '+ d +'='+ options[d];
+			}
 
-				a += '; '+ d +'=';
-
-				if( d in options ){
-					a += options[d];
-				}
-				else{
-					a += CookieModel._DEFAULT[d];
-				}
-
-				return a;
-			}, '');
-
-		// $.cookie(key, value, opts);
+			return a;
+		}, '');
 
 		return Promise.resolve(true);
 	}
 	/**
 	 * @desc    获取数据
 	 * @param   {String}    key
-	 * @return  {Promise}
+	 * @return  {Promise}   resolve 时传回 value
 	 * */
 	getData(key){
-		return $.cookie( key );
-	}
-	/**
-	 * @desc    将数据从缓存中删除
-	 * @override
-	 * @param   {String}    key
-	 * @param   {Object?}   options
-	 * @return  {Promise}
-	 * */
-	removeData(key, options){
+		var cookies = document.cookie
+			, i = 0, l
+			, result
+			, t
+			;
 
+		this._setIndex( key );
+
+		if( cookies ){
+			cookies = cookies.split('; ');
+		}
+		else{
+			cookies = [];
+		}
+
+		for(l = cookies.length; i < l; i++ ){
+			t = cookies[i].split('=');
+
+			if( key === decodeURIComponent( t[0] ) ){
+				result = decodeURIComponent( t[1] );
+				break;
+			}
+		}
+
+		try{
+			result = JSON.parse( result );
+		}
+		catch(e){}
+
+		return Promise.resolve( result );
 	}
 	/**
-	 * @desc    清空数据
-	 * @return  {Promise}
+	 * @desc    将数据从缓存中删除，实际为调用 setData 方法，过期时间为负值
+	 * @param   {String}    key
+	 * @return  {Promise}   resolve 时传回 true
+	 * */
+	removeData(key){
+		return this.setData(key, '', '-1d');
+	}
+	/**
+	 * @desc    清空数据，实际不做任何处理
+	 * @return  {Promise}   resolve 时传回空值
 	 * */
 	clearData(){
-
-	}
-
-	/**
-	 * @desc
-	 * */
-	setExpires(){
-
-	}
-	/**
-	 * @desc    设置 path
-	 * */
-	setPath(){
-
-	}
-	/**
-	 * @desc    设置 domain
-	 * */
-	setDomain(domain){
-
+		return Promise.resolve();
 	}
 }
 
@@ -200,27 +105,31 @@ CookieModel._DEFAULT = {
 	, expires: ''
 	, secure: ''
 };
-// 配置
-CookieModel._CONFIG = {
-	raw: true   // 是否编码
-	, json: true
+
+// 简短时间设置格式
+CookieModel._SHORT_TIME_EXPR = /^(-?\d+)(s|m|h|d|y)?$/i;
+CookieModel._SHORT_TIME_NUM = {
+	s: 1e3
+	, m: 6e4
+	, h: 36e5
+	, d: 864e5
+	, y: 31536e6
 };
-CookieModel.setRaw = function(){
-	CookieModel._CONFIG.raw = false;
-};
+
 // 转换时间数据格式
 CookieModel._transDate = function(date){
-	var temp
-		, expr = /^(-?\d+)(y|m|d)$/i
+	var temp = ''
 		;
+
 	if( date instanceof Date){}
 	else if( typeof date === 'number' ){
 		temp = new Date();
 		temp.setTime( +temp + date *864e+5 );
 		date = temp;
 	}
-	else if( expr.test( date ) ){
-		temp = expr.exec( date );
+	else if( temp = CookieModel._SHORT_TIME_EXPR.exec( date ) ){
+		date = new Date();
+		date.setTime( +date + Number( temp[1] ) * CookieModel._SHORT_TIME_NUM[temp[2]] );
 	}
 	else{
 		date = '';
