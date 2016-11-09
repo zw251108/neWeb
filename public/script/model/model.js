@@ -124,12 +124,17 @@ Model._MODEL_CACHE = {};
 /**
  * @desc    获取或生成 type 类型的 model 对象
  * @param   {String}    type
- * @param   {Boolean?}  notCache
+ * @param   {Boolean|Object?}   notCache    为 boolean 类型时表示是否缓存，为 object 类型时将值赋给 options 并设置为 false
  * @param   {Object?}   options
  * */
 Model.factory = function(type, notCache=false, options={}){
 	var model
 		;
+
+	if( typeof notCache === 'object' ){
+		options = notCache;
+		notCache = false;
+	}
 
 	if( type in Model ){
 		if( !notCache && type in Model._MODEL_CACHE ){

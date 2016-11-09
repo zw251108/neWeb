@@ -5709,32 +5709,53 @@ var sass = require('node-sass');
 // 	}
 // });
 
+// ftp
 var FtpClient = require('ftp')
-	, client = new FtpClient()
+	// , client = new FtpClient()
 	;
 
-client.on('ready', function(){
-	client.cwd('tgou2/img2', function(err, list){
-		if( !err ){
-			client.list(function(err, list){
-				if( err ){
-					console.log('error ', err);
-				}
-				else{
-					console.log('[\''+ list.filter(d=>d.type==='d').map(d=>'/'+d.name).sort().join('\',\'') +'\']');
-				}
+// client.on('ready', function(){
+// 	client.cwd('tgou2/img2', function(err, list){
+// 		if( !err ){
+// 			client.list(function(err, list){
+// 				if( err ){
+// 					console.log('error ', err);
+// 				}
+// 				else{
+// 					console.log('[\''+ list.filter(d=>d.type==='d').map(d=>'/'+d.name).sort().join('\',\'') +'\']');
+// 				}
+//
+// 				client.end();
+// 			});
+// 		}
+// 		else{
+// 			console.log(err)
+// 		}
+// 	});
+// });
+//
+// client.connect({
+// 	host: 'v0.ftp.upyun.com'
+// 	, user: 'tgouadmin/tg-image'
+// 	, password: 'tgouadmin@'
+// });
 
-				client.end();
-			});
-		}
-		else{
-			console.log(err)
+var WebSocketServer = require('ws').Server
+	, wss = new WebSocketServer({
+		port: 8181
+	})
+	;
+wss.on('connection', function(ws){
+	console.log('connection');
+
+	ws.on('message', function(msg){
+		console.log(msg)
+
+		if( ws.readyState == 1 ){console.log(1)
+			ws.send('123123123');
 		}
 	});
 });
-
-client.connect({
-	host: 'v0.ftp.upyun.com'
-	, user: 'tgouadmin/tg-image'
-	, password: 'tgouadmin@'
-});
+wss.on('close', function(){
+	console.log(111)
+})

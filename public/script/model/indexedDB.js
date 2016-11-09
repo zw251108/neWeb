@@ -16,7 +16,7 @@ class IndexedDBModel extends Model{
 	constructor(config={}){
 		super();
 
-		var indexedDB = window.indexedDB || window.mozIndexedDB || window.webbkitIndexedDB || window.msIndexedDB
+		var indexedDB = window.indexedDB || window.mozIndexedDB || window.webbkitIndexedDB || window.msIndexedDB || null
 			, dbRequest
 			;
 
@@ -31,39 +31,44 @@ class IndexedDBModel extends Model{
 			return all;
 		}, {});
 
-		dbRequest = indexedDB.open(this._config.dbName, this._config.dbVersion);
+		if( indexedDB ){
+			dbRequest = indexedDB.open(this._config.dbName, this._config.dbVersion);
 
-		// DB 版本设置或升级时回调
-		// createObjectStore deleteObjectStore 只能在 onupgradeneeded 事件中使用
-		dbRequest.onupgradeneeded = e=>{
-			var db = e.target.result
-				, store
-				;
+			// DB 版本设置或升级时回调
+			// createObjectStore deleteObjectStore 只能在 onupgradeneeded 事件中使用
+			dbRequest.onupgradeneeded = e=>{
+				var db = e.target.result
+					, store
+					;
 
-			// 创建表
-			if( !db.objectStoreNames.contains(this._config.tableName) ){
+				// 创建表
+				if( !db.objectStoreNames.contains(this._config.tableName) ){
 
-				// 创建存储对象
-				store = db.createObjectStore(this._config.tableName, {
-					keyPath: 'topic'
-				});
+					// 创建存储对象
+					store = db.createObjectStore(this._config.tableName, {
+						keyPath: 'topic'
+					});
 
-				store.createIndex('value', 'value', {
-					unique: false
-				});
-			}
-		};
-
-		// this._db 为 Promise 类型，会在 this._db.then() 中传入 db 实例，因为要保证数据库打开成功才可以操作
-		this._db = new Promise(function(resolve, reject){
-			dbRequest.onsuccess = function(e){
-				resolve(e.target.result);
+					store.createIndex('value', 'value', {
+						unique: false
+					});
+				}
 			};
-			dbRequest.onerror = function(e){
-				console.log( e );
-				reject(e);
-			}
-		});
+
+			// this._db 为 Promise 类型，会在 resolve 中传入 db 实例，因为要保证数据库打开成功才可以操作
+			this._db = new Promise(function(resolve, reject){
+				dbRequest.onsuccess = function(e){
+					resolve(e.target.result);
+				};
+				dbRequest.onerror = function(e){
+					console.log( e );
+					reject(e);
+				}
+			});
+		}
+		else{
+			this._db = Promise.reject(new Error('此数据库不支持 IndexedDB'));
+		}
 	}
 	/**
 	 * @desc    查询
