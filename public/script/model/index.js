@@ -1,3 +1,5 @@
+'use strict';
+
 import Model from './model.js';
 
 // 缓存

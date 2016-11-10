@@ -1,6 +1,6 @@
 'use strict';
 
-import Model from './model';
+import Model from './model.js';
 
 /**
  * @class   WebSocketModel
@@ -30,24 +30,23 @@ class WebSocketModel extends Model{
 			return all;
 		}, {});
 
-		this._EVENT_LIST = {};
-		this._CONN_ON = false;
+		this._EVENT_LIST = [];
 
 		if( 'WebSocket' in window ){
 			if( this._config.url ){
 
-				socket = new WebSocket(this._config.url);
+				socket = new WebSocket( this._config.url );
 
+				// this._conn 为 Promise 类型，会在 resolve 中传入 socket 实例，因为要保证简历连接成功时才可以操作
 				this._conn = new Promise((resolve, reject)=>{
 					// web socket 建立连接成功
 					socket.onopen = ()=>{
-						this._CONN_ON = true;
 						resolve( socket );
 					};
-					socket.onmessage = e=>this._receive(e);
+					socket.onmessage = e=>this.getData( e );
 					socket.onclose = function(e){
 						console.log( e );
-						reject(e);
+						reject( e );
 					};
 				});
 			}
@@ -59,30 +58,6 @@ class WebSocketModel extends Model{
 			this._conn = Promise.reject(new Error('此浏览器不支持 Web Socket'));
 		}
 	}
-	/**
-	 *
-	 * @return  {Promise}
-	 * */
-	_receive(event){
-		var temp = event.data
-			;
-
-		try{
-			temp = JSON.parse( temp );
-		}
-		catch(e){}
-
-		if( typeof temp === 'object' ){
-			this._EVENT_LIST[temp.key].reduce((a, d)=>{
-				return a && d( temp );
-			}, true);
-		}
-		else{
-			this._EVENT_LIST[temp].reduce((a, d)=>{
-				return a && d( temp );
-			}, true);
-		}
-	}
 
 	/**
 	 * @desc    设置数据
@@ -92,22 +67,32 @@ class WebSocketModel extends Model{
 	 * */
 	setData(key, value){
 		return this._conn.then((socket)=>{
-			socket.send( this._stringify({
+			socket.send(this._stringify({
 				key: value
-			}) );
+			}));
 
 			return true;
 		});
 	}
 	/**
-	 * @desc    获取数据，实际与 setData 接口相同，并不会返回数据
-	 * @param   {String}    key
-	 * @param   {*}         value
-	 * @return  {Promise}
-	 * todo ?
+	 * @desc    获取数据，为服务器端推送过来的数据，将调用 on 传入的回调函数，没有返回值
+	 * @param   {Object}    event
 	 * */
-	getData(key, value=''){
-		return this.setData(key, value);
+	getData(event){
+		var data = event.data
+			;
+
+		try{
+			data = JSON.parse( data );
+		}
+		catch(e){}
+
+		this._EVENT_LIST.reduce((a, d)=>{
+			var rs = d( data )
+				;
+
+			return a && (rs !== undefined ? rs : true);
+		}, true);
 	}
 	/**
 	 * @desc    删除数据，实际不做任何处理
@@ -126,29 +111,27 @@ class WebSocketModel extends Model{
 
 	/**
 	 * @desc    关闭连接
-	 * @return  {Promise}
+	 * @return  {Promise}   solve 时
 	 * */
 	close(){
 		return this._conn.then((socket)=>{
-			this._CONN_ON = false;
-
 			socket.close();
 
 			return true;
 		});
 	}
-	on(key, callback){
-		if( !(key in this._EVENT_LIST) ){
-			this._EVENT_LIST[key] = [];
-		}
-
-		this._EVENT_LIST[key].push(callback);
+	/**
+	 * @desc    添加监听回调函数
+	 * @param   {Function}  callback
+	 * */
+	on(callback){
+		this._EVENT_LIST.push(callback);
 	}
 }
 
 WebSocketModel._CONFIG = {
 	url: ''
-	, protocols: ''
+	, protocols: 'ws'
 };
 
 Model.register('webSocket', WebSocketModel);

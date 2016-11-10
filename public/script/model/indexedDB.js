@@ -55,8 +55,8 @@ class IndexedDBModel extends Model{
 				}
 			};
 
-			// this._db 为 Promise 类型，会在 resolve 中传入 db 实例，因为要保证数据库打开成功才可以操作
-			this._db = new Promise(function(resolve, reject){
+			// this._store 为 Promise 类型，会在 resolve 中传入 db 实例，因为要保证数据库打开成功才可以操作
+			this._store = new Promise(function(resolve, reject){
 				dbRequest.onsuccess = function(e){
 					resolve(e.target.result);
 				};
@@ -67,7 +67,7 @@ class IndexedDBModel extends Model{
 			});
 		}
 		else{
-			this._db = Promise.reject(new Error('此数据库不支持 IndexedDB'));
+			this._store = Promise.reject(new Error('此数据库不支持 IndexedDB'));
 		}
 	}
 	/**
@@ -76,7 +76,7 @@ class IndexedDBModel extends Model{
 	 * @return  {Promise}   resolve 时传回查询出来的 value
 	 * */
 	_select(key){
-		return this._db.then(db=>{
+		return this._store.then(db=>{
 			return new Promise((resolve, reject)=>{
 				var objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore(this._config.tableName)
 					, result = objectStore.get(key)
@@ -102,7 +102,7 @@ class IndexedDBModel extends Model{
 	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	_put(key, value){
-		return this._db.then(db=>{
+		return this._store.then(db=>{
 			return new Promise((resolve, reject)=>{
 				var objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore(this._config.tableName)
 					, result = objectStore.put({
@@ -127,7 +127,7 @@ class IndexedDBModel extends Model{
 	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	_delete(key){
-		return this._db.then(db=>{
+		return this._store.then(db=>{
 			return new Promise((resolve, reject)=>{
 				var objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore(this._config.tableName)
 					, result = objectStore.delete(key)
@@ -148,7 +148,7 @@ class IndexedDBModel extends Model{
 	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	_clear(){
-		return this._db.then(db=>{
+		return this._store.then(db=>{
 			return new Promise((resolve, reject)=>{
 				var objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore(this._config.tableName)
 					, result = objectStore.clear()

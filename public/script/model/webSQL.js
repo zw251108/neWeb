@@ -36,8 +36,8 @@ class WebSQLModel extends Model{
 			// 打开数据库，若不存在则创建
 			db = openDatabase(this._config.dbName, this._config.dbVersion, this._config.dbName, this._config.dbSize);
 
-			// this._db 为 Promise 类型，会在 resolve 中传入 db 实例，因为要保证数据表存在才可以操作
-			this._db = new Promise((resolve, reject)=>{
+			// this._store 为 Promise 类型，会在 resolve 中传入 db 实例，因为要保证数据表存在才可以操作
+			this._store = new Promise((resolve, reject)=>{
 				db.transaction(tx=>{
 					// 若没有数据表则创建
 					tx.executeSql('create table if not exists ' + this._config.tableName + '(id integer primary key autoincrement,topic varchar(255) unique,value text)', [], function(){
@@ -50,7 +50,7 @@ class WebSQLModel extends Model{
 			});
 		}
 		else{
-			this._db = Promise.reject(new Error('此浏览器不支持 Web SQL Database'));
+			this._store = Promise.reject(new Error('此浏览器不支持 Web SQL Database'));
 		}
 	}
 	/**
@@ -60,7 +60,7 @@ class WebSQLModel extends Model{
 	 * @return  {Promise}   resolve 时传回查询出来的数组
 	 * */
 	_select(key){
-		return this._db.then(db=>{
+		return this._store.then(db=>{
 			return new Promise((resolve, reject)=>{
 				db.transaction(tx=>{
 					tx.executeSql('select * from '+ this._config.tableName +' where topic=?', [key], function(tx, rs){
@@ -81,7 +81,7 @@ class WebSQLModel extends Model{
 	 * @return  {Promise}   resolve 时传回影响行数的 boolean 值
 	 * */
 	_update(key, value){
-		return this._db.then(db=>{
+		return this._store.then(db=>{
 			return new Promise((resolve, reject)=>{
 				db.transaction(tx=>{
 					tx.executeSql('update ' + this._config.tableName + ' set value=? where topic=?', [value, key], function(tx, rs){
@@ -102,7 +102,7 @@ class WebSQLModel extends Model{
 	 * @return  {Promise}   resolve 时传回新插入行 id 的 boolean 值
 	 * */
 	_insert(key, value){
-		return this._db.then(db=>{
+		return this._store.then(db=>{
 			return new Promise((resolve, reject)=>{
 				db.transaction(tx=>{
 					tx.executeSql('insert into ' + this._config.tableName + '(topic,value) values(?,?)', [key, value], function(tx, rs){
@@ -122,7 +122,7 @@ class WebSQLModel extends Model{
 	 * @return  {Promise}   resolve 时传回影响行数的 boolean 值
 	 * */
 	_delete(key){
-		return this._db.then(db=>{
+		return this._store.then(db=>{
 			return new Promise((resolve, reject)=>{
 				db.transaction(tx=>{
 					tx.executeSql('delete from '+ this._config.tableName +' where topic=?', [key], function(tx, rs){
@@ -141,7 +141,7 @@ class WebSQLModel extends Model{
 	 * @return  {Promise}   resolve 时传回影响行数的 boolean 值
 	 * */
 	_clearTable(){
-		return this._db.then(db=>{
+		return this._store.then(db=>{
 			return new Promise((resolve, reject)=>{
 				db.transaction(tx=>{
 					tx.executeSql('delete from ' + this._config.tableName, [], function(tx, rs){

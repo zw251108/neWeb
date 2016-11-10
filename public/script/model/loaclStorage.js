@@ -1,6 +1,6 @@
 'use strict';
 
-import Model from './model';
+import Model from './model.js';
 
 /**
  * @class   LocalStorageModel
@@ -12,9 +12,14 @@ class LocalStorageModel extends Model{
 	constructor(){
 		super();
 
-		this.localStorage = window.localStorage;
+		if( 'localStorage' in window ){
+			this._store = Promise.resolve( window.localStorage );
 
-		!LocalStorageModel._LISTENER_ON && LocalStorageModel._listen();
+			!LocalStorageModel._LISTENER_ON && LocalStorageModel._listen();
+		}
+		else{
+			this._store = Promise.reject(new Error('此浏览器不支持 localStorage'));
+		}
 	}
 
 	/**
@@ -26,9 +31,11 @@ class LocalStorageModel extends Model{
 	setData(key, value){
 		this._setIndex( key );
 
-		this.localStorage.setItem(key, this._stringify(value));
+		return this._store.then((store)=>{
+			store.setItem(key, this._stringify(value));
 
-		return Promise.resolve(true);
+			return true;
+		});
 	}
 	/**
 	 * @desc    获取数据
@@ -36,17 +43,19 @@ class LocalStorageModel extends Model{
 	 * @return  {Promise}   resolve 时传回查询出来的 value
 	 * */
 	getData(key){
-		var value = this.localStorage.getItem(key)
-			;
-
 		this._setIndex( key );
 
-		try{
-			value = JSON.parse(value);
-		}
-		catch(e){}
+		return this._store.then(function(store){
+			var value = store.getItem(key)
+				;
 
-		return Promise.resolve(value);
+			try{
+				value = JSON.parse(value);
+			}
+			catch(e){}
+
+			return value;
+		});
 	}
 	/**
 	 * @desc    将数据从缓存中删除
@@ -56,9 +65,11 @@ class LocalStorageModel extends Model{
 	removeData(key){
 		this._removeIndex( key );
 
-		this.localStorage.removeItem(key);
+		return this._store.then(function(store){
+			store.removeItem(key);
 
-		return Promise.resolve(true);
+			return true;
+		});
 	}
 	/**
 	 * @desc    清空数据
@@ -67,9 +78,11 @@ class LocalStorageModel extends Model{
 	clearData(){
 		this._index.forEach( d=>this._removeIndex(d) );
 
-		this.localStorage.clear();
+		return this._store.then(function(store){
+			store.clear();
 
-		return Promise.resolve(true);
+			return true;
+		});
 	}
 
 	/**

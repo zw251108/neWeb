@@ -1,4 +1,4 @@
-import $ from 'jquery';
+'use strict';
 
 /**
  * @class Model
@@ -42,12 +42,7 @@ class Model{
 	 * todo ?
 	 * */
 	_stringify(value){
-		if( typeof value === 'object' ){
-			return JSON.stringify( value );
-		}
-		else{
-			return value.toString();
-		}
+		return typeof value === 'object' ? JSON.stringify( value ) : value.toString();
 	}
 
 	/**
