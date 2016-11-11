@@ -35,14 +35,12 @@ class WebSocketModel extends Model{
 		if( 'WebSocket' in window ){
 			if( this._config.url ){
 
-				socket = new WebSocket( this._config.url );
+				socket = new WebSocket(this._config.url, this._config.protocols);
 
-				// this._conn 为 Promise 类型，会在 resolve 中传入 socket 实例，因为要保证简历连接成功时才可以操作
+				// this._conn 为 Promise 类型，会在 resolve 中传入 socket 实例，因为要保证建立连接成功时才可以操作
 				this._conn = new Promise((resolve, reject)=>{
 					// web socket 建立连接成功
-					socket.onopen = ()=>{
-						resolve( socket );
-					};
+					socket.onopen = ()=>resolve( socket );
 					socket.onmessage = e=>this.getData( e );
 					socket.onclose = function(e){
 						console.log( e );
@@ -125,7 +123,7 @@ class WebSocketModel extends Model{
 	 * @param   {Function}  callback
 	 * */
 	on(callback){
-		this._EVENT_LIST.push(callback);
+		this._EVENT_LIST.push( callback );
 	}
 }
 

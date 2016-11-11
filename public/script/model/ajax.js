@@ -60,6 +60,14 @@ class AjaxModel extends Model{
 	getData(key){
 
 	}
+	/**
+	 * @desc    删除数据
+	 * @param   {String}    key
+	 * @return  {Promise}
+	 * */
+	removeData(key){
+
+	}
 	clearData(){
 
 	}

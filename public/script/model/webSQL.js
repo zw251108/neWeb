@@ -140,7 +140,7 @@ class WebSQLModel extends Model{
 	 * @private
 	 * @return  {Promise}   resolve 时传回影响行数的 boolean 值
 	 * */
-	_clearTable(){
+	_clear(){
 		return this._store.then(db=>{
 			return new Promise((resolve, reject)=>{
 				db.transaction(tx=>{
@@ -169,7 +169,7 @@ class WebSQLModel extends Model{
 		return this._select(key).then(rs=>{
 			var result;
 
-			if( rs !== undefined ){    // key 已存在
+			if( rs && rs.length ){    // key 已存在
 				result = this._update(key, value);
 			}
 			else{
@@ -191,7 +191,7 @@ class WebSQLModel extends Model{
 			var value = ''
 				;
 
-			if( rs.length ){
+			if( rs && rs.length ){
 				// 只返回第一条数据
 				value = rs[0].value;
 			}
@@ -221,7 +221,7 @@ class WebSQLModel extends Model{
 	clearData(){
 		this._index.forEach( d=>this._removeIndex(d) );
 
-		return this._clearTable();
+		return this._clear();
 	}
 }
 

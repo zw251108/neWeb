@@ -10,8 +10,8 @@ import './indexedDB.js';
 import './webSQL.js';
 
 // 网络请求
-// import Ajax from './ajax.js';
-import Socket from './webSocket.js';
+import './ajax.js';
+import './webSocket.js';
 
 // post message
 //
