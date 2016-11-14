@@ -62,7 +62,7 @@
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^2.1.0",
     "gulp-uglify": "^1.4.2",
-    "html-webpack-plugin": "^1.7.0",
+    "html-webpack-plugin": "~1.7.0",
     "imports-loader": "^0.6.5",
     "jscheckstyle": "0.0.9",
     "jshint-loader": "^0.8.3",
@@ -72,6 +72,7 @@
     "sass-loader": "^3.1.2",
     "style-loader": "^0.13.0",
     "url-loader": "^0.5.7",
+    "webpack": "~1.13.3",
     "webpack-dev-middleware": "^1.4.0",
     "webpack-dev-server": "^1.14.0"
   },

@@ -52,7 +52,7 @@ class CookieModel extends Model{
 	getData(key){
 		var cookies = document.cookie
 			, i = 0, l
-			, result
+			, value = ''
 			, t
 			;
 
@@ -69,17 +69,17 @@ class CookieModel extends Model{
 			t = cookies[i].split('=');
 
 			if( key === decodeURIComponent( t[0] ) ){
-				result = decodeURIComponent( t[1] );
+				value = decodeURIComponent( t[1] );
 				break;
 			}
 		}
 
 		try{
-			result = JSON.parse( result );
+			value = JSON.parse( value );
 		}
 		catch(e){}
 
-		return Promise.resolve( result );
+		return Promise.resolve( value );
 	}
 	/**
 	 * @desc    将数据从缓存中删除，实际为调用 setData 方法，过期时间为负值

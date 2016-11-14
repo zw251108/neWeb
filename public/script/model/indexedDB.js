@@ -72,6 +72,7 @@ class IndexedDBModel extends Model{
 	}
 	/**
 	 * @desc    查询
+	 * @private
 	 * @param   {String}    key
 	 * @return  {Promise}   resolve 时传回查询出来的 value
 	 * */
@@ -97,6 +98,7 @@ class IndexedDBModel extends Model{
 	}
 	/**
 	 * @desc    新建或更新，add 接口要求数据库中不能已经有相同键的对象存在，因此统一使用 put 接口
+	 * @private
 	 * @param   {String}    key
 	 * @param   {String}    value
 	 * @return  {Promise}   resolve 时传回 true
@@ -123,6 +125,7 @@ class IndexedDBModel extends Model{
 	}
 	/**
 	 * @desc    删除
+	 * @private
 	 * @param   {String}    key
 	 * @return  {Promise}   resolve 时传回 true
 	 * */
@@ -145,6 +148,7 @@ class IndexedDBModel extends Model{
 	}
 	/**
 	 * @desc    清空
+	 * @private
 	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	_clear(){
@@ -181,6 +185,9 @@ class IndexedDBModel extends Model{
 	 * */
 	getData(key){
 		return this._select(key).then(function(value){
+
+			value = value || '';
+
 			try{
 				value = JSON.parse( value );
 			}

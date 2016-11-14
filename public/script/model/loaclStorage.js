@@ -49,8 +49,12 @@ class LocalStorageModel extends Model{
 			var value = store.getItem(key)
 				;
 
+			if( value === null ){
+				value = '';
+			}
+
 			try{
-				value = JSON.parse(value);
+				value = JSON.parse( value );
 			}
 			catch(e){}
 
