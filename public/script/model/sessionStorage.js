@@ -32,6 +32,8 @@ class SessionStorageModel extends Model{
 		return this._store.then((store)=>{
 			store.setItem(key, this._stringify(value));
 
+			this._trigger(key, value);
+
 			return true;
 		});
 	}
@@ -67,8 +69,10 @@ class SessionStorageModel extends Model{
 	removeData(key){
 		this._removeIndex( key );
 
-		return this._store.then(function(store){
+		return this._store.then((store)=>{
 			store.removeItem(key);
+
+			this._trigger(key, null);
 
 			return true;
 		});

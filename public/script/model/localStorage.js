@@ -34,6 +34,8 @@ class LocalStorageModel extends Model{
 		return this._store.then((store)=>{
 			store.setItem(key, this._stringify(value));
 
+			this._trigger(key, value);
+
 			return true;
 		});
 	}
@@ -69,8 +71,10 @@ class LocalStorageModel extends Model{
 	removeData(key){
 		this._removeIndex( key );
 
-		return this._store.then(function(store){
+		return this._store.then((store)=>{
 			store.removeItem(key);
+
+			this._trigger(key, null);
 
 			return true;
 		});
@@ -91,20 +95,17 @@ class LocalStorageModel extends Model{
 
 	/**
 	 * @desc    绑定数据监视事件
-	 * @param   {String}    key 数据键值
-	 * @param   {Function}  callback    事件触发函数
+	 * @param   {Function}  callback    事件触发函数，函数将传入 key,newValue 三个值
 	 * */
-	on(key, callback){
-		if( !(key in LocalStorageModel._EVENT_LIST) ){
-			LocalStorageModel._EVENT_LIST[key] = [];
-		}
+	on(callback){
+		this._eventList.push( callback );
 
-		LocalStorageModel._EVENT_LIST[key].push( callback );
+		LocalStorageModel._EVENT_LIST.push( callback );
 	}
 }
 
 // 保存的事件队列
-LocalStorageModel._EVENT_LIST = {};
+LocalStorageModel._EVENT_LIST = [];
 
 // 全局 localStorage
 LocalStorageModel._LISTENER_ON = false;
@@ -115,18 +116,12 @@ LocalStorageModel._listen = function(){
 		var key = e.key
 			, newVal = e.newValue
 			, oldVal = e.oldValue
-			, rs = true
 			;
 
 		if( key in LocalStorageModel._EVENT_LIST ){
 
-			rs = LocalStorageModel._EVENT_LIST[key].reduce((a, d)=>{
-
-				return a && d(newVal, oldVal);
-			}, rs);
+			LocalStorageModel._EVENT_LIST.forEach(d=>d(key, newVal, oldVal));
 		}
-
-		return rs;
 	});
 
 	LocalStorageModel._LISTENER_ON = true;

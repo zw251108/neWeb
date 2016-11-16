@@ -10,6 +10,7 @@ class Model{
 	constructor(){
 		this._index = [];
 		this._value = {};
+		this._eventList = [];
 	}
 	/**
 	 * @desc    设置数据索引
@@ -17,7 +18,7 @@ class Model{
 	 * @param   {String}    key
 	 * */
 	_setIndex(key){
-		if( !(key in this._index) ){
+		if( !(key in this._value) ){
 			this._index.push( key );
 		}
 	}
@@ -32,21 +33,41 @@ class Model{
 
 		if( i !== -1 ){
 			this._index.splice(i, 1);
+			delete this._value[key];
 		}
 	}
 	/**
-	 * @desc    转为字符串
+	 * @desc    转为字符串，会将 null,undefined 转为空字符串
 	 * @protected
 	 * @param   {*}     value
 	 * @return  {String}
-	 * todo ?
 	 * */
 	_stringify(value){
+
+		if( value === null || value === undefined ){
+			value = '';
+		}
+
 		return typeof value === 'object' ? JSON.stringify( value ) : value.toString();
+	}
+	/**
+	 * @desc    触发绑定的数据监控事件
+	 * */
+	_trigger(key, value){
+		setTimeout(()=>{
+			this._eventList.forEach(d=>d(key, value));
+		}, 0);
 	}
 
 	/**
-	 * @desc    设置数据
+	 * @desc    绑定数据监视事件
+	 * @param   {Function}  callback    事件触发函数，函数将传入 key,newValue 两个值，当 newValue 为 null 时，视为 removeData 触发
+	 * */
+	on(callback){
+		this._eventList.push( callback );
+	}
+	/**
+	 * @desc    设置数据，子类覆盖时如需对数据监控，应在适当的时候调用 _trigger 方法
 	 * @param   {String}    key
 	 * @param   {*}         value
 	 * @return  {Promise}   resolve 时传回 true
@@ -56,6 +77,8 @@ class Model{
 
 		this._value[key] = value;
 
+		this._trigger(key, value);
+
 		return Promise.resolve(true);
 	}
 	/**
@@ -64,11 +87,10 @@ class Model{
 	 * @return  {Promise}   resolve 时传回查询出来的 value
 	 * */
 	getData(key){
-		// todo 若不存在该数据 返回 reject ?
 		return Promise.resolve(this._value[key] || '');
 	}
 	/**
-	 * @desc    将数据从缓存中删除
+	 * @desc    将数据从缓存中删除，子类覆盖时如需对数据监控，应在适当的时候调用 _trigger 方法
 	 * @param   {String}    key
 	 * @return  {Promise}   resolve 时传回 true
 	 * */
@@ -78,11 +100,18 @@ class Model{
 		this._removeIndex( key );
 
 		try {
-			delete this._value[key];
-			rs = Promise.resolve(true);
+			if( this._value.hasOwnProperty(key) ){
+				delete this._value[key];
+				rs = Promise.resolve(true);
+
+				this._trigger(key, null);
+			}
+			else{
+				rs = Promise.reject( new Error('只能删除自定义属性') );
+			}
 		}
 		catch(e){
-			rs = Promise.reject(e);
+			rs = Promise.reject( e );
 		}
 
 		return rs;

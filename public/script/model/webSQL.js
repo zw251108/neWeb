@@ -177,6 +177,10 @@ class WebSQLModel extends Model{
 			}
 
 			return result;
+		}).then((rs)=>{
+			this._trigger(key, value);
+
+			return rs;
 		});
 	}
 	/**
@@ -212,7 +216,11 @@ class WebSQLModel extends Model{
 	removeData(key){
 		this._removeIndex( key );
 
-		return this._delete(key);
+		return this._delete(key).then((rs)=>{
+			this._trigger(key, value);
+
+			return rs;
+		});
 	}
 	/**
 	 * @desc    清空数据

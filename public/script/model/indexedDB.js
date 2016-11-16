@@ -176,7 +176,11 @@ class IndexedDBModel extends Model{
 	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	setData(key, value){
-		return this._put(key, this._stringify(value));
+		return this._put(key, this._stringify(value)).then((rs)=>{
+			this._trigger(key, value);
+
+			return rs;
+		});
 	}
 	/**
 	 * @desc    获取数据
@@ -202,7 +206,11 @@ class IndexedDBModel extends Model{
 	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	removeData(key){
-		return this._delete(key);
+		return this._delete(key).then((rs)=>{
+			this._trigger(key, null);
+
+			return rs;
+		});
 	}
 	/**
 	 * @desc    清空数据

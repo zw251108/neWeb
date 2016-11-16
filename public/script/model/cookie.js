@@ -42,6 +42,8 @@ class CookieModel extends Model{
 			return a;
 		}, '');
 
+		this._trigger(key, value);
+
 		return Promise.resolve(true);
 	}
 	/**
@@ -87,6 +89,8 @@ class CookieModel extends Model{
 	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	removeData(key){
+		this._trigger(key, null);
+
 		return this.setData(key, '', '-1d');
 	}
 	/**

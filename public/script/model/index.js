@@ -4,7 +4,7 @@ import Model from './model.js';
 
 // 缓存
 import './cookie.js';
-import './loaclStorage.js';
+import './localStorage.js';
 import './sessionStorage.js';
 import './indexedDB.js';
 import './webSQL.js';
