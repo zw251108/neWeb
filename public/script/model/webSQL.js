@@ -217,7 +217,7 @@ class WebSQLModel extends Model{
 		this._removeIndex( key );
 
 		return this._delete(key).then((rs)=>{
-			this._trigger(key, value);
+			this._trigger(key, null);
 
 			return rs;
 		});
@@ -237,7 +237,7 @@ WebSQLModel._CONFIG = {
 	dbName: 'storage'
 	, tableName: 'storage'
 	, dbVersion: 1
-	, dbSize: 2 * 1024 * 1024
+	, dbSize: 2<<20
 };
 
 Model.register('webSQL', WebSQLModel);

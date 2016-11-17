@@ -30,8 +30,6 @@ class WebSocketModel extends Model{
 			return all;
 		}, {});
 
-		this._EVENT_LIST = [];
-
 		if( 'WebSocket' in window ){
 			if( this._config.url ){
 
@@ -65,9 +63,12 @@ class WebSocketModel extends Model{
 	 * */
 	setData(key, value){
 		return this._conn.then((socket)=>{
-			socket.send(this._stringify({
-				key: value
-			}));
+			var send = {}
+				;
+
+			send[key] = value;
+
+			socket.send(this._stringify(send));
 
 			return true;
 		});
@@ -85,12 +86,7 @@ class WebSocketModel extends Model{
 		}
 		catch(e){}
 
-		this._EVENT_LIST.reduce((a, d)=>{
-			var rs = d( data )
-				;
-
-			return a && (rs !== undefined ? rs : true);
-		}, true);
+		this._eventList.forEach( d=>d(data) );
 	}
 	/**
 	 * @desc    删除数据，实际不做任何处理
@@ -122,9 +118,9 @@ class WebSocketModel extends Model{
 	 * @desc    添加监听回调函数
 	 * @param   {Function}  callback
 	 * */
-	on(callback){
-		this._EVENT_LIST.push( callback );
-	}
+	// on(callback){
+	// 	this._EVENT_LIST.push( callback );
+	// }
 }
 
 WebSocketModel._CONFIG = {

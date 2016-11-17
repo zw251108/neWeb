@@ -67,6 +67,15 @@ class Model{
 		this._eventList.push( callback );
 	}
 	/**
+	 * @desc    解除绑定数据监控回调函数
+	 * */
+	off(callback){
+		var i = this._eventList.indexOf( callback )
+			;
+
+		this._eventList.splice(i, 1);
+	}
+	/**
 	 * @desc    设置数据，子类覆盖时如需对数据监控，应在适当的时候调用 _trigger 方法
 	 * @param   {String}    key
 	 * @param   {*}         value

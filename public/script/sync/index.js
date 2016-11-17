@@ -6,9 +6,10 @@ import Model from '../model/index.js';
  * @method   Sync
  * @param   {Model}     from
  * @param   {Model}     to
- * @param   {Object}    options
  * */
-function sync(from, to, options){
+function sync(from, to){
+    var exec
+	    ;
 
 	// 参数都为 Model 子类，且为不同的两种子类
 	if( typeof from === 'object' &&
@@ -17,7 +18,7 @@ function sync(from, to, options){
 		to instanceof Model &&
 		from.constructor !== to.constructor){
 
-		from.on(function(key, value){
+		exec = function(key, value){
 			var rs
 				;
 
@@ -33,7 +34,16 @@ function sync(from, to, options){
 					console.log( from.constructor.name +' 数据同步到 '+ to.constructor.name +' 成功' );
 				}
 			});
-		});
+		};
+
+		from.on( exec );
+
+		return {
+			clearSync: function(){
+				from.off( exec );
+				console.log( '解除 '+ to.constructor.name +'对'+ from.constructor.name +' 的数据同步');
+			}
+		}
 	}
 	else{
 		console.log( new Error('参数类型错误') );

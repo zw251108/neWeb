@@ -5751,8 +5751,17 @@ wss.on('connection', function(ws){
 	ws.on('message', function(msg){
 		console.log(msg)
 
-		if( ws.readyState == 1 ){console.log(1)
-			ws.send('123123123');
+		if( ws.readyState == 1 ){
+			console.log(1)
+
+			setTimeout(function(){
+				ws.send('111');
+			}, 2000);
+			setTimeout(function(){
+				ws.send('222');
+			}, 5000);
+
+			ws.send('333');
 		}
 	});
 });
