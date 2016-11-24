@@ -110,6 +110,8 @@ DBError.prototype = new Error();
 
 error.register('DBError', '数据库错误');
 
+db.connect();
+
 // 自定义参数格式
 db.config.queryFormat = function(sql, values){
 	if( !values ) return sql;

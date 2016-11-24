@@ -39,6 +39,7 @@ function sync(from, to){
 		from.on( exec );
 
 		return {
+			// todo 添加更多操作
 			clearSync: function(){
 				from.off( exec );
 				console.log( '解除 '+ to.constructor.name +'对'+ from.constructor.name +' 的数据同步');
