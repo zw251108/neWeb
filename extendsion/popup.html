@@ -11,6 +11,36 @@ body{
 p{
 	text-align: center;
 }
+.formGroup{
+	overflow: hidden;
+	width: 500px;
+	border-radius: 10px;
+	margin: 10px 0;
+	padding: 10px;
+	background: #efefef;
+}
+.formGroup label{
+	display: block;
+	margin-bottom: 5px;
+	color: #333;
+}
+.formGroup input{
+	display: block;
+	width: 100%;
+	border: 0;
+	border-radius: 10px;
+	padding: 10px 0;
+	color: #333;
+	text-indent: 1em;
+}
+.formGroup button{
+	width: 100%;
+	border: 1px solid #00a8c6;
+	border-radius: 10px;
+	background: #fff;
+	color: #00a8c6;
+	line-height: 2em;
+}
 .error{
 	color: red;
 }
@@ -21,7 +51,23 @@ p{
 </head>
 <body>
 
-<button type="button" id="bookmark">添加到书签</button>
+<form action="http://localhost:9001/data/reader/bookmark" method="post">
+	<div class="formGroup">
+		<label for="title">标题</label>
+		<input type="text" id="title" name="title"/>
+	</div>
+	<div class="formGroup">
+		<label for="url">链接</label>
+		<input type="text" id="url" name="url"/>
+	</div>
+	<div class="formGroup">
+		<label for="ico">图标</label>
+		<input type="text" id="ico" name="ico"/>
+	</div>
+	<div class="formGroup">
+		<button type="submit" id="bookmark">添加到书签</button>
+	</div>
+</form>
 
 <script src="script/jquery.min.js"></script>
 <script src="script/script.js"></script>
