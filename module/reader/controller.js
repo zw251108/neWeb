@@ -319,7 +319,7 @@ web.get('/reader/bookmark/data', function(req, res){
 /**
  *
  * */
-data.push('bookmark')
+data.push('bookmark');
 
 web.get('/data/reader/bookmark', function(req, res){
 	var query = req.query || {}

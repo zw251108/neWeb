@@ -13,7 +13,6 @@ p{
 }
 .formGroup{
 	overflow: hidden;
-	width: 500px;
 	border-radius: 10px;
 	margin: 10px 0;
 	padding: 10px;
@@ -24,22 +23,36 @@ p{
 	margin-bottom: 5px;
 	color: #333;
 }
-.formGroup input{
+.formGroup .input{
 	display: block;
-	width: 100%;
+	width: 500px;
 	border: 0;
 	border-radius: 10px;
+	margin: 0 5px;
 	padding: 10px 0;
 	color: #333;
 	text-indent: 1em;
+}
+.formGroup .input-mini{
+	float: left;
+	width: 160px;
 }
 .formGroup button{
 	width: 100%;
 	border: 1px solid #00a8c6;
 	border-radius: 10px;
+	margin: 0 5px;
 	background: #fff;
 	color: #00a8c6;
+	font-size: 16px;
 	line-height: 2em;
+}
+.formGroup button:disabled{
+	border-color: #c0c0c0;
+	color: #c0c0c0;
+}
+.group{
+	float: left;
 }
 .error{
 	color: red;
@@ -54,15 +67,25 @@ p{
 <form action="http://localhost:9001/data/reader/bookmark" method="post">
 	<div class="formGroup">
 		<label for="title">标题</label>
-		<input type="text" id="title" name="title"/>
+		<input name="title" id="title" class="input"/>
 	</div>
 	<div class="formGroup">
-		<label for="url">链接</label>
-		<input type="text" id="url" name="url"/>
+		<div class="group">
+			<label for="urlPath">链接</label>
+			<input name="urlPath" id="urlPath" class="input input-mini"/>
+		</div>
+		<div class="group">
+			<label for="urlSearch">参数</label>
+			<input name="urlSearch" id="urlSearch" class="input input-mini"/>
+		</div>
+		<div class="group">
+			<label for="urlHash">哈希</label>
+			<input name="urlHash" id="urlHash" class="input input-mini"/>
+		</div>
 	</div>
 	<div class="formGroup">
 		<label for="ico">图标</label>
-		<input type="text" id="ico" name="ico"/>
+		<input name="ico" id="ico" class="input"/>
 	</div>
 	<div class="formGroup">
 		<button type="submit" id="bookmark">添加到书签</button>

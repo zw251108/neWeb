@@ -71,6 +71,9 @@ class Animator {
 			}
 		});
 	}
+	/**
+	 * @desc    停止动画
+	 * */
 	stop(){
 		if( this._animate ){
 			cancelAnimationFrame( this._animate );
@@ -79,6 +82,9 @@ class Animator {
 		}
 	}
 
+	/**
+	 * @desc    将动画代码渲染为 CSS 动画
+	 * */
 	renderCSS(){
 
 	}
