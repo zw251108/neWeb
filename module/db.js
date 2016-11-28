@@ -8,11 +8,14 @@ var mysql = require('mysql')
 	, config = require('../config.js')
 	, error = require('./error.js')
 
-	, db = mysql.createConnection( config.db )
+	, connection = mysql.createConnection( config.db )
+	, exec
+	, db = {}
 	, DBError = function(msg){
 		this.type = '[DB Error]';
 		this.message = msg;
 	}
+
 	, DBBaseType = {
 		int: []
 		, string: []
@@ -110,10 +113,19 @@ DBError.prototype = new Error();
 
 error.register('DBError', '数据库错误');
 
-db.connect();
+exec = new Promise(function(resolve, reject){
+	connection.connect(function(err){
+		if( !err ){
+			resolve( connection );
+		}
+		else{
+			reject( err );
+		}
+	});
+});
 
 // 自定义参数格式
-db.config.queryFormat = function(sql, values){
+connection.config.queryFormat = function(sql, values){
 	if( !values ) return sql;
 
 	sql = sql.replace(/\:(\w+)/g, function(txt, key){
@@ -140,32 +152,32 @@ db.handle = function(query){
 	sql = query.sql;
 	data = query.data || [];
 
-	return new Promise(function(resolve, reject){
-		if( sql ){
-			db.query(sql, data, function(err, rs){
-				if( !err ){
-					resolve( rs );
-				}
-				else{
-					reject( err );
-				}
-			});
-		}
-		else{
-			reject( new DBError('缺少 SQL 语句') );
-		}
-	}).then(function(rs){
-		return rs;
-	}, function(e){
-		console.log( e );
+	return exec.then(function(db){
+		var rs = new Promise(function(resolve, reject){
+			if( sql ){
+				db.query(sql, data, function(err, rs){
+					if( !err ){
+						resolve( rs );
+					}
+					else{
+						reject( err );
+					}
+				});
+			}
+			else{
+				reject( new DBError('缺少 SQL 语句') );
+			}
+		});
 
-		// if( e instanceof DBError){
-		// 	console.log('[DBError]', e.message);
-		// }
-		//
-		// return Promise.reject( e );
+		return rs.then(function(rs){
+			return rs;
+		}, function(e){
+			console.log( e );
 
-		return [];
+			return [];
+		});
+	}, function(e){ // 数据库连接失败
+		console.log('数据库连接失败', e.code, e.fatal);
 	});
 };
 
