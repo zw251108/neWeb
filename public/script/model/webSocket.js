@@ -4,6 +4,7 @@ import Model from './model.js';
 
 /**
  * @class   WebSocketModel
+ * @desc    WebSocketModel 仅有 setData 接口为继承来的，其余继承接口都失效
  * */
 class WebSocketModel extends Model{
 	/**
@@ -39,8 +40,8 @@ class WebSocketModel extends Model{
 				this._conn = new Promise((resolve, reject)=>{
 					// web socket 建立连接成功
 					socket.onopen = ()=>resolve( socket );
-					socket.onmessage = e=>this.getData( e );
-					socket.onclose = function(e){
+					socket.onmessage = e=>this.receiveData( e );
+					socket.onclose = e=>{
 						console.log( e );
 						reject( e );
 					};
@@ -62,7 +63,7 @@ class WebSocketModel extends Model{
 	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	setData(key, value){
-		return this._conn.then((socket)=>{
+		return this._conn.then(socket=>{
 			var send = {}
 				;
 
@@ -74,19 +75,12 @@ class WebSocketModel extends Model{
 		});
 	}
 	/**
-	 * @desc    获取数据，为服务器端推送过来的数据，将调用 on 传入的回调函数，没有返回值
-	 * @param   {Object}    event
+	 * @desc    获取数据，实际不做任何处理
+	 * @param   {String}    key
+	 * @return  {Promise}
 	 * */
-	getData(event){
-		var data = event.data
-			;
-
-		try{
-			data = JSON.parse( data );
-		}
-		catch(e){}
-
-		this._eventList.forEach( d=>d(data) );
+	getData(key){
+		return Promise.resolve(true);
 	}
 	/**
 	 * @desc    删除数据，实际不做任何处理
@@ -104,8 +98,22 @@ class WebSocketModel extends Model{
 	}
 
 	/**
+	 * @desc    接收数据，为服务器端推送过来的数据，将调用 on 传入的回调函数，没有返回值
+	 * */
+	receiveData(event){
+		var data = event.data
+			;
+
+		try{
+			data = JSON.parse( data );
+		}
+		catch(e){}
+
+		this._eventList.forEach( d=>d(data) );
+	}
+	/**
 	 * @desc    关闭连接
-	 * @return  {Promise}   solve 时
+	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	close(){
 		return this._conn.then((socket)=>{
@@ -114,13 +122,6 @@ class WebSocketModel extends Model{
 			return true;
 		});
 	}
-	/**
-	 * @desc    添加监听回调函数
-	 * @param   {Function}  callback
-	 * */
-	// on(callback){
-	// 	this._EVENT_LIST.push( callback );
-	// }
 }
 
 WebSocketModel._CONFIG = {

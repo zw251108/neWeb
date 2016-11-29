@@ -5,6 +5,8 @@ import Model from './model.js';
 
 /**
  * @class   AjaxModel
+ *
+ * todo    目前依赖于 jQuery 的 ajax 方法，未来期望改为使用 fetch，降级使用 ajax 并使用源生 XMLHttpRequest 对象
  * */
 class AjaxModel extends Model{
 	/**
@@ -21,6 +23,7 @@ class AjaxModel extends Model{
 		// if( 'fetch' in window ){
 		// }
 		// else{
+		//  // 使用源生 XMLHttpRequest 对象
 		// 	this._conn = function(url, value, options){
 		// 		return $.ajax({
 		// 			url: url
@@ -47,7 +50,11 @@ class AjaxModel extends Model{
 			options.data._type = 'POST';
 		}
 
-		return $.ajax( options );
+		return $.ajax( options ).then(function(data){
+			this._trigger(key, value);
+
+			return data;
+		});
 		// if( typeof value === 'object' ){
 		// 	value._type = 'POST';
 		// }

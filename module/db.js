@@ -8,9 +8,20 @@ var mysql = require('mysql')
 	, config = require('../config.js')
 	, error = require('./error.js')
 
-	, connection = mysql.createConnection( config.db )
+	, db = mysql.createConnection( config.db )
+	, connect = function(){
+		return new Promise(function(resolve, reject){
+			db.connect(function(err){
+				if( !err ){
+					resolve( db );
+				}
+				else{
+					reject( err );
+				}
+			});
+		});
+	}
 	, exec
-	, db = {}
 	, DBError = function(msg){
 		this.type = '[DB Error]';
 		this.message = msg;
@@ -113,15 +124,13 @@ DBError.prototype = new Error();
 
 error.register('DBError', '数据库错误');
 
-exec = new Promise(function(resolve, reject){
-	connection.connect(function(err){
-		if( !err ){
-			resolve( connection );
-		}
-		else{
-			reject( err );
-		}
-	});
+// 数据库建立连接操作
+exec = connect();
+
+db.on('error', function(e){
+	console.log( e );
+
+	exec = connect();
 });
 
 // 自定义参数格式
@@ -137,48 +146,48 @@ connection.config.queryFormat = function(sql, values){
 	return sql;
 };
 
-/**
- * @method  handle
- * @param   {object}    query
- * @param   {string}    query.sql
- * @param   {array?}    query.data
- * @return  {object}    数据操作的 Promise 对象
- * */
-db.handle = function(query){
-	var sql
-		, data
-		;
-	query = query || {};
-	sql = query.sql;
-	data = query.data || [];
+module.exports = {
+	/**
+	 * @method  handle
+	 * @param   {object}    query
+	 * @param   {string}    query.sql
+	 * @param   {array?}    query.data
+	 * @return  {object}    数据操作的 Promise 对象
+	 * */
+	handle: function(query){
+		var sql
+			, data
+			;
+		query = query || {};
+		sql = query.sql;
+		data = query.data || [];
 
-	return exec.then(function(db){
-		var rs = new Promise(function(resolve, reject){
-			if( sql ){
-				db.query(sql, data, function(err, rs){
-					if( !err ){
-						resolve( rs );
-					}
-					else{
-						reject( err );
-					}
-				});
-			}
-			else{
-				reject( new DBError('缺少 SQL 语句') );
-			}
+		return exec.then(function(db){
+			var rs = new Promise(function(resolve, reject){
+				if( sql ){
+					db.query(sql, data, function(err, rs){
+						if( !err ){
+							resolve( rs );
+						}
+						else{
+							reject( err );
+						}
+					});
+				}
+				else{
+					reject( new DBError('缺少 SQL 语句') );
+				}
+			});
+
+			return rs.then(function(rs){
+				return rs;
+			}, function(e){
+				console.log( e );
+
+				return [];
+			});
+		}, function(e){ // 数据库连接失败
+			console.log('数据库连接失败', e.code, e.fatal);
 		});
-
-		return rs.then(function(rs){
-			return rs;
-		}, function(e){
-			console.log( e );
-
-			return [];
-		});
-	}, function(e){ // 数据库连接失败
-		console.log('数据库连接失败', e.code, e.fatal);
-	});
+	}
 };
-
-module.exports = db;

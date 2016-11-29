@@ -5749,10 +5749,10 @@ wss.on('connection', function(ws){
 	console.log('connection');
 
 	ws.on('message', function(msg){
-		console.log(msg)
+		console.log(msg);
 
 		if( ws.readyState == 1 ){
-			console.log(1)
+			console.log(1);
 
 			setTimeout(function(){
 				ws.send('111');
@@ -5767,4 +5767,6 @@ wss.on('connection', function(ws){
 });
 wss.on('close', function(){
 	console.log(111)
-})
+});
+
+console.log(global)
