@@ -125,16 +125,22 @@ DBError.prototype = new Error();
 error.register('DBError', '数据库错误');
 
 // 数据库建立连接操作
-exec = connect();
+exec = connect().then(function(db){
+	return db;
+}, function(e){
+	console.log( e );
 
-db.on('error', function(e){
+	exec = connect();
+});
+
+db.on('error', function(e){console.log(111)
 	console.log( e );
 
 	exec = connect();
 });
 
 // 自定义参数格式
-connection.config.queryFormat = function(sql, values){
+db.config.queryFormat = function(sql, values){
 	if( !values ) return sql;
 
 	sql = sql.replace(/\:(\w+)/g, function(txt, key){
