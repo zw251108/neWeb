@@ -48,16 +48,13 @@ var utils = require('utility')
 
 			session.user = u;
 
-			if( u.id in USER_SESSION_LIST ){
-				USER_SESSION_LIST[u.id].push( session.id );
-			}
-			else{
-				USER_SESSION_LIST[u.id] = [session.id];
+			if( !(u.id in USER_SESSION_LIST) ){
+				USER_SESSION_LIST[u.id] = session.id;
 			}
 		}
 
 		, getUserAllSession: function(userId){
-			var rs = []
+			var rs = ''
 				;
 
 			if( userId in USER_SESSION_LIST ){

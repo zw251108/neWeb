@@ -402,7 +402,7 @@ web.post('/data/reader/bookmark', function(req, res){
 			}
 			;
 
-		socket.sendDataBySession(UserHandler.getUserAllSession( user.id ), json);
+		socket.sendDataBySession([UserHandler.getUserAllSession( user.id )], json);
 		console.log('通过 chrome 插件添加了一条 bookmark，', body.url);
 
 		return json;

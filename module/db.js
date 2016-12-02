@@ -11,12 +11,13 @@ var mysql = require('mysql')
 	, db = mysql.createConnection( config.db )
 	, connect = function(){
 		return new Promise(function(resolve, reject){
-			db.connect(function(err){
-				if( !err ){
+			db.connect(function(e){
+				if( !e ){
 					resolve( db );
 				}
 				else{
-					reject( err );
+					console.log( e );
+					reject( e );
 				}
 			});
 		});
@@ -130,7 +131,7 @@ exec = connect().then(function(db){
 }, function(e){
 	console.log( e );
 
-	exec = connect();
+	return exec = connect();
 });
 
 db.on('error', function(e){console.log(111)
