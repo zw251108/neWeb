@@ -5769,4 +5769,19 @@ wss.on('close', function(){
 	console.log(111)
 });
 
-console.log(global)
+// console.log(global)
+
+// class Model{
+// 	constructor(){
+//
+// 	}
+// 	setData(){}
+// 	getData(){}
+// }
+
+// import Model from './module/model.js';
+var Model = require('./module_new/model.js');
+
+var a = new Model();
+
+console.log(a);
