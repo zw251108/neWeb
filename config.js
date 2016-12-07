@@ -20,6 +20,17 @@ var CONFIG = {
 		, database: 'destiny'
 		, dateStrings: true
 		, dataTablePrefix: ''
+		, queryFormat: function(sql, values){
+			if( !values ) return sql;
+
+			sql = sql.replace(/\:(\w+)/g, function(txt, key){
+				return  values.hasOwnProperty(key) ? this.escape( values[key] ) : txt;
+			}.bind(this));
+
+			console.log('db 执行 sql: ', sql);
+
+			return sql;
+		}
 	}
 	, docType: {
 		html5: '<!DOCTYPE html>'

@@ -8,20 +8,22 @@ var mysql = require('mysql')
 	, config = require('../config.js')
 	, error = require('./error.js')
 
-	, db = mysql.createConnection( config.db )
-	, connect = function(){
-		return new Promise(function(resolve, reject){
-			db.connect(function(e){
-				if( !e ){
-					resolve( db );
-				}
-				else{
-					console.log( e );
-					reject( e );
-				}
-			});
-		});
-	}
+	, pool = mysql.createPool( config.db )
+	// , db = mysql.createConnection( config.db )
+	// , connect = function(){
+	// 	return new Promise(function(resolve, reject){
+	// 		db.connect(function(e){
+	// 			if( !e ){
+	// 				console.log('数据库连接 id:'+ db.threadId);
+	// 				resolve( db );
+	// 			}
+	// 			else{
+	// 				console.log( e );
+	// 				reject( e );
+	// 			}
+	// 		});
+	// 	});
+	// }
 	, exec
 	, DBError = function(msg){
 		this.type = '[DB Error]';
@@ -125,33 +127,53 @@ DBError.prototype = new Error();
 
 error.register('DBError', '数据库错误');
 
-// 数据库建立连接操作
-exec = connect().then(function(db){
-	return db;
-}, function(e){
-	console.log( e );
-
-	return exec = connect();
-});
-
-db.on('error', function(e){console.log(111)
-	console.log( e );
-
-	exec = connect();
-});
-
-// 自定义参数格式
-db.config.queryFormat = function(sql, values){
-	if( !values ) return sql;
-
-	sql = sql.replace(/\:(\w+)/g, function(txt, key){
-		return  values.hasOwnProperty(key) ? this.escape( values[key] ) : txt;
-	}.bind(this));
-
-	console.log('db 执行 sql: ', sql);
-
-	return sql;
+// todo 改成 pool
+// // 数据库建立连接操作
+// exec = connect().then(function(db){
+// 	return db;
+// }, function(e){
+// 	console.log( e );
+//
+// 	return exec = connect();
+// });
+exec = function(){
+	return new Promise(function(resolve, reject){
+		pool.getConnection(function(err, connection){
+			if( !err ){
+				resolve( connection );
+			}
+			else{
+				console.log( err );
+				reject( err );
+			}
+		});
+	});
 };
+// pool.on('connection', function(connection){
+// 	console.log('新建立一个连接：'+ connection.threadId);
+// });
+pool.on('enqueue', function(){
+	console.log('等待可用连接');
+});
+pool.on('error', function(e){
+	console.log(111);
+	console.log( e );
+
+	// exec = connect();
+});
+
+// // 自定义参数格式
+// pool.config.queryFormat = function(sql, values){
+// 	if( !values ) return sql;
+//
+// 	sql = sql.replace(/\:(\w+)/g, function(txt, key){
+// 		return  values.hasOwnProperty(key) ? this.escape( values[key] ) : txt;
+// 	}.bind(this));
+//
+// 	console.log('db 执行 sql: ', sql);
+//
+// 	return sql;
+// };
 
 module.exports = {
 	/**
@@ -169,7 +191,7 @@ module.exports = {
 		sql = query.sql;
 		data = query.data || [];
 
-		return exec.then(function(db){
+		return exec().then(function(db){
 			var rs = new Promise(function(resolve, reject){
 				if( sql ){
 					db.query(sql, data, function(err, rs){
