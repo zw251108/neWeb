@@ -290,7 +290,7 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						, toolbar: [{
 							type: 'button', id: 'add', icon: 'plus', title: '添加任务'
 						}]
-						, content: '<div class="tabWrap">'+ tabTpl(tabName).join('') +'</div>' +
+						, content: '<div class="container-flex tabWrap">'+ tabTpl(tabName).join('') +'</div>' +
 							'<ul class="taskList" id="taskList">'+ taskTpl(rs).join('') +'</ul>'
 					}
 					, modulePopup: [{
