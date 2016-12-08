@@ -195,6 +195,8 @@ module.exports = {
 			var rs = new Promise(function(resolve, reject){
 				if( sql ){
 					db.query(sql, data, function(err, rs){
+						db.release();   // 释放连接
+
 						if( !err ){
 							resolve( rs );
 						}
