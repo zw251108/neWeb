@@ -18,9 +18,6 @@ class WebSQLModel extends Model{
 	constructor(config={}){
 		super();
 
-		var db
-			;
-
 		this._config = Object.keys( WebSQLModel._CONFIG ).reduce((all, d)=>{
 			if( d in config ){
 				all[d] = config[d];
@@ -33,18 +30,19 @@ class WebSQLModel extends Model{
 		}, {});
 
 		if( 'openDatabase' in window ){
-			// 打开数据库，若不存在则创建
-			db = openDatabase(this._config.dbName, this._config.dbVersion, this._config.dbName, this._config.dbSize);
-
 			// this._store 为 Promise 类型，会在 resolve 中传入 db 实例，因为要保证数据表存在才可以操作
 			this._store = new Promise((resolve, reject)=>{
+				// 打开数据库，若不存在则创建
+				let db = openDatabase(this._config.dbName, this._config.dbVersion, this._config.dbName, this._config.dbSize)
+					;
+
 				db.transaction(tx=>{
 					// 若没有数据表则创建
 					tx.executeSql('create table if not exists ' + this._config.tableName + '(id integer primary key autoincrement,topic varchar(255) unique,value text)', [], function(){
-						resolve(db);
+						resolve( db );
 					}, function(tx, e){
 						console.log( e );
-						reject(e);
+						reject( e );
 					});
 				});
 			});

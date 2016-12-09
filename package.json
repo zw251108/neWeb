@@ -66,6 +66,7 @@
     "imports-loader": "^0.6.5",
     "jscheckstyle": "0.0.9",
     "jshint-loader": "^0.8.3",
+    "less-loader": "~2.2.3",
     "node-gyp": "^3.4.0",
     "node-sass": "^3.8.0",
     "node-xlsx": "^0.6.0",
