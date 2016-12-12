@@ -52,7 +52,7 @@ class CookieModel extends Model{
 	 * @return  {Promise}   resolve 时传回 value
 	 * */
 	getData(key){
-		var cookies = document.cookie
+		let cookies = document.cookie
 			, i = 0, l
 			, value = ''
 			, t
@@ -122,7 +122,7 @@ CookieModel._SHORT_TIME_NUM = {
 
 // 转换时间数据格式
 CookieModel._transDate = function(date){
-	var temp = ''
+	let temp = ''
 		;
 
 	if( date instanceof Date){}

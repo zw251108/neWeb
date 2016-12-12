@@ -16,9 +16,6 @@ class IndexedDBModel extends Model{
 	constructor(config={}){
 		super();
 
-		let indexedDB = window.indexedDB || window.mozIndexedDB || window.webbkitIndexedDB || window.msIndexedDB || null
-			;
-
 		this._config = Object.keys( IndexedDBModel._CONFIG ).reduce((all, d)=>{
 			if( d in config ){
 				all[d] = config[d];
@@ -30,11 +27,14 @@ class IndexedDBModel extends Model{
 			return all;
 		}, {});
 
-		if( indexedDB ){
-			// this._store 为 Promise 类型，会在 resolve 中传入 db 实例，因为要保证数据库打开成功才可以操作
-			this._store = new Promise(function(resolve, reject){
-				let dbRequest = indexedDB.open(this._config.dbName, this._config.dbVersion)
-					;
+		// this._store 为 Promise 类型，会在 resolve 中传入 db 实例，因为要保证数据库打开成功才可以操作
+		this._store = new Promise((resolve, reject)=>{
+			let indexedDB = window.indexedDB || window.mozIndexedDB || window.webbkitIndexedDB || window.msIndexedDB || null
+				, dbRequest
+				;
+
+			if( indexedDB ){
+				dbRequest = indexedDB.open(this._config.dbName, this._config.dbVersion);
 
 				// DB 版本设置或升级时回调
 				// createObjectStore deleteObjectStore 只能在 onupgradeneeded 事件中使用
@@ -64,11 +64,11 @@ class IndexedDBModel extends Model{
 						reject(e);
 					};
 				};
-			});
-		}
-		else{
-			this._store = Promise.reject(new Error('此数据库不支持 IndexedDB'));
-		}
+			}
+			else{
+				reject(new Error('此数据库不支持 IndexedDB'));
+			}
+		});
 	}
 	/**
 	 * @desc    查询
@@ -79,12 +79,12 @@ class IndexedDBModel extends Model{
 	_select(key){
 		return this._store.then(db=>{
 			return new Promise((resolve, reject)=>{
-				var objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore(this._config.tableName)
+				let objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore(this._config.tableName)
 					, result = objectStore.get(key)
 					;
 
 				result.onsuccess = function(e){
-					var rs = e.target.result
+					let rs = e.target.result
 						;
 
 					resolve( rs && rs.value );
@@ -106,7 +106,7 @@ class IndexedDBModel extends Model{
 	_put(key, value){
 		return this._store.then(db=>{
 			return new Promise((resolve, reject)=>{
-				var objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore(this._config.tableName)
+				let objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore(this._config.tableName)
 					, result = objectStore.put({
 						topic: key
 						, value: value
@@ -132,7 +132,7 @@ class IndexedDBModel extends Model{
 	_delete(key){
 		return this._store.then(db=>{
 			return new Promise((resolve, reject)=>{
-				var objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore(this._config.tableName)
+				let objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore(this._config.tableName)
 					, result = objectStore.delete(key)
 					;
 
@@ -154,7 +154,7 @@ class IndexedDBModel extends Model{
 	_clear(){
 		return this._store.then(db=>{
 			return new Promise((resolve, reject)=>{
-				var objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore(this._config.tableName)
+				let objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore(this._config.tableName)
 					, result = objectStore.clear()
 					;
 

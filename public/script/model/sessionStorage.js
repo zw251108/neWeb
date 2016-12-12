@@ -46,7 +46,7 @@ class SessionStorageModel extends Model{
 		this._setIndex( key );
 
 		return this._store.then(function(store){
-			var value = store.getItem(key)
+			let value = store.getItem(key)
 				;
 
 			if( value === null ){

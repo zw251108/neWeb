@@ -16,7 +16,7 @@ class WebSocketModel extends Model{
 	constructor(config={}){
 		super();
 
-		var socket
+		let socket
 			;
 
 		this._config = Object.keys( WebSocketModel._CONFIG ).reduce((all, d)=>{
@@ -64,7 +64,7 @@ class WebSocketModel extends Model{
 	 * */
 	setData(key, value){
 		return this._conn.then(socket=>{
-			var send = {}
+			let send = {}
 				;
 
 			send[key] = value;
@@ -101,7 +101,7 @@ class WebSocketModel extends Model{
 	 * @desc    接收数据，为服务器端推送过来的数据，将调用 on 传入的回调函数，没有返回值
 	 * */
 	receiveData(event){
-		var data = event.data
+		let data = event.data
 			;
 
 		try{

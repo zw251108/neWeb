@@ -2,7 +2,17 @@
 
 import Sync from './sync.js';
 
+/**
+ * @class   Ajax
+ * */
 class Ajax extends Sync{
+	/**
+	 * @constructor
+	 * */
+	constructor(options){
+		super();
+	}
+
 	/**
 	 * @param   {Object}    options
 	 * @param   {String}    options.url
@@ -13,6 +23,8 @@ class Ajax extends Sync{
 			;
 
 		if( 'fetch' in window ){
+
+
 			result = fetch( options.url ).then(function(res){
 				return res.text();
 			}).then(function(text){
@@ -32,8 +44,16 @@ class Ajax extends Sync{
 				xhr.open(options.methods, options.url);
 				xhr.send();
 				xhr.onload = function(){
-					if( this.status == 200 ){
-						resolve( this.response );
+					if( this.status == 200 && this.readyState === 4 ){
+						let value = this.responseText
+							;
+
+						try{
+							value = JSON.parse( value );
+						}
+						catch(e){}
+
+						resolve( value );
 					}
 					else{
 						reject(new Error( this.statusText ));

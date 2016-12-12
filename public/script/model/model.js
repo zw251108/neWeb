@@ -28,7 +28,7 @@ class Model{
 	 * @param   {String}    key
 	 * */
 	_removeIndex(key){
-		var i = this._index.indexOf( key )
+		let i = this._index.indexOf( key )
 			;
 
 		if( i !== -1 ){
@@ -70,7 +70,7 @@ class Model{
 	 * @desc    解除绑定数据监控回调函数
 	 * */
 	off(callback){
-		var i = this._eventList.indexOf( callback )
+		let i = this._eventList.indexOf( callback )
 			;
 
 		this._eventList.splice(i, 1);
@@ -104,7 +104,7 @@ class Model{
 	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	removeData(key){
-		var rs
+		let rs
 			;
 		this._removeIndex( key );
 
@@ -159,9 +159,10 @@ Model._MODEL_CACHE = {};
  * @param   {String}    type
  * @param   {Boolean|Object?}   notCache    为 boolean 类型时表示是否缓存，为 object 类型时将值赋给 options 并设置为 false
  * @param   {Object?}   options
+ * @return  {Model}
  * */
 Model.factory = function(type, notCache=false, options={}){
-	var model
+	let model
 		;
 
 	if( typeof notCache === 'object' ){

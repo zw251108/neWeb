@@ -85,5 +85,6 @@ WebSocket._CONFIG = {
 };
 
 Sync.register('webSocket', WebSocket);
+// Sync.register('ws', WebSocket); // 注册别名
 
 export default WebSocket;

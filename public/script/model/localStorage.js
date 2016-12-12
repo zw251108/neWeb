@@ -48,7 +48,7 @@ class LocalStorageModel extends Model{
 		this._setIndex( key );
 
 		return this._store.then(function(store){
-			var value = store.getItem(key)
+			let value = store.getItem(key)
 				;
 
 			if( value === null ){
@@ -113,7 +113,7 @@ LocalStorageModel._LISTENER_ON = false;
 // 全局 storage 事件监听，只执行一次，执行后将 LocalStorageModel._LISTENER_ON 设为 true
 LocalStorageModel._listen = function(){
 	window.addEventListener('storage', function(e){
-		var key = e.key
+		let key = e.key
 			, newVal = e.newValue
 			, oldVal = e.oldValue
 			;
