@@ -11,6 +11,13 @@ class CookieModel extends Model{
 	 * */
 	constructor(){
 		super();
+
+		if( navigator.cookieEnabled ){
+			this._store = Promise.resolve(true);
+		}
+		else{
+			this._store = Promise.reject( new Error('此浏览器不支持 Cookie') );
+		}
 	}
 
 	/**
@@ -21,30 +28,31 @@ class CookieModel extends Model{
 	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	setData(key, value, options){
-
 		this._setIndex( key );
 
-		if( typeof options !== 'object' ){
-			options = {
-				expires: options
-			};
-		}
-
-		if( options.expires ){
-			options.expires = CookieModel._transDate( options.expires );
-		}
-
-		document.cookie = encodeURIComponent(key) +'='+ encodeURIComponent( this._stringify(value) ) + Object.keys( CookieModel._DEFAULT ).reduce((a, d)=>{    // 整理配置
-			if( d in options ){
-				a += '; '+ d +'='+ options[d];
+		return this._store.then(()=>{
+			if( typeof options !== 'object' ){
+				options = {
+					expires: options
+				};
 			}
 
-			return a;
-		}, '');
+			if( options.expires ){
+				options.expires = CookieModel._transDate( options.expires );
+			}
 
-		this._trigger(key, value);
+			document.cookie = encodeURIComponent(key) +'='+ encodeURIComponent( this._stringify(value) ) + Object.keys( CookieModel._DEFAULT ).reduce((a, d)=>{    // 整理配置
+					if( d in options ){
+						a += '; '+ d +'='+ options[d];
+					}
 
-		return Promise.resolve(true);
+					return a;
+				}, '');
+
+			this._trigger(key, value);
+
+			return true
+		});
 	}
 	/**
 	 * @desc    获取数据
@@ -52,36 +60,38 @@ class CookieModel extends Model{
 	 * @return  {Promise}   resolve 时传回 value
 	 * */
 	getData(key){
-		let cookies = document.cookie
-			, i = 0, l
-			, value = ''
-			, t
-			;
-
 		this._setIndex( key );
 
-		if( cookies ){
-			cookies = cookies.split('; ');
-		}
-		else{
-			cookies = [];
-		}
+		return this._store.then(()=>{
+			let cookies = document.cookie
+				, i = 0, l
+				, value = ''
+				, t
+				;
 
-		for(l = cookies.length; i < l; i++ ){
-			t = cookies[i].split('=');
-
-			if( key === decodeURIComponent( t[0] ) ){
-				value = decodeURIComponent( t[1] );
-				break;
+			if( cookies ){
+				cookies = cookies.split('; ');
 			}
-		}
+			else{
+				cookies = [];
+			}
 
-		try{
-			value = JSON.parse( value );
-		}
-		catch(e){}
+			for(l = cookies.length; i < l; i++ ){
+				t = cookies[i].split('=');
 
-		return Promise.resolve( value );
+				if( key === decodeURIComponent( t[0] ) ){
+					value = decodeURIComponent( t[1] );
+					break;
+				}
+			}
+
+			try{
+				value = JSON.parse( value );
+			}
+			catch(e){}
+
+			return value;
+		});
 	}
 	/**
 	 * @desc    将数据从缓存中删除，实际为调用 setData 方法，过期时间为负值
@@ -89,9 +99,13 @@ class CookieModel extends Model{
 	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	removeData(key){
-		this._trigger(key, null);
+		this._removeIndex( key );
 
-		return this.setData(key, '', '-1d');
+		return this._store.then(()=>{
+			this._trigger(key, null);
+
+			return this.setData(key, '', '-1d');
+		});
 	}
 	/**
 	 * @desc    清空数据，实际不做任何处理

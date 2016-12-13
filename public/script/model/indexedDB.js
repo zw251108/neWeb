@@ -77,7 +77,7 @@ class IndexedDBModel extends Model{
 	 * @return  {Promise}   resolve 时传回查询出来的 value
 	 * */
 	_select(key){
-		return this._store.then(db=>{
+		return this._store.then((db)=>{
 			return new Promise((resolve, reject)=>{
 				let objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore(this._config.tableName)
 					, result = objectStore.get(key)
@@ -104,7 +104,7 @@ class IndexedDBModel extends Model{
 	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	_put(key, value){
-		return this._store.then(db=>{
+		return this._store.then((db)=>{
 			return new Promise((resolve, reject)=>{
 				let objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore(this._config.tableName)
 					, result = objectStore.put({
@@ -130,7 +130,7 @@ class IndexedDBModel extends Model{
 	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	_delete(key){
-		return this._store.then(db=>{
+		return this._store.then((db)=>{
 			return new Promise((resolve, reject)=>{
 				let objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore(this._config.tableName)
 					, result = objectStore.delete(key)
@@ -152,7 +152,7 @@ class IndexedDBModel extends Model{
 	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	_clear(){
-		return this._store.then(db=>{
+		return this._store.then((db)=>{
 			return new Promise((resolve, reject)=>{
 				let objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore(this._config.tableName)
 					, result = objectStore.clear()
@@ -188,7 +188,7 @@ class IndexedDBModel extends Model{
 	 * @return  {Promise}   resolve 时传回查询出来的 value
 	 * */
 	getData(key){
-		return this._select(key).then(function(value){
+		return this._select(key).then((value)=>{
 
 			value = value || '';
 

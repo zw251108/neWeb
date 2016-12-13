@@ -63,7 +63,7 @@ class WebSocketModel extends Model{
 	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	setData(key, value){
-		return this._conn.then(socket=>{
+		return this._conn.then((socket)=>{
 			let send = {}
 				;
 

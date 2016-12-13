@@ -15,7 +15,7 @@ class ServiceWorker extends Sync{
 		if( 'serviceWorker' in navigator ){
 			navigator.serviceWorker.register('service-worker.js', {
 				scope: './'
-			}).then(function(regist){
+			}).then((regist)=>{
 				let serviceWorker
 					;
 

@@ -16,7 +16,7 @@ class SessionStorageModel extends Model{
 			this._store = Promise.resolve( window.sessionStorage );
 		}
 		else{
-			this._store = Promise.reject(new Error('此浏览器不支持 sessionStorage'));
+			this._store = Promise.reject( new Error('此浏览器不支持 sessionStorage') );
 		}
 	}
 
@@ -45,7 +45,7 @@ class SessionStorageModel extends Model{
 	getData(key){
 		this._setIndex( key );
 
-		return this._store.then(function(store){
+		return this._store.then((store)=>{
 			let value = store.getItem(key)
 				;
 
@@ -84,7 +84,7 @@ class SessionStorageModel extends Model{
 	clearData(){
 		this._index.forEach( d=>this._removeIndex(d) );
 
-		return this._store.then(function(store){
+		return this._store.then((store)=>{
 			store.clear();
 
 			return true;

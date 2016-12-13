@@ -8,7 +8,7 @@ import Model from '../model/index.js';
  * @param   {Model}     to
  * */
 function sync(from, to){
-	var exec
+	let exec
 		;
 
 	// 参数都为 Model 子类，且为不同的两种子类
@@ -19,7 +19,7 @@ function sync(from, to){
 		from.constructor !== to.constructor){
 
 		exec = function(key, value){
-			var rs
+			let rs
 				;
 
 			if( value !== null ){
@@ -29,7 +29,7 @@ function sync(from, to){
 				rs = to.removeData(key);
 			}
 
-			rs.then(function(rs){
+			rs.then((rs)=>{
 				if( rs ){
 					console.log( from.constructor.name +' 数据同步到 '+ to.constructor.name +' 成功' );
 				}

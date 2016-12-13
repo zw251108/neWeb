@@ -33,13 +33,13 @@ class Animator {
 	 * @param   {Boolean|Function?}  finished    Boolean 值时表示是否继续运行，Function 时为运行结束的回调函数
 	 * */
 	run(finished){
-		var startTime = Date.now()
+		let startTime = Date.now()
 			, duration = this.duration
 			, self = this
 			;
 
 		this._animate = requestAnimationFrame(function step(){
-			var p = (Date.now() - startTime) / duration
+			let p = (Date.now() - startTime) / duration
 				, next = true
 				;
 

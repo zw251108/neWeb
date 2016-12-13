@@ -11,12 +11,12 @@ class AnimationQueue {
 		this.animators.push.apply(this.animators, arguments);
 	}
 	flush(){
-		var self = this
+		let self = this
 			;
 
 		if( this.animators.length ){
 			(function play(){
-				var animator = self.animators.shift()
+				let animator = self.animators.shift()
 					;
 
 				if( animator instanceof Animator){

@@ -50,7 +50,7 @@ class AjaxModel extends Model{
 			options.data._type = 'POST';
 		}
 
-		return $.ajax( options ).then(function(data){
+		return $.ajax( options ).then((data)=>{
 			this._trigger(key, value);
 
 			return data;

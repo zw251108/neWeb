@@ -68,7 +68,7 @@ class WebSocket extends Sync{
 	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	send(data={}){
-		return this._conn.then(socket=>{
+		return this._conn.then((socket)=>{
 			socket.send( JSON.stringify(data) );
 
 			return true;

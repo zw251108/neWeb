@@ -60,7 +60,7 @@ class WebSQLModel extends Model{
 	 * @return  {Promise}   resolve 时传回查询出来的数组
 	 * */
 	_select(key){
-		return this._store.then(db=>{
+		return this._store.then((db)=>{
 			return new Promise((resolve, reject)=>{
 				db.transaction(tx=>{
 					tx.executeSql('select * from '+ this._config.tableName +' where topic=?', [key], function(tx, rs){
@@ -81,7 +81,7 @@ class WebSQLModel extends Model{
 	 * @return  {Promise}   resolve 时传回影响行数的 boolean 值
 	 * */
 	_update(key, value){
-		return this._store.then(db=>{
+		return this._store.then((db)=>{
 			return new Promise((resolve, reject)=>{
 				db.transaction(tx=>{
 					tx.executeSql('update ' + this._config.tableName + ' set value=? where topic=?', [value, key], function(tx, rs){
@@ -102,7 +102,7 @@ class WebSQLModel extends Model{
 	 * @return  {Promise}   resolve 时传回新插入行 id 的 boolean 值
 	 * */
 	_insert(key, value){
-		return this._store.then(db=>{
+		return this._store.then((db)=>{
 			return new Promise((resolve, reject)=>{
 				db.transaction(tx=>{
 					tx.executeSql('insert into ' + this._config.tableName + '(topic,value) values(?,?)', [key, value], function(tx, rs){
@@ -122,7 +122,7 @@ class WebSQLModel extends Model{
 	 * @return  {Promise}   resolve 时传回影响行数的 boolean 值
 	 * */
 	_delete(key){
-		return this._store.then(db=>{
+		return this._store.then((db)=>{
 			return new Promise((resolve, reject)=>{
 				db.transaction(tx=>{
 					tx.executeSql('delete from '+ this._config.tableName +' where topic=?', [key], function(tx, rs){
@@ -141,7 +141,7 @@ class WebSQLModel extends Model{
 	 * @return  {Promise}   resolve 时传回影响行数的 boolean 值
 	 * */
 	_clear(){
-		return this._store.then(db=>{
+		return this._store.then((db)=>{
 			return new Promise((resolve, reject)=>{
 				db.transaction(tx=>{
 					tx.executeSql('delete from ' + this._config.tableName, [], function(tx, rs){
@@ -166,7 +166,7 @@ class WebSQLModel extends Model{
 
 		value = this._stringify(value);
 
-		return this._select(key).then(rs=>{
+		return this._select(key).then((rs)=>{
 			let result;
 
 			if( rs && rs.length ){    // key 已存在
@@ -191,7 +191,7 @@ class WebSQLModel extends Model{
 	getData(key){
 		this._setIndex( key );
 
-		return this._select(key).then(function(rs){
+		return this._select(key).then((rs)=>{
 			let value = ''
 				;
 

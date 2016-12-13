@@ -23,11 +23,9 @@ class Ajax extends Sync{
 			;
 
 		if( 'fetch' in window ){
-
-
-			result = fetch( options.url ).then(function(res){
+			result = fetch( options.url ).then((res)=>{
 				return res.text();
-			}).then(function(text){
+			}).then((text)=>{
 				try{
 					text = JSON.parse( text );
 				}
