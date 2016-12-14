@@ -103,13 +103,25 @@ var CONFIG = require('../../config.js')
 	;
 
 TagHandler.getTagList().then(function(rs){
+	return rs;
+}, function(e){ // 若遇到错误延迟 1500ms 后执行
+	console.log( e );
 
+	return new Promise(function(resolve, reject){
+		setTimeout(function(){
+			console.log('tag 数据查询失败，1.5s 后重新执行');
+			TagHandler.getTagList().then(function(rs){
+				resolve(rs);
+			});
+		}, 1500);
+	});
+}).then(function(rs){
 	rs.reduce(function(all, d, i){
 		all[d.name] = i;
 
 		return all;
 	}, TagHandler.TAG_INDEX);
-
+	console.log(rs)
 	TagHandler.TAG_CACHE = rs;
 });
 

@@ -149,18 +149,21 @@ exec = function(){
 		});
 	});
 };
-// pool.on('connection', function(connection){
-// 	console.log('新建立一个连接：'+ connection.threadId);
+pool.on('connection', function(connection){
+	console.log('pool 新建立一个连接：'+ connection.threadId);
+});
+// pool.on('disconnection', function(connection){
+// 	console.log('')
 // });
 pool.on('enqueue', function(){
 	console.log('等待可用连接');
 });
-pool.on('error', function(e){
-	console.log(111);
-	console.log( e );
-
-	// exec = connect();
-});
+// pool.on('error', function(e){
+// 	console.log(111);
+// 	console.log( e );
+//
+// 	// exec = connect();
+// });
 
 // // 自定义参数格式
 // pool.config.queryFormat = function(sql, values){
@@ -196,6 +199,7 @@ module.exports = {
 				if( sql ){
 					db.query(sql, data, function(err, rs){
 						db.release();   // 释放连接
+						console.log('pool 释放连接 '+ db.threadId);
 
 						if( !err ){
 							resolve( rs );

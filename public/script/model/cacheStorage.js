@@ -34,7 +34,7 @@ class CacheStorageModel extends Model{
 	}
 
 	/**
-	 * @desc    设置数据
+	 * @desc    设置缓存
 	 * @param   {String}    key
 	 * @param   {Response}  response
 	 * @return  {Promise}
@@ -51,7 +51,7 @@ class CacheStorageModel extends Model{
 		});
 	}
 	/**
-	 * @desc    获取数据
+	 * @desc    获取缓存
 	 * @param   {String|Request}    key
 	 * @return  {Promise}
 	 * */
@@ -86,6 +86,18 @@ class CacheStorageModel extends Model{
 
 			return result;
 		});
+	}
+	/**
+	 * @desc    将缓存删除
+	 * */
+	removeData(key){
+
+	}
+	/**
+	 * @desc    情况缓存
+	 * */
+	clearData(){
+
 	}
 }
 
