@@ -31,10 +31,12 @@ class ServiceWorker extends Sync{
 
 				if( serviceWorker ){
 					serviceWorker.addEventListener('statechange', function(e){
-
+						console.log(e);
 					});
 				}
-			})
+			}).catch(function(e){
+				console.log( e );
+			});
 		}
 	}
 }

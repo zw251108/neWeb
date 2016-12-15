@@ -121,7 +121,7 @@ TagHandler.getTagList().then(function(rs){
 
 		return all;
 	}, TagHandler.TAG_INDEX);
-	console.log(rs)
+	// console.log(rs);
 	TagHandler.TAG_CACHE = rs;
 });
 

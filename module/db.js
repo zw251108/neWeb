@@ -8,7 +8,7 @@ var mysql = require('mysql')
 	, config = require('../config.js')
 	, error = require('./error.js')
 
-	, pool = mysql.createPool( config.db )
+	, pool = mysql.createPool( config.db , function(){console.log(arguments)})
 	// , db = mysql.createConnection( config.db )
 	// , connect = function(){
 	// 	return new Promise(function(resolve, reject){
@@ -149,6 +149,7 @@ exec = function(){
 		});
 	});
 };
+
 pool.on('connection', function(connection){
 	console.log('pool 新建立一个连接：'+ connection.threadId);
 });
@@ -177,6 +178,13 @@ pool.on('enqueue', function(){
 //
 // 	return sql;
 // };
+
+exec().then(function(db){
+	db.release();
+	console.log('连接池建立成功');
+}, function(e){
+	console.log( e );
+});
 
 module.exports = {
 	/**

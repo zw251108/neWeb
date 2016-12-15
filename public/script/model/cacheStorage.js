@@ -89,15 +89,22 @@ class CacheStorageModel extends Model{
 	}
 	/**
 	 * @desc    将缓存删除
+	 * @param   {String}    key
+	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	removeData(key){
-
+		return Promise.resolve( true );
 	}
 	/**
 	 * @desc    情况缓存
+	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	clearData(){
-
+		this._store.then((caches)=>{
+			return caches.delete( this._config.storeName );
+		}).then(function(){
+			return true;
+		});
 	}
 }
 

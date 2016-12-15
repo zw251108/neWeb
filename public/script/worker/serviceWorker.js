@@ -8,28 +8,34 @@ const CACHE_NAME = 'cache'
 	, CACHE_URL = []
 	;
 
-this.addEventListener('install', function(event){
+self.addEventListener('install', function(event){
+	console.log('Service Worker 安装完成，install event', event);
+
 	event.waitUntil(caches.open( CACHE_NAME ).then((cache)=>{
-		console.log('opened cache');
+		console.log('cache open');
 
 		return cache.addAll( CACHE_URL ).catch(function(e){
 			console.log( e );
 			console.log('cache 安装失败');
-		});
+		}).then( self.skipWaiting() );
 	}));
 });
 
-this.addEventListener('fetch', function(event){
+self.addEventListener('activate', function(event){
+	console.log('Active event,', event);
+});
+
+self.addEventListener('fetch', function(event){
 	event.respondWith(caches.match( event.request ).then((response)=>{
 		return response || fetch( event.request.clone() );  // 克隆该请求，Request 对象是 stream 类型的，只能读取一次
 	}).then((response)=>{
 
-		caches.open( CACHE_NAME ).then((cache)=>{
-			cache.put(event.request, response);
+		caches.open( CACHE_NAME ).then((cache)=>{   // 将 response 缓存起来
+			cache.put(event.request, response.clone());
 		});
 
-		return response.clone();
-	}))
+		return response;
+	}));
 });
 
 // if( 'serviceWorker' in navigator ){
