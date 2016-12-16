@@ -9,7 +9,7 @@ class CacheStorageModel extends Model{
 	/**
 	 * @constructor
 	 * @param   {Object?}   config
-	 * @param   {String?}   config.storeName
+	 * @param   {String?}   config.cacheName
 	 * */
 	constructor(config={}){
 		super();
@@ -19,7 +19,7 @@ class CacheStorageModel extends Model{
 				all[d] = config[d];
 			}
 			else{
-				all[d] = CacheStorage._CONFIG[d];
+				all[d] = CacheStorageModel._CONFIG[d];
 			}
 
 			return all;
@@ -35,17 +35,17 @@ class CacheStorageModel extends Model{
 
 	/**
 	 * @desc    设置缓存
-	 * @param   {String}    key
-	 * @param   {Response}  response
-	 * @return  {Promise}
+	 * @param   {String|Request}    key
+	 * @param   {Response}          response
+	 * @return  {Promise}           resolve 时传回 true
 	 * */
 	setData(key, response){
 		this._setIndex( key );
 
 		return this._store.then((caches)=>{
-			return caches.open( this._config.storeName )
+			return caches.open( this._config.cacheName );
 		}).then(function(cache){
-			return cache.put(key, value);
+			return cache.put(key, response);
 		}).then(function(){
 			return true;
 		});
@@ -53,19 +53,23 @@ class CacheStorageModel extends Model{
 	/**
 	 * @desc    获取缓存
 	 * @param   {String|Request}    key
-	 * @return  {Promise}
+	 * @return  {Promise}           resolve 时传回查询到的缓存，reject 时传回 Error
 	 * */
 	getData(key){
-		typeof key === 'string' && this._setIndex( key );
-
 		return this._store.then((caches)=>{
 			let result
 				;
 
 			if( typeof key === 'string' ){
+
+				this._setIndex( key );
+
 				result = caches.match( new Request(key) );
 			}
 			else if( typeof key === 'object' && key instanceof Request ){
+
+				this._setIndex( key.url );
+
 				result = caches.match( key );
 			}
 			else{
@@ -78,10 +82,18 @@ class CacheStorageModel extends Model{
 				;
 
 			if( response ){
-				result = response();
+				result = response;
 			}
 			else{
-				result = Promise.reject( new Error('不存在该缓存') );
+				if( typeof key === 'string' ){
+					result = Promise.reject( new Error('不存在 '+ key +' 的缓存') );
+				}
+				else if( typeof key === 'object' && key instanceof Request ){
+					result = Promise.reject( new Error('不存在 '+ key.url +' 的缓存') );
+				}
+				else{
+					result = Promise.reject( new Error('不存在该缓存') );
+				}
 			}
 
 			return result;
@@ -101,7 +113,23 @@ class CacheStorageModel extends Model{
 	 * */
 	clearData(){
 		this._store.then((caches)=>{
-			return caches.delete( this._config.storeName );
+			return caches.delete( this._config.cacheName );
+		}).then(function(){
+			return true;
+		});
+	}
+
+	/**
+	 * @desc    基于 addAll 方法的封装
+	 * @param   {Array} cacheArray
+	 * */
+	addAll(cacheArray){
+		cacheArray.forEach( (d)=>this._setIndex(d) );
+
+		return this._store.then((caches)=>{
+			return caches.open( this._config.cacheName );
+		}).then(function(cache){
+			return cache.addAll( cacheArray );
 		}).then(function(){
 			return true;
 		});
@@ -109,7 +137,7 @@ class CacheStorageModel extends Model{
 }
 
 CacheStorageModel._CONFIG = {
-	storeName: 'storage'
+	cacheName: 'storage'
 };
 
 Model.register('cacheStorage', CacheStorageModel);

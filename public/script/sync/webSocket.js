@@ -29,8 +29,8 @@ class WebSocket extends Sync{
 					let socket = new WebSocket(this._config.url, this._config.protocols);
 
 					socket.onopen = ()=>resolve( socket );
-					socket.onmessage = e=>this._receive( e );
-					socket.onclose = e=>{
+					socket.onmessage = (e)=>this._receive( e );
+					socket.onclose = (e)=>{
 						console.log( e );
 						reject( e );
 					};

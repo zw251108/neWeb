@@ -40,8 +40,8 @@ class WebSocketModel extends Model{
 				this._conn = new Promise((resolve, reject)=>{
 					// web socket 建立连接成功
 					socket.onopen = ()=>resolve( socket );
-					socket.onmessage = e=>this.receiveData( e );
-					socket.onclose = e=>{
+					socket.onmessage = (e)=>this.receiveData( e );
+					socket.onclose = (e)=>{
 						console.log( e );
 						reject( e );
 					};
@@ -109,7 +109,7 @@ class WebSocketModel extends Model{
 		}
 		catch(e){}
 
-		this._eventList.forEach( d=>d(data) );
+		this._eventList.forEach( (d)=>d(data) );
 	}
 	/**
 	 * @desc    关闭连接

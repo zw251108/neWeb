@@ -82,7 +82,7 @@ class SessionStorageModel extends Model{
 	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	clearData(){
-		this._index.forEach( d=>this._removeIndex(d) );
+		this._index.forEach( (d)=>this._removeIndex(d) );
 
 		return this._store.then((store)=>{
 			store.clear();

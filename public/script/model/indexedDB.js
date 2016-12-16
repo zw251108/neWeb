@@ -36,9 +36,11 @@ class IndexedDBModel extends Model{
 			if( indexedDB ){
 				dbRequest = indexedDB.open(this._config.dbName, this._config.dbVersion);
 
-				// DB 版本设置或升级时回调
-				// createObjectStore deleteObjectStore 只能在 onupgradeneeded 事件中使用
-				dbRequest.onupgradeneeded = e=>{
+				/**
+				 * DB 版本设置或升级时回调
+				 * createObjectStore deleteObjectStore 只能在 onupgradeneeded 事件中使用
+				 * */
+				dbRequest.onupgradeneeded = (e)=>{
 					let db = e.target.result
 						, store
 						;
@@ -57,16 +59,16 @@ class IndexedDBModel extends Model{
 					}
 
 					dbRequest.onsuccess = function(e){
-						resolve(e.target.result);
+						resolve( e.target.result );
 					};
 					dbRequest.onerror = function(e){
 						console.log( e );
-						reject(e);
+						reject( e );
 					};
 				};
 			}
 			else{
-				reject(new Error('此数据库不支持 IndexedDB'));
+				reject( new Error('此数据库不支持 IndexedDB') );
 			}
 		});
 	}
@@ -80,7 +82,7 @@ class IndexedDBModel extends Model{
 		return this._store.then((db)=>{
 			return new Promise((resolve, reject)=>{
 				let objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore(this._config.tableName)
-					, result = objectStore.get(key)
+					, result = objectStore.get( key )
 					;
 
 				result.onsuccess = function(e){
@@ -91,7 +93,7 @@ class IndexedDBModel extends Model{
 				};
 				result.onerror = function(e){
 					console.log( e );
-					reject(e);
+					reject( e );
 				};
 			});
 		});
@@ -118,7 +120,7 @@ class IndexedDBModel extends Model{
 				};
 				result.onerror = function(e){
 					console.log( e );
-					reject(e);
+					reject( e );
 				};
 			});
 		});
@@ -141,7 +143,7 @@ class IndexedDBModel extends Model{
 				};
 				result.onerror = function(e){
 					console.log( e );
-					reject(e);
+					reject( e );
 				};
 			});
 		});
@@ -163,7 +165,7 @@ class IndexedDBModel extends Model{
 				};
 				result.onerror = function(e){
 					console.log( e );
-					reject(e);
+					reject( e );
 				}
 			});
 		});

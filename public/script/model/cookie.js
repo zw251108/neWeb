@@ -142,7 +142,7 @@ CookieModel._transDate = function(date){
 	if( date instanceof Date){}
 	else if( typeof date === 'number' ){
 		temp = new Date();
-		temp.setTime( +temp + CookieModel._SHORT_TIME_NUM.d *864e5 );
+		temp.setTime( +temp + CookieModel._SHORT_TIME_NUM.d * date );
 		date = temp;
 	}
 	else if( temp = CookieModel._SHORT_TIME_EXPR.exec( date ) ){

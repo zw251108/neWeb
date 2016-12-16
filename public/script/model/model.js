@@ -55,7 +55,7 @@ class Model{
 	 * */
 	_trigger(key, value){
 		setTimeout(()=>{
-			this._eventList.forEach(d=>d(key, value));
+			this._eventList.forEach((d)=>d(key, value));
 		}, 0);
 	}
 
@@ -130,7 +130,7 @@ class Model{
 	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	clearData(){
-		this._index.map(d=>this.removeData(d));
+		this._index.map((d)=>this.removeData(d));
 
 		return Promise.resolve(true);
 	}

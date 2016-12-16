@@ -84,7 +84,7 @@ class LocalStorageModel extends Model{
 	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	clearData(){
-		this._index.forEach( d=>this._removeIndex(d) );
+		this._index.forEach( (d)=>this._removeIndex(d) );
 
 		return this._store.then((store)=>{
 			store.clear();
@@ -120,7 +120,7 @@ LocalStorageModel._listen = function(){
 
 		if( key in LocalStorageModel._EVENT_LIST ){
 
-			LocalStorageModel._EVENT_LIST.forEach(d=>d(key, newVal, oldVal));
+			LocalStorageModel._EVENT_LIST.forEach((d)=>d(key, newVal, oldVal));
 		}
 	});
 
