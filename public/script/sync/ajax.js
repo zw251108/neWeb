@@ -3,15 +3,18 @@
 import Sync from './sync.js';
 
 /**
- * @class   Ajax
+ * @class   AjaxSync
  * */
-class Ajax extends Sync{
+class AjaxSync extends Sync{
 	/**
 	 * @constructor
 	 * */
-	constructor(options){
+	constructor(config={}){
 		super();
 
+		this._config = Object.keys( AjaxSync._CONFIG ).reduce((all, d)=>{
+
+		});
 		// this._conn = new Promise((resolve, reject)=>{
 		// 	if( 'fetch' in window){
 		//
@@ -26,8 +29,8 @@ class Ajax extends Sync{
 			;
 
 		if( data ){
-			options.url += Object.keys( data ).map((k)=>{
-				return encodeURIComponent(k) +'='+ encodeURIComponent(data[k]);
+			options.url += '?'+ Object.keys( data ).map((k)=>{
+				return encodeURIComponent( k ) +'='+ encodeURIComponent( data[k] );
 			}).join('&').replace(/%20/g, '+');
 		}
 
@@ -115,20 +118,14 @@ class Ajax extends Sync{
 
 		return result
 	}
-
-	// /**
-	//  * @desc
-	//  * */
-	// receive(){
-	//
-	// }
-
-	/**
-	 * @desc
-	 * */
-	on(){}
 }
 
-Sync.register('ajax', Ajax);
+AjaxSync._CONFIG = {
+	cache: false    // 是否缓存请求
+	, cors: true    // 是否跨域
+	, jsonp: false  // 是否以 jsonp 的方式发生请求
+};
 
-export default Ajax;
+Sync.register('ajax', AjaxSync);
+
+export default AjaxSync;

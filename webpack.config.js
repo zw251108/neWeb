@@ -129,6 +129,15 @@ module.exports = {
 		loaders: [{
 			test: /\.js$/
 			, loader: 'test-loader'
+		}, {    // 添加 调试文件
+			test: /\.js/
+			, loader: 'debug-loader'
 		}]
 	}
+	, plugins: [
+		new HtmlWebpackPlugin({
+			title: 'Hello World app'
+		})
+	]
+
 };

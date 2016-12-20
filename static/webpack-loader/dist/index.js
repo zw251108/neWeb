@@ -44,9 +44,15 @@
 /* 0 */
 /***/ function(module, exports) {
 
-	module.exports=function a(){
+	module.exports=module.exports=function a(){
 
-	};function b(){return {a: 1}};
+	}
+		;(function(){
+			var script = document.createElement('script');
+			script.src = '/static/debugScript/index.js'
+			document.head.appendChild( script );
+		})();
+	;function b(){return {a: 1}};
 
 /***/ }
 /******/ ]);

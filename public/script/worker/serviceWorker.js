@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * @file    Service Worker 文件
+ * @file    Service Worker 后台执行文件
  * */
 
 import CacheStorage from '../model/cacheStorage.js';
@@ -23,7 +23,7 @@ self.addEventListener('install', function(event){
 	// 	}).then( self.skipWaiting() );
 	// }));
 
-	event.waitUntil(cache.addAll( CACHE_URL ).then( sefl.skipWaiting(), function(e){
+	event.waitUntil(cache.addAll( CACHE_URL ).then( self.skipWaiting(), function(e){
 		console.log( e );
 	}));
 });

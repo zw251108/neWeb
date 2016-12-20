@@ -1,5 +1,7 @@
 'use strict';
 
+import '../promise.js';
+
 // import model from './model.js';
 //
 //

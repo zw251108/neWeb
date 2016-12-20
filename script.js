@@ -5740,6 +5740,11 @@ var FtpClient = require('ftp')
 // 	, password: 'tgouadmin@'
 // });
 
+// var webpack = require('webpack')
+// 	, webpackConfig = require('./webpack.config')
+// 	, compiler = webpack( webpackConfig )
+// 	;
+// console.log(compiler);
 var WebSocketServer = require('ws').Server
 	, wss = new WebSocketServer({
 		port: 8181

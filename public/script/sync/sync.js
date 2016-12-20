@@ -8,7 +8,16 @@ class Sync{
 	 * @constructor
 	 * */
 	constructor(){
-
+		this._eventList = [];
+	}
+	/**
+	 * @desc    触发绑定的监控事件
+	 * @param   {Object|String}     data
+	 * */
+	_trigger(data){
+		setTimeout(()=>{
+			this._eventList.forEach( (d)=>d(data) );
+		}, 0);
 	}
 
 	/**
@@ -16,9 +25,12 @@ class Sync{
 	 * */
 	send(){}
 	/**
-	 * @desc    绑定
+	 * @desc    绑定监控事件
+	 * @param   {Function}  callback    事件触发函数，函数将传入 data
 	 * */
-	on(){}
+	on(callback){
+		this._eventList.push( callback );
+	}
 }
 
 /**
