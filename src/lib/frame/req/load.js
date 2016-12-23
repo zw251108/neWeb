@@ -1,11 +1,11 @@
 'use strict';
 
-import Sync from './sync.js';
+import Req from './req';
 
 /**
  * @class   Load
  * */
-class Load extends Sync{
+class Load extends Req{
 	/**
 	 * @constructor
 	 * */
@@ -72,6 +72,6 @@ class Load extends Sync{
 	}
 }
 
-Sync.register('load', Load);
+Req.register('load', Load);
 
 export default Load;

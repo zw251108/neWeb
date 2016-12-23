@@ -5785,8 +5785,67 @@ wss.on('close', function(){
 // }
 
 // import Model from './module/model.js';
-var Model = require('./module_new/model.js');
+// var Model = require('./module_new/model.js');
+//
+// var a = new Model();
+//
+// console.log(a);
 
-var a = new Model();
+var fs = require('fs');
 
-console.log(a);
+var getSize = require('image-size')
+	;
+/*
+ * @param path
+ *
+ */
+function geFileList(paths,list){
+	if(typeof paths === 'string'){
+		paths = [paths];
+	}else if(!Array.isArray(paths)){
+		return [];
+	}
+	paths.forEach(function(path){
+		var files = fs.readdirSync(path);
+		files.forEach(function(i){
+			var state = fs.statSync(path + '/' + i);
+			if(state.isDirectory()){
+				geFileList(path + '/' + i,list)
+			}else if(state.isFile() && (path + '/' + i).indexOf('.svn') < 0){
+				list.push({
+					path:path + '/' + i,
+					name:i,
+					size:state.size
+				});
+			}
+		});
+	})
+}
+var list = []
+	;
+
+geFileList('../tiangou_fe_node/public/image/ftp', list);
+
+// module.exports = {
+// 	list:function(paths){
+// 		var list = [];
+// 		geFileList(paths,list);
+// 		return list;
+// 	}
+// };
+
+// console.log(list.map(function(d){//console.log(d.path)
+// 	var path = d.path.replace('../tiangou_fe_node/public/image/ftp/', '').split('/')
+// 		, size = !/\.ico$/.test(d.path) ? getSize(d.path): {width: 0, height: 0}
+// 		;
+// 	path.pop();
+//
+// 	return {
+// 		dir: path.join('/')
+// 		, name: d.name
+// 		, imgType: d.name.split('.')[1].toLowerCase()
+// 		, size: d.size
+// 		, width: size.width
+// 		, height: size.height
+// 	}
+// }));

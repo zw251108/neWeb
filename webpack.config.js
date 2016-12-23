@@ -119,24 +119,54 @@ module.exports = {
 	// ]
 
 	entry: {
-		index: path.resolve(ROOT_PATH, 'static/webpack-loader/src/index.js')
+		// index: path.resolve(ROOT_PATH, 'static/webpack-loader/src/index.js')
+		index: path.resolve(ROOT_PATH, 'static/newFrameDemo/src/index.js')
+		, sw: path.resolve(ROOT_PATH, 'src/lib/frame/worker/serviceWorker.js')
 	}
 	, output: {
-		path: path.resolve(ROOT_PATH, 'static/webpack-loader/dist')
+		path: path.resolve(ROOT_PATH, 'static/newFrameDemo/dist')
+		// path: path.resolve(ROOT_PATH, 'static/webpack-loader/dist')
 		, filename: '[name].js'
 	}
+	// 启用 source-map
+	, devtool: 'source-map'
 	, module: {
 		loaders: [{
-			test: /\.js$/
-			, loader: 'test-loader'
-		}, {    // 添加 调试文件
-			test: /\.js/
-			, loader: 'debug-loader'
+		// 	test: /\.js$/
+		// 	, loader: 'test-loader'
+		// }, {    // 添加 调试文件
+		// 	test: /\.js/
+		// 	, loader: 'debug-loader'
+			test: /\.jsx?$/,
+			exclude: /node_modules/,
+			loader: 'babel-loader'
+			, plugins: [
+				["transform-runtime", {
+					"helpers": false,
+					"polyfill": true,
+					"regenerator": true
+				}],
+				'add-module-exports',
+				'transform-es3-member-expression-literals',
+				'transform-es3-property-literals',
+			]
+			, query: {
+				presets: [
+					'es2015'
+				]
+			}
 		}]
 	}
 	, plugins: [
 		new HtmlWebpackPlugin({
 			title: 'Hello World app'
+			, filename: 'index.html'
+			, chunks: ['index']
+			, inject: 'body'
+		})
+		// 使用 uglifyJs 压缩 js
+		, new webpack.optimize.UglifyJsPlugin({
+			minimize: true
 		})
 	]
 

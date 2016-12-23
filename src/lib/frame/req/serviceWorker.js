@@ -1,19 +1,32 @@
 'use strict';
 
-import Sync from './sync.js';
+import Req from './req';
 
 /**
  * @class   ServiceWorker
  * */
-class ServiceWorker extends Sync{
+class ServiceWorker extends Req{
 	/**
 	 * @constructor
+	 * @param   {Object?}   options
+	 * @param   {String}    options.file
 	 * */
-	constructor(){
+	constructor(options){
 		super();
 
+		this._config = Object.keys( ServiceWorker._CONFIG ).reduce((all, d)=>{
+			if( d in options ){
+				all[d] = options[d];
+			}
+			else{
+				all[d] = ServiceWorker._CONFIG[d];
+			}
+
+			return all;
+		}, {});
+
 		if( 'serviceWorker' in navigator ){
-			navigator.serviceWorker.register('service-worker.js', {
+			navigator.serviceWorker.register(this._config.file, {
 				scope: './'
 			}).then((regist)=>{
 				let serviceWorker
@@ -41,7 +54,11 @@ class ServiceWorker extends Sync{
 	}
 }
 
-Sync.register('serviceWorker', ServiceWorker);
-// Sync.register('sw', ServiceWorker); // 注册别名
+ServiceWorker._CONFIG = {
+	file: 'sw.js'
+};
+
+Req.register('serviceWorker', ServiceWorker);
+// Req.register('sw', ServiceWorker); // 注册别名
 
 export default ServiceWorker;

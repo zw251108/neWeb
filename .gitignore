@@ -39,3 +39,6 @@ requirement/
 backup/
 
 log/
+
+static/newFrameDemo/dist
+static/webpack-loader/dist

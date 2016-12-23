@@ -1,6 +1,6 @@
 'use strict';
 
-import Model from './model.js';
+import Model from './model';
 
 /**
  * @class   CacheStorageModel
@@ -14,6 +14,9 @@ class CacheStorageModel extends Model{
 	constructor(config={}){
 		super();
 
+		let global
+			;
+
 		this._config = Object.keys( CacheStorageModel._CONFIG ).reduce((all, d)=>{
 			if( d in config ){
 				all[d] = config[d];
@@ -25,8 +28,19 @@ class CacheStorageModel extends Model{
 			return all;
 		}, {});
 
-		if( 'caches' in window ){
-			this._store = Promise.resolve( window.caches );
+		/**
+		 * 判断运行环境是 window 还是 Service Worker
+		 * */
+		try{    // window 环境
+			global = window;
+		}
+		catch(e){   // Service Worker 环境
+			console.log( e );
+			global = self;
+		}
+
+		if( 'caches' in global ){ // 判断
+			this._store = Promise.resolve( global.caches );
 		}
 		else{
 			this._store = Promise.reject( new Error('此浏览器不支持 Service Worker') );
@@ -45,6 +59,7 @@ class CacheStorageModel extends Model{
 		return this._store.then((caches)=>{
 			return caches.open( this._config.cacheName );
 		}).then(function(cache){
+			console.log('缓存 '+ key);
 			return cache.put(key, response);
 		}).then(function(){
 			return true;

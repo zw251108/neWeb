@@ -1,6 +1,6 @@
 'use strict';
 
-import Animator from './animator.js';
+import Animator from './animator';
 
 class AnimationQueue {
 	constructor(animators){

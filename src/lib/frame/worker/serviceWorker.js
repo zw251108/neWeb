@@ -4,12 +4,21 @@
  * @file    Service Worker 后台执行文件
  * */
 
-import CacheStorage from '../model/cacheStorage.js';
+import CacheStorageModel from '../model/cacheStorage';
+import IndexDBModel from '../model/indexedDB';
+import WebSocketReq from '../req/webSocket';
 
 const CACHE_NAME = 'cache'
 	, CACHE_URL = []
-	, cache = new CacheStorage()
+	, indb = new IndexDBModel()
+	, cache = new CacheStorageModel()
+	, socket = new WebSocketReq({
+		url: '127.0.0.1:8181'
+	})
 	;
+
+console.log('Service Worker 已加载');
+console.log( self );
 
 self.addEventListener('install', function(event){
 	console.log('Service Worker 安装完成，install event', event);
@@ -51,6 +60,7 @@ self.addEventListener('fetch', function(event){
 		return fetch( event.request.clone() );  // 克隆该请求，Request 对象是 stream 类型的，只能读取一次
 	}).then(function(response){
 		return cache.setData(event.request, response.clone()).then(function(){
+			console.log('已缓存 '+ event.request.url);
 			return response;
 		});
 	}));

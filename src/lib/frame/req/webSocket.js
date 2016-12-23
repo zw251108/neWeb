@@ -1,33 +1,45 @@
 'use strict';
 
-import Sync from './sync.js';
+import Req from './req';
 
 /**
- * @class   WebSocketSync
+ * @class   WebSocketReq
  * */
-class WebSocketSync extends Sync{
+class WebSocketReq extends Req{
 	/**
 	 * @constructor
 	 * */
 	constructor(config={}){
 		super();
 
-		this._config = Object.keys( WebSocketSync._CONFIG ).reduce((all, d)=>{
+		this._config = Object.keys( WebSocketReq._CONFIG ).reduce((all, d)=>{
 			if( d in config ){
 				all[d] = config[d];
 			}
 			else{
-				all[d] = WebSocketSync._CONFIG[d];
+				all[d] = WebSocketReq._CONFIG[d];
 			}
 
 			return all;
 		}, {});
 
 		this._conn = new Promise((resolve, reject)=>{
-			let socket
+			let global
+				, socket
 				;
 
-			if( 'WebSocket' in window ){
+			/**
+			 * 判断运行环境是 window 还是 Service Worker
+			 * */
+			try{    // window 环境
+				global = window;
+			}
+			catch(e){   // Service Worker 环境
+				console.log( e );
+				global = self;
+			}
+
+			if( 'WebSocket' in global ){
 				if( this._config.url ){
 					socket = new WebSocket(this._config.url, this._config.protocols);
 
@@ -79,12 +91,12 @@ class WebSocketSync extends Sync{
 	}
 }
 
-WebSocketSync._CONFIG = {
+WebSocketReq._CONFIG = {
 	url: ''
 	, protocols: 'ws'
 };
 
-Sync.register('webSocket', WebSocketSync);
-// Sync.register('ws', WebSocketSync); // 注册别名
+Req.register('webSocket', WebSocketReq);
+// Req.register('ws', WebSocketReq); // 注册别名
 
-export default WebSocketSync;
+export default WebSocketReq;

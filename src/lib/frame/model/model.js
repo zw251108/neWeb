@@ -1,6 +1,6 @@
 'use strict';
 
-import '../promise.js';
+// import '../promise';
 
 /**
  * @class Model

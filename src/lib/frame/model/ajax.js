@@ -1,7 +1,7 @@
 'use strict';
 
 import $ from 'jquery';
-import Model from './model.js';
+import Model from './model';
 
 /**
  * @class   AjaxModel

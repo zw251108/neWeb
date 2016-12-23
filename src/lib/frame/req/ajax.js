@@ -1,18 +1,18 @@
 'use strict';
 
-import Sync from './sync.js';
+import Req from './req';
 
 /**
- * @class   AjaxSync
+ * @class   AjaxReq
  * */
-class AjaxSync extends Sync{
+class AjaxReq extends Req{
 	/**
 	 * @constructor
 	 * */
 	constructor(config={}){
 		super();
 
-		this._config = Object.keys( AjaxSync._CONFIG ).reduce((all, d)=>{
+		this._config = Object.keys( AjaxReq._CONFIG ).reduce((all, d)=>{
 
 		});
 		// this._conn = new Promise((resolve, reject)=>{
@@ -120,12 +120,12 @@ class AjaxSync extends Sync{
 	}
 }
 
-AjaxSync._CONFIG = {
+AjaxReq._CONFIG = {
 	cache: false    // 是否缓存请求
 	, cors: true    // 是否跨域
 	, jsonp: false  // 是否以 jsonp 的方式发生请求
 };
 
-Sync.register('ajax', AjaxSync);
+Req.register('ajax', AjaxReq);
 
-export default AjaxSync;
+export default AjaxReq;
