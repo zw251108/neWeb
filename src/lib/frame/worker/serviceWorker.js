@@ -7,13 +7,14 @@
 import CacheStorageModel from '../model/cacheStorage';
 import IndexDBModel from '../model/indexedDB';
 import WebSocketReq from '../req/webSocket';
+import notify from '../notify';
 
-const CACHE_NAME = 'cache'
-	, CACHE_URL = []
+let CACHE_URL = []
+	, url = ''
 	, indb = new IndexDBModel()
 	, cache = new CacheStorageModel()
 	, socket = new WebSocketReq({
-		url: '127.0.0.1:8181'
+		url: 'ws://localhost:8181/'
 	})
 	;
 
@@ -23,35 +24,37 @@ console.log( self );
 self.addEventListener('install', function(event){
 	console.log('Service Worker 安装完成，install event', event);
 
-	// event.waitUntil(caches.open( CACHE_NAME ).then((cache)=>{
-	// 	console.log('cache open');
-	//
-	// 	return cache.addAll( CACHE_URL ).catch(function(e){
-	// 		console.log( e );
-	// 		console.log('cache 安装失败');
-	// 	}).then( self.skipWaiting() );
-	// }));
-
-	event.waitUntil(cache.addAll( CACHE_URL ).then( self.skipWaiting(), function(e){
+	event.waitUntil(cache.addAll( CACHE_URL ).then(self.skipWaiting(), function(e){
 		console.log( e );
 	}));
 });
 
 self.addEventListener('activate', function(event){
-	console.log('Active event,', event);
+	console.log('新版本 Service Worker 激活 Active event,', event);
+});
+
+self.addEventListener('message', function(event){
+
+});
+
+self.addEventListener('push', function(event){
+	event.waitUntil( self.self.registration.showNotification('123123', {
+		body: 'asdfsadfasdf'
+	}));
+});
+
+self.addEventListener('notificationclick', function(event){
+	event.notification.close();
+	event.waitUntil(clients.matchAll({
+		type: 'window'
+	}).then(()=>{
+		if( clients.openWindow ){
+			return clients.openWindow( url );
+		}
+	}));
 });
 
 self.addEventListener('fetch', function(event){
-	// event.respondWith(caches.match( event.request ).then((response)=>{
-	// 	return response || fetch( event.request.clone() );  // 克隆该请求，Request 对象是 stream 类型的，只能读取一次
-	// }).then((response)=>{
-	//
-	// 	caches.open( CACHE_NAME ).then((cache)=>{   // 将 response 缓存起来
-	// 		cache.put(event.request, response.clone());
-	// 	});
-	//
-	// 	return response;
-	// }));
 
 	event.respondWith(cache.getData( event.request ).then(function(response){
 		return response;
@@ -59,38 +62,26 @@ self.addEventListener('fetch', function(event){
 		console.log( e.message );
 		return fetch( event.request.clone() );  // 克隆该请求，Request 对象是 stream 类型的，只能读取一次
 	}).then(function(response){
-		return cache.setData(event.request, response.clone()).then(function(){
-			console.log('已缓存 '+ event.request.url);
-			return response;
-		});
+		let result
+			;
+		if( !response || response.status !== 200 || response.type !== 'basic' ){    // 判断是否为一个异常的响应
+			result = Promise.resolve( response );
+		}
+		else{
+			result = cache.setData(event.request, response.clone()).then(function(){
+				console.log('已缓存 '+ event.request.url);
+				return response;
+			});
+		}
+
+		return result;
 	}));
 });
 
+socket.on(function(data){
+	notify(data.title, data.content);
+});
 
-// fetch('/data/province?callback=a').then(function(t) {
-// 	var clone = t.clone();
-//
-// 	return caches.open('storage').then(function(cache){
-// 		console.log( cache.put('/data/province?callback=a', clone) )
-// 	}).then(function(){console.log(arguments);
-// 		console.log(t instanceof Request);
-// 		return t.text().catch(function() {
-// 			return t.text();
-// 		})
-// 	})
-// }).then(function(s) {
-// 	console.log(s)
-// })
-//
-//
-// var req = new Request('/data/province?callback=a1');
-// caches.match( req ).then(function(response){ console.log(response);
-// 	return response || fetch( req );
-// }).then(function(res){
-// 	console.log(res instanceof Response);
-// 	return res.text().catch(function() {
-// 		return res.text();
-// 	})
-// }).then(function(s) {
-// 	console.log(s)
-// })
+socket.send({
+	msg: 'hello'
+});

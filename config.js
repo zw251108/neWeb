@@ -8,6 +8,7 @@ var CONFIG = {
 		//ip: '127.0.0.1'
 		//,
 		port: 9001
+		, httpsPort: 443
 		, uploadDir: './public/image/'
 		, cookieSecret: 'secret'
 		, cookieKey: 'express.sid'

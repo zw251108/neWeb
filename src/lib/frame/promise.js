@@ -5,8 +5,8 @@ import $ from '../../../public/script/lib/jquery.min';
  *  因为在 UC 浏览器中 不支持 Promise
  * */
 
-if( !('Promise' in window) ){
-	window.Promise = function(exec){
+if( !('Promise' in self) ){
+	self.Promise = function(exec){
 		let defer = $.Deferred();
 
 		try{
@@ -18,14 +18,14 @@ if( !('Promise' in window) ){
 
 		return defer.promise();
 	};
-	window.Promise.resolve = function(value){
+	self.Promise.resolve = function(value){
 		let defer = $.Deferred();
 
 		defer.resolve( value );
 
 		return defer.promise();
 	};
-	window.Promise.reject = function(e){
+	self.Promise.reject = function(e){
 		let defer = $.Deferred();
 
 		defer.reject( e );
@@ -33,7 +33,7 @@ if( !('Promise' in window) ){
 		return defer.promise();
 	};
 
-	window.Promise.all = function(arr){
+	self.Promise.all = function(arr){
 		let i = 0
 			, j = arr.length
 			, defer = $.Deferred()
@@ -56,4 +56,4 @@ if( !('Promise' in window) ){
 	};
 }
 
-export default window.Promise;
+export default self.Promise;

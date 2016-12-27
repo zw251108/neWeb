@@ -24,22 +24,10 @@ class WebSocketReq extends Req{
 		}, {});
 
 		this._conn = new Promise((resolve, reject)=>{
-			let global
-				, socket
+			let socket
 				;
 
-			/**
-			 * 判断运行环境是 window 还是 Service Worker
-			 * */
-			try{    // window 环境
-				global = window;
-			}
-			catch(e){   // Service Worker 环境
-				console.log( e );
-				global = self;
-			}
-
-			if( 'WebSocket' in global ){
+			if( 'WebSocket' in self ){
 				if( this._config.url ){
 					socket = new WebSocket(this._config.url, this._config.protocols);
 

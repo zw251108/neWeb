@@ -29,23 +29,11 @@ class IndexedDBModel extends Model{
 
 		// this._store 为 Promise 类型，会在 resolve 中传入 db 实例，因为要保证数据库打开成功才可以操作
 		this._store = new Promise((resolve, reject)=>{
-			let global
-				, indexedDB
+			let indexedDB
 				, dbRequest
 				;
 
-			/**
-			 * 判断运行环境是 window 还是 Service Worker
-			 * */
-			try{    // window 环境
-				global = window;
-			}
-			catch(e){   // Service Worker 环境
-				console.log( e );
-				global = self;
-			}
-
-			indexedDB = global.indexedDB || global.mozIndexedDB || global.webbkitIndexedDB || global.msIndexedDB || null
+			indexedDB = self.indexedDB || self.mozIndexedDB || self.webbkitIndexedDB || self.msIndexedDB || null
 
 			if( indexedDB ){
 				dbRequest = indexedDB.open(this._config.dbName, this._config.dbVersion);

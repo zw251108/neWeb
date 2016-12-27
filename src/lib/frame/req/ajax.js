@@ -16,7 +16,7 @@ class AjaxReq extends Req{
 
 		});
 		// this._conn = new Promise((resolve, reject)=>{
-		// 	if( 'fetch' in window){
+		// 	if( 'fetch' in self){
 		//
 		// 	}
 		// 	else{
@@ -75,7 +75,7 @@ class AjaxReq extends Req{
 				break;
 		}
 
-		if( 'fetch' in window ){
+		if( 'fetch' in self ){
 			result = fetch( options.url ).then((res)=>{
 				return res.text();
 			}).then((text)=>{

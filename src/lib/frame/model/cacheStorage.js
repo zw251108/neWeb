@@ -14,9 +14,6 @@ class CacheStorageModel extends Model{
 	constructor(config={}){
 		super();
 
-		let global
-			;
-
 		this._config = Object.keys( CacheStorageModel._CONFIG ).reduce((all, d)=>{
 			if( d in config ){
 				all[d] = config[d];
@@ -28,19 +25,8 @@ class CacheStorageModel extends Model{
 			return all;
 		}, {});
 
-		/**
-		 * 判断运行环境是 window 还是 Service Worker
-		 * */
-		try{    // window 环境
-			global = window;
-		}
-		catch(e){   // Service Worker 环境
-			console.log( e );
-			global = self;
-		}
-
-		if( 'caches' in global ){ // 判断
-			this._store = Promise.resolve( global.caches );
+		if( 'caches' in self ){ // 判断
+			this._store = Promise.resolve( self.caches );
 		}
 		else{
 			this._store = Promise.reject( new Error('此浏览器不支持 Service Worker') );
@@ -59,7 +45,7 @@ class CacheStorageModel extends Model{
 		return this._store.then((caches)=>{
 			return caches.open( this._config.cacheName );
 		}).then(function(cache){
-			console.log('缓存 '+ key);
+			console.log('缓存 '+ (typeof key === 'string' ? key : key.url));
 			return cache.put(key, response);
 		}).then(function(){
 			return true;
@@ -101,13 +87,13 @@ class CacheStorageModel extends Model{
 			}
 			else{
 				if( typeof key === 'string' ){
-					result = Promise.reject( new Error('不存在 '+ key +' 的缓存') );
+					result = Promise.reject( new Error('不存在缓存 '+ key) );
 				}
 				else if( typeof key === 'object' && key instanceof Request ){
-					result = Promise.reject( new Error('不存在 '+ key.url +' 的缓存') );
+					result = Promise.reject( new Error('不存在缓存 '+ key.url) );
 				}
 				else{
-					result = Promise.reject( new Error('不存在该缓存') );
+					result = Promise.reject( new Error('不存在缓存 '+ key) );
 				}
 			}
 

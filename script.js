@@ -5760,18 +5760,27 @@ wss.on('connection', function(ws){
 			console.log(1);
 
 			setTimeout(function(){
-				ws.send('111');
+				ws.send(JSON.stringify({
+					title: 'hello 1'
+					, content: '1111'
+				}));
 			}, 2000);
 			setTimeout(function(){
-				ws.send('222');
+				ws.send(JSON.stringify({
+					title: 'hello 2'
+					, content: '2222'
+				}));
 			}, 5000);
 
-			ws.send('333');
+			ws.send(JSON.stringify({
+				title: 'hello 3'
+				, content: '3333'
+			}));
 		}
 	});
 });
 wss.on('close', function(){
-	console.log(111)
+	console.log(111);
 });
 
 // console.log(global)
@@ -5799,41 +5808,33 @@ var getSize = require('image-size')
  * @param path
  *
  */
-function geFileList(paths,list){
-	if(typeof paths === 'string'){
-		paths = [paths];
-	}else if(!Array.isArray(paths)){
-		return [];
-	}
-	paths.forEach(function(path){
-		var files = fs.readdirSync(path);
-		files.forEach(function(i){
-			var state = fs.statSync(path + '/' + i);
-			if(state.isDirectory()){
-				geFileList(path + '/' + i,list)
-			}else if(state.isFile() && (path + '/' + i).indexOf('.svn') < 0){
-				list.push({
-					path:path + '/' + i,
-					name:i,
-					size:state.size
-				});
-			}
-		});
-	})
-}
-var list = []
-	;
-
-geFileList('../tiangou_fe_node/public/image/ftp', list);
-
-// module.exports = {
-// 	list:function(paths){
-// 		var list = [];
-// 		geFileList(paths,list);
-// 		return list;
+// function geFileList(paths,list){
+// 	if(typeof paths === 'string'){
+// 		paths = [paths];
+// 	}else if(!Array.isArray(paths)){
+// 		return [];
 // 	}
-// };
-
+// 	paths.forEach(function(path){
+// 		var files = fs.readdirSync(path);
+// 		files.forEach(function(i){
+// 			var state = fs.statSync(path + '/' + i);
+// 			if(state.isDirectory()){
+// 				geFileList(path + '/' + i,list)
+// 			}else if(state.isFile() && (path + '/' + i).indexOf('.svn') < 0){
+// 				list.push({
+// 					path:path + '/' + i,
+// 					name:i,
+// 					size:state.size
+// 				});
+// 			}
+// 		});
+// 	})
+// }
+// var list = []
+// 	;
+//
+// geFileList('../tiangou_fe_node/public/image/ftp', list);
+//
 // console.log(list.map(function(d){//console.log(d.path)
 // 	var path = d.path.replace('../tiangou_fe_node/public/image/ftp/', '').split('/')
 // 		, size = !/\.ico$/.test(d.path) ? getSize(d.path): {width: 0, height: 0}

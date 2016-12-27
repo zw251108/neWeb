@@ -12,8 +12,8 @@ class LocalStorageModel extends Model{
 	constructor(){
 		super();
 
-		if( 'localStorage' in window ){
-			this._store = Promise.resolve( window.localStorage );
+		if( 'localStorage' in self ){
+			this._store = Promise.resolve( self.localStorage );
 
 			!LocalStorageModel._LISTENER_ON && LocalStorageModel._listen();
 		}
@@ -112,7 +112,7 @@ LocalStorageModel._LISTENER_ON = false;
 
 // 全局 storage 事件监听，只执行一次，执行后将 LocalStorageModel._LISTENER_ON 设为 true
 LocalStorageModel._listen = function(){
-	window.addEventListener('storage', function(e){
+	self.addEventListener('storage', function(e){
 		let key = e.key
 			, newVal = e.newValue
 			, oldVal = e.oldValue

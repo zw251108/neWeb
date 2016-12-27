@@ -61,7 +61,7 @@ class WebSQLModel extends Model{
 			let db
 				;
 
-			if( 'openDatabase' in window ){
+			if( 'openDatabase' in self ){
 				// 打开数据库，若不存在则创建
 				db = openDatabase(this._config.dbName, this._config.dbVersion, this._config.dbName, this._config.dbSize);
 

@@ -20,7 +20,7 @@ class AjaxModel extends Model{
 			$.ajaxSetup( options );
 		}
 		// // 有 fetch 优先使用 fetch
-		// if( 'fetch' in window ){
+		// if( 'fetch' in self ){
 		// }
 		// else{
 		//  // 使用源生 XMLHttpRequest 对象

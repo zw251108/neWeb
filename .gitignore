@@ -40,5 +40,7 @@ backup/
 
 log/
 
+keys/
+
 static/newFrameDemo/dist
 static/webpack-loader/dist

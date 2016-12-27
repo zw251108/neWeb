@@ -12,8 +12,8 @@ class SessionStorageModel extends Model{
 	constructor(){
 		super();
 
-		if( 'sessionStorage' in window ){
-			this._store = Promise.resolve( window.sessionStorage );
+		if( 'sessionStorage' in self ){
+			this._store = Promise.resolve( self.sessionStorage );
 		}
 		else{
 			this._store = Promise.reject( new Error('此浏览器不支持 sessionStorage') );

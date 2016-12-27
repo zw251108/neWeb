@@ -31,7 +31,7 @@ class WebSocketModel extends Model{
 			return all;
 		}, {});
 
-		if( 'WebSocket' in window ){
+		if( 'WebSocket' in self ){
 			if( this._config.url ){
 
 				socket = new WebSocket(this._config.url, this._config.protocols);

@@ -24,6 +24,13 @@ logger.setLevel('INFO');
 
 //---------- APP ----------
 var fs = require('fs')
+	// , options = {
+	// 	key: fs.readFileSync('./keys/server-key.pem')
+	// 	, ca: [fs.readFileSync('./keys/ca-cert.pem')]
+	// 	, cert: fs.readFileSync('./keys/server-cert.pem')
+	// }
+	// , http = require('http')
+	// , https = require('https')
 
 	// 全局配置信息
 	, CONFIG = require('./config.js')
@@ -32,6 +39,8 @@ var fs = require('fs')
 	, express       = require('express')
 	, web           = require('./module/web.js')
 	, webServer
+	, httpWebServer
+	, httpsWebServer
 
 	//----- Web Socket -----
 	, socket        = require('./module/socket.js')
@@ -282,6 +291,9 @@ web.get('/admin/', function(req, res){
 });
 
 //----- Web 服务器 -----
+// httpWebServer = http.createServer( web ).listen( CONFIG.web.port );
+// httpsWebServer = https.createServer(options, web).listen( CONFIG.web.httpsPort );
+
 webServer = web.listen( CONFIG.web.port
 	//, CONFIG.web.ip
 );
