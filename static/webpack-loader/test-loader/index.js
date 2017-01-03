@@ -4,7 +4,7 @@
 module.exports = function(source, map){
 	// 让 loader 缓存
 	this.cacheable();
-
+	                           console.log(arguments);
 	// var callback = this.async();
 
 	return 'module.exports=' + source + ';function b(){return {a: 1}};';
