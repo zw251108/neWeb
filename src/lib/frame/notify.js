@@ -3,7 +3,7 @@
 let notify = function(){}
 	;
 
-if( 'webkitNotifications' in self ){
+if( 'webkitNotifications' in self ){    // 兼容旧版本 chrome
 	notify = function(title, content){
 		let Notify = self.webkitNotifications;
 

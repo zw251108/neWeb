@@ -1,10 +1,17 @@
 'use strict';
 
-import modelSync from './modelSync';
+import ModelSync from './modelSync';
 
-import modelConnectSync from './modelConnectSync';
+import ModelReqSync from './modelReqSync';
 
 export default {
-	modelSync
-	, modelConnectSync
+	makeModelSync(from, to){
+		return new ModelSync(from, to);
+	}
+	, makeModelReqSync(req, model){
+		return new ModelReqSync(req, model)
+	}
+
+	, modelSync: ModelSync
+	, modelReqSync: ModelReqSync
 };
