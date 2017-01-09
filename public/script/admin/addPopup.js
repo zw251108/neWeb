@@ -21,7 +21,7 @@ define(['jquery', 'global'], function($){
 				, type: form.method
 				, data: data
 				, success: function(json){
-					if( json.msg === 'success' ){
+					if( json.msg === 'Done' ){
 
 						afterSend && afterSend(data, json);
 

@@ -7,7 +7,7 @@ define(['jquery', 'socket', 'storage', 'template'], function($, socket, storage)
 		})
 
 		, SKIN_LIST = ['default', '3024-day', '3024-night', 'ambiance', 'base16-dark', 'base16-light', 'blackboard', 'cobalt', 'dracula', 'eclipse', 'elegant', 'erlang-dark', 'icecoder', 'lesser-dark', 'liquibyte', 'material', 'mbo', 'mdn-like', 'midnight', 'monokai', 'neat', 'neo', 'night', 'paraiso-dark', 'paraiso-light', 'pastel-on-dark', 'rubyblue', 'seti', 'solarized', 'the-matrix', 'tomorrow-night-bright', 'tomorrow-night-eighties', 'ttcn', 'twilight', 'vibrant-ink', 'xq-dark', 'xq-light', 'yeti', 'zenburn']
-		, CURRENT_SKIN = 'default'
+		, CURRENT_SKIN = storage.getItem('skin') || 'default'
 
 		, $skinLink = $('<link />', {rel: 'stylesheet'}).appendTo('head')
 		, $skin = $('#changeSkin').on({
@@ -171,6 +171,11 @@ define(['jquery', 'socket', 'storage', 'template'], function($, socket, storage)
 		BASE_URL = dir;
 
 		codeEditorList = list;
+
+		// 初始化时，当从服务器返回 skin 是 default，并且本地不是 default，则取本地的值
+		if( CURRENT_SKIN !== 'default' && skin === 'default' ){
+			CURRENT_SKIN = skin;
+		}
 
 		skinList.setSkin( skin );
 
