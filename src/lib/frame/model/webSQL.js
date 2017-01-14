@@ -197,8 +197,6 @@ class WebSQLModel extends Model{
 	 * @return  {Promise}   resolve 时传回影响行数的 boolean 值
 	 * */
 	setData(key, value){
-		this._setIndex( key );
-
 		value = this._stringify(value);
 
 		return this._select(key).then((rs)=>{
@@ -224,8 +222,6 @@ class WebSQLModel extends Model{
 	 * @return  {Promise}   resolve 时传回查询出来的 value
 	 * */
 	getData(key){
-		this._setIndex( key );
-
 		return this._select(key).then((rs)=>{
 			let value = ''
 				;
@@ -249,8 +245,6 @@ class WebSQLModel extends Model{
 	 * @return  {Promise}   resolve 时传回影响行数的 boolean 值
 	 * */
 	removeData(key){
-		this._removeIndex( key );
-
 		return this._delete(key).then((rs)=>{
 			this._trigger(key, null);
 
@@ -262,8 +256,6 @@ class WebSQLModel extends Model{
 	 * @return  {Promise}   resolve 时传回影响行数的 boolean 值
 	 * */
 	clearData(){
-		this._index.forEach( (d)=>this._removeIndex(d) );
-
 		return this._clear();
 	}
 

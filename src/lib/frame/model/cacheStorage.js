@@ -40,8 +40,6 @@ class CacheStorageModel extends Model{
 	 * @return  {Promise}           resolve 时传回 true
 	 * */
 	setData(key, response){
-		this._setIndex( key );
-
 		return this._store.then((caches)=>{
 			return caches.open( this._config.cacheName );
 		}).then(function(cache){
@@ -62,15 +60,9 @@ class CacheStorageModel extends Model{
 				;
 
 			if( typeof key === 'string' ){
-
-				this._setIndex( key );
-
 				result = caches.match( new Request(key) );
 			}
 			else if( typeof key === 'object' && key instanceof Request ){
-
-				this._setIndex( key.url );
-
 				result = caches.match( key );
 			}
 			else{

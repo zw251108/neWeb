@@ -5752,9 +5752,11 @@ var WebSocketServer = require('ws').Server
 	;
 wss.on('connection', function(ws){
 	console.log('connection');
-
+	                        // console.log( Object.keys(ws) )
 	ws.on('message', function(msg){
 		console.log(msg);
+
+		// console.log(ws)
 
 		if( ws.readyState == 1 ){
 			console.log(1);

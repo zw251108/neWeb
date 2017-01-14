@@ -27,8 +27,6 @@ class SessionStorageModel extends Model{
 	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	setData(key, value){
-		this._setIndex( key );
-
 		return this._store.then((store)=>{
 			store.setItem(key, this._stringify(value));
 
@@ -43,8 +41,6 @@ class SessionStorageModel extends Model{
 	 * @return  {Promise}   resolve 时传回查询出来的 value
 	 * */
 	getData(key){
-		this._setIndex( key );
-
 		return this._store.then((store)=>{
 			let value = store.getItem(key)
 				;
@@ -67,8 +63,6 @@ class SessionStorageModel extends Model{
 	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	removeData(key){
-		this._removeIndex( key );
-
 		return this._store.then((store)=>{
 			store.removeItem(key);
 
@@ -82,8 +76,6 @@ class SessionStorageModel extends Model{
 	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	clearData(){
-		this._index.forEach( (d)=>this._removeIndex(d) );
-
 		return this._store.then((store)=>{
 			store.clear();
 

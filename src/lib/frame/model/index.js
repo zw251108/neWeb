@@ -9,9 +9,11 @@ import './sessionStorage';
 import './indexedDB';
 import './webSQL';
 
-// 网络请求
-import './ajax';
-import './webSocket';
+import './service';
+
+// // 网络请求
+// import './ajax';
+// import './webSocket';
 
 // post message
 //

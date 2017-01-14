@@ -28,8 +28,6 @@ class CookieModel extends Model{
 	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	setData(key, value, options){
-		this._setIndex( key );
-
 		return this._store.then(()=>{
 			if( typeof options !== 'object' ){
 				options = {
@@ -60,8 +58,6 @@ class CookieModel extends Model{
 	 * @return  {Promise}   resolve 时传回 value
 	 * */
 	getData(key){
-		this._setIndex( key );
-
 		return this._store.then(()=>{
 			let cookies = document.cookie
 				, i = 0, l
@@ -99,8 +95,6 @@ class CookieModel extends Model{
 	 * @return  {Promise}   resolve 时传回 true
 	 * */
 	removeData(key){
-		this._removeIndex( key );
-
 		return this._store.then(()=>{
 			this._trigger(key, null);
 
@@ -112,7 +106,7 @@ class CookieModel extends Model{
 	 * @return  {Promise}   resolve 时传回空值
 	 * */
 	clearData(){
-		return Promise.resolve();
+		return Promise.resolve( true );
 	}
 }
 

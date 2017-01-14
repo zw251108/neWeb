@@ -42,11 +42,11 @@ class ModelSync{
 		let rs
 			;
 
-		if( value !== null ){
+		if( value !== undefined ){
 			rs = this.to.setData(key, value);
 		}
 		else{
-			rs = this.io.removeData(key);
+			rs = this.to.removeData(key);
 		}
 
 		rs.then((rs)=>{
