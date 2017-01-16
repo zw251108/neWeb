@@ -540,7 +540,23 @@ module.exports = function(grunt){
 					, 'public/script/module/*.js'
 					, 'public/script/module/*/*.js'
 				]
-
+			}
+			, frame: {
+				options: {
+					destination: 'static/frameDoc'
+					, access: 'all'
+					, template : "node_modules/ink-docstrap/template"
+					, configure : "node_modules/ink-docstrap/template/jsdoc.conf.json"
+				}
+				, src: [
+					'src/lib/frame/*.js'
+					, 'src/lib/frame/model/*.js'
+					, 'src/lib/frame/req/*.js'
+					, 'src/lib/frame/proxy/*.js'
+					, 'src/lib/frame/sync/*.js'
+					, 'src/lib/frame/register/*.js'
+					, 'src/lib/frame/worker/*.js'
+				]
 			}
 		}
 		, watch: {
@@ -600,4 +616,6 @@ module.exports = function(grunt){
 		'concurrent:destiny'
 	]);
 	grunt.registerTask('build', ['concurrent:destinyBuild', 'cssmin:destinyBuild', 'copy:destinyBuild'])
+
+	grunt.registerTask('doc', ['jsdoc:frame']);
 };

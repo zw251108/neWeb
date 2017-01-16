@@ -1,6 +1,11 @@
 'use strict';
 
-let notify = function(){}
+/**
+ * @function    notify
+ * @param   {String}    title
+ * @param   {String}    content
+ * */
+let notify = function(title, content){}
 	;
 
 if( 'webkitNotifications' in self ){    // 兼容旧版本 chrome

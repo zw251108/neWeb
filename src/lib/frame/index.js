@@ -1,5 +1,9 @@
 'use strict';
 
+/**
+ * @file    框架聚合
+ * */
+
 // 数据缓存
 import model from './model/index';
 

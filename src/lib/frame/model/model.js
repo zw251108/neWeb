@@ -3,7 +3,8 @@
 // import '../promise';
 
 /**
- * @class Model
+ * @class
+ * @desc    数据层基类，将数据保存在内存中
  * */
 class Model{
 	/**
@@ -14,7 +15,6 @@ class Model{
 		this._eventList = [];
 	}
 
-// 私有/保护方法
 	/**
 	 * 转为字符串，会将 null,undefined 转为空字符串
 	 * @protected
@@ -31,6 +31,7 @@ class Model{
 	}
 	/**
 	 * 触发绑定的数据监控事件
+	 * @protected
 	 * @param   {String}    key
 	 * @param   {*}         value
 	 * */
@@ -40,7 +41,6 @@ class Model{
 		}, 0);
 	}
 
-// 公有方法
 	/**
 	 * 绑定数据监视事件
 	 * @param   {Function}  callback    事件触发函数，函数将传入 key,newValue 两个值，当 newValue 为 null 时，视为 removeData 触发
@@ -50,6 +50,7 @@ class Model{
 	}
 	/**
 	 * 解除绑定数据监控回调函数
+	 * @param   {Function}  callback
 	 * */
 	off(callback){
 		let i = this._eventList.indexOf( callback )
@@ -61,19 +62,34 @@ class Model{
 	 * 设置数据，子类覆盖时如需对数据监控，应在适当的时候调用 _trigger 方法
 	 * @param   {String}    key
 	 * @param   {*}         value
-	 * @return  {Promise}   resolve 时传回 true
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
+	 * @desc    设置数据的时候会使用 Object.defineProperty 定义该属性
 	 * */
 	setData(key, value){
-		this._value[key] = value;
+		if( key in this._value ){
+			this._value[key] = value;
+		}
+		else{
+			Object.defineProperty(this._value, key, {
+				enumerable: true
+				, configurable: false
+				, value: value
+				, set(newVal){
+					if( newVal !== value ){
+						this._trigger(key, newVal);
+					}
+				}
+			});
 
-		this._trigger(key, value);
+			this._trigger(key, value);
+		}
 
 		return Promise.resolve(true);
 	}
 	/**
 	 * 获取数据
 	 * @param   {String}    key
-	 * @return  {Promise}   resolve 时传回查询出来的 value
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回查询出来的 value
 	 * */
 	getData(key){
 		return Promise.resolve(this._value[key] || '');
@@ -81,7 +97,7 @@ class Model{
 	/**
 	 * 将数据从缓存中删除，子类覆盖时如需对数据监控，应在适当的时候调用 _trigger 方法
 	 * @param   {String}    key
-	 * @return  {Promise}   resolve 时传回 true
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
 	removeData(key){
 		let rs
@@ -106,7 +122,7 @@ class Model{
 	}
 	/**
 	 * 清空数据
-	 * @return  {Promise}   resolve 时传回 true
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
 	clearData(){
 		this._value = {};
@@ -115,11 +131,15 @@ class Model{
 	}
 }
 
-// 缓存
+/**
+ * @static
+ * @desc    子类对象缓存
+ * */
 Model._MODEL_CACHE = {};
 
 /**
  * 注册子类，若该子类已经被注册，并且缓存中没有该子类的实例，则覆盖
+ * @static
  * @param   {String}    type
  * @param   {Model}     model
  * */
@@ -135,9 +155,10 @@ Model.register = function(type, model){
 
 /**
  * 获取或生成 type 类型的 model 对象
+ * @static
  * @param   {String}    type
- * @param   {Boolean|Object?}   notCache    为 boolean 类型时表示是否缓存，为 object 类型时将值赋给 options 并设置为 false
- * @param   {Object?}   options
+ * @param   {Boolean|Object}   [notCache]    为 boolean 类型时表示是否缓存默认值为 false，为 object 类型时将值赋给 options 并设置为 false
+ * @param   {Object}    [options]
  * @return  {Model}
  * */
 Model.factory = function(type, notCache=false, options={}){

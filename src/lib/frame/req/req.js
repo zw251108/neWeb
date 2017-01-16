@@ -11,7 +11,8 @@ class Req{
 		this._eventList = [];
 	}
 	/**
-	 * @desc    触发绑定的监控事件
+	 * 触发绑定的监控事件
+	 * @private
 	 * @param   {Object|String}     data
 	 * */
 	_trigger(data){
@@ -21,14 +22,14 @@ class Req{
 	}
 
 	/**
-	 * @desc    发送数据
-	 * @return  {Promise}   在 resolve 时传入 true
+	 * 发送数据
+	 * @return  {Promise}   在 返回一个 Promise 对象，在 resolve 时传入 true
 	 * */
 	send(){
 		return Promise.resolve( true );
 	}
 	/**
-	 * @desc    绑定监控事件
+	 * 绑定监控事件
 	 * @param   {Function}  callback    事件触发函数，函数将传入 data
 	 * */
 	on(callback){
@@ -36,11 +37,14 @@ class Req{
 	}
 }
 
-// 缓存
+/**
+ * @static
+ * @desc    子类对象缓存
+ * */
 Req._CONN_CACHE = {};
 
 /**
- * @desc    注册子类，若该子类已经被注册，并且缓存中没有该子类的实例，则覆盖
+ * 注册子类，若该子类已经被注册，并且缓存中没有该子类的实例，则覆盖
  * @param   {String}    type
  * @param   {Model}     conn
  * */
@@ -55,10 +59,10 @@ Req.register = function(type, conn){
 };
 
 /**
- * @desc    获取或生成 type 类型的 model 对象
+ * 获取或生成 type 类型的 model 对象
  * @param   {String}    type
- * @param   {Boolean|Object?}   notCache    为 boolean 类型时表示是否缓存，为 object 类型时将值赋给 options 并设置为 false
- * @param   {Object?}   options
+ * @param   {Boolean|Object}    [notCache]  为 boolean 类型时表示是否缓存，为 object 类型时将值赋给 options 并设置为 false
+ * @param   {Object}    [options]
  * @return  {Req}
  * */
 Req.factory = function(type, notCache=false, options={}){

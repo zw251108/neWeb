@@ -3,13 +3,14 @@
 import Model from './model';
 
 /**
- * @class   CacheStorageModel
+ * @class
+ * @extends Model
  * */
 class CacheStorageModel extends Model{
 	/**
 	 * @constructor
-	 * @param   {Object?}   config
-	 * @param   {String?}   config.cacheName
+	 * @param   {Object}    [config]
+	 * @param   {String}    [config.cacheName]
 	 * */
 	constructor(config={}){
 		super();
@@ -34,10 +35,10 @@ class CacheStorageModel extends Model{
 	}
 
 	/**
-	 * @desc    设置缓存
+	 * 设置缓存
 	 * @param   {String|Request}    key
 	 * @param   {Response}          response
-	 * @return  {Promise}           resolve 时传回 true
+	 * @return  {Promise}           返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
 	setData(key, response){
 		return this._store.then((caches)=>{
@@ -50,9 +51,9 @@ class CacheStorageModel extends Model{
 		});
 	}
 	/**
-	 * @desc    获取缓存
+	 * 获取缓存
 	 * @param   {String|Request}    key
-	 * @return  {Promise}           resolve 时传回查询到的缓存，reject 时传回 Error
+	 * @return  {Promise}           返回一个 Promise 对象，在 resolve 时传回查询到的缓存，reject 时传回 Error
 	 * */
 	getData(key){
 		return this._store.then((caches)=>{
@@ -93,16 +94,16 @@ class CacheStorageModel extends Model{
 		});
 	}
 	/**
-	 * @desc    将缓存删除
+	 * 将缓存删除
 	 * @param   {String}    key
-	 * @return  {Promise}   resolve 时传回 true
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
 	removeData(key){
 		return Promise.resolve( true );
 	}
 	/**
-	 * @desc    情况缓存
-	 * @return  {Promise}   resolve 时传回 true
+	 * 情况缓存
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
 	clearData(){
 		this._store.then((caches)=>{
@@ -113,7 +114,7 @@ class CacheStorageModel extends Model{
 	}
 
 	/**
-	 * @desc    基于 addAll 方法的封装
+	 * 基于 addAll 方法的封装
 	 * @param   {Array} cacheArray
 	 * */
 	addAll(cacheArray){

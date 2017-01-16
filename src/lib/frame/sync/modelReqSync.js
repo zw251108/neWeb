@@ -3,7 +3,8 @@
 import Model from '../model/index';
 
 /**
- * @class   ModelConnectSync    实现 model 与网络请求之间同步
+ * @class
+ * 实现 model 与网络请求之间同步
  * */
 class ModelConnectSync{
 	/**

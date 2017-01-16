@@ -3,7 +3,8 @@
 import Model from './model';
 
 /**
- * @class   CookieModel
+ * @class
+ * @extends Model
  * */
 class CookieModel extends Model{
 	/**
@@ -21,11 +22,11 @@ class CookieModel extends Model{
 	}
 
 	/**
-	 * @desc    设置数据
+	 * 设置数据
 	 * @param   {String}    key
 	 * @param   {*}         value
-	 * @param   {Object|Number|String?} options 相关配置
-	 * @return  {Promise}   resolve 时传回 true
+	 * @param   {Object|Number|String}  [options]   相关配置
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
 	setData(key, value, options){
 		return this._store.then(()=>{
@@ -53,9 +54,9 @@ class CookieModel extends Model{
 		});
 	}
 	/**
-	 * @desc    获取数据
+	 * 获取数据
 	 * @param   {String}    key
-	 * @return  {Promise}   resolve 时传回 value
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 value
 	 * */
 	getData(key){
 		return this._store.then(()=>{
@@ -90,9 +91,9 @@ class CookieModel extends Model{
 		});
 	}
 	/**
-	 * @desc    将数据从缓存中删除，实际为调用 setData 方法，过期时间为负值
+	 * 将数据从缓存中删除，实际为调用 setData 方法，过期时间为负值
 	 * @param   {String}    key
-	 * @return  {Promise}   resolve 时传回 true
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
 	removeData(key){
 		return this._store.then(()=>{
@@ -102,8 +103,8 @@ class CookieModel extends Model{
 		});
 	}
 	/**
-	 * @desc    清空数据，实际不做任何处理
-	 * @return  {Promise}   resolve 时传回空值
+	 * 清空数据，实际不做任何处理
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回空值
 	 * */
 	clearData(){
 		return Promise.resolve( true );

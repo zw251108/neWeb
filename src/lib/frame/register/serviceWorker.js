@@ -1,10 +1,11 @@
 'use strict';
 
 /**
- * @desc    注册 Service Worker
- * @param   {Object?}   options
+ * 注册 Service Worker
+ * @function    registerServiceWorker
+ * @param   {Object}    [options]
  * @param   {String}    options.file
- * @return  {Promise}   在 resolve 时传入 true
+ * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传入 true
  * */
 function registerServiceWorker(options={}){
 	let rs

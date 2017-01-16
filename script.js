@@ -5855,6 +5855,7 @@ var getSize = require('image-size')
 
 // var express = require('express')
 // 	, React = require('react')
+// 	, ReactDOMServer = require('react-dom/server')
 // 	, app = express()
 // 	;
 //
@@ -5879,7 +5880,7 @@ var getSize = require('image-size')
 //     </html>
 //   `;
 // }
-//
+// //
 // app.use((req, res) => {
 // 	match({ routes, location: req.url }, (err, redirectLocation, renderProps) => {
 // 		if (err) {
@@ -5906,4 +5907,12 @@ var getSize = require('image-size')
 // 			res.status(404).end('Not found');
 // 		}
 // 	});
+// });
+//
+// app.get('/', function(req, res){
+// 	res.end(ReactDOMServer.renderToStaticMarkup(
+// 		React.DOM.body(null, React.DOM.div({
+// 			id: 'root'
+// 		}))
+// 	))
 // });

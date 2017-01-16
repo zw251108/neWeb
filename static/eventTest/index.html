@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+	<title>Title</title>
+</head>
+<body>
+<a href="javascript:void(0)" id="clickHref">
+	<div style="width: 100px;height: 100px;background: lime;">
+		<span id="clickMe">点击我</span>
+	</div>
+</a>
+<!--<button id="btn" type="button">一个按钮</button>-->
+
+<script>
+window.onload = function(){
+	window.addEventListener('click', function(e){
+		if( e.target.id === 'clickMe' ){
+			console.log(222);
+			e.stopImmediatePropagation();
+		}
+	}, false);
+	window.addEventListener('click', function(e){
+//		if( e.target.id === 'clickHref' ){
+			console.log(1111)
+//		}
+	}, true);
+}
+</script>
+</body>
+</html>

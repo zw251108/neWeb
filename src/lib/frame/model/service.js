@@ -5,9 +5,10 @@ import req from '../req/index.js';
 import sync from '../sync/index.js';
 
 /**
- * @class   ServiceModel
+ * @class
+ * @extends Model
  *
- * todo 与服务器建立连接，缓存请求返回的数据
+ * @todo 与服务器建立连接，缓存请求返回的数据
  * */
 class ServiceModel extends Model{
 	/**
@@ -21,7 +22,7 @@ class ServiceModel extends Model{
 		this._req = req.factory('ajax');
 	}
 	/**
-	 *
+	 * 设置数据
 	 * @param   {Object}    options
 	 * @param   {String}    options.url
 	 * @param   {Object}    options.data
@@ -36,6 +37,7 @@ class ServiceModel extends Model{
 		});
 	}
 	/**
+	 * 获取数据
 	 * @param   {Object}    options
 	 * @param   {String}    options.url
 	 * @param   {Object}    options.data
@@ -50,6 +52,7 @@ class ServiceModel extends Model{
 		});
 	}
 	/**
+	 * 将数据同步到本地存储
 	 * @param   {Model} cacheModel
 	 * */
 	syncTo(cacheModel){
@@ -63,11 +66,15 @@ class ServiceModel extends Model{
 	}
 }
 
-// 缓存
+/**
+ * @static
+ * @desc    子类对象缓存
+ * */
 ServiceModel._MODEL_CACHE = {};
 
 /**
  * 注册子类，若该子类已经被注册，并且缓存中没有该子类的实例，则覆盖
+ * @static
  * @param   {String}    type
  * @param   {Model}     model
  * */
@@ -82,9 +89,10 @@ ServiceModel.register = function(type, model){
 
 /**
  * 获取或生成 type 类型的 model 对象
+ * @static
  * @param   {String}    type
- * @param   {Boolean|Object?}   notCache    为 boolean 类型时表示是否缓存，为 object 类型时将值赋给 options 并设置为 false
- * @param   {Object?}   options
+ * @param   {Boolean|Object}    [notCache]  为 boolean 类型时表示是否缓存，为 object 类型时将值赋给 options 并设置为 false
+ * @param   {Object}    [options]
  * @return  {Model}
  * */
 ServiceModel.factory = function(type, notCache=false, options={}){

@@ -3,7 +3,8 @@
 import Model from '../model/index';
 
 /**
- * @class   ModelSync   实现 model 直接数据同步
+ * @class
+ * 实现 model 直接数据同步
  * */
 class ModelSync{
 	/**
@@ -33,7 +34,7 @@ class ModelSync{
 		}
 	}
 	/**
-	 * @desc    同步回调函数
+	 * 同步回调函数
 	 * @private
 	 * @param   {String}    key
 	 * @param   {*}         value
@@ -42,7 +43,7 @@ class ModelSync{
 		let rs
 			;
 
-		if( value !== undefined ){
+		if( value !== null ){
 			rs = this.to.setData(key, value);
 		}
 		else{

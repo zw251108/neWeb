@@ -3,23 +3,24 @@
 import Model from './model';
 
 /**
- * @class   WebSQLModel
+ * @class
+ * @extends Model
  * */
 class WebSQLModel extends Model{
 	/**
 	 * @constructor
-	 * @param   {Object?}   config
-	 * @param   {String?}   config.dbName
-	 * @param   {String?}   config.tableName
-	 * @param   {Number?}   config.dbVersion
-	 * @param   {Number?}   config.dbSize   单位字节
-	 * @param   {Object?}   config.sql
-	 * @param   {String?}   config.sql.create   创建表时执行的 sql 语句
-	 * @param   {String?}   config.sql.select   查询时执行的 sql 语句
-	 * @param   {String?}   config.sql.update   更新时执行的 sql 语句
-	 * @param   {String?}   config.sql.insert   插入时执行的 sql 语句
-	 * @param   {String?}   config.sql.delete   删除时执行的 sql 语句
-	 * @param   {String?}   config.sql.clear    clearData 时执行的 sql 语句
+	 * @param   {Object}    [config]
+	 * @param   {String}    [config.dbName]
+	 * @param   {String}    [config.tableName]
+	 * @param   {Number}    [config.dbVersion]
+	 * @param   {Number}    [config.dbSize] 单位字节
+	 * @param   {Object}    [config.sql]
+	 * @param   {String}    [config.sql.create] 创建表时执行的 sql 语句
+	 * @param   {String}    [config.sql.select] 查询时执行的 sql 语句
+	 * @param   {String}    [config.sql.update] 更新时执行的 sql 语句
+	 * @param   {String}    [config.sql.insert] 插入时执行的 sql 语句
+	 * @param   {String}    [config.sql.delete] 删除时执行的 sql 语句
+	 * @param   {String}    [config.sql.clear]  clearData 时执行的 sql 语句
 	 * @desc    传入 sql 语句时，可用 {{tableName}} 来代替表名
 	 * */
 	constructor(config={}){
@@ -81,7 +82,8 @@ class WebSQLModel extends Model{
 		});
 	}
 	/**
-	 * @desc    替换表名
+	 * 替换表名
+	 * @private
 	 * @param   {String}    sql
 	 * @return  {String}    替换完成的 sql 语句
 	 * */
@@ -89,10 +91,10 @@ class WebSQLModel extends Model{
 		return sql.replace('{{tableName}}', this._config.tableName);
 	}
 	/**
-	 * @desc    查询
+	 * 查询
 	 * @private
 	 * @param   {String}    key
-	 * @return  {Promise}   resolve 时传回查询出来的数组
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回查询出来的数组
 	 * */
 	_select(key){
 		return this._store.then((db)=>{
@@ -109,11 +111,11 @@ class WebSQLModel extends Model{
 		});
 	}
 	/**
-	 * @desc    更新
+	 * 更新
 	 * @private
 	 * @param   {String}    key
 	 * @param   {String}    value
-	 * @return  {Promise}   resolve 时传回影响行数的 boolean 值
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回影响行数的 boolean 值
 	 * */
 	_update(key, value){
 		return this._store.then((db)=>{
@@ -130,11 +132,11 @@ class WebSQLModel extends Model{
 		});
 	}
 	/**
-	 * @desc    新建
+	 * 新建
 	 * @private
 	 * @param   {String}    key
 	 * @param   {String}    value
-	 * @return  {Promise}   resolve 时传回新插入行 id 的 boolean 值
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回新插入行 id 的 boolean 值
 	 * */
 	_insert(key, value){
 		return this._store.then((db)=>{
@@ -151,10 +153,10 @@ class WebSQLModel extends Model{
 		});
 	}
 	/**
-	 * @desc    删除
+	 * 删除
 	 * @private
 	 * @param   {String}    key
-	 * @return  {Promise}   resolve 时传回影响行数的 boolean 值
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回影响行数的 boolean 值
 	 * */
 	_delete(key){
 		return this._store.then((db)=>{
@@ -171,9 +173,9 @@ class WebSQLModel extends Model{
 		});
 	}
 	/**
-	 * @desc    清空表
+	 * 清空表
 	 * @private
-	 * @return  {Promise}   resolve 时传回影响行数的 boolean 值
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回影响行数的 boolean 值
 	 * */
 	_clear(){
 		return this._store.then((db)=>{
@@ -191,10 +193,10 @@ class WebSQLModel extends Model{
 	}
 
 	/**
-	 * @desc    设置数据
+	 * 设置数据
 	 * @param   {String}    key
 	 * @param   {*}         value
-	 * @return  {Promise}   resolve 时传回影响行数的 boolean 值
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回影响行数的 boolean 值
 	 * */
 	setData(key, value){
 		value = this._stringify(value);
@@ -217,9 +219,9 @@ class WebSQLModel extends Model{
 		});
 	}
 	/**
-	 * @desc    获取数据
+	 * 获取数据
 	 * @param   {String}    key
-	 * @return  {Promise}   resolve 时传回查询出来的 value
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回查询出来的 value
 	 * */
 	getData(key){
 		return this._select(key).then((rs)=>{
@@ -240,9 +242,9 @@ class WebSQLModel extends Model{
 		});
 	}
 	/**
-	 * @desc    将数据从缓存中删除
+	 * 将数据从缓存中删除
 	 * @param   {String}    key
-	 * @return  {Promise}   resolve 时传回影响行数的 boolean 值
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回影响行数的 boolean 值
 	 * */
 	removeData(key){
 		return this._delete(key).then((rs)=>{
@@ -252,18 +254,18 @@ class WebSQLModel extends Model{
 		});
 	}
 	/**
-	 * @desc    清空数据
-	 * @return  {Promise}   resolve 时传回影响行数的 boolean 值
+	 * 清空数据
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回影响行数的 boolean 值
 	 * */
 	clearData(){
 		return this._clear();
 	}
 
 	/**
-	 * @desc    独立执行 sql 方法
+	 * 独立执行 sql 方法
 	 * @param   {String}    sql
-	 * @param   {Array?}    value
-	 * @return  {Promise}   resolve 时传回 sql 语句的执行结果
+	 * @param   {Array}     [value]
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 sql 语句的执行结果
 	 * */
 	executeSql(sql, value=[]){
 		return this._store.then((db)=>{

@@ -3,7 +3,8 @@
 import Req from './req';
 
 /**
- * @class   WebSocketReq
+ * @class
+ * @extends Req
  * */
 class WebSocketReq extends Req{
 	/**
@@ -70,7 +71,7 @@ class WebSocketReq extends Req{
 	/**
 	 * @desc    发送数据
 	 * @param   {Object}    data
-	 * @return  {Promise}   resolve 时传回 true
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
 	send(data={}){
 		return this._conn.then((socket)=>{

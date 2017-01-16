@@ -3,15 +3,16 @@
 import Model from './model';
 
 /**
- * @class   IndexedDBModel
+ * @class
+ * @extends Model
  * */
 class IndexedDBModel extends Model{
 	/**
 	 * @constructor
-	 * @param   {Object?}   config
-	 * @param   {String?}   config.dbName
-	 * @param   {String?}   config.tableName
-	 * @param   {Number?}   config.dbVersion
+	 * @param   {Object}    [config]
+	 * @param   {String}    [config.dbName]
+	 * @param   {String}    [config.tableName]
+	 * @param   {Number}    [config.dbVersion]
 	 * */
 	constructor(config={}){
 		super();
@@ -75,10 +76,10 @@ class IndexedDBModel extends Model{
 		});
 	}
 	/**
-	 * @desc    查询
+	 * 查询
 	 * @private
 	 * @param   {String}    key
-	 * @return  {Promise}   resolve 时传回查询出来的 value
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回查询出来的 value
 	 * */
 	_select(key){
 		return this._store.then((db)=>{
@@ -101,11 +102,11 @@ class IndexedDBModel extends Model{
 		});
 	}
 	/**
-	 * @desc    新建或更新，add 接口要求数据库中不能已经有相同键的对象存在，因此统一使用 put 接口
+	 * 新建或更新，add 接口要求数据库中不能已经有相同键的对象存在，因此统一使用 put 接口
 	 * @private
 	 * @param   {String}    key
 	 * @param   {String}    value
-	 * @return  {Promise}   resolve 时传回 true
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
 	_put(key, value){
 		return this._store.then((db)=>{
@@ -128,10 +129,10 @@ class IndexedDBModel extends Model{
 		});
 	}
 	/**
-	 * @desc    删除
+	 * 删除
 	 * @private
 	 * @param   {String}    key
-	 * @return  {Promise}   resolve 时传回 true
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
 	_delete(key){
 		return this._store.then((db)=>{
@@ -151,9 +152,9 @@ class IndexedDBModel extends Model{
 		});
 	}
 	/**
-	 * @desc    清空
+	 * 清空
 	 * @private
-	 * @return  {Promise}   resolve 时传回 true
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
 	_clear(){
 		return this._store.then((db)=>{
@@ -174,10 +175,10 @@ class IndexedDBModel extends Model{
 	}
 
 	/**
-	 * @desc    设置数据
+	 * 设置数据
 	 * @param   {String}    key
 	 * @param   {*}         value
-	 * @return  {Promise}   resolve 时传回 true
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
 	setData(key, value){
 		return this._put(key, this._stringify(value)).then((rs)=>{
@@ -187,9 +188,9 @@ class IndexedDBModel extends Model{
 		});
 	}
 	/**
-	 * @desc    获取数据
+	 * 获取数据
 	 * @param   {String}    key
-	 * @return  {Promise}   resolve 时传回查询出来的 value
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回查询出来的 value
 	 * */
 	getData(key){
 		return this._select(key).then((value)=>{
@@ -205,9 +206,9 @@ class IndexedDBModel extends Model{
 		});
 	}
 	/**
-	 * @desc    将数据从缓存中删除
+	 * 将数据从缓存中删除
 	 * @param   {String}    key
-	 * @return  {Promise}   resolve 时传回 true
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
 	removeData(key){
 		return this._delete(key).then((rs)=>{
@@ -217,8 +218,8 @@ class IndexedDBModel extends Model{
 		});
 	}
 	/**
-	 * @desc    清空数据
-	 * @return  {Promise}   resolve 时传回 true
+	 * 清空数据
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
 	clearData(){
 		return this._clear();

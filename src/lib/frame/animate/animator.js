@@ -1,14 +1,14 @@
 'use strict';
 
 /**
- * @class   Animator
+ * @class
  * */
 class Animator {
 	/**
 	 * @constructor
 	 * @param   {Number}    duration    运行时间，单位毫秒
 	 * @param   {Function}  progress    运行操作
-	 * @param   {String|Function?} easing   变化速率
+	 * @param   {String|Function}   [easing]    变化速率
 	 * */
 	constructor(duration, progress, easing='linear'){
 		this.duration = duration;
@@ -29,8 +29,8 @@ class Animator {
 	}
 
 	/**
-	 * @desc    运行动画
-	 * @param   {Boolean|Function?}  finished    Boolean 值时表示是否继续运行，Function 时为运行结束的回调函数
+	 * 运行动画
+	 * @param   {Boolean|Function}  [finished]  Boolean 值时表示是否继续运行，Function 时为运行结束的回调函数
 	 * */
 	run(finished){
 		let startTime = Date.now()
@@ -72,7 +72,7 @@ class Animator {
 		});
 	}
 	/**
-	 * @desc    停止动画
+	 * 停止动画
 	 * */
 	stop(){
 		if( this._animate ){
@@ -83,7 +83,7 @@ class Animator {
 	}
 
 	/**
-	 * @desc    将动画代码渲染为 CSS 动画
+	 * 将动画代码渲染为 CSS 动画
 	 * */
 	renderCSS(){
 
