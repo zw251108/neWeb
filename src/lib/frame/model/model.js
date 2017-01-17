@@ -5,6 +5,8 @@
 /**
  * @class
  * @desc    数据层基类，将数据保存在内存中
+ * @example
+ *  let model = new Model();
  * */
 class Model{
 	/**

@@ -4,10 +4,18 @@ import Req from './req';
 
 /**
  * @class
- * @desc    源生实现 Ajax，在支持 fetch 的浏览器中优先使用 fetch 方法，否则回退使用 XMLHttpRequest 对象
+ * @desc    源生实现 Ajax 接口    //，在支持 fetch 的浏览器中优先使用 fetch 方法，否则回退使用 XMLHttpRequest 对象
  *          参数上兼容 $.ajax 方法的参数
- *              不支持 success、error、complete 等回调函数参数，只能以 Promise 的方式调用
+ *              不支持 beforeSend、success、error、complete 等回调函数参数，只能以 Promise 的方式调用
  *              不支持 async 参数，所有请求为异步请求
+ *              不支持 cache 参数，所有请求不缓存
+ *              不支持 xhr 参数，不考虑兼容，直接使用 XMLHttpRequest 对象
+ *          支持监听事件：
+ *              ajaxStart   请求发送前
+ *              ajaxSend    请求已发送
+ *              ajaxSuccess 请求成功返回
+ *              ajaxError   请求发送失败、超时或返回错误
+ *              ajaxComplete    请求无论成功失败后最后调用的事件
  *
  * @extends Req
  * */
@@ -15,6 +23,8 @@ class AjaxReq extends Req{
 	/**
 	 * @constructor
 	 * @param   {Object}    [config]
+	 * @param   {Object}    [config.accepts]
+	 * @param   {String}    [config.contentType]
 	 * */
 	constructor(config={}){
 		super();
@@ -29,6 +39,9 @@ class AjaxReq extends Req{
 
 			return all;
 		}, {});
+
+		// 进行中的请求集合
+		this._active = {};
 	}
 
 	/**
@@ -79,14 +92,33 @@ class AjaxReq extends Req{
 	 * 发送 GET XMLHttpRequest 类型请求
 	 * @private
 	 * @param   {Object}    options
+	 * @param   {Object}    [headers]
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时返回结果
 	 * */
-	_sendGetXHR(options){
+	_sendGetXHR(options, headers={}){
 		return new Promise((resolve, reject)=>{
 			let xhr = new XMLHttpRequest()
 				;
 
-			xhr.open('GET', options.url);
+			xhr.open('GET', options.url, true, options.username, options.password);
+
+			if( options.xhrFields ){
+				Object.keys( options.xhrFields ).forEach((d)=>{   // 自定义配置，包括 withCredentials
+					xhr[d] = options.xhrFields[d];
+				});
+			}
+
+			if( options.mimeType && xhr.overrideMimeType ){ // 重写 mimeType
+				xhr.overrideMimeType( options.mimeType );
+			}
+
+			if( !options.crossDomain && (headers && !headers['X-Request-With']) ){
+				headers['X-Request-With'] = 'XMLHttpRequest';
+			}
+
+			Object.keys( headers ).forEach((d)=>{
+				xhr.setRequestHeader(d, headers[d]);
+			});
 
 			xhr.timeout = options.timeout || this._config.timeout;
 
@@ -106,6 +138,9 @@ class AjaxReq extends Req{
 			xhr.onerror = function(e){
 				reject(new Error( this.statusText ));
 			};
+			xhr.onabort = function(){
+
+			}
 		});
 	}
 	/**
@@ -200,12 +235,20 @@ class AjaxReq extends Req{
 	 * @param   {String}    options.url
 	 * @param   {String}    options.method
 	 * @param   {Object}    options.data
+	 * @param   {Object}    options.dataType
 	 * @return  {Promise}
 	 * */
 	send(url, options={}){
 		let result
-			, type = (options.method || options.type || '').toLowerCase()
+			, type
 			;
+
+		if( typeof url === 'object' ){
+			options = url;
+			url = options.url || '';
+		}
+
+		type = (options.method || options.type || '').toLowerCase();
 
 		switch( type ){
 			// todo 支持 Restful API
@@ -226,7 +269,7 @@ class AjaxReq extends Req{
 				result = this._sendGetRequest( options );
 				break;
 			case 'get': // 从服务器取回数据
-			default:
+			default:    // 默认为 GET 请求
 				this._toPostBody( options );
 				result = this._sendPostRequest( options );
 				break;
@@ -260,8 +303,35 @@ class AjaxReq extends Req{
 
 		return this._sendPostRequest( options );
 	}
+	/**
+	 * 终止请求
+	 * */
+	abort(id){
+
+	}
+	/**
+	 * 事件监听
+	 * @param   {String}    eventType   事件类型：ajaxStart,ajaxSend,ajaxSuccess,ajaxError,ajaxComplete
+	 * @param   {Function}  callback    事件回调
+	 * */
+	on(eventType, callback){
+
+	}
+
+	/**
+	 * 设置默认配置
+	 * @param   {Object}    options
+	 * @return  {Object}
+	 * */
+	setting(options){
+		this._default = options;
+	}
 }
 
+/**
+ * 默认配置
+ * @static
+ * */
 AjaxReq._CONFIG = {
 	cache: false    // 是否缓存请求
 	// , cors: true    // 是否跨域
@@ -270,13 +340,76 @@ AjaxReq._CONFIG = {
 	, maxNumRequest: 5  // 最大请求连接数
 };
 
+/**
+ * 默认参数
+ * @static
+ * */
 AjaxReq._DEFAULT = {
-	accepts: {} // 发送请求头信息通知服务器该请求需要接受何种类型的返回结果，需配合 converters 使用
-	, converters: {}
-	, cors: false
+	accepts: {  // 发送请求头信息通知服务器该请求需要接受何种类型的返回结果，需配合 converters 使用
+		'*': '*/*'
+		, text: 'text/plain'
+		, html: 'text/html'
+		, xml: 'application/xml, text/xml'
+		, json: 'application/json, text/javascript'
+	}
+	// 仅支持异步请求
+	// , async: true
+	// 不支持函数参数
+	// , beforeSend: function(){}
+	// 不支持缓存
+	// , cache: true
+	// 不支持函数参数
+	// , complete: function(){}
+	, content: {}
+	, contentType: ''
+	, context: {}
+	, converters: {
+		'* text': String  // 任何类型转化为文本
+		, 'text html': true // 将文本转化为 html
+		, 'text json': JSON.parse
+		, 'text xml': ''
+	}
+	, crossDomain: false
+	, data: {}
+	, dataFilter: function(){}
+	// 不支持函数参数
+	// , error: function(){}
+	, global: true
+	, headers: {}
+	, ifModified: false
+	, isLocal: true
+	//
 	, jsonp: false
+	, jsonpCallback: function(){}
+	, method: 'GET'
+	, mimeType: ''
+	, password: ''
+	, proccessData: true
+	, scriptCharset: ''
+	, statusCode: {}
+	// 不支持函数参数
+	// , success: function(){}
+	, timeout: 5000
+	, traditional: true
+	, type: 'GET'
+	, url: ''
+	, username: ''
+	// 使用 XMLHttpRequest 对象
+	// , xhr: function(){}
+	, xhrFields: {}
+
+	// , responseFields: {
+	// 	xml: 'responseXML'
+	// 	, text: 'responseText'
+	// 	, json: 'responseJSON'
+	// }
+	// , cors: false
 };
 
+/**
+ * 支持
+ * @static
+ * */
 AjaxReq._SUPPORT = {
 	cors: 'withCredentials' in new XMLHttpRequest()
 	, fetch: 'fetch' in self

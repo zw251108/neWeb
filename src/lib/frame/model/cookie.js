@@ -5,6 +5,11 @@ import Model from './model';
 /**
  * @class
  * @extends Model
+ * @desc    在 Model.factory 工厂方法注册为 cookie，将可以使用工厂方法生成
+ * @example
+	let cookieModel = new CookieModel()
+		, cookie = Model.factory('cookie')
+	    ;
  * */
 class CookieModel extends Model{
 	/**
@@ -151,6 +156,11 @@ CookieModel._transDate = function(date){
 	return date && date.toUTCString();
 };
 
+/**
+ * 在 Model.factory 工厂方法注册，将可以使用工厂方法生成
+ * @tutorial
+ *  let cookieModel = Model.factory('cookie');
+ * */
 Model.register('cookie', CookieModel);
 
 export default CookieModel;

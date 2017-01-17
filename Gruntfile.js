@@ -155,6 +155,11 @@ var jsFiles = {
 	//, 'impress/impress.js': ['bower_components/impress.js/js/impress.js']
 };
 
+// var docConfigure = require('ink-docstrap/template/jsdoc.conf.json');
+
+// docConfigure.templates.systemName = 'New TG Frame';
+// docConfigure.templates.theme = 'Cerulean';
+
 module.exports = function(grunt){
 	grunt.initConfig({
 		// 并行运行任务
@@ -546,7 +551,7 @@ module.exports = function(grunt){
 					destination: 'static/frameDoc'
 					, access: 'all'
 					, template : "node_modules/ink-docstrap/template"
-					, configure : "node_modules/ink-docstrap/template/jsdoc.conf.json"
+					, configure : "./jsdoc.conf.json"
 				}
 				, src: [
 					'src/lib/frame/*.js'

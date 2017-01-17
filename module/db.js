@@ -189,10 +189,10 @@ exec().then(function(db){
 module.exports = {
 	/**
 	 * @method  handle
-	 * @param   {object}    query
-	 * @param   {string}    query.sql
-	 * @param   {array?}    query.data
-	 * @return  {object}    数据操作的 Promise 对象
+	 * @param   {Object}    query
+	 * @param   {String}    query.sql
+	 * @param   {Array}     [query.data]
+	 * @return  {Object}    数据操作的 Promise 对象
 	 * */
 	handle: function(query){
 		var sql

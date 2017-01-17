@@ -6,7 +6,8 @@ import Req from './req';
 
 import './load';
 import './ajax';
+import './fetch';
 import './webSocket';
-import '../register/serviceWorker';
+// import '../register/serviceWorker';
 
 export default Req;
