@@ -23,12 +23,13 @@ class ServiceModel extends Model{
 	}
 	/**
 	 * 设置数据
+	 * @param   {String}    topic
 	 * @param   {Object}    options
 	 * @param   {String}    options.url
 	 * @param   {Object}    options.data
 	 * @return  {Promise}
 	 * */
-	setData(options){
+	setData(topic, options){
 		// Req 对象操作
 		return this._req( options ).then(function(){    // 发送请求成功
 
@@ -38,29 +39,47 @@ class ServiceModel extends Model{
 	}
 	/**
 	 * 获取数据
+	 * @param   {String}    topic
 	 * @param   {Object}    options
 	 * @param   {String}    options.url
 	 * @param   {Object}    options.data
 	 * @return  {Promise}
 	 * */
-	getData(options){
-		// Req 对象操作
-		return this._req( options ).then(function(){
+	getData(topic, options){
+		let result
+			;
 
-		}, function(){
+		// Req 对象操作
+
+		// todo 优先从本地 syncTo model 中读取数据
+		result = Promise.all( this._syncList.map(d=>{
+			d.getData(options).then(function(varlue){
+				return value;
+			}, function(e){
+				return null;
+			});
+		}) ).then(function(){
 
 		});
+
+		// return Promise.allthis._syncList
+
+		// this._req( options ).then(function(){
+		//
+		// }, function(){
+		//
+		// });
 	}
 	/**
 	 * 将数据同步到本地存储
 	 * @param   {Model} cacheModel
 	 * */
-	syncTo(cacheModel){
+	syncTo(model){
 		let rs
 			;
 
-		if( !(cacheModel instanceof ServiceModel) ){
-			rs = sync.makeModelSync(this, cacheModel);
+		if( !(model instanceof ServiceModel) ){
+			rs = sync.makeModelSync(this, model);
 			// this._syncList.push( rs );
 		}
 	}

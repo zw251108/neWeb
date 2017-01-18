@@ -5,11 +5,12 @@ import Model from './model';
 /**
  * @class
  * @extends Model
- * @desc    在 Model.factory 工厂方法注册为 cookie，将可以使用工厂方法生成
+ * @classdesc   在 Model.factory 工厂方法注册为 cookie，别名 c，将可以使用工厂方法生成
  * @example
-	let cookieModel = new CookieModel()
-		, cookie = Model.factory('cookie')
-	    ;
+let cookieModel = new CookieModel()
+	, cookie = Model.factory('cookie')
+    , c = Model.factory('c')
+	;
  * */
 class CookieModel extends Model{
 	/**
@@ -19,7 +20,7 @@ class CookieModel extends Model{
 		super();
 
 		if( navigator.cookieEnabled ){
-			this._store = Promise.resolve(true);
+			this._store = Promise.resolve( true );
 		}
 		else{
 			this._store = Promise.reject( new Error('此浏览器不支持 Cookie') );
@@ -28,12 +29,12 @@ class CookieModel extends Model{
 
 	/**
 	 * 设置数据
-	 * @param   {String}    key
+	 * @param   {String}    topic
 	 * @param   {*}         value
 	 * @param   {Object|Number|String}  [options]   相关配置
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
-	setData(key, value, options){
+	setData(topic, value, options){
 		return this._store.then(()=>{
 			if( typeof options !== 'object' ){
 				options = {
@@ -45,7 +46,7 @@ class CookieModel extends Model{
 				options.expires = CookieModel._transDate( options.expires );
 			}
 
-			document.cookie = encodeURIComponent(key) +'='+ encodeURIComponent( this._stringify(value) ) + Object.keys( CookieModel._DEFAULT ).reduce((a, d)=>{    // 整理配置
+			document.cookie = encodeURIComponent( topic ) +'='+ encodeURIComponent( this._stringify(value) ) + Object.keys( CookieModel._DEFAULT ).reduce((a, d)=>{    // 整理配置
 					if( d in options ){
 						a += '; '+ d +'='+ options[d];
 					}
@@ -53,17 +54,17 @@ class CookieModel extends Model{
 					return a;
 				}, '');
 
-			this._trigger(key, value);
+			this._trigger(topic, value);
 
 			return true
 		});
 	}
 	/**
 	 * 获取数据
-	 * @param   {String}    key
-	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 value
+	 * @param   {String}    topic
+	 * @return  {Promise}   返回一个 Promise 对象，若存在 topic 的值，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
 	 * */
-	getData(key){
+	getData(topic){
 		return this._store.then(()=>{
 			let cookies = document.cookie
 				, i = 0, l
@@ -81,30 +82,35 @@ class CookieModel extends Model{
 			for(l = cookies.length; i < l; i++ ){
 				t = cookies[i].split('=');
 
-				if( key === decodeURIComponent( t[0] ) ){
+				if( topic === decodeURIComponent( t[0] ) ){
 					value = decodeURIComponent( t[1] );
 					break;
 				}
 			}
 
-			try{
-				value = JSON.parse( value );
+			if( value ){
+				try{
+					value = JSON.parse( value );
+				}
+				catch(e){}
 			}
-			catch(e){}
+			else{
+				value = Promise.reject( null );
+			}
 
 			return value;
 		});
 	}
 	/**
 	 * 将数据从缓存中删除，实际为调用 setData 方法，过期时间为负值
-	 * @param   {String}    key
+	 * @param   {String}    topic
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
-	removeData(key){
+	removeData(topic){
 		return this._store.then(()=>{
-			this._trigger(key, null);
+			this._trigger(topic, null);
 
-			return this.setData(key, '', '-1d');
+			return this.setData(topic, '', '-1d');
 		});
 	}
 	/**
@@ -158,9 +164,12 @@ CookieModel._transDate = function(date){
 
 /**
  * 在 Model.factory 工厂方法注册，将可以使用工厂方法生成
- * @tutorial
- *  let cookieModel = Model.factory('cookie');
  * */
 Model.register('cookie', CookieModel);
+
+/**
+ * 注册别名
+ * */
+Model.registerAlias('cookie', 'c');
 
 export default CookieModel;

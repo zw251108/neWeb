@@ -23,6 +23,7 @@ class Req{
 
 	/**
 	 * 发送数据
+	 * @abstract
 	 * @return  {Promise}   在 返回一个 Promise 对象，在 resolve 时传入 true
 	 * */
 	send(){

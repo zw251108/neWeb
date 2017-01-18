@@ -4,9 +4,9 @@
 
 /**
  * @class
- * @desc    数据层基类，将数据保存在内存中
+ * @classdesc   数据层基类，将数据保存在内存中
  * @example
- *  let model = new Model();
+let model = new Model();
  * */
 class Model{
 	/**
@@ -14,7 +14,7 @@ class Model{
 	 * */
 	constructor(){
 		this._value = {};
-		this._eventList = [];
+		this._eventList = {};
 	}
 
 	/**
@@ -34,83 +34,103 @@ class Model{
 	/**
 	 * 触发绑定的数据监控事件
 	 * @protected
-	 * @param   {String}    key
+	 * @param   {String}    topic
 	 * @param   {*}         value
 	 * */
-	_trigger(key, value){
-		setTimeout(()=>{
-			this._eventList.forEach((d)=>d(key, value));
-		}, 0);
+	_trigger(topic, value){
+		if( topic in this._eventList ){
+			setTimeout(()=>{
+				this._eventList[topic].forEach((d)=>d(value));
+			}, 0);
+		}
 	}
 
 	/**
 	 * 绑定数据监视事件
-	 * @param   {Function}  callback    事件触发函数，函数将传入 key,newValue 两个值，当 newValue 为 null 时，视为 removeData 触发
+	 * @param   {String}    topic
+	 * @param   {Function}  callback    事件触发函数，函数将传入 newValue 两个值，当 removeData 执行时也会触发事件，newValue 被传为 null
 	 * */
-	on(callback){
-		this._eventList.push( callback );
+	on(topic, callback){
+		if( !(topic in this._eventList) ){
+			this._eventList[topic] = [];
+		}
+
+		this._eventList[topic].push( callback );
 	}
 	/**
 	 * 解除绑定数据监控回调函数
+	 * @param   {String}    topic
 	 * @param   {Function}  callback
 	 * */
-	off(callback){
-		let i = this._eventList.indexOf( callback )
+	off(topic, callback){
+		let i = this._eventList[topic].indexOf( callback )
 			;
 
-		this._eventList.splice(i, 1);
+		if( i !== -1 ){
+			this._eventList[topic].splice(i, 1);
+		}
 	}
 	/**
 	 * 设置数据，子类覆盖时如需对数据监控，应在适当的时候调用 _trigger 方法
-	 * @param   {String}    key
-	 * @param   {*}         value
+	 * @param   {String}    topic   主题
+	 * @param   {*}         value   value 为 null、undefined 时会被保存为空字符串
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * @desc    设置数据的时候会使用 Object.defineProperty 定义该属性
 	 * */
-	setData(key, value){
-		if( key in this._value ){
-			this._value[key] = value;
+	setData(topic, value){
+		if( topic in this._value ){
+			this._value[topic] = value;
 		}
 		else{
-			Object.defineProperty(this._value, key, {
+			Object.defineProperty(this._value, topic, {
 				enumerable: true
 				, configurable: false
 				, value: value
 				, set(newVal){
 					if( newVal !== value ){
-						this._trigger(key, newVal);
+						this._trigger(topic, newVal);
 					}
 				}
 			});
 
-			this._trigger(key, value);
+			this._trigger(topic, value);
 		}
 
 		return Promise.resolve(true);
 	}
 	/**
 	 * 获取数据
-	 * @param   {String}    key
-	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回查询出来的 value
+	 * @param   {String}    topic
+	 * @return  {Promise}   返回一个 Promise 对象，若存在 topic 的值，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
 	 * */
-	getData(key){
-		return Promise.resolve(this._value[key] || '');
+	getData(topic){
+		let result
+			;
+
+		if( topic in this._value ){
+			result = Promise.resolve( this._value[topic] );
+		}
+		else{
+			result = Promise.reject( null );
+		}
+		
+		return result;
 	}
 	/**
 	 * 将数据从缓存中删除，子类覆盖时如需对数据监控，应在适当的时候调用 _trigger 方法
-	 * @param   {String}    key
+	 * @param   {String}    topic
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
-	removeData(key){
+	removeData(topic){
 		let rs
 			;
 
 		try {
-			if( this._value.hasOwnProperty(key) ){
-				delete this._value[key];
+			if( this._value.hasOwnProperty(topic) ){
+				delete this._value[topic];
 				rs = Promise.resolve(true);
 
-				this._trigger(key, null);
+				this._trigger(topic, null);
 			}
 			else{
 				rs = Promise.reject( new Error('只能删除自定义属性') );
@@ -138,6 +158,7 @@ class Model{
  * @desc    子类对象缓存
  * */
 Model._MODEL_CACHE = {};
+Model._MODEL_ALIAS = {};
 
 /**
  * 注册子类，若该子类已经被注册，并且缓存中没有该子类的实例，则覆盖
@@ -153,6 +174,27 @@ Model.register = function(type, model){
 	else{
 		Model[type] = model;
 	}
+};
+
+/**
+ * 注册子类的别名
+ * @param   {String}        type        已注册的子类名
+ * @param   {String|Array}  aliasName   该子类的别名
+ * */
+Model.registerAlias = function(type, aliasName){
+
+	if( !Array.isArray(aliasName) ){
+		aliasName = [aliasName];
+	}
+
+	aliasName.forEach((d)=>{
+		if( !(d in Model._MODEL_ALIAS) ){
+			Model._MODEL_ALIAS[d] = type;
+		}
+		else{
+			console.log(d, ' 已经存在');
+		}
+	});
 };
 
 /**
@@ -172,6 +214,11 @@ Model.factory = function(type, notCache=false, options={}){
 		notCache = false;
 	}
 
+	// 判断 type 是否为别名
+	if( !(type in Model) && (type in Model._MODEL_ALIAS) ){
+		type = Model._MODEL_ALIAS[type];
+	}
+
 	if( type in Model ){
 		if( !notCache && type in Model._MODEL_CACHE ){
 			model = Model._MODEL_CACHE[type];
@@ -182,6 +229,7 @@ Model.factory = function(type, notCache=false, options={}){
 		}
 	}
 	else{
+		console.log('不存在注册为 ', type, ' 的子类');
 		model = new Model(options);
 	}
 

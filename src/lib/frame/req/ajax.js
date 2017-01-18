@@ -4,7 +4,7 @@ import Req from './req';
 
 /**
  * @class
- * @desc    源生实现 Ajax 接口    //，在支持 fetch 的浏览器中优先使用 fetch 方法，否则回退使用 XMLHttpRequest 对象
+ * @classdesc   源生实现 Ajax 接口，在支持 fetch 的浏览器中优先使用 fetch 方法，否则回退使用 XMLHttpRequest 对象
  *          参数上兼容 $.ajax 方法的参数
  *              不支持 beforeSend、success、error、complete 等回调函数参数，只能以 Promise 的方式调用
  *              不支持 async 参数，所有请求为异步请求

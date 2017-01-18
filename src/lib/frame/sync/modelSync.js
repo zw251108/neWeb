@@ -4,7 +4,7 @@ import Model from '../model/index';
 
 /**
  * @class
- * 实现 model 直接数据同步
+ * @classdesc   实现 model 直接数据同步
  * */
 class ModelSync{
 	/**

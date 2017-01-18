@@ -5,6 +5,13 @@ import Model from './model';
 /**
  * @class
  * @extends Model
+ * @classdesc   在 Model.factory 工厂方法注册为 webSQL，别名 ws,sql，将可以使用工厂方法生成
+ * @example
+let webSQLModel = new WebSQLModel()
+	, storage = Model.factory('webSQL')
+	, ws = Model.factory('ws')
+	, sql = Model.factory('sql')
+	;
  * */
 class WebSQLModel extends Model{
 	/**
@@ -93,15 +100,15 @@ class WebSQLModel extends Model{
 	/**
 	 * 查询
 	 * @private
-	 * @param   {String}    key
+	 * @param   {String}    topic
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回查询出来的数组
 	 * */
-	_select(key){
+	_select(topic){
 		return this._store.then((db)=>{
 			return new Promise((resolve, reject)=>{
 				db.transaction((tx)=>{
-					tx.executeSql(this._config.sql.select, [key], function(tx, rs){
-						resolve(rs.rows);
+					tx.executeSql(this._config.sql.select, [topic], function(tx, rs){
+						resolve( rs.rows );
 					}, function(tx, e){
 						console.log( e );
 						reject( e );
@@ -113,16 +120,16 @@ class WebSQLModel extends Model{
 	/**
 	 * 更新
 	 * @private
-	 * @param   {String}    key
+	 * @param   {String}    topic
 	 * @param   {String}    value
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回影响行数的 boolean 值
 	 * */
-	_update(key, value){
+	_update(topic, value){
 		return this._store.then((db)=>{
 			return new Promise((resolve, reject)=>{
 				db.transaction((tx)=>{
-					tx.executeSql(this._config.sql.update, [value, key], function(tx, rs){
-						resolve(!!rs.rowsAffected);
+					tx.executeSql(this._config.sql.update, [value, topic], function(tx, rs){
+						resolve( !!rs.rowsAffected );
 					}, function(tx, e){
 						console.log( e );
 						reject( e );
@@ -134,16 +141,16 @@ class WebSQLModel extends Model{
 	/**
 	 * 新建
 	 * @private
-	 * @param   {String}    key
+	 * @param   {String}    topic
 	 * @param   {String}    value
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回新插入行 id 的 boolean 值
 	 * */
-	_insert(key, value){
+	_insert(topic, value){
 		return this._store.then((db)=>{
 			return new Promise((resolve, reject)=>{
 				db.transaction((tx)=>{
-					tx.executeSql(this._config.sql.insert, [key, value], function(tx, rs){
-						resolve(!!rs.insertId);
+					tx.executeSql(this._config.sql.insert, [topic, value], function(tx, rs){
+						resolve( !!rs.insertId );
 					}, function(tx, e){
 						console.log( e );
 						reject( e );
@@ -155,14 +162,14 @@ class WebSQLModel extends Model{
 	/**
 	 * 删除
 	 * @private
-	 * @param   {String}    key
+	 * @param   {String}    topic
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回影响行数的 boolean 值
 	 * */
-	_delete(key){
+	_delete(topic){
 		return this._store.then((db)=>{
 			return new Promise((resolve, reject)=>{
 				db.transaction((tx)=>{
-					tx.executeSql(this._config.sql.delete, [key], function(tx, rs){
+					tx.executeSql(this._config.sql.delete, [topic], function(tx, rs){
 						resolve( !!rs.rowsAffected );
 					}, function(tx, e){
 						console.log( e );
@@ -182,7 +189,7 @@ class WebSQLModel extends Model{
 			return new Promise((resolve, reject)=>{
 				db.transaction((tx)=>{
 					tx.executeSql(this._config.sql.clear, [], function(tx, rs){
-						resolve(!!rs.rowsAffected);
+						resolve( !!rs.rowsAffected );
 					}, function(tx, e){
 						console.log( e );
 						reject( e );
@@ -194,61 +201,64 @@ class WebSQLModel extends Model{
 
 	/**
 	 * 设置数据
-	 * @param   {String}    key
+	 * @param   {String}    topic
 	 * @param   {*}         value
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回影响行数的 boolean 值
 	 * */
-	setData(key, value){
-		value = this._stringify(value);
+	setData(topic, value){
+		value = this._stringify( value );
 
-		return this._select(key).then((rs)=>{
+		return this._select( topic ).then((rs)=>{
 			let result;
 
-			if( rs && rs.length ){    // key 已存在
-				result = this._update(key, value);
+			if( rs && rs.length ){    // topic 已存在
+				result = this._update(topic, value);
 			}
 			else{
-				result = this._insert(key, value);
+				result = this._insert(topic, value);
 			}
 
 			return result;
 		}).then((rs)=>{
-			this._trigger(key, value);
+			this._trigger(topic, value);
 
 			return rs;
 		});
 	}
 	/**
 	 * 获取数据
-	 * @param   {String}    key
-	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回查询出来的 value
+	 * @param   {String}    topic
+	 * @return  {Promise}   返回一个 Promise 对象，若存在 topic 的值，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
 	 * */
-	getData(key){
-		return this._select(key).then((rs)=>{
+	getData(topic){
+		return this._select( topic ).then((rs)=>{
 			let value = ''
 				;
 
 			if( rs && rs.length ){
 				// 只返回第一条数据
 				value = rs[0].value;
-			}
 
-			try{
-				value = JSON.parse( value );
+				try{
+					value = JSON.parse( value );
+				}
+				catch(e){}
 			}
-			catch(e){}
+			else{
+				value = Promise.reject( null );
+			}
 
 			return value;
 		});
 	}
 	/**
 	 * 将数据从缓存中删除
-	 * @param   {String}    key
+	 * @param   {String}    topic
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回影响行数的 boolean 值
 	 * */
-	removeData(key){
-		return this._delete(key).then((rs)=>{
-			this._trigger(key, null);
+	removeData(topic){
+		return this._delete( topic ).then((rs)=>{
+			this._trigger(topic, null);
 
 			return rs;
 		});
@@ -272,7 +282,7 @@ class WebSQLModel extends Model{
 			return new Promise((resolve, reject)=>{
 				db.transaction((tx)=>{
 					tx.executeSql(sql, value, function(tx, rs){
-						resolve(rs);
+						resolve( rs );
 					}, function(e){
 						console.log( e );
 						reject( e );
@@ -298,6 +308,14 @@ WebSQLModel._CONFIG = {
 	}
 };
 
+/**
+ * 在 Model.factory 工厂方法注册，将可以使用工厂方法生成
+ * */
 Model.register('webSQL', WebSQLModel);
+
+/**
+ * 注册别名
+ * */
+Model.registerAlias('webSQL', ['ws', 'sql']);
 
 export default WebSQLModel;

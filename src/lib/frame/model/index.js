@@ -1,5 +1,9 @@
 'use strict';
 
+/**
+ * @module  model
+ * */
+
 import Model from './model';
 
 // 缓存

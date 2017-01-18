@@ -4,7 +4,7 @@ import Model from '../model/index';
 
 /**
  * @class
- * 实现 model 与网络请求之间同步
+ * @classdesc   实现 model 与网络请求之间同步
  * */
 class ModelConnectSync{
 	/**

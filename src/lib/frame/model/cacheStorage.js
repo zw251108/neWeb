@@ -5,6 +5,12 @@ import Model from './model';
 /**
  * @class
  * @extends Model
+ * @classdesc   在 Model.factory 工厂方法注册为 cacheStorage，别名 cs，将可以使用工厂方法生成
+ * @example
+let cacheStorageModel = new CacheStorageModel()
+	, storage = Model.factory('cacheStorage')
+	, cs = Model.factory('cs')
+	;
  * */
 class CacheStorageModel extends Model{
 	/**
@@ -36,35 +42,35 @@ class CacheStorageModel extends Model{
 
 	/**
 	 * 设置缓存
-	 * @param   {String|Request}    key
+	 * @param   {String|Request}    topic
 	 * @param   {Response}          response
 	 * @return  {Promise}           返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
-	setData(key, response){
+	setData(topic, response){
 		return this._store.then((caches)=>{
 			return caches.open( this._config.cacheName );
 		}).then(function(cache){
-			console.log('缓存 '+ (typeof key === 'string' ? key : key.url));
-			return cache.put(key, response);
+			console.log('缓存 '+ (typeof topic === 'string' ? topic : topic.url));
+			return cache.put(topic, response);
 		}).then(function(){
 			return true;
 		});
 	}
 	/**
 	 * 获取缓存
-	 * @param   {String|Request}    key
+	 * @param   {String|Request}    topic
 	 * @return  {Promise}           返回一个 Promise 对象，在 resolve 时传回查询到的缓存，reject 时传回 Error
 	 * */
-	getData(key){
+	getData(topic){
 		return this._store.then((caches)=>{
 			let result
 				;
 
-			if( typeof key === 'string' ){
-				result = caches.match( new Request(key) );
+			if( typeof topic === 'string' ){
+				result = caches.match( new Request(topic) );
 			}
-			else if( typeof key === 'object' && key instanceof Request ){
-				result = caches.match( key );
+			else if( typeof topic === 'object' && topic instanceof Request ){
+				result = caches.match( topic );
 			}
 			else{
 				result = Promise.reject( new Error('参数错误') );
@@ -79,14 +85,14 @@ class CacheStorageModel extends Model{
 				result = response;
 			}
 			else{
-				if( typeof key === 'string' ){
-					result = Promise.reject( new Error('不存在缓存 '+ key) );
+				if( typeof topic === 'string' ){
+					result = Promise.reject( new Error('不存在缓存 '+ topic) );
 				}
-				else if( typeof key === 'object' && key instanceof Request ){
-					result = Promise.reject( new Error('不存在缓存 '+ key.url) );
+				else if( typeof topic === 'object' && topic instanceof Request ){
+					result = Promise.reject( new Error('不存在缓存 '+ topic.url) );
 				}
 				else{
-					result = Promise.reject( new Error('不存在缓存 '+ key) );
+					result = Promise.reject( new Error('不存在缓存 '+ topic) );
 				}
 			}
 
@@ -95,10 +101,10 @@ class CacheStorageModel extends Model{
 	}
 	/**
 	 * 将缓存删除
-	 * @param   {String}    key
+	 * @param   {String}    topic
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
-	removeData(key){
+	removeData(topic){
 		return Promise.resolve( true );
 	}
 	/**
@@ -118,8 +124,6 @@ class CacheStorageModel extends Model{
 	 * @param   {Array} cacheArray
 	 * */
 	addAll(cacheArray){
-		cacheArray.forEach( (d)=>this._setIndex(d) );
-
 		return this._store.then((caches)=>{
 			return caches.open( this._config.cacheName );
 		}).then(function(cache){
@@ -134,6 +138,14 @@ CacheStorageModel._CONFIG = {
 	cacheName: 'storage'
 };
 
+/**
+ * 在 Model.factory 工厂方法注册，将可以使用工厂方法生成
+ * */
 Model.register('cacheStorage', CacheStorageModel);
+
+/**
+ * 注册别名
+ * */
+Model.registerAlias('cacheStorage', 'cs');
 
 export default CacheStorageModel;

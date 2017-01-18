@@ -555,12 +555,7 @@ module.exports = function(grunt){
 				}
 				, src: [
 					'src/lib/frame/*.js'
-					, 'src/lib/frame/model/*.js'
-					, 'src/lib/frame/req/*.js'
-					, 'src/lib/frame/proxy/*.js'
-					, 'src/lib/frame/sync/*.js'
-					, 'src/lib/frame/register/*.js'
-					, 'src/lib/frame/worker/*.js'
+					, 'src/lib/frame/*/*.js'
 				]
 			}
 		}

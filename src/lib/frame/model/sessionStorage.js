@@ -5,6 +5,12 @@ import Model from './model';
 /**
  * @class
  * @extends Model
+ * @classdesc   在 Model.factory 工厂方法注册为 sessionStorage，别名 ss，将可以使用工厂方法生成
+ * @example
+let sessionStorageModel = new SessionStorageModel()
+	, storage = Model.factory('sessionStorage')
+	, ss = Model.factory('ss')
+	;
  * */
 class SessionStorageModel extends Model{
 	/**
@@ -23,51 +29,52 @@ class SessionStorageModel extends Model{
 
 	/**
 	 * 设置数据
-	 * @param   {String}    key
+	 * @param   {String}    topic
 	 * @param   {*}         value
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
-	setData(key, value){
+	setData(topic, value){
 		return this._store.then((store)=>{
-			store.setItem(key, this._stringify(value));
+			store.setItem(topic, this._stringify(value));
 
-			this._trigger(key, value);
+			this._trigger(topic, value);
 
 			return true;
 		});
 	}
 	/**
 	 * 获取数据
-	 * @param   {String}    key
-	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回查询出来的 value
+	 * @param   {String}    topic
+	 * @return  {Promise}   返回一个 Promise 对象，若存在 topic 的值，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
 	 * */
-	getData(key){
+	getData(topic){
 		return this._store.then((store)=>{
-			let value = store.getItem(key)
+			let value = store.getItem( topic )
 				;
 
 			if( value === null ){
-				value = '';
+				value = Promise.reject( null );
 			}
-
-			try{
-				value = JSON.parse( value );
+			else{
+				try{
+					value = JSON.parse( value );
+				}
+				catch(e){}
 			}
-			catch(e){}
 
 			return value;
 		});
 	}
 	/**
 	 * 将数据从缓存中删除
-	 * @param   {String}    key
+	 * @param   {String}    topic
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
-	removeData(key){
+	removeData(topic){
 		return this._store.then((store)=>{
-			store.removeItem(key);
+			store.removeItem(topic);
 
-			this._trigger(key, null);
+			this._trigger(topic, null);
 
 			return true;
 		});
@@ -85,6 +92,14 @@ class SessionStorageModel extends Model{
 	}
 }
 
+/**
+ * 在 Model.factory 工厂方法注册，将可以使用工厂方法生成
+ * */
 Model.register('sessionStorage', SessionStorageModel);
+
+/**
+ * 注册别名
+ * */
+Model.registerAlias('sessionStorage', 'ss');
 
 export default SessionStorageModel;

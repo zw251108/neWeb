@@ -5,6 +5,12 @@ import Model from './model';
 /**
  * @class
  * @extends Model
+ * @classdesc   在 Model.factory 工厂方法注册为 indexedDB，别名 idb，将可以使用工厂方法生成
+ * @example
+let indexedDBModel = new IndexedDBModel()
+	, storage = Model.factory('indexedDB')
+	, idb = Model.factory('idb')
+	;
  * */
 class IndexedDBModel extends Model{
 	/**
@@ -34,7 +40,7 @@ class IndexedDBModel extends Model{
 				, dbRequest
 				;
 
-			indexedDB = self.indexedDB || self.mozIndexedDB || self.webbkitIndexedDB || self.msIndexedDB || null
+			indexedDB = self.indexedDB || self.mozIndexedDB || self.webbkitIndexedDB || self.msIndexedDB || null;
 
 			if( indexedDB ){
 				dbRequest = indexedDB.open(this._config.dbName, this._config.dbVersion);
@@ -78,21 +84,18 @@ class IndexedDBModel extends Model{
 	/**
 	 * 查询
 	 * @private
-	 * @param   {String}    key
+	 * @param   {String}    topic
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回查询出来的 value
 	 * */
-	_select(key){
+	_select(topic){
 		return this._store.then((db)=>{
 			return new Promise((resolve, reject)=>{
-				let objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore(this._config.tableName)
-					, result = objectStore.get( key )
+				let objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore( this._config.tableName )
+					, result = objectStore.get( topic )
 					;
 
 				result.onsuccess = function(e){
-					let rs = e.target.result
-						;
-
-					resolve( rs && rs.value );
+					resolve( e.target.result );
 				};
 				result.onerror = function(e){
 					console.log( e );
@@ -104,22 +107,22 @@ class IndexedDBModel extends Model{
 	/**
 	 * 新建或更新，add 接口要求数据库中不能已经有相同键的对象存在，因此统一使用 put 接口
 	 * @private
-	 * @param   {String}    key
+	 * @param   {String}    topic
 	 * @param   {String}    value
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
-	_put(key, value){
+	_put(topic, value){
 		return this._store.then((db)=>{
 			return new Promise((resolve, reject)=>{
-				let objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore(this._config.tableName)
+				let objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore( this._config.tableName )
 					, result = objectStore.put({
-						topic: key
+						topic: topic
 						, value: value
 					})
 					;
 
 				result.onsuccess = function(e){
-					resolve(!!e.target.result);
+					resolve( !!e.target.result );
 				};
 				result.onerror = function(e){
 					console.log( e );
@@ -131,18 +134,18 @@ class IndexedDBModel extends Model{
 	/**
 	 * 删除
 	 * @private
-	 * @param   {String}    key
+	 * @param   {String}    topic
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
-	_delete(key){
+	_delete(topic){
 		return this._store.then((db)=>{
 			return new Promise((resolve, reject)=>{
-				let objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore(this._config.tableName)
-					, result = objectStore.delete(key)
+				let objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore( this._config.tableName )
+					, result = objectStore.delete( topic )
 					;
 
 				result.onsuccess = function(e){
-					resolve(true);
+					resolve( true );
 				};
 				result.onerror = function(e){
 					console.log( e );
@@ -159,12 +162,12 @@ class IndexedDBModel extends Model{
 	_clear(){
 		return this._store.then((db)=>{
 			return new Promise((resolve, reject)=>{
-				let objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore(this._config.tableName)
+				let objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore( this._config.tableName )
 					, result = objectStore.clear()
 					;
 
 				result.onsuccess = function(e){
-					resolve(true);
+					resolve( true );
 				};
 				result.onerror = function(e){
 					console.log( e );
@@ -176,43 +179,47 @@ class IndexedDBModel extends Model{
 
 	/**
 	 * 设置数据
-	 * @param   {String}    key
+	 * @param   {String}    topic
 	 * @param   {*}         value
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
-	setData(key, value){
-		return this._put(key, this._stringify(value)).then((rs)=>{
-			this._trigger(key, value);
+	setData(topic, value){
+		return this._put(topic, this._stringify(value)).then((rs)=>{
+			this._trigger(topic, value);
 
 			return rs;
 		});
 	}
 	/**
 	 * 获取数据
-	 * @param   {String}    key
-	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回查询出来的 value
+	 * @param   {String}    topic
+	 * @return  {Promise}   返回一个 Promise 对象，若存在 topic 的值，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
 	 * */
-	getData(key){
-		return this._select(key).then((value)=>{
+	getData(topic){
+		return this._select( topic ).then((value)=>{
 
-			value = value || '';
+			if( value ){
 
-			try{
-				value = JSON.parse( value );
+				try{
+					value = JSON.parse( value );
+				}
+				catch(e){}
 			}
-			catch(e){}
+			else{
+				value = Promise.reject( null );
+			}
 
 			return value;
 		});
 	}
 	/**
 	 * 将数据从缓存中删除
-	 * @param   {String}    key
+	 * @param   {String}    topic
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
-	removeData(key){
-		return this._delete(key).then((rs)=>{
-			this._trigger(key, null);
+	removeData(topic){
+		return this._delete( topic ).then((rs)=>{
+			this._trigger(topic, null);
 
 			return rs;
 		});
@@ -232,6 +239,14 @@ IndexedDBModel._CONFIG = {
 	, dbVersion: 1
 };
 
+/**
+ * 在 Model.factory 工厂方法注册，将可以使用工厂方法生成
+ * */
 Model.register('indexedDB', IndexedDBModel);
+
+/**
+ * 注册别名
+ * */
+Model.registerAlias('indexedDB', 'idb');
 
 export default IndexedDBModel;

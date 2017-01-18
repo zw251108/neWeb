@@ -5,7 +5,7 @@ import Req from './req';
 /**
  * @class
  * @extends Req
- * @desc    加载静态资源
+ * @classdesc   加载静态资源
  * */
 class LoadReq extends Req{
 	/**
