@@ -11,6 +11,10 @@ let localStorageModel = new LocalStorageModel()
 	, storage = Model.factory('localStorage')
 	, ls = Model.factory('ls')
 	;
+
+storage.getData('fittingShow/index/first').then(function(value){
+	console.log('获取到 ', value);
+});
  * */
 class LocalStorageModel extends Model{
 	/**
@@ -137,7 +141,7 @@ class LocalStorageModel extends Model{
 LocalStorageModel._EVENT_LIST = {};
 
 /**
- * 全局 localStorage
+ * 全局 storage 监听事件是否开启
  * @static
  * */
 LocalStorageModel._LISTENER_ON = false;

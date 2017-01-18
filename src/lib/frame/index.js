@@ -23,6 +23,9 @@ import register from './register/index';
 // 动画库
 import animate from './animate/index';
 
+// 获取地理位置
+import location from './location';
+
 // 桌面通知， 目前仅支持 PC 端
 import notify from './notify';
 
@@ -34,5 +37,6 @@ export default {
 	, sync
 
 	, animate
+	, location
 	, notify
 };

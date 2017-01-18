@@ -11,6 +11,9 @@ let cookieModel = new CookieModel()
 	, cookie = Model.factory('cookie')
     , c = Model.factory('c')
 	;
+console.log( cookie === c );    // 因为将对象实例进行了缓存，所以结果为 true
+
+cookie.set('memberId', 1, '30d');   // 将 memberId 放入 cookie 中，过期时间 30 天
  * */
 class CookieModel extends Model{
 	/**
@@ -36,6 +39,7 @@ class CookieModel extends Model{
 	 * */
 	setData(topic, value, options){
 		return this._store.then(()=>{
+			
 			if( typeof options !== 'object' ){
 				options = {
 					expires: options
@@ -46,7 +50,9 @@ class CookieModel extends Model{
 				options.expires = CookieModel._transDate( options.expires );
 			}
 
-			document.cookie = encodeURIComponent( topic ) +'='+ encodeURIComponent( this._stringify(value) ) + Object.keys( CookieModel._DEFAULT ).reduce((a, d)=>{    // 整理配置
+			document.cookie = encodeURIComponent( topic ) +'='+
+				encodeURIComponent( this._stringify(value) ) +
+				Object.keys( CookieModel._DEFAULT ).reduce((a, d)=>{    // 整理配置
 					if( d in options ){
 						a += '; '+ d +'='+ options[d];
 					}
@@ -122,7 +128,11 @@ class CookieModel extends Model{
 	}
 }
 
-// 默认参数
+/**
+ * 默认参数
+ * @const
+ * @static
+ * */
 CookieModel._DEFAULT = {
 	path: '/'
 	, domain: ''
@@ -130,8 +140,17 @@ CookieModel._DEFAULT = {
 	, secure: ''
 };
 
-// 简短时间设置格式
+/**
+ * 简短时间设置格式
+ * @const
+ * @static
+ * */
 CookieModel._SHORT_TIME_EXPR = /^(-?\d+)(s|m|h|d|y)?$/i;
+/**
+ * 时间单位对应的毫秒数
+ * @const
+ * @static
+ * */
 CookieModel._SHORT_TIME_NUM = {
 	s: 1e3
 	, m: 6e4
@@ -140,7 +159,12 @@ CookieModel._SHORT_TIME_NUM = {
 	, y: 31536e6
 };
 
-// 转换时间数据格式
+/**
+ * 转换时间数据格式
+ * @static
+ * @param   {Date|Number|String}    date
+ * @return  {String}    返回一个 UTC 格式的时间字符串
+ * */
 CookieModel._transDate = function(date){
 	let temp = ''
 		;

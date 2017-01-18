@@ -5,7 +5,7 @@ import Model from './model';
 /**
  * @class
  * @extends Model
- * @classdesc   在 Model.factory 工厂方法注册为 cacheStorage，别名 cs，将可以使用工厂方法生成
+ * @classdesc   在 Model.factory 工厂方法注册为 cacheStorage，别名 cs，将可以使用工厂方法生成。主要提供给 Service Worker 调用，普通页面使用场景有限
  * @example
 let cacheStorageModel = new CacheStorageModel()
 	, storage = Model.factory('cacheStorage')
@@ -108,7 +108,7 @@ class CacheStorageModel extends Model{
 		return Promise.resolve( true );
 	}
 	/**
-	 * 情况缓存
+	 * 清空缓存
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
 	clearData(){

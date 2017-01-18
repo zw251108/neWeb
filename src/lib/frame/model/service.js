@@ -17,8 +17,11 @@ class ServiceModel extends Model{
 	constructor(){
 		super();
 
-		this._syncList = [];
+		this._syncList = null;
 
+		/**
+		 *
+		 * */
 		this._req = req.factory('ajax');
 	}
 	/**
@@ -31,7 +34,7 @@ class ServiceModel extends Model{
 	 * */
 	setData(topic, options){
 		// Req 对象操作
-		return this._req( options ).then(function(){    // 发送请求成功
+		return this._req(topic, options ).then(function(){    // 发送请求成功
 
 		}, function(){
 
@@ -43,36 +46,33 @@ class ServiceModel extends Model{
 	 * @param   {Object}    options
 	 * @param   {String}    options.url
 	 * @param   {Object}    options.data
+	 * @param   {Boolean}   fromLocal   是否优先从本地缓存中读取数据
 	 * @return  {Promise}
 	 * */
-	getData(topic, options){
+	getData(topic, options={}, fromLocal=true){
 		let result
 			;
 
-		// Req 对象操作
+		// todo 优先从本地 syncTo model 中读取数据，若没有则发生请求
+		if( fromLocal && this._syncList ){
+			// todo 解决多个本地缓存优先级的问题
+			result = this._syncList.getData('topic');
+		}
+		else{
+			result = Promise.reject();
+		}
 
-		// todo 优先从本地 syncTo model 中读取数据
-		result = Promise.all( this._syncList.map(d=>{
-			d.getData(options).then(function(varlue){
-				return value;
-			}, function(e){
-				return null;
-			});
-		}) ).then(function(){
-
+		result = result.catch(()=>{
+			// todo 本地缓存中未获取到数据，发送请求
+			// Req 对象操作
+			return this._req.send(topic, options);
 		});
 
-		// return Promise.allthis._syncList
-
-		// this._req( options ).then(function(){
-		//
-		// }, function(){
-		//
-		// });
+		return result;
 	}
 	/**
 	 * 将数据同步到本地存储
-	 * @param   {Model} cacheModel
+	 * @param   {Model}     model
 	 * */
 	syncTo(model){
 		let rs
@@ -80,7 +80,7 @@ class ServiceModel extends Model{
 
 		if( !(model instanceof ServiceModel) ){
 			rs = sync.makeModelSync(this, model);
-			// this._syncList.push( rs );
+			this._syncList = model;
 		}
 	}
 }

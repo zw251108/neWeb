@@ -233,6 +233,11 @@ class IndexedDBModel extends Model{
 	}
 }
 
+/**
+ * 默认配置
+ * @const
+ * @static
+ * */
 IndexedDBModel._CONFIG = {
 	dbName: 'storage'
 	, tableName: 'storage'

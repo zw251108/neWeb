@@ -1,12 +1,19 @@
 'use strict';
 
-// import '../promise';
-
 /**
  * @class
  * @classdesc   数据层基类，将数据保存在内存中
  * @example
 let model = new Model();
+
+model.setData('index/first', true).then(function(){
+	console.log('数据保存成功');
+});
+model.getData('index/first').then(function(value){
+	console.log('获取到数据 ', value);
+}, function(e){
+	console.log('当数据不存在时，reject 传入 null');
+});
  * */
 class Model{
 	/**
@@ -154,10 +161,14 @@ class Model{
 }
 
 /**
+ * 子类对象缓存
  * @static
- * @desc    子类对象缓存
  * */
 Model._MODEL_CACHE = {};
+/**
+ * 子类别名列表
+ * @static
+ * */
 Model._MODEL_ALIAS = {};
 
 /**
@@ -178,6 +189,7 @@ Model.register = function(type, model){
 
 /**
  * 注册子类的别名
+ * @static
  * @param   {String}        type        已注册的子类名
  * @param   {String|Array}  aliasName   该子类的别名
  * */
@@ -201,7 +213,7 @@ Model.registerAlias = function(type, aliasName){
  * 获取或生成 type 类型的 model 对象
  * @static
  * @param   {String}    type
- * @param   {Boolean|Object}   [notCache]    为 boolean 类型时表示是否缓存默认值为 false，为 object 类型时将值赋给 options 并设置为 false
+ * @param   {Boolean|Object}   [notCache]    为 boolean 类型时表示是否缓存，默认值为 false；为 object 类型时将值赋给 options 并设置为 false
  * @param   {Object}    [options]
  * @return  {Model}
  * */

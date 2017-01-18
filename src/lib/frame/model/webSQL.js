@@ -5,13 +5,18 @@ import Model from './model';
 /**
  * @class
  * @extends Model
- * @classdesc   在 Model.factory 工厂方法注册为 webSQL，别名 ws,sql，将可以使用工厂方法生成
+ * @classdesc   在 Model.facory 工厂方法注册为 webSQL，别名 ws,sql，将可以使用工厂方法生成。默认使用表名为 storage，有 id,topic,value 3 个列的表，在生成对象时传入 options 可覆盖默认 SQL 语句
  * @example
 let webSQLModel = new WebSQLModel()
 	, storage = Model.factory('webSQL')
 	, ws = Model.factory('ws')
 	, sql = Model.factory('sql')
+    , newSQL = Model.factory('webSQL', {
+        tableName: 'newStorage'
+    })
 	;
+
+newSQL.setData('index/data', {});   // newSQL 不会被缓存
  * */
 class WebSQLModel extends Model{
 	/**
@@ -293,6 +298,11 @@ class WebSQLModel extends Model{
 	}
 }
 
+/**
+ * 默认配置
+ * @const
+ * @static
+ * */
 WebSQLModel._CONFIG = {
 	dbName: 'storage'
 	, tableName: 'storage'
