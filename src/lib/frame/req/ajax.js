@@ -22,7 +22,7 @@ import Req from './req';
 class AjaxReq extends Req{
 	/**
 	 * @constructor
-	 * @param   {Object}    [config]
+	 * @param   {Object}    [config={}]
 	 * @param   {Object}    [config.accepts]
 	 * @param   {String}    [config.contentType]
 	 * */

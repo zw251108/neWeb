@@ -21,7 +21,12 @@ class Model{
 	 * */
 	constructor(){
 		this._value = {};
-		this._eventList = {};
+		this._eventList = [];
+		this._syncList = {};
+
+		this.on((topic, value)=>{
+			this._sync(topic, value);
+		});
 	}
 
 	/**
@@ -45,36 +50,64 @@ class Model{
 	 * @param   {*}         value
 	 * */
 	_trigger(topic, value){
-		if( topic in this._eventList ){
+		if( this._eventList.length ){
 			setTimeout(()=>{
-				this._eventList[topic].forEach((d)=>d(value));
+				this._eventList.forEach((d)=>d(topic, value));
 			}, 0);
 		}
 	}
+	/**
+	 * 数据同步的内部实现
+	 * @protected
+	 * @param   {String}    topic
+	 * @param   {*}         value
+	 * */
+	_sync(topic, value){
+		this._syncList.map((d)=>{
+			let result
+				;
+
+			if( value !== null ){
+				result = d.setData(topic, value);
+			}
+			else{
+				result = d.removeData( topic );
+			}
+
+			result.catch(function(e){
+				console.log(e, d.constructor.name, '同步失败');
+			});
+
+			return result;
+		}).then(function(){
+			console.log('同步完成');
+		});
+	}
+
+	/**
+	 * 事件触发函数，函数将传入 topic,newValue 值，当 removeData 执行时也会触发事件，newValue 被传为 null
+	 * @callback    ModelChangeEvent
+	 * @param   {String}    topic
+	 * @param   {*}     newValue
+	 * */
 
 	/**
 	 * 绑定数据监视事件
-	 * @param   {String}    topic
-	 * @param   {Function}  callback    事件触发函数，函数将传入 newValue 两个值，当 removeData 执行时也会触发事件，newValue 被传为 null
+	 * @param   {ModelChangeEvent}  callback
 	 * */
-	on(topic, callback){
-		if( !(topic in this._eventList) ){
-			this._eventList[topic] = [];
-		}
-
-		this._eventList[topic].push( callback );
+	on(callback){
+		this._eventList.push( callback );
 	}
 	/**
 	 * 解除绑定数据监控回调函数
-	 * @param   {String}    topic
-	 * @param   {Function}  callback
+	 * @param   {ModelChangeEvent}  callback
 	 * */
-	off(topic, callback){
-		let i = this._eventList[topic].indexOf( callback )
+	off(callback){
+		let i = this._eventList.indexOf( callback )
 			;
 
 		if( i !== -1 ){
-			this._eventList[topic].splice(i, 1);
+			this._eventList.splice(i, 1);
 		}
 	}
 	/**
@@ -157,6 +190,38 @@ class Model{
 		this._value = {};
 
 		return Promise.resolve(true);
+	}
+
+	/**
+	 * 将当前 model 的数据同步到其它 model
+	 * @param   {Model|Array}   model
+	 * */
+	syncTo(model){
+		if( !Array.isArray( model ) ){
+			model = [model];
+		}
+
+		model.forEach((d)=>{
+			if( typeof d === 'object' &&
+				d instanceof Model &&
+				d.constructor !== this.constructor &&
+				this._syncList.indexOf( d ) === -1 ){
+
+				this._syncList.push( d );
+			}
+		});
+	}
+	/**
+	 * 清除数据同步
+	 * @param   {Model} model
+	 * */
+	cleanSync(model){
+		let i = this._syncList.indexOf( model )
+			;
+
+		if( i !== -1 ){
+			this._syncList.splice(i, 1);
+		}
 	}
 }
 

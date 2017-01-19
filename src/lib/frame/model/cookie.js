@@ -11,6 +11,7 @@ let cookieModel = new CookieModel()
 	, cookie = Model.factory('cookie')
     , c = Model.factory('c')
 	;
+
 console.log( cookie === c );    // 因为将对象实例进行了缓存，所以结果为 true
 
 cookie.set('memberId', 1, '30d');   // 将 memberId 放入 cookie 中，过期时间 30 天

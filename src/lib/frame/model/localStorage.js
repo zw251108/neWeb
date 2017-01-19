@@ -99,37 +99,29 @@ class LocalStorageModel extends Model{
 
 	/**
 	 * 绑定数据监视事件
-	 * @param   {String}    topic
-	 * @param   {Function}  callback    事件触发函数，函数将传入 newValue，当 localStorage 中的数据是被其它页面修改时，该函数将额外传入 oldValue
+	 * @param   {ModelChangeEvent}  callback
 	 * */
-	on(topic, callback){
+	on(callback){
 
-		if( !(topic in this._eventList) ){
-			this._eventList[topic] = [];
-		}
-		this._eventList[topic].push( callback );
+		this._eventList.push( callback );
 
-		if( !(topic in LocalStorageModel._EVENT_LIST) ){
-			LocalStorageModel._EVENT_LIST[topic] = [];
-		}
-		LocalStorageModel._EVENT_LIST[topic].push( callback );
+		LocalStorageModel._EVENT_LIST.push( callback );
 	}
 	/**
 	 * 解除绑定数据监控回调函数
-	 * @param   {String}    topic
-	 * @param   {Function}  callback
+	 * @param   {ModelChangeEvent}  callback
 	 * */
-	off(topic, callback){
-		let i = this._eventList[topic].indexOf( callback )
+	off(callback){
+		let i = this._eventList.indexOf( callback )
 			;
 
 		if( i !== -1 ){
-			this._eventList[topic].splice(i, 1);
+			this._eventList.splice(i, 1);
 		}
 
-		i = LocalStorageModel._EVENT_LIST[topic].indexOf( callback );
+		i = LocalStorageModel._EVENT_LIST.indexOf( callback );
 		if( i !== -1 ){
-			LocalStorageModel._EVENT_LIST[topic].splice(i, 1);
+			LocalStorageModel._EVENT_LIST.splice(i, 1);
 		}
 	}
 }
@@ -138,7 +130,7 @@ class LocalStorageModel extends Model{
  * 保存的事件队列
  * @static
  * */
-LocalStorageModel._EVENT_LIST = {};
+LocalStorageModel._EVENT_LIST = [];
 
 /**
  * 全局 storage 监听事件是否开启
@@ -157,9 +149,9 @@ LocalStorageModel._listen = function(){
 			, oldVal = e.oldValue
 			;
 
-		if( topic in LocalStorageModel._EVENT_LIST ){
+		if( LocalStorageModel._EVENT_LIST.length ){
 
-			LocalStorageModel._EVENT_LIST[topic].forEach((d)=>d(newVal, oldVal));
+			LocalStorageModel._EVENT_LIST.forEach((d)=>d(topic, newVal, oldVal));
 		}
 	});
 

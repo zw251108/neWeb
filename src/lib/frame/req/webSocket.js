@@ -9,6 +9,7 @@ import Req from './req';
 class WebSocketReq extends Req{
 	/**
 	 * @constructor
+	 * @param   {Object}    [config={}]
 	 * */
 	constructor(config={}){
 		super();

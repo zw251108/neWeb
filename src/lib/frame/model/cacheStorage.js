@@ -41,6 +41,22 @@ class CacheStorageModel extends Model{
 	}
 
 	/**
+	 * 将 url 字符串转换为 Request 对象
+	 * @private
+	 * @param   {String|Request}    url
+	 * @return  {Request}
+	 * */
+	_tranToRequest(url){
+		
+		if( typeof url === 'object' && url instanceof Request ){}
+		else{
+			url = new Request( url );
+		}
+
+		return url
+	}
+
+	/**
 	 * 设置缓存
 	 * @param   {String|Request}    topic
 	 * @param   {Response}          response
@@ -51,7 +67,7 @@ class CacheStorageModel extends Model{
 			return caches.open( this._config.cacheName );
 		}).then(function(cache){
 			console.log('缓存 '+ (typeof topic === 'string' ? topic : topic.url));
-			return cache.put(topic, response);
+			return cache.add(topic, response);
 		}).then(function(){
 			return true;
 		});
@@ -62,21 +78,12 @@ class CacheStorageModel extends Model{
 	 * @return  {Promise}           返回一个 Promise 对象，在 resolve 时传回查询到的缓存，reject 时传回 Error
 	 * */
 	getData(topic){
+		topic = this._tranToRequest( topic );
+
 		return this._store.then((caches)=>{
-			let result
-				;
-
-			if( typeof topic === 'string' ){
-				result = caches.match( new Request(topic) );
-			}
-			else if( typeof topic === 'object' && topic instanceof Request ){
-				result = caches.match( topic );
-			}
-			else{
-				result = Promise.reject( new Error('参数错误') );
-			}
-
-			return result;
+			return caches.open( this._config.cacheName );
+		}).then((cache)=>{
+			return cache.match( topic );
 		}).then(function(response){
 			let result
 				;
@@ -85,15 +92,7 @@ class CacheStorageModel extends Model{
 				result = response;
 			}
 			else{
-				if( typeof topic === 'string' ){
-					result = Promise.reject( new Error('不存在缓存 '+ topic) );
-				}
-				else if( typeof topic === 'object' && topic instanceof Request ){
-					result = Promise.reject( new Error('不存在缓存 '+ topic.url) );
-				}
-				else{
-					result = Promise.reject( new Error('不存在缓存 '+ topic) );
-				}
+				result = Promise.reject( new Error('不存在缓存 '+ topic.url) );
 			}
 
 			return result;
@@ -101,11 +100,20 @@ class CacheStorageModel extends Model{
 	}
 	/**
 	 * 将缓存删除
-	 * @param   {String}    topic
+	 * @param   {String|Request}    topic
+	 * @param   {Object}    [options={}]    cache.delete 的可选参数
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
-	removeData(topic){
-		return Promise.resolve( true );
+	removeData(topic, options={}){
+		topic = this._tranToRequest( topic );
+
+		return this._store.then((caches)=>{
+			return caches.open( this._config.cacheName );
+		}).then(function(cache){
+			return cache.delete(topic, options);
+		}).then(function(){
+			return true;
+		});
 	}
 	/**
 	 * 清空缓存

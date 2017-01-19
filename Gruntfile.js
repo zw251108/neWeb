@@ -535,6 +535,20 @@ module.exports = function(grunt){
 			}
 		}
 
+		, watch: {
+			destiny: {
+				files: ['less/*.less'
+					, 'sass/source/*.scss'
+					, 'public/style/*.css'
+					, 'public/script/*.js'
+				]
+				, tasks: ['less']
+				, options: {
+					livereload: 9090
+				}
+			}
+		}
+
 		, jsdoc: {
 			destiny: {
 				options: {
@@ -554,22 +568,16 @@ module.exports = function(grunt){
 					, configure : "./jsdoc.conf.json"
 				}
 				, src: [
-					'src/lib/frame/*.js'
-					, 'src/lib/frame/*/*.js'
+					'../tiangou_web/javascript/libs/testFrame/*.js'
+					, '../tiangou_web/javascript/libs/testFrame/model/*.js'
+					, '../tiangou_web/javascript/libs/testFrame/biz/*.js'
+					, '../tiangou_web/javascript/libs/testFrame/register/*.js'
+					, '../tiangou_web/javascript/libs/testFrame/worker/*.js'
+					// 'src/lib/frame/*.js'
+					// , 'src/lib/frame/model/*.js'
+					// , 'src/lib/frame/register/*.js'
+					// , 'src/lib/frame/worker/*.js'
 				]
-			}
-		}
-		, watch: {
-			destiny: {
-				files: ['less/*.less'
-					, 'sass/source/*.scss'
-					, 'public/style/*.css'
-					, 'public/script/*.js'
-				]
-				, tasks: ['less']
-				, options: {
-					livereload: 9090
-				}
 			}
 		}
 	});

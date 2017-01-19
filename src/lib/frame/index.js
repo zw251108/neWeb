@@ -10,8 +10,8 @@ import model from './model/index';
 // 网络请求
 import req from './req/index';
 
-// 数据同步
-import sync from './sync/index';
+// // 数据同步
+// import sync from './sync/index';
 
 // 请求代理
 import proxy from './proxy/index.js';
@@ -34,7 +34,7 @@ export default {
 	, proxy
 	, register
 	, req
-	, sync
+	// , sync
 
 	, animate
 	, location

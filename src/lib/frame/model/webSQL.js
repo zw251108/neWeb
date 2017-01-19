@@ -21,7 +21,7 @@ newSQL.setData('index/data', {});   // newSQL 不会被缓存
 class WebSQLModel extends Model{
 	/**
 	 * @constructor
-	 * @param   {Object}    [config]
+	 * @param   {Object}    [config={}]
 	 * @param   {String}    [config.dbName]
 	 * @param   {String}    [config.tableName]
 	 * @param   {Number}    [config.dbVersion]

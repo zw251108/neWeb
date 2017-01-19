@@ -8,7 +8,7 @@ class Animator {
 	 * @constructor
 	 * @param   {Number}    duration    运行时间，单位毫秒
 	 * @param   {Function}  progress    运行操作
-	 * @param   {String|Function}   [easing]    变化速率
+	 * @param   {String|Function}   [easing=linear]    变化速率
 	 * */
 	constructor(duration, progress, easing='linear'){
 		this.duration = duration;

@@ -15,10 +15,15 @@ let indexedDBModel = new IndexedDBModel()
 class IndexedDBModel extends Model{
 	/**
 	 * @constructor
-	 * @param   {Object}    [config]
+	 * @param   {Object}    [config={}]
 	 * @param   {String}    [config.dbName]
 	 * @param   {String}    [config.tableName]
 	 * @param   {Number}    [config.dbVersion]
+	 * @param   {String}    [config.keyPath]
+	 * @param   {Array}     [config.index]
+	 * @param   {String}    config.index[].name
+	 * @param   {String}    [config.index[].keyPath]    未设置时默认使用 name
+	 * @param   {Boolean}   [config.index[].unique=false]   默认值 false
 	 * */
 	constructor(config={}){
 		super();
@@ -59,11 +64,13 @@ class IndexedDBModel extends Model{
 
 						// 创建存储对象
 						store = db.createObjectStore(this._config.tableName, {
-							keyPath: 'topic'
+							keyPath: this._config.keyPath
 						});
 
-						store.createIndex('value', 'value', {
-							unique: false
+						this._config.index.forEach((d)=>{
+							store.createIndex(d.name, d.keyPath || d.name, {
+								unique: d.unique || false
+							});
 						});
 					}
 
@@ -242,6 +249,12 @@ IndexedDBModel._CONFIG = {
 	dbName: 'storage'
 	, tableName: 'storage'
 	, dbVersion: 1
+	, keyPath: 'topic'
+	, index: [{
+		name: 'value'
+		, keyPath: 'value'
+		, unique: false
+	}]
 };
 
 /**
