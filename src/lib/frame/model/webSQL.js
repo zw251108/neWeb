@@ -5,7 +5,7 @@ import Model from './model';
 /**
  * @class
  * @extends Model
- * @classdesc   在 Model.facory 工厂方法注册为 webSQL，别名 ws,sql，将可以使用工厂方法生成。默认使用表名为 storage，有 id,topic,value 3 个列的表，在生成对象时传入 options 可覆盖默认 SQL 语句
+ * @classdesc   对 WebSQL Database 进行封装，统一调用接口，在 Model.facory 工厂方法注册为 webSQL，别名 ws,sql，将可以使用工厂方法生成。默认使用表名为 storage，有 id,topic,value 3 个列的表，在生成对象时传入 options 可覆盖默认 SQL 语句
  * @example
 let webSQLModel = new WebSQLModel()
 	, storage = Model.factory('webSQL')
@@ -279,7 +279,7 @@ class WebSQLModel extends Model{
 	/**
 	 * 独立执行 sql 方法
 	 * @param   {String}    sql
-	 * @param   {Array}     [value]
+	 * @param   {Array}     [value=[]]
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 sql 语句的执行结果
 	 * */
 	executeSql(sql, value=[]){

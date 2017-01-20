@@ -5,6 +5,7 @@ import req from '../req/index.js';
 
 /**
  * @class
+ * @classdesc   对服务器接口进行封装，与 Model 统一接口，隔离数据与数据来源的问题
  * @extends Model
  *
  * @todo 支持 RESTful API
@@ -65,8 +66,9 @@ class ServiceModel extends Model{
 	 * 获取数据，默认视为发送 GET 请求到服务器，可以返回结果保存到本地缓存
 	 * @param   {String}    topic
 	 * @param   {Object}    [options={}]    ajax 参数
-	 * @param   {String}    options.url
-	 * @param   {Object}    options.data
+	 * @param   {String}    [options.url]
+	 * @param   {Object}    [options.data]
+	 * @param   {String}    [options.method]
 	 * @param   {Boolean}   [isCache=false]   是否优先从本地缓存中读取数据，同时发送请求后数据是否同步到本地缓存，默认为 false
 	 * @return  {Promise}
 	 * @todo    优先从本地 syncTo model 中读取数据，若没有则发送请求
@@ -172,8 +174,8 @@ ServiceModel.register = function(type, model){
  * 获取或生成 type 类型的 model 对象
  * @static
  * @param   {String}    type
- * @param   {Boolean|Object}    [notCache]  为 boolean 类型时表示是否缓存，为 object 类型时将值赋给 options 并设置为 false
- * @param   {Object}    [options]
+ * @param   {Boolean|Object}    [notCache=false]    为 boolean 类型时表示是否缓存，为 object 类型时将值赋给 options 并设置为 false
+ * @param   {Object}    [options={}]
  * @return  {Model}
  * */
 ServiceModel.factory = function(type, notCache=false, options={}){

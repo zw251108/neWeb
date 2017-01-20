@@ -1,7 +1,7 @@
 import $ from '../../../public/script/lib/jquery.min';
 
 /**
- * @file    Promise 简易兼容实现，因为在 UC 浏览器中 不支持 Promise
+ * @file    Promise 基于 jQuery 的简易兼容实现，因为在 UC 浏览器中 不支持 Promise
  * @global
  * */
 

@@ -3,6 +3,8 @@
 /**
  * @module  model
  * @desc    数据层，统一数据、本地缓存、服务器接口的调用，数据调用统一为 setData、getData、removeData、clearData 接口，也可继承相关的类，自定义实现接口
+ *          当前继承关系
+	
  * */
 
 import Model from './model';

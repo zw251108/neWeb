@@ -5,7 +5,7 @@ import Model from './model';
 /**
  * @class
  * @extends Model
- * @classdesc   在 Model.factory 工厂方法注册为 cacheStorage，别名 cs，将可以使用工厂方法生成。主要提供给 Service Worker 调用，普通页面使用场景有限
+ * @classdesc   对浏览器源生 CacheStorage 接口进行封装，统一调用接口，主要提供给 Service Worker 调用，普通页面使用场景有限，在 Model.factory 工厂方法注册为 cacheStorage，别名 cs，将可以使用工厂方法生成
  * @example
 let cacheStorageModel = new CacheStorageModel()
 	, storage = Model.factory('cacheStorage')
@@ -15,7 +15,7 @@ let cacheStorageModel = new CacheStorageModel()
 class CacheStorageModel extends Model{
 	/**
 	 * @constructor
-	 * @param   {Object}    [config]
+	 * @param   {Object}    [config={}]
 	 * @param   {String}    [config.cacheName]
 	 * */
 	constructor(config={}){
@@ -129,7 +129,7 @@ class CacheStorageModel extends Model{
 
 	/**
 	 * 基于 addAll 方法的封装
-	 * @param   {Array} cacheArray
+	 * @param   {Request[]} cacheArray
 	 * */
 	addAll(cacheArray){
 		return this._store.then((caches)=>{

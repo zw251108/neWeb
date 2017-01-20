@@ -3,7 +3,7 @@
 /**
  * 获取定位信息
  * @function    location
- * @param   {Object}    [options]
+ * @param   {Object}    [options={}]
  * @return  {Promise}   
  * */
 let location = function(options={}){

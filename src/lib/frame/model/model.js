@@ -194,7 +194,7 @@ class Model{
 
 	/**
 	 * 将当前 model 的数据同步到其它 model
-	 * @param   {Model|Array}   model
+	 * @param   {Model|Model[]}   model
 	 * */
 	syncTo(model){
 		if( !Array.isArray( model ) ){
@@ -256,7 +256,7 @@ Model.register = function(type, model){
  * 注册子类的别名
  * @static
  * @param   {String}        type        已注册的子类名
- * @param   {String|Array}  aliasName   该子类的别名
+ * @param   {String|String[]}  aliasName   该子类的别名
  * */
 Model.registerAlias = function(type, aliasName){
 
@@ -278,8 +278,8 @@ Model.registerAlias = function(type, aliasName){
  * 获取或生成 type 类型的 model 对象
  * @static
  * @param   {String}    type
- * @param   {Boolean|Object}   [notCache]    为 boolean 类型时表示是否缓存，默认值为 false；为 object 类型时将值赋给 options 并设置为 false
- * @param   {Object}    [options]
+ * @param   {Boolean|Object}   [notCache=false] 为 boolean 类型时表示是否缓存，默认值为 false；为 object 类型时将值赋给 options 并设置为 false
+ * @param   {Object}    [options={}]
  * @return  {Model}
  * */
 Model.factory = function(type, notCache=false, options={}){

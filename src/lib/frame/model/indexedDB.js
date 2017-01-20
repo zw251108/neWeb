@@ -5,7 +5,7 @@ import Model from './model';
 /**
  * @class
  * @extends Model
- * @classdesc   在 Model.factory 工厂方法注册为 indexedDB，别名 idb，将可以使用工厂方法生成
+ * @classdesc   对 IndexedDB 进行封装，统一调用接口，在 Model.factory 工厂方法注册为 indexedDB，别名 idb，将可以使用工厂方法生成
  * @example
 let indexedDBModel = new IndexedDBModel()
 	, storage = Model.factory('indexedDB')
@@ -20,7 +20,7 @@ class IndexedDBModel extends Model{
 	 * @param   {String}    [config.tableName]
 	 * @param   {Number}    [config.dbVersion]
 	 * @param   {String}    [config.keyPath]
-	 * @param   {Array}     [config.index]
+	 * @param   {Object[]}  [config.index]
 	 * @param   {String}    config.index[].name
 	 * @param   {String}    [config.index[].keyPath]    未设置时默认使用 name
 	 * @param   {Boolean}   [config.index[].unique=false]   默认值 false

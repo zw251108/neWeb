@@ -5,7 +5,7 @@ import Model from './model';
 /**
  * @class
  * @extends Model
- * @classdesc   在 Model.factory 工厂方法注册为 localStorage，别名 ls，将可以使用工厂方法生成
+ * @classdesc   对 localStorage 进行封装，统一调用接口，在 Model.factory 工厂方法注册为 localStorage，别名 ls，将可以使用工厂方法生成
  * @example
 let localStorageModel = new LocalStorageModel()
 	, storage = Model.factory('localStorage')
