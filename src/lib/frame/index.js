@@ -29,6 +29,15 @@ import location from './location';
 // 桌面通知， 目前仅支持 PC 端
 import notify from './notify';
 
+// 数据提交
+import report from './report';
+
+// 全局 error 事件监听
+import './onerror';
+
+// 全局监控
+import './tracker';
+
 export default {
 	model
 	, proxy
@@ -39,4 +48,5 @@ export default {
 	, animate
 	, location
 	, notify
+	, report
 };
