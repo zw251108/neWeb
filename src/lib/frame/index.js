@@ -13,8 +13,8 @@ import req from './req/index';
 // // 数据同步
 // import sync from './sync/index';
 
-// 请求代理
-import proxy from './proxy/index.js';
+// // 请求代理
+// import proxy from './proxy/index.js';
 
 // 注册后台 worker
 import register from './register/index';
@@ -40,7 +40,7 @@ import './tracker';
 
 export default {
 	model
-	, proxy
+	// , proxy
 	, register
 	, req
 	// , sync
