@@ -724,7 +724,7 @@ var CONFIG  = require('../../config.js')
 		}
 
 		, updateBookmarkRead: function(user, data){
-			var execute
+			let execute
 				, id            = data.id
 				, bookmarkId    = data.bookmarkId
 				, url           = data.url

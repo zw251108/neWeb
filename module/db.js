@@ -3,7 +3,7 @@
 /**
  * 数据处理接口
  * */
-var mysql = require('mysql')
+let mysql = require('mysql')
 
 	, config = require('../config.js')
 	, error = require('./error.js')
@@ -51,7 +51,7 @@ var mysql = require('mysql')
 		, gt: function(col, value, eq){}
 
 		, like: function(col, value, or){
-			var type = typeof Value
+			let type = typeof Value
 				, rs = ''
 				;
 
@@ -69,7 +69,7 @@ var mysql = require('mysql')
 			return ' '+ rs +' ';
 		}
 		, regexp: function(col, value, or){
-			var type = typeof Value
+			let type = typeof Value
 				, rs = ''
 				;
 
@@ -93,7 +93,7 @@ var mysql = require('mysql')
 		}
 	}
 	, order = function(col, desc){
-		var type = typeof col
+		let type = typeof col
 			, rs = ''
 			;
 
@@ -195,7 +195,7 @@ module.exports = {
 	 * @return  {Object}    数据操作的 Promise 对象
 	 * */
 	handle: function(query){
-		var sql
+		let sql
 			, data
 			;
 		query = query || {};
@@ -203,7 +203,7 @@ module.exports = {
 		data = query.data || [];
 
 		return exec().then(function(db){
-			var rs = new Promise(function(resolve, reject){
+			let rs = new Promise(function(resolve, reject){
 				if( sql ){
 					db.query(sql, data, function(err, rs){
 						db.release();   // 释放连接
