@@ -122,7 +122,7 @@ class CookieModel extends Model{
 	}
 	/**
 	 * 清空数据，实际不做任何处理
-	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回空值
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
 	clearData(){
 		return Promise.resolve( true );
