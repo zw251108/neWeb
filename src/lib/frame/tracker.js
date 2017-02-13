@@ -1,6 +1,6 @@
 'use strict';
 
-import report from 'report';
+import report from './report.js';
 
 /**
  * @file    开启全局 scp 监听事件

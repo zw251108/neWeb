@@ -1,6 +1,6 @@
 'use strict';
 
-import report from 'report';
+import report from './report.js';
 
 /**
  * @file    开启全局错误监控事件，将错误信息发送到

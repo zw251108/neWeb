@@ -29,7 +29,7 @@
  </pre>
  * */
 
-import Model from './model';
+import Model from './model.js';
 
 // 缓存
 import './cookie';

@@ -4,7 +4,7 @@
  * @module  animator
  * */
 
-import animator from './animator';
-import queue from './queue';
+import animator from './animator.js';
+import queue from './queue.js';
 
 export default {animator, queue};

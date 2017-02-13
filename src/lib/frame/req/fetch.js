@@ -1,6 +1,6 @@
 'use strict';
 
-import Req from './req';
+import Req from './req.js';
 
 /**
  * @class

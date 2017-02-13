@@ -2,4 +2,6 @@
 
 import frame from '../../../src/lib/frame/index.js';
 
-frame.register.serviceWorker();
+// frame.register.serviceWorker();
+
+window.frame = frame;

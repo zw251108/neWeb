@@ -4,9 +4,9 @@
  * @module  register
  * */
 
-import serviceWorker from './serviceWorker';
+import serviceWorker from './serviceWorker.js';
 
-import webWorker from './webWorker';
+import webWorker from './webWorker.js';
 
 export default {
 	serviceWorker

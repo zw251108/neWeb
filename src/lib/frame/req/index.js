@@ -4,12 +4,12 @@
  * @module   req
  * */
 
-import Req from './req';
+import Req from './req.js';
 
 import './load';
 import './ajax';
 import './fetch';
-import webSocket from './webSocket';
+import webSocket from './webSocket.js';
 // import '../register/serviceWorker';
 
 /**

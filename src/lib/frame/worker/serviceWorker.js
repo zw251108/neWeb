@@ -4,10 +4,10 @@
  * @file    Service Worker 后台执行文件
  * */
 
-import CacheStorageModel from '../model/cacheStorage';
-import IndexDBModel from '../model/indexedDB';
-import WebSocketReq from '../req/webSocket';
-import notify from '../notify';
+import CacheStorageModel from '../model/cacheStorage.js';
+import IndexDBModel from '../model/indexedDB.js';
+import WebSocketReq from '../req/webSocket.js';
+import notify from '../notify.js';
 
 let CACHE_URL = []
 	, url = ''
