@@ -88,7 +88,7 @@ class Model{
 	 * 事件触发函数，函数将传入 topic,newValue 值，当 removeData 执行时也会触发事件，newValue 被传为 null
 	 * @callback    ModelChangeEvent
 	 * @param   {String}    topic
-	 * @param   {*}     newValue
+	 * @param   {*}         newValue
 	 * */
 
 	/**
@@ -122,14 +122,27 @@ class Model{
 			this._value[topic] = value;
 		}
 		else{
+			// // todo 判断是 object 类型的进行深度 defineProperty
+			// if( typeof value === 'object' ){
+			// 	Object.keys( value ).forEach((d)=>{
+			// 		this._setObserver(value[d], d, topic);
+			// 	});
+			// }
+
+			/**
+			 * 不能同时设置访问器 (get 和 set) 和 writable 或 value，否则会报错误
+			 * */
 			Object.defineProperty(this._value, topic, {
 				enumerable: true
 				, configurable: false
-				, value: value
+				// , value: value
 				, set(newVal){
 					if( newVal !== value ){
 						this._trigger(topic, newVal);
 					}
+				}
+				, get(){
+					return value;
 				}
 			});
 
@@ -275,12 +288,12 @@ Model.registerAlias = function(type, aliasName){
 };
 
 /**
- * 获取或生成 type 类型的 model 对象
+ * 获取或生成 type 类型的 Model 子类的实例或 Model 类的实例
  * @static
  * @param   {String}    type
- * @param   {Boolean|Object}   [notCache=false] 为 boolean 类型时表示是否缓存，默认值为 false；为 object 类型时将值赋给 options 并设置为 false
- * @param   {Object}    [options={}]
- * @return  {Model}
+ * @param   {Boolean|Object}    [notCache=false] 为 boolean 类型时表示是否缓存，默认值为 false；为 object 类型时将值赋给 options 并设置为 false
+ * @param   {Object}            [options={}]
+ * @return  {Model}     当 type 有意义的时候，为 Model 子类类的实例，否则为 Model 类的实例
  * */
 Model.factory = function(type, notCache=false, options={}){
 	let model

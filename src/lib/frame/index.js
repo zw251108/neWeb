@@ -16,18 +16,21 @@ import req from './req/index.js';
 // // 请求代理
 // import proxy from './proxy/index.js';
 
-// 注册后台 worker
-import register from './register/index.js';
+// 通用工具类
+import util from './util/index.js';
 
 
+/**
+ * @todo    期望改为根据全局环境动态加载
+ * */
 // 动画库
 import animate from './animate/index.js';
 
-// 获取地理位置
-import location from './location.js';
-
 // 桌面通知， 目前仅支持 PC 端
 import notify from './notify.js';
+
+// 注册后台 worker
+import register from './register/index.js';
 
 // 数据提交
 import report from './report.js';
@@ -41,12 +44,17 @@ import './tracker.js';
 export default {
 	model
 	// , proxy
-	, register
 	, req
 	// , sync
 
-	, animate
 	, location
+
+	, util
+
+	// 实验性功能
+	, animate
+	, register
 	, notify
+
 	, report
 };

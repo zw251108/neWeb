@@ -56,6 +56,9 @@ var fs = require('fs')
 	, helmet        = require('helmet')
 
 	, session       = require('express-session')
+
+	, onHeaders     = require('on-headers')
+
 	, sessionStore  = new session.MemoryStore()
 
 	, sharedSession = require('express-socket.io-session')
@@ -92,14 +95,14 @@ web.use( log4js.connectLogger(logger, {format: ':method :url :remote-addr'}) );
 //web.use( helmet() );    // 安全性
 
 // 设置 session
-session = session({
+var sessionMiddleware = session({
 	store:      sessionStore
 	, secret:   CONFIG.web.cookieSecret
 	, key:      CONFIG.web.cookieKey
 	, resave:   false
 	, saveUninitialized: true
 });
-web.use( session );
+web.use( sessionMiddleware );
 
 // 判断浏览器类型，操作系统
 web.use(function(req, res, next){
@@ -143,6 +146,16 @@ web.use('/requirement',     express.static(__dirname + '/requirement'));
 web.use('/test.html',    express.static(__dirname + '/test.html') );  //
 
 web.use('/static', express.static(__dirname + '/static'));  // 静态页面目录，实验性页面
+
+var sessionReadonly = function(req, res, next){
+
+	sessionMiddleware(req, res, next);
+
+	onHeaders(res, ()=>{
+		delete req.sessionID;
+		delete req.session;
+	});
+};
 
 /**
  * 自动设置静态目录 主要用于测试 demo

@@ -1,7 +1,7 @@
 'use strict';
 
 import Model from './model.js';
-import req from '../req/index.js';
+// import req from '../req/index.js';
 
 /**
  * @class
@@ -20,7 +20,7 @@ class ServiceModel extends Model{
 		super();
 
 		this._config = Object.keys( ServiceModel._CONFIG ).reduce((all, d)=>{
-			
+
 			if( d in options ){
 				all[d] = options[d];
 			}
@@ -39,11 +39,27 @@ class ServiceModel extends Model{
 		this._req = req.factory('ajax');
 	}
 	/**
+	 * 对 setData 和 getData 的 options 添加跨域参数
+	 * @param   {Object}    options setData 和 getData 的 options 参数
+	 * @return  {Object}
+	 * */
+	_setCrossDomain(options){
+		if( this._config.isCrossDomain && !('xhrFields' in options) ){
+			options.xhrFields = {
+				withCredentials: true
+			};
+		}
+
+		return options;
+	}
+
+	/**
 	 * 设置数据，默认视为发送 POST 请求到服务器，不会将返回结果保存到本地缓存
 	 * @param   {String|Object}    topic    字符串类型为请求 url，对象类型为所有参数
 	 * @param   {Object}    [options]
 	 * @param   {String}    [options.url]
 	 * @param   {Object}    [options.data]
+	 * @param   {String}    [options.method]
 	 * @return  {Promise}
 	 * */
 	setData(topic, options){
@@ -54,6 +70,8 @@ class ServiceModel extends Model{
 
 		topic = this._config.baseUrl + topic;
 		options.method = options.method || 'POST';
+
+		options = this._setCrossDomain( options );
 
 		// Req 对象操作
 		return this._req(topic, options).then(function(){    // 发送请求成功
@@ -84,6 +102,8 @@ class ServiceModel extends Model{
 		}
 		else{
 			result = Promise.reject();
+
+			options = this._setCrossDomain( options );
 		}
 
 		// 当从本地缓存时未找到期望的数据会 reject，或者不从缓存中获取数据时也会 reject
@@ -108,7 +128,6 @@ class ServiceModel extends Model{
 
 		return result;
 	}
-
 	/**
 	 * 删除数据
 	 * @param   {String|Object} topic
@@ -125,7 +144,6 @@ class ServiceModel extends Model{
 	clearData(){
 		return Promise.resolve( true );
 	}
-
 	/**
 	 * 将数据同步到本地存储，一次只能设置一个本地缓存
 	 * @override
@@ -139,6 +157,25 @@ class ServiceModel extends Model{
 			this._syncTo = model;
 		}
 	}
+
+	/**
+	 * 处理返回结果
+	 * @param   {Object}    res 从服务器返回的统一格式数据
+	 * @return  {Promise}
+	 * */
+	handleResponse(res){
+		let result
+			;
+
+		if( res.success ){
+			result = Promise.resolve( res.data );
+		}
+		else{
+			result = Promise.reject( res );
+		}
+
+		return result;
+	}
 }
 
 /**
@@ -147,6 +184,7 @@ class ServiceModel extends Model{
  * */
 ServiceModel._CONFIG = {
 	baseUrl: ''
+	, isCrossDomain: true
 };
 
 /**
@@ -171,12 +209,34 @@ ServiceModel.register = function(type, model){
 };
 
 /**
- * 获取或生成 type 类型的 model 对象
+ * 注册子类的别名
+ * @static
+ * @param   {String}        type        已注册的子类名
+ * @param   {String|String[]}  aliasName   该子类的别名
+ * */
+ServiceModel.registerAlias = function(type, aliasName){
+
+	if( !Array.isArray(aliasName) ){
+		aliasName = [aliasName];
+	}
+
+	aliasName.forEach((d)=>{
+		if( !(d in ServiceModel._MODEL_ALIAS) ){
+			ServiceModel._MODEL_ALIAS[d] = type;
+		}
+		else{
+			console.log(d, ' 已经存在');
+		}
+	});
+};
+
+/**
+ * 获取或生成 type 类型的 ServiceModel 子类的实例或 ServiceModel 类的实例
  * @static
  * @param   {String}    type
  * @param   {Boolean|Object}    [notCache=false]    为 boolean 类型时表示是否缓存，为 object 类型时将值赋给 options 并设置为 false
- * @param   {Object}    [options={}]
- * @return  {Model}
+ * @param   {Object}            [options={}]
+ * @return  {Model}     当 type 有意义的时候，为 ServiceModel 子类的实例，否则为 ServiceModel 类的实例
  * */
 ServiceModel.factory = function(type, notCache=false, options={}){
 	let model
@@ -189,7 +249,7 @@ ServiceModel.factory = function(type, notCache=false, options={}){
 
 	if( type in ServiceModel ){
 		if( !notCache && type in ServiceModel._MODEL_CACHE ){
-			model = Model._MODEL_CACHE[type];
+			model = ServiceModel._MODEL_CACHE[type];
 		}
 		else{
 			model = new ServiceModel[type](options);
@@ -202,5 +262,15 @@ ServiceModel.factory = function(type, notCache=false, options={}){
 
 	return model;
 };
+
+/**
+ * 在 Model.factory 工厂方法注册，将可以使用工厂方法生成
+ * */
+Model.register('service', ServiceModel);
+
+/**
+ * 注册别名
+ * */
+Model.registerAlias('service', 's');
 
 export default ServiceModel;
