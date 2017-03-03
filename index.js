@@ -316,7 +316,7 @@ console.log('Web Server is listening...');
 socketServer = socket.listen( webServer );
 
 // 设置 socket.IO 与 express 共用 session
-socketServer.use( sharedSession(session, {
+socketServer.use( sharedSession(sessionMiddleware, {
 	autoSave: true
 }) );
 
