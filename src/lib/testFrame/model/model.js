@@ -87,8 +87,19 @@ class Model{
 	/**
 	 * 事件触发函数，函数将传入 topic,newValue 值，当 removeData 执行时也会触发事件，newValue 被传为 null
 	 * @callback    ModelChangeEvent
-	 * @param   {String}    topic
-	 * @param   {*}         newValue
+	 * @param       {String}    topic
+	 * @param       {*}         newValue
+	 * @param       {*}         [oldValue]
+	 * */
+	/**
+	 * 在 Promise resolve 时调用的函数
+	 * @callback    promiseResolve
+	 * @param       {*}     result
+	 * */
+	/**
+	 * 在 Promise reject 时调用的函数
+	 * @callback    promiseReject
+	 * @param       {*}     result
 	 * */
 
 	/**
@@ -210,7 +221,7 @@ class Model{
 	 * @param   {Model|Model[]}   model
 	 * */
 	syncTo(model){
-		if( !Array.isArray( model ) ){
+		if( !Array.isArray(model) ){
 			model = [model];
 		}
 
@@ -221,6 +232,9 @@ class Model{
 				this._syncList.indexOf( d ) === -1 ){
 
 				this._syncList.push( d );
+			}
+			else{   // 该实例类型已经存在
+				console.log('该实例类型已经存在');
 			}
 		});
 	}
@@ -290,10 +304,10 @@ Model.registerAlias = function(type, aliasName){
 /**
  * 获取或生成 type 类型的 Model 子类的实例或 Model 类的实例
  * @static
- * @param   {String}    type
+ * @param   {String}            type
  * @param   {Boolean|Object}    [notCache=false] 为 boolean 类型时表示是否缓存，默认值为 false；为 object 类型时将值赋给 options 并设置为 false
  * @param   {Object}            [options={}]
- * @return  {Model}     当 type 有意义的时候，为 Model 子类类的实例，否则为 Model 类的实例
+ * @return  {Model}             当 type 有意义的时候，为 Model 子类类的实例，否则为 Model 类的实例
  * */
 Model.factory = function(type, notCache=false, options={}){
 	let model
@@ -314,13 +328,13 @@ Model.factory = function(type, notCache=false, options={}){
 			model = Model._MODEL_CACHE[type];
 		}
 		else{
-			model = new Model[type](options);
+			model = new Model[type]( options );
 			Model._MODEL_CACHE[type] = model;
 		}
 	}
 	else{
 		console.log('不存在注册为 ', type, ' 的子类');
-		model = new Model(options);
+		model = new Model();
 	}
 
 	return model;

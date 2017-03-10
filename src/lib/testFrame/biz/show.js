@@ -6,7 +6,7 @@ import domain from '../domain.js';
 /**
  * @class
  * @classdesc   试衣秀业务模块
- * @extends ServiceModel
+ * @extends     ServiceModel
  * */
 class ShowServiceModel extends ServiceModel{
 	/**
@@ -30,7 +30,7 @@ class ShowServiceModel extends ServiceModel{
 	/**
 	 * 试衣秀相关 - 搭讪（关注某人）
 	 * @param   {String|Number} favorMemberId   用户 id
-	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
 	 * */
 	friendRelationAdd(favorMemberId){
 		return this.getData('/friendRelation/add', {
@@ -43,7 +43,7 @@ class ShowServiceModel extends ServiceModel{
 	/**
 	 * 试衣秀相关 - 取消关注某人
 	 * @param   {String|Number} favorMemberId   用户 id
-	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
 	 * */
 	friendRelationRemove(favorMemberId){
 		return this.getData('/friendRelation/remove', {
@@ -56,7 +56,7 @@ class ShowServiceModel extends ServiceModel{
 	/**
 	 * 试衣秀相关 - 删除试衣秀
 	 * @param   {String|Number} buyerShowId     试衣秀 id
-	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
 	 * */
 	buyerShowClose(buyerShowId){
 		return this.getData('/buyerShow/close', {
@@ -69,7 +69,7 @@ class ShowServiceModel extends ServiceModel{
 	/**
 	 * 试衣秀相关 - 献花
 	 * @param   {String|Number} buyerShowId     试衣秀 id
-	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
 	 * */
 	addFlower(buyerShowId){
 		return this.getData('/buyerShow/addFlower', {
@@ -83,7 +83,7 @@ class ShowServiceModel extends ServiceModel{
 	 * 撒娇礼相关 - 添加撒娇
 	 * @param   {String|Number} buyerShowId     试衣秀 id
 	 * @param   {String|Number} skuId
-	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
 	 * */
 	crowdAdd(buyerShowId, skuId){
 		return this.getData('/crowd/item/add', {
@@ -97,7 +97,7 @@ class ShowServiceModel extends ServiceModel{
 	/**
 	 * 撒娇礼相关 - 撒娇删除
 	 * @param   {String|Number} crowdItemId     撒娇礼 id
-	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
 	 * */
 	crowdDelete(crowdItemId){
 		return this.getData('/crowd/item/delete', {
@@ -110,7 +110,7 @@ class ShowServiceModel extends ServiceModel{
 	/**
 	 * 撒娇礼相关 - 撒娇取消
 	 * @param   {String|Number} crowdItemId     撒娇礼 id
-	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
 	 * */
 	crowdCancel(crowdItemId){
 		return this.getData('/crowd/item/cancel', {
@@ -132,7 +132,7 @@ class ShowServiceModel extends ServiceModel{
 	/**
 	 * 话题相关 - 添加关注专辑
 	 * @param   {String|Number} labelId     专辑 id
-	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
 	 * @todo    未查到接口
 	 * */
 	followAdd(labelId){
@@ -146,7 +146,7 @@ class ShowServiceModel extends ServiceModel{
 	/**
 	 * 话题相关 - 取消关注专辑
 	 * @param   {String|Number} labelId     专辑 id
-	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
 	 * @todo    未查到接口
 	 * */
 	followCancel(labelId){

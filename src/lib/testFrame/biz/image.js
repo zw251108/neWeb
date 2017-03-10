@@ -6,7 +6,7 @@ import domain from '../domain.js';
 /**
  * @class
  * @classdesc   图片相关操作模块，将 CDN 相关操作整合
- * @extends ServiceModel
+ * @extends     ServiceModel
  * */
 class ImageServiceModel extends ServiceModel{
 	/**

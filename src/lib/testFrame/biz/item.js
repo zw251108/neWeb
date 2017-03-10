@@ -6,7 +6,7 @@ import domain from '../domain.js';
 /**
  * @class
  * @classdesc   Item 业务模块
- * @extends ServiceModel
+ * @extends     ServiceModel
  * */
 class ItemServiceModel extends ServiceModel{
 	/**

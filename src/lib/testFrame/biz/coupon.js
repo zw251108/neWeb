@@ -6,7 +6,7 @@ import domain from '../domain.js';
 /**
  * @class
  * @classdesc   coupon 业务模块
- * @extends ServiceModel
+ * @extends     ServiceModel
  * */
 class CouponServiceModel extends ServiceModel{
 	/**
@@ -31,7 +31,7 @@ class CouponServiceModel extends ServiceModel{
 	 * 获取某个用户满平分活动的资格记录
 	 * @param   {String|Number} activityId  活动 id
 	 * @param   {String|Number} memberId    用户 id
-	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
 	 * */
 	activityQcList(activityId, memberId){
 		return this.getData('/publics/activity/qc/list', {
@@ -45,7 +45,7 @@ class CouponServiceModel extends ServiceModel{
 	/**
 	 * 获取品活动的优惠规则
 	 * @param   {String|Number} activityId  活动 id
-	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
 	 * */
 	activityRuleGet(activityId){
 		return this.getData('/publics/activity/rule/get', {

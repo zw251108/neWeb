@@ -6,7 +6,7 @@ import domain from '../domain.js';
 /**
  * @class
  * @classdesc   IM 业务模块
- * @extends ServiceModel
+ * @extends     ServiceModel
  * */
 class ImServiceModel extends ServiceModel{
 	/**
@@ -30,7 +30,7 @@ class ImServiceModel extends ServiceModel{
 	/**
 	 * 获取用户账号信息（判断用户是否注册了环信 IM 账号）
 	 * @param   {String|Number} memberId
-	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
 	 * */
 	getByMemberId(memberId){
 		return this.getData('/publics/tgou/easemob/getByMemberId', {
@@ -43,7 +43,7 @@ class ImServiceModel extends ServiceModel{
 	/**
 	 * 获取用户环信信息
 	 * @param   {String|Number} memberId
-	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
 	 * */
 	getAccount(memberId){
 		return this.getData('/publics/tgou/easemob/getAccount', {
@@ -53,7 +53,6 @@ class ImServiceModel extends ServiceModel{
 			}
 		});
 	}
-
 	/**
 	 * 获取客服系统中的 IM 服务号
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果

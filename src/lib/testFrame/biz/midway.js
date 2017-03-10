@@ -6,7 +6,7 @@ import domain from '../domain.js';
 /**
  * @class
  * @classdesc   中间件模块
- * @extends ServiceModel
+ * @extends     ServiceModel
  * */
 class MidwayServiceModel extends ServiceModel{
 	/**

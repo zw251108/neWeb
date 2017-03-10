@@ -275,6 +275,7 @@ class App{
 				title
 			}) );
 		}
+		catch(e){}
 	}
 	/**
 	 * 切换页面，通知 App 增加历史记录
@@ -404,6 +405,7 @@ App.updateUrlParams = function(obj){
 			obj = JSON.parse( obj );
 		}
 	}
+	catch(e){}
 };
 App.headerMenuEvent = function(){};
 App.headStoreEvent = function(){};

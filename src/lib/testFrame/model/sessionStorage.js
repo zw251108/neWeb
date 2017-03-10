@@ -4,8 +4,8 @@ import Model from './model.js';
 
 /**
  * @class
- * @extends Model
  * @classdesc   对 sessionStorage 进行封装，统一调用接口，在 Model.factory 工厂方法注册为 sessionStorage，别名 ss，将可以使用工厂方法生成
+ * @extends     Model
  * @example
 let sessionStorageModel = new SessionStorageModel()
 	, storage = Model.factory('sessionStorage')

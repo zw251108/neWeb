@@ -1,65 +1,60 @@
 'use strict';
 
-let throttle = function (func, wait, options) {
+/**
+ * @file    节流函数
+ * @desc    保证一个函数在固定的时间内只执行一次
+ * */
 
-	let timeout, context, args, result;
-	// 最近一次func被调用的时间点
-	let previous = 0;
-	if (!options) options = {};
+/**
+ * @function
+ * @param   {Function}  func
+ * @param   {Number}    wait
+ * @return  {Function}
+ * */
+function throttle(func, wait){
+	let timeout = null
+		, result = function(){
+			let that = this || null
+				;
 
-	// 创建一个延后执行的函数包裹住func的执行过程
-	let later = function () {
-		// 执行时，刷新最近一次调用时间
-		previous = options.leading === false ? 0 : new Date();
-		// 清空定时器
-		timeout = null;
-		result = func.apply(context, args);
-		if (!timeout) context = args = null;
-	};
+			if( !timeout ){
+				func.apply(that, arguments || []);
 
-	// 返回一个throttled的函数
-	let throttled = function () {
-		// ----- 节流函数开始执行----
-		// 我们尝试调用func时，会首先记录当前时间戳
-		let now = new Date();
-		// 是否是第一次调用
-		if (!previous && options.leading === false) previous = now;
-		// func还要等待多久才能被调用 =  预设的最小等待期-（当前时间-上一次调用的时间）
-		// 显然，如果第一次调用，且未设置options.leading = false，那么remaing=0，func会被立即执行
-		let remaining = wait - (now - previous);
-		// 记录之后执行时需要的上下文和参数
-		context = this;
-		args = arguments;
-
-		// 如果计算后能被立即执行
-		if (remaining <= 0 || remaining > wait) {
-			// 清除之前的“最新调用”
-			if (timeout) {
-				clearTimeout(timeout);
-				timeout = null;
+				timeout = setTimeout(function(){
+					clearTimeout( timeout );
+					timeout = null;
+				}, wait);
 			}
-			// 刷新最近一次func调用的时间点
-			previous = now;
-			// 执行func调用
-			result = func.apply(context, args);
-			// 如果timeout被清空了，
-			if (!timeout) context = args = null;
-
-		} else if (!timeout && options.trailing !== false) {
-			// 如果设置了trailing edge，那么暂缓此次调用尝试的执行
-			timeout = setTimeout(later, remaining);
 		}
-		return result;
+		;
+
+	/**
+	 * 取消计时器
+	 * */
+	result.cancel = function(){
+		if( timeout ){
+			clearTimeout( timeout );
+			timeout = null;
+		}
 	};
 
-	// 可以取消函数的节流化
-	throttled.cancel = function () {
-		clearTimeout(timeout);
-		previous = 0;
-		timeout = context = args = null;
+	/**
+	 * 取消定时器，立即执行
+	 * @param   {Object}    [context=null]  执行函数时的 this 指向
+	 * @param   {Array}     [argv=[]]       执行函数时的传入参数
+	 * */
+	result.immediate = function(context=null, argv=[]){
+		result.cancel();
+
+		func.apply(context, argv);
+		
+		timeout = setTimeout(function(){
+			clearTimeout( timeout );
+			timeout = null;
+		});
 	};
 
-	return throttled;
-};
+	return result;
+}
 
 export default throttle;

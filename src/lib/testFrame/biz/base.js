@@ -8,7 +8,7 @@ import marketList from '../../../../setting/marketShop.json';
 /**
  * @class
  * @classdesc   Base 业务模块
- * @extends ServiceModel
+ * @extends     ServiceModel
  * */
 class BaseServiceModel extends ServiceModel{
 	/**
@@ -32,7 +32,7 @@ class BaseServiceModel extends ServiceModel{
 	/**
 	 * 获取城市列表
 	 * @param   {String|Number} id  城市 id
-	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
 	 * */
 	cityList(id){
 		return this.getData('/publics/city/list', {
@@ -43,9 +43,9 @@ class BaseServiceModel extends ServiceModel{
 	}
 	/**
 	 * 通过经纬度获取城市信息
-	 * @param   {String|Number}    lat
-	 * @param   {String|Number}    lon
-	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @param   {String|Number} lat
+	 * @param   {String|Number} lon
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
 	 * */
 	cityLocate(lat, lon){
 		return this.getData('/publics/city/locate', {
@@ -69,7 +69,7 @@ class BaseServiceModel extends ServiceModel{
 	/**
 	 * 自提点查询
 	 * @param   {String|Number} storeId     门店 id
-	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
 	 * */
 	queryPickUpSiteByStoreId(storeId){
 		return this.getData('/publics/pickupsite/queryPickUpSiteByStoreId', {
@@ -82,7 +82,7 @@ class BaseServiceModel extends ServiceModel{
 	/**
 	 * 获取门店信息
 	 * @param   {String|Number} storeId     门店 id
-	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
 	 * */
 	storeInfo(storeId){
 		return this.getData('/publics/store/info', {
@@ -97,8 +97,8 @@ class BaseServiceModel extends ServiceModel{
 	 * @private
 	 * @param   {String|Number} lat
 	 * @param   {String|Number} lon
-	 * @param   {Number}    [source=1]  门店类型
-	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @param   {Number}        [source=1]  门店类型
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
 	 * */
 	_getGpsShop(lat, lon, source=1){
 		return this.getData('/publics/store/nearby/store', {
@@ -110,6 +110,7 @@ class BaseServiceModel extends ServiceModel{
 			}
 		})
 	}
+
 	/**
 	 * 计算弧度
 	 * @private
@@ -126,7 +127,7 @@ class BaseServiceModel extends ServiceModel{
 	 * @param   {String|Number} lng1
 	 * @param   {String|Number} lat2
 	 * @param   {String|Number} lng2
-	 * @return  {Number}    返回距离信息
+	 * @return  {Number}        返回距离信息
 	 * */
 	_getDistance(lat1='', lng1='', lat2='', lng2=''){
 		let EARTH_RADIUS = 6378.137 // 地球半径
@@ -152,7 +153,7 @@ class BaseServiceModel extends ServiceModel{
 	}
 	/**
 	 * 获取去过的门店
-	 * @param   {Object[]}     storeList   去过的门店
+	 * @param   {Object[]}      storeList   去过的门店
 	 * @param   {String|Number} storeList[].cityId
 	 * @param   {String|Number} storeList[].id
 	 * @param   {String|Number} storeList[].type
@@ -160,7 +161,7 @@ class BaseServiceModel extends ServiceModel{
 	 * @param   {String|Number} [source]    门店类型：1.百货；2.超市
 	 * @param   {String|Number} [lat]
 	 * @param   {String|Number} [lon]
-	 * @return  {Promise}   在 resolve 时传入 storeId
+	 * @return  {Promise}       在 resolve 时传入 storeId
 	 * @desc    从 cookie 中获取 cityId、经纬度（lat lon）、去过的门店列表（usualShop）
 	 *      从去过的门店中获取当前城市最近去过的的门店
 	 *      若没有则根据 GPS 发送请求获取当前距离最近的门店

@@ -4,8 +4,8 @@ import Model from './model.js';
 
 /**
  * @class
- * @extends Model
  * @classdesc   对 cookie 的使用进行封装，统一调用接口，在 Model.factory 工厂方法注册为 cookie，别名 c，将可以使用工厂方法生成
+ * @extends     Model
  * @example
 let cookieModel = new CookieModel()
 	, cookie = Model.factory('cookie')
@@ -33,10 +33,10 @@ class CookieModel extends Model{
 
 	/**
 	 * 设置数据
-	 * @param   {String}    topic
-	 * @param   {*}         value
+	 * @param   {String}                topic
+	 * @param   {*}                     value
 	 * @param   {Object|Number|String}  [options]   相关配置
-	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
+	 * @return  {Promise}               返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
 	setData(topic, value, options){
 		return this._store.then(()=>{

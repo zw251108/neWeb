@@ -2,20 +2,32 @@
 
 import Model from './model.js';
 // import req from '../req/index.js';
+
+/**
+ * 目前数据请求依赖于 jQuery.ajax 方法
+ * @todo 替换为自开发请求类库
+ * */
 import $ from 'jquery';
 
 /**
  * @class
  * @classdesc   对服务器接口进行封装，与 Model 统一接口，隔离数据与数据来源的问题
- * @extends Model
+ * @extends     Model
  *
  * @todo 支持 RESTful API
+ * @todo 通道功能，一个 topic 一次只能发送一条，其余保存在队列中，等待当前发送的返回，再发送下一条
+ * @todo 限制同时发送的请求的最大数量
  * */
 class ServiceModel extends Model{
 	/**
 	 * @constructor
 	 * @param   {Object}    [config={}]
 	 * @param   {String}    [config.baseUrl]
+	 * @param   {Boolean}   [config.isCrossDomain]
+	 // * @param   {Function}  [config.beforeSendHandler]
+	 * @param   {Function}  [config.successHandler]
+	 * @param   {Function}  [config.errorHandler]
+	 * @param   {Number}    [config.timeout]
 	 * */
 	constructor(config={}){
 		super();
@@ -34,18 +46,25 @@ class ServiceModel extends Model{
 
 		this._syncTo = null;
 
+		// // 设置默认前置处理
+		// if( !this._config.beforeSendHandler ){
+		// 	this._config.beforeSendHandler = function(){
+		//
+		// 	};
+		// }
+
 		// 设置默认成功处理
 		if( !this._config.successHandler ){
 			this._config.successHandler = function(rs){
 				return rs;
-			}
+			};
 		}
 
 		// 设置默认错误处理
 		if( !this._config.errorHandler ){
 			this._config.errorHandler = function(e){
 				return Promise.reject( e );
-			}
+			};
 		}
 
 		// // 任务队列
@@ -64,6 +83,12 @@ class ServiceModel extends Model{
 		// this._req = req.factory('ajax');
 	}
 	/**
+	 *
+	 * */
+	_setDefault(options){
+
+	}
+	/**
 	 * 对 setData 和 getData 的 options 添加跨域参数
 	 * @param   {Object}    options setData 和 getData 的 options 参数
 	 * @return  {Object}
@@ -80,14 +105,14 @@ class ServiceModel extends Model{
 
 	/**
 	 * 设置数据，默认视为发送 POST 请求到服务器，不会将返回结果保存到本地缓存
-	 * @param   {String|Object}    topic    字符串类型为请求 url，对象类型为所有参数
-	 * @param   {Object}    [options]
-	 * @param   {String}    [options.url]
-	 * @param   {Object}    [options.data]
-	 * @param   {String}    [options.method]
+	 * @param   {String|Object} topic    字符串类型为请求 url，对象类型为所有参数，其中 url 为必填
+	 * @param   {Object}        [options]
+	 * @param   {Object}        [options.data]
+	 * @param   {String}        [options.method]
+	 * @param   {Boolean}       [needSeckey=false]
 	 * @return  {Promise}
 	 * */
-	setData(topic, options){
+	setData(topic, options, needSeckey=false){
 		let result
 			;
 
@@ -104,73 +129,89 @@ class ServiceModel extends Model{
 			options = this._setCrossDomain( options );
 		}
 
-		result = $.ajax(topic, options).then(this._config.successHandler, this._config.errorHandler);
-
-		// // Req 对象操作
-		// return this._req(topic, options).then(function(){    // 发送请求成功
-		//
-		// }, function(){
-		//
-		// });
-		return result;
-	}
-	/**
-	 * 获取数据，默认视为发送 GET 请求到服务器，可以返回结果保存到本地缓存
-	 * @param   {String}    topic
-	 * @param   {Object}    [options={}]    ajax 参数
-	 * @param   {String}    [options.url]
-	 * @param   {Object}    [options.data]
-	 * @param   {String}    [options.method]
-	 * @param   {Boolean}   [isCache=false]   是否优先从本地缓存中读取数据，同时发送请求后数据是否同步到本地缓存，默认为 false
-	 * @return  {Promise}
-	 * @todo    优先从本地 syncTo model 中读取数据，若没有则发送请求
-	 * */
-	getData(topic, options={}, isCache=false){
-		let result
-			;
-
-		// 判断是否设置了本地缓存以及是否从本地缓存中读取数据
-		if( isCache && this._syncTo ){
-			// todo 解决多个本地缓存优先级的问题
-			result = this._syncTo.getData( topic );
+		if( topic ){
+			result = $.ajax(topic, options).then(this._config.successHandler, this._config.errorHandler);
 		}
 		else{
 			result = Promise.reject();
-
-			topic = this._config.baseUrl + topic;
-			options.method = options.method || 'POST';
-			options.dataType = options.dataType || 'json';
-
-			if( this._config.isCrossDomain ){
-				options = this._setCrossDomain( options );
-			}
 		}
 
-		// 当从本地缓存时未找到期望的数据会 reject，或者不从缓存中获取数据时也会 reject
-		result = result.catch(()=>{
-			// 发送请求，从服务器获取数据
-			// return this._req.send(topic, options)
-			return $.ajax(topic, options)
-				.then((data)=>{
-					let result
-						;
+		return result;
+	}
+	/**
+	 * 获取数据，默认视为发送 GET 请求到服务器，可以将返回结果保存到本地缓存
+	 * @param   {String|Object}     topic   字符串类型为请求 url，对象类型为所有参数，其中 url 为必填
+	 * @param   {Object|Boolean}    [options={}]    对象类型为 ajax 参数，Boolean 类型时将其赋值给 isCache，自身设置为 {}
+	 * @param   {Object}            [options.data]
+	 * @param   {String}            [options.method]
+	 * @param   {Boolean}           [isCache=false]   是否优先从本地缓存中读取数据，同时发送请求后数据是否同步到本地缓存，默认为 false
+	 * @param   {Boolean}           [needSeckey=false]  是否需要
+	 * @return  {Promise}
+	 * @todo    优先从本地 syncTo model 中读取数据，若没有则发送请求
+	 * */
+	getData(topic, options={}, isCache=false, needSeckey=false){
+		let result
+			;
 
-					if( isCache && this._syncTo ){  // 如果有设置缓存，则将请求返回的数据存入本地缓存
-						result = this._syncTo.setData(topic, data).then(function(){
-							return data;
-						}, function(e){
-							console.log( e );
+		if( typeof options === 'boolean' ){
+			isCache = options;
+			options = {};
+		}
 
-							return data;
-						});
-					}
-					else{
-						result = data;
-					}
+		if( typeof topic === 'object' ){
+			options = topic;
+			topic = options.url;
+		}
 
-					return result;
-				}).then(this._config.successHandler, this._config.errorHandler);
-		});
+		if( topic ){
+			// 判断是否设置了本地缓存以及是否从本地缓存中读取数据
+			if( isCache && this._syncTo ){
+				// todo 解决多个本地缓存优先级的问题
+				result = this._syncTo.getData( topic );
+			}
+			else{
+				result = Promise.reject();
+
+				topic = this._config.baseUrl + topic;
+				options.method = options.method || 'GET';
+				options.dataType = options.dataType || 'json';
+
+				if( this._config.isCrossDomain ){
+					options = this._setCrossDomain( options );
+				}
+			}
+
+			// 当从本地缓存时未找到期望的数据会 reject，或者不从缓存中获取数据时也会 reject
+			result = result.catch(()=>{
+				// console.log(options)
+				
+				// 发送请求，从服务器获取数据
+				// return this._req.send(topic, options)
+				return $.ajax(topic, options)
+					.then((data)=>{
+						let result
+							;
+
+						if( isCache && this._syncTo ){  // 如果有设置缓存，则将请求返回的数据存入本地缓存
+							result = this._syncTo.setData(topic, data).then(function(){
+								return data;
+							}, function(e){
+								console.log( e );
+
+								return data;
+							});
+						}
+						else{
+							result = data;
+						}
+
+						return result;
+					}).then(this._config.successHandler, this._config.errorHandler);
+			});
+		}
+		else{   // topic 无值不做任何处理
+			result = Promise.reject();
+		}
 
 		return result;
 	}
@@ -205,29 +246,24 @@ class ServiceModel extends Model{
 		}
 	}
 
-	/**
-	 * @todo
-	 * 通道功能，一个 topic 一次只能发送一条，其余保存在队列中，等待当前发送的返回，再发送下一条
-	 * */
-
-	/**
-	 * 处理返回结果
-	 * @param   {Object}    res 从服务器返回的统一格式数据
-	 * @return  {Promise}
-	 * */
-	handleResponse(res){
-		let result
-			;
-
-		if( res.success ){
-			result = Promise.resolve( res.data );
-		}
-		else{
-			result = Promise.reject( res );
-		}
-
-		return result;
-	}
+	// /**
+	//  * 处理返回结果
+	//  * @param   {Object}    res 从服务器返回的统一格式数据
+	//  * @return  {Promise}
+	//  * */
+	// handleResponse(res){
+	// 	let result
+	// 		;
+	//
+	// 	if( res.success ){
+	// 		result = Promise.resolve( res.data );
+	// 	}
+	// 	else{
+	// 		result = Promise.reject( res );
+	// 	}
+	//
+	// 	return result;
+	// }
 }
 
 /**
@@ -239,6 +275,8 @@ ServiceModel._CONFIG = {
 	, isCrossDomain: true
 	, task: false
 	, jsonp: false
+	, timeout: 10000
+	// , beforeSendHandler: null
 	, successHandler: null
 	, errorHandler: null
 };
