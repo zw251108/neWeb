@@ -106,13 +106,13 @@ class ServiceModel extends Model{
 	/**
 	 * 设置数据，默认视为发送 POST 请求到服务器，不会将返回结果保存到本地缓存
 	 * @param   {String|Object} topic    字符串类型为请求 url，对象类型为所有参数，其中 url 为必填
-	 * @param   {Object}        [options]
+	 * @param   {Object}        [options={}]
 	 * @param   {Object}        [options.data]
 	 * @param   {String}        [options.method]
 	 * @param   {Boolean}       [needSeckey=false]
 	 * @return  {Promise}
 	 * */
-	setData(topic, options, needSeckey=false){
+	setData(topic, options={}, needSeckey=false){
 		let result
 			;
 

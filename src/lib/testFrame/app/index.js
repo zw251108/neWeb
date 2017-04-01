@@ -33,10 +33,9 @@ class App{
 		catch(e){}
 	}
 	/**
-	 * 推送消息，传递最大的 id
 	 * @param   {String}    maxId   传入 id 或 '-1'
 	 * @param   {String}    messageType 消息类型
-	 * @desc    目前有 501、502、503、504
+	 * @desc    推送消息，传递最大的 id，目前有 501、502、503、504
 	 *  501     降价通知
 	 *  502     活动卷消息
 	 *  503     活动消息
@@ -101,9 +100,8 @@ class App{
 		catch(e){}
 	}
 	/**
-	 * 弹出日期选择窗，callback 回调方法
 	 * @param   {Function}  callback
-	 * @desc    在回调函数 callback 中传入选择的日期 time
+	 * @desc    弹出日期选择窗，callback 回调方法，在回调函数 callback 中传入选择的日期 time
 	 * */
 	showDateDialog(callback){
 		callback = callback = function(){};
@@ -226,9 +224,8 @@ class App{
 		catch(e){}
 	}
 	/**
-	 * 覆盖 App 后退事件
 	 * @param   {String}    event
-	 * @desc    目前调用时传入的参数为 'event:App.tgBackEvent'
+	 * @desc    覆盖 App 后退事件，目前调用时传入的参数为 'event:App.tgBackEvent'
 	 * @todo 调用的代码被覆盖重写，取消？
 	 * @todo 若不取消，期望传入参数规则
 	 * */
@@ -236,15 +233,16 @@ class App{
 		// todo 与 cookie 解耦
 		cookie.getData('global').then((value)=>{
 
-			//根据版本号，进行不同处理
-			if( this.getTgAppVersion() < 3 && value === 'android' ){
+			return this.getTgAppVersion().then((version)=>{
 
-				event = event.split(':')[1];
-			}
+				//根据版本号，进行不同处理
+				if( version < 3 && value === 'android' ){
+					event = event.split(':')[1];
+				}
 
-			window.app.tgBackEvent( event );
-		}).catch(function(e){
-		});
+				window.app.tgBackEvent( event );
+			});
+		}).catch(function(e){});
 	}
 	/**
 	 * 页面加载完毕
@@ -291,11 +289,10 @@ class App{
 		catch(e){}
 	}
 	/**
-	 * 跳转原生页
 	 * @param   {String}    code
 	 * @param   {String}    url
 	 * @param   {String}    [event]
-	 * @desc    目前 code 有 'dengLu'、'shiYiLieBiao'
+	 * @desc    跳转原生页，目前 code 有 'dengLu'、'shiYiLieBiao'
 	 *  event 有 'event:Ap.gotoFittingShowWatch'
 	 * @todo 期望传入参数规则
 	 * */
@@ -366,23 +363,64 @@ class App{
 		catch(e){}
 	}
 	/**
-	 * @todo 返回值类型？
+	 * 获取当前 APP 版本
 	 * @return  {Promise}
 	 * */
 	getTgAppVersion(){
-		try{
-			return Promise.resolve( Number(window.app.getTgAppVersion().toString().match(/\d+/)[0]) );
-		}
-		catch(e){
-			// todo 获取 cookie
-		}
+		return new Promise(function(resolve){
+			resolve( Number(window.app.getTgAppVersion()).toString().match(/\d+/)[0] );
+		}).catch(function(){
+			return cookie.getData('hybridVersion');
+		}).catch(function(){
+			return 0;
+		});
 	}
 	setUserHeaderImg(){}
 	customShare(){}
 	showWifi(){}
 	updateUserName(){}
 	setCurStoreName(){}
-	startChatWith(){}
+	/**
+	 * @param   {Object}    info
+	 * @desc    调用 IM 聊天，老版本中用户之间聊天和用户联系客服统一使用此接口，在新版本中添加 startChatWithService 接口，期望将其分离
+	 * */
+	startChatWith(info){
+		this.getTgAppVersion().then(function(version){
+			if( version >= 5 ){
+				window.app.startChatWith( JSON.stringify(info) );
+			}
+		}).catch(function(e){});
+	}
+	/**
+	 * @param   {Object}        info
+	 * @param   {String}        info.counterUrl             专柜页面  url
+	 * @param   {Object}        [info.productInfo]          商品信息
+	 * @param   {String}        info.productInfo.productUrl 商品页面 url
+	 * @param   {String}        info.productInfo.imageUrl   商品图片 url
+	 * @param   {String}        info.productInfo.title      商品名称
+	 * @param   {Number|String} info.productInfo.price      商品价格
+	 * @param   {Object}        [info.orderInfo]            订单信息
+	 * @param   {String}        info.orderInfo.orderUrl     订单页面 url
+	 * @param   {String}        info.orderInfo.imageUrl     订单第一个商品图片 url
+	 * @param   {String}        info.orderInfo.orderId      订单 id
+	 * @param   {Number|String} info.orderInfo.price        订单总价
+	 * @param   {String}        info.orderInfo.time         订单下单时间（YYYY-MM-DD hh:mm 格式）
+	 * @desc    调用 IM 联系客服，新版本添加用来部分替代 startChatWith，期望将用户之间聊天和用户联系客服分开
+	 *          参数在之前 startChatWith 的基础上添加 counterUrl,productInfo,orderInfo，分别对应专柜页面 url，商品信息，订单信息
+	 *          startChatWithService 内部判断当 window.app 不存在 startChatWithService 方法时会降级调用 startChatWith
+	 * */
+	startChatWithService(info){
+		this.getTgAppVersion().then(function(version){
+			if( version >= 5 ){
+				if( 'startChatWithService' in window.app ){
+					window.app.startChatWithService( JSON.stringify(info) );
+				}
+				else{
+					window.app.startChatWith( JSON.stringify(info) );
+				}
+			}
+		}).catch(function(e){});
+	}
 	setHeaderArrowDirection(){}
 	setAppStateText(){}
 	setShareEnable(){}

@@ -1,7 +1,8 @@
 'use strict';
 
+import Model        from '../model/model.js';
 import ServiceModel from '../model/service.js';
-import domain from '../domain.js';
+import domain       from '../domain.js';
 
 /**
  * @class
@@ -16,21 +17,22 @@ class ImageServiceModel extends ServiceModel{
 	constructor(config={}){
 		super( config );
 
-		this._config.domainList = [];  // 子域名
+		this._config.domainList = ['img'];  // 子域名
 
 		if( !domain.isOnline ){
-			this._config.domainList.push('test.img.tg-img.com');
+			this._config.domainList.push( domain.env );
+			this._config.imagePath = 'test.img.tg-img.com';
 		}
 		else{
-			this._config.domainList.push('image1');
 			this._config.domainList.push( domain.host );
+			this._config.imagePath = 'image1.' + domain.host
 		}
 
 		this._config.baseUrl = '//'+ this._config.domainList.join('.');
 	}
 
 	/**
-	 * 获取图片的绝对路径，并添加相关后缀（与又拍云相关）
+	 * @desc    获取图片的绝对路径，并添加相关后缀（与又拍云相关）
 	 * @param   {String}    url
 	 * @param   {String}    [type='y']
 	 * @return  {String}
@@ -44,20 +46,35 @@ class ImageServiceModel extends ServiceModel{
 				rs = url + (ImageServiceModel.POSTFIX[type] || '');
 			}
 			else{
-				rs = this._config.baseUrl + url + (ImageServiceModel.POSTFIX[type] || '');
+				rs = this._config.imagePath + url + (ImageServiceModel.POSTFIX[type] || '');
 			}
 		}
 
 		return rs;
 	}
-
 	/**
-	 * 占位图路径处理
+	 * @desc    占位图路径处理
 	 * @param   {String}    [imgType='']
 	 * @return  {String}    图片路径
+	 * @todo    未实现
 	 * */
 	errorHandler(imgType=''){
 
+	}
+
+	/**
+	 * @desc    异步上传图片
+	 * @param   {FormData}  formData
+	 * @param   {File}      formData.file
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * */
+	syncImg(formData){
+		return this.getData('/fileUploader/syncImg', {
+			method: 'POST'
+			, data: formData
+			, processData: false
+			, contentType: false
+		});
 	}
 }
 
@@ -86,8 +103,8 @@ ImageServiceModel.POSTFIX = {
 	, "580x220": '!580x220'
 };
 
-ServiceModel.register('image', ImageServiceModel);
+Model.register('image', ImageServiceModel);
 
-ServiceModel.registerAlias('image', 'img');
+Model.registerAlias('image', 'img');
 
 export default ImageServiceModel;

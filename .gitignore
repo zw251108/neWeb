@@ -46,3 +46,9 @@ static/newFrameDemo/dist
 static/webpack-loader/dist
 static/frameDoc
 static/bigDemo
+less/ui/
+module/model/
+src/lib/testFrame/track/
+src/lib/testFrame/url/
+static/tgouDoc/
+work/

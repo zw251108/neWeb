@@ -1,7 +1,8 @@
 'use strict';
 
+import Model        from '../model/model.js';
 import ServiceModel from '../model/service.js';
-import domain from '../domain.js';
+import domain       from '../domain.js';
 
 /**
  * @class
@@ -28,7 +29,7 @@ class MidwayServiceModel extends ServiceModel{
 	}
 
 	/**
-	 * 获取中间件数据
+	 * @desc    获取中间件数据
 	 * @param   {String}    topic   中间件请求地址
 	 * @param   {Object}    options
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回处理过的返回结果
@@ -40,8 +41,8 @@ class MidwayServiceModel extends ServiceModel{
 	}
 }
 
-ServiceModel.register('midway', MidwayServiceModel);
+Model.register('midway', MidwayServiceModel);
 
-ServiceModel.registerAlias('midway', 'mid');
+Model.registerAlias('midway', 'mid');
 
 export default MidwayServiceModel;

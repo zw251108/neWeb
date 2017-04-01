@@ -29,8 +29,8 @@ class Animator {
 	}
 
 	/**
-	 * @desc    运行动画
 	 * @param   {Boolean|Function?}  finished    Boolean 值时表示是否继续运行，Function 时为运行结束的回调函数
+	 * @desc    运行动画
 	 * */
 	run(finished){
 		let startTime = Date.now()
