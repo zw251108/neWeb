@@ -8,7 +8,7 @@ import marketList   from '../../../../setting/marketShop.json';
 
 /**
  * @class
- * @classdesc   Base 业务模块
+ * @classdesc   Base 业务模块，在 Model.factory 工厂方法注册为 base，将可以使用工厂方法生成
  * @extends     ServiceModel
  * */
 class BaseServiceModel extends ServiceModel{
@@ -32,7 +32,7 @@ class BaseServiceModel extends ServiceModel{
 
 	/**
 	 * @desc    城市相关 - 获取城市列表
-	 * @param   {Number|String} id  城市 id
+	 * @param   {Number | String} id  城市 id
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
 	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=1865}
 	 * */

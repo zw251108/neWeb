@@ -6,7 +6,7 @@ import domain       from '../domain.js';
 
 /**
  * @class
- * @classdesc   订单业务模块
+ * @classdesc   订单业务模块，在 Model.factory 工厂方法注册为 order，将可以使用工厂方法生成
  * @extends     ServiceModel
  * */
 class OrderServiceModel extends ServiceModel{

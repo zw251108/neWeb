@@ -10,7 +10,7 @@ let cookie = Model.factory('cookie');
  * */
 class App{
 	/**
-	 * 是否支持 iOS Pay
+	 * @desc    是否支持 iOS Pay
 	 * @return  {Boolean}
 	 * */
 	isSupportIosPay(){
@@ -22,7 +22,7 @@ class App{
 		}
 	}
 	/**
-	 * 调用 iOS Pay
+	 * @desc    调用 iOS Pay
 	 * @param   {Number} orderId 订单编号
 	 * @return
 	 * */
@@ -33,13 +33,13 @@ class App{
 		catch(e){}
 	}
 	/**
+	 * @desc    推送消息，传递最大的 id，目前有 501、502、503、504
+	 *          501     降价通知
+	 *          502     活动卷消息
+	 *          503     活动消息
+	 *  504     试衣秀消息（系统信息、献花、评论）
 	 * @param   {String}    maxId   传入 id 或 '-1'
 	 * @param   {String}    messageType 消息类型
-	 * @desc    推送消息，传递最大的 id，目前有 501、502、503、504
-	 *  501     降价通知
-	 *  502     活动卷消息
-	 *  503     活动消息
-	 *  504     试衣秀消息（系统信息、献花、评论）
 	 * */
 	getMessageMaxId(maxId, messageType){
 		try{
@@ -48,7 +48,7 @@ class App{
 		catch(e){}
 	}
 	/**
-	 * 弹出 notice，msg 消息，5000 毫秒持续时间
+	 * @desc    弹出 notice，msg 消息，5000 毫秒持续时间
 	 * @param   {String}    msg
 	 * @param   {Number}    time
 	 * @todo 目前没有调用到，取消？
@@ -62,7 +62,7 @@ class App{
 		catch(e){}
 	}
 	/**
-	 * 打开遮罩 mask，msg 消息
+	 * @desc    打开遮罩 mask，msg 消息
 	 * @param   {String}    [msg='加载中...']
 	 * @todo 目前没有调用到，取消？
 	 * */
@@ -76,7 +76,7 @@ class App{
 		catch(e){}
 	}
 	/**
-	 * 关闭遮罩 mask
+	 * @desc    关闭遮罩 mask
 	 *
 	 * */
 	unmask(){
@@ -88,7 +88,7 @@ class App{
 		catch(e){}
 	}
 	/**
-	 * 页面滚动到 y 位置
+	 * @desc    页面滚动到 y 位置
 	 * @param   {Number}    y
 	 * @todo 有一次调用，但被注释掉，取消？
 	 * */
@@ -100,8 +100,8 @@ class App{
 		catch(e){}
 	}
 	/**
-	 * @param   {Function}  callback
 	 * @desc    弹出日期选择窗，callback 回调方法，在回调函数 callback 中传入选择的日期 time
+	 * @param   {Function}  callback
 	 * */
 	showDateDialog(callback){
 		callback = callback = function(){};
@@ -115,7 +115,7 @@ class App{
 		catch(e){}
 	}
 	/**
-	 * 保存一条数据，参数为 JSON 字符串
+	 * @desc    保存一条数据，参数为 JSON 字符串
 	 * @param   {String}    key
 	 * @param   {String}    value
 	 * @param   {String}    time
@@ -128,7 +128,7 @@ class App{
 		catch(e){}
 	}
 	/**
-	 * 查询一条数据，id 为主键 key，返回 JSON 字符串
+	 * @desc    查询一条数据，id 为主键 key，返回 JSON 字符串
 	 * @return  {String}
 	 * @todo 目前没有调用到，取消？
 	 * */
@@ -139,7 +139,7 @@ class App{
 		catch(e){}
 	}
 	/**
-	 * 打开二维码扫描
+	 * @desc    打开二维码扫描
 	 * */
 	codeScan(){
 		try{
@@ -148,7 +148,7 @@ class App{
 		catch(e){}
 	}
 	/**
-	 * 获取基础信息
+	 * @desc    获取基础信息
 	 * @return  {*}
 	 * @todo 目前没有调用到，取消？
 	 * */
@@ -159,7 +159,7 @@ class App{
 		catch(e){}
 	}
 	/**
-	 * 页面是否被遮盖（如筛选），被遮盖 isOverLay 为 true，否则为 false
+	 * @desc    页面是否被遮盖（如筛选），被遮盖 isOverLay 为 true，否则为 false
 	 * @param   {Boolean}   flag    是否遮罩
 	 * */
 	isOverlay(flag){
@@ -177,7 +177,7 @@ class App{
 		catch(e){}
 	}
 	/**
-	 * 弹出 alert，参数为 JSON 字符串
+	 * @desc    弹出 alert，参数为 JSON 字符串
 	 * @param   {String}    obj
 	 * @todo 目前没有调用到，取消？
 	 * @todo 若不取消，期望传入参数更详细
@@ -189,7 +189,7 @@ class App{
 		catch(e){}
 	}
 	/**
-	 * 弹出 confirm，参数为 JSON 字符串
+	 * @desc    弹出 confirm，参数为 JSON 字符串
 	 * @param   {String}    obj
 	 * @todo 有一次调用，但被注释掉，取消？
 	 * @todo 若不取消，期望传入参数更详细
@@ -201,7 +201,7 @@ class App{
 		catch(e){}
 	}
 	/**
-	 * 弹出列表窗口，参数为 JSON 字符串
+	 * @desc    弹出列表窗口，参数为 JSON 字符串
 	 * @param   {String}    obj
 	 * @todo 目前没有调用到，取消？
 	 * @todo 若不取消，期望传入参数更详细
@@ -213,7 +213,7 @@ class App{
 		catch(e){}
 	}
 	/**
-	 * 退出系统
+	 * @desc    退出系统
 	 * @todo 目前没有调用到，取消？
 	 * @todo 若不取消，期望传入参数更详细
 	 * */
@@ -224,8 +224,8 @@ class App{
 		catch(e){}
 	}
 	/**
-	 * @param   {String}    event
 	 * @desc    覆盖 App 后退事件，目前调用时传入的参数为 'event:App.tgBackEvent'
+	 * @param   {String}    event
 	 * @todo 调用的代码被覆盖重写，取消？
 	 * @todo 若不取消，期望传入参数规则
 	 * */
@@ -245,7 +245,7 @@ class App{
 		}).catch(function(e){});
 	}
 	/**
-	 * 页面加载完毕
+	 * @desc    页面加载完毕
 	 * */
 	tgWebOver(){
 		let flg = true
@@ -264,7 +264,7 @@ class App{
 		catch(e){}
 	}
 	/**
-	 * 设置 header 标题
+	 * @desc    设置 header 标题
 	 * @param   {String}    title
 	 * */
 	setTgTitle(title){
@@ -276,7 +276,7 @@ class App{
 		catch(e){}
 	}
 	/**
-	 * 切换页面，通知 App 增加历史记录
+	 * @desc    切换页面，通知 App 增加历史记录
 	 * @param   {String}    url
 	 * @param   {String}    isNeedRefresh true 或 false 的字符串格式
 	 * */
@@ -289,11 +289,11 @@ class App{
 		catch(e){}
 	}
 	/**
+	 * @desc    跳转原生页，目前 code 有 'dengLu'、'shiYiLieBiao'
+	 *          event 有 'event:Ap.gotoFittingShowWatch'
 	 * @param   {String}    code
 	 * @param   {String}    url
 	 * @param   {String}    [event]
-	 * @desc    跳转原生页，目前 code 有 'dengLu'、'shiYiLieBiao'
-	 *  event 有 'event:Ap.gotoFittingShowWatch'
 	 * @todo 期望传入参数规则
 	 * */
 	tgChangePage(code, url, event){
@@ -303,7 +303,7 @@ class App{
 		catch(e){}
 	}
 	/**
-	 * 首页弹窗加载完毕
+	 * @desc    首页弹窗加载完毕
 	 * */
 	tgShowWindow(){
 		try{
@@ -312,7 +312,7 @@ class App{
 		catch(e){}
 	}
 	/**
-	 * 通知 App 登录密码修改
+	 * @desc    通知 App 登录密码修改
 	 * @param   {String}    password
 	 * @return
 	 * */
@@ -327,7 +327,7 @@ class App{
 		catch(e){}
 	}
 	/**
-	 * 通知 App 后退
+	 * @desc    通知 App 后退
 	 * */
 	tgPageBack(){
 		try{
@@ -336,7 +336,7 @@ class App{
 		catch(e){}
 	}
 	/**
-	 * 通知 App 退出登录
+	 * @desc    通知 App 退出登录
 	 * */
 	tgLogout(){
 		try{
@@ -345,7 +345,7 @@ class App{
 		catch(e){}
 	}
 	/**
-	 * 隐藏 App 的 menus
+	 * @desc    隐藏 App 的 menus
 	 * */
 	hideAppMenus(){
 		try{
@@ -354,7 +354,7 @@ class App{
 		catch(e){}
 	}
 	/**
-	 * 显示 App 的 menus
+	 * @desc    显示 App 的 menus
 	 * */
 	showAppMenus(){
 		try{
@@ -363,7 +363,7 @@ class App{
 		catch(e){}
 	}
 	/**
-	 * 获取当前 APP 版本
+	 * @desc    获取当前 APP 版本
 	 * @return  {Promise}
 	 * */
 	getTgAppVersion(){
@@ -381,8 +381,8 @@ class App{
 	updateUserName(){}
 	setCurStoreName(){}
 	/**
-	 * @param   {Object}    info
 	 * @desc    调用 IM 聊天，老版本中用户之间聊天和用户联系客服统一使用此接口，在新版本中添加 startChatWithService 接口，期望将其分离
+	 * @param   {Object}    info
 	 * */
 	startChatWith(info){
 		this.getTgAppVersion().then(function(version){
@@ -392,6 +392,9 @@ class App{
 		}).catch(function(e){});
 	}
 	/**
+	 * @desc    调用 IM 联系客服，新版本添加用来部分替代 startChatWith，期望将用户之间聊天和用户联系客服分开
+	 *          参数在之前 startChatWith 的基础上添加 counterUrl,productInfo,orderInfo，分别对应专柜页面 url，商品信息，订单信息
+	 *          startChatWithService 内部判断当 window.app 不存在 startChatWithService 方法时会降级调用 startChatWith
 	 * @param   {Object}        info
 	 * @param   {String}        info.counterUrl             专柜页面  url
 	 * @param   {Object}        [info.productInfo]          商品信息
@@ -405,9 +408,6 @@ class App{
 	 * @param   {String}        info.orderInfo.orderId      订单 id
 	 * @param   {Number|String} info.orderInfo.price        订单总价
 	 * @param   {String}        info.orderInfo.time         订单下单时间（YYYY-MM-DD hh:mm 格式）
-	 * @desc    调用 IM 联系客服，新版本添加用来部分替代 startChatWith，期望将用户之间聊天和用户联系客服分开
-	 *          参数在之前 startChatWith 的基础上添加 counterUrl,productInfo,orderInfo，分别对应专柜页面 url，商品信息，订单信息
-	 *          startChatWithService 内部判断当 window.app 不存在 startChatWithService 方法时会降级调用 startChatWith
 	 * */
 	startChatWithService(info){
 		this.getTgAppVersion().then(function(version){
@@ -434,7 +434,7 @@ class App{
 }
 
 /**
- * 用于修改 url 参数
+ * @desc    用于修改 url 参数
  * @param   {String|Object} obj
  * */
 App.updateUrlParams = function(obj){

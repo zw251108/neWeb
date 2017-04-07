@@ -7,7 +7,7 @@ import validate     from '../util/validate.js';
 
 /**
  * @class
- * @classdesc   会员业务模块
+ * @classdesc   会员业务模块，在 Model.factory 工厂方法注册为 member，将可以使用工厂方法生成
  * @extends     ServiceModel
  * */
 class MemberServiceModel extends ServiceModel{

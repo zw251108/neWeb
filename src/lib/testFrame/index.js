@@ -1,22 +1,32 @@
 'use strict';
 
-import maple from 'maple';
-
 /**
  * @file    框架聚合
  * */
+
+import Vue from 'vue';
+
+import maple from 'maple';
+
+// 全局监控
+import tracker from './tracker.js';
+
+// Vue 调用全局监控
+Vue.use( tracker );
 
 /**
  * @todo    期望改为根据全局环境动态加载
  * */
 // 基于 jQuery Deferred 对象简易实现 Promise，主要针对 UC 浏览器
-import './promise.js';
+import 'promise.js';
+
+
 
 // 数据层
-import Model from './model/index.js';
+import Model from 'model/index.js';
 
 // 业务模块
-import * as api from './biz/index.js';
+import * as api from 'biz/index.js';
 
 /**
  *
@@ -108,7 +118,7 @@ Model.service._CONFIG.errorHandler = function(){
 };
 
 // 网络请求
-import req from './req/index.js';
+import req from 'req/index.js';
 //
 // // 数据同步
 // import sync from './sync/index.js';
@@ -117,32 +127,32 @@ import req from './req/index.js';
 // import proxy from './proxy/index.js';
 
 // 通用工具类
-import util from './util/index.js';
+import util from 'util/index.js';
 
 /**
  * @todo    期望改为根据全局环境动态加载
  * */
 // 与 APP 交互接口
-import App from './app/index.js';
+import App from 'app/index.js';
 
 let app = new App();
 
-import domain from './domain.js';
+import domain from 'domain.js';
 
 // 获取地理位置
-import location from './location.js';
+import location from 'location.js';
 
 /**
  * todo 实验性功能
  * */
 // 动画库
-import * as animate from './animate/index.js';
+import * as animate from 'animate/index.js';
 
 // 注册后台 worker
-import register from './register/index.js';
+import register from 'register/index.js';
 
 // 桌面通知， 目前仅支持 PC 端
-import notify from './notify.js';
+import notify from 'notify.js';
 
 let newTg = window.newTg = {
 	model: Model

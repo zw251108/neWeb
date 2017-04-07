@@ -4,7 +4,7 @@ import Model from './model.js';
 
 /**
  * @class
- * @classdesc   对 WebSQL Database 进行封装，统一调用接口，在 Model.facory 工厂方法注册为 webSQL，别名 ws,sql，将可以使用工厂方法生成。默认使用表名为 storage，有 id,topic,value 3 个列的表，在生成对象时传入 options 可覆盖默认 SQL 语句
+ * @classdesc   对 WebSQL Database 进行封装，统一调用接口，在 Model.factory 工厂方法注册为 webSQL，别名 ws,sql，将可以使用工厂方法生成。默认使用表名为 storage，有 id,topic,value 3 个列的表，在生成对象时传入 options 可覆盖默认 SQL 语句
  * @extends     Model
  * @example
 let webSQLModel = new WebSQLModel()

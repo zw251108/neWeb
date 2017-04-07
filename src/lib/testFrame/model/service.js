@@ -11,7 +11,7 @@ import $ from 'jquery';
 
 /**
  * @class
- * @classdesc   对服务器接口进行封装，与 Model 统一接口，隔离数据与数据来源的问题
+ * @classdesc   对服务器接口进行封装，与 Model 统一接口，隔离数据与数据来源的问题，在 Model.factory 工厂方法注册为 service，别名 s，将可以使用工厂方法生成
  * @extends     Model
  *
  * @todo 支持 RESTful API

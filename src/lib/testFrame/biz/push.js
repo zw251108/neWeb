@@ -6,7 +6,7 @@ import domain       from '../domain.js';
 
 /**
  * @class
- * @classdesc   Push 业务模块
+ * @classdesc   Push 业务模块，在 Model.factory 工厂方法注册为 push，将可以使用工厂方法生成
  * @extends     ServiceModel
  * */
 class PushServiceModel extends ServiceModel{

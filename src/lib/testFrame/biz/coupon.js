@@ -7,7 +7,7 @@ import validate     from '../util/validate.js';
 
 /**
  * @class
- * @classdesc   coupon 业务模块
+ * @classdesc   coupon 业务模块，在 Model.factory 工厂方法注册为 coupon，将可以使用工厂方法生成
  * @extends     ServiceModel
  * */
 class CouponServiceModel extends ServiceModel{

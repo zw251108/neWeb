@@ -6,7 +6,7 @@ import domain       from '../domain.js';
 
 /**
  * @class
- * @classdesc   中间件模块
+ * @classdesc   中间件模块，在 Model.factory 工厂方法注册为 midway，别名 mid，将可以使用工厂方法生成
  * @extends     ServiceModel
  * */
 class MidwayServiceModel extends ServiceModel{

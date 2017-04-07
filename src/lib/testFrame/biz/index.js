@@ -2,51 +2,54 @@
 
 /**
  * @file    业务模块接口聚合页面
- * @desc    只提供 base、coupon、im、item、member、order、show 模块的接口实例，wechat、midway、image 模块因需要在构造时传入参数，所以不提供实例
+ * @desc    只提供 base、coupon、im、item、member、order、show、ipc、pay、push、img 模块的接口实例，wechat、midway 模块因需要在构造时传入参数，所以不提供实例
  * */
 
 import Model from '../model/model.js';
 import '../model/service.js';
 
-import './base.js';
+import 'base.js';
 export let base     = Model.factory('base');
 
-import './coupon.js';
+import 'coupon.js';
 export let coupon   = Model.factory('coupon');
 
-import './im.js';
+import 'im.js';
 export let imSer    = Model.factory('im');
 
-import './item.js';
+import 'item.js';
 export let item     = Model.factory('item');
 
-import './ipc.js';
-export let ipt      = Model.factory('ipc');
+import 'ipc.js';
+export let ipc      = Model.factory('ipc');
 
-import './member.js';
+import 'member.js';
 export let member   = Model.factory('member');
 
-import './order.js';
+import 'order.js';
 export let order    = Model.factory('order');
 
-import './pay.js';
+import 'pay.js';
 export let pay      = Model.factory('pay');
 
-import './push.js';
+import 'push.js';
 export let push     = Model.factory('push');
 
-import './show.js';
+import 'show.js';
 export let show     = Model.factory('show');
 
-import './image.js';
+import 'ticket.js';
+export let ticket   = Model.factory('ticket');
+
+import 'image.js';
 export let img      = Model.factory('img');
 
-import './midway.js';
+import 'midway.js';
 // export let midway   = Model.factory('midway');
 
 /**
  * @todo 期望改为根据全局环境动态加载
  * */
-import './wechat.js';
+import 'wechat.js';
 
 // export let weixin   = Model.factory('wechat');

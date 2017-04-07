@@ -6,7 +6,7 @@ import domain       from '../domain.js';
 
 /**
  * @class
- * @classdesc   图片相关操作模块，将 CDN 相关操作整合
+ * @classdesc   图片相关操作模块，将 CDN 相关操作整合，在 Model.factory 工厂方法注册为 image，别名 img，将可以使用工厂方法生成
  * @extends     ServiceModel
  * */
 class ImageServiceModel extends ServiceModel{

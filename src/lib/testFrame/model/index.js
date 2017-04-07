@@ -48,17 +48,17 @@
 import Model from './model.js';
 
 // 缓存
-import './cookie';
-import './localStorage';
-import './sessionStorage';
-import './indexedDB';
-import './webSQL';
+import 'cookie';
+import 'localStorage';
+import 'sessionStorage';
+import 'indexedDB';
+import 'webSQL';
 
-import './service';
+import 'service';
 
 // // 网络请求
-// import './ajax';
-// import './webSocket';
+// import 'ajax';
+// import 'webSocket';
 
 // post message
 //

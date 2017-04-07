@@ -7,7 +7,7 @@ import validate     from '../util/validate.js';
 
 /**
  * @class
- * @classdesc   ipc 异业联盟业务模块
+ * @classdesc   ipc 异业联盟业务模块，在 Model.factory 工厂方法注册为 ipc，将可以使用工厂方法生成
  * @extends     ServiceModel
  * @todo        在非线上环境使用 member 域名，取消？
  * */
