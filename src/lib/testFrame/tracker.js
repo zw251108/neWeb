@@ -1,9 +1,5 @@
 'use strict';
 
-// import Vue          from 'vue';
-import report       from './report.js';
-import scpConfig    from './scp.config.json';
-
 /**
  * @file    开启全局 scp 监听事件
  * @desc    以 Vue 插件的形式实现
@@ -14,6 +10,10 @@ import scpConfig    from './scp.config.json';
  * @todo    同时发送点击时的屏幕坐标、页面坐标
  * */
 
+
+import model        from './model/index.js';
+import scpConfig    from './scp.config.json';
+
 /**
  * 封装替换组件注册中的 methods 方法集合，将方法添加 _$ 前缀重命名
  * 原名为新定义方法
@@ -22,23 +22,13 @@ import scpConfig    from './scp.config.json';
  * */
 let methodsBindScp = function(methods){
 	Object.keys( methods ).forEach((d)=>{
+
 		console.log(d);
 		methods['_$'+ d] = methods[d];
+
 		methods[d] = function(){
-			let componentName = [this.componentName]
-				, $temp
-				;
 
-			if( !this.$children.length ){
-
-				for($temp = this.$parent; $temp && $temp !== this.$root; $temp = $temp.$parent){
-
-					componentName.unshift( $temp.componentName );
-				}
-
-				// todo 根据 componentName d 到 scpConfig 替换对应 C 和 D
-				report('//log.test.66buy.com.cn/tgs.gif', componentName.join('-') +'.'+ d);
-			}
+			this.$tracker && this.$tracker();
 
 			return methods['_$'+ d].apply(this, arguments);
 		}
@@ -48,9 +38,12 @@ let methodsBindScp = function(methods){
 /**
  * 封装替换组件注册中的 ready 方法，将原 ready 替换为 _$ready
  * ready 替换为新方法，在数据中添加 componentName，为自身组件名，为驼峰格式
+ * @todo    Vue 升级到 2 的时候，替换 ready 方法
  * */
 let readyBindComponentName = function(def, id){
+
 	def._$ready = def.ready || function(){};
+
 	def.ready = function(){
 
 		this.$set('componentName', id.replace(/(-)([a-z])/ig, function($, $1, $2){
@@ -62,7 +55,35 @@ let readyBindComponentName = function(def, id){
 };
 
 let tracker = {
-	install(Vue){
+	installed: false
+	, install(Vue){
+
+		if( this.installed ){
+			return;
+		}
+
+		let log = model.factory('log');
+
+		/**
+		 * 对 Vue 原型上添加 $tracker 方法
+		 * */
+		Vue.prototype.$tracker = function(){
+			let componentName = [this.componentName]
+				, $temp
+				;
+
+			for($temp = this.$parent; $temp && $temp !== this.$root; $temp = $temp.$parent){
+
+				componentName.unshift( $temp.componentName );
+			}
+
+			// 根据 componentName d 到 scpConfig 替换对应 C 和 D，若未找到则不发请求
+			componentName = componentName.join('-');
+			if( componentName in scpConfig ){
+
+				log.trackSCP( scpConfig[componentName].C +'.'+ scpConfig[componentName].D[d] );
+			}
+		};
 
 		Vue._$component = Vue.component;
 
@@ -71,20 +92,12 @@ let tracker = {
 				, temp
 				;
 
-			if( argc > 1 ){
+			if( argc > 1 ){ // 注册组件
 
+				// 替换 ready 方法，在 ready 时对组件添加 componentName 数据项
 				readyBindComponentName(def, id);
 
-				// def._$ready = def.ready || function(){};
-				// def.ready = function(){
-				// 	// console.log(this, id)
-				// 	this.$set('componentName', id.replace(/(-)([a-z])/ig, function($, $1, $2){
-				// 		return $2.toUpperCase();
-				// 	}));
-				// 	                      // console.log(this.componentName)
-				// 	def._$ready.apply(this, arguments);
-				// };
-
+				// 替换 methods 中的方法，执行时发送埋点请求
 				methodsBindScp(def.methods || {}, id);
 
 				// 局部组件
@@ -93,41 +106,21 @@ let tracker = {
 
 					readyBindComponentName(temp[d], d);
 
-					// temp[d]._$ready = temp[d].ready || function(){};
-					// temp[d].ready = function(){
-					// 	this.$set('componentName', d.replace(/(-)([a-z])/ig, function($, $1, $2){
-					// 		return $2.toUpperCase();
-					// 	}));
-					//
-					// 	def._$ready.apply(this, arguments);
-					// };
-
-					// temp[d]._$data = temp[d].data || function(){return {};};
-					// temp[d].data = function(){
-					// 	this.$set('$componentName', d);
-					//
-					// 	let t = temp[d]._$data.apply(this, arguments);
-					//
-					// 	if( t ){
-					// 		return t;
-					// 	}
-					// };
-
 					methodsBindScp( temp[d].methods || {} );
 				});
 
 				Vue._$component(id, def);
 			}
-			else if( argc === 1 ){
+			else if( argc === 1 ){  // 调用组件
 				return Vue._$component( id );
 			}
 		};
 
-		tracker.installed = true;
+		this.installed = true;
 	}
 };
 
-// todo 利用事件捕获机制对全局操作键盘，保存事件触发时屏幕的坐标，页面坐标
+// todo 利用事件捕获机制对全局操作监控，保存事件触发时屏幕的坐标，页面坐标
 // window.addEventListener('click', function(e){
 // 	let target = e.target
 // 		;
@@ -144,4 +137,3 @@ let tracker = {
 // }, true);
 
 export default tracker;
-

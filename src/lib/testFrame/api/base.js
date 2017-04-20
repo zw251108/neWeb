@@ -8,7 +8,7 @@ import marketList   from '../../../../setting/marketShop.json';
 
 /**
  * @class
- * @classdesc   Base 业务模块，在 Model.factory 工厂方法注册为 base，将可以使用工厂方法生成
+ * @classdesc   Base 业务模块，二/三级域名 base，在 Model.factory 工厂方法注册为 base，将可以使用工厂方法生成
  * @extends     ServiceModel
  * */
 class BaseServiceModel extends ServiceModel{
@@ -31,10 +31,10 @@ class BaseServiceModel extends ServiceModel{
 	}
 
 	/**
-	 * @desc    城市相关 - 获取城市列表
-	 * @param   {Number | String} id  城市 id
+	 * @summary 城市相关 - 获取城市列表
+	 * @param   {Number|String} id  城市 id
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=1865}
+	 * @see     [http://base.test.66buy.com.cn/publics/city/list]{@link http://dev.51tiangou.com/interfaces/detail.html?id=1865}
 	 * */
 	cityList(id){
 		return this.getData('/publics/city/list', {
@@ -44,11 +44,11 @@ class BaseServiceModel extends ServiceModel{
 		});
 	}
 	/**
-	 * @desc    城市相关 - 通过经纬度获取城市信息
+	 * @summary 城市相关 - 通过经纬度获取城市信息
 	 * @param   {Number|String} lon
 	 * @param   {Number|String} lat
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=1809}
+	 * @see     [http://base.test.66buy.com.cn/publics/city/locate]{@link http://dev.51tiangou.com/interfaces/detail.html?id=1809}
 	 * */
 	cityLocate(lat, lon){
 		return this.getData('/publics/city/locate', {
@@ -59,10 +59,10 @@ class BaseServiceModel extends ServiceModel{
 		});
 	}
 	/**
-	 * @desc    城市相关 - 获取热门城市
+	 * @summary 城市相关 - 获取热门城市
 	 * @param   {Number|String} [pageCount=999]
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=1811}
+	 * @see     [http://base.test.66buy.com.cn/publics/city/hot/list]{@link http://dev.51tiangou.com/interfaces/detail.html?id=1811}
 	 * @todo    查接口存在 id 参数，用途？
 	 * */
 	hotCity(pageCount=999){
@@ -73,7 +73,7 @@ class BaseServiceModel extends ServiceModel{
 		});
 	}
 	/**
-	 * @desc    城市相关 - 获取热门城市，与 hotCity 接口完全相同，整理为内部调用 hotCity 接口，为旧版接口
+	 * @summary 城市相关 - 获取热门城市，与 hotCity 接口完全相同，整理为内部调用 hotCity 接口，为旧版接口
 	 * @param   {Number|String} [pageCount=999]
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
 	 * @see     [hotCity]{@link BaseServiceModel#hotCity}
@@ -83,10 +83,10 @@ class BaseServiceModel extends ServiceModel{
 		return this.hotCity(pageCount);
 	}
 	/**
-	 * @desc    城市相关 - 根据省份获取城市列表
+	 * @summary 城市相关 - 根据省份获取城市列表
 	 * @param   {Number|String} provinceId
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=1859}
+	 * @see     [http://base.test.66buy.com.cn/publics/city/cities]{@link http://dev.51tiangou.com/interfaces/detail.html?id=1859}
 	 * */
 	cityListByProvince(provinceId){
 		return this.getData('/publics/city/cities', {
@@ -95,29 +95,38 @@ class BaseServiceModel extends ServiceModel{
 			}
 		});
 	}
+	/**
+	 * @summary 查热门城市及城市下所有百货超市
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @see     [http://base.test.66buy.com.cn/publics/city/hot/store]{@link http://dev.51tiangou.com/interfaces/detail.html?id=3673}
+	 * */
+	allCityStore(){
+		return this.getData('/publics/city/hot/store');
+	}
 
 	/**
-	 * @desc    自提点查询
+	 * @summary 自提点查询
 	 * @param   {Number|String} storeId     门店 id
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=1969}
+	 * @desc    使用 POST 方法
+	 * @see     [http://base.test.66buy.com.cn/publics/pickupsite/queryPickUpSiteByStoreId]{@link http://dev.51tiangou.com/interfaces/detail.html?id=1969}
 	 * */
 	queryPickUpSiteByStoreId(storeId){
-		return this.getData('/publics/pickupsite/queryPickUpSiteByStoreId', {
-			method: 'POST'
-			, data: {
+		return this.setData('/publics/pickupsite/queryPickUpSiteByStoreId', {
+			data: {
 				storeId
 			}
 		});
 	}
 
 	/**
-	 * @desc    门店相关 - 获取门店列表
+	 * @summary 门店相关 - 获取门店列表
 	 * @param   {Number|String} [cityId]
 	 * @param   {Number|String} [type]          为 1 或 2
 	 * @param   {Number}        [pageCount=999]
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=1851}
+	 * @desc    使用 POST 方法
+	 * @see     [http://base.test.66buy.com.cn/publics/store/list]{@link http://dev.51tiangou.com/interfaces/detail.html?id=1851}
 	 * */
 	storeList(cityId, type, pageCount=999){
 		let data = {
@@ -132,38 +141,37 @@ class BaseServiceModel extends ServiceModel{
 			data.type = type
 		}
 
-		return this.getData('/publics/store/list', {
-			method: 'POST'
-			, data
+		return this.setData('/publics/store/list', {
+			data
 		});
 	}
 	/**
-	 * @desc    门店相关 - 获取门店信息
+	 * @summary 门店相关 - 获取门店信息
 	 * @param   {Number|String} storeId     门店 id
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=1853}
+	 * @desc    使用 POST 方法
+	 * @see     [http://base.test.66buy.com.cn/publics/store/info]{@link http://dev.51tiangou.com/interfaces/detail.html?id=1853}
 	 * @todo    页面中使用了同步请求
 	 * */
 	storeInfo(storeId){
-		return this.getData('/publics/store/info', {
-			method: 'POST'
-			, data: {
+		return this.setData('/publics/store/info', {
+			data: {
 				storeId
 			}
 		});
 	}
 	/**
-	 * @desc    门店相关 - 查询城市百货门店
+	 * @summary 门店相关 - 查询城市百货门店
 	 * @param   {Number|String} cityId
 	 * @param   {Number|String} [type=1]        目前只看到 type 为 1
 	 * @param   {Number}        [pageCount=999]
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=1549}
+	 * @desc    使用 POST 方法
+	 * @see     [http://base.test.66buy.com.cn/publics/store/cityMallStores]{@link http://dev.51tiangou.com/interfaces/detail.html?id=1549}
 	 * */
 	cityMallStores(cityId, type=1, pageCount=999){
-		return this.getData('/publics/store/cityMallStores', {
-			method: 'POST'
-			, data: {
+		return this.setData('/publics/store/cityMallStores', {
+			data: {
 				cityId
 				, type
 				, pageCount
@@ -171,18 +179,19 @@ class BaseServiceModel extends ServiceModel{
 		});
 	}
 	/**
-	 * @desc    门店相关 - 查询城市超市门店
+	 * @summary 门店相关 - 查询城市超市门店
 	 * @param   {Number|String} cityId
 	 * @param   {Number|String} type            type 为 1 或 2
 	 * @param   {Number}        [pageCount=999]
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @desc    使用 POST 方法
+	 * @see     [http://base.test.66buy.com.cn/publics/store/cityMarketStores]
 	 * @todo    接口中心未查到
 	 * @todo    type 值？
 	 * */
 	cityMarketStores(cityId, type, pageCount=999){
-		return this.getData('/publics/store/cityMarketStores', {
-			method: 'POST'
-			, data: {
+		return this.setData('/publics/store/cityMarketStores', {
+			data: {
 				cityId
 				, type
 				, pageCount
@@ -190,18 +199,18 @@ class BaseServiceModel extends ServiceModel{
 		});
 	}
 	/**
-	 * @desc    门店相关 - 查询附近的门店
+	 * @summary 门店相关 - 查询附近的门店
 	 * @param   {Number|String} lat
 	 * @param   {Number|String} lon
 	 * @param   {Number}        [type=1]  门店类型：1.百货，2.超市
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=1595}
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=1863}
+	 * @desc    使用 POST 方法
+	 * @see     [http://base.test.66buy.com.cn/publics/store/nearby/store]{@link http://dev.51tiangou.com/interfaces/detail.html?id=1595}
+	 * @see     [http://base.test.66buy.com.cn/publics/store/nearby/store]{@link http://dev.51tiangou.com/interfaces/detail.html?id=1863}
 	 * */
 	nearStore(lat, lon, type=1){
-		return this.getData('/publics/store/nearby/store', {
-			method: 'POST'
-			, data: {
+		return this.setData('/publics/store/nearby/store', {
+			data: {
 				latitude: lat
 				, longitude: lon
 				, type
@@ -209,11 +218,12 @@ class BaseServiceModel extends ServiceModel{
 		});
 	}
 	/**
-	 * @desc    门店相关 - 查询附近的门店，与 nearStore 接口完全相同，目前为调用 nearStore 接口，为旧版接口
+	 * @summary 门店相关 - 查询附近的门店
 	 * @param   {Number|String} lat
 	 * @param   {Number|String} lon
 	 * @param   {Number}        [type=1]  门店类型：1.百货，2.超市
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @desc    与 nearStore 接口完全相同，目前为调用 nearStore 接口，为旧版接口
 	 * @see     [nearStore]{@link BaseServiceModel#nearStore}
 	 * @todo    与 nearStore 取其一
 	 * */
@@ -222,11 +232,12 @@ class BaseServiceModel extends ServiceModel{
 	}
 
 	/**
-	 * @desc    查询百货商品分类
+	 * @summary 查询百货商品分类
 	 * @param   {Number|String} storeId
 	 * @param   {Number|String} [floor] 楼层
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=1551}
+	 * @desc    使用 POST 方法
+	 * @see     [http://base.test.66buy.com.cn/publics/counterCategory/listMainCategory]{@link http://dev.51tiangou.com/interfaces/detail.html?id=1551}
 	 * */
 	listMainCategory(storeId, floor){
 		let data = {
@@ -238,18 +249,18 @@ class BaseServiceModel extends ServiceModel{
 			data.floor = floor;
 		}
 		
-		return this.getData('/publics/counterCategory/listMainCategory', {
-			method: 'POST'
-			, data
+		return this.setData('/publics/counterCategory/listMainCategory', {
+			data
 		});
 	}
 
 	/**
-	 * @desc    专柜相关 - 查询店铺楼层
+	 * @summary 专柜相关 - 查询店铺楼层
 	 * @param   {Number|String} storeId
 	 * @param   {Number|String} [counterCategoryId] 未查到该参数
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=1579}
+	 * @desc    使用 POST 方法
+	 * @see     [http://base.test.66buy.com.cn/publics/counter/floors]{@link http://dev.51tiangou.com/interfaces/detail.html?id=1579}
 	 * */
 	storeFloors(storeId, counterCategoryId){
 		let data = {
@@ -261,42 +272,41 @@ class BaseServiceModel extends ServiceModel{
 			data.counterCategoryId = counterCategoryId;
 		}
 
-		return this.getData('/publics/counter/floors', {
-			method: 'POST'
-			, data
+		return this.setData('/publics/counter/floors', {
+			data
 		});
 	}
 	/**
-	 * @desc    专柜相关 - 查询热门专柜
+	 * @summary 专柜相关 - 查询热门专柜
 	 * @param   {Number|String} storeId
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=1553}
+	 * @desc    使用 POST 方法
+	 * @see     [http://base.test.66buy.com.cn/publics/counter/hotCounter]{@link http://dev.51tiangou.com/interfaces/detail.html?id=1553}
 	 * */
 	hotCounter(storeId){
-		return this.getData('/publics/counter/hotCounter', {
-			method: 'POST'
-			, data: {
+		return this.setData('/publics/counter/hotCounter', {
+			data: {
 				storeId
 			}
 		});
 	}
 	/**
-	 * @desc    专柜列表
+	 * @summary 专柜列表
 	 * @param   {Number|String} storeId
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=1855}
+	 * @desc    使用 POST 方法
+	 * @see     [http://base.test.66buy.com.cn/publics/counter/list]{@link http://dev.51tiangou.com/interfaces/detail.html?id=1855}
 	 * @todo    查接口存在 brandIds,orderColumn,orderType 参数，用途？
 	 * */
 	counterList(storeId){
-		return this.getData('/publics/counter/list', {
-			method: 'POST'
-			, data: {
+		return this.setData('/publics/counter/list', {
+			data: {
 				storeId
 			}
 		});
 	}
 	/**
-	 * @desc    专柜相关 - 查询全部专柜
+	 * @summary 专柜相关 - 查询全部专柜
 	 * @param   {Number|String} storeId
 	 * @param   {Object}        [options={}]            配置查询条件
 	 * @param   {Number|String} [options.floor]         楼层
@@ -305,7 +315,8 @@ class BaseServiceModel extends ServiceModel{
 	 * @param   {Number}        [options.startNum=0]
 	 * @param   {Number}        [options.pageCount=10]
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=1555}
+	 * @desc    使用 POST 方法
+	 * @see     [http://base.test.66buy.com.cn/publics/counter/listCounter]{@link http://dev.51tiangou.com/interfaces/detail.html?id=1555}
 	 * */
 	listCounter(storeId, options={}){
 		let data = {
@@ -326,40 +337,39 @@ class BaseServiceModel extends ServiceModel{
 		data.startNum = options.startNum || 0;
 		data.pageCOunt = options.pageCount || 10;
 
-		return this.getData('/publics/counter/listCounter', {
-			method: 'POST'
-			, data
+		return this.setData('/publics/counter/listCounter', {
+			data
 		});
 	}
 	/**
-	 * @desc    专柜相关 - 查询专柜信息
+	 * @summary 专柜相关 - 查询专柜信息
 	 * @param   {Number|String} counterId
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=1557}
+	 * @desc    使用 POST 方法
+	 * @see     [http://base.test.66buy.com.cn/publics/counter/counterInfo]{@link http://dev.51tiangou.com/interfaces/detail.html?id=1557}
 	 * */
 	counterInfo(counterId){
-		return this.getData('/publics/counter/counterInfo', {
-			method: 'POST'
-			, data: {
+		return this.setData('/publics/counter/counterInfo', {
+			data: {
 				counterId
 			}
 		});
 	}
 
 	/**
-	 * @desc    获取省份列表
+	 * @summary 获取省份列表
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=1857}
+	 * @see     [http://base.test.66buy.com.cn/publics/province/list]{@link http://dev.51tiangou.com/interfaces/detail.html?id=1857}
 	 * */
 	provinceList(){
 		return this.getData('/publics/province/list');
 	}
 
 	/**
-	 * @desc    获取地区列表
+	 * @summary 获取地区列表
 	 * @param   {Number|String} cityId
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=1861}
+	 * @see     [http://base.test.66buy.com.cn/publics/district/list]{@link http://dev.51tiangou.com/interfaces/detail.html?id=1861}
 	 * */
 	districtList(cityId){
 		return this.getData('/publics/district/list', {
@@ -370,10 +380,10 @@ class BaseServiceModel extends ServiceModel{
 	}
 
 	/**
-	 * @desc    品牌查询
+	 * @summary 品牌查询
 	 * @param   {Number|String} brandIds
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=1849}
+	 * @see     [http://base.test.66buy.com.cn/publics/brand/query]{@link http://dev.51tiangou.com/interfaces/detail.html?id=1849}
 	 * @todo    查接口存在 storeId,cityId,counterId,source,categoryCode,needProduct,orderColumn,orderType 参数，用途？
 	 * */
 	brandQuery(brandIds){
@@ -385,16 +395,16 @@ class BaseServiceModel extends ServiceModel{
 	}
 
 	/**
-	 * @desc    根据经纬度到百度提供的api查所在城市，再判断该城市下是否有门店
+	 * @summary 根据经纬度到百度提供的 api 查所在城市，再判断该城市下是否有门店
 	 * @param   {Number}    lat
 	 * @param   {Number}    lon
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=3575}
+	 * @desc    使用 POST 方法
+	 * @see     [http://base.test.66buy.com.cn/publics/store/judgeStoreByCity]{@link http://dev.51tiangou.com/interfaces/detail.html?id=3575}
 	 * */
 	judgeStoreByCity(lat, lon){
-		return this.getData('/publics/store/judgeStoreByCity', {
-			method: 'POST'
-			, data: {
+		return this.setData('/publics/store/judgeStoreByCity', {
+			data: {
 				latitude: lat
 				, longitude: lon
 			}
@@ -402,12 +412,13 @@ class BaseServiceModel extends ServiceModel{
 	}
 
 	/**
-	 * @desc    通过 gps 取附近的门店，实际为 nearStore 接口重命名
+	 * @summary 通过 gps 取附近的门店
 	 * @private
 	 * @param   {Number|String} lat
 	 * @param   {Number|String} lon
 	 * @param   {Number}        [source=1]  门店类型：1.百货，2.超市
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @desc    实际为 nearStore 接口重命名
 	 * @see     [nearStore]{@link BaseServiceModel#nearStore}
 	 * @todo    与 nearStore 取其一
 	 * */
@@ -415,7 +426,7 @@ class BaseServiceModel extends ServiceModel{
 		return this.nearStore(lat, lon, source);
 	}
 	/**
-	 * @desc    计算弧度
+	 * @summary 计算弧度
 	 * @private
 	 * @param   {Number|String} d
 	 * @return  {Number}
@@ -424,7 +435,7 @@ class BaseServiceModel extends ServiceModel{
 		return d * Math.PI / 180.0;
 	}
 	/**
-	 * @desc    根据经纬度，获取距离
+	 * @summary 根据经纬度，获取距离
 	 * @private
 	 * @param   {Number|String} lat1
 	 * @param   {Number|String} lng1
@@ -456,11 +467,7 @@ class BaseServiceModel extends ServiceModel{
 	}
 
 	/**
-	 * @desc    获取去过的门店，从 cookie 中获取 cityId、经纬度（lat lon）、去过的门店列表（usualShop）
-	 *      从去过的门店中获取当前城市最近去过的的门店
-	 *      若没有则根据 GPS 发送请求获取当前距离最近的门店
-	 *      若没有则根据 mallShop.json 和 market.json 获取当前城市的默认门店
-	 *      内部调用了 _getGpsShow、_getDistance、_rad 方法
+	 * @summary 获取去过的门店
 	 * @param   {Object[]}      storeList   去过的门店
 	 * @param   {Number|String} storeList[].cityId
 	 * @param   {Number|String} storeList[].id
@@ -470,6 +477,11 @@ class BaseServiceModel extends ServiceModel{
 	 * @param   {Number|String} [lat]
 	 * @param   {Number|String} [lon]
 	 * @return  {Promise}       在 resolve 时传入 storeId
+	 * @desc    从 cookie 中获取 cityId、经纬度（lat lon）、去过的门店列表（usualShop）
+				从去过的门店中获取当前城市最近去过的的门店
+				若没有则根据 GPS 发送请求获取当前距离最近的门店
+				若没有则根据 mallShop.json 和 market.json 获取当前城市的默认门店
+内部调用了 _getGpsShow、_getDistance、_rad 方法
 	 * */
 	getUsualShop(storeList, cityId, source, lat, lon){
 		let storeId

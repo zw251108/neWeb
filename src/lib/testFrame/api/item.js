@@ -7,7 +7,7 @@ import validate     from '../util/validate.js';
 
 /**
  * @class
- * @classdesc   Item 业务模块，在 Model.factory 工厂方法注册为 item，将可以使用工厂方法生成
+ * @classdesc   Item 业务模块，二/三级域名 item，在 Model.factory 工厂方法注册为 item，将可以使用工厂方法生成
  * @extends     ServiceModel
  * */
 class ItemServiceModel extends ServiceModel{
@@ -30,7 +30,7 @@ class ItemServiceModel extends ServiceModel{
 	}
 
 	/**
-	 * @desc    商品列表，对返回的数据补全已售数量
+	 * @summary 商品列表
 	 * @param   {Object}        data
 	 * @param   {Number|String} [data.cityId]
 	 * @param   {Number|String} [data.counterId]
@@ -62,7 +62,8 @@ class ItemServiceModel extends ServiceModel{
 	 * @param   {Number}        [data.pageCount]        值为 4 或 6 或 8 或 24
 	 * @param   {Number}        [data.pageNum]          接口中心没有该参数，疑似错误，值为 0
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=713}
+	 * @desc    对返回的数据补全已售数量
+	 * @see     [http://item.test.66buy.com.cn/front/listing/search]{@link http://dev.51tiangou.com/interfaces/detail.html?id=713}
 	 * @todo    参数太多，精简
 	 * */
 	search(data){
@@ -93,11 +94,11 @@ class ItemServiceModel extends ServiceModel{
 		});
 	}
 	/**
-	 * @desc    活动商品列表
+	 * @summary 活动商品列表
 	 * @param   {Object}        data
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
 	 * @desc    对返回的数据补全已售数量
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=1239}
+	 * @see     [http://item.test.66buy.com.cn/front/listing/searchByActivity]{@link http://dev.51tiangou.com/interfaces/detail.html?id=1239}
 	 * @todo    coupon 下有接口调用相同的路径
 	 * @todo    目前没有调用到，取消？
 	 * */
@@ -120,10 +121,11 @@ class ItemServiceModel extends ServiceModel{
 		});
 	}
 	/**
-	 * @desc    获取品牌
+	 * @summary 获取品牌
 	 * @param   {Number|String} cityId
 	 * @param   {Number}        pageCount
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @see     [http://item.test.66buy.com.cn/front/listing/search/brand]
 	 * @todo    接口中心未查到
 	 * */
 	brandAll(cityId, pageCount=999){
@@ -135,7 +137,7 @@ class ItemServiceModel extends ServiceModel{
 		});
 	}
 	/**
-	 * @desc    获取分类
+	 * @summary 获取分类
 	 * @param   {Object}        data
 	 * @param   {Number|String} [data.storeId]
 	 * @param   {Number|String} [data.storeIds]
@@ -145,6 +147,8 @@ class ItemServiceModel extends ServiceModel{
 	 * @param   {Number}        [data.source]       值为 1,2
 	 * @param   {Number}        [data.level]        值为 1
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @desc    使用 POST 方法
+	 * @see     [http://item.test.66buy.com.cn/front/listing/search/categoryCode]
 	 * @todo    接口中心未查到
 	 * */
 	categoryCode(data){
@@ -152,35 +156,35 @@ class ItemServiceModel extends ServiceModel{
 			delete data.storeId;
 		}
 
-		return this.getData('/front/listing/search/categoryCode', {
-			method: 'POST'
-			, data
+		return this.setData('/front/listing/search/categoryCode', {
+			data
 		});
 	}
 	/**
-	 * @desc    虚拟货架商品分类查询
+	 * @summary 虚拟货架商品分类查询
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @desc    使用 POST 方法
+	 * @see     [http://item.test.66buy.com.cn/front/listing/search/merchant/categoryCode]
 	 * @todo    接口中心未查到
 	 * @todo    目前没有调用到，取消？
 	 * */
 	merchantCategoryCode(){
-		return this.getData('/front/listing/search/merchant/categoryCode', {
-			method: 'POST'
-		});
+		return this.setData('/front/listing/search/merchant/categoryCode');
 	}
 	/**
-	 * @desc    获取品牌
+	 * @summary 获取品牌
 	 * @param   {Number}    [needProduct=0]
 	 * @param   {Number}    [startNum=0]
 	 * @param   {Number}    [pageCount=999]
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @desc    使用 POST 方法
+	 * @see     [http://item.test.66buy.com.cn/front/listing/search/order]
 	 * @todo    接口中心未查到
 	 * @todo    应该还有其它参数
 	 * */
 	brand(needProduct=0, startNum=0, pageCount=999){
-		return this.getData('/front/listing/search/order', {
-			method: 'POST'
-			, data: {
+		return this.setData('/front/listing/search/order', {
+			data: {
 				needProduct
 				, startNum
 				, pageCount
@@ -188,22 +192,23 @@ class ItemServiceModel extends ServiceModel{
 		});
 	}
 	/**
-	 * @desc    加载商品数据
+	 * @summary 加载商品数据
 	 * @param   {Number|String} id  商品 id
 	 * @param   {Number}        source  门店类型
 	 * @param   {String}        [orderColumn='item_heat desc,sold_qty desc,start_time desc']
 	 * @param   {String}        [orderType='DESC']
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @desc    使用 POST 方法
+	 * @see     [http://item.test.66buy.com.cn/front/listing/search/order/sug]
 	 * @todo    接口中心未查到
 	 * */
 	sugProduct(id, source, orderColumn='item_heat desc,sold_qty desc,start_time desc', orderType='DESC'){
 		let result
-		;
+			;
 
 		if( id ){
-			result = this.getData('/front/listing/search/order/sug', {
-				method: 'POST'
-				, data: {
+			result = this.setData('/front/listing/search/order/sug', {
+				data: {
 					id
 					, source
 					, orderColumn
@@ -218,7 +223,7 @@ class ItemServiceModel extends ServiceModel{
 		return result;
 	}
 	/**
-	 * @desc    商品列表（跨境吃货合并后的接口），猜测参数与 search 接口一致
+	 * @summary 商品列表（跨境吃货合并后的接口）
 	 * @param   {Object}        data
 	 * @param   {Number|String} [data.storeIds]         门店 id 集合
 	 * @param   {Number|String} [data.brandsIds]        品牌 id 集合
@@ -234,6 +239,8 @@ class ItemServiceModel extends ServiceModel{
 	 * @param   {Number}        [data.startNum]
 	 * @param   {Number}        [data.pageCount]
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @desc    猜测参数与 search 接口一致
+	 * @see     [http://item.test.66buy.com.cn/front/listing/overseaSearch]
 	 * @todo    接口中心未查到
 	 * */
 	searchMerge(data){
@@ -256,14 +263,14 @@ class ItemServiceModel extends ServiceModel{
 		});
 	}
 	/**
-	 * @desc    商品详情
+	 * @summary 商品详情
 	 * @param   {Number|String} id          商品 id
 	 * @param   {Number|String} storeId
 	 * @param   {Number|String} fxStoreId
 	 * @param   {String}        jr
 	 * @param   {Boolean}       isApp       是否为 APP
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=789}
+	 * @see     [http://item.test.66buy.com.cn/front/listing/detailInfo]{@link http://dev.51tiangou.com/interfaces/detail.html?id=789}
 	 * @todo    接口中心写 161019 废弃
 	 * */
 	detail(id, storeId, fxStoreId, jr, isApp){
@@ -296,7 +303,7 @@ class ItemServiceModel extends ServiceModel{
 	 * 超市大放送商品
 	 * @param   {Object}        data
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=1241}
+	 * @see     [http://item.test.66buy.com.cn/front/listing/superMarketSales]{@link http://dev.51tiangou.com/interfaces/detail.html?id=1241}
 	 * @todo    coupon 下有接口调用相同的路径
 	 * @todo    目前没有调用到，取消？
 	 * */
@@ -311,13 +318,13 @@ class ItemServiceModel extends ServiceModel{
 		});
 	}
 	/**
-	 * @desc    档期购
+	 * @summary 档期购
 	 * @param   {Number|String} storeId
 	 * @param   {Object}        [options={}]
 	 * @param   {Number}        [options.startNum=0]
 	 * @param   {Number}        [options.pageCount=10]
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=1237}
+	 * @see     [http://item.test.66buy.com.cn/front/listing/query/basePromotion]{@link http://dev.51tiangou.com/interfaces/detail.html?id=1237}
 	 * */
 	basePromotion(storeId, options={}){
 		let data = {
@@ -333,10 +340,10 @@ class ItemServiceModel extends ServiceModel{
 		});
 	}
 	/**
-	 * @desc    图文详情
+	 * @summary 图文详情
 	 * @param   {Number|String} productId
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果，如果未传参数会返回 []
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=1235}
+	 * @see     [http://item.test.66buy.com.cn/front/listing/query/detail]{@link http://dev.51tiangou.com/interfaces/detail.html?id=1235}
 	 * */
 	introduce(productId){
 		let result
@@ -357,12 +364,12 @@ class ItemServiceModel extends ServiceModel{
 	}
 	
 	/**
-	 * @desc    抢，根据 cityId,storeId 下一轮抢的活动产品
+	 * @summary 抢，根据 cityId,storeId 下一轮抢的活动产品
 	 * @param   {Number|String} cityId
 	 * @param   {Number|String} storeId
 	 * @param   {Number|String} activityId
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=1243}
+	 * @see     [http://item.test.66buy.com.cn/mallProduct/nextRoundRob]{@link http://dev.51tiangou.com/interfaces/detail.html?id=1243}
 	 * @todo    目前没有调用到，取消？
 	 * */
 	qiang(cityId, storeId, activityId){
@@ -375,13 +382,13 @@ class ItemServiceModel extends ServiceModel{
 		});
 	}
 	/**
-	 * @desc    抢（跨境频道用），与 qiang 调用相同接口但传参不同
+	 * @summary 抢（跨境频道用）
 	 * @param   {Number|String} cityId
 	 * @param   {Number|String} storeId
 	 * @param   {Number|String} activityId
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @desc    内部调用的路径与 qiang 接口相同，添加了验证对 activityId 的验证
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=1243}
+	 * @summary 内部调用的路径与 qiang 接口相同，但传参不同，添加了验证对 activityId 的验证
+	 * @see     [http://item.test.66buy.com.cn/mallProduct/nextRoundRob]{@link http://dev.51tiangou.com/interfaces/detail.html?id=1243}
 	 * @todo    目前没有调用到，取消？
 	 * */
 	qiangOverseas(cityId, storeId, activityId){
@@ -401,10 +408,10 @@ class ItemServiceModel extends ServiceModel{
 		});
 	}
 	/**
-	 * @desc    抢（下一轮抢，通用）
+	 * @summary 抢（下一轮抢，通用）
 	 * @param   {Number|String} activityId
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=2265}
+	 * @see     [http://item.test.66buy.com.cn/mallProduct/nextNotStartRoundRob]{@link http://dev.51tiangou.com/interfaces/detail.html?id=2265}
 	 * @todo    目前没有调用到，取消？
 	 * */
 	qiangNextRound(activityId){
@@ -421,12 +428,12 @@ class ItemServiceModel extends ServiceModel{
 		});
 	}
 	/**
-	 * @desc    查询 sku（试衣用）
+	 * @summary 查询 sku（试衣用）
 	 * @param   {Number|String} activityProductId
 	 * @param   {Number|String} counterId
 	 * @param   {Number|String} [storeId]
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=497}
+	 * @see     [http://item.test.66buy.com.cn/mallProduct/querySku]{@link http://dev.51tiangou.com/interfaces/detail.html?id=497}
 	 * */
 	querySku(activityProductId, counterId, storeId){
 		let data = {
@@ -434,7 +441,7 @@ class ItemServiceModel extends ServiceModel{
 				, counterId
 			}
 			, result
-		;
+			;
 
 		if( validate.isInteger(activityProductId) ){
 			if( storeId && validate.checkNumberListFormat(storeId) ){
@@ -452,11 +459,12 @@ class ItemServiceModel extends ServiceModel{
 		return result;
 	}
 	/**
-	 * @desc    获取收藏商品信息
+	 * @summary 获取收藏商品信息
 	 * @param   {Number|String} itemId
 	 * @param   {Number|String} [fxStoreId]
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=2777}
+	 * @desc    使用 POST 方法
+	 * @see     [http://item.test.66buy.com.cn/mallProduct/queryFittingItem]{@link http://dev.51tiangou.com/interfaces/detail.html?id=2777}
 	 * */
 	queryCollectItemInfo(itemId, fxStoreId){
 		let data = {
@@ -468,17 +476,16 @@ class ItemServiceModel extends ServiceModel{
 			data.fxStoreId = fxStoreId;
 		}
 
-		return this.getData('/mallProduct/queryFittingItem', {
-			method: 'POST'
-			, data
+		return this.setData('/mallProduct/queryFittingItem', {
+			data
 		});
 	}
 
 	/**
-	 * @desc    试衣详情页接口
+	 * @summary 试衣详情页接口
 	 * @param   {Number|String} id  营销商品 id
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果，如果未传参数会返回 []
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=89}
+	 * @see     [http://item.test.66buy.com.cn/mallActivityProductToFitting/detailInfo]{@link http://dev.51tiangou.com/interfaces/detail.html?id=89}
 	 * */
 	fittingDetailInfo(id){
 		let result
@@ -496,13 +503,13 @@ class ItemServiceModel extends ServiceModel{
 		return result;
 	}
 	/**
-	 * @desc    试衣列表
+	 * @summary 试衣列表
 	 * @param   {Object}    [data={}]
 	 * @param   {String}    [data.order='time'] 排序，time 时间排序，category 分类排序，默认分类排序
 	 * @param   {Number}    [data.startNum=0]
 	 * @param   {Number}    [data.pageNum=30]
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=501}
+	 * @see     [http://item.test.66buy.com.cn/mallActivityProductToFitting/queryMallProductToFitting]{@link http://dev.51tiangou.com/interfaces/detail.html?id=501}
 	 * */
 	fittingList(data={}){
 
@@ -516,27 +523,28 @@ class ItemServiceModel extends ServiceModel{
 	}
 
 	/**
-	 * @desc    查询试衣总人数
+	 * @summary 查询试衣总人数
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=1127}
+	 * @see     [http://item.test.66buy.com.cn/mallActivityProductToFitting/queryMallProductToFitting]{@link http://dev.51tiangou.com/interfaces/detail.html?id=1127}
 	 * @todo    目前没有调用到，取消？
 	 * */
 	queryFittingNum(){
 		return this.getData('/mallActivityProductToFitting/queryFittingNum');
 	}
 	/**
-	 * @desc    查询试衣间列表
+	 * @summary 查询试衣间列表
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @see     [http://item.test.66buy.com.cn/mallActivityProductToFitting/queryFittingRecord]
 	 * @todo    接口中心未查到
 	 * */
 	queryFittingRecord(){
 		return this.getData('/mallActivityProductToFitting/queryFittingRecord');
 	}
 	/**
-	 * @desc    绑定试衣照片与商品信息
+	 * @summary 绑定试衣照片与商品信息
 	 * @param   {String}    mallProductToFittingAllJson
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=493}
+	 * @see     [http://item.test.66buy.com.cn/mallActivityProductToFitting/addShareFittingRecord]{@link http://dev.51tiangou.com/interfaces/detail.html?id=493}
 	 * */
 	bindFittingItem(mallProductToFittingAllJson){
 		return this.getData('/mallActivityProductToFitting/addShareFittingRecord', {
@@ -546,9 +554,10 @@ class ItemServiceModel extends ServiceModel{
 		});
 	}
 	/**
-	 * @desc    绑定试衣照片与商品信息，实际为 bindFittingItem 接口重命名，调整为内部调用 bindFittingItem
+	 * @summary 绑定试衣照片与商品信息
 	 * @param   {String}    mallProductToFittingAllJson
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @desc    实际为 bindFittingItem 接口重命名，调整为内部调用 bindFittingItem
 	 * @see     [bindFittingItem]{@link ItemServiceModel#bindFittingItem}
 	 * @todo    与 bindFittingItem 取其一
 	 * */
@@ -556,16 +565,16 @@ class ItemServiceModel extends ServiceModel{
 		return this.bindFittingItem( mallProductToFittingAllJson );
 	}
 	/**
-	 * @desc    试衣列表删除功能
+	 * @summary 试衣列表删除功能
 	 * @param   {Number|String} ids 试衣品 id 集合
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=499}
+	 * @desc    使用 POST 方法
+	 * @see     [http://item.test.66buy.com.cn/mallActivityProductToFitting/updDeleteMallProductToFitting]{@link http://dev.51tiangou.com/interfaces/detail.html?id=499}
 	 * @todo    有一次调用，但被注释掉，取消？
 	 * */
 	delFittingItems(ids){
-		return this.getData('/mallActivityProductToFitting/updDeleteMallProductToFitting', {
-			method: 'POST'
-			, data: {
+		return this.setData('/mallActivityProductToFitting/updDeleteMallProductToFitting', {
+			data: {
 				ids
 			}
 		});
@@ -578,7 +587,7 @@ class ItemServiceModel extends ServiceModel{
 	 * @param   {Number}    [options.startNum=0]
 	 * @param   {Number}    [options.pageCount=10]
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=2749}
+	 * @see     [http://item.test.66buy.com.cn/mallActivityProductToFitting/queryItemCollections]{@link http://dev.51tiangou.com/interfaces/detail.html?id=2749}
 	 * */
 	queryItemCollections(fieldText, options={}){
 		let data = {
@@ -595,10 +604,10 @@ class ItemServiceModel extends ServiceModel{
 		});
 	}
 	/**
-	 * @desc    删除收藏记录
+	 * @summary 删除收藏记录
 	 * @param   {Number|String} itemIds 商品 id
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=2817}
+	 * @see     [http://item.test.66buy.com.cn/mallActivityProductToFitting/updDelItemCollection]{@link http://dev.51tiangou.com/interfaces/detail.html?id=2817}
 	 * */
 	updDelItemCollection(itemIds){
 		return this.getData('/mallActivityProductToFitting/updDelItemCollection', {
@@ -608,10 +617,10 @@ class ItemServiceModel extends ServiceModel{
 		});
 	}
 	/**
-	 * @desc    收藏记录详情页
+	 * @summary 收藏记录详情页
 	 * @param   {Number|String} fittingId   试衣 id
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=2759}
+	 * @see     [http://item.test.66buy.com.cn/mallActivityProductToFitting/queryItemCollectionInfo]{@link http://dev.51tiangou.com/interfaces/detail.html?id=2759}
 	 * */
 	queryItemCollectionInfo(fittingId){
 		return this.getData('/mallActivityProductToFitting/queryItemCollectionInfo', {
@@ -621,40 +630,40 @@ class ItemServiceModel extends ServiceModel{
 		});
 	}
 	/**
-	 * @desc    判断商品当前收藏状态
+	 * @summary 判断商品当前收藏状态
 	 * @param   {Number|String} itemId  商品 id
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=2701}
+	 * @desc    使用 POST 方法
+	 * @see     [http://item.test.66buy.com.cn/mallActivityProductToFitting/existShareFittingRecord]{@link http://dev.51tiangou.com/interfaces/detail.html?id=2701}
 	 * */
 	isCollected(itemId){
-		return this.getData('/mallActivityProductToFitting/existShareFittingRecord', {
-			method: 'POST'
-			, data: {
+		return this.setData('/mallActivityProductToFitting/existShareFittingRecord', {
+			data: {
 				itemId
 			}
 		});
 	}
 	/**
-	 * @desc    添加收藏商品
+	 * @summary 添加收藏商品
 	 * @param   {String}    mallProductToFittingAllJson
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=2813}
+	 * @desc    使用 POST 方法
+	 * @see     [http://item.test.66buy.com.cn/mallActivityProductToFitting/addItemCollection]{@link http://dev.51tiangou.com/interfaces/detail.html?id=2813}
 	 * */
 	addItemCollection(mallProductToFittingAllJson){
 		return this.getData('/mallActivityProductToFitting/addItemCollection', {
-			method: 'POST'
-			, data: {
+			data: {
 				mallProductToFittingAllJson
 			}
 		});
 	}
 
 	/**
-	 * @desc    发起天猫比价
+	 * @summary 发起天猫比价
 	 * @param   {Number|String} fittingId   试衣 id
 	 * @param   {String}        url         天猫同款 url
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=397}
+	 * @see     [http://item.test.66buy.com.cn/publics/tmallCompare/addCompare]{@link http://dev.51tiangou.com/interfaces/detail.html?id=397}
 	 * @todo    目前没有调用到，取消？
 	 * */
 	addCompare(fittingId, url){
@@ -667,19 +676,19 @@ class ItemServiceModel extends ServiceModel{
 	}
 
 	/**
-	 * @desc    朋友发起砍价
+	 * @summary 朋友发起砍价
 	 * @param   {Number|String}     activityProductId   活动品 id
 	 * @param   {Number|String}     uuid                微信 openId
 	 * @param   {String}            wechatName
 	 * @param   {Number|String}     memberSecId         分享者的 memberId，加密后的字符串
 	 * @return  {Promise}           返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=633}
+	 * @desc    使用 POST 方法
+	 * @see     [http://item.test.66buy.com.cn/barginRecord/add]{@link http://dev.51tiangou.com/interfaces/detail.html?id=633}
 	 * @todo    使用防黄牛机制
 	 * */
 	barginRecordAdd(activityProductId, uuid, wechatName, memberSecId){
-		return this.getData('/barginRecord/add', {
-			method: 'POST'
-			, data: {
+		return this.setData('/barginRecord/add', {
+			data: {
 				activityProductId
 				, uuid
 				, wechatName
@@ -688,10 +697,10 @@ class ItemServiceModel extends ServiceModel{
 		});
 	}
 	/**
-	 * @desc    获取砍价团详情
+	 * @summary 获取砍价团详情
 	 * @param   {Number|String}    activityProductId
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=629}
+	 * @see     [http://item.test.66buy.com.cn/barginRecord/detail]{@link http://dev.51tiangou.com/interfaces/detail.html?id=629}
 	 * */
 	barginRecordDetail(activityProductId){
 		return this.getData('/barginRecord/detail', {
@@ -701,11 +710,11 @@ class ItemServiceModel extends ServiceModel{
 		});
 	}
 	/**
-	 * @desc    分享后的砍价详情页
+	 * @summary 分享后的砍价详情页
 	 * @param   {Number|String}    activityProductId
 	 * @param   {Number|String}    memberSecId          加密后的会员 id
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=677}
+	 * @see     [http://item.test.66buy.com.cn/barginRecord/shareDetail]{@link http://dev.51tiangou.com/interfaces/detail.html?id=677}
 	 * */
 	shareBarginRecordDetail(activityProductId, memberSecId){
 		return this.getData('/barginRecord/shareDetail', {
@@ -717,10 +726,10 @@ class ItemServiceModel extends ServiceModel{
 	}
 
 	/**
-	 * @desc    邀请分享并参加活动
+	 * @summary 邀请分享并参加活动
 	 * @param   {Number|String} activityProductId
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=637}
+	 * @see     [http://item.test.66buy.com.cn/barginItem/add]{@link http://dev.51tiangou.com/interfaces/detail.html?id=637}
 	 * */
 	barginItemAdd(activityProductId){
 		return this.getData('/barginItem/add', {
@@ -730,23 +739,22 @@ class ItemServiceModel extends ServiceModel{
 		});
 	}
 	/**
-	 * @desc    获取我的砍价团信息
+	 * @summary 获取我的砍价团信息
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=635}
+	 * @desc    使用 POST 方法
+	 * @see     [http://item.test.66buy.com.cn/barginItem/list]{@link http://dev.51tiangou.com/interfaces/detail.html?id=635}
 	 * */
 	barginItemList(){
-		return this.getData('/barginItem/list', {
-			method: 'POST'
-		});
+		return this.setData('/barginItem/list');
 	}
 
 	/**
-	 * @desc    消息推送
+	 * @summary 消息推送
 	 * @param   {Number|String} messageCode     501.降价，502.发券
 	 * @param   {Number}        [startNum=1]
 	 * @param   {Number}        [pageCount=1]
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=471}
+	 * @see     [http://item.test.66buy.com.cn/messageBody/queryAllMessageBody]{@link http://dev.51tiangou.com/interfaces/detail.html?id=471}
 	 * */
 	queryAllMessageBody(messageCode, startNum=0, pageCount=1){
 		return this.getData('/messageBody/queryAllMessageBody', {
@@ -759,12 +767,13 @@ class ItemServiceModel extends ServiceModel{
 	}
 
 	/**
-	 * @desc    查询专柜和专柜品
+	 * @summary 查询专柜和专柜品
 	 * @param   {Number|String} storeId
 	 * @param   {Number|String} [categoryId=''] 分类 id
 	 * @param   {String}        [sort='']       排序方式，dynamic 表示专柜动态排序，attention 表示关注人数排序
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=1633}
+	 * @desc    使用 POST 方法
+	 * @see     [http://item.test.66buy.com.cn/counterDynamicsPub/queryDynamicForIndex]{@link http://dev.51tiangou.com/interfaces/detail.html?id=1633}
 	 * */
 	queryDynamicByStore(storeId, categoryId='', sort=''){
 		let data = {
@@ -779,33 +788,33 @@ class ItemServiceModel extends ServiceModel{
 			data.sort = sort;
 		}
 
-		return this.getData('/counterDynamicsPub/queryDynamicForIndex', {
-			method: 'POST'
-			, data
+		return this.setData('/counterDynamicsPub/queryDynamicForIndex', {
+			data
 		});
 	}
 	/**
-	 * @desc    导购推荐
+	 * @summary 导购推荐
 	 * @param   {Number|String} counterId
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=1629}
+	 * @desc    使用 POST 方法
+	 * @see     [http://item.test.66buy.com.cn/counterDynamicsPub/queryCounterRecommend]{@link http://dev.51tiangou.com/interfaces/detail.html?id=1629}
 	 * */
 	queryCounterRecommend(counterId){
-		return this.getData('/counterDynamicsPub/queryCounterRecommend', {
-			method: 'POST'
-			, data: {
+		return this.setData('/counterDynamicsPub/queryCounterRecommend', {
+			data: {
 				counterId
 			}
 		});
 	}
 	/**
-	 * @desc    专柜动态
+	 * @summary 专柜动态
 	 * @param   {Number|String} counterId
 	 * @param   {Object}        [options={}]        分页参数
 	 * @param   {Number}        [options.startNum=0]
 	 * @param   {Number}        [options.pageCount=10]
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=1631}
+	 * @desc    使用 POST 方法
+	 * @see     [http://item.test.66buy.com.cn/counterDynamicsPub/queryDynamicByCounterId]{@link http://dev.51tiangou.com/interfaces/detail.html?id=1631}
 	 * */
 	queryDynamicByCounter(counterId, options){
 		let data = {
@@ -816,26 +825,25 @@ class ItemServiceModel extends ServiceModel{
 		data.startNum = options.startNum || 0;
 		data.pageCount = options.pageCount || 10;
 
-		return this.getData('/counterDynamicsPub/queryDynamicByCounterId', {
-			method: 'POST'
-			, data
+		return this.setData('/counterDynamicsPub/queryDynamicByCounterId', {
+			data
 		});
 	}
 
 	/**
-	 * @desc    分享分销专题展示
+	 * @summary 分享分销专题展示
 	 * @param   {Number|String} distributionTopicId 专题 id
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=1639}
+	 * @desc    使用 POST 方法
+	 * @see     [http://item.test.66buy.com.cn/distributionTopicPub/queryTopic]{@link http://dev.51tiangou.com/interfaces/detail.html?id=1639}
 	 * */
 	queryTopic(distributionTopicId){
 		let result
 			;
 
 		if( distributionTopicId ){
-			result = this.getData('/distributionTopicPub/queryTopic', {
-				method: 'POST'
-				, data: {
+			result = this.setData('/distributionTopicPub/queryTopic', {
+				data: {
 					distributionTopicId
 				}
 			});
@@ -848,20 +856,20 @@ class ItemServiceModel extends ServiceModel{
 	}
 
 	/**
-	 * @desc    运营品牌
+	 * @summary 运营品牌
 	 * @param   {Number|String} brandId
 	 * @param   {Number}        source      业态
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @see     {@link http://dev.51tiangou.com/interfaces/detail.html?id=2509}
+	 * @desc    使用 POST 方法
+	 * @see     [http://item.test.66buy.com.cn/frontBizCategory/queryFrontBizBrand]{@link http://dev.51tiangou.com/interfaces/detail.html?id=2509}
 	 * */
 	queryFrontBizBrand(brandId, source){
 		let result
 			;
 
 		if( brandId ){
-			result = this.getData('/frontBizCategory/queryFrontBizBrand', {
-				method: 'POST'
-				, data: {
+			result = this.setData('/frontBizCategory/queryFrontBizBrand', {
+				data: {
 					brandId
 					, source
 				}

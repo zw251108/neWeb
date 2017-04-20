@@ -570,6 +570,7 @@ module.exports = function(grunt){
 				, src: [
 					'../tiangou_web/javascript/libs/testFrame/*.js'
 					, '../tiangou_web/javascript/libs/testFrame/model/*.js'
+					, '../tiangou_web/javascript/libs/testFrame/api/*.js'
 					, '../tiangou_web/javascript/libs/testFrame/biz/*.js'
 					, '../tiangou_web/javascript/libs/testFrame/register/*.js'
 					, '../tiangou_web/javascript/libs/testFrame/worker/*.js'

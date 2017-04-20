@@ -6,7 +6,7 @@ import domain       from '../domain.js';
 
 /**
  * @class
- * @classdesc   图片相关操作模块，将 CDN 相关操作整合，在 Model.factory 工厂方法注册为 image，别名 img，将可以使用工厂方法生成
+ * @classdesc   图片相关操作模块，将 CDN 相关操作整合，二/三级域名 img，在 Model.factory 工厂方法注册为 image，别名 img，将可以使用工厂方法生成
  * @extends     ServiceModel
  * */
 class ImageServiceModel extends ServiceModel{
@@ -32,7 +32,7 @@ class ImageServiceModel extends ServiceModel{
 	}
 
 	/**
-	 * @desc    获取图片的绝对路径，并添加相关后缀（与又拍云相关）
+	 * @summary 获取图片的绝对路径，并添加相关后缀（与又拍云相关）
 	 * @param   {String}    url
 	 * @param   {String}    [type='y']
 	 * @return  {String}
@@ -53,7 +53,7 @@ class ImageServiceModel extends ServiceModel{
 		return rs;
 	}
 	/**
-	 * @desc    占位图路径处理
+	 * @summary 占位图路径处理
 	 * @param   {String}    [imgType='']
 	 * @return  {String}    图片路径
 	 * @todo    未实现
@@ -63,15 +63,17 @@ class ImageServiceModel extends ServiceModel{
 	}
 
 	/**
-	 * @desc    异步上传图片
+	 * @summary 异步上传图片
 	 * @param   {FormData}  formData
 	 * @param   {File}      formData.file
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @desc    使用 POST 方法
+	 * @see     [http://img.test.66buy.com.cn/fileUploader/syncImg]
+	 * @todo    接口中未查到
 	 * */
 	syncImg(formData){
-		return this.getData('/fileUploader/syncImg', {
-			method: 'POST'
-			, data: formData
+		return this.setData('/fileUploader/syncImg', {
+			data: formData
 			, processData: false
 			, contentType: false
 		});

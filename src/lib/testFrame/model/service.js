@@ -89,7 +89,7 @@ class ServiceModel extends Model{
 
 	}
 	/**
-	 * 对 setData 和 getData 的 options 添加跨域参数
+	 * @desc    对 setData 和 getData 的 options 添加跨域参数
 	 * @param   {Object}    options setData 和 getData 的 options 参数
 	 * @return  {Object}
 	 * */
@@ -104,7 +104,7 @@ class ServiceModel extends Model{
 	}
 
 	/**
-	 * 设置数据，默认视为发送 POST 请求到服务器，不会将返回结果保存到本地缓存
+	 * @desc    设置数据，默认视为发送 POST 请求到服务器，不会将返回结果保存到本地缓存
 	 * @param   {String|Object} topic    字符串类型为请求 url，对象类型为所有参数，其中 url 为必填
 	 * @param   {Object}        [options={}]
 	 * @param   {Object}        [options.data]
@@ -139,7 +139,7 @@ class ServiceModel extends Model{
 		return result;
 	}
 	/**
-	 * 获取数据，默认视为发送 GET 请求到服务器，可以将返回结果保存到本地缓存
+	 * @desc    获取数据，默认视为发送 GET 请求到服务器，可以将返回结果保存到本地缓存
 	 * @param   {String|Object}     topic   字符串类型为请求 url，对象类型为所有参数，其中 url 为必填
 	 * @param   {Object|Boolean}    [options={}]    对象类型为 ajax 参数，Boolean 类型时将其赋值给 isCache，自身设置为 {}
 	 * @param   {Object}            [options.data]
@@ -216,7 +216,7 @@ class ServiceModel extends Model{
 		return result;
 	}
 	/**
-	 * 删除数据
+	 * @desc    删除数据
 	 * @param   {String|Object} topic
 	 * @param   {Object}        [options]
 	 * @return  {Promise}
@@ -227,13 +227,13 @@ class ServiceModel extends Model{
 		return Promise.resolve( true );
 	}
 	/**
-	 * 清空数据，实际不做任何处理
+	 * @desc    清空数据，实际不做任何处理
 	 * */
 	clearData(){
 		return Promise.resolve( true );
 	}
 	/**
-	 * 将数据同步到本地存储，一次只能设置一个本地缓存
+	 * @desc    将数据同步到本地存储，一次只能设置一个本地缓存
 	 * @override
 	 * @param   {Model}     model
 	 * @todo    目前只能将数据同步到一个本地缓存中，是否考虑可以同步到多个本地缓存，亦或由本地缓存之间设置同步
@@ -281,81 +281,81 @@ ServiceModel._CONFIG = {
 	, errorHandler: null
 };
 
-/**
- * 子类对象缓存
- * @static
- * */
-ServiceModel._MODEL_CACHE = {};
-
-/**
- * 注册子类，若该子类已经被注册，并且缓存中没有该子类的实例，则覆盖
- * @static
- * @param   {String}    type
- * @param   {Model}     model
- * */
-ServiceModel.register = function(type, model){
-	if( type in ServiceModel && type in ServiceModel._MODEL_CACHE ){
-		console.log('type', ' 重复注册，并已生成实例，不能覆盖');
-	}
-	else{
-		ServiceModel[type] = model;
-	}
-};
-
-/**
- * 注册子类的别名
- * @static
- * @param   {String}            type        已注册的子类名
- * @param   {String|String[]}   aliasName   该子类的别名
- * */
-ServiceModel.registerAlias = function(type, aliasName){
-
-	if( !Array.isArray(aliasName) ){
-		aliasName = [aliasName];
-	}
-
-	aliasName.forEach((d)=>{
-		if( !(d in ServiceModel._MODEL_ALIAS) ){
-			ServiceModel._MODEL_ALIAS[d] = type;
-		}
-		else{
-			console.log(d, ' 已经存在');
-		}
-	});
-};
-
-/**
- * 获取或生成 type 类型的 ServiceModel 子类的实例或 ServiceModel 类的实例
- * @static
- * @param   {String}            type
- * @param   {Boolean|Object}    [notCache=false]    为 boolean 类型时表示是否缓存，为 object 类型时将值赋给 options 并设置为 false
- * @param   {Object}            [options={}]
- * @return  {Model}             当 type 有意义的时候，为 ServiceModel 子类的实例，否则为 ServiceModel 类的实例
- * */
-ServiceModel.factory = function(type, notCache=false, options={}){
-	let model
-		;
-
-	if( typeof notCache === 'object' ){
-		options = notCache;
-		notCache = false;
-	}
-
-	if( type in ServiceModel ){
-		if( !notCache && type in ServiceModel._MODEL_CACHE ){
-			model = ServiceModel._MODEL_CACHE[type];
-		}
-		else{
-			model = new ServiceModel[type](options);
-			ServiceModel._MODEL_CACHE[type] = model;
-		}
-	}
-	else{
-		model = new ServiceModel(options);
-	}
-
-	return model;
-};
+// /**
+//  * 子类对象缓存
+//  * @static
+//  * */
+// ServiceModel._MODEL_CACHE = {};
+//
+// /**
+//  * 注册子类，若该子类已经被注册，并且缓存中没有该子类的实例，则覆盖
+//  * @static
+//  * @param   {String}    type
+//  * @param   {Model}     model
+//  * */
+// ServiceModel.register = function(type, model){
+// 	if( type in ServiceModel && type in ServiceModel._MODEL_CACHE ){
+// 		console.log('type', ' 重复注册，并已生成实例，不能覆盖');
+// 	}
+// 	else{
+// 		ServiceModel[type] = model;
+// 	}
+// };
+//
+// /**
+//  * 注册子类的别名
+//  * @static
+//  * @param   {String}            type        已注册的子类名
+//  * @param   {String|String[]}   aliasName   该子类的别名
+//  * */
+// ServiceModel.registerAlias = function(type, aliasName){
+//
+// 	if( !Array.isArray(aliasName) ){
+// 		aliasName = [aliasName];
+// 	}
+//
+// 	aliasName.forEach((d)=>{
+// 		if( !(d in ServiceModel._MODEL_ALIAS) ){
+// 			ServiceModel._MODEL_ALIAS[d] = type;
+// 		}
+// 		else{
+// 			console.log(d, ' 已经存在');
+// 		}
+// 	});
+// };
+//
+// /**
+//  * 获取或生成 type 类型的 ServiceModel 子类的实例或 ServiceModel 类的实例
+//  * @static
+//  * @param   {String}            type
+//  * @param   {Boolean|Object}    [notCache=false]    为 boolean 类型时表示是否缓存，为 object 类型时将值赋给 options 并设置为 false
+//  * @param   {Object}            [options={}]
+//  * @return  {Model}             当 type 有意义的时候，为 ServiceModel 子类的实例，否则为 ServiceModel 类的实例
+//  * */
+// ServiceModel.factory = function(type, notCache=false, options={}){
+// 	let model
+// 		;
+//
+// 	if( typeof notCache === 'object' ){
+// 		options = notCache;
+// 		notCache = false;
+// 	}
+//
+// 	if( type in ServiceModel ){
+// 		if( !notCache && type in ServiceModel._MODEL_CACHE ){
+// 			model = ServiceModel._MODEL_CACHE[type];
+// 		}
+// 		else{
+// 			model = new ServiceModel[type](options);
+// 			ServiceModel._MODEL_CACHE[type] = model;
+// 		}
+// 	}
+// 	else{
+// 		model = new ServiceModel(options);
+// 	}
+//
+// 	return model;
+// };
 
 /**
  * 在 Model.factory 工厂方法注册，将可以使用工厂方法生成

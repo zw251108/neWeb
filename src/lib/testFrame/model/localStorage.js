@@ -34,7 +34,7 @@ class LocalStorageModel extends Model{
 	}
 
 	/**
-	 * 设置数据
+	 * @summary 设置数据
 	 * @param   {String}    topic
 	 * @param   {*}         value
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
@@ -49,7 +49,7 @@ class LocalStorageModel extends Model{
 		});
 	}
 	/**
-	 * 获取数据
+	 * @summary 获取数据
 	 * @param   {String}    topic
 	 * @return  {Promise}   返回一个 Promise 对象，若存在 topic 的值，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
 	 * */
@@ -72,7 +72,7 @@ class LocalStorageModel extends Model{
 		});
 	}
 	/**
-	 * 将数据从缓存中删除
+	 * @summary 将数据从缓存中删除
 	 * @param   {String}    topic
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
@@ -86,7 +86,7 @@ class LocalStorageModel extends Model{
 		});
 	}
 	/**
-	 * 清空数据
+	 * @summary 清空数据
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
 	clearData(){
@@ -98,7 +98,7 @@ class LocalStorageModel extends Model{
 	}
 
 	/**
-	 * 绑定数据监视事件
+	 * @summary 绑定数据监视事件
 	 * @param   {ModelChangeEvent}  callback
 	 * */
 	on(callback){
@@ -108,7 +108,7 @@ class LocalStorageModel extends Model{
 		LocalStorageModel._EVENT_LIST.push( callback );
 	}
 	/**
-	 * 解除绑定数据监控回调函数
+	 * @summary 解除绑定数据监控回调函数
 	 * @param   {ModelChangeEvent}  callback
 	 * */
 	off(callback){
@@ -139,8 +139,9 @@ LocalStorageModel._EVENT_LIST = [];
 LocalStorageModel._LISTENER_ON = false;
 
 /**
- * 全局 storage 事件监听，只执行一次，执行后将 LocalStorageModel._LISTENER_ON 设为 true，该监听事件只能由其他页面修改 localStorage 的数据时触发
+ * @summary 全局 storage 事件监听
  * @static
+ * @desc    只执行一次，执行后将 LocalStorageModel._LISTENER_ON 设为 true，该监听事件只能由其他页面修改 localStorage 的数据时触发
  * */
 LocalStorageModel._listen = function(){
 	self.addEventListener('storage', function(e){

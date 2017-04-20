@@ -30,7 +30,7 @@ class Model{
 	}
 
 	/**
-	 * 转为字符串，会将 null,undefined 转为空字符串
+	 * @summary 转为字符串，会将 null,undefined 转为空字符串
 	 * @protected
 	 * @param   {*}     value
 	 * @return  {String}
@@ -44,7 +44,7 @@ class Model{
 		return typeof value === 'object' ? JSON.stringify( value ) : value.toString();
 	}
 	/**
-	 * 触发绑定的数据监控事件
+	 * @summary 触发绑定的数据监控事件
 	 * @protected
 	 * @param   {String}    topic
 	 * @param   {*}         value
@@ -57,7 +57,7 @@ class Model{
 		}
 	}
 	/**
-	 * 数据同步的内部实现
+	 * @summary 数据同步的内部实现
 	 * @protected
 	 * @param   {String}    topic
 	 * @param   {*}         value
@@ -85,32 +85,40 @@ class Model{
 	}
 
 	/**
-	 * 事件触发函数，函数将传入 topic,newValue 值，当 removeData 执行时也会触发事件，newValue 被传为 null
+	 * @summary 事件触发函数
 	 * @callback    ModelChangeEvent
 	 * @param       {String}    topic
 	 * @param       {*}         newValue
 	 * @param       {*}         [oldValue]
+	 * @desc        函数将传入 topic,newValue 值，当 removeData 执行时也会触发事件，newValue 被传为 null
 	 * */
+
 	/**
-	 * 在 Promise resolve 时调用的函数
+	 * @summary 在 Promise resolve 时调用的函数
 	 * @callback    promiseResolve
 	 * @param       {*}     result
 	 * */
 	/**
-	 * 在 Promise reject 时调用的函数
+	 * @summary 在 Promise reject 时调用的函数
 	 * @callback    promiseReject
 	 * @param       {*}     result
 	 * */
+	/**
+	 * @typedef     {Promise.<Object,Error>}    ModelPromise
+	 * @property    {Object}
+	 * @property    {Object}
+	 * @throws      {Error}
+	 * */
 
 	/**
-	 * 绑定数据监视事件
+	 * @summary 绑定数据监视事件
 	 * @param   {ModelChangeEvent}  callback
 	 * */
 	on(callback){
 		this._eventList.push( callback );
 	}
 	/**
-	 * 解除绑定数据监控回调函数
+	 * @summary 解除绑定数据监控回调函数
 	 * @param   {ModelChangeEvent}  callback
 	 * */
 	off(callback){
@@ -122,11 +130,11 @@ class Model{
 		}
 	}
 	/**
-	 * 设置数据，子类覆盖时如需对数据监控，应在适当的时候调用 _trigger 方法
+	 * @summary 设置数据
 	 * @param   {String}    topic   主题
 	 * @param   {*}         value   value 为 null、undefined 时会被保存为空字符串
-	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
-	 * @desc    设置数据的时候会使用 Object.defineProperty 定义该属性
+	 * @return  {Promise<Object>|Promise<Error>}   返回一个 Promise 对象，在 resolve 时传回 true
+	 * @desc    子类覆盖时如需对数据监控，应在适当的时候调用 _trigger 方法，设置数据的时候会使用 Object.defineProperty 定义该属性
 	 * */
 	setData(topic, value){
 		if( topic in this._value ){
@@ -163,7 +171,7 @@ class Model{
 		return Promise.resolve(true);
 	}
 	/**
-	 * 获取数据
+	 * @summary 获取数据
 	 * @param   {String}    topic
 	 * @return  {Promise}   返回一个 Promise 对象，若存在 topic 的值，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
 	 * */
@@ -181,9 +189,10 @@ class Model{
 		return result;
 	}
 	/**
-	 * 将数据从缓存中删除，子类覆盖时如需对数据监控，应在适当的时候调用 _trigger 方法
+	 * @summary 将数据从缓存中删除
 	 * @param   {String}    topic
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
+	 * @desc    子类覆盖时如需对数据监控，应在适当的时候调用 _trigger 方法
 	 * */
 	removeData(topic){
 		let rs
@@ -207,7 +216,7 @@ class Model{
 		return rs;
 	}
 	/**
-	 * 清空数据
+	 * @summary 清空数据
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
 	clearData(){
@@ -217,7 +226,7 @@ class Model{
 	}
 
 	/**
-	 * 将当前 model 的数据同步到其它 model
+	 * @summary 将当前 model 的数据同步到其它 model
 	 * @param   {Model|Model[]}   model
 	 * */
 	syncTo(model){
@@ -239,7 +248,7 @@ class Model{
 		});
 	}
 	/**
-	 * 清除数据同步
+	 * @summary 清除数据同步
 	 * @param   {Model} model
 	 * */
 	cleanSync(model){
@@ -264,10 +273,11 @@ Model._MODEL_CACHE = {};
 Model._MODEL_ALIAS = {};
 
 /**
- * 注册子类，若该子类已经被注册，并且缓存中没有该子类的实例，则覆盖
+ * @summary 注册子类
  * @static
  * @param   {String}    type
  * @param   {Model}     model
+ * @desc    若该子类已经被注册，并且缓存中没有该子类的实例，则覆盖
  * */
 Model.register = function(type, model){
 
@@ -280,7 +290,7 @@ Model.register = function(type, model){
 };
 
 /**
- * 注册子类的别名
+ * @summary 注册子类的别名
  * @static
  * @param   {String}        type        已注册的子类名
  * @param   {String|String[]}  aliasName   该子类的别名
@@ -302,10 +312,10 @@ Model.registerAlias = function(type, aliasName){
 };
 
 /**
- * 获取或生成 type 类型的 Model 子类的实例或 Model 类的实例
+ * @summary 获取或生成 type 类型的 Model 子类的实例或 Model 类的实例
  * @static
  * @param   {String}            type
- * @param   {Boolean|Object}    [notCache=false] 为 boolean 类型时表示是否缓存，默认值为 false；为 object 类型时将值赋给 options 并设置为 false
+ * @param   {Boolean|Object}    [notCache=false] 为 boolean 类型时表示是否缓存，默认值为 false，设为 true 时既不从缓存中读取子类实例对象，生成的实例对象也不保存在缓存中；为 object 类型时将值赋给 options 并设置为 false
  * @param   {Object}            [options={}]
  * @return  {Model}             当 type 有意义的时候，为 Model 子类类的实例，否则为 Model 类的实例
  * */
@@ -323,13 +333,21 @@ Model.factory = function(type, notCache=false, options={}){
 		type = Model._MODEL_ALIAS[type];
 	}
 
+	// 判断是否存在该子类
 	if( type in Model ){
-		if( !notCache && type in Model._MODEL_CACHE ){
-			model = Model._MODEL_CACHE[type];
-		}
-		else{
+
+		if( notCache || !(type in Model._MODEL_CACHE) ){    // 不使用缓存或没有该子类实例
+
 			model = new Model[type]( options );
-			Model._MODEL_CACHE[type] = model;
+
+			if( !notCache ){
+
+				// 使用缓存，将该子类实例缓存
+				Model._MODEL_CACHE[type] = model;
+			}
+		}
+		else{   // 使用缓存并存在该子类实例
+			model = Model._MODEL_CACHE[type];
 		}
 	}
 	else{
