@@ -77,7 +77,7 @@ var fs = require('fs')
 	;
 
 //----- 重置 manifest 版本代号 -----
-var manifest = fs.readFileSync(__dirname + '/tpl/cache.manifest').toString();
+var manifest = fs.readFileSync(__dirname + '/template/cache.manifest').toString();
 fs.writeFileSync(__dirname + '/public/cache.manifest', new Buffer(manifest.replace('%v%', Math.floor(Math.random()*100))) );
 console.log('cache.mainfest has reset');
 

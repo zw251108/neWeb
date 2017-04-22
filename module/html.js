@@ -10,7 +10,7 @@ var CONFIG = require('../config.js')
 
 	, TPL_CACHE = {}
 	, getTpl = function(path){
-		var temp = __dirname +'../tpl/'+ path
+		var temp = __dirname +'../template/'+ path
 			, html
 			;
 		if( temp in TPL_CACHE ){

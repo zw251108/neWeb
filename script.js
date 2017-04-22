@@ -634,7 +634,7 @@ function saveOrUpdate(name, num){
 //};
 //
 var fs = require('fs')
-//	, html = fs.readFileSync(__dirname + '/tpl/page.html').toString()
+//	, html = fs.readFileSync(__dirname + '/template/page.html').toString()
 //	;
 //
 //var createEmmet = require('./module/emmet/htmlToEmmet.js');

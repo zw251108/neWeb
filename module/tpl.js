@@ -6,7 +6,7 @@ var CONFIG  = require('../config.js')
 	// , fs    = require('fs')
 	// , path  = require('path')
 	//
-	// , HTML_DEFAULT_TPL = 'tpl/page.html'
+	// , HTML_DEFAULT_TPL = 'template/page.html'
 	//
 	// , htmlTpl = fs.readFileSync(__dirname +'/../'+ HTML_DEFAULT_TPL).toString()
 	//
@@ -24,7 +24,7 @@ var CONFIG  = require('../config.js')
 	// , emmetTpl      = require('./emmetTpl/emmetTpl.js').template
 	//
 	// , TPL_CACHE = {}
-	// , TPL_DIR = 'tpl/'
+	// , TPL_DIR = 'template/'
 	// , TPL_KEY = '%'
 	//
 	// , stylesheet    = emmetTpl({

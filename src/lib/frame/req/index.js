@@ -1,25 +1,19 @@
 'use strict';
 
-/**
- * @module   req
- * */
-
-import Req from './req.js';
-
-import './load';
-import './ajax';
-import './fetch';
-import webSocket from './webSocket.js';
-// import '../register/serviceWorker';
+import ajax from './ajax.js';
+import load from './load.js';
 
 /**
- * @function    req 发送请求
+ * todo 实验性功能
  * */
-function req(url, options, type){
-	// todo 判断类型
-}
+import fetch from './fetch.js';
 
 export default {
-	req
-	, webSocket
+	ajax
+	, load
+
+	/**
+	 * todo 实验性功能
+	 * */
+	, fetch
 };

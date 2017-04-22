@@ -1,4 +1,4 @@
-import $ from '../../../public/script/lib/jquery.min';
+import $ from 'jquery';
 
 /**
  * @file    Promise 基于 jQuery 的简易兼容实现，因为在 UC 浏览器中 不支持 Promise
@@ -54,6 +54,10 @@ if( !('Promise' in self) ){
 
 		return defer.promise();
 	};
+	self.Promise.race = function(arr){};
+
+	self.Promise.prototype.then = function(){};
+	self.Promise.prototype.catch = function(){};
 }
 
 export default self.Promise;

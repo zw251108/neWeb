@@ -3,7 +3,7 @@
 /**
  * 获取定位信息
  * @function    location
- * @param   {Object}    [options={}]
+ * @param   {Object}    [options]
  * @return  {Promise}   
  * */
 let location = function(options={}){
@@ -25,7 +25,7 @@ let location = function(options={}){
 			}, {});
 
 			navigator.geolocation.getCurrentPosition(resolve, reject, opts);
-		})
+		});
 	}
 	else{
 		result = Promise.reject( new Error('您的浏览器不支持地理定位功能') );

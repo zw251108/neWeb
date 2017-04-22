@@ -4,8 +4,8 @@ import Model from './model.js';
 
 /**
  * @class
- * @extends Model
- * @classdesc   对 WebSQL Database 进行封装，统一调用接口，在 Model.facory 工厂方法注册为 webSQL，别名 ws,sql，将可以使用工厂方法生成。默认使用表名为 storage，有 id,topic,value 3 个列的表，在生成对象时传入 options 可覆盖默认 SQL 语句
+ * @classdesc   对 WebSQL Database 进行封装，统一调用接口，在 Model.factory 工厂方法注册为 webSQL，别名 ws,sql，将可以使用工厂方法生成。默认使用表名为 storage，有 id,topic,value 3 个列的表，在生成对象时传入 options 可覆盖默认 SQL 语句
+ * @extends     Model
  * @example
 let webSQLModel = new WebSQLModel()
 	, storage = Model.factory('webSQL')
@@ -94,7 +94,7 @@ class WebSQLModel extends Model{
 		});
 	}
 	/**
-	 * 替换表名
+	 * @summary 替换表名
 	 * @private
 	 * @param   {String}    sql
 	 * @return  {String}    替换完成的 sql 语句
@@ -103,7 +103,7 @@ class WebSQLModel extends Model{
 		return sql.replace('{{tableName}}', this._config.tableName);
 	}
 	/**
-	 * 查询
+	 * @summary 查询
 	 * @private
 	 * @param   {String}    topic
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回查询出来的数组
@@ -123,7 +123,7 @@ class WebSQLModel extends Model{
 		});
 	}
 	/**
-	 * 更新
+	 * @summary 更新
 	 * @private
 	 * @param   {String}    topic
 	 * @param   {String}    value
@@ -144,7 +144,7 @@ class WebSQLModel extends Model{
 		});
 	}
 	/**
-	 * 新建
+	 * @summary 新建
 	 * @private
 	 * @param   {String}    topic
 	 * @param   {String}    value
@@ -165,7 +165,7 @@ class WebSQLModel extends Model{
 		});
 	}
 	/**
-	 * 删除
+	 * @summary 删除
 	 * @private
 	 * @param   {String}    topic
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回影响行数的 boolean 值
@@ -185,7 +185,7 @@ class WebSQLModel extends Model{
 		});
 	}
 	/**
-	 * 清空表
+	 * @summary 清空表
 	 * @private
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回影响行数的 boolean 值
 	 * */
@@ -205,7 +205,7 @@ class WebSQLModel extends Model{
 	}
 
 	/**
-	 * 设置数据
+	 * @summary 设置数据
 	 * @param   {String}    topic
 	 * @param   {*}         value
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回影响行数的 boolean 值
@@ -231,7 +231,7 @@ class WebSQLModel extends Model{
 		});
 	}
 	/**
-	 * 获取数据
+	 * @summary 获取数据
 	 * @param   {String}    topic
 	 * @return  {Promise}   返回一个 Promise 对象，若存在 topic 的值，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
 	 * */
@@ -257,7 +257,7 @@ class WebSQLModel extends Model{
 		});
 	}
 	/**
-	 * 将数据从缓存中删除
+	 * @summary 将数据从缓存中删除
 	 * @param   {String}    topic
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回影响行数的 boolean 值
 	 * */
@@ -269,7 +269,7 @@ class WebSQLModel extends Model{
 		});
 	}
 	/**
-	 * 清空数据
+	 * @summary 清空数据
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回影响行数的 boolean 值
 	 * */
 	clearData(){
@@ -277,7 +277,7 @@ class WebSQLModel extends Model{
 	}
 
 	/**
-	 * 独立执行 sql 方法
+	 * @summary 独立执行 sql 方法
 	 * @param   {String}    sql
 	 * @param   {Array}     [value=[]]
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 sql 语句的执行结果

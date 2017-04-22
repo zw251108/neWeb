@@ -41,7 +41,7 @@ class CacheStorageModel extends Model{
 	}
 
 	/**
-	 * 将 url 字符串转换为 Request 对象
+	 * @summary 将 url 字符串转换为 Request 对象
 	 * @private
 	 * @param   {String|Request}    url
 	 * @return  {Request}
@@ -57,7 +57,7 @@ class CacheStorageModel extends Model{
 	}
 
 	/**
-	 * 设置缓存
+	 * @summary 设置缓存
 	 * @param   {String|Request}    topic
 	 * @param   {Response}          response
 	 * @return  {Promise}           返回一个 Promise 对象，在 resolve 时传回 true
@@ -73,7 +73,7 @@ class CacheStorageModel extends Model{
 		});
 	}
 	/**
-	 * 获取缓存
+	 * @summary 获取缓存
 	 * @param   {String|Request}    topic
 	 * @return  {Promise}           返回一个 Promise 对象，在 resolve 时传回查询到的缓存，reject 时传回 Error
 	 * */
@@ -99,7 +99,7 @@ class CacheStorageModel extends Model{
 		});
 	}
 	/**
-	 * 将缓存删除
+	 * @summary 将缓存删除
 	 * @param   {String|Request}    topic
 	 * @param   {Object}    [options={}]    cache.delete 的可选参数
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
@@ -116,7 +116,7 @@ class CacheStorageModel extends Model{
 		});
 	}
 	/**
-	 * 清空缓存
+	 * @summary 清空缓存
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
 	clearData(){
@@ -128,7 +128,7 @@ class CacheStorageModel extends Model{
 	}
 
 	/**
-	 * 基于 addAll 方法的封装
+	 * @summary 基于 addAll 方法的封装
 	 * @param   {Request[]} cacheArray
 	 * */
 	addAll(cacheArray){

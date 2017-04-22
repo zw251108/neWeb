@@ -6,8 +6,8 @@ var fs = require('fs')
 	, htmlToEmmet   = require('./htmlToEmmet.js')
 
 	, getEmmet  = function( dir ){
-		console.log('read file: tpl/', dir);
-		return htmlToEmmet( Cheerio, fs.readFileSync(__dirname +'/../../tpl/'+ dir).toString() );
+		console.log('read file: template/', dir);
+		return htmlToEmmet( Cheerio, fs.readFileSync(__dirname +'/../../template/'+ dir).toString() );
 	}
 	;
 

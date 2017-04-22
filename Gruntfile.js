@@ -186,8 +186,8 @@ module.exports = function(grunt){
 					collapseWhitespace: true
 				},
 				files: {
-					'public/index.html': 'tpl/index.html',
-					'public/module.html': 'tpl/module.html'
+					'public/index.html': 'template/index.html',
+					'public/module.html': 'template/module.html'
 				}
 			}
 		}
@@ -517,8 +517,8 @@ module.exports = function(grunt){
 					dest: '../destiny_build/zw150026/public/media/', expand: true, flatten: true, filter: 'isFile'
 					, src: ['public/media/*']
 				}, {
-					dest: '../destiny_build/zw150026/tpl/', expand: true, filter: 'isFile'
-					, cwd: 'tpl/', src: ['**']
+					dest: '../destiny_build/zw150026/template/', expand: true, filter: 'isFile'
+					, cwd: 'template/', src: ['**']
 				}, {
 				//	dest: '../destiny_build/zw150026/', expand: true, flatten: false, filter: 'isFile'
 				//	, src: ['config.js']

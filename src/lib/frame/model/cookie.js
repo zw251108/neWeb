@@ -4,8 +4,8 @@ import Model from './model.js';
 
 /**
  * @class
- * @extends Model
  * @classdesc   对 cookie 的使用进行封装，统一调用接口，在 Model.factory 工厂方法注册为 cookie，别名 c，将可以使用工厂方法生成
+ * @extends     Model
  * @example
 let cookieModel = new CookieModel()
 	, cookie = Model.factory('cookie')
@@ -32,11 +32,15 @@ class CookieModel extends Model{
 	}
 
 	/**
-	 * 设置数据
-	 * @param   {String}    topic
-	 * @param   {*}         value
-	 * @param   {Object|Number|String}  [options]   相关配置
-	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
+	 * @summary 设置数据
+	 * @param   {String}                topic
+	 * @param   {*}                     value
+	 * @param   {Object|Number|String}  [options]           相关配置
+	 * @param   {String}                [options.path]
+	 * @param   {String}                [options.domain]
+	 * @param   {Date|Number|String}    [options.expires]
+	 * @param   {String}                [options.secure]
+	 * @return  {Promise}               返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
 	setData(topic, value, options){
 		return this._store.then(()=>{
@@ -63,11 +67,11 @@ class CookieModel extends Model{
 
 			this._trigger(topic, value);
 
-			return true
+			return true;
 		});
 	}
 	/**
-	 * 获取数据
+	 * @summary 获取数据
 	 * @param   {String}    topic
 	 * @return  {Promise}   返回一个 Promise 对象，若存在 topic 的值，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
 	 * */
@@ -109,9 +113,10 @@ class CookieModel extends Model{
 		});
 	}
 	/**
-	 * 将数据从缓存中删除，实际为调用 setData 方法，过期时间为负值
+	 * @summary 将数据从缓存中删除
 	 * @param   {String}    topic
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
+	 * @desc    实际为调用 setData 方法，过期时间为负值
 	 * */
 	removeData(topic){
 		return this._store.then(()=>{
@@ -121,8 +126,9 @@ class CookieModel extends Model{
 		});
 	}
 	/**
-	 * 清空数据，实际不做任何处理
+	 * @summary 清空数据
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
+	 * @desc    实际不做任何处理
 	 * */
 	clearData(){
 		return Promise.resolve( true );
@@ -161,10 +167,10 @@ CookieModel._SHORT_TIME_NUM = {
 };
 
 /**
- * 转换时间数据格式
+ * @summary 转换时间数据格式
  * @static
  * @param   {Date|Number|String}    date
- * @return  {String}    返回一个 UTC 格式的时间字符串
+ * @return  {String}                返回一个 UTC 格式的时间字符串
  * */
 CookieModel._transDate = function(date){
 	let temp = ''
