@@ -4,6 +4,7 @@
  * @file    框架聚合
  * */
 
+
 /**
  * 基于 jQuery Deferred 对象简易实现 Promise，主要针对 UC 浏览器
  * @todo    期望改为根据全局环境动态加载
@@ -11,64 +12,85 @@
 import './promise.js';
 
 /**
- * 通用工具类
+ * ---------- 全局运行时检测 ----------
  * */
-import util from './util/index.js';
+// 运行环境
+import domain   from './runtime/domain.js';
+
+// 运行参数
+import url      from './runtime/url.js';
+
+// 运行设备
+import device   from './runtime/device.js';
 
 /**
- * 运行环境
+ * ---------- 通用工具 ----------
  * */
-import domain from './domain.js';
+import util     from './util/index.js';
 
 /**
- * 数据层
+ * ---------- 数据层 ----------
  * */
-import Model from './model/index.js';
+import Model    from './model/index.js';
 
 /**
- * 业务模块
+ * ---------- 业务接口模块 ----------
  * */
 import * as api from './api/index.js';
 
-/**
- * 加载微信业务模块
- * @todo    期望改为根据全局环境动态加载
- * */
+// 加载微信业务模块 todo 期望改为根据全局环境动态加载
 import './api/wechat.js';
 
 /**
- * 与 APP 交互接口
- * @todo    期望改为根据全局环境动态加载
+ * ---------- APP 交互接口 ----------
+ * todo    期望改为根据全局环境动态加载
  * */
-import App from './app/index.js';
+import App      from './app/index.js';
 
 let app = new App();
 
 /**
- * 全局业务执行
+ * ---------- 全局事件 ----------
  * */
+// 全局滚动事件
+import scroll   from './event/scroll.js';
+
+// 全局 resize 事件
+import resize   from './event/resize.js';
+
+let event = {
+	scroll
+	, resize
+};
+
+// 获取地理位置
+import location from './location.js';
 
 /**
- * 防黄牛机制
+ * ---------- 全局业务执行 ----------
  * */
-let secKeyModel = new Model();
+// 防止运营商劫持（待验证）
+import './biz/preventHijack.js';
 
-/**
- * 设置页面请求默认业务处理
- * */
-// /**
-//  * 在请求发送前置预处理
-//  * @method      beforeSendHandler
-//  * @memberOf    Model.service._CONFIG
-//  * @param       {Object}                options
-//  * @return      {Promise}
-//  * @todo        是否需要?
-//  * */
-// Model.service._CONFIG.beforeSendHandler = function(options){
-// 	return api.member.secKey().then(function(){
-//
-// 	});
-// };
+// 系统监控
+let log = Model.factory('log');
+
+if( domain.env !== 'online' || domain.env !== 'test' ){ // 不为线上或测试环境时禁用埋点功能
+	log.setDisabled( true );
+}
+
+// 组件埋点
+import Vue      from 'vue';
+import maple    from 'maple';
+
+import tracker  from './tracker.js';
+
+Vue.use( tracker );
+
+// 防黄牛机制
+import 'biz/preventScalper.js'
+
+// 设置页面请求默认业务处理
 /**
  * 对发送请求成功时的返回值进行预处理
  * @method      successHandler
@@ -80,7 +102,7 @@ Model.service._CONFIG.successHandler = function(res){
 	let secKey = res.secKey
 		, timestamp = res.timestamp
 		, execute
-		;
+	;
 
 	if( secKey && timestamp ){
 
@@ -96,7 +118,7 @@ Model.service._CONFIG.successHandler = function(res){
 
 	execute = execute.then(function(){
 		let result
-			;
+		;
 
 		if( res.success ){  //
 			result = res.data;
@@ -130,98 +152,43 @@ Model.service._CONFIG.successHandler = function(res){
  * @return      {Promise}
  * */
 Model.service._CONFIG.errorHandler = function(){
-	console.log( arguments );
+	// console.log( arguments );
 
 	maple.notice('网络好像不给力喔，请检查一下您的网络设置');
 
 	return Promise.reject();
 };
 
-/**
- * 系统监控
- * */
-let log = Model.factory('log');
+// 个人地理位置信息
+import positionInfo from './biz/autoPosition.js';
 
-// 不为线上或测试环境时禁用埋点功能
-if( domain.env !== 'online' || domain.env !== 'test' ){
-	log.setDisabled( true );
-}
+// 个人信息
+import mineInfo from './biz/mineInfo.js';
 
-/**
- * 监控系统
- * */
-import Vue from 'vue';
-import maple from 'maple';
+let biz = {
+	mineInfo
+	, positionInfo
+};
 
-import tracker from './tracker.js';
+// 获取微信用户信息 todo 期望改为根据全局环境动态加载
+import wechat   from './biz/wechat.js';
+
+biz.wechat = wechat;
 
 /**
- * 组件埋点
- * */
-Vue.use( tracker );
-/**
- * todo 加载组件
+ * ---------- 加载组件 ----------
+ * todo
  * */
 
-// // 网络请求
-// import req from 'req/index.js';
-//
-// // 数据同步
-// import sync from './sync/index.js';
-//
-// // 请求代理
-// import proxy from './proxy/index.js';
-
-/**
- * 获取地理位置
- * */
-import location from './location.js';
-
-/**
- * todo 实验性功能
- * */
-
-/**
- * 动画库
- * */
-import * as animate from './animate/index.js';
-
-/**
- * 注册后台 worker
- * */
-import register from './register/index.js';
-
-/**
- * 桌面通知， 目前仅支持 PC 端
- * */
-import notify from './notify.js';
-
-// /**
-//  * 对 document.createElement 重写，要求最后一个参数为验证参数，若验证未通过则返回空对象
-//  * */
-// document._createElement = document.createElement;
-// document.createElement = function(){
-// 	let argc = arguments.length
-// 		, rs
-// 		;
-//
-// 	if( argc > 1 && arguments[argc -1] === '' ){    // 最后一个参数为验证
-// 		rs = document._createElement.apply(document, Array.prototype.slice.call(arguments, 0, argc -1));	}
-// 	else{   // 未通过验证
-// 		rs = {};
-// 	}
-//
-// 	return rs;
-// };
-
-///^(13\d)|(14[0-35-9])|(18[05-9])\d{8}$/
 
 let newTg = window.newTg = {
-	model: Model
-	// , proxy
-	, req
-	// , sync
-	, domain
+	domain
+	, url
+	, device
+
+	, util
+
+	, model: Model
 	, api
 
 	/**
@@ -229,9 +196,12 @@ let newTg = window.newTg = {
 	 * */
 	, app
 
+	, event
+
+	, biz
+
 	, location
 
-	, util
 
 	// 实验性功能
 	, animate
@@ -240,3 +210,76 @@ let newTg = window.newTg = {
 };
 
 export default newTg;
+
+/**
+ * 参数
+ *
+ * needRefresh      是否回退刷新
+ * goToTop          回到顶部按钮
+ * useGoTop
+ * autoAnalyse      自动统计
+ * useWcShare       使用微信分享
+ * isWcShare
+ * isWcAutoLogin    微信自动登录
+ * loadMore         是否可以加载更多数据
+ *
+ * global           运行环境，从 cookie 中取，若没有则判断 AlipayClient wechat webapp
+ *
+ * pageInitTime     ? 统计渲染时间？ 存入了 cookie
+ * params           url 上的参数
+ * params.source_type
+ * params.source_weixin_id
+ * params.shopid
+ * params.js
+ * params.JR
+ *
+ * scrollTop        ?
+ * isBack           !!scrollTop
+ * backOver         false
+ * cityId           城市 id
+ * cityName         城市名称
+ * hybrid           是否为 app
+ * isAndroid
+ * isIos
+ * isAirMall        ? 空中导购？
+ * $body            $('body')
+ *
+ * 去掉 url 上的 scrollTop
+ * 非微信下 replaceState(null, '', url)
+ *
+ * app 下 body 的 class 上添加 hybrid 和 cookie 中 global 的值
+ *
+ * 所有 a 标签绑定 click 事件
+ * 所有 [data-scp] 绑定 click 事件
+ *
+ * 回到顶部按钮       使用组件替代
+ *
+ * 自动统计             发送 trackPage
+ *
+ * 自动拉起 app
+ *
+ * 绑定滚动加载更多事件   使用全局事件
+ *
+ * 加载微信 js-sdk      在 biz/wechat 中实现
+ * */
+
+
+
+/**
+ * todo 实验性功能
+ * */
+
+/**
+ * ---------- 动画库 ----------
+ * */
+import * as animate from './animate/index.js';
+
+/**
+ * ---------- 注册后台 worker ----------
+ * */
+import register from './register/index.js';
+
+/**
+ * ---------- 桌面通知 ----------
+ * */
+import notify   from './notify.js';

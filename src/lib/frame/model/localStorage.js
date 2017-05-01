@@ -19,56 +19,88 @@ storage.getData('fittingShow/index/first').then(function(value){
 class LocalStorageModel extends Model{
 	/**
 	 * @constructor
+	 * @param   {Object}    [config={}]
+	 * @param   {Boolean}   [config.listen] 是否开启监听事件
 	 * */
-	constructor(){
-		super();
+	constructor(config={}){
+		super( config );
 
 		if( 'localStorage' in self ){
 			this._store = Promise.resolve( self.localStorage );
 
-			!LocalStorageModel._LISTENER_ON && LocalStorageModel._listen();
+			config.listen && !LocalStorageModel._LISTENER_ON && LocalStorageModel._listen();
 		}
 		else{
 			this._store = Promise.reject( new Error('此浏览器不支持 localStorage') );
 		}
 	}
 
+	// ---------- 静态方法 ----------
+	/**
+	 * @summary 全局 storage 事件监听
+	 * @static
+	 * @desc    只执行一次，执行后将 LocalStorageModel._LISTENER_ON 设为 true，该监听事件只能由其他页面修改 localStorage 的数据时触发
+	 * */
+	static _listen = function(){
+		self.addEventListener('storage', function(e){
+			let topic = e.key
+				, newVal = e.newValue
+				, oldVal = e.oldValue
+			;
+
+			if( LocalStorageModel._EVENT_LIST.length ){
+
+				LocalStorageModel._EVENT_LIST.forEach((d)=>d(topic, newVal, oldVal));
+			}
+		});
+
+		LocalStorageModel._LISTENER_ON = true;
+	}
+
+	// ---------- 公有方法 ----------
 	/**
 	 * @summary 设置数据
 	 * @param   {String}    topic
 	 * @param   {*}         value
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
+	 * @desc    保持值得时候，同时会保持在内存中
 	 * */
 	setData(topic, value){
-		return this._store.then((store)=>{
-			store.setItem(topic, this._stringify(value));
+		super.setData(topic, value).then(()=>{
+			return this._store.then((store)=>{
+				store.setItem(topic, this._stringify(value));
 
-			this._trigger(topic, value);
-
-			return true;
+				return true;
+			});
 		});
 	}
 	/**
 	 * @summary 获取数据
 	 * @param   {String}    topic
 	 * @return  {Promise}   返回一个 Promise 对象，若存在 topic 的值，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
+	 * @desc    获取数据时会优先从内存中取值，若没有则从 localStorage 中取值
 	 * */
 	getData(topic){
-		return this._store.then((store)=>{
-			let value = store.getItem( topic )
-				;
+		return super.getData( topic ).catch(()=>{
+			return this._store.then((store)=>{
+				let value = store.getItem( topic )
+					;
 
-			if( value === null ){
-				value = Promise.reject( null );
-			}
-			else{
-				try{
-					value = JSON.parse( value );
+				if( value === null ){
+					value = Promise.reject( null );
 				}
-				catch(e){}
-			}
+				else{
+					try{
+						value = JSON.parse( value );
+					}
+					catch(e){}
 
-			return value;
+					// 在内存中保留该值
+					super.setData(topic, value);
+				}
+
+				return value;
+			});
 		});
 	}
 	/**
@@ -77,12 +109,12 @@ class LocalStorageModel extends Model{
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
 	removeData(topic){
-		return this._store.then((store)=>{
-			store.removeItem( topic );
-
-			this._trigger(topic, null);
-
-			return true;
+		return super.removeData( topic ).then(()=>{
+			return this._store.then((store)=>{
+				store.removeItem( topic );
+				
+				return true;
+			});
 		});
 	}
 	/**
@@ -90,10 +122,12 @@ class LocalStorageModel extends Model{
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
 	clearData(){
-		return this._store.then((store)=>{
-			store.clear();
+		return super.clearData().then(()=>{
+			return this._store.then((store)=>{
+				store.clear();
 
-			return true;
+				return true;
+			});
 		});
 	}
 
@@ -131,7 +165,6 @@ class LocalStorageModel extends Model{
  * @static
  * */
 LocalStorageModel._EVENT_LIST = [];
-
 /**
  * 全局 storage 监听事件是否开启
  * @static
@@ -139,31 +172,9 @@ LocalStorageModel._EVENT_LIST = [];
 LocalStorageModel._LISTENER_ON = false;
 
 /**
- * @summary 全局 storage 事件监听
- * @static
- * @desc    只执行一次，执行后将 LocalStorageModel._LISTENER_ON 设为 true，该监听事件只能由其他页面修改 localStorage 的数据时触发
- * */
-LocalStorageModel._listen = function(){
-	self.addEventListener('storage', function(e){
-		let topic = e.key
-			, newVal = e.newValue
-			, oldVal = e.oldValue
-			;
-
-		if( LocalStorageModel._EVENT_LIST.length ){
-
-			LocalStorageModel._EVENT_LIST.forEach((d)=>d(topic, newVal, oldVal));
-		}
-	});
-
-	LocalStorageModel._LISTENER_ON = true;
-};
-
-/**
  * 在 Model.factory 工厂方法注册，将可以使用工厂方法生成
  * */
 Model.register('localStorage', LocalStorageModel);
-
 /**
  * 注册别名
  * */

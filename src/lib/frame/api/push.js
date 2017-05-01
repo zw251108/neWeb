@@ -2,7 +2,7 @@
 
 import Model        from '../model/model';
 import ServiceModel from '../model/service.js';
-import domain       from '../domain.js';
+import domain       from '../runtime/domain.js';
 
 /**
  * @class

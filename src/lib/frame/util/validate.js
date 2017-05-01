@@ -32,6 +32,10 @@ let validate = {
 		, checkOrderType(orderType){
 			return /^DESC$|^ASC$/i.test( orderType );
 		}
+
+		, checkPhoneNum(phone){
+			return /^(13\d)|(14[0-35-9])|(18[05-9])\d{8}$/.test( phone );
+		}
 	}
 	;
 

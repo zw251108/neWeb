@@ -31,8 +31,38 @@ class CookieModel extends Model{
 		}
 	}
 
+	// ---------- 静态方法 ----------
 	/**
-	 * @summary 设置数据
+	 * @summary 转换时间数据格式
+	 * @static
+	 * @param   {Date|Number|String}    date 为 Number 类型时默认单位为天
+	 * @return  {String}                返回一个 UTC 格式的时间字符串
+	 * */
+	static _transDate = function(date){
+		let temp = ''
+		;
+
+		if( date instanceof Date){}
+		else if( typeof date === 'number' ){
+			temp = new Date();
+			temp.setTime( +temp + CookieModel._SHORT_TIME_NUM.d * date );
+			date = temp;
+		}
+		else if( temp = CookieModel._SHORT_TIME_EXPR.exec( date ) ){
+			date = new Date();
+			date.setTime( date.getTime() + Number( temp[1] ) * CookieModel._SHORT_TIME_NUM[temp[2]] );
+		}
+		else{
+			date = '';
+		}
+
+		return date && date.toUTCString();
+	}
+
+	// ---------- 私有方法 ----------
+	/**
+	 * @summary 设置 cookie
+	 * @private
 	 * @param   {String}                topic
 	 * @param   {*}                     value
 	 * @param   {Object|Number|String}  [options]           相关配置
@@ -41,10 +71,10 @@ class CookieModel extends Model{
 	 * @param   {Date|Number|String}    [options.expires]
 	 * @param   {String}                [options.secure]
 	 * @return  {Promise}               返回一个 Promise 对象，在 resolve 时传回 true
+	 * @desc    因为设置 cookie 和删除 cookie 使用是相同的代码，只是传入的过期时间不同，所以提出一个共通方法
 	 * */
-	setData(topic, value, options){
+	_setCookie(topic, value, options){
 		return this._store.then(()=>{
-			
 			if( typeof options !== 'object' ){
 				options = {
 					expires: options
@@ -65,73 +95,96 @@ class CookieModel extends Model{
 					return a;
 				}, '');
 
-			this._trigger(topic, value);
+			return Promise.resolve( true );
+		});
+	}
 
-			return true;
+	// ---------- 公有方法 ----------
+	/**
+	 * @summary 设置数据
+	 * @override
+	 * @param   {String}                topic
+	 * @param   {*}                     value
+	 * @param   {Object|Number|String}  [options]           相关配置
+	 * @param   {String}                [options.path]
+	 * @param   {String}                [options.domain]
+	 * @param   {Date|Number|String}    [options.expires]
+	 * @param   {String}                [options.secure]
+	 * @return  {Promise}               返回一个 Promise 对象，在 resolve 时传回 true
+	 * @desc    保持值得时候，同时会保持在内存中
+	 * */
+	setData(topic, value, options){
+
+		return super.setData(topic, value).then(()=>{
+			return this._setCookie(topic, value, options);
 		});
 	}
 	/**
 	 * @summary 获取数据
 	 * @param   {String}    topic
 	 * @return  {Promise}   返回一个 Promise 对象，若存在 topic 的值，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
+	 * @desc    获取数据时会优先从内存中取值，若没有则从 cookie 中取值
 	 * */
 	getData(topic){
-		return this._store.then(()=>{
-			let cookies = document.cookie
-				, i = 0, l
-				, value = ''
-				, t
+		return super.getData( topic ).catch(()=>{  // 内存中不存在该值
+			return this._store.then(()=>{
+				let cookies = document.cookie
+					, i = 0, l
+					, value = ''
+					, t
 				;
 
-			if( cookies ){
-				cookies = cookies.split('; ');
-			}
-			else{
-				cookies = [];
-			}
-
-			for(l = cookies.length; i < l; i++ ){
-				t = cookies[i].split('=');
-
-				if( topic === decodeURIComponent( t[0] ) ){
-					value = decodeURIComponent( t[1] );
-					break;
+				if( cookies ){
+					cookies = cookies.split('; ');
 				}
-			}
-
-			if( value ){
-				try{
-					value = JSON.parse( value );
+				else{
+					cookies = [];
 				}
-				catch(e){}
-			}
-			else{
-				value = Promise.reject( null );
-			}
 
-			return value;
+				for(l = cookies.length; i < l; i++ ){
+					t = cookies[i].split('=');
+
+					if( topic === decodeURIComponent( t[0] ) ){
+						value = decodeURIComponent( t[1] );
+						break;
+					}
+				}
+
+				if( value ){
+					try{
+						value = JSON.parse( value );
+					}
+					catch(e){}
+
+					// 在内存中保留该值
+					super.setData(topic, value);
+				}
+				else{
+					value = Promise.reject( null );
+				}
+
+				return value;
+			});
 		});
 	}
 	/**
 	 * @summary 将数据从缓存中删除
 	 * @param   {String}    topic
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
-	 * @desc    实际为调用 setData 方法，过期时间为负值
+	 * @desc    调用 _setCookie 方法，过期时间为负值
 	 * */
 	removeData(topic){
-		return this._store.then(()=>{
-			this._trigger(topic, null);
-
-			return this.setData(topic, '', '-1d');
+		return super.removeData( topic ).then(()=>{
+			return this._setCookie(topic, '', -1);
 		});
 	}
 	/**
 	 * @summary 清空数据
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
-	 * @desc    实际不做任何处理
+	 * @desc    只调用了父类的 clearData 方法，清楚了内存中的数据，对 cookie 实际没做任何处理
 	 * */
 	clearData(){
-		return Promise.resolve( true );
+		return super.clearData();
 	}
 }
 
@@ -146,7 +199,6 @@ CookieModel._DEFAULT = {
 	, expires: ''
 	, secure: ''
 };
-
 /**
  * 简短时间设置格式
  * @const
@@ -167,37 +219,9 @@ CookieModel._SHORT_TIME_NUM = {
 };
 
 /**
- * @summary 转换时间数据格式
- * @static
- * @param   {Date|Number|String}    date
- * @return  {String}                返回一个 UTC 格式的时间字符串
- * */
-CookieModel._transDate = function(date){
-	let temp = ''
-		;
-
-	if( date instanceof Date){}
-	else if( typeof date === 'number' ){
-		temp = new Date();
-		temp.setTime( +temp + CookieModel._SHORT_TIME_NUM.d * date );
-		date = temp;
-	}
-	else if( temp = CookieModel._SHORT_TIME_EXPR.exec( date ) ){
-		date = new Date();
-		date.setTime( +date + Number( temp[1] ) * CookieModel._SHORT_TIME_NUM[temp[2]] );
-	}
-	else{
-		date = '';
-	}
-
-	return date && date.toUTCString();
-};
-
-/**
  * 在 Model.factory 工厂方法注册，将可以使用工厂方法生成
  * */
 Model.register('cookie', CookieModel);
-
 /**
  * 注册别名
  * */

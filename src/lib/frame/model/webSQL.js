@@ -93,6 +93,8 @@ class WebSQLModel extends Model{
 			}
 		});
 	}
+
+	// ---------- 私有方法 ----------
 	/**
 	 * @summary 替换表名
 	 * @private
@@ -204,56 +206,63 @@ class WebSQLModel extends Model{
 		});
 	}
 
+	// ---------- 公有方法 ----------
 	/**
 	 * @summary 设置数据
 	 * @param   {String}    topic
 	 * @param   {*}         value
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回影响行数的 boolean 值
+	 * @desc    保持值得时候，同时会保持在内存中
 	 * */
 	setData(topic, value){
-		value = this._stringify( value );
+		return super.setData(topic, value).then(()=>{
 
-		return this._select( topic ).then((rs)=>{
-			let result;
+			value = this._stringify( value );
 
-			if( rs && rs.length ){    // topic 已存在
-				result = this._update(topic, value);
-			}
-			else{
-				result = this._insert(topic, value);
-			}
+			return this._select( topic ).then((rs)=>{
+				let result;
 
-			return result;
-		}).then((rs)=>{
-			this._trigger(topic, value);
+				if( rs && rs.length ){    // topic 已存在
+					result = this._update(topic, value);
+				}
+				else{
+					result = this._insert(topic, value);
+				}
 
-			return rs;
+				return result;
+			});
 		});
 	}
 	/**
 	 * @summary 获取数据
 	 * @param   {String}    topic
 	 * @return  {Promise}   返回一个 Promise 对象，若存在 topic 的值，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
+	 * @desc    获取数据时会优先从内存中取值，若没有则从 WebSQL Database 中取值
 	 * */
 	getData(topic){
-		return this._select( topic ).then((rs)=>{
-			let value = ''
-				;
+		return super.getData( topic ).catch(()=>{
+			return this._select( topic ).then((rs)=>{
+				let value = ''
+					;
 
-			if( rs && rs.length ){
-				// 只返回第一条数据
-				value = rs[0].value;
+				if( rs && rs.length ){
+					// 只返回第一条数据
+					value = rs[0].value;
 
-				try{
-					value = JSON.parse( value );
+					try{
+						value = JSON.parse( value );
+					}
+					catch(e){}
+
+					// 在内存中保留该值
+					super.setData(topic, value);
 				}
-				catch(e){}
-			}
-			else{
-				value = Promise.reject( null );
-			}
+				else{
+					value = Promise.reject( null );
+				}
 
-			return value;
+				return value;
+			});
 		});
 	}
 	/**
@@ -262,10 +271,8 @@ class WebSQLModel extends Model{
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回影响行数的 boolean 值
 	 * */
 	removeData(topic){
-		return this._delete( topic ).then((rs)=>{
-			this._trigger(topic, null);
-
-			return rs;
+		return super.removeData( topic ).then(()=>{
+			return this._delete( topic );
 		});
 	}
 	/**
@@ -273,7 +280,9 @@ class WebSQLModel extends Model{
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回影响行数的 boolean 值
 	 * */
 	clearData(){
-		return this._clear();
+		return this.clearData().then(()=>{
+			return this._clear();
+		});
 	}
 
 	/**
@@ -322,7 +331,6 @@ WebSQLModel._CONFIG = {
  * 在 Model.factory 工厂方法注册，将可以使用工厂方法生成
  * */
 Model.register('webSQL', WebSQLModel);
-
 /**
  * 注册别名
  * */

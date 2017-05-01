@@ -2,7 +2,7 @@
 
 import Model        from '../model/model.js';
 import ServiceModel from '../model/service.js';
-import domain       from '../domain.js';
+import domain       from '../runtime/domain.js';
 
 /**
  * @class
@@ -158,7 +158,24 @@ class DiscoverServiceModel extends ServiceModel{
 			data
 		});
 	}
-
+	/**
+	 * @summary 发现频道 - 举报发现/评论
+	 * @param   {Number|String} contentId
+	 * @param   {Number}        type        举报类型，0.发现，1.评论
+	 * @param   {String}        operator    举报人
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回值
+	 * @desc    使用 POST 请求
+	 * @see     [http://discover.test.66buy.com.cn/front/report/add]{@link http://dev.51tiangou.com/interfaces/detail.html?id=3689}
+	 * */
+	report(contentId, type, operator){
+		return this.setData('/front/report/add', {
+			data: {
+				contentId
+				, type
+				, operator
+			}
+		});
+	}
 }
 
 Model.register('discover', DiscoverServiceModel);

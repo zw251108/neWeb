@@ -2,7 +2,7 @@
 
 import Model        from '../model/index.js';
 import ServiceModel from '../model/service.js';
-import domain       from '../domain.js';
+import domain       from '../runtime/domain.js';
 import validate     from '../util/validate.js';
 
 /**

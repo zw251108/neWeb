@@ -40,6 +40,7 @@ class CacheStorageModel extends Model{
 		}
 	}
 
+	// ---------- 私有方法 ----------
 	/**
 	 * @summary 将 url 字符串转换为 Request 对象
 	 * @private
@@ -56,6 +57,7 @@ class CacheStorageModel extends Model{
 		return url
 	}
 
+	// ---------- 公有方法 ----------
 	/**
 	 * @summary 设置缓存
 	 * @param   {String|Request}    topic
@@ -142,6 +144,11 @@ class CacheStorageModel extends Model{
 	}
 }
 
+/**
+ * 默认配置
+ * @const
+ * @static
+ * */
 CacheStorageModel._CONFIG = {
 	cacheName: 'storage'
 };
@@ -150,7 +157,6 @@ CacheStorageModel._CONFIG = {
  * 在 Model.factory 工厂方法注册，将可以使用工厂方法生成
  * */
 Model.register('cacheStorage', CacheStorageModel);
-
 /**
  * 注册别名
  * */

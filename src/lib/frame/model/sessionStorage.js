@@ -27,42 +27,50 @@ class SessionStorageModel extends Model{
 		}
 	}
 
+	// ---------- 公有方法 ----------
 	/**
 	 * @summary 设置数据
 	 * @param   {String}    topic
 	 * @param   {*}         value
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
+	 * @desc    保持值得时候，同时会保持在内存中
 	 * */
 	setData(topic, value){
-		return this._store.then((store)=>{
-			store.setItem(topic, this._stringify(value));
+		return super.setData(topic, value).then(()=>{
+			return this._store.then((store)=>{
+				store.setItem(topic, this._stringify(value));
 
-			this._trigger(topic, value);
-
-			return true;
+				return true;
+			});
 		});
 	}
 	/**
 	 * @summary 获取数据
 	 * @param   {String}    topic
 	 * @return  {Promise}   返回一个 Promise 对象，若存在 topic 的值，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
+	 * @desc    获取数据时会优先从内存中取值，若没有则从 sessionStorage 中取值
 	 * */
 	getData(topic){
-		return this._store.then((store)=>{
-			let value = store.getItem( topic )
-				;
+		return super.getData( topic ).catch(()=>{
+			return this._store.then((store)=>{
+				let value = store.getItem( topic )
+					;
 
-			if( value === null ){
-				value = Promise.reject( null );
-			}
-			else{
-				try{
-					value = JSON.parse( value );
+				if( value === null ){
+					value = Promise.reject( null );
 				}
-				catch(e){}
-			}
+				else{
+					try{
+						value = JSON.parse( value );
+					}
+					catch(e){}
 
-			return value;
+					// 在内存中保留该值
+					super.setData(topic, value);
+				}
+
+				return value;
+			});
 		});
 	}
 	/**
@@ -71,12 +79,12 @@ class SessionStorageModel extends Model{
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
 	removeData(topic){
-		return this._store.then((store)=>{
-			store.removeItem(topic);
+		return super.removeData( topic ).then(()=>{
+			return this._store.then((store)=>{
+				store.removeItem(topic);
 
-			this._trigger(topic, null);
-
-			return true;
+				return true;
+			});
 		});
 	}
 	/**
@@ -84,10 +92,12 @@ class SessionStorageModel extends Model{
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
 	clearData(){
-		return this._store.then((store)=>{
-			store.clear();
+		return super.clearData().then(()=>{
+			return this._store.then((store)=>{
+				store.clear();
 
-			return true;
+				return true;
+			});
 		});
 	}
 }

@@ -2,7 +2,7 @@
 
 import Model        from '../model/model.js';
 import ServiceModel from '../model/service.js';
-import domain       from '../domain.js';
+import domain       from '../runtime/domain.js';
 import mallList     from '../../../../setting/mallShop.json';
 import marketList   from '../../../../setting/marketShop.json';
 
@@ -230,6 +230,22 @@ class BaseServiceModel extends ServiceModel{
 	nearbyStore(lat, lon, type=1){
 		return this.nearStore(lat, lon, type);
 	}
+	/**
+	 * @summary 根据经纬度到百度提供的 api 查所在城市，再判断该城市下是否有门店
+	 * @param   {Number}    lat
+	 * @param   {Number}    lon
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @desc    使用 POST 方法
+	 * @see     [http://base.test.66buy.com.cn/publics/store/judgeStoreByCity]{@link http://dev.51tiangou.com/interfaces/detail.html?id=3575}
+	 * */
+	judgeStoreByCity(lat, lon){
+		return this.setData('/publics/store/judgeStoreByCity', {
+			data: {
+				latitude: lat
+				, longitude: lon
+			}
+		});
+	}
 
 	/**
 	 * @summary 查询百货商品分类
@@ -390,23 +406,6 @@ class BaseServiceModel extends ServiceModel{
 		return this.getData('/publics/brand/query', {
 			data: {
 				brandIds
-			}
-		});
-	}
-
-	/**
-	 * @summary 根据经纬度到百度提供的 api 查所在城市，再判断该城市下是否有门店
-	 * @param   {Number}    lat
-	 * @param   {Number}    lon
-	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @desc    使用 POST 方法
-	 * @see     [http://base.test.66buy.com.cn/publics/store/judgeStoreByCity]{@link http://dev.51tiangou.com/interfaces/detail.html?id=3575}
-	 * */
-	judgeStoreByCity(lat, lon){
-		return this.setData('/publics/store/judgeStoreByCity', {
-			data: {
-				latitude: lat
-				, longitude: lon
 			}
 		});
 	}

@@ -1,7 +1,6 @@
 'use strict';
 
 import Model from './model.js';
-// import req from '../req/index.js';
 
 /**
  * 目前数据请求依赖于 jQuery.ajax 方法
@@ -240,7 +239,7 @@ class ServiceModel extends Model{
 	 * */
 	syncTo(model){
 
-		// 判断 model 是继承自 Model 的类但并不继承字 ServiceModel
+		// 判断 model 是继承自 Model 的类但并不继承自 ServiceModel
 		if( (model instanceof Model) && !(model instanceof ServiceModel) ){
 			this._syncTo = model;
 		}
@@ -281,87 +280,10 @@ ServiceModel._CONFIG = {
 	, errorHandler: null
 };
 
-// /**
-//  * 子类对象缓存
-//  * @static
-//  * */
-// ServiceModel._MODEL_CACHE = {};
-//
-// /**
-//  * 注册子类，若该子类已经被注册，并且缓存中没有该子类的实例，则覆盖
-//  * @static
-//  * @param   {String}    type
-//  * @param   {Model}     model
-//  * */
-// ServiceModel.register = function(type, model){
-// 	if( type in ServiceModel && type in ServiceModel._MODEL_CACHE ){
-// 		console.log('type', ' 重复注册，并已生成实例，不能覆盖');
-// 	}
-// 	else{
-// 		ServiceModel[type] = model;
-// 	}
-// };
-//
-// /**
-//  * 注册子类的别名
-//  * @static
-//  * @param   {String}            type        已注册的子类名
-//  * @param   {String|String[]}   aliasName   该子类的别名
-//  * */
-// ServiceModel.registerAlias = function(type, aliasName){
-//
-// 	if( !Array.isArray(aliasName) ){
-// 		aliasName = [aliasName];
-// 	}
-//
-// 	aliasName.forEach((d)=>{
-// 		if( !(d in ServiceModel._MODEL_ALIAS) ){
-// 			ServiceModel._MODEL_ALIAS[d] = type;
-// 		}
-// 		else{
-// 			console.log(d, ' 已经存在');
-// 		}
-// 	});
-// };
-//
-// /**
-//  * 获取或生成 type 类型的 ServiceModel 子类的实例或 ServiceModel 类的实例
-//  * @static
-//  * @param   {String}            type
-//  * @param   {Boolean|Object}    [notCache=false]    为 boolean 类型时表示是否缓存，为 object 类型时将值赋给 options 并设置为 false
-//  * @param   {Object}            [options={}]
-//  * @return  {Model}             当 type 有意义的时候，为 ServiceModel 子类的实例，否则为 ServiceModel 类的实例
-//  * */
-// ServiceModel.factory = function(type, notCache=false, options={}){
-// 	let model
-// 		;
-//
-// 	if( typeof notCache === 'object' ){
-// 		options = notCache;
-// 		notCache = false;
-// 	}
-//
-// 	if( type in ServiceModel ){
-// 		if( !notCache && type in ServiceModel._MODEL_CACHE ){
-// 			model = ServiceModel._MODEL_CACHE[type];
-// 		}
-// 		else{
-// 			model = new ServiceModel[type](options);
-// 			ServiceModel._MODEL_CACHE[type] = model;
-// 		}
-// 	}
-// 	else{
-// 		model = new ServiceModel(options);
-// 	}
-//
-// 	return model;
-// };
-
 /**
  * 在 Model.factory 工厂方法注册，将可以使用工厂方法生成
  * */
 Model.register('service', ServiceModel);
-
 /**
  * 注册别名
  * */

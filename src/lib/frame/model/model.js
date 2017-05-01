@@ -29,6 +29,92 @@ class Model{
 		});
 	}
 
+	// ---------- 静态方法 ----------
+	/**
+	 * @summary 注册子类
+	 * @static
+	 * @param   {String}    type
+	 * @param   {Model}     model
+	 * @desc    若该子类已经被注册，并且缓存中没有该子类的实例，则覆盖
+	 * */
+	static register = function(type, model){
+
+		if( type in Model && type in Model._MODEL_CACHE ){
+			console.log('type', ' 重复注册，并已生成实例，不能覆盖');
+		}
+		else{
+			Model[type] = model;
+		}
+	}
+	/**
+	 * @summary 注册子类的别名
+	 * @static
+	 * @param   {String}            type        已注册的子类名
+	 * @param   {String|String[]}   aliasName   该子类的别名
+	 * */
+	static registerAlias = function(type, aliasName){
+
+		if( !Array.isArray(aliasName) ){
+			aliasName = [aliasName];
+		}
+
+		aliasName.forEach((d)=>{
+			if( !(d in Model._MODEL_ALIAS) ){
+				Model._MODEL_ALIAS[d] = type;
+			}
+			else{
+				console.log(d, ' 已经存在');
+			}
+		});
+	}
+	/**
+	 * @summary 获取或生成 type 类型的 Model 子类的实例或 Model 类的实例
+	 * @static
+	 * @param   {String}            type
+	 * @param   {Boolean|Object}    [notCache=false] 为 boolean 类型时表示是否缓存，默认值为 false，设为 true 时既不从缓存中读取子类实例对象，生成的实例对象也不保存在缓存中；为 object 类型时将值赋给 options 并设置为 false
+	 * @param   {Object}            [options={}]
+	 * @return  {Model}             当 type 有意义的时候，为 Model 子类类的实例，否则为 Model 类的实例
+	 * */
+	static factory = function(type, notCache=false, options={}){
+		let model
+		;
+
+		if( typeof notCache === 'object' ){
+			options = notCache;
+			notCache = false;
+		}
+
+		// 判断 type 是否为别名
+		if( !(type in Model) && (type in Model._MODEL_ALIAS) ){
+			type = Model._MODEL_ALIAS[type];
+		}
+
+		// 判断是否存在该子类
+		if( type in Model ){
+
+			if( notCache || !(type in Model._MODEL_CACHE) ){    // 不使用缓存或没有该子类实例
+
+				model = new Model[type]( options );
+
+				if( !notCache ){
+
+					// 使用缓存，将该子类实例缓存
+					Model._MODEL_CACHE[type] = model;
+				}
+			}
+			else{   // 使用缓存并存在该子类实例
+				model = Model._MODEL_CACHE[type];
+			}
+		}
+		else{
+			console.log('不存在注册为 ', type, ' 的子类');
+			model = new Model();
+		}
+
+		return model;
+	}
+
+	// ---------- 私有方法 ----------
 	/**
 	 * @summary 转为字符串，会将 null,undefined 转为空字符串
 	 * @protected
@@ -110,6 +196,7 @@ class Model{
 	 * @throws      {Error}
 	 * */
 
+	// ---------- 公有方法 ----------
 	/**
 	 * @summary 绑定数据监视事件
 	 * @param   {ModelChangeEvent}  callback
@@ -134,7 +221,8 @@ class Model{
 	 * @param   {String}    topic   主题
 	 * @param   {*}         value   value 为 null、undefined 时会被保存为空字符串
 	 * @return  {Promise<Object>|Promise<Error>}   返回一个 Promise 对象，在 resolve 时传回 true
-	 * @desc    子类覆盖时如需对数据监控，应在适当的时候调用 _trigger 方法，设置数据的时候会使用 Object.defineProperty 定义该属性
+	 * @desc    设置数据的时候会使用 Object.defineProperty 定义该属性
+				目前子类的实现中都调用了 super.setData，若其它子类的实现中并没有调用，但需对数据监控，应在适当的时候调用 _trigger 方法
 	 * */
 	setData(topic, value){
 		if( topic in this._value ){
@@ -157,6 +245,7 @@ class Model{
 				// , value: value
 				, set(newVal){
 					if( newVal !== value ){
+
 						this._trigger(topic, newVal);
 					}
 				}
@@ -261,6 +350,7 @@ class Model{
 	}
 }
 
+// ---------- 静态属性 ----------
 /**
  * 子类对象缓存
  * @static
@@ -271,91 +361,5 @@ Model._MODEL_CACHE = {};
  * @static
  * */
 Model._MODEL_ALIAS = {};
-
-/**
- * @summary 注册子类
- * @static
- * @param   {String}    type
- * @param   {Model}     model
- * @desc    若该子类已经被注册，并且缓存中没有该子类的实例，则覆盖
- * */
-Model.register = function(type, model){
-
-	if( type in Model && type in Model._MODEL_CACHE ){
-		console.log('type', ' 重复注册，并已生成实例，不能覆盖');
-	}
-	else{
-		Model[type] = model;
-	}
-};
-
-/**
- * @summary 注册子类的别名
- * @static
- * @param   {String}        type        已注册的子类名
- * @param   {String|String[]}  aliasName   该子类的别名
- * */
-Model.registerAlias = function(type, aliasName){
-
-	if( !Array.isArray(aliasName) ){
-		aliasName = [aliasName];
-	}
-
-	aliasName.forEach((d)=>{
-		if( !(d in Model._MODEL_ALIAS) ){
-			Model._MODEL_ALIAS[d] = type;
-		}
-		else{
-			console.log(d, ' 已经存在');
-		}
-	});
-};
-
-/**
- * @summary 获取或生成 type 类型的 Model 子类的实例或 Model 类的实例
- * @static
- * @param   {String}            type
- * @param   {Boolean|Object}    [notCache=false] 为 boolean 类型时表示是否缓存，默认值为 false，设为 true 时既不从缓存中读取子类实例对象，生成的实例对象也不保存在缓存中；为 object 类型时将值赋给 options 并设置为 false
- * @param   {Object}            [options={}]
- * @return  {Model}             当 type 有意义的时候，为 Model 子类类的实例，否则为 Model 类的实例
- * */
-Model.factory = function(type, notCache=false, options={}){
-	let model
-		;
-
-	if( typeof notCache === 'object' ){
-		options = notCache;
-		notCache = false;
-	}
-
-	// 判断 type 是否为别名
-	if( !(type in Model) && (type in Model._MODEL_ALIAS) ){
-		type = Model._MODEL_ALIAS[type];
-	}
-
-	// 判断是否存在该子类
-	if( type in Model ){
-
-		if( notCache || !(type in Model._MODEL_CACHE) ){    // 不使用缓存或没有该子类实例
-
-			model = new Model[type]( options );
-
-			if( !notCache ){
-
-				// 使用缓存，将该子类实例缓存
-				Model._MODEL_CACHE[type] = model;
-			}
-		}
-		else{   // 使用缓存并存在该子类实例
-			model = Model._MODEL_CACHE[type];
-		}
-	}
-	else{
-		console.log('不存在注册为 ', type, ' 的子类');
-		model = new Model();
-	}
-
-	return model;
-};
 
 export default Model;

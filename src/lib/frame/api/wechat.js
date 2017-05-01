@@ -2,12 +2,8 @@
 
 import Model        from '../model/model.js';
 import ServiceModel from '../model/service.js';
-import domain       from '../domain.js';
+import domain       from '../runtime/domain.js';
 import validate     from '../util/validate.js';
-
-// import Load from '../req/load';
-
-// import LoadReq from '../req/load';
 
 /**
  * @class
@@ -18,7 +14,6 @@ class WeChatServiceModel extends ServiceModel{
 	/**
 	 * @constructor
 	 * @param   {Object}    [config={}]
-	 * @param   {Object}    [config.wx] 微信 SDK 对象
 	 * */
 	constructor(config={}){
 		super( config );
@@ -32,71 +27,12 @@ class WeChatServiceModel extends ServiceModel{
 		this._config.domainList.push( domain.host );
 
 		this._config.baseUrl = '//'+ this._config.domainList.join('.');
-
-		// 判断微信 JS-SDK 是否加载
-		if( !config.wx ){
-			// todo 使用 localStorage 替代 cookie
-			this._cache = Model.factory('cookie');
-			// this._load = new Load();
-
-			// this.wx = this._load('wechat').then(()=>{
-			// 	return wx;
-			// });
-		}
-		else{
-			this.wx = Promise.resolve( config.wx );
-		}
-
-		// this.wx = new Promise((resolve, reject)=>{
-		// 	// 判断是否为微信环境
-		// 	if( /imessage/i.test(navigator.userAgent) ){
-		// 		// 微信 JS-SDK 是否已加载
-		// 		if( 'wx' in window ){
-		// 			resolve( wx );
-		// 		}
-		// 		else{
-		//
-		// 		}
-		// 	}
-		// 	else{
-		//
-		// 	}
-		// });
 	}
 
-	/**
-	 * @summary 本地缓存中获取 openId
-	 * @param   {String}    [appId='']
-	 * @return  {Promise}   在 resolve 时传回查询
-	 * */
-	_getLocalOpenid(appId=''){
-		return this._cache.getData( (appId && appId +'_') +'openid' );
-	}
-	_setLocalOpenid(openId, appId=''){
-		return this._cache.setData((appId && appId +'_') +'openid', openId, '365d');
-	}
-	_getLocalOpenCypher(appId=''){
-		return this._cache.getData( (appId && appId +'_') +'openid_cypher' );
-	}
-	_setLocalOpenCypher(openIdCypher, appId){
-		return this._cache.setData((appId && appId +'_') +'openid_cypher', openIdCypher, '365d');
-	}
-
-	/**
-	 * @summary 加载微信 JS-SDK
-	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 wx 对象
-	 * */
-	loadScript(){
-		return $.loadScript('//res.wx.qq.com/open/js/jweixin-1.0.0.js').then(()=>{
-			this.wx = wx;
-		});
-		// return this._load('//res.wx.qq.com/open/js/jweixin-1.0.0.js')
-	}
 	/**
 	 * @summary 获取 openid
 	 * @param   {String}    code        微信重定向回来 url 上的参数 code
 	 * @param   {String}    [appId]     指定公众号 appId
-	 // * @param   {String}    [appSecret] 指定公众号 appSecret
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回一个由 openId、openCypher 组成的对象，若未传 code 则返回 Promise.reject();
 	 * @see     [http://wechat.test.66buy.com.cn/publics/wechat/getOpenid]{@link http://dev.51tiangou.com/interfaces/detail.html?id=791}
 	 * */
@@ -110,19 +46,6 @@ class WeChatServiceModel extends ServiceModel{
 					code
 					, appId
 				}
-			})//.then( this.handleResponse )
-				.then((data)=>{
-				let openId = data.openid
-					, openCypher = data.openid_cypher
-					;
-
-				this._setLocalOpenid( openId );
-				this._setLocalOpenCypher( openCypher );
-
-				return {
-					openId
-					, openCypher
-				};
 			});
 		}
 		else{
@@ -131,56 +54,7 @@ class WeChatServiceModel extends ServiceModel{
 
 		return result;
 	}
-	/**
-	 * @summary 获取 openId
-	 * @param   {String|String[]}   code    若 code 为数组，取最后一个
-	 * @param   {String}            appId
-	 * @return  {Promise}           返回一个 Promise 对象，在 resolve 时传回一个由 openId、openCypher 组成的对象
-	 * @desc    获取 openId 的几种情况
-				1.本地没有 openId，并且 url 上没有 code 参数 >> 立即跳转页面去换取微信 code
-				2.本地没有 openId，但是 url 上有 code 参数 >> 调取 getOpenid 的接口获取 openId
-				3.本地存在 openId，则返回 openId
-	 * */
-	getOpenidUtil(code, appId){
-		if( Array.isArray(code) ){
-			code = code[code.length -1];
-		}
 
-		Promise.all([
-			this._getLocalOpenid( appId )
-			, this._getLocalOpenCypher( appId )
-		]).then(([openId, openCypher])=>{ // 情况 3
-
-			return {
-				openId
-				, openCypher
-			};
-		}, (e)=>{
-			let result
-				;
-
-			if( code && code.length > 26 ){ // code 长度小于 26 则视为无效的 code
-				result = this.getOpenid(code, appId);
-			}
-			else{   // 情况 1
-				let url = 'https://open.weixin.qq.com/connect/oauth2/authorize'
-					, params = [
-						'appid='+ appId
-						, 'redirect_uri='+ encodeURIComponent( location.origin + location.pathname + location.search )
-						, 'response_type=code'
-						, 'scope=snsapi_base'
-						, 'state=_static_openid_flag_'
-					]
-					, hash = 'wechat_redirect'
-					;
-
-				// 跳转至微信 authorize 地址，获取 code
-				location.replace( url +'?'+ params.join('&') +'#'+ hash );
-			}
-
-			return result;
-		});
-	}
 	/**
 	 * 网页获取 openId （已作废）
 	 * @param   {String}    code

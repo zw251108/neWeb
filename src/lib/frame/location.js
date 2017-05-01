@@ -1,10 +1,14 @@
 'use strict';
 
 /**
- * 获取定位信息
+ * @file    对地理定位接口进行封装
+ * */
+
+/**
+ * @summary     获取定位信息
  * @function    location
- * @param   {Object}    [options]
- * @return  {Promise}   
+ * @param       {Object}    [options]
+ * @return      {Promise}
  * */
 let location = function(options={}){
 	let result
@@ -36,11 +40,14 @@ let location = function(options={}){
 
 location._CONFIG = {
 	// 指示浏览器获取高精度的位置，默认为false
-	enableHighAcuracy: true
+	enableHighAccuracy: true
 	// 指定获取地理位置的超时时间，默认不限时，单位为毫秒
-	, timeout: 50000
+	, timeout: 2000
 	// 最长有效期，在重复获取地理位置时，此参数指定多久再次获取位置
-	, maximumAge: 300000
+	, maximumAge: 5000
 };
 
+/**
+ * @exports {Function}  location
+ * */
 export default location;
