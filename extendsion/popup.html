@@ -26,7 +26,7 @@ p{
 	display: block;
 	width: 500px;
 	border: 0;
-	border-radius: 10px;
+	border-radius: 5px;
 	margin: 0 5px;
 	padding: 10px 0;
 	color: #333;
@@ -36,6 +36,20 @@ p{
 	float: left;
 	width: 160px;
 }
+.formGroup .input-checkbox{
+	float: left;
+	height: 16px;
+	width: 16px;
+	margin: 10px;
+}
+.formGroup span{
+	display: block;
+	border-radius: 5px;
+	margin-bottom: -10px;
+	padding: 10px 0;
+	background: #fff;
+}
+
 .formGroup button{
 	width: 100%;
 	border: 1px solid #00a8c6;
@@ -73,18 +87,13 @@ p{
 		<input name="title" id="title" class="input"/>
 	</div>
 	<div class="formGroup">
-		<div class="group">
-			<label for="urlPath">链接</label>
-			<input name="urlPath" id="urlPath" class="input input-mini"/>
-		</div>
-		<div class="group">
-			<label for="urlSearch">参数</label>
-			<input name="urlSearch" id="urlSearch" class="input input-mini"/>
-		</div>
-		<div class="group">
-			<label for="urlHash">哈希</label>
-			<input name="urlHash" id="urlHash" class="input input-mini"/>
-		</div>
+		<label for="path">链接</label>
+		<input name="path" id="path" class="input"/>
+	</div>
+	<div id="params"></div>
+	<div class="formGroup" id="hashField">
+		<label for="hash">哈希</label>
+		<input name="hash" id="hash" class="input"/>
 	</div>
 	<div class="formGroup">
 		<label for="ico">图标</label>

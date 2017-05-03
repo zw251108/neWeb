@@ -1,9 +1,10 @@
 $(function(){
 	var $form = $('form')
 		, $title = $('#title')
-		, $urlPath = $('#urlPath')
-		, $urlSearch = $('#urlSearch')
-		, $urlHash = $('#urlHash')
+		, $path = $('#path')
+		, $params = $('#params')
+		, $hashField = $('#hashField')
+		, $hash = $('#hash')
 		, $ico = $('#ico')
 		, $submit = $('#bookmark')
 		;
@@ -14,9 +15,25 @@ $(function(){
 
 		temp.href = tab.url;
 
-		$urlPath.val( temp.origin + temp.pathname );
-		$urlSearch.val( temp.search );
-		$urlHash.val( temp.hash );
+		$path.val( temp.origin + temp.pathname );
+
+		$params.html( temp.search ? temp.search.slice(1).split('&').map(function(d){
+			return `<div class="formGroup">
+				<label>
+					<input class="input-checkbox" type="checkbox" name="param" value="${d}"/><span>${d}</span>
+				</label>
+			</div>`;
+		}).join('') : '' );
+
+		// $urlSearch.val( temp.search );
+
+		if( !temp.hash ){
+			$hashField.hide();
+		}
+		else{
+			$hash.val( temp.hash );
+		}
+
 		$title.val( tab.title );
 		$ico.val( tab.favIconUrl || '' )
 	});
@@ -24,13 +41,18 @@ $(function(){
 	$form.on('submit', function(e){
 		e.preventDefault();
 
+		let $param = $params.find(':checkbox:checked')
+			;
+
 		$submit.attr('disabled', 'disabled');
 
 		$.ajax({
 			url: this.action
 			, type: this.method
 			, data: {
-				url: $urlPath.val() + $urlSearch.val() + $urlHash.val()
+				url: $path.val() + ($param.length ? '?'+ $param.map(function(d){
+					return d.value;
+				}).get().join('&') : '') + $hash.val()
 				, title: $title.val()
 				, ico: $ico.val()
 				, email: 'zw150026@163.com'
