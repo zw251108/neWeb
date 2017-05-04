@@ -170,6 +170,6 @@ let positionInfo = function(){
 	;
 
 /**
- * @exports {Function}  positionInfo
+ * @exports positionInfo
  * */
 export default positionInfo;

@@ -5,26 +5,26 @@
  * */
 
 import CacheStorageModel from '../model/cacheStorage.js';
-import IndexDBModel from '../model/indexedDB.js';
-import WebSocketReq from '../req/webSocket.js';
+// import IndexDBModel from '../model/indexedDB.js';
+// import WebSocketReq from '../req/webSocket.js';
 import notify from '../notify.js';
 
 let CACHE_URL = []
 	, url = ''
-	, indb = new IndexDBModel()
+	// , indb = new IndexDBModel()
 	, cache = new CacheStorageModel()
-	, socket = new WebSocketReq({
-		url: 'ws://localhost:8181/'
-	})
+	// , socket = new WebSocketReq({
+	// 	url: 'ws://localhost:8181/'
+	// })
 	;
 
 console.log('Service Worker 已加载');
-console.log( self );
+// console.log( self );
 
 self.addEventListener('install', function(event){
 	console.log('Service Worker 安装完成，install event', event);
 
-	event.waitUntil(cache.addAll( CACHE_URL ).then(self.skipWaiting(), function(e){
+	event.waitUntil( cache.addAll( CACHE_URL ).then(self.skipWaiting(), function(e){
 		console.log( e );
 	}));
 });
@@ -45,7 +45,7 @@ self.addEventListener('push', function(event){
 
 self.addEventListener('notificationclick', function(event){
 	event.notification.close();
-	event.waitUntil(clients.matchAll({
+	event.waitUntil( clients.matchAll({
 		type: 'window'
 	}).then(()=>{
 		if( clients.openWindow ){
@@ -56,10 +56,11 @@ self.addEventListener('notificationclick', function(event){
 
 self.addEventListener('fetch', function(event){
 
-	event.respondWith(cache.getData( event.request ).then(function(response){
+	event.respondWith( cache.getData( event.request ).then(function(response){
 		return response;
 	}, function(e){
 		console.log( e.message );
+
 		return fetch( event.request.clone() );  // 克隆该请求，Request 对象是 stream 类型的，只能读取一次
 	}).then(function(response){
 		let result
@@ -70,6 +71,7 @@ self.addEventListener('fetch', function(event){
 		else{
 			result = cache.setData(event.request, response.clone()).then(function(){
 				console.log('已缓存 '+ event.request.url);
+				
 				return response;
 			});
 		}
@@ -78,10 +80,10 @@ self.addEventListener('fetch', function(event){
 	}));
 });
 
-socket.on(function(data){
-	notify(data.title, data.content);
-});
-
-socket.send({
-	msg: 'hello'
-});
+// socket.on(function(data){
+// 	notify(data.title, data.content);
+// });
+//
+// socket.send({
+// 	msg: 'hello'
+// });

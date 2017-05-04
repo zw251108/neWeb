@@ -48,6 +48,6 @@ location._CONFIG = {
 };
 
 /**
- * @exports {Function}  location
+ * @exports location
  * */
 export default location;

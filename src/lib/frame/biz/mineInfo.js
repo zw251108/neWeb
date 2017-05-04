@@ -42,7 +42,7 @@ let mineInfo = function(){
 };
 
 /**
- * @exports {Function}  mineInfo
+ * @exports mineInfo    {Function}
  * @desc    执行后返回一个 Promise 对象，在 resolve 时候传入请求回来的个人信息数据，在 reject 时传入 {msg: '尚未登录'}
  * */
 export default mineInfo;

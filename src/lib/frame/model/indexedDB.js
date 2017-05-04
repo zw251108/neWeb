@@ -7,10 +7,10 @@ import Model from './model.js';
  * @classdesc   对 IndexedDB 进行封装，统一调用接口，在 Model.factory 工厂方法注册为 indexedDB，别名 idb，将可以使用工厂方法生成
  * @extends     Model
  * @example
-let indexedDBModel = new IndexedDBModel()
-	, storage = Model.factory('indexedDB')
-	, idb = Model.factory('idb')
-	;
+ let indexedDBModel = new IndexedDBModel()
+ , storage = Model.factory('indexedDB')
+ , idb = Model.factory('idb')
+ ;
  * */
 class IndexedDBModel extends Model{
 	/**

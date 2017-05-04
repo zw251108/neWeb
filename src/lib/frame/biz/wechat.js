@@ -61,7 +61,7 @@ let cookie      = model.factory('cookie')
 
 
 /**
- * @exports {Object}    wechat
+ * @exports wechat
  * */
 export default {
 	/**
