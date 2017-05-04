@@ -37,7 +37,7 @@ class Model{
 	 * @param   {Model}     model
 	 * @desc    若该子类已经被注册，并且缓存中没有该子类的实例，则覆盖
 	 * */
-	static register = function(type, model){
+	static register(type, model){
 
 		if( type in Model && type in Model._MODEL_CACHE ){
 			console.log('type', ' 重复注册，并已生成实例，不能覆盖');
@@ -52,7 +52,7 @@ class Model{
 	 * @param   {String}            type        已注册的子类名
 	 * @param   {String|String[]}   aliasName   该子类的别名
 	 * */
-	static registerAlias = function(type, aliasName){
+	static registerAlias(type, aliasName){
 
 		if( !Array.isArray(aliasName) ){
 			aliasName = [aliasName];
@@ -75,7 +75,7 @@ class Model{
 	 * @param   {Object}            [options={}]
 	 * @return  {Model}             当 type 有意义的时候，为 Model 子类类的实例，否则为 Model 类的实例
 	 * */
-	static factory = function(type, notCache=false, options={}){
+	static factory(type, notCache=false, options={}){
 		let model
 		;
 

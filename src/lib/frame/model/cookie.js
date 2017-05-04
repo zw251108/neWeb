@@ -38,7 +38,7 @@ class CookieModel extends Model{
 	 * @param   {Date|Number|String}    date 为 Number 类型时默认单位为天
 	 * @return  {String}                返回一个 UTC 格式的时间字符串
 	 * */
-	static _transDate = function(date){
+	static _transDate(date){
 		let temp = ''
 		;
 

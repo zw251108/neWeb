@@ -41,7 +41,7 @@ class LocalStorageModel extends Model{
 	 * @static
 	 * @desc    只执行一次，执行后将 LocalStorageModel._LISTENER_ON 设为 true，该监听事件只能由其他页面修改 localStorage 的数据时触发
 	 * */
-	static _listen = function(){
+	static _listen(){
 		self.addEventListener('storage', function(e){
 			let topic = e.key
 				, newVal = e.newValue

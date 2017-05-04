@@ -42,19 +42,19 @@ class IndexedDBModel extends Model{
 		// this._store 为 Promise 类型，会在 resolve 中传入 db 实例，因为要保证数据库打开成功才可以操作
 		this._store = new Promise((resolve, reject)=>{
 			let indexedDB
-				, dbRequest
+				, dbOpenRequest
 				;
 
 			indexedDB = self.indexedDB || self.mozIndexedDB || self.webbkitIndexedDB || self.msIndexedDB || null;
 
 			if( indexedDB ){
-				dbRequest = indexedDB.open(this._config.dbName, this._config.dbVersion);
+				dbOpenRequest = indexedDB.open(this._config.dbName, this._config.dbVersion);
 
 				/**
 				 * DB 版本设置或升级时回调
 				 * createObjectStore deleteObjectStore 只能在 onupgradeneeded 事件中使用
 				 * */
-				dbRequest.onupgradeneeded = (e)=>{
+				dbOpenRequest.onupgradeneeded = (e)=>{
 					let db = e.target.result
 						, store
 						;
@@ -74,10 +74,10 @@ class IndexedDBModel extends Model{
 						});
 					}
 
-					dbRequest.onsuccess = function(e){
+					dbOpenRequest.onsuccess = function(e){
 						resolve( e.target.result );
 					};
-					dbRequest.onerror = function(e){
+					dbOpenRequest.onerror = function(e){
 						console.log( e );
 						reject( e );
 					};
@@ -100,13 +100,13 @@ class IndexedDBModel extends Model{
 		return this._store.then((db)=>{
 			return new Promise((resolve, reject)=>{
 				let objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore( this._config.tableName )
-					, result = objectStore.get( topic )
+					, objectStoreRequest = objectStore.get( topic )
 					;
 
-				result.onsuccess = function(e){
+				objectStoreRequest.onsuccess = function(e){
 					resolve( e.target.result );
 				};
-				result.onerror = function(e){
+				objectStoreRequest.onerror = function(e){
 					console.log( e );
 					reject( e );
 				};
@@ -125,16 +125,16 @@ class IndexedDBModel extends Model{
 		return this._store.then((db)=>{
 			return new Promise((resolve, reject)=>{
 				let objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore( this._config.tableName )
-					, result = objectStore.put({
+					, objectStoreRequest = objectStore.put({
 						topic: topic
 						, value: value
 					})
 					;
 
-				result.onsuccess = function(e){
+				objectStoreRequest.onsuccess = function(e){
 					resolve( !!e.target.result );
 				};
-				result.onerror = function(e){
+				objectStoreRequest.onerror = function(e){
 					console.log( e );
 					reject( e );
 				};
@@ -151,13 +151,13 @@ class IndexedDBModel extends Model{
 		return this._store.then((db)=>{
 			return new Promise((resolve, reject)=>{
 				let objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore( this._config.tableName )
-					, result = objectStore.delete( topic )
+					, objectStoreRequest = objectStore.delete( topic )
 					;
 
-				result.onsuccess = function(e){
+				objectStoreRequest.onsuccess = function(e){
 					resolve( true );
 				};
-				result.onerror = function(e){
+				objectStoreRequest.onerror = function(e){
 					console.log( e );
 					reject( e );
 				};
@@ -173,13 +173,13 @@ class IndexedDBModel extends Model{
 		return this._store.then((db)=>{
 			return new Promise((resolve, reject)=>{
 				let objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore( this._config.tableName )
-					, result = objectStore.clear()
+					, objectStoreRequest = objectStore.clear()
 					;
 
-				result.onsuccess = function(e){
+				objectStoreRequest.onsuccess = function(e){
 					resolve( true );
 				};
-				result.onerror = function(e){
+				objectStoreRequest.onerror = function(e){
 					console.log( e );
 					reject( e );
 				}
