@@ -17,15 +17,17 @@ $(function(){
 
 		$path.val( temp.origin + temp.pathname );
 
-		$params.html( temp.search ? temp.search.slice(1).split('&').map(function(d){
-			return `<div class="formGroup">
-				<label>
-					<input class="input-checkbox" type="checkbox" name="param" value="${d}"/><span>${d}</span>
-				</label>
-			</div>`;
-		}).join('') : '' );
-
-		// $urlSearch.val( temp.search );
+		if( !temp.search ){
+			$params.hide();
+		}
+		else{
+			$params.append( temp.search.slice(1).split('&').map(function(d, i){
+				return `
+				<label class="forCheckbox">
+					<input class="input-checkbox" type="checkbox" id="param${i}" name="param" value="${d}"/><span>${d}</span>
+				</label>`;
+			}).join('') );
+		}
 
 		if( !temp.hash ){
 			$hashField.hide();
