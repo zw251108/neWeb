@@ -25,7 +25,8 @@ const APP_ID                = {
 	, TOKEN_EXPIRES         = 7             // token 在 cookie 中的过期时间
 	, WECHAT_AUTH_URL       = 'https://open.weixin.qq.com/connect/oauth2/authorize'
 	, WECHAT_REDIRECT_HASH  = 'wechat_redirect'
-	;
+	, CODE_MIN_LENGTH       = 26            // code 最小长度
+;
 
 let cookie      = model.factory('cookie')
 	, ls        = model.factory('ls')
@@ -41,7 +42,7 @@ let cookie      = model.factory('cookie')
 		, cancel: ()=>{}
 	}
 	, defaultAppId = APP_ID[domain.env] || APP_ID.online
-	
+
 	, wx = $.getScript('//res.wx.qq.com/open/js/jweixin-1.0.0.js').then(()=>{
 		return wx;
 	})
@@ -54,14 +55,14 @@ let cookie      = model.factory('cookie')
 	 * */
 	, getWxAuthUrl = (appId, scope, state)=>{
 		return WECHAT_AUTH_URL +'?'+ [
-			'appid='+ appId
-			, 'redirect_uri='+ encodeURIComponent(url.origin + url.pathname + url.search)
-			, 'response_type=code'
-			, 'scope='+ scope
-			, 'state='+ state
-		].join('') + '#' + WECHAT_REDIRECT_HASH;
+				'appid='+ appId
+				, 'redirect_uri='+ encodeURIComponent(url.origin + url.pathname + url.search)
+				, 'response_type=code'
+				, 'scope='+ scope
+				, 'state='+ state
+			].join('') + '#' + WECHAT_REDIRECT_HASH;
 	}
-	;
+;
 
 
 /**
@@ -164,21 +165,20 @@ export default {
 	 * @param       {String}            [appId]
 	 * @return      {Promise}           返回一个 Promise 对象，在 resolve 时传回一个由 openId、openCypher 组成的对象
 	 * @desc        获取 openId 的几种情况：
-					1.本地没有 openId，并且 url 上没有 code 参数 >> 立即跳转页面去换取微信 code
-					2.本地没有 openId，但是 url 上有 code 参数 >> 调取 getOpenid 的接口获取 openId
-					3.本地存在 openId，则返回 openId
+	 1.本地没有 openId，并且 url 上没有 code 参数 >> 立即跳转页面去换取微信 code
+	 2.本地没有 openId，但是 url 上有 code 参数 >> 调取 getOpenid 的接口获取 openId
+	 3.本地存在 openId，则返回 openId
 	 * */
 	, getOpenidUtil(code, appId=defaultAppId){
 		let isDefaultAppId = appId === defaultAppId
 			, openIdKey = 'openid' + (isDefaultAppId ? '' : '_' + appId)
 			, openIdCypherKey = 'openid_cypher' + (isDefaultAppId ? '' : '_' + appId)
-			;
+		;
 
 		if( Array.isArray(code) ){
 			code = code[code.length -1];
 		}
 
-		// return cookie.getData([openIdKey, openIdCypherKey]).then()
 		return Promise.all([
 			cookie.getData( openIdKey )
 			, cookie.getData( openIdCypherKey )
@@ -189,9 +189,9 @@ export default {
 			};
 		}, ()=>{
 			let exec
-				;
+			;
 
-			if( code && code.length > 26 ){ // code 长度小于 26 则视为无效的 code
+			if( code && code.length > CODE_MIN_LENGTH ){ // code 长度小于 26 则视为无效的 code
 				exec = wechat.getOpenid(code, appId);
 			}
 			else{
@@ -212,10 +212,10 @@ export default {
 	 * @param       {String}    [appId=defaultAppId]    公众号 AppId，可以根据不同AppId取得对应的openId。默认用当前环境的AppId
 	 * @return      {Promise}   执行后返回一个 Promise 对象，在 resolve 时传入微信个人信息数据，否则跳转页面到微信授权页面
 	 * @desc        可以获取当前微信用户的头像、性别、昵称、openId 等信息，流程之上而下的逻辑优先顺序如下：
-					1.如果 cookie 中存在了用户信息，则直接返回 cookie 中的用户信息，cookie 中的保存时间暂时定为7天
-					2.如果 cookie 中存在 access_token 和 openid 时，则利用这两个值来调用后台接口来换取用户信息（获取后缓存至 cookie）
-					3.如果 url 上带有 code 和 state 参数，则利用 code 来调用后台接口来换取用户信息（获取后缓存至 cookie）和 access_token(此值缓存至 cookie，用来调用步骤 2)
-					4.以上条件都不满足，说明该用户比较纯洁，第一次浏览该页面。此时，直接跳转至“微信鉴权页面”去换取 code
+	 1.如果 cookie 中存在了用户信息，则直接返回 cookie 中的用户信息，cookie 中的保存时间暂时定为7天
+	 2.如果 cookie 中存在 access_token 和 openid 时，则利用这两个值来调用后台接口来换取用户信息（获取后缓存至 cookie）
+	 3.如果 url 上带有 code 和 state 参数，则利用 code 来调用后台接口来换取用户信息（获取后缓存至 cookie）和 access_token(此值缓存至 cookie，用来调用步骤 2)
+	 4.以上条件都不满足，说明该用户比较纯洁，第一次浏览该页面。此时，直接跳转至“微信鉴权页面”去换取 code
 	 * */
 	, getUserInfoUtil(appId=defaultAppId){
 		let isDefaultAppId = appId === defaultAppId
@@ -223,7 +223,7 @@ export default {
 			, openIdKey = 'openid' + (isDefaultAppId ? '' : '_' + appId)
 			, openIdCypherKey = 'openid_cypher' + (isDefaultAppId ? '' : '_' + appId)
 			, userInfoKey = 'userInfo' + (isDefaultAppId ? '' : '_' + appId)
-			;
+		;
 
 		return cookie.getData('userInfo').catch(()=>{   // cookie 中不存在 userInfo
 
@@ -234,7 +234,7 @@ export default {
 			]).then(([openid, access_token])=>{   // 存在，通过 openid 和 access_token 获取用户信息
 				return wechat.getUserInfoByAccessToken(openid, access_token).catch((res)=>{
 					let exec
-						;
+					;
 
 					// access_token 已经过期，清除 cookie 中的缓存
 					if( res.code === 503 ){
@@ -252,7 +252,7 @@ export default {
 				let params = url.params
 					, code = params.code
 					, exec
-					;
+				;
 
 				code = Array.isArray(code) ? code[code.length - 1] : code;
 
@@ -295,12 +295,12 @@ export default {
 	 * */
 	, login(isWcAutoLogin){
 		let exec
-			;
+		;
 
 		if( device.weixin && isWcAutoLogin ){
 			exec = cookie.getData(['autoLogin', 'isLogin']).then(({autoLogin, isLogin})=>{
 				let result
-					;
+				;
 
 				if( autoLogin === 'true' && isLogin === 'true' ){   // 已经登录
 					result = true;
@@ -333,7 +333,7 @@ export default {
 			return cookie.getData('isCheck');
 		}).then((value)=>{
 			let exec
-				;
+			;
 
 			if( value === 'true' ){ // 获取用户基本信息
 				exec = Promise.reject();
@@ -353,7 +353,7 @@ export default {
 					]);
 				}, (res)=>{
 					let result
-						;
+					;
 
 					if( res.code === 888 ){
 						result = true;
