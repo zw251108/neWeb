@@ -8,7 +8,7 @@ import app from '../app/index.js';
 
 
 /**
- * @exports {Object}    url
+ * @exports url
  * */
 export default {
 	protocol: location.protocol

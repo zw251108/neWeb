@@ -196,6 +196,50 @@ class Model{
 	 * @throws      {Error}
 	 * */
 
+	/**
+	 * @summary 当 setData 传入一个 json 时内部调用函数
+	 * @protected
+	 * @param   {Object}    topic
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
+	 * */
+	_setByObject(topic){
+		return Promise.all( Object.keys(topic).map((d)=>{
+			return this.setData(d, topic[d]);
+		}) ).then((data)=>{
+			return !!data;
+		});
+	}
+	/**
+	 * @summary 当 getData 传入一个数组时内部调用函数
+	 * @protected
+	 * @param   {String[]}  topic
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回一个 json，key 为 topic 中的数据，value 为对应查找出来的值
+	 * */
+	_getByArray(topic){
+		return Promise.all( topic.map((d)=>{
+			return this.getData( d );
+		}) ).then((data)=>{
+			return topic.reduce((rs, d, i)=>{
+				rs[d] = data[i];
+
+				return rs;
+			}, {});
+		});
+	}
+	/**
+	 * @summary 当 removeData 传入一个数组时内部调用函数
+	 * @protected
+	 * @param   {String[]}  topic
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
+	 * */
+	_removeByArray(topic){
+		return Promise.all( topic.map((d)=>{
+			return this.removeData( d );
+		}) ).then((data)=>{
+			return !!data;
+		});
+	}
+
 	// ---------- 公有方法 ----------
 	/**
 	 * @summary 绑定数据监视事件
@@ -218,91 +262,112 @@ class Model{
 	}
 	/**
 	 * @summary 设置数据
-	 * @param   {String}    topic   主题
-	 * @param   {*}         value   value 为 null、undefined 时会被保存为空字符串
-	 * @return  {Promise<Object>|Promise<Error>}   返回一个 Promise 对象，在 resolve 时传回 true
+	 * @param   {String|Object} topic   主题
+	 * @param   {*}             value   为 null、undefined 时会被保存为空字符串，当 topic 为 object 类型时被忽略
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回 true
 	 * @desc    设置数据的时候会使用 Object.defineProperty 定义该属性
 				目前子类的实现中都调用了 super.setData，若其它子类的实现中并没有调用，但需对数据监控，应在适当的时候调用 _trigger 方法
 	 * */
 	setData(topic, value){
-		if( topic in this._value ){
-			this._value[topic] = value;
+		let result
+			;
+
+		if( typeof topic === 'object' ){
+			result = this._setByObject( topic );
 		}
 		else{
-			// // todo 判断是 object 类型的进行深度 defineProperty
-			// if( typeof value === 'object' ){
-			// 	Object.keys( value ).forEach((d)=>{
-			// 		this._setObserver(value[d], d, topic);
-			// 	});
-			// }
+			if( topic in this._value ){
+				this._value[topic] = value;
+			}
+			else{
+				// // todo 判断是 object 类型的进行深度 defineProperty
+				// if( typeof value === 'object' ){
+				// 	Object.keys( value ).forEach((d)=>{
+				// 		this._setObserver(value[d], d, topic);
+				// 	});
+				// }
 
-			/**
-			 * 不能同时设置访问器 (get 和 set) 和 writable 或 value，否则会报错误
-			 * */
-			Object.defineProperty(this._value, topic, {
-				enumerable: true
-				, configurable: false
-				// , value: value
-				, set(newVal){
-					if( newVal !== value ){
+				/**
+				 * 不能同时设置访问器 (get 和 set) 和 writable 或 value，否则会报错误
+				 * */
+				Object.defineProperty(this._value, topic, {
+					enumerable: true
+					, configurable: false
+					// , value: value
+					, set(newVal){
+						if( newVal !== value ){
 
-						this._trigger(topic, newVal);
+							this._trigger(topic, newVal);
+						}
 					}
-				}
-				, get(){
-					return value;
-				}
-			});
+					, get(){
+						return value;
+					}
+				});
 
-			this._trigger(topic, value);
+				this._trigger(topic, value);
+
+				result = Promise.resolve(true);
+			}
 		}
 
-		return Promise.resolve(true);
+		return result
 	}
 	/**
 	 * @summary 获取数据
-	 * @param   {String}    topic
-	 * @return  {Promise}   返回一个 Promise 对象，若存在 topic 的值，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
+	 * @param   {String|String[]} topic
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
+	 * @desc    当 topic 的类型为数组的时候，resolve 传入的结果为一个 json，key 为 topic 中的数据，value 为对应查找出来的值
 	 * */
 	getData(topic){
 		let result
 			;
 
-		if( topic in this._value ){
-			result = Promise.resolve( this._value[topic] );
+		if( Array.isArray(topic) ){
+			result = this._getByArray( topic );
 		}
 		else{
-			result = Promise.reject( null );
+			if( topic in this._value ){
+				result = Promise.resolve( this._value[topic] );
+			}
+			else{
+				result = Promise.reject( null );
+			}
 		}
 		
 		return result;
 	}
 	/**
 	 * @summary 将数据从缓存中删除
-	 * @param   {String}    topic
-	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
-	 * @desc    子类覆盖时如需对数据监控，应在适当的时候调用 _trigger 方法
+	 * @param   {String|String[]}   topic
+	 * @return  {Promise}           返回一个 Promise 对象，在 resolve 时传回 true
+	 * @desc    目前子类的实现中都调用了 super.removeData，若其它子类的实现中并没有调用，但需对数据监控，应在适当的时候调用 _trigger 方法
 	 * */
 	removeData(topic){
-		let rs
+		let result
 			;
 
-		try {
-			if( this._value.hasOwnProperty(topic) ){
-				delete this._value[topic];
-				rs = Promise.resolve(true);
+		if( Array.isArray(topic) ){
+			result = this._removeByArray( topic );
+		}
+		else{
+			try {
+				if( this._value.hasOwnProperty(topic) ){
+					delete this._value[topic];
+					result = Promise.resolve(true);
 
-				this._trigger(topic, null);
+					this._trigger(topic, null);
+				}
+				else{
+					result = Promise.reject( new Error('只能删除自定义属性') );
+				}
 			}
-			else{
-				rs = Promise.reject( new Error('只能删除自定义属性') );
+			catch(e){
+				result = Promise.reject( e );
 			}
 		}
-		catch(e){
-			rs = Promise.reject( e );
-		}
 
-		return rs;
+		return result;
 	}
 	/**
 	 * @summary 清空数据

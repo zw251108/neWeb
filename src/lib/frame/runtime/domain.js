@@ -35,6 +35,9 @@ let test = currentStatus === 'dev' || currentStatus === 'test'
 	, isOnline = currentStatus === 'online'
 	;
 
+/**
+ * @exports domain
+ * */
 export default {
 	env: currentStatus
 	, isOnline
