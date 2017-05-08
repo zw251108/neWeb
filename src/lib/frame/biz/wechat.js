@@ -79,7 +79,7 @@ export default {
 			return new Promise((resolve)=>{
 				wx.ready( resolve );
 			});
-		})
+		});
 	}
 	/**
 	 * @summary 设置分享语

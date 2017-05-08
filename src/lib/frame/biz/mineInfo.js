@@ -12,7 +12,7 @@ let cookie      = model.factory('cookie')
 	;
 
 /**
- * @Function
+ * @function
  * @return  {Promise}   若用户已经登录，在 resolve 时返回用户信息，否则 reject
  * */
 let mineInfo = function(){
