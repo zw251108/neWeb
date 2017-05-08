@@ -58,17 +58,21 @@ let positionInfo = function(){
 			});
 		}
 		else{
-			exec = Promise.all([
-				cookie.getData('cityId')
-				, cookie.getData('cityName')
-			]).then(([cityId, cityName])=>{ //非第一次进入，cookie 中有 city 信息
-				return {
-					cityId
-					, cityName
-				};
-			}, ()=>{    // 第一次进入
+			exec = cookie.getData(['cityId', 'cityName']).catch(()=>{
 				return defaultCity;
 			});
+
+			// exec = Promise.all([
+			// 	cookie.getData('cityId')
+			// 	, cookie.getData('cityName')
+			// ]).then(([cityId, cityName])=>{ //非第一次进入，cookie 中有 city 信息
+			// 	return {
+			// 		cityId
+			// 		, cityName
+			// 	};
+			// }, ()=>{    // 第一次进入
+			// 	return defaultCity;
+			// });
 		}
 
 		return exec.then((rs)=>{
@@ -134,12 +138,15 @@ let positionInfo = function(){
 					, cityName = data.name
 					;
 
-				return Promise.all([
-					cookie.getData('cityId')
-					, cookie.getData('cityName')
-				]).catch(()=>{  // 第一次进入，cookie 中没有 cityId,cityName
-					return [];
-				}).then(([currCityId, currCityName])=>{
+				// return Promise.all([
+				// 	cookie.getData('cityId')
+				// 	, cookie.getData('cityName')
+				// ]).catch(()=>{  // 第一次进入，cookie 中没有 cityId,cityName
+				// 	return [];
+				// }).then(([currCityId, currCityName])=>{
+				return cookie.getData(['cityId', 'cityName']).catch(()=>{
+					return {};
+				}).then(({cityId: currCityId, cityName: currCityName})=>{
 					let exec
 						;
 
@@ -170,6 +177,6 @@ let positionInfo = function(){
 	;
 
 /**
- * @exports {Function}  positionInfo
+ * @exports positionInfo
  * */
 export default positionInfo;

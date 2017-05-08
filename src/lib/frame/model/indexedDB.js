@@ -7,10 +7,10 @@ import Model from './model.js';
  * @classdesc   对 IndexedDB 进行封装，统一调用接口，在 Model.factory 工厂方法注册为 indexedDB，别名 idb，将可以使用工厂方法生成
  * @extends     Model
  * @example
-let indexedDBModel = new IndexedDBModel()
-	, storage = Model.factory('indexedDB')
-	, idb = Model.factory('idb')
-	;
+ let indexedDBModel = new IndexedDBModel()
+ , storage = Model.factory('indexedDB')
+ , idb = Model.factory('idb')
+ ;
  * */
 class IndexedDBModel extends Model{
 	/**
@@ -42,19 +42,19 @@ class IndexedDBModel extends Model{
 		// this._store 为 Promise 类型，会在 resolve 中传入 db 实例，因为要保证数据库打开成功才可以操作
 		this._store = new Promise((resolve, reject)=>{
 			let indexedDB
-				, dbRequest
+				, dbOpenRequest
 				;
 
 			indexedDB = self.indexedDB || self.mozIndexedDB || self.webbkitIndexedDB || self.msIndexedDB || null;
 
 			if( indexedDB ){
-				dbRequest = indexedDB.open(this._config.dbName, this._config.dbVersion);
+				dbOpenRequest = indexedDB.open(this._config.dbName, this._config.dbVersion);
 
 				/**
 				 * DB 版本设置或升级时回调
 				 * createObjectStore deleteObjectStore 只能在 onupgradeneeded 事件中使用
 				 * */
-				dbRequest.onupgradeneeded = (e)=>{
+				dbOpenRequest.onupgradeneeded = (e)=>{
 					let db = e.target.result
 						, store
 						;
@@ -74,10 +74,10 @@ class IndexedDBModel extends Model{
 						});
 					}
 
-					dbRequest.onsuccess = function(e){
+					dbOpenRequest.onsuccess = function(e){
 						resolve( e.target.result );
 					};
-					dbRequest.onerror = function(e){
+					dbOpenRequest.onerror = function(e){
 						console.log( e );
 						reject( e );
 					};
@@ -100,13 +100,13 @@ class IndexedDBModel extends Model{
 		return this._store.then((db)=>{
 			return new Promise((resolve, reject)=>{
 				let objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore( this._config.tableName )
-					, result = objectStore.get( topic )
+					, objectStoreRequest = objectStore.get( topic )
 					;
 
-				result.onsuccess = function(e){
+				objectStoreRequest.onsuccess = function(e){
 					resolve( e.target.result );
 				};
-				result.onerror = function(e){
+				objectStoreRequest.onerror = function(e){
 					console.log( e );
 					reject( e );
 				};
@@ -125,16 +125,16 @@ class IndexedDBModel extends Model{
 		return this._store.then((db)=>{
 			return new Promise((resolve, reject)=>{
 				let objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore( this._config.tableName )
-					, result = objectStore.put({
+					, objectStoreRequest = objectStore.put({
 						topic: topic
 						, value: value
 					})
 					;
 
-				result.onsuccess = function(e){
+				objectStoreRequest.onsuccess = function(e){
 					resolve( !!e.target.result );
 				};
-				result.onerror = function(e){
+				objectStoreRequest.onerror = function(e){
 					console.log( e );
 					reject( e );
 				};
@@ -151,13 +151,13 @@ class IndexedDBModel extends Model{
 		return this._store.then((db)=>{
 			return new Promise((resolve, reject)=>{
 				let objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore( this._config.tableName )
-					, result = objectStore.delete( topic )
+					, objectStoreRequest = objectStore.delete( topic )
 					;
 
-				result.onsuccess = function(e){
+				objectStoreRequest.onsuccess = function(e){
 					resolve( true );
 				};
-				result.onerror = function(e){
+				objectStoreRequest.onerror = function(e){
 					console.log( e );
 					reject( e );
 				};
@@ -173,13 +173,13 @@ class IndexedDBModel extends Model{
 		return this._store.then((db)=>{
 			return new Promise((resolve, reject)=>{
 				let objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore( this._config.tableName )
-					, result = objectStore.clear()
+					, objectStoreRequest = objectStore.clear()
 					;
 
-				result.onsuccess = function(e){
+				objectStoreRequest.onsuccess = function(e){
 					resolve( true );
 				};
-				result.onerror = function(e){
+				objectStoreRequest.onerror = function(e){
 					console.log( e );
 					reject( e );
 				}
@@ -190,53 +190,82 @@ class IndexedDBModel extends Model{
 	// ---------- 公有方法 ----------
 	/**
 	 * @summary 设置数据
-	 * @param   {String}    topic
-	 * @param   {*}         value
-	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
+	 * @param   {String|Object} topic
+	 * @param   {*}             value
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回 true
 	 * @desc    保持值得时候，同时会保持在内存中
 	 * */
 	setData(topic, value){
-		return super.setData(topic, value).then(()=>{
-			return this._put(topic, this._stringify(value));
-		});
+		let result
+			;
+
+		if( typeof topic === 'object' ){
+			result = this._setByObject( topic );
+		}
+		else{
+			result = super.setData(topic, value).then(()=>{
+				return this._put(topic, this._stringify(value));
+			});
+		}
+
+		return result;
 	}
 	/**
 	 * @summary 获取数据
-	 * @param   {String}    topic
-	 * @return  {Promise}   返回一个 Promise 对象，若存在 topic 的值，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
-	 * @desc    获取数据时会优先从内存中取值，若没有则从 indexedDB 中取值
+	 * @param   {String|String[]}   topic
+	 * @return  {Promise}       返回一个 Promise 对象，若存在 topic 的值，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
+	 * @desc    获取数据时会优先从内存中取值，若没有则从 indexedDB 中取值并将其存入内存中，当 topic 的类型为数组的时候，resolve 传入的结果为一个 json，key 为 topic 中的数据，value 为对应查找出来的值
 	 * */
 	getData(topic){
-		return super.getData( topic ).catch(()=>{
-			return this._select( topic ).then((value)=>{
+		let result
+			;
 
-				if( value ){
+		if( Array.isArray(topic) ){
+			result = this._getByArray( topic );
+		}
+		else{
+			result = super.getData( topic ).catch(()=>{
+				return this._select( topic ).then((value)=>{
 
-					try{
-						value = JSON.parse( value );
+					if( value ){
+
+						try{
+							value = JSON.parse( value );
+						}
+						catch(e){}
+
+						// 在内存中保留该值
+						super.setData(topic, value);
 					}
-					catch(e){}
+					else{
+						value = Promise.reject( null );
+					}
 
-					// 在内存中保留该值
-					super.setData(topic, value);
-				}
-				else{
-					value = Promise.reject( null );
-				}
-
-				return value;
+					return value;
+				});
 			});
-		});
+		}
+		return result;
 	}
 	/**
 	 * @summary 将数据从缓存中删除
-	 * @param   {String}    topic
-	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
+	 * @param   {String|String[]}   topic
+	 * @return  {Promise}           返回一个 Promise 对象，在 resolve 时传回 true
 	 * */
 	removeData(topic){
-		return super.removeData( topic ).then(()=>{
-			return this._delete( topic );
-		});
+		let result
+			;
+
+		if( Array.isArray(topic) ){
+			result = this._removeByArray( topic );
+		}
+		else{
+			result = super.removeData( topic ).then(()=>{
+				return this._delete( topic );
+			});
+		}
+
+		return result;
 	}
 	/**
 	 * @summary 清空数据

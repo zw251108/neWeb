@@ -416,6 +416,23 @@ class OrderServiceModel extends ServiceModel{
 			}
 		});
 	}
+	/**
+	 * @summary 获得会员用户当前可用的线上的优惠券
+	 * @param   {Number|String} counterId
+	 * @param   {Number|String} storeId
+	 * @param   {Number}        productAccount
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回处理过的返回结果
+	 * @see     [http://oserv.test.66buy.com.cn/publics/tgouOrder/getUsableCouponItems]{@link http://dev.51tiangou.com/interfaces/detail.html?id=3759}
+	 * */
+	getUsableCouponItems(counterId, storeId, productAccount){
+		return this.setData('/publics/tgouOrder/getUsableCouponItems', {
+			data: {
+				counterId
+				, storeId
+				, productAccount
+			}
+		});
+	}
 
 	/**
 	 * @summary 查询优惠信息，订单确认，查询优惠信息

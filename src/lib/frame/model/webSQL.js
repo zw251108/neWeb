@@ -209,18 +209,27 @@ class WebSQLModel extends Model{
 	// ---------- 公有方法 ----------
 	/**
 	 * @summary 设置数据
-	 * @param   {String}    topic
-	 * @param   {*}         value
-	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回影响行数的 boolean 值
+	 * @param   {String|Object} topic
+	 * @param   {*}             value
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回影响行数的 boolean 值
 	 * @desc    保持值得时候，同时会保持在内存中
 	 * */
 	setData(topic, value){
-		return super.setData(topic, value).then(()=>{
+		let result
+			;
 
-			value = this._stringify( value );
+		if( typeof topic === 'object' ){
+			result = this._setByObject( topic );
+		}
+		else{
+			result = super.setData(topic, value).then(()=>{
 
-			return this._select( topic ).then((rs)=>{
-				let result;
+				value = this._stringify( value );
+
+				return this._select( topic );
+			}).then((rs)=>{
+				let result
+					;
 
 				if( rs && rs.length ){    // topic 已存在
 					result = this._update(topic, value);
@@ -231,49 +240,71 @@ class WebSQLModel extends Model{
 
 				return result;
 			});
-		});
+		}
+
+		return result;
 	}
 	/**
 	 * @summary 获取数据
-	 * @param   {String}    topic
-	 * @return  {Promise}   返回一个 Promise 对象，若存在 topic 的值，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
-	 * @desc    获取数据时会优先从内存中取值，若没有则从 WebSQL Database 中取值
+	 * @param   {String|String[]}   topic
+	 * @return  {Promise}           返回一个 Promise 对象，若存在 topic 的值，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
+	 * @desc    获取数据时会优先从内存中取值，若没有则从 WebSQL Database 中取值并将其存入内存中，当 topic 的类型为数组的时候，resolve 传入的结果为一个 json，key 为 topic 中的数据，value 为对应查找出来的值
 	 * */
 	getData(topic){
-		return super.getData( topic ).catch(()=>{
-			return this._select( topic ).then((rs)=>{
-				let value = ''
-					;
+		let result
+			;
 
-				if( rs && rs.length ){
-					// 只返回第一条数据
-					value = rs[0].value;
+		if( Array.isArray(topic) ){
+			result = this._getByArray( topic );
+		}
+		else{
+			result = super.getData( topic ).catch(()=>{
+				return this._select( topic ).then((rs)=>{
+					let value = ''
+						;
 
-					try{
-						value = JSON.parse( value );
+					if( rs && rs.length ){
+						// 只返回第一条数据
+						value = rs[0].value;
+
+						try{
+							value = JSON.parse( value );
+						}
+						catch(e){}
+
+						// 在内存中保留该值
+						super.setData(topic, value);
 					}
-					catch(e){}
+					else{
+						value = Promise.reject( null );
+					}
 
-					// 在内存中保留该值
-					super.setData(topic, value);
-				}
-				else{
-					value = Promise.reject( null );
-				}
-
-				return value;
+					return value;
+				});
 			});
-		});
+		}
+
+		return result;
 	}
 	/**
 	 * @summary 将数据从缓存中删除
-	 * @param   {String}    topic
-	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回影响行数的 boolean 值
+	 * @param   {String|String[]}   topic
+	 * @return  {Promise}           返回一个 Promise 对象，在 resolve 时传回影响行数的 boolean 值
 	 * */
 	removeData(topic){
-		return super.removeData( topic ).then(()=>{
-			return this._delete( topic );
-		});
+		let result
+			;
+
+		if( Array.isArray(topic) ){
+			result = this._removeByArray( topic );
+		}
+		else{
+			result = super.removeData( topic ).then(()=>{
+				return this._delete( topic );
+			});
+		}
+
+		return result;
 	}
 	/**
 	 * @summary 清空数据

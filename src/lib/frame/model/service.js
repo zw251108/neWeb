@@ -139,11 +139,11 @@ class ServiceModel extends Model{
 	}
 	/**
 	 * @desc    获取数据，默认视为发送 GET 请求到服务器，可以将返回结果保存到本地缓存
-	 * @param   {String|Object}     topic   字符串类型为请求 url，对象类型为所有参数，其中 url 为必填
-	 * @param   {Object|Boolean}    [options={}]    对象类型为 ajax 参数，Boolean 类型时将其赋值给 isCache，自身设置为 {}
+	 * @param   {String|Object}     topic               字符串类型为请求 url，对象类型为所有参数，其中 url 为必填
+	 * @param   {Object|Boolean}    [options={}]        对象类型为 ajax 参数，Boolean 类型时将其赋值给 isCache，自身设置为 {}
 	 * @param   {Object}            [options.data]
 	 * @param   {String}            [options.method]
-	 * @param   {Boolean}           [isCache=false]   是否优先从本地缓存中读取数据，同时发送请求后数据是否同步到本地缓存，默认为 false
+	 * @param   {Boolean}           [isCache=false]     是否优先从本地缓存中读取数据，同时发送请求后数据是否同步到本地缓存，默认为 false
 	 * @param   {Boolean}           [needSeckey=false]  是否需要
 	 * @return  {Promise}
 	 * @todo    优先从本地 syncTo model 中读取数据，若没有则发送请求

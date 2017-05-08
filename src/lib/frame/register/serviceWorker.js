@@ -22,8 +22,9 @@ function registerServiceWorker(options={}){
 	return new Promise((resolve, reject)=>{
 		if( 'serviceWorker' in navigator ){
 			if( !(config.file in registerServiceWorker._CACHE) ){
+
 				registerServiceWorker._CACHE[config.file] = navigator.serviceWorker.register(config.file, {
-					scope: './'
+					scope: config.scope
 				}).then((regist)=>{
 					let serviceWorker
 						;
@@ -48,6 +49,7 @@ function registerServiceWorker(options={}){
 				}).catch(function(e){
 					console.log( e );
 				});
+
 				navigator.serviceWorker.ready.then((reg)=>{
 					reg.pushManager.getSubscription().then((res)=>{
 						if( !res ){
@@ -78,6 +80,7 @@ registerServiceWorker._CACHE = {};
 
 registerServiceWorker._CONFIG = {
 	file: 'sw.js'
+	, scope: './'
 };
 
 export default registerServiceWorker;

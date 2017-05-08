@@ -5745,45 +5745,45 @@ var FtpClient = require('ftp')
 // 	, compiler = webpack( webpackConfig )
 // 	;
 // console.log(compiler);
-var WebSocketServer = require('ws').Server
-	, wss = new WebSocketServer({
-		port: 8181
-	})
-	;
-wss.on('connection', function(ws){
-	console.log('connection');
-	                        // console.log( Object.keys(ws) )
-	ws.on('message', function(msg){
-		console.log(msg);
-
-		// console.log(ws)
-
-		if( ws.readyState == 1 ){
-			console.log(1);
-
-			setTimeout(function(){
-				ws.send(JSON.stringify({
-					title: 'hello 1'
-					, content: '1111'
-				}));
-			}, 2000);
-			setTimeout(function(){
-				ws.send(JSON.stringify({
-					title: 'hello 2'
-					, content: '2222'
-				}));
-			}, 5000);
-
-			ws.send(JSON.stringify({
-				title: 'hello 3'
-				, content: '3333'
-			}));
-		}
-	});
-});
-wss.on('close', function(){
-	console.log(111);
-});
+// var WebSocketServer = require('ws').Server
+// 	, wss = new WebSocketServer({
+// 		port: 8181
+// 	})
+// 	;
+// wss.on('connection', function(ws){
+// 	console.log('connection');
+// 	                        // console.log( Object.keys(ws) )
+// 	ws.on('message', function(msg){
+// 		console.log(msg);
+//
+// 		// console.log(ws)
+//
+// 		if( ws.readyState == 1 ){
+// 			console.log(1);
+//
+// 			setTimeout(function(){
+// 				ws.send(JSON.stringify({
+// 					title: 'hello 1'
+// 					, content: '1111'
+// 				}));
+// 			}, 2000);
+// 			setTimeout(function(){
+// 				ws.send(JSON.stringify({
+// 					title: 'hello 2'
+// 					, content: '2222'
+// 				}));
+// 			}, 5000);
+//
+// 			ws.send(JSON.stringify({
+// 				title: 'hello 3'
+// 				, content: '3333'
+// 			}));
+// 		}
+// 	});
+// });
+// wss.on('close', function(){
+// 	console.log(111);
+// });
 
 // console.log(global)
 
@@ -5916,3 +5916,18 @@ var getSize = require('image-size')
 // 		}))
 // 	))
 // });
+
+let text = fs.readFileSync('../Work/log/log.txt')
+	, index
+	;
+
+console.log( Object.keys( text.toString().split('----').reverse().map(function(d){
+	let t = /【简 介】: (.*)/.exec( d );
+	// t && console.log( t[1] );
+
+	return t ? t[1] : '';
+}).reduce(function(all, d){
+	all[d] = 1;
+
+	return all;
+}, {}) ) );

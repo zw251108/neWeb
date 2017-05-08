@@ -40,7 +40,7 @@ class LogServiceModel extends ServiceModel{
 		this.sessionStoreage = Model.factory('sessionStorage');
 
 		/**
-		 * @private [Promise]   _uuid
+		 * @member  {Promise}   _uuid
 		 * 获取 uuid，优先级 localStorage > sessionStorage > cookie > 缓存在页面，返回一个 Promise 对象，在 resolve 时传回 uuid
 		 * */
 		this._uuid = Promise.all([
@@ -68,7 +68,7 @@ class LogServiceModel extends ServiceModel{
 		});
 
 		/**
-		 * @private [Promise]   _global
+		 * @member  {Promise}   _global
 		 * 从 cookie 中获取 global 参数，失败则传 webapp
 		 * */
 		this._global = this.cookie.getData('global').catch(()=>{
@@ -76,7 +76,7 @@ class LogServiceModel extends ServiceModel{
 		});
 
 		/**
-		 * @private [Promise]   _memberId
+		 * @member  {Promise}   _memberId
 		 * 从 cookie 中获取 memberId
 		 * */
 		this._memberId = this.cookie.getData('memberId').catch(()=>{});
