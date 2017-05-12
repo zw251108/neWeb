@@ -52,7 +52,7 @@ $(function(){
 			url: this.action
 			, type: this.method
 			, data: {
-				url: $path.val() + ($param.length ? '?'+ $param.map(function(d){
+				url: $path.val() + ($param.length ? '?'+ $param.map(function(i, d){
 					return d.value;
 				}).get().join('&') : '') + $hash.val()
 				, title: $title.val()
