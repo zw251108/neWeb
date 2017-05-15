@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
+    , "processTest": "node test.js"
   },
   "author": "ZwB",
   "license": "BSD-2-Clause",
