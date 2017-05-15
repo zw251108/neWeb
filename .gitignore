@@ -8,6 +8,8 @@ bower_components/
 .idea
 *.iml
 
+npm-debug.log
+
 # 离线缓存文件 此文件为动态生成
 public/cache.manifest
 

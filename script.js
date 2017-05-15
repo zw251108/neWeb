@@ -5917,17 +5917,65 @@ var getSize = require('image-size')
 // 	))
 // });
 
-let text = fs.readFileSync('../Work/log/log.txt')
-	, index
+// let text = fs.readFileSync('../Work/log/log.txt')
+// 	, index
+// 	;
+//
+// console.log( Object.keys( text.toString().split('----').reverse().map(function(d){
+// 	let t = /【简 介】: (.*)/.exec( d );
+// 	// t && console.log( t[1] );
+//
+// 	return t ? t[1] : '';
+// }).reduce(function(all, d){
+// 	all[d] = 1;
+//
+// 	return all;
+// }, {}) ) );
+
+var cp = require('child_process')
+	, spawn = cp.spawn
+	, ls = spawn('npm run processTest', {
+		shell: true
+		, detached : true
+	})
+	// , fork = cp.fork('npm run processTest')
 	;
 
-console.log( Object.keys( text.toString().split('----').reverse().map(function(d){
-	let t = /【简 介】: (.*)/.exec( d );
-	// t && console.log( t[1] );
+// fork.on('message', function(m){
+// 	console.log(m);
+// });
 
-	return t ? t[1] : '';
-}).reduce(function(all, d){
-	all[d] = 1;
+ls.stdout.on('data', function(data){
 
-	return all;
-}, {}) ) );
+	var str = data.toString();
+
+	console.log('stdout', str);
+
+	// if( /stringLength/.test(str) ){
+	// 	console.log('输入 y');
+		ls.stdin.write('y');
+		ls.stdin.end();
+	// }
+});
+ls.stderr.on('data', function(data){
+	console.log('stderr', data.toString());
+});
+ls.on('close', function(code){
+	console.log(code)
+});
+ls.on('error', function(){
+	console.log('error');
+})
+
+// cp.exec('npm run processTest', {
+// 	encoding: 'buffer'
+// }, function(e, stdout, stderr){
+// 	console.log(123)
+// 	if( e ){
+// 		console.log(e);
+//
+// 		return;
+// 	}
+//
+// 	console.log( stdout );
+// });
