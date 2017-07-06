@@ -5936,7 +5936,7 @@ var cp = require('child_process')
 	, spawn = cp.spawn
 	, ls = spawn('npm run processTest', {
 		shell: true
-		, detached : true
+		// , detached : true
 	})
 	// , fork = cp.fork('npm run processTest')
 	;
@@ -5945,27 +5945,104 @@ var cp = require('child_process')
 // 	console.log(m);
 // });
 
+let i = 0;
+
+let interval = setInterval(function(){
+
+	console.log( i++ );
+
+	if( i > 10 ){
+		clearInterval( interval );
+
+		// process.exit(0);
+	}
+}, 2000);
+
+console.log( process.cwd() );
+
+// process.stdin.setEncoding('utf8');
+//
+// process.stdin.on('readable', () => {
+// 	console.log('主线程可输入');
+// 	var chunk = process.stdin.read();
+// 	if (chunk !== null) {
+// 		process.stdout.write(`主线程输入：${chunk}`);
+// 	}
+//
+// 	if( ls ){
+// 		console.log(`子线程写入：${chunk}`);
+// 		ls.stdin.write(chunk);
+// 		ls.stdin.end();
+//
+// 		ls = null;
+//
+// 		process.stdin.emit('close');
+// 	}
+// 	else{
+// 		console.log(`子线程写入关闭，无法写入：${chunk}`);
+// 	}
+//
+// 	// process.stdin.end();
+// });
+//
+// process.stdin.on('close', ()=>{
+// 	console.log('主线程关闭输入');
+// });
+// process.stdin.on('end', () => {
+// 	console.log('主线程输入结束');
+// 	process.stdout.write('end');
+// });
+
+// process.stdout.on('data', ()=>{
+// 	console.log(111);
+// })
+
+ls.stdin.write('111');
+ls.stdin.end();
+
 ls.stdout.on('data', function(data){
 
 	var str = data.toString();
 
-	console.log('stdout', str);
+	console.log('子线程输出：', str);
+
+	if(/y\/n/.test( str ) ){
+
+		// ls.stdin.write('111');
+		// ls.stdin.end();
+
+		console.log('向子线程输入 1');
+
+		// ls.stdin
+		// ls.stdin.write('1');
+		// ls.stdin.emit('end');
+	}
 
 	// if( /stringLength/.test(str) ){
 	// 	console.log('输入 y');
-		ls.stdin.write('y');
-		ls.stdin.end();
+	// 	ls.stdin.write('y');
+	// 	ls.stdin.end();
 	// }
 });
 ls.stderr.on('data', function(data){
-	console.log('stderr', data.toString());
+	console.log('子线程报错：', data.toString());
 });
-ls.on('close', function(code){
-	console.log(code)
+ls.on('close', function(){
+	console.log('子线程 stdio 流关闭');
+
+	process.stdin.emit('close');
+
+	ls = null;
 });
 ls.on('error', function(){
-	console.log('error');
-})
+	console.log('线程异常');
+});
+ls.on('exit', function(){
+	console.log('子进程退出自身');
+
+
+	ls = null;
+});
 
 // cp.exec('npm run processTest', {
 // 	encoding: 'buffer'

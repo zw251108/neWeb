@@ -4,8 +4,8 @@
   "description": "新的个人网站，基于 Node.js",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
-    , "processTest": "node test.js"
+    "start": "node index.js",
+    "processTest": "node test.js"
   },
   "author": "ZwB",
   "license": "BSD-2-Clause",
@@ -22,6 +22,7 @@
     "express-react-views": "^0.9.0",
     "express-session": "^1.11.3",
     "express-socket.io-session": "^1.3.1",
+    "hammerjs": "~2.0.8",
     "helmet": "^2.1.0",
     "iconv-lite": "~0.4.11",
     "image-size": "~0.3.5",
