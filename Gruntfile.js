@@ -353,29 +353,29 @@ module.exports = function(grunt){
 				}
 			}
 		}
-		, sass: {
-			destiny: {
-				options: {
-					outputStyle: 'compressed'
-				}
-				, dist: {
-					files: {
-						'build/sass/style.css': 'test/sass/style.scss'
-					}
-				}
-			}
-
-			, test: {
-				options: {
-					outputStyle: 'compressed'
-				}
-				, dist: {
-					files: {
-						'build/animate.css': 'test/animate.scss'
-					}
-				}
-			}
-		}
+		// , sass: {
+		// 	destiny: {
+		// 		options: {
+		// 			outputStyle: 'compressed'
+		// 		}
+		// 		, dist: {
+		// 			files: {
+		// 				'build/sass/style.css': 'test/sass/style.scss'
+		// 			}
+		// 		}
+		// 	}
+		//
+		// 	, test: {
+		// 		options: {
+		// 			outputStyle: 'compressed'
+		// 		}
+		// 		, dist: {
+		// 			files: {
+		// 				'build/animate.css': 'test/animate.scss'
+		// 			}
+		// 		}
+		// 	}
+		// }
 
 		, requirejs: {
 			destiny: {
@@ -538,7 +538,7 @@ module.exports = function(grunt){
 		, watch: {
 			destiny: {
 				files: ['less/*.less'
-					, 'sass/source/*.scss'
+					// , 'sass/source/*.scss'
 					, 'public/style/*.css'
 					, 'public/script/*.js'
 				]
@@ -598,7 +598,7 @@ module.exports = function(grunt){
 	 * */
 	grunt.loadNpmTasks('grunt-contrib-cssmin');
 	grunt.loadNpmTasks('grunt-contrib-less');   // less 编译
-	grunt.loadNpmTasks('grunt-sass');   // sass 编辑（基于 node-sass，不是基于 ruby）
+	// grunt.loadNpmTasks('grunt-sass');   // sass 编辑（基于 node-sass，不是基于 ruby）
 	/**
 	 * js 打包及压缩
 	 * */

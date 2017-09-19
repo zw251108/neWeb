@@ -5,6 +5,7 @@ $(function(){
 		, $params = $('#params')
 		, $hashField = $('#hashField')
 		, $hash = $('#hash')
+		, $hashContent = $('#hashContent')
 		, $ico = $('#ico')
 		, $submit = $('#bookmark')
 		;
@@ -33,7 +34,8 @@ $(function(){
 			$hashField.hide();
 		}
 		else{
-			$hash.val( temp.hash );
+			$hash.val( temp.hash ).prop('checked', true);
+			$hashContent.html( temp.hash );
 		}
 
 		$title.val( tab.title );
@@ -54,7 +56,7 @@ $(function(){
 			, data: {
 				url: $path.val() + ($param.length ? '?'+ $param.map(function(i, d){
 					return d.value;
-				}).get().join('&') : '') + $hash.val()
+				}).get().join('&') : '') + ($hash.prop('checked') ? $hash.val() : '')
 				, title: $title.val()
 				, ico: $ico.val()
 				, email: 'zw150026@163.com'

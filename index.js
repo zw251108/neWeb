@@ -209,6 +209,8 @@ web.get('/', function(req, res){
 		}
 		;
 
+	// console.log(req.cookies);
+
 	res.send( tpl.html('index', {
 		title: '个人小站（开发测试中...）'
 		, user: isGuest ? '/user/login' : '/user/center'

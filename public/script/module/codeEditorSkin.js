@@ -7,7 +7,7 @@ define(['jquery', 'socket', 'storage', 'template'], function($, socket, storage)
 		})
 
 		, SKIN_LIST = ['default', '3024-day', '3024-night', 'ambiance', 'base16-dark', 'base16-light', 'blackboard', 'cobalt', 'dracula', 'eclipse', 'elegant', 'erlang-dark', 'icecoder', 'lesser-dark', 'liquibyte', 'material', 'mbo', 'mdn-like', 'midnight', 'monokai', 'neat', 'neo', 'night', 'paraiso-dark', 'paraiso-light', 'pastel-on-dark', 'rubyblue', 'seti', 'solarized', 'the-matrix', 'tomorrow-night-bright', 'tomorrow-night-eighties', 'ttcn', 'twilight', 'vibrant-ink', 'xq-dark', 'xq-light', 'yeti', 'zenburn']
-		, CURRENT_SKIN = storage.getItem('skin') || 'default'
+		, CURRENT_SKIN = 'default'
 
 		, $skinLink = $('<link />', {rel: 'stylesheet'}).appendTo('head')
 		, $skin = $('#changeSkin').on({
@@ -46,7 +46,8 @@ define(['jquery', 'socket', 'storage', 'template'], function($, socket, storage)
 			}
 		})
 
-		, $skinList = $skin.after('<span class="arrow hidden"></span><ul class="list tiny scrollBar skinList hidden" role="listbox" aria-expanded="false"></ul>')			.nextAll('ul').append( listTpl($.map(SKIN_LIST, function(d){
+		, $skinList = $skin.after('<span class="arrow hidden"></span><ul class="list tiny scrollBar skinList hidden" role="listbox" aria-expanded="false"></ul>')
+			.nextAll('ul').append( listTpl($.map(SKIN_LIST, function(d){
 			var obj = {
 				name: d
 			};
