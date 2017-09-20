@@ -1,6 +1,7 @@
 'use strict';
 
 import Model from './model.js';
+import merge from '../util/merge.js';
 
 /**
  * @class
@@ -21,16 +22,7 @@ class CacheStorageModel extends Model{
 	constructor(config={}){
 		super();
 
-		this._config = Object.keys( CacheStorageModel._CONFIG ).reduce((all, d)=>{
-			if( d in config ){
-				all[d] = config[d];
-			}
-			else{
-				all[d] = CacheStorageModel._CONFIG[d];
-			}
-
-			return all;
-		}, {});
+		this._config = merge(config, CacheStorageModel._CONFIG);
 
 		if( 'caches' in self ){ // 判断
 			this._store = Promise.resolve( self.caches );

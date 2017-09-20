@@ -1,8 +1,8 @@
 'use strict';
 
+import domain       from 'domainConfig';
 import Model        from '../model/model.js';
-import ServiceModel from '../model/service.js';
-import domain       from '../runtime/domain.js';
+import ServiceModel from 'ServiceModel';
 import validate     from '../util/validate.js';
 
 /**
@@ -27,6 +27,15 @@ class WeChatServiceModel extends ServiceModel{
 		this._config.domainList.push( domain.host );
 
 		this._config.baseUrl = '//'+ this._config.domainList.join('.');
+
+		// this.isWechat = new Promise((resolve, reject)=>{
+		// 	if( device.wechat ){
+		// 		resolve();
+		// 	}
+		// 	else{
+		// 		reject();
+		// 	}
+		// });
 	}
 
 	/**
@@ -157,6 +166,43 @@ class WeChatServiceModel extends ServiceModel{
 	openidEncode(){
 		return this.getData('/publics/wechat/getOpenidCypher', {
 			data: {
+			}
+		});
+	}
+	/**
+	 * @summary 微信联合登录【已登录】会员快速绑定
+	 * @param   {String}    token
+	 * @param   {String}    code
+	 * @param   {Number}    from    0.web，1.app
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @desc    使用 POST 方法
+	 * @see     [http://wechat.test.66buy.com.cn/publics/wechat/union/quickBind]{@link http://dev.51tiangou.com/interfaces/detail.html?id=4311}
+	 * */
+	quickBind(token, code, from){
+		return this.setData('/publics/wechat/union/quickBind', {
+			data: {
+				token
+				, code
+				, from
+			}
+		});
+	}
+	/**
+	 * @summary 微信联合登录 unionid 绑定会员
+	 * @param   {String}    phone
+	 * @param   {String}    randomPass
+	 * @param   {String}    unionId
+	 * @param   {String}    userInfo    用户信息 JSON
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @see     [http://wechat.test.66buy.com.cn/publics/wechat/union/bind]{@link http://dev.51tiangou.com/interfaces/detail.html?id=4313}
+	 * */
+	unionBind(phone, randomPass, unionId, userInfo){
+		return this.getData('/publics/weacht/union/bind', {
+			data: {
+				phone
+				, randomPass
+				, unionId
+				, userInfo
 			}
 		});
 	}
@@ -584,6 +630,42 @@ class WeChatServiceModel extends ServiceModel{
 
 		return this.setData('/publics/activity/multiCity/get', {
 			data
+		});
+	}
+	/**
+	 * @summary 免费试用活动核销
+	 * @param   {String}    verifyCode
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @see     [http://wechat.test.66buy.com.cn/publics/activity/trial/verify]{@link http://dev.51tiangou.com/interfaces/detail.html?id=4245}
+	 * */
+	trialVerify(verifyCode){
+		return this.getData('/publics/activity/trial/verify', {
+			data: {
+				verifyCode
+			}
+		});
+	}
+	/**
+	 * @summary 申请免费试用
+	 * @param   {Number|String} activityId
+	 * @param   {Number|String} productId
+	 * @param   {Number}        type        用户类型，1 为天狗用户，2 为微信用户
+	 * @param   {Number|String} joinerId    用户登录 id
+	 * @param   {String}        phone
+	 * @param   {Object}        userInfo    用户信息 json
+	 * @return  {Promise}      返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @see     [http://wechat.test.66buy.com.cn/publics/activity/trial/apply]{@link http://dev.51tiangou.com/interfaces/detail.html?id=4231}
+	 * */
+	trialApply(activityId, productId, type, joinerId, phone, userInfo){
+		return this.getData('/publics/activity/trial/apply', {
+			data: {
+				activityId
+				, productId
+				, type
+				, joinerId
+				, phone
+				, userInfo
+			}
 		});
 	}
 }

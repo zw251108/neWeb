@@ -1,8 +1,8 @@
 'use strict';
 
 import Model        from '../model/model.js';
-import ServiceModel from '../model/service.js';
-import domain       from '../runtime/domain.js';
+import ServiceModel from 'ServiceModel';
+import domain       from 'domainConfig';
 
 /**
  * @class
@@ -143,6 +143,197 @@ class PayServiceModel extends ServiceModel{
 
 		return this.setData('/callback/unionFastPayReturn', {
 			data
+		});
+	}
+	/**
+	 * @summary 支付成功通知
+	 * @param   {String}        bizNumber
+	 * @param   {Number}        bizType
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @desc    bizType 目前的值：
+	 *          1   停车场
+	 *          3   试衣秀
+	 *          4   订单支付
+	 * @see     [http://pay.test.66buy.com.cn/publics/successNotify]
+	 * @todo    这个接口地址没确定
+	 * */
+	successNotify(bizNumber, bizType){
+		return this.getData('/callback/successNotify', {
+			data: {
+				bizNumber
+				, bizType
+			}
+		});
+	}
+
+	/**
+	 * @summary 微众银行开卡
+	 * @param   {String}    phoneNo
+	 * @param   {String}    redirect
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @desc    使用 POST 方法
+	 * @see     [http://pay.test.66buy.com.cn/webank/open]
+	 * @todo    接口中心未查到
+	 * */
+	personOpen(phoneNo, redirect){
+		return this.setData('/webank/open', {
+			data: {
+				phoneNo
+				, redirect
+			}
+		});
+	}
+	/**
+	 * @summary 绑定银行卡
+	 * @param   {String}    redirect
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @desc    使用 POST 方法
+	 * @see     [http://pay.test.66buy.com.cn/webank/bindBankCard]
+	 * @todo    接口中心未查到
+	 * */
+	bindBankCard(redirect){
+		return this.setData('/webank/bindBankCard', {
+			data: {
+				redirect
+			}
+		});
+	}
+	/**
+	 * @summary 解除绑定银行卡
+	 * @param   {String}    bindingId
+	 * @param   {String}    redirect
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @desc    使用 POST 方法
+	 * @see     [http://pay.test.66buy.com.cn/webank/unBindBankCard]
+	 * @todo    接口中心未查到
+	 * */
+	unBindBankCard(bindingId, redirect){
+		return this.setData('/webank/unBindBankCard', {
+			data: {
+				bindingId
+				, redirect
+			}
+		});
+	}
+	/**
+	 * @summary 查询银行卡列表
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @desc    使用 POST 方法
+	 * @see     [http://pay.test.66buy.com.cn/webank/queryBindBankCards]
+	 * @todo    接口中心未查到
+	 * */
+	queryBindBankCards(){
+		return this.setData('/webank/queryBindBankCards');
+	}
+	/**
+	 * @summary 修改手机号码
+	 * @param   {String}    newPhoneNo
+	 * @param   {String}    redirect
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @desc    使用 POST 方法
+	 * @see     [http://pay.test.66buy.com.cn/webank/modifyPhoneNo]
+	 * @todo    接口中心未查到
+	 * */
+	modifyPhoneNo(newPhoneNo, redirect){
+		return this.setData('/webank/modifyPhoneNo', {
+			data: {
+				newPhoneNo
+				, redirect
+			}
+		});
+	}
+	/**
+	 * @summary 修改手机号码
+	 * @param   {String}    newPhoneNo
+	 * @param   {String}    redirect
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @desc    使用 POST 方法，内部调用 modifyPhoneNo
+	 * @todo    与 modifyPhoneNo 取其一
+	 * */
+	changePhoneNumber(newPhoneNo, redirect){
+		return this.modifyPhoneNo(newPhoneNo, redirect);
+	}
+	/**
+	 * @summary 修改密码
+	 * @param   {String}    redirect
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @desc    使用 POST 方法
+	 * @see     [http://pay.test.66buy.com.cn/webank/pwdChange]
+	 * @todo    接口中心未查到
+	 * */
+	pwdChange(redirect){
+		return this.setData('/webank/pwdChange', {
+			data: {
+				redirect
+			}
+		});
+	}
+	/**
+	 * @summary 重置密码
+	 * @param   {String}    redirect
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @desc    使用 POST 方法
+	 * @todo    接口中心未查到
+	 * @see     [http://pay.test.66buy.com.cn/webank/pwdReset]
+	 * */
+	pwdReset(redirect){
+		return this.setData('/webank/pwdReset', {
+			data: {
+				redirect
+			}
+		});
+	}
+	/**
+	 * @summary 查询手机号
+	 * @param   {Boolean}   [redirect]
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @desc    使用 POST 方法
+	 * @see     [http://pay.test.66buy.com.cn/webank/queryPersonPhoneNo]
+	 * @todo    接口中心未查到
+	 * */
+	queryPersonPhoneNo(redirect){
+		let data = {}
+			;
+
+		if( redirect ){
+			data.redirect = redirect;
+		}
+
+		return this.setData('/webank/queryPersonPhoneNo', {
+			data
+		});
+	}
+	/**
+	 * @summary 查询余额
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @desc    使用 POST 方法
+	 * @see     [http://pay.test.66buy.com.cn/webank/queryBalance]
+	 * @todo    接口中心未查到
+	 * */
+	queryBalance(){
+		return this.setData('/webank/queryBalance');
+	}
+	/**
+	 * @summary 充值
+	 * @param   {Number|String} amount
+	 * @param   {String}        bindingId
+	 * @param   {String}        cardNo
+	 * @param   {String}        cardType
+	 * @param   {String}        redirect
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @desc    使用 POST 方法
+	 * @see     [http://pay.test.66buy.com.cn/webank/recharge]
+	 * @todo    接口中心未查到
+	 * */
+	recharge(amount, bindingId, cardNo, cardType, redirect){
+		return this.setData('/webank/recharge', {
+			data: {
+				amount
+				, bindingId
+				, cardNo
+				, cardType
+				, redirect
+			}
 		});
 	}
 }

@@ -1,8 +1,8 @@
 'use strict';
 
 import Model        from '../model/model.js';
-import ServiceModel from '../model/service.js';
-import domain       from '../runtime/domain.js';
+import ServiceModel from 'ServiceModel';
+import domain       from 'domainConfig';
 import validate     from '../util/validate.js';
 
 /**
@@ -306,7 +306,6 @@ class CouponServiceModel extends ServiceModel{
 		});
 	}
 
-
 	/**
 	 * 根据优惠券号 id 获取优惠券详情
 	 * @param   {Number|String} id
@@ -441,10 +440,10 @@ class CouponServiceModel extends ServiceModel{
 	 * @param   {Number}        [options.source]
 	 * @param   {Number}        [options.paytype]   目前只有值为 1
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @desc    options 可以不传，但传了，就必须有 cardId,storeId,amount 参数，source 和 paytype 要同时有，使用 POST 方法
+	 * @desc    options 可以不传，但传了，就必须有 cardId,storeId,amount 参数，source 和 paytype 要同时有，使用 POST 方法，参数中添加了 needSecKey 使用防黄牛机制
 	 * @see     [http://coupon.test.66buy.com.cn/publics/couponCode/add]{@link http://dev.51tiangou.com/interfaces/detail.html?id=23}
+	 * @todo    与 couponCodeAdd 取其一
 	 * @todo    页面中使用了同步请求
-	 * @todo    使用防黄牛机制
 	 * */
 	add(couponId, options={}){
 		let data = {
@@ -467,6 +466,7 @@ class CouponServiceModel extends ServiceModel{
 
 		return this.setData('/publics/couponCode/add', {
 			data
+			, needSecKey: true
 		});
 	}
 	/**
@@ -483,6 +483,9 @@ class CouponServiceModel extends ServiceModel{
 	 * @see     [add]{@link CouponServiceModel#add}
 	 * @todo    与 add 取其一
 	 * */
+	couponCodeAdd(couponId, options={}){
+		return this.add(couponId, options);
+	}
 	/**
 	 * @summary 领取新鲜不过夜优惠券
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
@@ -555,7 +558,7 @@ class CouponServiceModel extends ServiceModel{
 
 		return this.getData('/front/listing/searchByActivity', {
 			data
-		}).then(function(data){
+		}).then((data)=>{
 			(validate.isObject( data ) ? data.productList || [] : data).forEach((d)=>{
 				if( !d.solidQty ){
 					d.solidQty = 0;
@@ -809,6 +812,7 @@ class CouponServiceModel extends ServiceModel{
 	 * @param   {Number|String} cityId
 	 * @param   {Object}        [options={}]
 	 * @param   {Number|String} [options.storeId]
+	 * @param   {Number|String} [options.cityId]
 	 * @param   {Number}        [options.pageType]      页面 id，值为 2,3,4,5,7,11,12,13,14,15,16,17,18,,43
 	 * @param   {Number}        [options.advModuleId]   值为 138,139
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
@@ -829,6 +833,9 @@ class CouponServiceModel extends ServiceModel{
 			}
 			if( 'storeId' in options ){
 				data.storeId = options.storeId;
+			}
+			if( 'cityId' in options ){
+				data.storeId = options.cityId;
 			}
 			if( 'advModuleId' in options ){
 				data.advModuleId = options.advModuleId;
@@ -1090,6 +1097,24 @@ class CouponServiceModel extends ServiceModel{
 		return this.getData('/publics/qr/route', {
 			data: {
 				url
+			}
+		});
+	}
+
+	/**
+	 * @summary 扫码个性推荐活动优惠列表
+	 * @param   {Number|String} activityId  活动 id
+	 * @param   {Number|String} storeId
+	 * @param   {Number|String} jr          temp、门店 id、场内外、业种 MIS 编码、推荐位置
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @see     [http://coupon.test.66buy.com.cn/publics/weBank/activity/coupon]{@link http://dev.51tiangou.com/interfaces/detail.html?id=4371}
+	 * */
+	webankCouponAdd(activityId, storeId, jr){
+		return this.getData('/publics/weBank/activity/coupon', {
+			data: {
+				activityId
+				, storeId
+				, jr
 			}
 		});
 	}

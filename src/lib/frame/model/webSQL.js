@@ -1,12 +1,14 @@
 'use strict';
 
 import Model from './model.js';
+import merge from '../util/merge.js';
 
 /**
  * @class
  * @classdesc   对 WebSQL Database 进行封装，统一调用接口，在 Model.factory 工厂方法注册为 webSQL，别名 ws,sql，将可以使用工厂方法生成。默认使用表名为 storage，有 id,topic,value 3 个列的表，在生成对象时传入 options 可覆盖默认 SQL 语句
  * @extends     Model
  * @example
+<pre>
 let webSQLModel = new WebSQLModel()
 	, storage = Model.factory('webSQL')
 	, ws = Model.factory('ws')
@@ -17,6 +19,7 @@ let webSQLModel = new WebSQLModel()
 	;
 
 newSQL.setData('index/data', {});   // newSQL 不会被缓存
+</pre>
  * */
 class WebSQLModel extends Model{
 	/**
@@ -41,28 +44,11 @@ class WebSQLModel extends Model{
 		let sql = config.sql
 			;
 
-		this._config = Object.keys( WebSQLModel._CONFIG ).reduce((all, d)=>{
-			if( d in config ){
-				all[d] = config[d];
-			}
-			else{
-				all[d] = WebSQLModel._CONFIG[d];
-			}
-
-			return all;
-		}, {});
+		this._config = merge(config, WebSQLModel._CONFIG);
 
 		if( sql && typeof sql === 'object' ){
-			sql = Object.keys( sql ).reduce((all, d) =>{
-				if( d in sql ){
-					all[d] = sql[d];
-				}
-				else{
-					all[d] = WebSQLModel._CONFIG.sql[d];
-				}
 
-				return all;
-			}, {});
+			this._config.sql = merge(sql, WebSQLModel._CONFIG.sql);
 		}
 
 		Object.keys( this._config.sql ).forEach((d)=>{
@@ -76,13 +62,13 @@ class WebSQLModel extends Model{
 
 			if( 'openDatabase' in self ){
 				// 打开数据库，若不存在则创建
-				db = openDatabase(this._config.dbName, this._config.dbVersion, this._config.dbName, this._config.dbSize);
+				db = openDatabase(this._config.dbName, ''+ this._config.dbVersion, this._config.dbName, this._config.dbSize);
 
 				db.transaction((tx)=>{
 					// 若没有数据表则创建
-					tx.executeSql(this._config.sql.create, [], function(){
+					tx.executeSql(this._config.sql.create, [], ()=>{
 						resolve( db );
-					}, function(tx, e){
+					}, (tx, e)=>{
 						console.log( e );
 						reject( e );
 					});
@@ -102,7 +88,7 @@ class WebSQLModel extends Model{
 	 * @return  {String}    替换完成的 sql 语句
 	 * */
 	_replaceTableName(sql){
-		return sql.replace('{{tableName}}', this._config.tableName);
+		return sql.replace(/{{tableName}}/g, this._config.tableName);
 	}
 	/**
 	 * @summary 查询
@@ -114,9 +100,9 @@ class WebSQLModel extends Model{
 		return this._store.then((db)=>{
 			return new Promise((resolve, reject)=>{
 				db.transaction((tx)=>{
-					tx.executeSql(this._config.sql.select, [topic], function(tx, rs){
+					tx.executeSql(this._config.sql.select, [topic], (tx, rs)=>{
 						resolve( rs.rows );
-					}, function(tx, e){
+					}, (tx, e)=>{
 						console.log( e );
 						reject( e );
 					});
@@ -135,9 +121,9 @@ class WebSQLModel extends Model{
 		return this._store.then((db)=>{
 			return new Promise((resolve, reject)=>{
 				db.transaction((tx)=>{
-					tx.executeSql(this._config.sql.update, [value, topic], function(tx, rs){
+					tx.executeSql(this._config.sql.update, [value, topic], (tx, rs)=>{
 						resolve( !!rs.rowsAffected );
-					}, function(tx, e){
+					}, (tx, e)=>{
 						console.log( e );
 						reject( e );
 					});
@@ -156,9 +142,9 @@ class WebSQLModel extends Model{
 		return this._store.then((db)=>{
 			return new Promise((resolve, reject)=>{
 				db.transaction((tx)=>{
-					tx.executeSql(this._config.sql.insert, [topic, value], function(tx, rs){
+					tx.executeSql(this._config.sql.insert, [topic, value], (tx, rs)=>{
 						resolve( !!rs.insertId );
-					}, function(tx, e){
+					}, (tx, e)=>{
 						console.log( e );
 						reject( e );
 					})
@@ -176,9 +162,9 @@ class WebSQLModel extends Model{
 		return this._store.then((db)=>{
 			return new Promise((resolve, reject)=>{
 				db.transaction((tx)=>{
-					tx.executeSql(this._config.sql.delete, [topic], function(tx, rs){
+					tx.executeSql(this._config.sql.delete, [topic], (tx, rs)=>{
 						resolve( !!rs.rowsAffected );
-					}, function(tx, e){
+					}, (tx, e)=>{
 						console.log( e );
 						reject( e );
 					});
@@ -195,9 +181,9 @@ class WebSQLModel extends Model{
 		return this._store.then((db)=>{
 			return new Promise((resolve, reject)=>{
 				db.transaction((tx)=>{
-					tx.executeSql(this._config.sql.clear, [], function(tx, rs){
+					tx.executeSql(this._config.sql.clear, [], (tx, rs)=>{
 						resolve( !!rs.rowsAffected );
-					}, function(tx, e){
+					}, (tx, e)=>{
 						console.log( e );
 						reject( e );
 					});
@@ -246,16 +232,20 @@ class WebSQLModel extends Model{
 	}
 	/**
 	 * @summary 获取数据
-	 * @param   {String|String[]}   topic
-	 * @return  {Promise}           返回一个 Promise 对象，若存在 topic 的值，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
+	 * @param   {String|String[]|...String} topic
+	 * @return  {Promise}                   返回一个 Promise 对象，若存在 topic 的值，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
 	 * @desc    获取数据时会优先从内存中取值，若没有则从 WebSQL Database 中取值并将其存入内存中，当 topic 的类型为数组的时候，resolve 传入的结果为一个 json，key 为 topic 中的数据，value 为对应查找出来的值
 	 * */
 	getData(topic){
-		let result
+		let argc = arguments.length
+			, result
 			;
 
 		if( Array.isArray(topic) ){
 			result = this._getByArray( topic );
+		}
+		else if( argc > 1 ){
+			result = this._getByArray( [].slice.call(arguments) );
 		}
 		else{
 			result = super.getData( topic ).catch(()=>{
@@ -326,14 +316,32 @@ class WebSQLModel extends Model{
 		return this._store.then((db)=>{
 			return new Promise((resolve, reject)=>{
 				db.transaction((tx)=>{
-					tx.executeSql(sql, value, function(tx, rs){
+					tx.executeSql(sql, value, (tx, rs)=>{
 						resolve( rs );
-					}, function(e){
+					}, (tx, e)=>{
 						console.log( e );
 						reject( e );
 					});
 				});
-			})
+			});
+		});
+	}
+	/**
+	 * @summary 针对某列建立索引
+	 * @param   {String}    col
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 sql 语句的执行结果
+	 * */
+	createIndex(col){
+		return this._store.then((db)=>{
+			return new Promise((resolve, reject)=>{
+				db.transaction((tx)=>{
+					tx.executeSql(this._config.sql.createIndex.replace(/{{col}}/g, col), [], (tx, rs)=>{
+						resolve( !!rs.rowsAffected );
+					}, (tx, e)=>{
+						reject( e );
+					});
+				});
+			});
 		});
 	}
 }
@@ -347,14 +355,16 @@ WebSQLModel._CONFIG = {
 	dbName: 'storage'
 	, tableName: 'storage'
 	, dbVersion: 1
+	// 数据库可用空间大小，如果指定太大，浏览器会提示用户是否允许使用这么多空间
 	, dbSize: 2<<20
 	, sql: {
-		create: 'create table if not exists `{{tableName}}`(id integer primary key autoincrement,topic text unique,value text)'
-		, select: 'select * from `{{tableName}}` where topic=?'
-		, update: 'update `{{tableName}}` set value=? where topic=?'
-		, insert: 'insert into `{{tableName}}`(topic,value) values(?,?)'
-		, delete: 'delete from `{{tableName}}` where topic=?'
-		, clear: 'delete from `{{tableName}}`'
+		create:         'create table if not exists `{{tableName}}`(id integer primary key autoincrement,topic text unique,value text)'
+		, select:       'select * from `{{tableName}}` where topic=?'
+		, update:       'update `{{tableName}}` set value=? where topic=?'
+		, insert:       'insert into `{{tableName}}`(topic,value) values(?,?)'
+		, delete:       'delete from `{{tableName}}` where topic=?'
+		, clear:        'delete from `{{tableName}}`'
+		, createIndex:  'create index if not exists index_{{col}} on `{{tableName}}`(`{{col}}`)'
 	}
 };
 

@@ -1,8 +1,8 @@
 'use strict';
 
 import Model        from '../model/index.js';
-import ServiceModel from '../model/service.js';
-import domain       from '../runtime/domain.js';
+import ServiceModel from 'ServiceModel';
+import domain       from 'domainConfig';
 import validate     from '../util/validate.js';
 
 /**

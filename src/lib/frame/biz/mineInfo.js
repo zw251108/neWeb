@@ -12,16 +12,19 @@ let cookie      = model.factory('cookie')
 	;
 
 /**
- * @function
- * @return  {Promise}   若用户已经登录，在 resolve 时返回用户信息，否则 reject
+ * @summary     获取个人信息，微信下且未登录则获取微信信息
+ * @function    mineInfo
+ * @memberOf    biz
+ * @return      {Promise}   若用户已经登录，在 resolve 时返回用户信息，否则 reject
+ * @desc        执行后返回一个 Promise 对象，在 resolve 时候传入请求回来的个人信息数据，在 reject 时传入 {msg: '尚未登录'}
  * */
 let mineInfo = function(){
 
-	return cookie.getData('isLogin').then(function(value){
+	return cookie.getData('isLogin').then((value)=>{
 		let exec
 			;
 
-		if( value === 'true' ){
+		if( value === true ){
 			exec = member.mineInfo();
 		}
 		else{
@@ -29,20 +32,16 @@ let mineInfo = function(){
 		}
 
 		return exec;
-	}).then(function(data){
+	}).then((data)=>{
 		// 缓存个人信息
-		return ls.setData('mineInfo', data).then(function(){
+		return ls.setData('mineInfo', data).then(()=>{
 			return data;
 		});
-	}).catch(function(){
+	}).catch(()=>{
 		return Promise.reject({
 			msg: '尚未登录'
 		});
-	})
+	});
 };
 
-/**
- * @exports mineInfo    {Function}
- * @desc    执行后返回一个 Promise 对象，在 resolve 时候传入请求回来的个人信息数据，在 reject 时传入 {msg: '尚未登录'}
- * */
 export default mineInfo;

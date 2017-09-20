@@ -1,16 +1,19 @@
 'use strict';
 
 import Model from './model.js';
+import merge from '../util/merge.js';
 
 /**
  * @class
  * @classdesc   对 IndexedDB 进行封装，统一调用接口，在 Model.factory 工厂方法注册为 indexedDB，别名 idb，将可以使用工厂方法生成
  * @extends     Model
  * @example
- let indexedDBModel = new IndexedDBModel()
- , storage = Model.factory('indexedDB')
- , idb = Model.factory('idb')
- ;
+<pre>
+let indexedDBModel = new IndexedDBModel()
+	, storage = Model.factory('indexedDB')
+	, idb = Model.factory('idb')
+	;
+</pre>
  * */
 class IndexedDBModel extends Model{
 	/**
@@ -28,16 +31,7 @@ class IndexedDBModel extends Model{
 	constructor(config={}){
 		super();
 
-		this._config = Object.keys( IndexedDBModel._CONFIG ).reduce((all, d)=>{
-			if( d in config ){
-				all[d] = config[d];
-			}
-			else{
-				all[d] = IndexedDBModel._CONFIG[d];
-			}
-
-			return all;
-		}, {});
+		this._config = merge(config, IndexedDBModel._CONFIG);
 
 		// this._store 为 Promise 类型，会在 resolve 中传入 db 实例，因为要保证数据库打开成功才可以操作
 		this._store = new Promise((resolve, reject)=>{
@@ -73,14 +67,13 @@ class IndexedDBModel extends Model{
 							});
 						});
 					}
-
-					dbOpenRequest.onsuccess = function(e){
-						resolve( e.target.result );
-					};
-					dbOpenRequest.onerror = function(e){
-						console.log( e );
-						reject( e );
-					};
+				};
+				dbOpenRequest.onsuccess = function(e){
+					resolve( e.target.result );
+				};
+				dbOpenRequest.onerror = function(e){
+					console.log( e );
+					reject( e );
 				};
 			}
 			else{
@@ -204,7 +197,7 @@ class IndexedDBModel extends Model{
 		}
 		else{
 			result = super.setData(topic, value).then(()=>{
-				return this._put(topic, this._stringify(value));
+				return this._put(topic, value);
 			});
 		}
 
@@ -212,27 +205,36 @@ class IndexedDBModel extends Model{
 	}
 	/**
 	 * @summary 获取数据
-	 * @param   {String|String[]}   topic
-	 * @return  {Promise}       返回一个 Promise 对象，若存在 topic 的值，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
+	 * @param   {String|String[]|...String} topic
+	 * @return  {Promise}                   返回一个 Promise 对象，若存在 topic 的值，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
 	 * @desc    获取数据时会优先从内存中取值，若没有则从 indexedDB 中取值并将其存入内存中，当 topic 的类型为数组的时候，resolve 传入的结果为一个 json，key 为 topic 中的数据，value 为对应查找出来的值
 	 * */
 	getData(topic){
-		let result
+		let argc = arguments.length
+			, result
 			;
 
 		if( Array.isArray(topic) ){
 			result = this._getByArray( topic );
 		}
+		else if( argc > 1 ){
+			result = this._getByArray( [].slice.call(arguments) );
+		}
 		else{
 			result = super.getData( topic ).catch(()=>{
-				return this._select( topic ).then((value)=>{
+				return this._select( topic ).then((rs)=>{
+					let value
+						;
 
-					if( value ){
+					if( rs ){
+						value = rs.value;
 
-						try{
-							value = JSON.parse( value );
+						if( typeof value === 'string' ){ // 若为字符串类型的数据，尝试进行解析
+							try{
+								value = JSON.parse( value );
+							}
+							catch(e){}
 						}
-						catch(e){}
 
 						// 在内存中保留该值
 						super.setData(topic, value);
@@ -245,6 +247,7 @@ class IndexedDBModel extends Model{
 				});
 			});
 		}
+
 		return result;
 	}
 	/**
@@ -276,6 +279,69 @@ class IndexedDBModel extends Model{
 			return this._clear();
 		});
 	}
+	/**
+	 * @summary 获取通过 range 获取数据
+	 * @param   {Number}            [min]
+	 * @param   {Number|Boolean}    [max]
+	 * @param   {Boolean}           [eqMin=true]
+	 * @param   {Boolean}           [eqMax=true]
+	 * @return  {Promise}           返回一个 Promise 对象，在 resolve 时传回 cursor 列表
+	 * @todo    区间取值功能
+	 * */
+	getDataByRange(min, max, eqMin=true, eqMax=true){
+		let argc = arguments.length
+			;
+
+		return this._store.then((db)=>{
+			return new Promise((resolve, reject)=>{
+				let objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore( this._config.tableName )
+					// , keyRangeValue = IDBKeyRange.bound(min, max, eqMin, eqMax)
+					// , objectStoreRequest = objectStore.openCursor( keyRangeValue )
+					, objectStoreRequest = objectStore.openCursor()
+					, cursorList = []
+					;
+
+				// switch( argc ){
+				// 	case 1:
+				// 		keyRangeValue = IDBKeyRange.bound( min );
+				// 		break;
+				// 	case 2:
+				// 		if( typeof max === 'boolean' ){
+				// 			keyRangeValue = IDBKeyRange.lowerBound(min, max);
+				// 		}
+				// 		else{
+				// 			keyRangeValue = IDBKeyRange.bound(min, max);
+				// 		}
+				// 		break;
+				// 	case 3:
+				// 		keyRangeValue = IDBKeyRange.bound()
+				// 		break;
+				// 	case 4:
+				// 		break;
+				// 	default:
+				// 		break;
+				// }
+
+				objectStoreRequest.onsuccess = function(e){
+					let cursor = e.target.result
+					;
+
+					if( cursor ){
+						cursorList.push( cursor.value );
+
+						cursor.continue();
+					}
+					else{
+						resolve( cursorList );
+					}
+				};
+				objectStoreRequest.onerror = function(e){
+					console.log( e );
+					reject( e );
+				};
+			});
+		});
+	}
 }
 
 /**
@@ -289,6 +355,10 @@ IndexedDBModel._CONFIG = {
 	, dbVersion: 1
 	, keyPath: 'topic'
 	, index: [{
+		name: 'topic'
+		, keyPath: 'topic'
+		, unique: true
+	}, {
 		name: 'value'
 		, keyPath: 'value'
 		, unique: false

@@ -1,8 +1,10 @@
 'use strict';
 
+import CONFIG       from '../config.js';
+import domain       from 'domainConfig';
+import merge        from '../util/merge.js';
 import Model        from '../model/model.js';
-import ServiceModel from '../model/service.js';
-import domain       from '../runtime/domain.js';
+import ServiceModel from 'ServiceModel';
 
 /**
  * @class
@@ -28,60 +30,18 @@ class LogServiceModel extends ServiceModel{
 
 		this._config.baseUrl = '//'+ this._config.domainList.join('.');
 
-		// 各个 model 中 uuid 的 key 值
-		this.uuidKey = 'tgs_uuid';
-
-		this.uuid = config.uuid;
+		// this._config.ceKey = CONFIG.ceKey;
 
 		this.disabled = false;  // 是否禁用
 
-		this.cookie = Model.factory('cookie');
-		this.localStorage = Model.factory('localStorage');
-		this.sessionStoreage = Model.factory('sessionStorage');
+		this._scpExtraPromise = null;   // 获取 SCP 额外参数的 Promise
 
-		/**
-		 * @member  {Promise}   _uuid
-		 * 获取 uuid，优先级 localStorage > sessionStorage > cookie > 缓存在页面，返回一个 Promise 对象，在 resolve 时传回 uuid
-		 * */
-		this._uuid = Promise.all([
-			this.localStorage.getData( this.uuidKey ).catch(()=>{})
-			, this.sessionStoreage.getData( this.uuidKey ).catch(()=>{})
-			, this.cookie.getData( this.uuidKey ).catch(()=>{})
-		]).then(([localUUID, sessionUUID, cookieUUID])=>{
-			let uuid = localUUID || sessionUUID || cookieUUID || this.uuid
-				;
+		this._pageExtraPromise = null;  // 获取 page 额外参数的 Promise
 
-			if( uuid !== localUUID ){
-				this.localStorage.setData(this.uuidKey, uuid);
-			}
-			if( uuid !== sessionUUID ){
-				this.sessionStoreage.setData(this.uuidKey, uuid);
-			}
-			if( uuid !== cookieUUID ){
-				this.cookie.setData(this.uuidKey, uuid);
-			}
-			if( uuid !== this.uuid ){
-				this.uuid = uuid;
-			}
-
-			return uuid;
-		});
-
-		/**
-		 * @member  {Promise}   _global
-		 * 从 cookie 中获取 global 参数，失败则传 webapp
-		 * */
-		this._global = this.cookie.getData('global').catch(()=>{
-			return 'webapp';
-		});
-
-		/**
-		 * @member  {Promise}   _memberId
-		 * 从 cookie 中获取 memberId
-		 * */
-		this._memberId = this.cookie.getData('memberId').catch(()=>{});
+		this._searchExtraPromise = null;    // 获取 search 额外参数的 Promise
 	}
 
+	// ---------- 私有方法 ----------
 	/**
 	 * @summary 将对象转为 get 请求格式的参数
 	 * @private
@@ -93,37 +53,29 @@ class LogServiceModel extends ServiceModel{
 			return d +'='+ encodeURIComponent( params[d] || '' );
 		}).join('&');
 	}
-
-	_makeParam(){
-		return Promise.all([
-			this._global
-			, this._memberId
-		]);
-	}
-
+	
+	// ---------- 公有方法 ----------
 	/**
-	 * @summary 整合参数
-	 * @param   {Object}    params
-	 * @return  {Promise}
+	 * @summary 设置 scp 跟踪全局参数
+	 * @param   {Promise}   scpEP
 	 * */
-	_setData(params){
-
-		return Promise.all([
-			this._global
-			, this._memberId
-		]).then(([global, memberId])=>{
-			return {
-				gl: global
-				, mi: memberId
-			}
-		});
-
-		let rs = {
-
-			}
-			;
+	setSCPExtra(scpEP){
+		this._scpExtraPromise = scpEP;
 	}
-
+	/**
+	 * @summary 设置 page 跟踪全局参数
+	 * @param   {Promise}   pageEP
+	 * */
+	setPageExtra(pageEP){
+		this._pageExtraPromise = pageEP;
+	}
+	/**
+	 * @summary 设置 search 跟踪全局数据
+	 * @param   {Promise}   searchEP
+	 * */
+	setSearchExtra(searchEP){
+		this._searchExtraPromise = searchEP;
+	}
 	/**
 	 * @summary 设置是否禁用
 	 * @param   {Boolean}   disabled
@@ -137,50 +89,61 @@ class LogServiceModel extends ServiceModel{
 	 * @param   {Object}    params
 	 * */
 	sendTrack(url, params){
-
 		if( this.disabled ){
 			return;
 		}
 
-		let image = document.createElement('img')
+		let image = document.createElement('img', CONFIG.ceKey)
+		// let image = document.createElement('img')
 			, timestamp = +new Date()
 			, name = 'img_'+ timestamp
 			;
 
 		window[name] = image;
 
-		image.onload = image.onerror = function(){
+		image.onload = image.onerror = ()=>{
 			// 内存释放
 			window[name] = image = image.onload = image.onerror = null;
 
 			delete window[name];
 		};
 
-		image.src = this._config.baseUrl + url + this._toQueryString( params );
+		image.src = this._config.baseUrl + url +'?'+ this._toQueryString( params );
+
+		console.log('发送 track', params);
 	}
 	/**
 	 * @summary 发送 scp，发送 scp.gif
 	 * @param   {String}    scp
 	 * @param   {String}    [bk]
+	 * @param   {String}    [traceId]
 	 * */
-	trackSCP(scp, bk){
+	trackSCP(scp, bk, traceId){
+		if( this.disabled ){
+			return;
+		}
+
 		if( !scp ){
 			return;
 		}
 
-		Promise.all([
-			this._global
-			, this._memberId
-			, this._uuid
-		]).then(function([global, memberId, uuid]){
-			let params = {
+		let execute
+			;
+
+		if( this._scpExtraPromise ){
+			execute = this._scpExtraPromise;
+		}
+		else{
+			execute = Promise.resolve({});
+		}
+
+		execute.then((extParams)=>{
+			let params = merge({
 					scp
 					, bk
-					, uu: uuid
-					, gl: global
-					, mi: memberId
-					, t: (+new Date())
-				}
+					, traceId
+					, t: Date.now()
+				}, extParams)
 				;
 
 			this.sendTrack('/scp.gif', params);
@@ -188,30 +151,79 @@ class LogServiceModel extends ServiceModel{
 	}
 	/**
 	 * @summary 发送 tgs.gif
-	 * @param   {Object}    [opts={}]
+	 * @param   {Object}    [options={}]
 	 * */
-	trackPage(opts={}){
-		opts.type = 1;
+	trackPage(options={}){
+		if( this.disabled ){
+			return;
+		}
 
-		this.sendTrack('/tgs.gif', opts);
+		let execute
+			;
+
+		options.type = 1;
+
+		if( this._pageExtraPromise ){
+			execute = this._pageExtraPromise;
+		}
+		else{
+			execute = Promise.resolve({});
+		}
+
+		execute.then((extParams)=>{
+			let params = merge(options, extParams)
+				;
+
+			this.sendTrack('/tgs.gif', params);
+		});
 	}
 	/**
 	 * @summary 发送 sr.gif
 	 * @param   {String}    key         搜索关键字
 	 * @param   {Object}    [data={}]
+	 * @param   {String}    [data.results]
+	 * @param   {String}    [data.whereabouts]
+	 * @param   {String}    [data.source]
 	 * */
 	trackSearch(key, data={}){
+		if( this.disabled ){
+			return;
+		}
+
 		if( !key ){
 			return;
 		}
 
-		// data.results;
-		// data.whereabouts;
-		// data.source;
+		let execute
+			;
 
-		this.sendTrack('/sr.gif', {
-			url: key
+		if( this._searchExtraPromise ){
+			execute = this._searchExtraPromise
+		}
+		else{
+			execute = Promise.resolve({});
+		}
+
+		execute.then((extParams)=>{
+			let params
+				;
+
+			params = merge(data, extParams);
+			params = merge({
+				url: key
+			}, params);
+
+			this.sendTrack('/sr.gif', params);
 		});
+	}
+	/**
+	 * @summary 发生 ep.gif
+	 * */
+	trackEp(){
+		let params = {}
+			;
+
+		this.sendTrack('ep.gif', params);
 	}
 }
 

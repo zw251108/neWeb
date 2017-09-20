@@ -4,11 +4,11 @@
  * @file    自动定位
  * */
 
-import maple    from 'maple';
-
-import location from '../location.js';
+import url      from 'url';
+import position from '../position.js';
 import model    from '../model/index.js';
-import url      from '../runtime/url.js';
+
+import confirm  from '../component/confirm/index.js';
 
 const CITY_ID_EXPIRES   = 365
 	, CITY_NAME_EXPIRES = 365
@@ -19,20 +19,32 @@ const CITY_ID_EXPIRES   = 365
 let cookie = model.factory('cookie')
 	, base = model.factory('base')
 
-	, pathname = url.pathname
-	, isIndex = (pathname === '/' || pathname === '/index.html' || pathname === '/discover/index.html')
+	, pathname = url.path
+	, isIndex = (pathname === '/' || pathname === '/index.html' || pathname === '/discover/index.html' || pathname === '/testDemo.html')    // testDemo 为测试用
 	, changeCityConfirm = function(currCity, toCity){
-		return new Promise((resolve, reject)=>{
-			maple.confirm({
-				title: '提示信息'
-				, content: '您当前选择的城市为'+ currCity +'，是否切换至'+ toCity +'？'
-				, okFn: resolve
-				, cancelFn: reject
-			});
+		return confirm({
+			title: '提示信息'
+			, content: '您当前选择的城市为'+ currCity +'，是否切换至'+ toCity +'？'
 		});
+
+		// return new Promise((resolve, reject)=>{
+		//
+		// 	maple.confirm({
+		// 		title: '提示信息'
+		// 		, content: '您当前选择的城市为'+ currCity +'，是否切换至'+ toCity +'？'
+		// 		, okFn: resolve
+		// 		, cancelFn: reject
+		// 	});
+		// });
 	}
 	;
 
+/**
+ * @summary     获取当前地理位置的门店信息
+ * @function    positionInfo
+ * @memberOf    tg.biz
+ * @return      {Promise}
+ * */
 let positionInfo = function(){
 		let params = url.params
 			, cityId = params.cityId || params.cityid || undefined
@@ -58,39 +70,27 @@ let positionInfo = function(){
 			});
 		}
 		else{
-			exec = cookie.getData(['cityId', 'cityName']).catch(()=>{
+			exec = cookie.getData('cityId', 'cityName').catch(()=>{
 				return defaultCity;
 			});
-
-			// exec = Promise.all([
-			// 	cookie.getData('cityId')
-			// 	, cookie.getData('cityName')
-			// ]).then(([cityId, cityName])=>{ //非第一次进入，cookie 中有 city 信息
-			// 	return {
-			// 		cityId
-			// 		, cityName
-			// 	};
-			// }, ()=>{    // 第一次进入
-			// 	return defaultCity;
-			// });
 		}
 
 		return exec.then((rs)=>{
-			
 			gpsPosition();
 
 			return rs;
 		});
 	}
 	, gpsPosition = function(){
-
+		console.log('进入定位');
+	
 		if( isIndex ){  // 当前页面是首页或者发现频道首页
 			cookie.getData('isGPS').then(()=>{  // 定位过
+				console.log('已经定位过');
+				
 				return Promise.reject();
 			}, ()=>{   // 没有进行过定位，当前页面是首页或者城市惠页面
-				console.log('进入定位');
-
-				return location();
+				return position();
 			}).then((position)=>{
 				let coords = (position || {}).coords || {}
 					, exec
@@ -108,6 +108,10 @@ let positionInfo = function(){
 				}
 
 				return exec;
+			}, ()=>{
+				console.log('定位失败');
+				
+				return Promise.reject();
 			}).then(({lat, lon})=>{
 
 				// 根据经纬度到百度提供的 api 查所在城市，再判断该城市下是否有门店
@@ -144,7 +148,7 @@ let positionInfo = function(){
 				// ]).catch(()=>{  // 第一次进入，cookie 中没有 cityId,cityName
 				// 	return [];
 				// }).then(([currCityId, currCityName])=>{
-				return cookie.getData(['cityId', 'cityName']).catch(()=>{
+				return cookie.getData('cityId', 'cityName').catch(()=>{
 					return {};
 				}).then(({cityId: currCityId, cityName: currCityName})=>{
 					let exec
@@ -163,20 +167,17 @@ let positionInfo = function(){
 						cookie.removeData('storeId');
 
 						// 去掉 url 上参数
-						url.removeParam('cityId', 'storeId', 'source');
+						url.replace('cityId', 'storeId', 'source');
 
 						// 刷新当前页面
 						url.reload();
 					}, ()=>{});
 				});
-			}).then(()=>{
+			}).catch(()=>{}).then(()=>{
 				cookie.setData('isGPS', true);
 			});
 		}
 	}
 	;
 
-/**
- * @exports positionInfo
- * */
 export default positionInfo;

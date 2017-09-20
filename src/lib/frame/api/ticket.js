@@ -1,8 +1,8 @@
 'use strict';
 
 import Model        from '../model/model.js';
-import ServiceModel from '../model/service.js';
-import domain       from '../runtime/domain.js';
+import ServiceModel from 'ServiceModel';
+import domain       from 'domainConfig';
 
 /**
  * @class
@@ -120,6 +120,14 @@ class TicketServiceModel extends ServiceModel{
 		});
 	}
 
+	/**
+	 * @summary 客服中心问题分类列表
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @see     [http://ticket.test.66buy.com.cn/publics/csQaCat/homePage]{@link http://dev.51tiangou.com/interfaces/detail.html?id=3223}
+	 * */
+	csQaCatHome(){
+		return this.getData('/pulbic/csQaCat/homePage');
+	}
 	/**
 	 * @summary 问题分类
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果

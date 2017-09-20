@@ -1,8 +1,8 @@
 'use strict';
 
 import Model        from '../model/model.js';
-import ServiceModel from '../model/service.js';
-import domain       from '../runtime/domain.js';
+import ServiceModel from 'ServiceModel';
+import domain       from 'domainConfig';
 import validate     from '../util/validate.js';
 
 /**
@@ -32,15 +32,18 @@ class ImServiceModel extends ServiceModel{
 	/**
 	 * @summary 获取用户账号信息（判断用户是否注册了环信 IM 账号）
 	 * @param   {Number|String} memberId
+	 * @param   {Number}        [tgAppVersion]  在 app 下传 app 版本号
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @desc    使用 POST 方法
+	 * @desc    使用 POST 方法，在参数中添加了 tgAppVersion 参数，在 APP 下，拦截器会将 tgAppVersion 参数加上
 	 * @see     [http://imserv.test.66buy.com.cn/publics/tgou/easemob/getByMemberId]{@link http://dev.51tiangou.com/interfaces/detail.html?id=3211}
 	 * */
-	getByMemberId(memberId){
+	getByMemberId(memberId, tgAppVersion){
 		return this.setData('/publics/tgou/easemob/getByMemberId', {
 			data: {
 				memberId
+				, tgAppVersion
 			}
+			, tgAppVersion: true
 		});
 	}
 	/**
@@ -84,10 +87,12 @@ class ImServiceModel extends ServiceModel{
 	/**
 	 * @summary 通过 counterId 获得导购 im 账号列表
 	 * @param   {Number|String} counterId
+	 * @param   {Number}        [tgAppVersion]  在 app 下传 app 版本号
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果，如果未传参数会返回 []
+	 * @desc    在参数中添加了 tgAppVersion 参数，在 APP 下，拦截器会将 tgAppVersion 参数加上
 	 * @see     [http://imserv.test.66buy.com.cn/publics/tgou/easemob/getSkillGroup]{@link http://dev.51tiangou.com/interfaces/detail.html?id=106}
 	 * */
-	getServiceList(counterId){
+	getServiceList(counterId, tgAppVersion){
 		let result
 			;
 
@@ -95,7 +100,9 @@ class ImServiceModel extends ServiceModel{
 			result = this.getData('/publics/tgou/getByCounterId', {
 				data: {
 					counterId
+					, tgAppVersion
 				}
+				, tgAppVersion: true
 			});
 		}
 		else{

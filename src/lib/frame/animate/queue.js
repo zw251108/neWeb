@@ -19,7 +19,7 @@ class AnimationQueue {
 				let animator = self.animators.shift()
 					;
 
-				if( animator instanceof Animator){
+				if( animator instanceof Animator ){
 					animator.start(function(){
 						if( self.animators.length ){
 							play();

@@ -1,8 +1,8 @@
 'use strict';
 
 import Model        from '../model/model.js';
-import ServiceModel from '../model/service.js';
-import domain       from '../runtime/domain.js';
+import ServiceModel from 'ServiceModel';
+import domain       from 'domainConfig';
 import validate     from '../util/validate.js';
 
 /**
@@ -438,7 +438,7 @@ class MemberServiceModel extends ServiceModel{
 	 * @param   {Number|String} cardId
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
 	 * @see     [http://mserv.test.66buy.com.cn/publics/signRecord/signin]{@link http://dev.51tiangou.com/interfaces/detail.html?id=1921}
-	 * @todo    使用防黄牛机制
+	 * @desc    参数中添加了 needSecKey 使用防黄牛机制
 	 * */
 	signin(storeId, cardId){
 		let result
@@ -450,6 +450,7 @@ class MemberServiceModel extends ServiceModel{
 					storeId
 					, cardId
 				}
+				, needSecKey: true
 			});
 		}
 		else{
@@ -656,21 +657,34 @@ class MemberServiceModel extends ServiceModel{
 			}
 		});
 	}
+	/**
+	 * @summary 微信下联合登录
+	 * @param   {String}    unionId
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @desc    使用 POST 方法
+	 * @see     [http://mserv.test.66buy.com.cn/publics/login/wechatLogin]{@lick http://dev.51tiangou.com/interfaces/detail.html?id=4549}
+	 * */
+	weChatLogin(unionId){
+		return this.setData('/publics/login/wechatLogin', {
+			data: {
+				unionId
+			}
+		});
+	}
 
 	/**
 	 * @summary 更改密码
-	 * @param   {String}    oldPwd
 	 * @param   {String}    password
 	 * @param   {String}    code        验证码
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
 	 * @desc    使用 POST 方法
+	 *          2017-08-28 去掉 oldPwd 参数
 	 * @see     [http://mserv.test.66buy.com.cn/publics/member/updatePwd]{@link http://dev.51tiangou.com/interfaces/detail.html?id=2811}
 	 * */
-	updatePwd(oldPwd, password, code){
+	updatePwd(password, code){
 		return this.setData('/publics/member/updatePwd', {
 			data: {
-				oldPwd
-				, password
+				password
 				, code
 			}
 		});
@@ -680,19 +694,28 @@ class MemberServiceModel extends ServiceModel{
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
 	 * @see     [http://mserv.test.66buy.com.cn/publics/member/info]
 	 * @todo    接口中心未查到
-	 * @todo    isCheckLogin=false
+	 * @todo    isCheckLogin=false 不检查登录
 	 * */
 	memberInfo(){
 		return this.getData('/publics/member/info');
 	}
 	/**
-	 * 加载用户信息，使用 POST 方法
+	 * @summary 加载用户信息
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @desc    使用 POST 方法
 	 * @see     [http://mserv.test.66buy.com.cn/publics/member/memberProfile]
 	 * @todo    接口中心未查到
 	 * */
 	memberProfile(){
 		return this.setData('/publics/member/memberProfile');
+	}
+	/**
+	 * @summary     查看个人资料
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @see     [http://mserv.test.66buy.com.cn/publics/member/socialProfile]{@link http://dev.51tiangou.com/interfaces/detail.html?id=4079}
+	 * */
+	socialProfile(){
+		return this.getData('/publics/member/socialProfile');
 	}
 	/**
 	 * @summary 更新电话号
@@ -727,6 +750,19 @@ class MemberServiceModel extends ServiceModel{
 		return this.setData('/publics/member/update/nickname', {
 			data: {
 				nickname
+			}
+		});
+	}
+	/**
+	 * @summary 更新个人资料
+	 * @param   {String}    signature   签名
+	 * @desc    使用 POST 方法
+	 * @see     [http://mserv.test.66buy.com.cn/publics/member/update/signature]{@link http://dev.51tiangou.com/interfaces/detail.html?id=4069}
+	 * */
+	memberSignature(signature){
+		return this.setData('/publics/member/update/signature', {
+			data: {
+				signature
 			}
 		});
 	}
@@ -876,10 +912,10 @@ class MemberServiceModel extends ServiceModel{
 	 * @summary 更新头像
 	 * @param   {String}    imageUrl
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @desc    使用 POST 方法
+	 * @desc    使用 POST 方法，方法原名 updatePhone。。。
 	 * @see     [http://mserv.test.66buy.com.cn/publics/member/update/photo]{@link http://dev.51tiangou.com/interfaces/detail.html?id=1801}
 	 * */
-	updatePhone(imageUrl){
+	updatePhoto(imageUrl){
 		return this.setData('/publics/member/update/photo', {
 			data: {
 				imageUrl
@@ -893,6 +929,41 @@ class MemberServiceModel extends ServiceModel{
 	 * */
 	openState(){
 		return this.getData('/publics/member/openState');
+	}
+	/**
+	 * @summary 关闭扫码页
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @see     [http://mserv.test.66buy.com.cn/publics/member/close]{@link http://dev.51tiangou.com/interfaces/detail.html?id=4301}
+	 * */
+	close(){
+		return this.setData('/publics/member/close');
+	}
+	/**
+	 * @summary 订阅和取消门店
+	 * @param   {Number|String} storeId
+	 * @param   {Number}        state   是否订阅，1.订阅，0.取消订阅
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @see     [http://mserv.test.66buy.com.cn/publics/member/store/subscribed]{@link http://dev.51tiangou.com/interfaces/detail.html?id=4201}
+	 * */
+	subscribed(storeId, state){
+		return this.getData('/publics/member/store/subscribed', {
+			data: {
+				storeId
+				, state
+			}
+		});
+	}
+	/**
+	 * @summary 关注和取消关注（门店）
+	 * @param   {Number|String} storeId
+	 * @param   {Number}        state   是否订阅，1.订阅，0.取消订阅
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @desc    实际为 subscribed 接口重命名
+	 * @see     [subscribed]{@link MemberServiceModel#subscribed}
+	 * @todo    与 subscribed 取其一
+	 * */
+	storeAttention(storeId, state){
+		return this.subscribed(storeId, state);
 	}
 
 	/**

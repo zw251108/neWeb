@@ -1,8 +1,8 @@
 'use strict';
 
 import Model        from '../model/model.js';
-import ServiceModel from '../model/service.js';
-import domain       from '../runtime/domain.js';
+import ServiceModel from 'ServiceModel';
+import domain       from 'domainConfig';
 import validate     from '../util/validate.js';
 
 /**
@@ -83,7 +83,7 @@ class ItemServiceModel extends ServiceModel{
 
 		return this.getData('/front/listing/search', {
 			data
-		}).then(function(data){ // 补全已售数量
+		}).then((data)=>{ // 补全已售数量
 			(validate.isObject( data ) ? data.productList || [] : data).forEach((d)=>{
 				if( !d.solidQty ){
 					d.solidQty = 0;
@@ -110,7 +110,7 @@ class ItemServiceModel extends ServiceModel{
 
 		return this.getData('/front/listing/searchByActivity', {
 			data
-		}).then(function(data){ // 补全已售数量
+		}).then((data)=>{ // 补全已售数量
 			(validate.isObject( data ) ? data.productList || [] : data).forEach((d)=>{
 				if( !d.solidQty ){
 					d.solidQty = 0;
@@ -193,27 +193,43 @@ class ItemServiceModel extends ServiceModel{
 	}
 	/**
 	 * @summary 加载商品数据
-	 * @param   {Number|String} id  商品 id
-	 * @param   {Number}        source  门店类型
+	 * @param   {Number|String} id          商品 id
+	 * @param   {Number}        source      门店类型
+	 * @param   {String}        uuid        用户 uuid
 	 * @param   {String}        [orderColumn='item_heat desc,sold_qty desc,start_time desc']
 	 * @param   {String}        [orderType='DESC']
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @desc    使用 POST 方法
-	 * @see     [http://item.test.66buy.com.cn/front/listing/search/order/sug]
-	 * @todo    接口中心未查到
+	 * @desc    使用 POST 方法，在原接口基础上添加参数 memberId, cellPhone, uuid，同时支持使用拦截器实现添加 uuid 等参数
+	 *          2017-08-15 由 /front/listing/search/order/sug 接口切换到 /mallProduct/recommend/byMember 接口
+	 *          2017-08-28 去掉 memberId cellPhone 参数，调用接口时，不再传递用户敏感信息
+	 // * @see     [http://item.test.66buy.com.cn/front/listing/search/order/sug]
+	 // * @todo    接口中心未查到
+	 * @see     [http://item.test.66buy.com.cn/mallProduct/recommend/byMember]{@link http://dev.51tiangou.com/interfaces/detail.html?id=4289}
 	 * */
-	sugProduct(id, source, orderColumn='item_heat desc,sold_qty desc,start_time desc', orderType='DESC'){
+	sugProduct(id, source, uuid, orderColumn='item_heat desc,sold_qty desc,start_time desc', orderType='DESC'){
 		let result
 			;
 
 		if( id ){
-			result = this.setData('/front/listing/search/order/sug', {
+			// result = this.setData('/front/listing/search/order/sug', {
+			// 	data: {
+			// 		id
+			// 		, source
+			// 		, uuid
+			// 		, orderColumn
+			// 		, orderType
+			// 	}
+			// 	, uuid: true
+			// });
+			result = this.setData('/mallProduct/recommend/byMember', {
 				data: {
 					id
 					, source
+					, uuid
 					, orderColumn
 					, orderType
 				}
+				, uuid: true
 			});
 		}
 		else{
@@ -222,6 +238,42 @@ class ItemServiceModel extends ServiceModel{
 
 		return result;
 	}
+	/**
+	 * @summary 购物完成页面调用猜你喜欢接口
+	 * @param   {Number|String} id          商品 id
+	 * @param   {Number}        source      门店类型
+	 * @param   {String}        uuid        用户 uuid
+	 * @param   {String}        [orderColumn='item_heat desc,sold_qty desc,start_time desc']
+	 * @param   {String}        [orderType='DESC']
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @desc    使用 POST 方法，为原 sugProduct 接口，在原接口基础上添加参数 memberId, cellPhone, uuid，同时支持使用拦截器实现添加 uuid 等参数
+	 *          2017-08-28 去掉 memberId cellPhone 参数，调用接口时，不再传递用户敏感信息
+	 * @see     [http://item.test.66buy.com.cn/front/listing/search/order/sug]
+	 * @todo    接口中心未查到
+	 * */
+	sugProductInOrderFin(id, source, uuid, orderColumn='item_heat desc,sold_qty desc,start_time desc', orderType='DESC'){
+		let result
+		;
+
+		if( id ){
+			result = this.setData('/front/listing/search/order/sug', {
+				data: {
+					id
+					, source
+					, uuid
+					, orderColumn
+					, orderType
+				}
+				, uuid: true
+			});
+		}
+		else{
+			result = Promise.reject();
+		}
+
+		return result;
+	}
+
 	/**
 	 * @summary 商品列表（跨境吃货合并后的接口）
 	 * @param   {Object}        data
@@ -347,7 +399,7 @@ class ItemServiceModel extends ServiceModel{
 	 * */
 	introduce(productId){
 		let result
-		;
+			;
 
 		if( productId && validate.isInteger(productId) ){
 			result = this.getData('/front/listing/query/detail', {
@@ -361,6 +413,29 @@ class ItemServiceModel extends ServiceModel{
 		}
 
 		return result;
+	}
+	/**
+	 * @summary 图文详情
+	 * @param   {Number|String} productId
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果，如果未传参数会返回 []
+	 * @see     [introduce]{@link ItemServiceModel#introduce}
+	 * @todo    与 introduce 取其一
+	 * */
+	queryDetail(productId){
+		return this.introduce( productId );
+	}
+	/**
+	 * @summary 通过商品 id 获取天狗答疑
+	 * @param   {Number|String} productId
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果，如果未传参数会返回 []
+	 * @see     [http://item.test.66buy.com.cn/front/listing/productFaq]{@link http://dev.51tiangou.com/interfaces/detail.html?id=3841}
+	 * */
+	productFaq(productId){
+		return this.getData('/front/listing/productFaq', {
+			data: {
+				productId
+			}
+		});
 	}
 	
 	/**
@@ -682,9 +757,8 @@ class ItemServiceModel extends ServiceModel{
 	 * @param   {String}            wechatName
 	 * @param   {Number|String}     memberSecId         分享者的 memberId，加密后的字符串
 	 * @return  {Promise}           返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @desc    使用 POST 方法
+	 * @desc    使用 POST 方法，参数中添加了 needSecKey 使用防黄牛机制
 	 * @see     [http://item.test.66buy.com.cn/barginRecord/add]{@link http://dev.51tiangou.com/interfaces/detail.html?id=633}
-	 * @todo    使用防黄牛机制
 	 * */
 	barginRecordAdd(activityProductId, uuid, wechatName, memberSecId){
 		return this.setData('/barginRecord/add', {
@@ -694,6 +768,7 @@ class ItemServiceModel extends ServiceModel{
 				, wechatName
 				, memberSecId
 			}
+			, needSecKey: true
 		});
 	}
 	/**

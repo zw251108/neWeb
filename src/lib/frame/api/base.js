@@ -1,8 +1,8 @@
 'use strict';
 
+import domain       from 'domainConfig';
 import Model        from '../model/model.js';
-import ServiceModel from '../model/service.js';
-import domain       from '../runtime/domain.js';
+import ServiceModel from 'ServiceModel';
 import mallList     from '../../../../setting/mallShop.json';
 import marketList   from '../../../../setting/marketShop.json';
 
@@ -30,6 +30,63 @@ class BaseServiceModel extends ServiceModel{
 		this._config.baseUrl = '//'+ this._config.domainList.join('.');
 	}
 
+	// ---------- 私有方法 ----------
+	/**
+	 * @summary 通过 gps 取附近的门店
+	 * @private
+	 * @param   {Number|String} lat
+	 * @param   {Number|String} lon
+	 * @param   {Number}        [source=1]  门店类型：1.百货，2.超市
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @desc    实际为 nearStore 接口重命名
+	 * @see     [nearStore]{@link BaseServiceModel#nearStore}
+	 * @todo    与 nearStore 取其一
+	 * */
+	_getGpsShop(lat, lon, source=1){
+		return this.nearStore(lat, lon, source);
+	}
+	/**
+	 * @summary 计算弧度
+	 * @private
+	 * @param   {Number|String} d
+	 * @return  {Number}
+	 * */
+	_rad(d){
+		return d * Math.PI / 180.0;
+	}
+	/**
+	 * @summary 根据经纬度，获取距离
+	 * @private
+	 * @param   {Number|String} lat1
+	 * @param   {Number|String} lng1
+	 * @param   {Number|String} lat2
+	 * @param   {Number|String} lng2
+	 * @return  {Number}        返回距离信息
+	 * */
+	_getDistance(lat1='', lng1='', lat2='', lng2=''){
+		let EARTH_RADIUS = 6378.137 // 地球半径
+			, radLat1
+			, radLat2
+			, a, b, s
+		;
+		if ( lat1 === '' || lng1 === '' || lat2 === '' || lng2 === '' ){
+			s = 0;
+		}
+		else{
+			radLat1 = this._rad( lat1 );
+			radLat2 = this._rad( lat2 );
+			a = radLat1 - radLat2;
+			b = this._rad( lng1 ) - this._rad( lng2 );
+			s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a/2), 2) + Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(b /2), 2)));
+			s = s * EARTH_RADIUS;
+			s = Math.round(s * 10000) / 10000;
+			return s;
+		}
+
+		return s;
+	}
+
+	// ---------- 公有方法 ----------
 	/**
 	 * @summary 城市相关 - 获取城市列表
 	 * @param   {Number|String} id  城市 id
@@ -382,6 +439,20 @@ class BaseServiceModel extends ServiceModel{
 	}
 
 	/**
+	 * @summary 通过 storeId 查询省份简称
+	 * @param   {Number|String} storeId
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @see     [http://base.test.66buy.com.cn/publics/storeAddress/queryProByStoreId]{@link http://dev.51tiangou.com/interfaces/detail.html?id=3923}
+	 * */
+	queryProByStoreId(storeId){
+		return this.setData('/publics/storeAddress/queryProByStoreId', {
+			data: {
+				storeId
+			}
+		});
+	}
+
+	/**
 	 * @summary 获取地区列表
 	 * @param   {Number|String} cityId
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
@@ -411,58 +482,17 @@ class BaseServiceModel extends ServiceModel{
 	}
 
 	/**
-	 * @summary 通过 gps 取附近的门店
-	 * @private
-	 * @param   {Number|String} lat
-	 * @param   {Number|String} lon
-	 * @param   {Number}        [source=1]  门店类型：1.百货，2.超市
-	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @desc    实际为 nearStore 接口重命名
-	 * @see     [nearStore]{@link BaseServiceModel#nearStore}
-	 * @todo    与 nearStore 取其一
+	 * @summary 按门店 id、商品末级分类查出对应电子信誉卡
+	 * @param   {Number|String} storeId
+	 * @param   {String}        categoryIds 商品末级分类 id
+	 * @return  {Promise}
+	 * @desc    使用 POST 方法
+	 * @see     [http://base.dev.66buy.com.cn/publics/storeCreditCard/queryByCateIds]{@link http://dev.51tiangou.com/interfaces/detail.html?id=3991}
 	 * */
-	_getGpsShop(lat, lon, source=1){
-		return this.nearStore(lat, lon, source);
-	}
-	/**
-	 * @summary 计算弧度
-	 * @private
-	 * @param   {Number|String} d
-	 * @return  {Number}
-	 * */
-	_rad(d){
-		return d * Math.PI / 180.0;
-	}
-	/**
-	 * @summary 根据经纬度，获取距离
-	 * @private
-	 * @param   {Number|String} lat1
-	 * @param   {Number|String} lng1
-	 * @param   {Number|String} lat2
-	 * @param   {Number|String} lng2
-	 * @return  {Number}        返回距离信息
-	 * */
-	_getDistance(lat1='', lng1='', lat2='', lng2=''){
-		let EARTH_RADIUS = 6378.137 // 地球半径
-			, radLat1
-			, radLat2
-			, a, b, s
-			;
-		if ( lat1 === '' || lng1 === '' || lat2 === '' || lng2 === '' ){
-			s = 0;
-		}
-		else{
-			radLat1 = this._rad( lat1 );
-			radLat2 = this._rad( lat2 );
-			a = radLat1 - radLat2;
-			b = this._rad( lng1 ) - this._rad( lng2 );
-			s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a/2), 2) + Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(b /2), 2)));
-			s = s * EARTH_RADIUS;
-			s = Math.round(s * 10000) / 10000;
-			return s;
-		}
+	storeCreditCard(storeId, categoryIds){
+		return this.setData('/publics/storeCreditCard/queryByCateIds', {
 
-		return s;
+		});
 	}
 
 	/**

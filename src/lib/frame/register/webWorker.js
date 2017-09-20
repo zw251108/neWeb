@@ -1,5 +1,7 @@
 'use strict';
 
+import merge from '../util/merge.js';
+
 /**
  * 运行 Web Worker
  * @function    registerWebWorker
@@ -8,18 +10,9 @@
  * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传入生成的 Web Worker 实例
  * */
 function registerWebWorker(options={}){
-	let config = Object.keys( registerWebWorker._CONFIG ).reduce((all, d)=>{
-			if( d in options ){
-				all[d] = options[d];
-			}
-			else{
-				all[d] = registerWebWorker._CONFIG[d];
-			}
-
-			return all;
-		}, {})
+	let config = merge(options, registerWebWorker._CONFIG)
 		;
-
+	
 	return new Promise((resolve, reject)=>{
 		if( 'Worker' in self ){
 

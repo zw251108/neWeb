@@ -7,10 +7,12 @@ import Model from './model.js';
  * @classdesc   对 sessionStorage 进行封装，统一调用接口，在 Model.factory 工厂方法注册为 sessionStorage，别名 ss，将可以使用工厂方法生成
  * @extends     Model
  * @example
+<pre>
 let sessionStorageModel = new SessionStorageModel()
 	, storage = Model.factory('sessionStorage')
 	, ss = Model.factory('ss')
 	;
+ </pre>
  * */
 class SessionStorageModel extends Model{
 	/**
@@ -20,9 +22,13 @@ class SessionStorageModel extends Model{
 		super();
 
 		if( 'sessionStorage' in self ){
+			this._enabled = true;
+			this._storeSync = self.sessionStorage;
 			this._store = Promise.resolve( self.sessionStorage );
 		}
 		else{
+			this._enabled = false;
+			this._storeSync = null;
 			this._store = Promise.reject( new Error('此浏览器不支持 sessionStorage') );
 		}
 	}
@@ -56,16 +62,20 @@ class SessionStorageModel extends Model{
 	}
 	/**
 	 * @summary 获取数据
-	 * @param   {String|String[]}   topic
-	 * @return  {Promise}           返回一个 Promise 对象，若存在 topic 的值，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
+	 * @param   {String|String[]|...String} topic
+	 * @return  {Promise}                   返回一个 Promise 对象，若存在 topic 的值，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
 	 * @desc    获取数据时会优先从内存中取值，若没有则从 sessionStorage 中取值并将其存入内存中，当 topic 的类型为数组的时候，resolve 传入的结果为一个 json，key 为 topic 中的数据，value 为对应查找出来的值
 	 * */
 	getData(topic){
-		let result
+		let argc = arguments.length
+			, result
 			;
 
 		if( Array.isArray(topic) ){
 			result = this._getByArray( topic );
+		}
+		else if( argc > 1 ){
+			result = this._getByArray( [].slice.call(arguments) );
 		}
 		else{
 			result = super.getData( topic ).catch(()=>{
@@ -89,6 +99,56 @@ class SessionStorageModel extends Model{
 					return value;
 				});
 			});
+		}
+
+		return result;
+	}
+	/**
+	 * @summary 以同步的方式获取 sessionStorage 中的数据
+	 * @param   {String|String[]|...String} topic
+	 * @return  {Object|String}             若存在 topic 的值，返回查询出来的 value，否则返回 null
+	 * @desc    获取数据时会优先从内存中取值，若没有则从 sessionStorage 中取值并将其存入内存中，当 topic 的类型为数组的时候，返回结果为一个 json，key 为 topic 中的数据，value 为对应查找出来的值
+	 * */
+	getDataSync(topic){
+		let argc = arguments.length
+			, keyList
+			, result
+			;
+
+		if( this._enabled ){
+
+			if( !Array.isArray(topic) ){
+				keyList = [topic];
+			}
+			else if( argc > 1 ){
+				keyList = [].slice.call( arguments );
+			}
+			else{
+				keyList = topic;
+			}
+
+			result = keyList.reduce((all, d)=>{
+				if( d in this._value ){
+					all[d] = this._value[d];
+				}
+				else{
+					all[d] = this._storeSync.getItem( d );
+
+					try{
+						all[d] = JSON.parse( all[d] );
+					}
+					catch(e){}
+
+					super.setData(d, all[d]);
+				}
+			}, {});
+
+			if( !Array.isArray(topic) ){
+				result = result[topic];
+			}
+		}
+		else{
+			result = null;
 		}
 
 		return result;

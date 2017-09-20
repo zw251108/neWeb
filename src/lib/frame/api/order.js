@@ -1,8 +1,8 @@
 'use strict';
 
 import Model        from '../model/model.js';
-import ServiceModel from '../model/service.js';
-import domain       from '../runtime/domain.js';
+import ServiceModel from 'ServiceModel';
+import domain       from 'domainConfig';
 
 /**
  * @class
@@ -116,9 +116,8 @@ class OrderServiceModel extends ServiceModel{
 	 * @param   {String}        orderOption 支付方式、提货方式数据序列化（JSON.stringify）
 	 * @param   {Number|String} fxStoreId   分销 storeId
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @desc    使用 POST 方法
+	 * @desc    使用 POST 方法，参数中添加了 needSecKey 使用防黄牛机制
 	 * @see     [http://oser.test.66buy.com.cn/publics/tgouOrder/add]{@link http://dev.51tiangou.com/interfaces/detail.html?id=3195}
-	 * @todo    使用防黄牛机制
 	 * */
 	add(from, fxStoreId, products, orderOption){
 		return this.setData('/publics/tgouOrder/add', {
@@ -128,6 +127,7 @@ class OrderServiceModel extends ServiceModel{
 				, products
 				, orderOption
 			}
+			, needSecKey: true
 		});
 	}
 	/**
@@ -245,6 +245,7 @@ class OrderServiceModel extends ServiceModel{
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回处理过的返回结果
 	 * @see     [http://oser.test.66buy.com.cn/publics/tgouOrder/waitings]
 	 * @todo    接口中心未查到
+	 * @todo    isCheckLogin=false 不检查登录
 	 * */
 	waitings(){
 		return this.getData('/publics/tgouOrder/waitings');
@@ -479,6 +480,34 @@ class OrderServiceModel extends ServiceModel{
 			data
 		});
 	}
+	/**
+	 * @summary 通过服务单加购物车
+	 * @param   {Number|String} serveOrderId    服务单 id
+	 * @return  {Promise}
+	 * @desc    使用 POST 方法
+	 * @see     [http://oserv.test.66buy.com.cn/publics/shopCart/cartServeOrder]{@link http://dev.51tiangou.com/interfaces/detail.html?id=4127
+	 * */
+	cartServeOrder(serveOrderId){
+		return this.setData('/publics/shopCart/cartServeOrder', {
+			data: {
+				serveOrderId
+			}
+		});
+	}
+	/**
+	 * @summary 购物车页面限购数校验
+	 * @param   {String}        products    JSON 字符串
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回处理过的返回结果
+	 * @desc    使用 POST 方法，products 为 json 数组，每个 json 包含 activityProductId 和 quantity，对应为 营销品 id 和购买数量
+	 * @see     [http://oser.test.66buy.com.cn/publics/shopCart/shopCartLimitQty]{@link http://dev.51tiangou.com/interfaces/detail.html?id=4189}
+	 * */
+	shopCartLimitQty(products){
+		return this.setData('/publics/shopCart/shopCartLimitQty', {
+			data: {
+				products
+			}
+		});
+	}
 
 	/**
 	 * @summary 购物车下单
@@ -660,6 +689,118 @@ class OrderServiceModel extends ServiceModel{
 	 * */
 	returnUrl(path){
 		return this._config.baseUrl + path;
+	}
+
+	/**
+	 * @summary 退货之前获取订单商品
+	 * @param   {String}    orderId
+	 * @param   {String}    orderItemId
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回处理过的返回结果
+	 * @desc    使用 POST方法
+	 * @see     [http://oser.test.66buy.com.cn/publics/tgouOrder/preApplyReturn]{@link http://dev.51tiangou.com/interfaces/detail.html?id=4537}
+	 * */
+	preApplyReturn(orderId, orderItemId){
+		return this.setData('/publics/tgouOrder/preApplyReturn', {
+			data: {
+				orderId
+				, orderItemId
+			}
+		});
+	}
+	/**
+	 * @summary 获取退货原因
+	 * @param   {String}    orderId
+	 * @param   {Number}    isReceive   是否收货，1 已收货，2 未收货
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回处理过的返回结果
+	 * @desc    使用 POST方法
+	 * @see     [http://oser.test.66buy.com.cn/publics/returnRequest/returnRejectReason]{@link http://dev.51tiangou.com/interfaces/detail.html?id=4517}
+	 * @see     [http://oser.test.66buy.com.cn/publics/returnRequest/returnRejectReason]{@link http://dev.51tiangou.com/interfaces/detail.html?id=4491}
+	 * */
+	returnRejectReason(orderId, isReceive){
+		return this.setData('/publics/returnRequest/returnRejectReason', {
+			data: {
+				orderId
+				, isReceive
+			}
+		});
+	}
+	/**
+	 * @summary 查询当前订单中可退金额
+	 * @param   {String}    orderId
+	 * @param   {String}    applyItems  为 JSON.stringify 序列化字符串
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回处理过的返回结果
+	 * @desc    使用 POST方法
+	 * @see     [http://oser.test.66buy.com.cn/publics/returnRequest/queryAmt]{@link http://dev.51tiangou.com/interfaces/detail.html?id=4525}
+	 * */
+	queryAmt(orderId, applyItems){
+		return this.setData('/publics/returnRequest/queryAmt', {
+			data: {
+				orderId
+				, applyItems
+			}
+		});
+	}
+	/**
+	 * @summary 创建售后信息
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回处理过的返回结果
+	 * @desc    使用 POST方法
+	 * @see     [return]{@link OrderServiceModel#return}
+	 * @todo    补完
+	 * @todo    return 接口？
+	 * */
+	tgouOrdeReturn(orderId, applyItems, applyType, type, reasonCode, reasonType, comment, returnAmount){
+		return this.setData('/publics/tgouOrder/return', {});
+	}
+	/**
+	 * @summary 售后详情
+	 * @param   {String}    returnRequestId 退货单 id
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回处理过的返回结果
+	 * @desc    使用 POST方法
+	 * @see     [http://oser.test.66buy.com.cn/publics/returnRequest/detail]{@link http://dev.51tiangou.com/interfaces/detail.html?id=4485}
+	 * */
+	returnRequestDetail(returnRequestId){
+		return this.setData('/publics/returnRequest/detail', {
+			data: {
+				returnRequestId
+			}
+		});
+	}
+	/**
+	 * @summary 取消售后
+	 * @param   {String}    returnRequestId 退货单 id
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回处理过的返回结果
+	 * @desc    使用 POST方法
+	 * @see     [http://oser.test.66buy.com.cn/publics/returnRequest/returnCancelReason]{@link http://dev.51tiangou.com/interfaces/detail.html?id=4515}
+	 * */
+	returnCancelReason(returnRequestId){
+		return this.setData('/publics/returnRequest/returnCancelReason', {
+			data: {
+				returnRequestId
+			}
+		});
+	}
+	// /**
+	//  * @summary 退货填写信息
+	//  * @todo    补完
+	//  * */
+	// addReturnInfo(){
+	// 	return this.setData('/publics/tgouOrder/addReturnInfo', {});
+	// }
+	/**
+	 * @summary 申请仲裁
+	 * @param   {String}    returnRequestId 退货单 id
+	 * @param   {String}    comment         批注
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回处理过的返回结果
+	 * @desc    使用 POST方法
+	 * @see     [http://oser.test.66buy.com.cn/publics/tgouOrder/return/complain]{@link http://dev.51tiangou.com/interfaces/detail.html?id=4547}
+	 * */
+	applyComplain(returnRequestId, comment){
+		return this.setData('/publics/tgouOrder/return/complain', {
+			data: {
+				returnRequestId
+				, comment
+			}
+		});
 	}
 }
 

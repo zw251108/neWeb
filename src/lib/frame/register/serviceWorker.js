@@ -1,23 +1,17 @@
 'use strict';
 
+import merge    from '../util/merge.js';
+
 /**
- * 注册 Service Worker
+ * @summary     注册 Service Worker
  * @function    registerServiceWorker
- * @param   {Object}    [options={}]
- * @param   {String}    options.file
- * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传入 true
+ * @param       {Object}    [options={}]
+ * @param       {String}    options.file
+ * @return      {Promise}   返回一个 Promise 对象，在 resolve 时传入 true
  * */
 function registerServiceWorker(options={}){
-	let config = Object.keys( registerServiceWorker._CONFIG ).reduce((all, d)=>{
-		if( d in options ){
-			all[d] = options[d];
-		}
-		else{
-			all[d] = registerServiceWorker._CONFIG[d];
-		}
-
-		return all;
-	}, {});
+	let config = merge(options, registerServiceWorker._CONFIG)
+		;
 
 	return new Promise((resolve, reject)=>{
 		if( 'serviceWorker' in navigator ){
@@ -40,6 +34,7 @@ function registerServiceWorker(options={}){
 					}
 
 					if( serviceWorker ){
+						// todo 用途
 						serviceWorker.addEventListener('statechange', function(e){
 							console.log(e);
 						});

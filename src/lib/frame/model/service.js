@@ -1,6 +1,8 @@
 'use strict';
 
-import Model from './model.js';
+import Model        from './model.js';
+import merge        from '../util/merge.js';
+import HandlerQueue from '../util/handlerQueue.js';
 
 /**
  * 目前数据请求依赖于 jQuery.ajax 方法
@@ -22,96 +24,52 @@ class ServiceModel extends Model{
 	 * @constructor
 	 * @param   {Object}    [config={}]
 	 * @param   {String}    [config.baseUrl]
-	 * @param   {Boolean}   [config.isCrossDomain]
-	 // * @param   {Function}  [config.beforeSendHandler]
-	 * @param   {Function}  [config.successHandler]
-	 * @param   {Function}  [config.errorHandler]
+	 // * @param   {Boolean}   [config.isCrossDomain]
+	 // * @param   {Boolean}   [config.useLock]
 	 * @param   {Number}    [config.timeout]
 	 * */
 	constructor(config={}){
 		super();
 
-		this._config = Object.keys( ServiceModel._CONFIG ).reduce((all, d)=>{
-			
-			if( d in config ){
-				all[d] = config[d];
-			}
-			else{
-				all[d] = ServiceModel._CONFIG[d];
-			}
-
-			return all;
-		}, {});
-
+		this._config = merge(config, ServiceModel._CONFIG);
+		
 		this._syncTo = null;
 
-		// // 设置默认前置处理
-		// if( !this._config.beforeSendHandler ){
-		// 	this._config.beforeSendHandler = function(){
-		//
-		// 	};
-		// }
-
-		// 设置默认成功处理
-		if( !this._config.successHandler ){
-			this._config.successHandler = function(rs){
-				return rs;
-			};
-		}
-
-		// 设置默认错误处理
-		if( !this._config.errorHandler ){
-			this._config.errorHandler = function(e){
-				return Promise.reject( e );
-			};
-		}
-
-		// // 任务队列
-		// this._task = {};
-
-		// /**
-		//  * 判断是否使用 jsonp 方式发送数据
-		//  * */
-		// if( this._config.jsonp ){
-		// 	this._req = req.jsonp;
-		// }
-		// else{
-		// 	this._req = req.ajax;
-		// }
-
-		// this._req = req.factory('ajax');
+		this.interceptor = {
+			req: new HandlerQueue()
+			, res: new HandlerQueue()
+		};
 	}
-	/**
-	 *
-	 * */
-	_setDefault(options){
 
-	}
+	// ---------- 私有方法 ----------
 	/**
-	 * @desc    对 setData 和 getData 的 options 添加跨域参数
+	 * @summary 对 setData 和 getData 的 options 添加默认参数
 	 * @param   {Object}    options setData 和 getData 的 options 参数
 	 * @return  {Object}
 	 * */
-	_setCrossDomain(options){
-		if( this._config.isCrossDomain && !('xhrFields' in options) ){
-			options.xhrFields = {
+	_setOpts(options){
+		return merge(options, {
+			cache: false
+			, dataType: 'json'
+			, timeout: this._config.timeout || 10000
+			, xhrFields: {
 				withCredentials: true
-			};
-		}
-
-		return options;
+			}
+		});
 	}
 
+	// ---------- 公有方法 ----------
 	/**
-	 * @desc    设置数据，默认视为发送 POST 请求到服务器，不会将返回结果保存到本地缓存
-	 * @param   {String|Object} topic    字符串类型为请求 url，对象类型为所有参数，其中 url 为必填
-	 * @param   {Object}        [options={}]
-	 * @param   {Object}        [options.data]
-	 * @param   {String}        [options.method]
-	 * @param   {Boolean}       [needSeckey=false]
-	 * @return  {Promise}
+	 * @summary     设置数据，默认视为发送 POST 请求到服务器，不会将返回结果保存到本地缓存
+	 * @override
+	 * @param       {String|Object} topic               字符串类型为请求 url，对象类型为所有参数，其中 url 为必填
+	 * @param       {String}        topic.url
+	 * @param       {Object}        [options={}]
+	 * @param       {Object}        [options.data]
+	 * @param       {String}        [options.method]
+	 * @return      {Promise}
 	 * */
-	setData(topic, options={}, needSeckey=false){
+	setData(topic, options={}){
 		let result
 			;
 
@@ -121,34 +79,44 @@ class ServiceModel extends Model{
 		}
 
 		topic = this._config.baseUrl + topic;
-		options.method = options.method || 'POST';
-		options.dataType = options.dataType || 'json';
 
-		if( this._config.isCrossDomain ){
-			options = this._setCrossDomain( options );
-		}
+		options = this._setOpts( options );
+
+		options.method = options.method || 'POST';
 
 		if( topic ){
-			result = $.ajax(topic, options).then(this._config.successHandler, this._config.errorHandler);
+			
+			// 执行请求拦截器
+			result = this.reqInterceptor(topic, options).then((rs)=>{
+
+				// 发送请求，向服务器发送数据
+				console.log('发送 post 请求', topic);
+
+				return this.request(topic, options);
+			}).then((res)=>{
+
+				// 执行响应拦截器
+				return this.resInterceptor( res );
+			});
 		}
-		else{
+		else{   // topic 无值不做任何处理
 			result = Promise.reject();
 		}
 
 		return result;
 	}
 	/**
-	 * @desc    获取数据，默认视为发送 GET 请求到服务器，可以将返回结果保存到本地缓存
-	 * @param   {String|Object}     topic               字符串类型为请求 url，对象类型为所有参数，其中 url 为必填
-	 * @param   {Object|Boolean}    [options={}]        对象类型为 ajax 参数，Boolean 类型时将其赋值给 isCache，自身设置为 {}
-	 * @param   {Object}            [options.data]
-	 * @param   {String}            [options.method]
-	 * @param   {Boolean}           [isCache=false]     是否优先从本地缓存中读取数据，同时发送请求后数据是否同步到本地缓存，默认为 false
-	 * @param   {Boolean}           [needSeckey=false]  是否需要
-	 * @return  {Promise}
+	 * @summary     获取数据，默认视为发送 GET 请求到服务器，可以将返回结果保存到本地缓存
+	 * @override
+	 * @param       {String|Object}     topic               字符串类型为请求 url，对象类型为所有参数，其中 url 为必填
+	 * @param       {Object|Boolean}    [options={}]        对象类型为 ajax 参数，Boolean 类型时将其赋值给 isCache，自身设置为 {}
+	 * @param       {Object}            [options.data]
+	 * @param       {String}            [options.method]
+	 * @param       {Boolean}           [isCache=false]     是否优先从本地缓存中读取数据，同时发送请求后数据是否同步到本地缓存，默认为 false
+	 * @return      {Promise}
 	 * @todo    优先从本地 syncTo model 中读取数据，若没有则发送请求
 	 * */
-	getData(topic, options={}, isCache=false, needSeckey=false){
+	getData(topic, options={}, isCache=false){
 		let result
 			;
 
@@ -172,40 +140,45 @@ class ServiceModel extends Model{
 				result = Promise.reject();
 
 				topic = this._config.baseUrl + topic;
-				options.method = options.method || 'GET';
-				options.dataType = options.dataType || 'json';
 
-				if( this._config.isCrossDomain ){
-					options = this._setCrossDomain( options );
-				}
+				options = this._setOpts( options );
+
+				options.method = options.method || 'GET';
 			}
 
 			// 当从本地缓存时未找到期望的数据会 reject，或者不从缓存中获取数据时也会 reject
 			result = result.catch(()=>{
-				// console.log(options)
-				
-				// 发送请求，从服务器获取数据
-				// return this._req.send(topic, options)
-				return $.ajax(topic, options)
-					.then((data)=>{
-						let result
-							;
 
-						if( isCache && this._syncTo ){  // 如果有设置缓存，则将请求返回的数据存入本地缓存
-							result = this._syncTo.setData(topic, data).then(function(){
-								return data;
-							}, function(e){
-								console.log( e );
+				// 执行请求拦截器
+				return this.reqInterceptor(topic, options).then(()=>{
 
-								return data;
-							});
-						}
-						else{
-							result = data;
-						}
+					// 发送请求，从服务器获取数据
+					console.log('发送 get 请求', topic);
 
-						return result;
-					}).then(this._config.successHandler, this._config.errorHandler);
+					return this.request(topic, options);
+				}).then((res)=>{
+
+					// 执行响应拦截器
+					return this.resInterceptor( res );
+				}).then((data)=>{   // 将数据同步
+					let result
+						;
+
+					if( isCache && this._syncTo ){  // 如果有设置缓存，则将请求返回的数据存入本地缓存
+						result = this._syncTo.setData(topic, data).then(()=>{
+							return data;
+						}, (e)=>{
+							console.log( e );
+
+							return data;
+						});
+					}
+					else{
+						result = data;
+					}
+
+					return result;
+				});
 			});
 		}
 		else{   // topic 无值不做任何处理
@@ -215,27 +188,28 @@ class ServiceModel extends Model{
 		return result;
 	}
 	/**
-	 * @desc    删除数据
-	 * @param   {String|Object} topic
-	 * @param   {Object}        [options]
-	 * @return  {Promise}
-	 * @todo    可以考虑支持 RESTful API，发送 delete 类型的请求
+	 * @summary     删除数据
+	 * @override
+	 * @param       {String|Object} topic
+	 * @param       {Object}        [options]
+	 * @return      {Promise}
+	 * @todo        可以考虑支持 RESTful API，发送 delete 类型的请求
 	 * */
 	removeData(topic, options){
 
 		return Promise.resolve( true );
 	}
 	/**
-	 * @desc    清空数据，实际不做任何处理
+	 * @summary 清空数据，实际不做任何处理
 	 * */
 	clearData(){
 		return Promise.resolve( true );
 	}
 	/**
-	 * @desc    将数据同步到本地存储，一次只能设置一个本地缓存
+	 * @summary     将数据同步到本地存储，一次只能设置一个本地缓存
 	 * @override
-	 * @param   {Model}     model
-	 * @todo    目前只能将数据同步到一个本地缓存中，是否考虑可以同步到多个本地缓存，亦或由本地缓存之间设置同步
+	 * @param       {Model}     model
+	 * @todo        目前只能将数据同步到一个本地缓存中，是否考虑可以同步到多个本地缓存，亦或由本地缓存之间设置同步
 	 * */
 	syncTo(model){
 
@@ -244,25 +218,62 @@ class ServiceModel extends Model{
 			this._syncTo = model;
 		}
 	}
+	/**
+	 * @summary 发送请求
+	 * @param   {String}    topic
+	 * @param   {Object}    options
+	 * @return  {Promise}
+	 * */
+	request(topic, options){
+		return $.ajax(topic, options).then((res)=>{ // 请求成功
+			return res;
+		}, ()=>{    // 请求失败
+			return new Error();
+		});
+	}
+	/**
+	 * @summary 执行请求拦截器进行验证
+	 * @param   {String}    topic
+	 * @param   {Object}    options
+	 * @return  {Promise}
+	 * */
+	reqInterceptor(topic, options){
+		let condition = (rs)=>{
+				let result = rs.some((d)=>{
+						return d === false;
+					})
+					;
 
-	// /**
-	//  * 处理返回结果
-	//  * @param   {Object}    res 从服务器返回的统一格式数据
-	//  * @return  {Promise}
-	//  * */
-	// handleResponse(res){
-	// 	let result
-	// 		;
-	//
-	// 	if( res.success ){
-	// 		result = Promise.resolve( res.data );
-	// 	}
-	// 	else{
-	// 		result = Promise.reject( res );
-	// 	}
-	//
-	// 	return result;
-	// }
+				if( result ){
+					return Promise.reject();
+				}
+				else{
+					return Promise.resolve();
+				}
+			}
+			;
+
+		console.log('执行全局请求拦截器', topic);
+		return Promise.all( ServiceModel.interceptor.req.fireAll(null, topic, options) ).then( condition ).then(()=>{
+			console.log('执行局部请求拦截器', topic);
+
+			return Promise.all( this.interceptor.req.fireAll(null, topic, options) ).then( condition );
+		});
+	}
+	/**
+	 * @summary 执行响应拦截器进行验证
+	 * @param   {Object}    res
+	 * @return  {Promise}
+	 * */
+	resInterceptor(res){
+		console.log('执行全局响应拦截器');
+
+		return ServiceModel.interceptor.res.fireReduce(null, res).then((res)=>{
+			console.log('执行局部响应拦截器');
+			
+			return this.interceptor.res.fireReduce(null, res);
+		});
+	}
 }
 
 /**
@@ -271,13 +282,19 @@ class ServiceModel extends Model{
  * */
 ServiceModel._CONFIG = {
 	baseUrl: ''
-	, isCrossDomain: true
+	// , isCrossDomain: true
 	, task: false
-	, jsonp: false
+	// , jsonp: false
 	, timeout: 10000
-	// , beforeSendHandler: null
-	, successHandler: null
-	, errorHandler: null
+};
+
+/**
+ * 拦截器
+ * @static
+ * */
+ServiceModel.interceptor = {
+	req: new HandlerQueue()
+	, res: new HandlerQueue()
 };
 
 /**

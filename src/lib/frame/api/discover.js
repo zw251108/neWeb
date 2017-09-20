@@ -1,8 +1,8 @@
 'use strict';
 
 import Model        from '../model/model.js';
-import ServiceModel from '../model/service.js';
-import domain       from '../runtime/domain.js';
+import ServiceModel from 'ServiceModel';
+import domain       from 'domainConfig';
 
 /**
  * @class
@@ -158,6 +158,7 @@ class DiscoverServiceModel extends ServiceModel{
 			data
 		});
 	}
+
 	/**
 	 * @summary 发现频道 - 举报发现/评论
 	 * @param   {Number|String} contentId
@@ -175,6 +176,45 @@ class DiscoverServiceModel extends ServiceModel{
 				, operator
 			}
 		});
+	}
+
+	/**
+	 * @summary 关注他人
+	 * @param   {Number|String} memberIds   关注列表
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回值
+	 * @desc    使用 POST 请求
+	 * @see     [http://discover.test.66buy.com.cn/front/fans/concern]{@link http://dev.51tiangou.com/interfaces/detail.html?id=4013}
+	 * */
+	concern(memberIds){
+		return this.setData('/front/fans/concern', {
+			data: {
+				memberIds
+			}
+		});
+	}
+	/**
+	 * @summary 取消关注他人
+	 * @param   {Number|String} memberId
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回值
+	 * @desc    使用 POST 请求
+	 * @todo    未查到
+	 * */
+	unconcern(memberId){
+		return this.setData('/front/fans/unconcern', {
+			data: {
+				memberId
+			}
+		});
+	}
+
+	/**
+	 * @summary 查询用户是否为官 V
+	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回返回值
+	 * @desc    使用 POST 请求
+	 * @see     [http://discover.test.66buy.com.cn/front/userRole/isOfficeV]{@link http://dev.51tiangou.com/interfaces/detail.html?id=4185}
+	 * */
+	isOfficeV(){
+		return this.setData('/front/userRole/isOfficeV');
 	}
 }
 

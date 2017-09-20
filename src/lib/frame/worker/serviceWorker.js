@@ -4,14 +4,11 @@
  * @file    Service Worker 后台执行文件
  * */
 
-import CacheStorageModel from '../model/cacheStorage.js';
-// import IndexDBModel from '../model/indexedDB.js';
-// import WebSocketReq from '../req/webSocket.js';
-import notify from '../notify.js';
+import CacheStorageModel    from '../model/cacheStorage.js';
+import notify               from '../notify.js';
 
 let CACHE_URL = []
 	, url = ''
-	// , indb = new IndexDBModel()
 	, cache = new CacheStorageModel()
 	// , socket = new WebSocketReq({
 	// 	url: 'ws://localhost:8181/'
@@ -19,7 +16,6 @@ let CACHE_URL = []
 	;
 
 console.log('Service Worker 已加载');
-// console.log( self );
 
 self.addEventListener('install', function(event){
 	console.log('Service Worker 安装完成，install event', event);

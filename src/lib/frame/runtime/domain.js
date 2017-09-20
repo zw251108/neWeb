@@ -36,7 +36,9 @@ let test = currentStatus === 'dev' || currentStatus === 'test'
 	;
 
 /**
- * @exports domain
+ * @exports     domain
+ * @type        {Object}
+ * @memberOf    maple
  * */
 export default {
 	env: currentStatus

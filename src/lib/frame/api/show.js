@@ -1,8 +1,8 @@
 'use strict';
 
 import Model        from '../model/model.js';
-import ServiceModel from '../model/service.js';
-import domain       from '../runtime/domain.js';
+import ServiceModel from 'ServiceModel';
+import domain       from 'domainConfig';
 import validate     from '../util/validate.js';
 
 /**
@@ -209,7 +209,7 @@ class ShowServiceModel extends ServiceModel{
 	 * @summary 试衣秀相关 - 献花
 	 * @param   {Number|String} buyerShowId     试衣秀 id
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
-	 * @desc    使用 POST 方法
+	 * @desc    使用 POST 方法，参数中添加了 needSecKey 使用防黄牛机制
 	 * @see     [http://show.test.66buy.com.cn/buyerShow/addFlower]{@link http://dev.51tiangou.com/interfaces/detail.html?id=1815}
 	 * */
 	addFlower(buyerShowId){
@@ -217,6 +217,7 @@ class ShowServiceModel extends ServiceModel{
 			data: {
 				buyerShowId
 			}
+			, needSecKey: true
 		})
 	}
 	/**
@@ -728,6 +729,23 @@ class ShowServiceModel extends ServiceModel{
 		return this.setData('/label/follow/cancel', {
 			data: {
 				labelId
+			}
+		});
+	}
+
+	/**
+	 * @summary 专辑详情点赞
+	 * @param   {Number|String} labelId
+	 * @param   {String}        [openId]    微信登录下传 openid
+	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回返回结果
+	 * @desc    使用 POST 方法
+	 * @see     [http://show.test.66buy.com.cn/labelFlower/add]{@link http://dev.51tiangou.com/interfaces/detail.html?id=4051}
+	 * */
+	labelFlower(labelId, openId){
+		return this.setData('/labelFlower/add', {
+			data: {
+				labelId
+				, openId
 			}
 		});
 	}

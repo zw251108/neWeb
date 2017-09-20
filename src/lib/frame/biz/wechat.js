@@ -6,16 +6,23 @@
  * */
 
 import $        from 'jquery';
+
+import CONFIG   from '../config.js';
+import device   from 'device';
+import url      from 'url';
+import domain   from 'domainConfig';
 import model    from '../model/index.js';
-import domain   from '../runtime/domain.js';
-import url      from '../runtime/url.js';
-import device   from '../runtime/device.js';
 
 const APP_ID                = {
 		dev:        'wx3bc8b36ed3f965bd'
-		, test:     'wx3bc8b36ed3f965bd'
+		, test:     'wxff6dd0fa2c5c8028'
 		, pre:      'wxd13f25106e193648'
 		, online:   'wx1c18f2760c5ff068'
+	}
+	, OPEN_APP_ID           = {
+		test:       'wxff6dd0fa2c5c8028'
+		, pre:      'wxff6dd0fa2c5c8028'
+		, online:   'wx4f113b1e6b172f5e'
 	}
 	, STATE_NAME            = 'wechat_util'
 	, USER_INFO_EXPIRES     = 7             // userInfo 在 cookie 中的过期时间
@@ -25,8 +32,9 @@ const APP_ID                = {
 	, TOKEN_EXPIRES         = 7             // token 在 cookie 中的过期时间
 	, WECHAT_AUTH_URL       = 'https://open.weixin.qq.com/connect/oauth2/authorize'
 	, WECHAT_REDIRECT_HASH  = 'wechat_redirect'
+	, WECHAT_JS_SDK_URL     = '//res.wx.qq.com/open/js/jweixin-1.0.0.js'
 	, CODE_MIN_LENGTH       = 26            // code 最小长度
-;
+	;
 
 let cookie      = model.factory('cookie')
 	, ls        = model.factory('ls')
@@ -42,18 +50,50 @@ let cookie      = model.factory('cookie')
 		, cancel: ()=>{}
 	}
 	, defaultAppId = APP_ID[domain.env] || APP_ID.online
+;
 
-	, wx = $.getScript('//res.wx.qq.com/open/js/jweixin-1.0.0.js').then(()=>{
-		return wx;
-	})
+/**
+ * @namespace   tg.biz.wechat
+ * */
+let wechatBiz = {
 	/**
-	 * @summary 返回微信授权页面回退页面路径
-	 * @param   {String}    appId
-	 * @param   {String}    scope   目前有 2 个值，获取 openid 时为 snsnapi_base，获取用户信息时为 snsapi_userinfo
-	 * @param   {String}    state   目前有 2 个值，获取 openid 时为 _static_openid_flag_，获取用户信息时为 wechat_util
-	 * @return  {String}    拼装后的微信授权页面路径
+	 * @summary     加载微信 js-sdk
+	 * @function    loadWcSdk
+	 * @memberOf    tg.biz.wechat
+	 * @return      {Promise}
 	 * */
-	, getWxAuthUrl = (appId, scope, state)=>{
+	loadWcSdk(){
+		return new Promise((resolve, reject)=>{
+			let dom = document.createElement('script', CONFIG.ceKey)
+				;
+
+			dom.async = true;
+			dom.src = WECHAT_JS_SDK_URL;
+
+			dom.onload = ()=>{
+				wechat.loadWcSdk = function(){
+					return Promise.resolve( wx );
+				};
+				
+				resolve( wx );
+			};
+			dom.onerror = ()=>{
+				reject( null );
+			};
+
+			document.head.appendChild( dom );
+		});
+	}
+	/**
+	 * @summary     返回微信授权页面回退页面路径
+	 * @function    getWxAuthUrl
+	 * @memberOf    tg.biz.wechat
+	 * @param       {String}    appId
+	 * @param       {String}    scope   目前有 2 个值，获取 openid 时为 snsnapi_base，获取用户信息时为 snsapi_userinfo
+	 * @param       {String}    state   目前有 2 个值，获取 openid 时为 _static_openid_flag_，获取用户信息时为 wechat_util
+	 * @return      {String}    拼装后的微信授权页面路径
+	 * */
+	, getWxAuthUrl(appId, scope, state){
 		return WECHAT_AUTH_URL +'?'+ [
 				'appid='+ appId
 				, 'redirect_uri='+ encodeURIComponent(url.origin + url.pathname + url.search)
@@ -62,23 +102,16 @@ let cookie      = model.factory('cookie')
 				, 'state='+ state
 			].join('') + '#' + WECHAT_REDIRECT_HASH;
 	}
-;
-
-
-/**
- * @exports wechat
- * */
-export default {
 	/**
-	 * @summary 注册调用微信接口
-	 * @method
-	 * @memberOf    wechat
+	 * @summary     注册调用微信接口
+	 * @function    sign
+	 * @memberOf    tg.biz.wechat
 	 * @param       {Object}    config
 	 * @param       {Array}     config.jsApiList
 	 * @return      {Promise}   返回一个 Promise 对象，在 wx.ready 时调用 resolve 并传回返回结果
 	 * */
-	sign(config){
-		wx.then((wx)=>{
+	, sign(config){
+		return wechatBiz.getWX().then((wx)=>{
 			wx.config( config );
 
 			return new Promise((resolve)=>{
@@ -87,9 +120,9 @@ export default {
 		});
 	}
 	/**
-	 * @summary 设置分享语
-	 * @method
-	 * @memberOf    wechat
+	 * @summary     设置分享语
+	 * @function    setShare
+	 * @memberOf    tg.biz.wechat
 	 * @param       {Object}    options
 	 * @param       {String}    options.title
 	 * @param       {String}    options.friendTitle
@@ -102,7 +135,7 @@ export default {
 	 * @param       {String}    [options.imageUrl]  和 imgUrl 必有一个
 	 * */
 	, setShare(options={}){
-		return wx.then((wx)=>{
+		return wechatBiz.getWX().then((wx)=>{
 
 			// 显示微信功能菜单
 			wx.showMenuItems({
@@ -138,12 +171,12 @@ export default {
 		});
 	}
 	/**
-	 * @summary 隐藏菜单
-	 * @method
-	 * @memberOf    wechat
+	 * @summary     隐藏菜单
+	 * @function    hideMenu
+	 * @memberOf    tg.biz.wechat
 	 * */
 	, hideMenu(){
-		return this.wx.then((wx)=>{
+		return wechatBiz.getWX().then((wx)=>{
 			wx.hideMenuItems({
 				menuList: [
 					'menuItem:share:appMessage'
@@ -158,9 +191,9 @@ export default {
 		});
 	}
 	/**
-	 * @summary 获取 openId
-	 * @method
-	 * @memberOf    wechat
+	 * @summary     获取 openId
+	 * @function    getOpenidUtil
+	 * @memberOf    tg.biz.wechat
 	 * @param       {String|String[]}   code    若 code 为数组，取最后一个
 	 * @param       {String}            [appId]
 	 * @return      {Promise}           返回一个 Promise 对象，在 resolve 时传回一个由 openId、openCypher 组成的对象
@@ -173,7 +206,7 @@ export default {
 		let isDefaultAppId = appId === defaultAppId
 			, openIdKey = 'openid' + (isDefaultAppId ? '' : '_' + appId)
 			, openIdCypherKey = 'openid_cypher' + (isDefaultAppId ? '' : '_' + appId)
-		;
+			;
 
 		if( Array.isArray(code) ){
 			code = code[code.length -1];
@@ -206,9 +239,9 @@ export default {
 		});
 	}
 	/**
-	 * @summary 获取微信用户个人信息的通用方法
-	 * @method
-	 * @memberOf    wechat
+	 * @summary     获取微信用户个人信息的通用方法
+	 * @function    getUserInfoUtil
+	 * @memberOf    tg.biz.wechat
 	 * @param       {String}    [appId=defaultAppId]    公众号 AppId，可以根据不同AppId取得对应的openId。默认用当前环境的AppId
 	 * @return      {Promise}   执行后返回一个 Promise 对象，在 resolve 时传入微信个人信息数据，否则跳转页面到微信授权页面
 	 * @desc        可以获取当前微信用户的头像、性别、昵称、openId 等信息，流程之上而下的逻辑优先顺序如下：
@@ -223,7 +256,7 @@ export default {
 			, openIdKey = 'openid' + (isDefaultAppId ? '' : '_' + appId)
 			, openIdCypherKey = 'openid_cypher' + (isDefaultAppId ? '' : '_' + appId)
 			, userInfoKey = 'userInfo' + (isDefaultAppId ? '' : '_' + appId)
-		;
+			;
 
 		return cookie.getData('userInfo').catch(()=>{   // cookie 中不存在 userInfo
 
@@ -287,26 +320,23 @@ export default {
 		});
 	}
 	/**
-	 * @summary 微信自动登录
-	 * @method
-	 * @memberOf    wechat
+	 * @summary     微信自动登录
+	 * @function    login
+	 * @memberOf    tg.biz.wechat
 	 * @param       {Boolean}   isWcAutoLogin   是否微信自动登录
 	 * @return      {Promise}
 	 * */
 	, login(isWcAutoLogin){
 		let exec
-		;
+			;
 
 		if( device.weixin && isWcAutoLogin ){
-			exec = cookie.getData(['autoLogin', 'isLogin']).then(({autoLogin, isLogin})=>{
+			exec = cookie.getData('autoLogin', 'isLogin').then(({autoLogin, isLogin})=>{
 				let result
 				;
 
-				if( autoLogin === 'true' && isLogin === 'true' ){   // 已经登录
-					result = true;
-				}
-				else{   // 微信下，并且需要自动登录
-					result = this.getOpenidUtil( url.params.code || '' ).then(({openid, openid_cypher})=>{
+				if( autoLogin === true && isLogin === true ){   // 已经登录
+					result = getOpenidUtil( url.params.code || '' ).then(({openid, openid_cypher})=>{
 						return wechat.login(openid, openid_cypher).then((data)=>{
 							return cookie.setData('token', data.token, TOKEN_EXPIRES);
 						}, (res)=>{
@@ -318,25 +348,32 @@ export default {
 							}
 						});
 					}, ()=>{
-						return cookie.setData('autoLogin', true)
+						return cookie.setData('autoLogin', true);
 					});
+				}
+				else{   // 微信下，并且需要自动登录
+					result = true;
 				}
 
 				return result;
 			});
 		}
 		else{
+			console.log('非微信或不需要微信自动登录');
+
 			exec = Promise.resolve();
 		}
 
 		return exec.then(()=>{  // 校验登录状态
-			return cookie.getData('isCheck');
+			return cookie.getData('isCheck').catch(()=>{
+				return false;
+			});
 		}).then((value)=>{
 			let exec
 			;
 
-			if( value === 'true' ){ // 获取用户基本信息
-				exec = Promise.reject();
+			if( value === true ){ // 获取用户基本信息
+				exec = Promise.resolve();
 			}
 			else{
 				exec = member.memberInfo().then((data)=>{
@@ -371,10 +408,56 @@ export default {
 							, isCheck: true
 						})
 					]);
-				});
+				}, ()=>{});
 			}
 
 			return exec;
 		});
 	}
-}
+	/**
+	 * @summary     获取微信 sdk 对象
+	 * @function    getWX
+	 * @memberOf    tg.biz.wechat
+	 * @return      {Promise}
+	 * */
+	, getWX(){
+		let result
+			;
+
+		if( device.wechat ){
+			result = wechatBiz.loadWcSdk();
+		}
+		else{
+			result = Promise.reject( null );
+		}
+
+		return result;
+	}
+
+	, chooseImage(count){
+		return wechatBiz.getWX().then((wx)=>{
+			return new Promise((resolve)=>{
+				wx.chooseImage({
+					count
+					, success(res){
+						resolve( res );
+					}
+				});
+			});
+		});
+	}
+	, uploadImage(localId){
+		return wechatBiz.getWX().then((wx)=>{
+			return new Promise((resolve)=>{
+				wx.uploadImage({
+					localId
+					, success(res){
+						resolve( res );
+					}
+				});
+			});
+		});
+	}
+};
+
+export default wechatBiz

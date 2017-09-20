@@ -2,19 +2,23 @@
 
 /**
  * @file    防抖函数
- * @desc    保证函数只在固定时间内最后一次触发才执行
+ *          保证函数只在固定时间内最后一次触发才执行
  * */
 
 /**
- * @function
- * @param   {Function}  func
- * @param   {Number}    wait
- * @return  {Function}
+ * @summary     防抖函数
+ * @function    debounce
+ * @memberOf    maple.util
+ * @param       {Function}  func
+ * @param       {Number}    wait
+ * @param       {Function}  [cancelCB]  上一次计时器取消时调用
+ * @return      {Function}
  * */
-function debounce(func, wait){
+let debounce = function(func, wait, cancelCB){
 	let timeout = null
 		, result = function(){
 			let that = this || null
+				, argv = [].slice.call( arguments )
 				;
 
 			if( timeout ){
@@ -22,7 +26,7 @@ function debounce(func, wait){
 			}
 
 			timeout = setTimeout(function(){
-				func.apply(that, arguments || []);
+				func.apply(that, argv || []);
 			}, wait);
 		}
 		;
@@ -34,6 +38,8 @@ function debounce(func, wait){
 		if( timeout ){
 			clearTimeout( timeout );
 			timeout = null;
+
+			cancelCB && cancelCB();
 		}
 	};
 
@@ -48,6 +54,6 @@ function debounce(func, wait){
 
 
 	return result;
-}
+};
 
 export default debounce;
