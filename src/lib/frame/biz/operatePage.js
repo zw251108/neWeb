@@ -44,26 +44,26 @@ url._changePage = url.changePage;
 url._replacePage = url.replacePage;
 
 let needRefresh = (is)=>{
-	if( is ){
-		view.needRefresh();
+		if( is ){
+			view.needRefresh();
+		}
 	}
-}
 	, setHistory = (type, href)=>{
-	if( type === 'change' ){
-		url.pushHistory( href );    // 将目标路径添加到 history
+		if( type === 'change' ){
+			url.pushHistory( href );    // 将目标路径添加到 history
+		}
+		else if( type === 'replace' ){
+			url.replaceHistory( href );
+		}
 	}
-	else if( type === 'replace' ){
-		url.replaceHistory( href );
+	, setPage = (type, href)=>{ // 页面跳转
+		if( type === 'change' ){
+			url._changePage( href );
+		}
+		else if( type === 'replace' ){
+			url._replacePage( href );
+		}
 	}
-}
-	, setPage = (type, href)=>{
-	if( type === 'change' ){
-		url._changePage( href );
-	}
-	else if( type === 'replace' ){
-		url._replacePage( href );
-	}
-}
 	, assignPage = (type, href, params={}, isNeedRefresh=false)=>{
 		let nowScroll = view.scroll.scrollBar('top').px
 			, nowView   // todo
@@ -122,8 +122,7 @@ let needRefresh = (is)=>{
 			// });
 			//
 			// result.then((hybrid)=>{
-				let rs
-					, appCode = AppPageCode[targetUrl.path]
+				let appCode = AppPageCode[targetUrl.path]
 					;
 
 				if( hybrid && type === 'change' ){  // APP 添加跳转记录
@@ -136,9 +135,12 @@ let needRefresh = (is)=>{
 					app.tgChangePage(appCode, url.pack());
 				}
 				else{   // 页面路由控制
-					rs = router.get(targetUrl.path, params);    // 页面路由控制
+					// rs = router.get(targetUrl.path);    // 页面路由控制
 
-					if( rs ){   // 路由中有该路径
+					if( router.has(targetUrl.path) ){   // 路由中有该路径
+
+						router.get(targetUrl.path, params)
+
 						setHistory(type, targetUrl.pack());
 					}
 					else{   // 路由中没有该路径，跳转页面

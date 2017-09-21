@@ -54,7 +54,7 @@ class HandlerQueue{
 	 * @summary 队列中是否还有剩余
 	 * @return  {Boolean}
 	 * */
-	has(){
+	remain(){
 		return this._currIndex < this._queue.length;
 	}
 	/**

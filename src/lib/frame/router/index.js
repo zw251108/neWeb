@@ -107,9 +107,59 @@ class Router{
 	 * */
 	get(path, params={}){
 		let tempUrl = url.parseUrl( path )
+			, result = Promise.resolve()
 			;
 
 		path = tempUrl.path;
+
+		// return
+		this.routers.reduce((promise, route)=>{
+			let result = route.pattern.exec( path )
+				, tempParams
+				;
+
+			if( result ){    // 存在匹配 path
+				
+				// 解析 url 中的参数
+				tempParams = route.paramNames.reduce((all, d, i)=>{
+					all[d] = result[i +1];
+
+					return all;
+				}, {});
+				tempParams = merge(tempParams, params);
+
+				if( 'before' in route && typeof route.before === 'function' ){
+					promise = promise.then(()=>{
+						return new Promise((resolve)=>{
+							route.before(url.pack(), path, tempParams, resolve);
+						});
+					});
+				}
+
+				promise = promise.then((exec)=>{
+					if( exec ){
+						return route.callback( tempParams );
+					}
+				});
+
+				if( 'after' in route && typeof route.after === 'function' ){
+					promise = promise.then(()=>{
+						return new Promise((resolve, reject)=>{
+							route.after(url.pack(), path, tempParams, (execRemain)=>{
+								if( execRemain ){
+									resolve();
+								}
+								else{
+									reject();
+								}
+							});
+						});
+					});
+				}
+			}
+
+			return promise;
+		}, Promise.resolve());
 
 		return this.routers.map((route)=>{
 			let result = route.pattern.exec( path )
@@ -128,12 +178,8 @@ class Router{
 
 				try{
 					// 执行路由程序
-					if( 'context' in route ){   // 设置了 callback 执行上下文（即 this）
-						route.callback.call(route.context, params);
-					}
-					else{
-						route.callback( temp );
-					}
+
+					route.callback( temp );
 
 					// todo ? 设置 history
 					// history.pushState(null, '', tempUrl.pack());
@@ -147,22 +193,16 @@ class Router{
 			return !!result;
 		}).some(d=>d);
 	}
-	// /**
-	//  * @summary 更新当前浏览器路径
-	//  * @param   {String}    href
-	//  * @return  {Router}    this
-	//  * */
-	// update(href){
-	// 	history.pushState(null, '', href);
-	// 	return this;
-	// }
-	// back(href){
-	// 	let tempUrl = url.parseUrl( href )
-	// 		, path = tempUrl.path
-	// 		;
-	//
-	// 	return this;
-	// }
+	/**
+	 * @summary 判断已注册的路由中是否有匹配该路径
+	 * @param   {String}    path
+	 * @return  {Boolean}
+	 * */
+	has(path){
+		return this.routers.some((route)=>{
+			return route.pattern.test( path );
+		});
+	}
 }
 
 let temp = {
@@ -180,7 +220,7 @@ let temp = {
 let router = new Router();
 
 url.popState.add(()=>{
-	let rs = router.back( location.href )
+	let rs = router.get( location.href )
 		;
 	
 	if( !rs ){

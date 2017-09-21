@@ -273,7 +273,7 @@ url.replacePage = function(href){
  * */
 url.hashChange = listener('hashchange', (e)=>{
 	url.hash = url.parseUrl( e.newUrl ).hash;
-	               console.log(e);
+
 	console.log(111)
 });
 /**
