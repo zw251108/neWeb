@@ -141,14 +141,29 @@ let url = new Url()
 	;
 
 /**
+ * @summary     Url 类对象
+ * @type        {Url}
+ * @memberOf    url
+ *
+ * */
+url.Url = Url;
+/**
  * @summary     对 url 进行解析
  * @method
  * @memberOf    url
- * @param       {String}    url
- * @return      {Url}
+ * @param       {String|Url}    url
+ * @return      {Url}           若出入的 url 参数是一个 Url 对象，则不做处理直接返回
  * */
 url.parseUrl = (url)=>{
-	return new Url( url );
+	if( url instanceof Url ){
+		return url;
+	}
+	else if( typeof url === 'string' ){
+		return new Url( url );
+	}
+	else{
+		return new Url();
+	}
 };
 /**
  * @summary     对没有协议头（以 // 开头）的路径加上协议头
@@ -271,20 +286,37 @@ url.replacePage = function(href){
  * @type        {Listener}
  * @memberOf    url
  * */
-url.hashChange = listener('hashchange', (e)=>{
-	url.hash = url.parseUrl( e.newUrl ).hash;
+url.hashChange = listener('hashchange', (e, newUrl)=>{
+	let temp
+		;
 
-	console.log(111)
+	if( e.newUrl ){
+		temp = url.parseUrl( e.newUrl );
+	}
+	else if( newUrl ){
+		temp = url.parseUrl( newUrl );
+	}
+
+	if( temp ){
+		url.hash = temp.hash;
+	}
 });
 /**
  * @summary     监听 popstate 事件
  * @type        {Listener}
  * @memberOf    url
  * */
-url.popState = listener('popstate', (e)=>{
-	let temp = url.parseUrl( location.href )
+url.popState = listener('popstate', (e, newUrl)=>{
+	let temp
 		, state = e.state
 		;
+
+	if( newUrl ){
+		temp = url.parseUrl( newUrl );
+	}
+	else{
+		temp = url.parseUrl( location.href );
+	}
 
 	if( typeof state === 'string' ){
 		try{

@@ -38,12 +38,29 @@ class Router{
 
 	// ---------- 公有方法 ----------
 	/**
+	 * @summary 进入页面初始化 router
+	 * */
+	init(){
+		let tempUrl
+			;
+
+		if( url.hash ){
+			tempUrl = url.parseUrl( url.hash );
+
+			if( this.has( tempUrl.path ) ){
+				this.get( tempUrl );
+			}
+		}
+	}
+	hash(){}
+	/**
 	 * @summary 注册路径
 	 * @param   {Object|String|RegExp}  route           当 route 为 Object 类型时且不为 RegExp 视为路由配置对象
 	 * @param   {String|RegExp}         route.path
 	 * @param   {Function}              route.callback
 	 * @param   {Array}                 [route.children]
 	 * @param   {RouterEvent}           [callback]      当 route 为 String 或 RegExp 类型时有效
+	 * @return  {Router}                this
 	 * @desc    path 以 / 开始视为根目录开始，否则以当前路径目录下，不能带参数和 hash(? #)
 	 *          可以配置动态路由，参数名以 :name 的形式
 	 *          解析出来的路由参数将以组合到出入 RouterEvent 函数的参数 params 中
@@ -98,68 +115,69 @@ class Router{
 			// 	routers: router.children
 			// });
 		}
+
+		return this;
 	}
 	/**
 	 * @summary 跳转到路径
-	 * @param   {String}            path
+	 * @param   {String|Url}        path
 	 * @param   {Object|Boolean}    [params={}]
 	 * @desc
 	 * */
 	get(path, params={}){
 		let tempUrl = url.parseUrl( path )
-			, result = Promise.resolve()
 			;
 
 		path = tempUrl.path;
 
 		// return
-		this.routers.reduce((promise, route)=>{
-			let result = route.pattern.exec( path )
-				, tempParams
-				;
-
-			if( result ){    // 存在匹配 path
-				
-				// 解析 url 中的参数
-				tempParams = route.paramNames.reduce((all, d, i)=>{
-					all[d] = result[i +1];
-
-					return all;
-				}, {});
-				tempParams = merge(tempParams, params);
-
-				if( 'before' in route && typeof route.before === 'function' ){
-					promise = promise.then(()=>{
-						return new Promise((resolve)=>{
-							route.before(url.pack(), path, tempParams, resolve);
-						});
-					});
-				}
-
-				promise = promise.then((exec)=>{
-					if( exec ){
-						return route.callback( tempParams );
-					}
-				});
-
-				if( 'after' in route && typeof route.after === 'function' ){
-					promise = promise.then(()=>{
-						return new Promise((resolve, reject)=>{
-							route.after(url.pack(), path, tempParams, (execRemain)=>{
-								if( execRemain ){
-									resolve();
-								}
-								else{
-									reject();
-								}
-							});
-						});
-					});
-				}
-			}
-
-			return promise;
-		}, Promise.resolve());
+		// this.routers.reduce((promise, route)=>{
+		// 	let result = route.pattern.exec( path )
+		// 		, tempParams
+		// 		;
+		//
+		// 	if( result ){    // 存在匹配 path
+		//
+		// 		// 解析 url 中的参数
+		// 		tempParams = route.paramNames.reduce((all, d, i)=>{
+		// 			all[d] = result[i +1];
+		//
+		// 			return all;
+		// 		}, {});
+		// 		tempParams = merge(tempParams, params);
+		//
+		// 		if( 'before' in route && typeof route.before === 'function' ){
+		// 			promise = promise.then(()=>{
+		// 				return new Promise((resolve)=>{
+		// 					route.before(url.pack(), path, tempParams, resolve);
+		// 				});
+		// 			});
+		// 		}
+		//
+		// 		promise = promise.then((exec)=>{
+		// 			if( exec ){
+		// 				return route.callback( tempParams );
+		// 			}
+		// 		});
+		//
+		// 		if( 'after' in route && typeof route.after === 'function' ){
+		// 			promise = promise.then(()=>{
+		// 				return new Promise((resolve, reject)=>{
+		// 					route.after(url.pack(), path, tempParams, (execRemain)=>{
+		// 						if( execRemain ){
+		// 							resolve();
+		// 						}
+		// 						else{
+		// 							reject();
+		// 						}
+		// 					});
+		// 				});
+		// 			});
+		// 		}
+		// 	}
+		//
+		// 	return promise;
+		// }, Promise.resolve());
 
 		return this.routers.map((route)=>{
 			let result = route.pattern.exec( path )
@@ -181,9 +199,7 @@ class Router{
 
 					route.callback( temp );
 
-					// todo ? 设置 history
-					// history.pushState(null, '', tempUrl.pack());
-					// this.listener.trigger(url.pack(), tempUrl.pack());
+					this.listener.trigger(url.pack(), tempUrl.pack());
 				}
 				catch(e){
 					console.log(path, '路由执行错误', e);
@@ -227,10 +243,5 @@ url.popState.add(()=>{
 		console.log('router 中不存在', location.href);
 	}
 });
-
-// /**
-//  * @exports router
-//  * */
-// export default router;
 
 export default router;

@@ -139,7 +139,7 @@ let needRefresh = (is)=>{
 
 					if( router.has(targetUrl.path) ){   // 路由中有该路径
 
-						router.get(targetUrl.path, params)
+						router.get(targetUrl.path, params);
 
 						setHistory(type, targetUrl.pack());
 					}
@@ -162,7 +162,7 @@ let needRefresh = (is)=>{
  * @override
  * @method
  * @memberOf    url
- * @param       {String}            href
+ * @param       {String|Url}        href
  * @param       {Object|Boolean}    [params={}]
  * @param       {Boolean}           [isNeedRefresh=false]
  * @return      {Promise}
@@ -181,7 +181,7 @@ url.replacePage = function(href, params={}, isNeedRefresh=false){
  * @override
  * @method
  * @memberOf    url
- * @param       {String}            href
+ * @param       {String|Url}        href
  * @param       {Object|Boolean}    [params={}]             当为 Boolean 类型数据时，视为 isNeedRefresh 参数，自身赋值为 {}
  * @param       {Boolean}           [isNeedRefresh=false]
  * @return      {Promise}

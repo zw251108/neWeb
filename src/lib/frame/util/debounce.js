@@ -23,6 +23,8 @@ let debounce = function(func, wait, cancelCB){
 
 			if( timeout ){
 				clearTimeout( timeout );
+
+				cancelCB && cancelCB();
 			}
 
 			timeout = setTimeout(function(){
@@ -51,7 +53,6 @@ let debounce = function(func, wait, cancelCB){
 
 		func.apply(context, argv);
 	};
-
 
 	return result;
 };

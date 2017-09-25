@@ -91,88 +91,43 @@ class HandlerQueue{
 	}
 	/**
 	 * @summary 执行队列中的一个 handler，内部指针将指向下一个 handler
-	 * @param   {Object}    [context]
 	 * @param   {...*}
 	 * @return  {*}
-	 * @desc    当出入参数时，第一个参数被视为上下文（context）指向 handler 的 this，剩余参数被视为传入 handler 的参数
+	 * @desc    当出入参数时，参数被视为传入 handler 的参数
 	 * */
-	fire(context){
-		let args = [].slice.apply( arguments )
-			, temp = this.next()
-			, result
-			;
-
-		if( args.length ){
-			args.shift();
-
-			result = temp.apply(context, args);
-		}
-		else{
-			result = temp();
-		}
-
-		return result;
+	fire(){
+		return this.next()( ...arguments );
 	}
 	/**
 	 * @summary 执行队列中的全部 handler，将返回一个结果数组
 	 * @param   {Object}    [context]
 	 * @param   {...*}
 	 * @return  {Array}
-	 * @desc    当传入参数时，第一个参数被视为上下文（context）指向 handler 的 this，剩余参数被视为传入 handler 的参数（所有 handler 都会传入相同的参数），全部执行后会重置
+	 * @desc    当传入参数时，参数被视为传入 handler 的参数（所有 handler 都会传入相同的参数），全部执行后会重置
 	 * */
 	fireAll(context){
-		let args = [].slice.apply( arguments )
-			, result
+		let args = arguments
 			;
-
-		if( args.length ){
-			args.shift();
-		}
-
-		result = this._queue.filter((d)=>{
-			return d !== null;
-		}).map((d)=>{
-			if( typeof context === 'object' ){
-				return d.apply(context, args)
-			}
-			else{
-				return d();
-			}
-		});
 
 		this.reset();
 
-		return result;
+		return this._queue.filter( d=>d !== null ).map( d=>d( ...args ) );
 	}
 	/**
 	 * @summary 以 reduce 的形式执行队列中的全部 handler，即前一个 handler 的返回结果作为下一个 handler 的参数
-	 * @param   {Object}    [context]
 	 * @param   {*}         [init]
 	 * @return  {Promise}
-	 * @desc    当传入参数时，第一个参数被视为上下文（context）指向 handler 的 this，第二个参数被视为传入第一个 handler 的参数，全部执行后会重置
+	 * @desc    当传入参数时，参数被视为传入第一个 handler 的参数，全部执行后会重置
 	 *          由于为 reduce 方式调用，将只允许传入一个初始参数，并且原则上所有 handler 都应只有一个参数
 	 *          由于为 reduce 方式调用，将返回 Promise 类型的结果
 	 * */
-	fireReduce(context, init){
-		let result = Promise.resolve( init )
-			;
-
-		result = this._queue.filter((d)=>{
-			return d !== null;
-		}).reduce((promise, d)=>{
-			return promise.then((rs)=>{
-				if( typeof context === 'object' ){
-					return d.call(context, rs);
-				}
-				else{
-					return d( rs );
-				}
-			});
-		}, result);
-
+	fireReduce(init){
+		
 		this.reset();
 
-		return result;
+		return this._queue.filter( d=>d !== null ).reduce((promise, d)=>{
+			return promise.then( rs=>d( rs ) );
+		}, Promise.resolve( init ));
 	}
 }
 
