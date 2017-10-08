@@ -4,19 +4,55 @@
  * @file    首页
  * */
 
-import Vue from 'vue';
-import z from '../lib/frame/index.js';
+import $        from 'jquery';
 
-import '../component/index.js';
+import Vue      from 'vue';
+import z        from 'z';
+
+console.log($)
+console.log(Vue)
+
+import module   from '../component/module/index.vue';
+import metro    from '../component/metro/index.vue';
+import dialog   from '../component/dialog/index.vue';
 
 let ls = z.model.factory('ls')
-	// , cookie = z.model.factory('c')
 	, service = z.model.factory('s')
 	, vm = new Vue({
-		el: '#app'
+		el: '#main'
+		, data: {
+			userAvatar: ''
+			, nickname: ''
+			, modules: []
+			, sns: [{
+				icon: 'renren'
+				, url: '#'
+			}, {
+				icon: 'qq'
+				, url: '#'
+			}, {
+				icon: 'wechat'
+			}, {
+				icon: 'weibo'
+				, url: 'http://weibo.com/2707826454/profile'
+			}, {
+				icon: 'github'
+				, url: 'https://github.com/zw251108'
+			}]
+		}
+		, components: {
+			zModule: module
+			, zMetro: metro
+			, zDialog: dialog
+		}
 	})
 	;
 
-service.getData('/index').then(function(data){
-	vm.$set('moduleList', data.data);
+service.getData('/modules').then((res)=>{
+	                            console.log(res.data.modules)
+	vm.modules =res.data.modules.map((d)=>{
+		d.size = d.metroSize;
+		
+		return d;
+	});
 });

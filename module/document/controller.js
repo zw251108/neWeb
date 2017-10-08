@@ -1,6 +1,6 @@
 'use strict';
 
-var CONFIG      = require('../../config.js')
+let CONFIG      = require('../../config.js')
 	, web       = require('../web.js')
 	, socket    = require('../socket.js')
 
@@ -32,7 +32,7 @@ menu.register({
 });
 
 web.get('/document/', function(req, res){
-	var query = req.query || {}
+	let query = req.query || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
@@ -51,6 +51,18 @@ web.get('/document/', function(req, res){
 	});
 });
 
+
+let {getDataSucc , getDataError} = require('../controller.js')
+	;
+
+web.get('/document/data', (req, res)=>{
+	let query = req.query || {}
+		, user = UserHandler.getUserFromSession.fromReq( req )
+		;
+
+	DocumentHandler.getDefaultDocument(user, query).then(getDataSucc.bind(null, res), getDataError.bind(null, res));
+});
+
 /**
  *
  * */
@@ -62,7 +74,7 @@ admin.register({
 	, href: 'document/'
 });
 web.get('/admin/document/', function(req, res){
-	var query = req.query || {}
+	let query = req.query || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
@@ -81,7 +93,7 @@ web.get('/admin/document/', function(req, res){
 	});
 });
 web.get('/admin/document/:documentId/', function(req, res){
-	var param = req.params || {}
+	let param = req.params || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
@@ -111,7 +123,7 @@ web.get('/admin/document/:documentId/', function(req, res){
  * put  /admin/document/:documentId/:sectionId/:contentId/  内容详细保存
  * */
 web.post(   '/admin/document/', function(req, res){
-	var body = req.body || {}
+	let body = req.body || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
@@ -132,7 +144,7 @@ web.post(   '/admin/document/', function(req, res){
 	});
 });
 web.put(    '/admin/document/:documentId/', function(req, res){
-	var param = req.params || {}
+	let param = req.params || {}
 		, body = req.body || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
@@ -156,7 +168,7 @@ web.put(    '/admin/document/:documentId/', function(req, res){
 	});
 });
 web.post(   '/admin/document/:documentId/', function(req, res){
-	var param = req.params || {}
+	let param = req.params || {}
 		, body = req.body || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
@@ -180,7 +192,7 @@ web.post(   '/admin/document/:documentId/', function(req, res){
 	});
 });
 web.put(    '/admin/document/:documentId/:sectionId/', function(req, res){
-	var param = req.params || {}
+	let param = req.params || {}
 		, body = req.body || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
@@ -205,7 +217,7 @@ web.put(    '/admin/document/:documentId/:sectionId/', function(req, res){
 	});
 });
 web.post(   '/admin/document/:documentId/:sectionId/', function(req, res){
-	var param = req.params || {}
+	let param = req.params || {}
 		, body = req.body || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
@@ -230,7 +242,7 @@ web.post(   '/admin/document/:documentId/:sectionId/', function(req, res){
 	});
 });
 web.put(    '/admin/document/:documentId/:sectionId/:contentId/', function(req, res){
-	var param = req.params || {}
+	let param = req.params || {}
 		, body = req.body || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;

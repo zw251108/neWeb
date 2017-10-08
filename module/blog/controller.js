@@ -1,6 +1,6 @@
 'use strict';
 
-var CONFIG  = require('../../config.js')
+let CONFIG  = require('../../config.js')
 	, web       = require('../web.js')
 	, socket    = require('../socket.js')
 
@@ -32,7 +32,7 @@ menu.register({
 });
 
 web.get('/blog/', function(req, res){
-	var query = req.query || {}
+	let query = req.query || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
@@ -55,10 +55,22 @@ web.get('/blog/', function(req, res){
 		res.end();
 	});
 });
-web.get('/blog/:blogId/', function(req, res){
-	var param = req.params || {}
+
+let {getDataSucc , getDataError} = require('../controller.js')
+	;
+
+web.get('/blog/data', function(req, res){
+	let query = req.query || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
+
+	BlogHandler.getBlogList(user, query).then(getDataSucc.bind(null, res), getDataError.bind(null, res));
+});
+
+web.get('/blog/:blogId/', function(req, res){
+	let param = req.params || {}
+		, user = UserHandler.getUserFromSession.fromReq( req )
+	;
 
 	BlogHandler.getBlog(user, param).then(BlogView.blog, function(e){
 		console.log( e );
@@ -75,6 +87,14 @@ web.get('/blog/:blogId/', function(req, res){
 	});
 });
 
+web.get('/blog/:blogId/data', function(req, res){
+	let param = req.params || {}
+		, user = UserHandler.getUserFromSession.fromReq( req )
+	;
+
+	BlogHandler.getBlog(user, param).then(getDataSucc.bind(null, res), getDataError.bind(null, res));
+});
+
 /**
  *
  * */
@@ -86,7 +106,7 @@ admin.register({
 	, href: 'blog/'
 });
 web.get('/admin/blog/', function(req, res){
-	var query = req.query || {}
+	let query = req.query || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
@@ -105,7 +125,7 @@ web.get('/admin/blog/', function(req, res){
 	});
 });
 web.get('/admin/blog/:blogId/', function(req, res){
-	var param = req.params || {}
+	let param = req.params || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
@@ -129,7 +149,7 @@ web.get('/admin/blog/:blogId/', function(req, res){
  * post /admin/blog/:blogId/ 保存文章内容
  * */
 web.post('/admin/blog/', function(req, res){
-	var body = req.body || {}
+	let body = req.body || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
@@ -150,7 +170,7 @@ web.post('/admin/blog/', function(req, res){
 	});
 });
 web.post('/admin/blog/:blogId/', function(req, res){
-	var body = req.body || {}
+	let body = req.body || {}
 		, param = req.params || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;

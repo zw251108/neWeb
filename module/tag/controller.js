@@ -1,6 +1,6 @@
 'use strict';
 
-var CONFIG      = require('../../config.js')
+let CONFIG      = require('../../config.js')
 	, web       = require('../web.js')
 	, socket    = require('../socket.js')
 
@@ -20,7 +20,7 @@ var CONFIG      = require('../../config.js')
  * Web 数据接口
  * */
 web.get('/tag/data', function(req, res){
-	var query = req.query || {}
+	let query = req.query || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
@@ -52,7 +52,7 @@ admin.register({
 	, href: 'tag/'
 });
 web.get('/admin/tag/', function(req, res){
-	var user = UserHandler.getUserFromSession.fromReq( req )
+	let user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
 	TagAdminView.tag( user ).then(function(html){
@@ -67,7 +67,7 @@ web.get('/admin/tag/', function(req, res){
  * */
 socket.register({
 	tag: function(socket){
-		var topic = 'tag'
+		let topic = 'tag'
 			, user = UserHandler.getUserFromSession.fromSocket( socket )
 			;
 
@@ -89,7 +89,7 @@ socket.register({
 		});
 	}
 	, 'tag/add': function(socket, data){
-		var topic = 'tag/add'
+		let topic = 'tag/add'
 			, query = data.query || {}
 			, user = UserHandler.getUserFromSession.fromSocket( socket )
 			;
@@ -113,7 +113,7 @@ socket.register({
 		});
 	}
 	, 'tag/increase': function(socket, data){
-		var topic = 'tag/increase'
+		let topic = 'tag/increase'
 			, query = data.query || {}
 			, user = UserHandler.getUserFromSession.fromSocket( socket )
 			;
@@ -143,7 +143,7 @@ socket.register({
  * */
 data.push('tag');
 web.get('/data/tag', function(req, res){
-	var query = req.query || {}
+	let query = req.query || {}
 		, callback = query.callback
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		, execute

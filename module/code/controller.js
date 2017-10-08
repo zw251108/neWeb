@@ -1,6 +1,6 @@
 'use strict';
 
-var CONFIG  = require('../../config.js')
+let CONFIG  = require('../../config.js')
 	, web       = require('../web.js')
 	, socket    = require('../socket.js')
 
@@ -53,7 +53,7 @@ menu.register({
 });
 
 web.get('/code/', function(req, res){
-	var query = req.query || {}
+	let query = req.query || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
@@ -72,7 +72,7 @@ web.get('/code/', function(req, res){
 	});
 });
 web.get('/code/editor', function(req, res){
-	var query = req.query || {}
+	let query = req.query || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
@@ -87,8 +87,26 @@ web.get('/code/editor', function(req, res){
 	});
 });
 
+let {getDataSucc , getDataError} = require('../controller.js')
+	;
+
+web.get('/code/data', (req, res)=>{
+	let query = req.query || {}
+		, user = UserHandler.getUserFromSession.fromReq( req )
+		;
+
+	CodeHandler.getCodeList(user, query).then(getDataSucc.bind(null, res), getDataError.bind(null, res));
+});
+web.get('/code/editor/data', (req, res)=>{
+	let query = req.query || {}
+		, user = UserHandler.getUserFromSession.fromReq( req )
+		;
+
+	CodeHandler.getCode(user, query).then(getDataSucc.bind(null, res), getDataError.bind(null, res));
+});
+
 web.post('/code/setMore', ImageHandler.uploadMiddleware.single('preview'), function(req, res){
-	var body = req.body || {}
+	let body = req.body || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
@@ -120,7 +138,7 @@ web.post('/code/setMore', ImageHandler.uploadMiddleware.single('preview'), funct
 	});
 });
 web.post('/code/demoImgUpload', ImageHandler.uploadMiddleware.single('image'), function(req, res){
-	var user = UserHandler.getUserFromSession.fromReq( req )
+	let user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
 	ImageHandler.uploadImage(user, req).then(function(data){
@@ -145,7 +163,7 @@ web.get('/code/demo/',      function(req, res){
 	res.end();
 });
 web.post('/code/demo/',     function(req, res){
-	var body        = req.body
+	let body        = req.body
 		, html      = body.html
 		, css       = body.css
 		, cssLib    = body.cssLib
@@ -179,14 +197,14 @@ web.post('/code/demo/',     function(req, res){
 	res.end();
 });
 web.get('/code/demo/get',   function(req, res){
-	var query = req.query
+	let query = req.query
 		;
 
 	res.send( JSON.stringify(query) );
 	res.end();
 });
 web.post('/code/demo/set',  function(req, res){
-	var body = req.body
+	let body = req.body
 		;
 
 	res.send( JSON.stringify(body) );
@@ -195,7 +213,7 @@ web.post('/code/demo/set',  function(req, res){
 
 socket.register({
 	code: function(socket, data){
-		var topic = 'code'
+		let topic = 'code'
 			, query = data.query || {}
 			, user = UserHandler.getUserFromSession.fromSocket( socket )
 			;
@@ -218,7 +236,7 @@ socket.register({
 		});
 	}
 	, 'code/search': function(socket, data){
-		var topic = 'code/search'
+		let topic = 'code/search'
 			, query = data.query || {}
 			, user = UserHandler.getUserFromSession.fromSocket( socket )
 			;
@@ -241,7 +259,7 @@ socket.register({
 		});
 	}
 	, 'code/filter': function(socket, data){
-		var topic = 'code/search'
+		let topic = 'code/search'
 			, query = data.query || {}
 			, user = UserHandler.getUserFromSession.fromSocket( socket )
 			;
@@ -265,7 +283,7 @@ socket.register({
 	}
 	, 'code/code': function(socket, data){}
 	, 'code/editor/save': function(socket, data){
-		var topic = 'code/editor/save'
+		let topic = 'code/editor/save'
 			, query = data.query
 			, user = UserHandler.getUserFromSession.fromSocket(socket)
 			;
@@ -296,7 +314,7 @@ socket.register({
 		});
 	}
 	, 'code/demoImgLib': function(socket){
-		var topic = 'code/demoImgLib'
+		let topic = 'code/demoImgLib'
 			, user = UserHandler.getUserFromSession.fromSocket( socket )
 			;
 

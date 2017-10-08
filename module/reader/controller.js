@@ -1,6 +1,6 @@
 'use strict';
 
-var CONFIG      = require('../../config.js')
+let CONFIG      = require('../../config.js')
 	, web       = require('../web.js')
 	, socket    = require('../socket.js')
 
@@ -54,7 +54,7 @@ menu.register({
 });
 
 web.get('/reader/', function(req, res){
-	var query = req.query || {}
+	let query = req.query || {}
 		, user = UserHandler.getUserFromSession.fromReq(req)
 		;
 
@@ -73,7 +73,7 @@ web.get('/reader/', function(req, res){
 	});
 });
 web.get('/reader/bookmark', function(req, res){
-	var query = req.query || {}
+	let query = req.query || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
@@ -95,7 +95,7 @@ web.get('/reader/bookmark', function(req, res){
 	});
 });
 web.get('/reader/favorite', function(req, res){
-	var query = req.query || {}
+	let query = req.query || {}
 		, user = UserHandler.getUserFromSession.fromReq(req)
 		;
 
@@ -117,10 +117,41 @@ web.get('/reader/favorite', function(req, res){
 	});
 });
 
+let {getDataSucc , getDataError} = require('../controller.js')
+	;
+
+web.get('/reader/data', (req, res)=>{
+	let query = req.query || {}
+		, user = UserHandler.getUserFromSession.fromReq(req)
+		;
+
+	ReaderHandler.getReaderList(user, query).then(getDataSucc.bind(null, res), getDataError.bind(null, res));
+});
+web.get('/reader/bookmark/data', (req, res)=>{
+	let query = req.query || {}
+		, user = UserHandler.getUserFromSession.fromReq( req )
+		;
+
+	// 设置状态为未读
+	query.status = 0;
+
+	ReaderHandler.getBookmarkList(user, query).then(getDataSucc.bind(null, res), getDataError.bind(null, res));
+});
+web.get('/reader/favorite/data', (req, res)=>{
+	let query = req.query || {}
+		, user = UserHandler.getUserFromSession.fromReq(req)
+		;
+
+	// 设置状态为已读
+	query.status = 1;
+
+	ReaderHandler.getBookmarkList(user, query).then(getDataSucc.bind(null, res), getDataError.bind(null, res));
+});
+
 socket.register({
 	reader: function(){}
 	, 'reader/add': function(socket, data){
-		var topic = 'reader/add'
+		let topic = 'reader/add'
 			, query = data.query || {}
 			, user = UserHandler.getUserFromSession.fromSocket( socket )
 			;
@@ -143,7 +174,7 @@ socket.register({
 		});
 	}
 	, 'reader/feed': function(socket, data){
-		var topic = 'reader/feed'
+		let topic = 'reader/feed'
 			, query = data.query || {}
 			, user = UserHandler.getUserFromSession.fromSocket( socket )
 			;
@@ -166,7 +197,7 @@ socket.register({
 		});
 	}
 	, 'reader/search': function(socket, data){
-		var topic = 'reader/search'
+		let topic = 'reader/search'
 			, query = data.query || {}
 			, user = UserHandler.getUserFromSession.fromSocket( socket )
 			;
@@ -196,7 +227,7 @@ socket.register({
 
 	, 'reader/bookmark': function(){}
 	, 'reader/bookmark/add': function(socket, data){
-		var topic = 'reader/bookmark/add'
+		let topic = 'reader/bookmark/add'
 			, query = data.query || {}
 			, user = UserHandler.getUserFromSession.fromSocket( socket )
 			;
@@ -221,7 +252,7 @@ socket.register({
 		});
 	}
 	, 'reader/bookmark/read': function(socket, data){
-		var topic = 'reader/bookmark/read'
+		let topic = 'reader/bookmark/read'
 			, query = data.query
 			, user = UserHandler.getUserFromSession.fromSocket( socket )
 			;
@@ -244,7 +275,7 @@ socket.register({
 		});
 	}
 	, 'reader/bookmark/search': function(socket, data){
-		var topic = 'reader/bookmark/search'
+		let topic = 'reader/bookmark/search'
 			, query = data.query || {}
 			, user = UserHandler.getUserFromSession.fromSocket( req )
 			;
@@ -285,7 +316,7 @@ admin.register({
 	, href: 'reader/bookmark'
 });
 web.get('/admin/reader/bookmark', function(req, res){
-	var user = UserHandler.getUserFromSession.fromReq( req )
+	let user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
 	ReaderAdminView.bookmark( user ).then(function(html){
@@ -295,7 +326,7 @@ web.get('/admin/reader/bookmark', function(req, res){
 });
 
 web.get('/reader/bookmark/data', function(req, res){
-	var query = req.query || {}
+	let query = req.query || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
@@ -322,7 +353,7 @@ web.get('/reader/bookmark/data', function(req, res){
 data.push('bookmark');
 
 web.get('/data/reader/bookmark', function(req, res){
-	var query = req.query || {}
+	let query = req.query || {}
 		, callback = query.callback
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		, isGuest = UserHandler.isGuest( user )
@@ -370,7 +401,7 @@ web.get('/data/reader/bookmark', function(req, res){
 	})
 });
 web.post('/data/reader/bookmark', function(req, res){
-	var body = req.body || {}
+	let body = req.body || {}
 		, session = req.session
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		, isGuest = UserHandler.isGuest( user )
@@ -395,7 +426,7 @@ web.post('/data/reader/bookmark', function(req, res){
 	execute.then(function(user){    // 登录成功
 		return ReaderHandler.addBookmark(user, body);
 	}).then(function(rs){
-		var json = {
+		let json = {
 				topic: 'reader/bookmark/new'
 				, data: [rs]
 				, msg: 'Done'

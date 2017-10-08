@@ -1,6 +1,6 @@
 'use strict';
 
-var CONFIG      = require('../../config.js')
+let CONFIG      = require('../../config.js')
 	, web       = require('../web.js')
 	, socket    = require('../socket.js')
 
@@ -33,7 +33,7 @@ menu.register({
 });
 
 web.get('/task/', function(req, res){
-	var query = req.query || {}
+	let query = req.query || {}
 		, user = UserHandler.getUserFromSession.fromReq(req)
 		;
 
@@ -55,12 +55,12 @@ web.get('/task/', function(req, res){
 	//	TaskModel.getCycleTask(user.id)
 	//	, TaskModel.getTaskAll(user.id)
 	//]).then(function(results){
-	//	var rs = results[0]
+	//	let rs = results[0]
 	//		, temp = results[1]
 	//		;
 	//
 	//	rs = rs.filter(function(d){
-	//		var i = temp.length
+	//		let i = temp.length
 	//			, t
 	//			, s, e
 	//			;
@@ -100,8 +100,19 @@ web.get('/task/', function(req, res){
 	//});
 });
 
+let {getDataSucc , getDataError} = require('../controller.js')
+	;
+
+web.get('/task/data', (req, res)=>{
+	let query = req.query || {}
+		, user = UserHandler.getUserFromSession.fromReq(req)
+		;
+
+	TaskHandler.getTaskList(user, query).then(getDataSucc.bind(null, res), getDataError.bind(null, res));
+});
+
 web.post('/task/', function(req, res){
-	var body = req.body || {}
+	let body = req.body || {}
 		, user = UserHandler.getUserFromSession.fromReq(req)
 		;
 
@@ -122,7 +133,7 @@ web.post('/task/', function(req, res){
 	});
 
 	//TaskModel.addTaskByUser(user.id, body).then(function(rs){
-	//	var result;
+	//	let result;
 	//
 	//	if( rs && rs.insertId ){
 	//
@@ -133,7 +144,7 @@ web.post('/task/', function(req, res){
 	//		}
 	//		else{
 	//			result = TaskModel.addUserTask(user.id, rs.insertId).then(function(rs){
-	//				var result;
+	//				let result;
 	//
 	//				if( rs && rs.insertId ){
 	//					body.id = rs.insertId;
@@ -154,7 +165,7 @@ web.post('/task/', function(req, res){
 	//
 	//	return result;
 	//}).then(function(rs){
-	//	var result;
+	//	let result;
 	//
 	//	if( rs && rs.insertId ){
 	//		result = {
@@ -180,7 +191,7 @@ web.post('/task/', function(req, res){
 });
 
 web.post('/task/:taskId/start', function(req, res){
-	var param = req.params || {}
+	let param = req.params || {}
 		, body = req.body || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
@@ -209,7 +220,7 @@ web.post('/task/:taskId/start', function(req, res){
 	//}
 	//else{
 	//	result = TaskModel.addUserTask(user.id, taskId).then(function(rs){
-	//		var result;
+	//		let result;
 	//
 	//		if( rs && rs.insertId ){
 	//			id = rs.insertId;
@@ -224,7 +235,7 @@ web.post('/task/:taskId/start', function(req, res){
 	//}
 	//
 	//result.then(function(rs){
-	//	var result;
+	//	let result;
 	//
 	//	if( rs && rs.changedRows ){
 	//		result = {
@@ -253,7 +264,7 @@ web.post('/task/:taskId/start', function(req, res){
 });
 
 web.post('/task/:taskId/done', function(req, res){
-	var param = req.params || {}
+	let param = req.params || {}
 		, body = req.body || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
@@ -277,7 +288,7 @@ web.post('/task/:taskId/done', function(req, res){
 	});
 
 	//TaskModel.doneTask( id ).then(function(rs){
-	//	var result;
+	//	let result;
 	//
 	//	if( rs && rs.changedRows ){
 	//
@@ -297,7 +308,7 @@ web.post('/task/:taskId/done', function(req, res){
 	//
 	//	return result;
 	//}).then(function(rs){
-	//	var result;
+	//	let result;
 	//
 	//	if( rs && rs.changedRows ){
 	//		result = {
@@ -325,7 +336,7 @@ web.post('/task/:taskId/done', function(req, res){
 });
 
 web.post('/task/:taskId/end', function(req, res){
-	var param = req.params || {}
+	let param = req.params || {}
 		, body = req.body || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
@@ -349,7 +360,7 @@ web.post('/task/:taskId/end', function(req, res){
 	});
 
 	//TaskModel.doneTask( id ).then(function(rs){
-	//	var result;
+	//	let result;
 	//
 	//	if( rs && rs.changedRows ){
 	//		result = TaskModel.unableTask(taskId);
@@ -360,7 +371,7 @@ web.post('/task/:taskId/end', function(req, res){
 	//
 	//	return result;
 	//}).then(function(rs){
-	//	var result;
+	//	let result;
 	//
 	//	if( rs && rs.changedRows ){
 	//		result = {

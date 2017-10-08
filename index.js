@@ -3,7 +3,7 @@
 /**
  * 设置 log
  * */
-var log4js        = require('log4js')
+let log4js        = require('log4js')
 	, logger
 	;
 
@@ -23,7 +23,7 @@ logger = log4js.getLogger('normal');
 logger.setLevel('INFO');
 
 //---------- APP ----------
-var fs = require('fs')
+let fs = require('fs')
 	// , options = {
 	// 	key: fs.readFileSync('./keys/server-key.pem')
 	// 	, ca: [fs.readFileSync('./keys/ca-cert.pem')]
@@ -77,7 +77,7 @@ var fs = require('fs')
 	;
 
 //----- 重置 manifest 版本代号 -----
-var manifest = fs.readFileSync(__dirname + '/template/cache.manifest').toString();
+let manifest = fs.readFileSync(__dirname + '/template/cache.manifest').toString();
 fs.writeFileSync(__dirname + '/public/cache.manifest', new Buffer(manifest.replace('%v%', Math.floor(Math.random()*100))) );
 console.log('cache.mainfest has reset');
 
@@ -95,7 +95,7 @@ web.use( log4js.connectLogger(logger, {format: ':method :url :remote-addr'}) );
 //web.use( helmet() );    // 安全性
 
 // 设置 session
-var sessionMiddleware = session({
+let sessionMiddleware = session({
 	store:      sessionStore
 	, secret:   CONFIG.web.cookieSecret
 	, key:      CONFIG.web.cookieKey
@@ -106,7 +106,7 @@ web.use( sessionMiddleware );
 
 // 判断浏览器类型，操作系统
 web.use(function(req, res, next){
-	var session = req.session
+	let session = req.session
 		;
 
 	if( !('ua' in session) ){
@@ -147,7 +147,9 @@ web.use('/test.html',    express.static(__dirname + '/test.html') );  //
 
 web.use('/static', express.static(__dirname + '/static'));  // 静态页面目录，实验性页面
 
-var sessionReadonly = function(req, res, next){
+web.use('/dist', express.static(__dirname +'/dist'));   // 新版本打包文件
+
+let sessionReadonly = function(req, res, next){
 
 	sessionMiddleware(req, res, next);
 
@@ -181,7 +183,7 @@ modules.register({
 	, href: '#'
 });
 
-var userSNS = [{
+let userSNS = [{
 	icon: 'renren'
 	, url: '#'
 }, {
@@ -202,7 +204,7 @@ var userSNS = [{
 	/
  * */
 web.get('/', function(req, res){
-	var user = UserHandler.getUserFromSession.fromReq( req )
+	let user = UserHandler.getUserFromSession.fromReq( req )
 		, isGuest = UserHandler.isGuest( user )
 		, userData = {
 			avatar: 'image/default/avatar.png'
@@ -255,9 +257,17 @@ web.get('/', function(req, res){
 	res.end();
 });
 
+web.get('/modules', (req, res)=>{
+	res.send( JSON.stringify({
+		data: modules
+		, msg: 'Done'
+	}) );
+	res.end();
+});
+
 // 编码工具皮肤设置与获取
 web.get('/skin', function(req, res){
-	var user = UserHandler.getUserFromSession.fromReq( req )
+	let user = UserHandler.getUserFromSession.fromReq( req )
 		, skin
 		;
 
@@ -270,7 +280,7 @@ web.get('/skin', function(req, res){
 	res.end();
 });
 web.post('/skin', function(req, res){   // 设置皮肤功能
-	var user = UserHandler.getUserFromSession.fromReq( req )
+	let user = UserHandler.getUserFromSession.fromReq( req )
 		, body = req.body || {}
 		, skin = body.skin
 		;
@@ -290,7 +300,7 @@ web.post('/skin', function(req, res){   // 设置皮肤功能
 	admin/
  * */
 web.get('/admin/', function(req, res){
-	var user = UserHandler.getUserFromSession.fromReq( req )
+	let user = UserHandler.getUserFromSession.fromReq( req )
 		, isGuest = UserHandler.isGuest( user )
 		;
 

@@ -1,6 +1,6 @@
 'use strict';
 
-var web         = require('../web.js')
+let web         = require('../web.js')
 	, socket    = require('../socket.js')
 	, error     = require('../error.js')
 
@@ -39,7 +39,7 @@ menu.register({
 });
 
 web.get('/bower/', function(req, res){
-	var query = req.query || {}
+	let query = req.query || {}
 		, page = query.page || 1
 		, size = query.size || 20
 		;
@@ -64,12 +64,31 @@ web.get('/bower/', function(req, res){
 	});
 });
 
+let {getDataSucc , getDataError} = require('../controller.js')
+	;
+
+web.get('/bower/data', (req, res)=>{
+	Model.getBowerByPage(page, size).then(function(rs){
+		return Model.countBower().then(function(count){
+			return {
+				data: rs
+				, index: page
+				, size: size
+				, count: count
+				, urlCallback: function(index){
+					return '?page='+ index;
+				}
+			}
+		});
+	}).then(getDataSucc.bind(null, res), getDataError.bind(null, res));
+});
+
 socket.register({
 	bower: function(socket, data){}
 	, 'bower/editor/lib': function(socket, data){}
 
 	, 'bower/search': function(socket, data){
-		var send = {
+		let send = {
 				topic: 'bower/search'
 			}
 			, query = data.query || {}
@@ -100,7 +119,7 @@ socket.register({
 		});
 	}
 	, 'bower/install': function(socket, data){
-		var send = {
+		let send = {
 				topic: 'bower/install/end'
 			}
 			, query = data.query || {}
@@ -111,7 +130,7 @@ socket.register({
 
 		if( name ){
 			execute = Model.isExistBower( name ).then(function(isExist){
-				var result
+				let result
 					;
 
 				if( isExist ){
@@ -119,7 +138,7 @@ socket.register({
 				}
 				else{
 					result = Bower.install(name, function(type, info){  // 安装信息输出
-						var data = {
+						let data = {
 							info: {}
 						};
 
@@ -143,7 +162,7 @@ socket.register({
 
 						console.log( PROMPT_CALLBACK_INDEX, typeof PROMPT_CALLBACK_CACHE[0] );
 					}).then(function(info){
-						var l = info.length
+						let l = info.length
 							, result
 							;
 
@@ -191,7 +210,7 @@ socket.register({
 		});
 	}
 	, 'bower/install/endChoose': function(socket, data){
-		var query = data.query || {}
+		let query = data.query || {}
 			, save = query.choose
 			, send = {
 				topic: 'bower/install/end'
@@ -211,7 +230,7 @@ socket.register({
 		});
 	}
 	, 'bower/install/prompts': function(socket, data){
-		var query = data.query || {}
+		let query = data.query || {}
 			, cbId = query.cbId
 			, pickId = query.pickId
 			, t = PROMPT_CALLBACK_CACHE[PROMPT_CALLBACK_INDEX[cbId]]

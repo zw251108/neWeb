@@ -1,6 +1,6 @@
 'use strict';
 
-var CONFIG  = require('../../config.js')
+let CONFIG  = require('../../config.js')
 	, web       = require('../web.js')
 	, socket    = require('../socket.js')
 
@@ -20,7 +20,7 @@ var CONFIG  = require('../../config.js')
  * */
 // 地区数据
 web.get('/basedata/province/data',  function(req, res){
-	var query = req.query || {}
+	let query = req.query || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
@@ -33,7 +33,7 @@ web.get('/basedata/province/data',  function(req, res){
 	});
 });
 web.get('/basedata/city/data',      function(req, res){
-	var query = req.query || {}
+	let query = req.query || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
@@ -54,7 +54,7 @@ web.get('/basedata/city/data',      function(req, res){
 	});
 });
 web.get('/basedata/district/data',  function(req, res){
-	var query = req.query || {}
+	let query = req.query || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
@@ -75,7 +75,7 @@ web.get('/basedata/district/data',  function(req, res){
 	});
 });
 web.get('/basedata/town/data',      function(req, res){
-	var query = req.query || {}
+	let query = req.query || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
@@ -96,7 +96,7 @@ web.get('/basedata/town/data',      function(req, res){
 	});
 });
 web.get('/basedata/village/data',   function(req, res){
-	var query = req.query || {}
+	let query = req.query || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
@@ -119,7 +119,7 @@ web.get('/basedata/village/data',   function(req, res){
 
 // 大学数据
 web.get('/basedata/university/data', function(req, res){
-	var query = req.query || {}
+	let query = req.query || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
@@ -151,7 +151,7 @@ admin.register({
 	, href: 'address/'
 });
 web.get('/admin/address/', function(req, res){
-	var user = UserHandler.getUserFromSession.fromReq( req )
+	let user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
 	BaseDataAdminView.province( user ).then(function(html){
@@ -166,7 +166,7 @@ web.get('/admin/address/', function(req, res){
  * */
 socket.register({
 	province: function(socket, data){
-		var topic = 'province'
+		let topic = 'province'
 			, query = data.query || {}
 			, user = UserHandler.getUserFromSession.fromSocket( socket )
 			;
@@ -180,7 +180,7 @@ socket.register({
 		});
 	}
 	, city: function(socket, data){
-		var topic = 'city'
+		let topic = 'city'
 			, query = data.query || {}
 			, user = UserHandler.getUserFromSession.fromSocket( socket )
 			;
@@ -203,7 +203,7 @@ socket.register({
 		});
 	}
 	, district: function(socket, data){
-		var topic = 'district'
+		let topic = 'district'
 			, query = data.query || {}
 			, user = UserHandler.getUserFromSession.fromSocket( socket )
 			;
@@ -226,7 +226,7 @@ socket.register({
 		});
 	}
 	, town: function(socket, data){
-		var topic = 'town'
+		let topic = 'town'
 			, query = data.query || {}
 			, user = UserHandler.getUserFromSession.fromSocket( socket )
 			;
@@ -249,7 +249,7 @@ socket.register({
 		});
 	}
 	, village: function(socket, data){
-		var topic = 'village'
+		let topic = 'village'
 			, query = data.query || {}
 			, user = UserHandler.getUserFromSession.fromSocket( socket )
 			;
@@ -273,7 +273,7 @@ socket.register({
 	}
 
 	, university: function(socket, data){
-		var topic = 'university'
+		let topic = 'university'
 			, query = data.query || {}
 			, user = UserHandler.getUserFromSession.fromSocket( socket )
 			;
@@ -304,7 +304,7 @@ data.push('province', 'city', 'district', 'town', 'village', 'university');
 
 // 地区数据
 web.get('/data/province',   function(req, res){
-	var query = req.query || {}
+	let query = req.query || {}
 		, callback = query.callback
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		, execute
@@ -335,7 +335,7 @@ web.get('/data/province',   function(req, res){
 	});
 });
 web.get('/data/city',       function(req, res){
-	var query = req.query || {}
+	let query = req.query || {}
 		, callback = query.callback
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		, execute
@@ -366,7 +366,7 @@ web.get('/data/city',       function(req, res){
 	});
 });
 web.get('/data/district',   function(req, res){
-	var query = req.query || {}
+	let query = req.query || {}
 		, callback = query.callback
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		, execute
@@ -397,7 +397,7 @@ web.get('/data/district',   function(req, res){
 	});
 });
 web.get('/data/town',       function(req, res){
-	var query = req.query || {}
+	let query = req.query || {}
 		, callback = query.callback
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		, execute
@@ -428,7 +428,7 @@ web.get('/data/town',       function(req, res){
 	});
 });
 web.get('/data/village',    function(req, res){
-	var query = req.query || {}
+	let query = req.query || {}
 		, callback = query.callback
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		, execute
@@ -461,7 +461,7 @@ web.get('/data/village',    function(req, res){
 
 // 大学数据
 web.get('/data/university', function(req, res){
-	var query = req.query || {}
+	let query = req.query || {}
 		, callback = query.callback
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		, execute

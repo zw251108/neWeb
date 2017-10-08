@@ -1,6 +1,6 @@
 'use strict';
 
-var CONFIG    = require('../../config.js')
+let CONFIG    = require('../../config.js')
 
 	, db        = require('../db.js')
 	, web       = require('../web.js')
@@ -16,7 +16,7 @@ var CONFIG    = require('../../config.js')
 
 // 单个文件上传接口
 web.post('/image/imageUpload', ImageHandler.uploadMiddleware.single('image'), function(req, res){
-	var user = UserHandler.getUserFromSession.fromReq( req )
+	let user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
 	ImageHandler.uploadImage(user, req).then(function(rs){
@@ -38,7 +38,7 @@ web.post('/image/imageUpload', ImageHandler.uploadMiddleware.single('image'), fu
 	// 	sql: Image.Model.imageAdd
 	// 	, data: {}
 	// }).then(function(rs){
-	// 	var data = {};  // rs.data;
+	// 	let data = {};  // rs.data;
 	//
 	// 	//rs = rs.result;
 	//
@@ -50,13 +50,13 @@ web.post('/image/imageUpload', ImageHandler.uploadMiddleware.single('image'), fu
 });
 // 多个文件上传接口
 web.post('/image/imagesUpload', ImageHandler.uploadMiddleware.array(), function(req, res){
-	var body = req.body || {}
+	let body = req.body || {}
 		, type = body.type
 		;
 });
 
 //web.post('/image/demoUpload', upload.single('image'), function(req, res){
-//	var body = req.body || {}
+//	let body = req.body || {}
 //		, type = body.type
 //		, file = req.file
 //		, size = ImageHandler( req.file.path )
@@ -71,7 +71,7 @@ web.post('/image/imagesUpload', ImageHandler.uploadMiddleware.array(), function(
 //			, type: type === 'demo' ? 5 : 1
 //		}
 //	}).then(function(rs){
-//		var data = rs.data;
+//		let data = rs.data;
 //
 //		rs = rs.result;
 //

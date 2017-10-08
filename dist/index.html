@@ -29,12 +29,12 @@
 		</form>
 	</z-module>
 	<z-metro v-for="item in modules" :url="item.url" :id="item.id" :size="item.size" :title="item.title" :icon="item.icon || item.id"></z-metro>
-	<z-metro v-for="item in sns" :url="item.url" :id="item.id" size="metro-tiny" :icon="item.icon"></z-metro>
+	<z-metro v-for="item in sns" class="metro-tiny" :url="item.url" :id="item.id" size="tiny" :icon="item.icon"></z-metro>
 	<z-dialog>
 
 	</z-dialog>
 </main>
 
 <footer id="footer" class="Footer"></footer>
-</body>
+<script type="text/javascript" src="js/v.js"></script><script type="text/javascript" src="js/index.js"></script></body>
 </html>

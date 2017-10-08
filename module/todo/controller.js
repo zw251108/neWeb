@@ -1,6 +1,6 @@
 'use strict';
 
-var CONFIG      = require('../../config.js')
+let CONFIG      = require('../../config.js')
 	, web       = require('../web.js')
 	, socket    = require('../socket.js')
 
@@ -33,7 +33,7 @@ var CONFIG      = require('../../config.js')
 //});
 
 web.get('/todo/', function(req, res){
-	var query = req.query || {}
+	let query = req.query || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
@@ -50,4 +50,15 @@ web.get('/todo/', function(req, res){
 		res.send( CONFIG.docType.html5 + html );
 		res.end();
 	});
+});
+
+let {getDataSucc , getDataError} = require('../controller.js')
+	;
+
+web.get('/todo/data', (req, res)=>{
+	let query = req.query || {}
+		, user = UserHandler.getUserFromSession.fromReq( req )
+		;
+
+	TodoHandler.getTodoList(user, query).then(getDataSucc.bind(null, res), getDataError.bind(null, res));
 });

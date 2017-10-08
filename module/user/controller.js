@@ -1,6 +1,6 @@
 'use strict';
 
-var web         = require('../web.js')
+let web         = require('../web.js')
 	, socket    = require('../socket.js')
 
 	, config    = require('../../config.js')
@@ -45,11 +45,22 @@ menu.register({
 });
 
 web.get('/user/', function(req, res){
-	var query = req.query || {}
+	let query = req.query || {}
 		, user = UserHandler.getUserFromSession.fromReq(req)
 		;
 
 	// todo 用户首页
+	res.end();
+});
+
+let {getDataSucc , getDataError} = require('../controller.js')
+	;
+
+web.get('/user/data', (req, res)=>{
+	let query = req.query || {}
+		, user = UserHandler.getUserFromSession.fromReq(req)
+		;
+
 	res.end();
 });
 
@@ -63,7 +74,7 @@ web.get('/user/login', function(req, res){
 });
 web.post('/user/login', function(req, res){
 	// 用户登录
-	var query = req.body
+	let query = req.body
 		, session = req.session
 		, user = session.user || {}
 		;
@@ -89,7 +100,7 @@ web.post('/user/login', function(req, res){
 	});
 });
 web.post('/user/verify', function(req, res){
-	var query = req.body
+	let query = req.body
 		, session = req.session
 		;
 
@@ -113,7 +124,7 @@ web.post('/user/verify', function(req, res){
 	});
 });
 web.post('/user/avatar', function(req, res){
-	var query = req.body || {}
+	let query = req.body || {}
 		;
 
 	UserHandler.getUserAvatar( query ).then(function(rs){
@@ -261,7 +272,7 @@ web.get('/user/resume/tags', function(req, res){
 
 socket.register({
 	'user/skin': function(socket, data){
-		var user = UserHandler.getUserFromSession.fromSocket( socket )
+		let user = UserHandler.getUserFromSession.fromSocket( socket )
 			, query = data.query || {}
 			;
 		//console.log(socket)
