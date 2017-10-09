@@ -260,6 +260,9 @@ module.exports = {
 		// , z: 'z'
 		// , $: 'window.$'
 		// , jquery: 'window.$'
+		, jquery: {
+			root: '$'
+		}
 	},
 	resolve: {
 		modules: ['node_modules', __dirname]

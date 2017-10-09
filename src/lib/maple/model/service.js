@@ -1,6 +1,6 @@
 'use strict';
 
-import $            from 'jquery';
+// import $            from 'jquery';
 
 import Model        from './model.js';
 import merge        from '../util/merge.js';

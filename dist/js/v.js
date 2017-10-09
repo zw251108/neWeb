@@ -152,23 +152,39 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Listener; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return listener; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util_debounce_js__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__util_throttle_js__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__util_merge_js__ = __webpack_require__(1);
 
 
 /**
  * @file    全局事件监听对象
  * */
 
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.listener = exports.Listener = undefined;
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _debounce = __webpack_require__(7);
+
+var _debounce2 = _interopRequireDefault(_debounce);
+
+var _throttle = __webpack_require__(8);
+
+var _throttle2 = _interopRequireDefault(_throttle);
+
+var _merge = __webpack_require__(1);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
  * @class
@@ -176,7 +192,7 @@
  * @desc        默认使用捕获方式
  * @todo        调整，兼容 addEventListener 的参数结构？
  * */
-class Listener {
+var Listener = function () {
 	/**
   * @constructor
   * @param   {Object}                    config
@@ -188,7 +204,10 @@ class Listener {
   * @param   {Boolean}                   [config.useThrottle]    是否使用 throttle
   * @todo    处理 passive 参数
   * */
-	constructor(config = {}) {
+	function Listener() {
+		var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+		_classCallCheck(this, Listener);
 
 		if (!config.type) {
 			console.log('未指定监听事件');
@@ -196,7 +215,7 @@ class Listener {
 			throw new Error('未指定监听事件');
 		}
 
-		this._config = Object(__WEBPACK_IMPORTED_MODULE_2__util_merge_js__["a" /* default */])(config, Listener._CONFIG);
+		this._config = (0, _merge2.default)(config, Listener._CONFIG);
 
 		this._isListening = false; // 当前监听状态
 
@@ -211,143 +230,168 @@ class Listener {
   * @private
   * @return  {Function}
   * */
-	_queueExecute() {
-		let eventQueue = this._eventQueue;
 
-		return function () {
-			let rs = true,
-			    i = 0,
-			    j = eventQueue.length,
-			    that = this || null,
+
+	_createClass(Listener, [{
+		key: '_queueExecute',
+		value: function _queueExecute() {
+			var eventQueue = this._eventQueue;
+
+			return function () {
+				var rs = true,
+				    i = 0,
+				    j = eventQueue.length,
+				    that = this || null,
+				    argv = [].slice.call(arguments);
+
+				for (; i < j; i++) {
+					rs = eventQueue[i].apply(that, argv);
+
+					if (rs === false) {
+						return false;
+					}
+				}
+
+				return rs;
+			};
+		}
+
+		/**
+   * @summary     监听事件回调
+   * @callback    ListenerCallback
+   * @param       {Object|Event}  event
+   * @param       {...*}
+   * */
+
+		// ---------- 公有方法 ----------
+		/**
+   * @summary 添加执行函数
+   * @param   {ListenerCallback}  callback
+   * @return  {Listener}          返回 this，可以使用链式操作
+   * */
+
+	}, {
+		key: 'add',
+		value: function add(callback) {
+			if (this._eventQueue.indexOf(callback) === -1) {
+				this._eventQueue.push(callback);
+			} else {
+				console.log('该函数已经存在于队列中');
+			}
+
+			return this;
+		}
+		/**
+   * @summary 开始监听事件
+   * @param   {Number}    [wait=0]    间隔时间，单位为毫秒，若传则使用 debounce 或 throttle 方式执行
+   * @return  {Listener}  返回 this，可以使用链式操作
+   * @desc    当传入 wait 参数时根据生成 Listener 对象实例时的 useDebounce 或 useThrottle 参数来判断使用哪种方式，若都设置则 debounce 优先
+   * */
+
+	}, {
+		key: 'on',
+		value: function on() {
+			var wait = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+
+			wait = Number(wait);
+
+			if (this._isListening) {
+				return this;
+			}
+
+			if (!this._config.target) {
+				return this;
+			}
+
+			if (this._config.useDebounce && wait && wait > 0) {
+				this._listener = (0, _debounce2.default)(this._queueExecute(), wait);
+			} else if (this._config.useThrottle && wait && wait > 0) {
+				this._listener = (0, _throttle2.default)(this._queueExecute(), wait);
+			} else {
+				this._listener = this._queueExecute();
+			}
+
+			if ('addEventListener' in this._config.target) {
+				this._config.target.addEventListener(this._config.type, this._listener, this._config.useCapture);
+			}
+
+			this._isListening = true;
+
+			return this;
+		}
+		/**
+   * @summary 取消监听
+   * @param   {Boolean|Function}  [isAll=true]
+   * @return  {Listener}          返回 this，可以使用链式操作
+   * @desc    若传入参数为 true，则将将事件监听解除绑定，若传入参数类型为函数，则只将该函数从函数队列删除，不解除监听事件
+   * */
+
+	}, {
+		key: 'off',
+		value: function off() {
+			var isAll = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+
+			if (!this._config.target) {
+				return this;
+			}
+
+			if (typeof isAll === 'boolean' && isAll) {
+
+				if ('removeEventListener' in this._config.target) {
+					this._config.target.removeEventListener(this._config.type, this._listener, this._config.useCapture);
+				}
+
+				if ('cancel' in this._listener) {
+					this._listener.cancel();
+
+					this._listener = null;
+				}
+
+				this._isListening = false;
+			} else if (typeof isAll === 'function') {
+				var index = this._eventQueue.indexOf(isAll);
+
+				this._eventQueue.splice(index, 1);
+			}
+
+			return this;
+		}
+		/**
+   * @summary 立即执行
+   * @param   {...*}
+   * */
+
+	}, {
+		key: 'trigger',
+		value: function trigger() {
+			var context = this._config.target,
+			    event = {
+				type: this._config.type,
+				target: this._config.target
+			},
 			    argv = [].slice.call(arguments);
 
-			for (; i < j; i++) {
-				rs = eventQueue[i].apply(that, argv);
+			argv.unshift(event);
 
-				if (rs === false) {
-					return false;
-				}
+			if ('immediate' in this._listener) {
+				this._listener.immediate(context, argv);
+			} else {
+				this._listener.apply(context, argv);
 			}
-
-			return rs;
-		};
-	}
-
-	/**
-  * @summary     监听事件回调
-  * @callback    ListenerCallback
-  * @param       {Object|Event}  event
-  * @param       {...*}
-  * */
-
-	// ---------- 公有方法 ----------
-	/**
-  * @summary 添加执行函数
-  * @param   {ListenerCallback}  callback
-  * @return  {Listener}          返回 this，可以使用链式操作
-  * */
-	add(callback) {
-		if (this._eventQueue.indexOf(callback) === -1) {
-			this._eventQueue.push(callback);
-		} else {
-			console.log('该函数已经存在于队列中');
 		}
+	}]);
 
-		return this;
-	}
-	/**
-  * @summary 开始监听事件
-  * @param   {Number}    [wait=0]    间隔时间，单位为毫秒，若传则使用 debounce 或 throttle 方式执行
-  * @return  {Listener}  返回 this，可以使用链式操作
-  * @desc    当传入 wait 参数时根据生成 Listener 对象实例时的 useDebounce 或 useThrottle 参数来判断使用哪种方式，若都设置则 debounce 优先
-  * */
-	on(wait = 0) {
-		wait = Number(wait);
-
-		if (this._isListening) {
-			return this;
-		}
-
-		if (!this._config.target) {
-			return this;
-		}
-
-		if (this._config.useDebounce && wait && wait > 0) {
-			this._listener = Object(__WEBPACK_IMPORTED_MODULE_0__util_debounce_js__["a" /* default */])(this._queueExecute(), wait);
-		} else if (this._config.useThrottle && wait && wait > 0) {
-			this._listener = Object(__WEBPACK_IMPORTED_MODULE_1__util_throttle_js__["a" /* default */])(this._queueExecute(), wait);
-		} else {
-			this._listener = this._queueExecute();
-		}
-
-		if ('addEventListener' in this._config.target) {
-			this._config.target.addEventListener(this._config.type, this._listener, this._config.useCapture);
-		}
-
-		this._isListening = true;
-
-		return this;
-	}
-	/**
-  * @summary 取消监听
-  * @param   {Boolean|Function}  [isAll=true]
-  * @return  {Listener}          返回 this，可以使用链式操作
-  * @desc    若传入参数为 true，则将将事件监听解除绑定，若传入参数类型为函数，则只将该函数从函数队列删除，不解除监听事件
-  * */
-	off(isAll = true) {
-
-		if (!this._config.target) {
-			return this;
-		}
-
-		if (typeof isAll === 'boolean' && isAll) {
-
-			if ('removeEventListener' in this._config.target) {
-				this._config.target.removeEventListener(this._config.type, this._listener, this._config.useCapture);
-			}
-
-			if ('cancel' in this._listener) {
-				this._listener.cancel();
-
-				this._listener = null;
-			}
-
-			this._isListening = false;
-		} else if (typeof isAll === 'function') {
-			let index = this._eventQueue.indexOf(isAll);
-
-			this._eventQueue.splice(index, 1);
-		}
-
-		return this;
-	}
-	/**
-  * @summary 立即执行
-  * @param   {...*}
-  * */
-	trigger() {
-		let context = this._config.target,
-		    event = {
-			type: this._config.type,
-			target: this._config.target
-		},
-		    argv = [].slice.call(arguments);
-
-		argv.unshift(event);
-
-		if ('immediate' in this._listener) {
-			this._listener.immediate(context, argv);
-		} else {
-			this._listener.apply(context, argv);
-		}
-	}
-}
+	return Listener;
+}();
 
 /**
  * 监听事件的默认配置
  * @static
  * @const
  * */
+
+
 Listener._CONFIG = {
 	type: '',
 	target: window || self || null,
@@ -370,11 +414,14 @@ Listener._CONFIG = {
  * @return      {Listener}
  * @desc        可以穿四个参数，最少传一个参数，若只传一个参数会视为 type
  * */
-let listener = (target, type, callback = {}, options = {}) => {
-	let opts = {},
-	    ls;
+var listener = function listener(target, type) {
+	var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+	var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
 
-	if (typeof callback === 'object') {
+	var opts = {},
+	    ls = void 0;
+
+	if ((typeof callback === 'undefined' ? 'undefined' : _typeof(callback)) === 'object') {
 		options = callback;
 		callback = null;
 	}
@@ -397,7 +444,7 @@ let listener = (target, type, callback = {}, options = {}) => {
 		opts.target = target;
 	}
 
-	opts = Object(__WEBPACK_IMPORTED_MODULE_2__util_merge_js__["a" /* default */])(opts, options);
+	opts = (0, _merge2.default)(opts, options);
 
 	ls = new Listener(opts);
 
@@ -410,7 +457,7 @@ let listener = (target, type, callback = {}, options = {}) => {
 	return ls;
 };
 
-let addHandler = (target, eventType, handler) => {
+var addHandler = function addHandler(target, eventType, handler) {
 	if ('addEventListener' in target) {
 		target.addEventListener(eventType, handler, false);
 	} else if ('attachEvent' in target) {
@@ -420,11 +467,12 @@ let addHandler = (target, eventType, handler) => {
 	}
 };
 
-
+exports.Listener = Listener;
+exports.listener = listener;
 
 /***/ }),
 /* 1 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
@@ -442,8 +490,11 @@ let addHandler = (target, eventType, handler) => {
  * @return      {object}
  * */
 
-let merge = function (target, defaults) {
-	let temp = Object.keys(defaults).reduce((all, d) => {
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+var merge = function merge(target, defaults) {
+	var temp = Object.keys(defaults).reduce(function (all, d) {
 
 		if (d in target) {
 			all[d] = target[d];
@@ -454,7 +505,7 @@ let merge = function (target, defaults) {
 		return all;
 	}, {});
 
-	return Object.keys(target).reduce((all, d) => {
+	return Object.keys(target).reduce(function (all, d) {
 		if (!(d in all)) {
 			all[d] = target[d];
 		}
@@ -463,17 +514,26 @@ let merge = function (target, defaults) {
 	}, temp);
 };
 
-/* harmony default export */ __webpack_exports__["a"] = (merge);
+exports.default = merge;
 
 /***/ }),
 /* 2 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__listener_js__ = __webpack_require__(0);
 
 
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _listener = __webpack_require__(0);
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
  * @class
@@ -510,17 +570,21 @@ model.getData('isLogin', 'token', 'hybrid').then(({isLogin, token, hybrid})=>{
 	//
 })
  * */
-class Model {
+var Model = function () {
 	/**
   * @constructor
   * */
-	constructor() {
+	function Model() {
+		var _this = this;
+
+		_classCallCheck(this, Model);
+
 		this._value = Object.create(null); // 不会受到 prototype 的影响，适合用来存储数据，没有 hasOwnProperty、toString 方法
 		this._eventList = [];
 		this._syncList = [];
 
-		this._listener = Object(__WEBPACK_IMPORTED_MODULE_0__listener_js__["b" /* listener */])(this, 'modelChange', (e, topic, value) => {
-			this._sync(topic, value);
+		this._listener = (0, _listener.listener)(this, 'modelChange', function (e, topic, value) {
+			_this._sync(topic, value);
 		});
 	}
 
@@ -532,399 +596,469 @@ class Model {
   * @param   {Model}     model
   * @desc    若该子类已经被注册，并且缓存中没有该子类的实例，则覆盖
   * */
-	static register(type, model) {
 
-		if (type in Model && type in Model._MODEL_CACHE) {
-			console.log('type', ' 重复注册，并已生成实例，不能覆盖');
-		} else {
-			Model[type] = model;
+
+	_createClass(Model, [{
+		key: '_stringify',
+
+
+		// ---------- 私有方法 ----------
+		/**
+   * @summary     转为字符串，会将 null,undefined 转为空字符串
+   * @protected
+   * @param       {*}     value
+   * @return      {String}
+   * */
+		value: function _stringify(value) {
+
+			if (value === null || value === undefined) {
+				value = '';
+			}
+
+			return (typeof value === 'undefined' ? 'undefined' : _typeof(value)) === 'object' ? JSON.stringify(value) : value.toString();
 		}
-	}
-	/**
-  * @summary 注册子类的别名
-  * @static
-  * @param   {String}            type        已注册的子类名
-  * @param   {String|String[]}   aliasName   该子类的别名
-  * */
-	static registerAlias(type, aliasName) {
+		/**
+   * @summary     触发绑定的数据监控事件
+   * @protected
+   * @param       {String}    topic
+   * @param       {*}         value
+   * */
 
-		if (!Array.isArray(aliasName)) {
-			aliasName = [aliasName];
+	}, {
+		key: '_trigger',
+		value: function _trigger(topic, value) {
+			this._listener.trigger(topic, value);
+		}
+		/**
+   * @summary     数据同步的内部实现
+   * @protected
+   * @param       {String}    topic
+   * @param       {*}         value
+   * */
+
+	}, {
+		key: '_sync',
+		value: function _sync(topic, value) {
+			if (this._syncList.length) {
+				Promise.all(this._syncList.map(function (d) {
+					var result = void 0;
+
+					if (value !== null) {
+						result = d.setData(topic, value);
+					} else {
+						result = d.removeData(topic);
+					}
+
+					result.catch(function (e) {
+						console.log(e, d.constructor.name, '同步失败');
+					});
+
+					return result;
+				})).then(function () {
+					console.log('同步完成');
+				});
+			}
 		}
 
-		aliasName.forEach(d => {
-			if (!(d in Model._MODEL_ALIAS)) {
-				Model._MODEL_ALIAS[d] = type;
+		/**
+   * @summary     数据改变事件触发回调函数
+   * @callback    ModelChangeEvent
+   * @param       {Event}     event
+   * @param       {String}    topic
+   * @param       {*}         newValue
+   * @param       {*}         [oldValue]
+   * @desc        函数将传入 topic,newValue 值，当 removeData 执行时也会触发事件，newValue 被传为 null
+   *              由于统一使用 Listener 对象，第一个参数将为事件对象，当前事件将传入 {type: modelChange, target: 对象实例}
+   * */
+
+		// /**
+		//  * @summary     在 Promise resolve 时调用的函数
+		//  * @callback    promiseResolve
+		//  * @param       {*}     result
+		//  * */
+		// /**
+		//  * @summary     在 Promise reject 时调用的函数
+		//  * @callback    promiseReject
+		//  * @param       {*}     result
+		//  * */
+		// /**
+		//  * @typedef     {Promise.<Object,Error>}    ModelPromise
+		//  * @property    {Object}
+		//  * @property    {Object}
+		//  * @throws      {Error}
+		//  * */
+
+		/**
+   * @summary     当 setData 传入一个 json 时内部调用函数
+   * @protected
+   * @param       {Object}    topic
+   * @return      {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
+   * */
+
+	}, {
+		key: '_setByObject',
+		value: function _setByObject(topic) {
+			var _this2 = this;
+
+			return Promise.all(Object.keys(topic).map(function (d) {
+				return _this2.setData(d, topic[d]);
+			})).then(function (data) {
+				return !!data;
+			});
+		}
+		/**
+   * @summary     当 getData 传入一个数组时内部调用函数
+   * @protected
+   * @param       {String[]}  topic
+   * @return      {Promise}   返回一个 Promise 对象，在 resolve 时传回一个 json，key 为 topic 中的数据，value 为对应查找出来的值
+   * @desc        其中如果任何一个 key 没有值，则返回 null
+   * */
+
+	}, {
+		key: '_getByArray',
+		value: function _getByArray(topic) {
+			var _this3 = this;
+
+			return Promise.all(topic.map(function (d) {
+				return _this3.getData(d).catch(function () {
+					return null;
+				});
+			})).then(function (data) {
+				return topic.reduce(function (rs, d, i) {
+					rs[d] = data[i];
+
+					return rs;
+				}, {});
+			});
+		}
+		/**
+   * @summary     当 removeData 传入一个数组时内部调用函数
+   * @protected
+   * @param       {String[]}  topic
+   * @return      {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
+   * */
+
+	}, {
+		key: '_removeByArray',
+		value: function _removeByArray(topic) {
+			var _this4 = this;
+
+			return Promise.all(topic.map(function (d) {
+				return _this4.removeData(d);
+			})).then(function (data) {
+				return !!data;
+			});
+		}
+
+		// ---------- 公有方法 ----------
+		/**
+   * @summary 绑定数据监视事件
+   * @param   {ModelChangeEvent}  callback
+   * */
+
+	}, {
+		key: 'on',
+		value: function on(callback) {
+			this._listener.add(callback);
+		}
+		/**
+   * @summary 解除绑定数据监控回调函数
+   * @param   {ModelChangeEvent}  callback
+   * */
+
+	}, {
+		key: 'off',
+		value: function off(callback) {
+			this._listener.off(callback);
+		}
+		/**
+   * @summary 设置数据
+   * @param   {String|Object} topic   主题
+   * @param   {*}             [value] 为 null、undefined 时会被保存为空字符串，当 topic 为 object 类型时被忽略
+   * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回 true
+   * @desc    设置数据的时候会使用 Object.defineProperty 定义该属性
+  			目前子类的实现中都调用了 super.setData，若其它子类的实现中并没有调用，但需对数据监控，应在适当的时候调用 _trigger 方法
+   * */
+
+	}, {
+		key: 'setData',
+		value: function setData(topic, value) {
+			var _this5 = this;
+
+			var result = void 0;
+
+			if ((typeof topic === 'undefined' ? 'undefined' : _typeof(topic)) === 'object') {
+				result = this._setByObject(topic);
 			} else {
-				console.log(d, ' 已经存在');
+				if (topic in this._value) {
+					this._value[topic] = value;
+				} else {
+					// // todo 判断是 object 类型的进行深度 defineProperty
+					// if( typeof value === 'object' ){
+					// 	Object.keys( value ).forEach((d)=>{
+					// 		this._setObserver(value[d], d, topic);
+					// 	});
+					// }
+
+					// console.log('监控', topic, '属性的值');
+
+					/**
+      * 不能同时设置访问器 (get 和 set) 和 writable 或 value，否则会报错误
+      * configurable 设为 true 才可以使用 delete
+      * */
+					Object.defineProperty(this._value, topic, {
+						enumerable: true,
+						configurable: true
+						// , value: value
+						, set: function set(newVal) {
+							console.log('设置', topic, '的值为', newVal);
+
+							if (newVal !== value) {
+
+								_this5._trigger(topic, newVal);
+							}
+						},
+						get: function get() {
+							console.log('获取', topic, '的值', value, typeof value === 'undefined' ? 'undefined' : _typeof(value));
+							return value;
+						}
+					});
+
+					this._trigger(topic, value);
+				}
+
+				result = Promise.resolve(true);
 			}
-		});
-	}
-	/**
-  * @summary 获取或生成 type 类型的 Model 子类的实例或 Model 类的实例
-  * @static
-  * @param   {String}            [type]
-  * @param   {Boolean|Object}    [notCache=false] 为 boolean 类型时表示是否缓存，默认值为 false，设为 true 时既不从缓存中读取子类实例对象，生成的实例对象也不保存在缓存中；为 object 类型时将值赋给 options 并设置为 true
-  * @param   {Object}            [options={}]
-  * @return  {Model}             当 type 有意义的时候，为 Model 子类类的实例，否则为 Model 类的实例
-  * */
-	static factory(type, notCache = false, options = {}) {
-		let model;
 
-		if (type) {
+			return result;
+		}
+		/**
+   * @summary 获取数据
+   * @param   {String|String[]|...String} topic
+   * @return  {Promise}                   返回一个 Promise 对象，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
+   * @desc    当 topic 的类型为数组的时候，resolve 传入的结果为一个 json，key 为 topic 中的数据，value 为对应查找出来的值，当传入多个参数时视为传入数组的操作
+   * */
 
-			if (typeof notCache === 'object') {
-				options = notCache;
-				notCache = true;
+	}, {
+		key: 'getData',
+		value: function getData(topic) {
+			var argc = arguments.length,
+			    result = void 0;
+
+			if (Array.isArray(topic)) {
+				result = this._getByArray(topic);
+			} else if (argc > 1) {
+				result = this._getByArray([].slice.call(arguments));
+			} else {
+				if (topic in this._value) {
+					result = Promise.resolve(this._value[topic]);
+				} else {
+					result = Promise.reject(null);
+				}
 			}
 
-			// 判断 type 是否为别名
-			if (!(type in Model) && type in Model._MODEL_ALIAS) {
-				type = Model._MODEL_ALIAS[type];
+			return result;
+		}
+		/**
+   * @summary 将数据从缓存中删除
+   * @param   {String|String[]}   topic
+   * @return  {Promise}           返回一个 Promise 对象，在 resolve 时传回 true
+   * @desc    目前子类的实现中都调用了 super.removeData，若其它子类的实现中并没有调用，但需对数据监控，应在适当的时候调用 _trigger 方法
+   * */
+
+	}, {
+		key: 'removeData',
+		value: function removeData(topic) {
+			var result = void 0;
+
+			if (Array.isArray(topic)) {
+				result = this._removeByArray(topic);
+			} else {
+				try {
+					if (topic in this._value) {
+						// if( this._value.hasOwnProperty(topic) ){
+
+						delete this._value[topic];
+
+						result = Promise.resolve(true);
+
+						this._trigger(topic, null);
+						// }
+						// else{
+						// 	result = Promise.reject( new Error('只能删除自定义属性') );
+						// }
+					} else {
+						// model 中不存在该数据
+						result = Promise.resolve(true);
+
+						this._trigger(topic, null);
+					}
+				} catch (e) {
+					result = Promise.reject(e);
+				}
 			}
 
-			// 判断是否存在该子类
-			if (type in Model) {
+			return result;
+		}
+		/**
+   * @summary 清空数据
+   * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
+   * */
 
-				if (notCache || !(type in Model._MODEL_CACHE)) {
-					// 不使用缓存或没有该子类实例
+	}, {
+		key: 'clearData',
+		value: function clearData() {
+			this._value = {};
 
-					model = new Model[type](options);
+			return Promise.resolve(true);
+		}
 
-					if (!notCache) {
+		/**
+   * @summary 将当前 model 的数据同步到其它 model
+   * @param   {Model|Model[]}   model
+   * */
 
-						// 使用缓存，将该子类实例缓存
-						Model._MODEL_CACHE[type] = model;
+	}, {
+		key: 'syncTo',
+		value: function syncTo(model) {
+			var _this6 = this;
 
-						console.log('通过工厂方法生成', type, '类型的对象', '将', type, '类型的对象缓存');
+			if (!Array.isArray(model)) {
+				model = [model];
+			}
+
+			model.forEach(function (d) {
+				if ((typeof d === 'undefined' ? 'undefined' : _typeof(d)) === 'object' && d instanceof Model && d.constructor !== _this6.constructor && _this6._syncList.indexOf(d) === -1) {
+
+					_this6._syncList.push(d);
+				} else {
+					// 该实例类型已经存在
+					console.log('该实例类型已经存在');
+				}
+			});
+		}
+		/**
+   * @summary 清除数据同步
+   * @param   {Model} model
+   * */
+
+	}, {
+		key: 'cleanSync',
+		value: function cleanSync(model) {
+			var i = this._syncList.indexOf(model);
+
+			if (i !== -1) {
+				this._syncList.splice(i, 1);
+			}
+		}
+	}], [{
+		key: 'register',
+		value: function register(type, model) {
+
+			if (type in Model && type in Model._MODEL_CACHE) {
+				console.log('type', ' 重复注册，并已生成实例，不能覆盖');
+			} else {
+				Model[type] = model;
+			}
+		}
+		/**
+   * @summary 注册子类的别名
+   * @static
+   * @param   {String}            type        已注册的子类名
+   * @param   {String|String[]}   aliasName   该子类的别名
+   * */
+
+	}, {
+		key: 'registerAlias',
+		value: function registerAlias(type, aliasName) {
+
+			if (!Array.isArray(aliasName)) {
+				aliasName = [aliasName];
+			}
+
+			aliasName.forEach(function (d) {
+				if (!(d in Model._MODEL_ALIAS)) {
+					Model._MODEL_ALIAS[d] = type;
+				} else {
+					console.log(d, ' 已经存在');
+				}
+			});
+		}
+		/**
+   * @summary 获取或生成 type 类型的 Model 子类的实例或 Model 类的实例
+   * @static
+   * @param   {String}            [type]
+   * @param   {Boolean|Object}    [notCache=false] 为 boolean 类型时表示是否缓存，默认值为 false，设为 true 时既不从缓存中读取子类实例对象，生成的实例对象也不保存在缓存中；为 object 类型时将值赋给 options 并设置为 true
+   * @param   {Object}            [options={}]
+   * @return  {Model}             当 type 有意义的时候，为 Model 子类类的实例，否则为 Model 类的实例
+   * */
+
+	}, {
+		key: 'factory',
+		value: function factory(type) {
+			var notCache = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+			var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+			var model = void 0;
+
+			if (type) {
+
+				if ((typeof notCache === 'undefined' ? 'undefined' : _typeof(notCache)) === 'object') {
+					options = notCache;
+					notCache = true;
+				}
+
+				// 判断 type 是否为别名
+				if (!(type in Model) && type in Model._MODEL_ALIAS) {
+					type = Model._MODEL_ALIAS[type];
+				}
+
+				// 判断是否存在该子类
+				if (type in Model) {
+
+					if (notCache || !(type in Model._MODEL_CACHE)) {
+						// 不使用缓存或没有该子类实例
+
+						model = new Model[type](options);
+
+						if (!notCache) {
+
+							// 使用缓存，将该子类实例缓存
+							Model._MODEL_CACHE[type] = model;
+
+							console.log('通过工厂方法生成', type, '类型的对象', '将', type, '类型的对象缓存');
+						}
+					} else {
+						// 使用缓存并存在该子类实例
+						model = Model._MODEL_CACHE[type];
+
+						console.log('从缓存中取到', type, '类型的对象');
 					}
 				} else {
-					// 使用缓存并存在该子类实例
-					model = Model._MODEL_CACHE[type];
+					model = new Model();
 
-					console.log('从缓存中取到', type, '类型的对象');
+					console.log('不存在注册为 ', type, ' 的子类');
 				}
 			} else {
 				model = new Model();
 
-				console.log('不存在注册为 ', type, ' 的子类');
-			}
-		} else {
-			model = new Model();
-
-			console.log('生成 model 对象');
-		}
-
-		return model;
-	}
-
-	// ---------- 私有方法 ----------
-	/**
-  * @summary     转为字符串，会将 null,undefined 转为空字符串
-  * @protected
-  * @param       {*}     value
-  * @return      {String}
-  * */
-	_stringify(value) {
-
-		if (value === null || value === undefined) {
-			value = '';
-		}
-
-		return typeof value === 'object' ? JSON.stringify(value) : value.toString();
-	}
-	/**
-  * @summary     触发绑定的数据监控事件
-  * @protected
-  * @param       {String}    topic
-  * @param       {*}         value
-  * */
-	_trigger(topic, value) {
-		this._listener.trigger(topic, value);
-	}
-	/**
-  * @summary     数据同步的内部实现
-  * @protected
-  * @param       {String}    topic
-  * @param       {*}         value
-  * */
-	_sync(topic, value) {
-		if (this._syncList.length) {
-			Promise.all(this._syncList.map(d => {
-				let result;
-
-				if (value !== null) {
-					result = d.setData(topic, value);
-				} else {
-					result = d.removeData(topic);
-				}
-
-				result.catch(function (e) {
-					console.log(e, d.constructor.name, '同步失败');
-				});
-
-				return result;
-			})).then(function () {
-				console.log('同步完成');
-			});
-		}
-	}
-
-	/**
-  * @summary     数据改变事件触发回调函数
-  * @callback    ModelChangeEvent
-  * @param       {Event}     event
-  * @param       {String}    topic
-  * @param       {*}         newValue
-  * @param       {*}         [oldValue]
-  * @desc        函数将传入 topic,newValue 值，当 removeData 执行时也会触发事件，newValue 被传为 null
-  *              由于统一使用 Listener 对象，第一个参数将为事件对象，当前事件将传入 {type: modelChange, target: 对象实例}
-  * */
-
-	// /**
-	//  * @summary     在 Promise resolve 时调用的函数
-	//  * @callback    promiseResolve
-	//  * @param       {*}     result
-	//  * */
-	// /**
-	//  * @summary     在 Promise reject 时调用的函数
-	//  * @callback    promiseReject
-	//  * @param       {*}     result
-	//  * */
-	// /**
-	//  * @typedef     {Promise.<Object,Error>}    ModelPromise
-	//  * @property    {Object}
-	//  * @property    {Object}
-	//  * @throws      {Error}
-	//  * */
-
-	/**
-  * @summary     当 setData 传入一个 json 时内部调用函数
-  * @protected
-  * @param       {Object}    topic
-  * @return      {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
-  * */
-	_setByObject(topic) {
-		return Promise.all(Object.keys(topic).map(d => {
-			return this.setData(d, topic[d]);
-		})).then(data => {
-			return !!data;
-		});
-	}
-	/**
-  * @summary     当 getData 传入一个数组时内部调用函数
-  * @protected
-  * @param       {String[]}  topic
-  * @return      {Promise}   返回一个 Promise 对象，在 resolve 时传回一个 json，key 为 topic 中的数据，value 为对应查找出来的值
-  * @desc        其中如果任何一个 key 没有值，则返回 null
-  * */
-	_getByArray(topic) {
-		return Promise.all(topic.map(d => {
-			return this.getData(d).catch(() => {
-				return null;
-			});
-		})).then(data => {
-			return topic.reduce((rs, d, i) => {
-				rs[d] = data[i];
-
-				return rs;
-			}, {});
-		});
-	}
-	/**
-  * @summary     当 removeData 传入一个数组时内部调用函数
-  * @protected
-  * @param       {String[]}  topic
-  * @return      {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
-  * */
-	_removeByArray(topic) {
-		return Promise.all(topic.map(d => {
-			return this.removeData(d);
-		})).then(data => {
-			return !!data;
-		});
-	}
-
-	// ---------- 公有方法 ----------
-	/**
-  * @summary 绑定数据监视事件
-  * @param   {ModelChangeEvent}  callback
-  * */
-	on(callback) {
-		this._listener.add(callback);
-	}
-	/**
-  * @summary 解除绑定数据监控回调函数
-  * @param   {ModelChangeEvent}  callback
-  * */
-	off(callback) {
-		this._listener.off(callback);
-	}
-	/**
-  * @summary 设置数据
-  * @param   {String|Object} topic   主题
-  * @param   {*}             [value] 为 null、undefined 时会被保存为空字符串，当 topic 为 object 类型时被忽略
-  * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回 true
-  * @desc    设置数据的时候会使用 Object.defineProperty 定义该属性
- 			目前子类的实现中都调用了 super.setData，若其它子类的实现中并没有调用，但需对数据监控，应在适当的时候调用 _trigger 方法
-  * */
-	setData(topic, value) {
-		let result;
-
-		if (typeof topic === 'object') {
-			result = this._setByObject(topic);
-		} else {
-			if (topic in this._value) {
-				this._value[topic] = value;
-			} else {
-				// // todo 判断是 object 类型的进行深度 defineProperty
-				// if( typeof value === 'object' ){
-				// 	Object.keys( value ).forEach((d)=>{
-				// 		this._setObserver(value[d], d, topic);
-				// 	});
-				// }
-
-				// console.log('监控', topic, '属性的值');
-
-				/**
-     * 不能同时设置访问器 (get 和 set) 和 writable 或 value，否则会报错误
-     * configurable 设为 true 才可以使用 delete
-     * */
-				Object.defineProperty(this._value, topic, {
-					enumerable: true,
-					configurable: true
-					// , value: value
-					, set: newVal => {
-						console.log('设置', topic, '的值为', newVal);
-
-						if (newVal !== value) {
-
-							this._trigger(topic, newVal);
-						}
-					},
-					get() {
-						console.log('获取', topic, '的值', value, typeof value);
-						return value;
-					}
-				});
-
-				this._trigger(topic, value);
+				console.log('生成 model 对象');
 			}
 
-			result = Promise.resolve(true);
+			return model;
 		}
+	}]);
 
-		return result;
-	}
-	/**
-  * @summary 获取数据
-  * @param   {String|String[]|...String} topic
-  * @return  {Promise}                   返回一个 Promise 对象，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
-  * @desc    当 topic 的类型为数组的时候，resolve 传入的结果为一个 json，key 为 topic 中的数据，value 为对应查找出来的值，当传入多个参数时视为传入数组的操作
-  * */
-	getData(topic) {
-		let argc = arguments.length,
-		    result;
-
-		if (Array.isArray(topic)) {
-			result = this._getByArray(topic);
-		} else if (argc > 1) {
-			result = this._getByArray([].slice.call(arguments));
-		} else {
-			if (topic in this._value) {
-				result = Promise.resolve(this._value[topic]);
-			} else {
-				result = Promise.reject(null);
-			}
-		}
-
-		return result;
-	}
-	/**
-  * @summary 将数据从缓存中删除
-  * @param   {String|String[]}   topic
-  * @return  {Promise}           返回一个 Promise 对象，在 resolve 时传回 true
-  * @desc    目前子类的实现中都调用了 super.removeData，若其它子类的实现中并没有调用，但需对数据监控，应在适当的时候调用 _trigger 方法
-  * */
-	removeData(topic) {
-		let result;
-
-		if (Array.isArray(topic)) {
-			result = this._removeByArray(topic);
-		} else {
-			try {
-				if (topic in this._value) {
-					// if( this._value.hasOwnProperty(topic) ){
-
-					delete this._value[topic];
-
-					result = Promise.resolve(true);
-
-					this._trigger(topic, null);
-					// }
-					// else{
-					// 	result = Promise.reject( new Error('只能删除自定义属性') );
-					// }
-				} else {
-					// model 中不存在该数据
-					result = Promise.resolve(true);
-
-					this._trigger(topic, null);
-				}
-			} catch (e) {
-				result = Promise.reject(e);
-			}
-		}
-
-		return result;
-	}
-	/**
-  * @summary 清空数据
-  * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
-  * */
-	clearData() {
-		this._value = {};
-
-		return Promise.resolve(true);
-	}
-
-	/**
-  * @summary 将当前 model 的数据同步到其它 model
-  * @param   {Model|Model[]}   model
-  * */
-	syncTo(model) {
-		if (!Array.isArray(model)) {
-			model = [model];
-		}
-
-		model.forEach(d => {
-			if (typeof d === 'object' && d instanceof Model && d.constructor !== this.constructor && this._syncList.indexOf(d) === -1) {
-
-				this._syncList.push(d);
-			} else {
-				// 该实例类型已经存在
-				console.log('该实例类型已经存在');
-			}
-		});
-	}
-	/**
-  * @summary 清除数据同步
-  * @param   {Model} model
-  * */
-	cleanSync(model) {
-		let i = this._syncList.indexOf(model);
-
-		if (i !== -1) {
-			this._syncList.splice(i, 1);
-		}
-	}
-}
+	return Model;
+}();
 
 // ---------- 静态属性 ----------
 /**
  * 子类对象缓存
  * @static
  * */
+
+
 Model._MODEL_CACHE = {};
 /**
  * 子类别名列表
@@ -932,9416 +1066,14 @@ Model._MODEL_CACHE = {};
  * */
 Model._MODEL_ALIAS = {};
 
-/* harmony default export */ __webpack_exports__["a"] = (Model);
+exports.default = Model;
 
 /***/ }),
 /* 3 */,
 /* 4 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
- * jQuery JavaScript Library v2.2.4
- * http://jquery.com/
- *
- * Includes Sizzle.js
- * http://sizzlejs.com/
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license
- * http://jquery.org/license
- *
- * Date: 2016-05-20T17:23Z
- */
-
-(function (global, factory) {
-
-	if (typeof module === "object" && typeof module.exports === "object") {
-		// For CommonJS and CommonJS-like environments where a proper `window`
-		// is present, execute the factory and get jQuery.
-		// For environments that do not have a `window` with a `document`
-		// (such as Node.js), expose a factory as module.exports.
-		// This accentuates the need for the creation of a real `window`.
-		// e.g. var jQuery = require("jquery")(window);
-		// See ticket #14549 for more info.
-		module.exports = global.document ? factory(global, true) : function (w) {
-			if (!w.document) {
-				throw new Error("jQuery requires a window with a document");
-			}
-			return factory(w);
-		};
-	} else {
-		factory(global);
-	}
-
-	// Pass this if window is not defined yet
-})(typeof window !== "undefined" ? window : this, function (window, noGlobal) {
-
-	// Support: Firefox 18+
-	// Can't be in strict mode, several libs including ASP.NET trace
-	// the stack via arguments.caller.callee and Firefox dies if
-	// you try to trace through "use strict" call chains. (#13335)
-	//"use strict";
-	var arr = [];
-
-	var document = window.document;
-
-	var slice = arr.slice;
-
-	var concat = arr.concat;
-
-	var push = arr.push;
-
-	var indexOf = arr.indexOf;
-
-	var class2type = {};
-
-	var toString = class2type.toString;
-
-	var hasOwn = class2type.hasOwnProperty;
-
-	var support = {};
-
-	var version = "2.2.4",
-
-
-	// Define a local copy of jQuery
-	jQuery = function (selector, context) {
-
-		// The jQuery object is actually just the init constructor 'enhanced'
-		// Need init if jQuery is called (just allow error to be thrown if not included)
-		return new jQuery.fn.init(selector, context);
-	},
-
-
-	// Support: Android<4.1
-	// Make sure we trim BOM and NBSP
-	rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g,
-
-
-	// Matches dashed string for camelizing
-	rmsPrefix = /^-ms-/,
-	    rdashAlpha = /-([\da-z])/gi,
-
-
-	// Used by jQuery.camelCase as callback to replace()
-	fcamelCase = function (all, letter) {
-		return letter.toUpperCase();
-	};
-
-	jQuery.fn = jQuery.prototype = {
-
-		// The current version of jQuery being used
-		jquery: version,
-
-		constructor: jQuery,
-
-		// Start with an empty selector
-		selector: "",
-
-		// The default length of a jQuery object is 0
-		length: 0,
-
-		toArray: function () {
-			return slice.call(this);
-		},
-
-		// Get the Nth element in the matched element set OR
-		// Get the whole matched element set as a clean array
-		get: function (num) {
-			return num != null ?
-
-			// Return just the one element from the set
-			num < 0 ? this[num + this.length] : this[num] :
-
-			// Return all the elements in a clean array
-			slice.call(this);
-		},
-
-		// Take an array of elements and push it onto the stack
-		// (returning the new matched element set)
-		pushStack: function (elems) {
-
-			// Build a new jQuery matched element set
-			var ret = jQuery.merge(this.constructor(), elems);
-
-			// Add the old object onto the stack (as a reference)
-			ret.prevObject = this;
-			ret.context = this.context;
-
-			// Return the newly-formed element set
-			return ret;
-		},
-
-		// Execute a callback for every element in the matched set.
-		each: function (callback) {
-			return jQuery.each(this, callback);
-		},
-
-		map: function (callback) {
-			return this.pushStack(jQuery.map(this, function (elem, i) {
-				return callback.call(elem, i, elem);
-			}));
-		},
-
-		slice: function () {
-			return this.pushStack(slice.apply(this, arguments));
-		},
-
-		first: function () {
-			return this.eq(0);
-		},
-
-		last: function () {
-			return this.eq(-1);
-		},
-
-		eq: function (i) {
-			var len = this.length,
-			    j = +i + (i < 0 ? len : 0);
-			return this.pushStack(j >= 0 && j < len ? [this[j]] : []);
-		},
-
-		end: function () {
-			return this.prevObject || this.constructor();
-		},
-
-		// For internal use only.
-		// Behaves like an Array's method, not like a jQuery method.
-		push: push,
-		sort: arr.sort,
-		splice: arr.splice
-	};
-
-	jQuery.extend = jQuery.fn.extend = function () {
-		var options,
-		    name,
-		    src,
-		    copy,
-		    copyIsArray,
-		    clone,
-		    target = arguments[0] || {},
-		    i = 1,
-		    length = arguments.length,
-		    deep = false;
-
-		// Handle a deep copy situation
-		if (typeof target === "boolean") {
-			deep = target;
-
-			// Skip the boolean and the target
-			target = arguments[i] || {};
-			i++;
-		}
-
-		// Handle case when target is a string or something (possible in deep copy)
-		if (typeof target !== "object" && !jQuery.isFunction(target)) {
-			target = {};
-		}
-
-		// Extend jQuery itself if only one argument is passed
-		if (i === length) {
-			target = this;
-			i--;
-		}
-
-		for (; i < length; i++) {
-
-			// Only deal with non-null/undefined values
-			if ((options = arguments[i]) != null) {
-
-				// Extend the base object
-				for (name in options) {
-					src = target[name];
-					copy = options[name];
-
-					// Prevent never-ending loop
-					if (target === copy) {
-						continue;
-					}
-
-					// Recurse if we're merging plain objects or arrays
-					if (deep && copy && (jQuery.isPlainObject(copy) || (copyIsArray = jQuery.isArray(copy)))) {
-
-						if (copyIsArray) {
-							copyIsArray = false;
-							clone = src && jQuery.isArray(src) ? src : [];
-						} else {
-							clone = src && jQuery.isPlainObject(src) ? src : {};
-						}
-
-						// Never move original objects, clone them
-						target[name] = jQuery.extend(deep, clone, copy);
-
-						// Don't bring in undefined values
-					} else if (copy !== undefined) {
-						target[name] = copy;
-					}
-				}
-			}
-		}
-
-		// Return the modified object
-		return target;
-	};
-
-	jQuery.extend({
-
-		// Unique for each copy of jQuery on the page
-		expando: "jQuery" + (version + Math.random()).replace(/\D/g, ""),
-
-		// Assume jQuery is ready without the ready module
-		isReady: true,
-
-		error: function (msg) {
-			throw new Error(msg);
-		},
-
-		noop: function () {},
-
-		isFunction: function (obj) {
-			return jQuery.type(obj) === "function";
-		},
-
-		isArray: Array.isArray,
-
-		isWindow: function (obj) {
-			return obj != null && obj === obj.window;
-		},
-
-		isNumeric: function (obj) {
-
-			// parseFloat NaNs numeric-cast false positives (null|true|false|"")
-			// ...but misinterprets leading-number strings, particularly hex literals ("0x...")
-			// subtraction forces infinities to NaN
-			// adding 1 corrects loss of precision from parseFloat (#15100)
-			var realStringObj = obj && obj.toString();
-			return !jQuery.isArray(obj) && realStringObj - parseFloat(realStringObj) + 1 >= 0;
-		},
-
-		isPlainObject: function (obj) {
-			var key;
-
-			// Not plain objects:
-			// - Any object or value whose internal [[Class]] property is not "[object Object]"
-			// - DOM nodes
-			// - window
-			if (jQuery.type(obj) !== "object" || obj.nodeType || jQuery.isWindow(obj)) {
-				return false;
-			}
-
-			// Not own constructor property must be Object
-			if (obj.constructor && !hasOwn.call(obj, "constructor") && !hasOwn.call(obj.constructor.prototype || {}, "isPrototypeOf")) {
-				return false;
-			}
-
-			// Own properties are enumerated firstly, so to speed up,
-			// if last one is own, then all properties are own
-			for (key in obj) {}
-
-			return key === undefined || hasOwn.call(obj, key);
-		},
-
-		isEmptyObject: function (obj) {
-			var name;
-			for (name in obj) {
-				return false;
-			}
-			return true;
-		},
-
-		type: function (obj) {
-			if (obj == null) {
-				return obj + "";
-			}
-
-			// Support: Android<4.0, iOS<6 (functionish RegExp)
-			return typeof obj === "object" || typeof obj === "function" ? class2type[toString.call(obj)] || "object" : typeof obj;
-		},
-
-		// Evaluates a script in a global context
-		globalEval: function (code) {
-			var script,
-			    indirect = eval;
-
-			code = jQuery.trim(code);
-
-			if (code) {
-
-				// If the code includes a valid, prologue position
-				// strict mode pragma, execute code by injecting a
-				// script tag into the document.
-				if (code.indexOf("use strict") === 1) {
-					script = document.createElement("script");
-					script.text = code;
-					document.head.appendChild(script).parentNode.removeChild(script);
-				} else {
-
-					// Otherwise, avoid the DOM node creation, insertion
-					// and removal by using an indirect global eval
-
-					indirect(code);
-				}
-			}
-		},
-
-		// Convert dashed to camelCase; used by the css and data modules
-		// Support: IE9-11+
-		// Microsoft forgot to hump their vendor prefix (#9572)
-		camelCase: function (string) {
-			return string.replace(rmsPrefix, "ms-").replace(rdashAlpha, fcamelCase);
-		},
-
-		nodeName: function (elem, name) {
-			return elem.nodeName && elem.nodeName.toLowerCase() === name.toLowerCase();
-		},
-
-		each: function (obj, callback) {
-			var length,
-			    i = 0;
-
-			if (isArrayLike(obj)) {
-				length = obj.length;
-				for (; i < length; i++) {
-					if (callback.call(obj[i], i, obj[i]) === false) {
-						break;
-					}
-				}
-			} else {
-				for (i in obj) {
-					if (callback.call(obj[i], i, obj[i]) === false) {
-						break;
-					}
-				}
-			}
-
-			return obj;
-		},
-
-		// Support: Android<4.1
-		trim: function (text) {
-			return text == null ? "" : (text + "").replace(rtrim, "");
-		},
-
-		// results is for internal usage only
-		makeArray: function (arr, results) {
-			var ret = results || [];
-
-			if (arr != null) {
-				if (isArrayLike(Object(arr))) {
-					jQuery.merge(ret, typeof arr === "string" ? [arr] : arr);
-				} else {
-					push.call(ret, arr);
-				}
-			}
-
-			return ret;
-		},
-
-		inArray: function (elem, arr, i) {
-			return arr == null ? -1 : indexOf.call(arr, elem, i);
-		},
-
-		merge: function (first, second) {
-			var len = +second.length,
-			    j = 0,
-			    i = first.length;
-
-			for (; j < len; j++) {
-				first[i++] = second[j];
-			}
-
-			first.length = i;
-
-			return first;
-		},
-
-		grep: function (elems, callback, invert) {
-			var callbackInverse,
-			    matches = [],
-			    i = 0,
-			    length = elems.length,
-			    callbackExpect = !invert;
-
-			// Go through the array, only saving the items
-			// that pass the validator function
-			for (; i < length; i++) {
-				callbackInverse = !callback(elems[i], i);
-				if (callbackInverse !== callbackExpect) {
-					matches.push(elems[i]);
-				}
-			}
-
-			return matches;
-		},
-
-		// arg is for internal usage only
-		map: function (elems, callback, arg) {
-			var length,
-			    value,
-			    i = 0,
-			    ret = [];
-
-			// Go through the array, translating each of the items to their new values
-			if (isArrayLike(elems)) {
-				length = elems.length;
-				for (; i < length; i++) {
-					value = callback(elems[i], i, arg);
-
-					if (value != null) {
-						ret.push(value);
-					}
-				}
-
-				// Go through every key on the object,
-			} else {
-				for (i in elems) {
-					value = callback(elems[i], i, arg);
-
-					if (value != null) {
-						ret.push(value);
-					}
-				}
-			}
-
-			// Flatten any nested arrays
-			return concat.apply([], ret);
-		},
-
-		// A global GUID counter for objects
-		guid: 1,
-
-		// Bind a function to a context, optionally partially applying any
-		// arguments.
-		proxy: function (fn, context) {
-			var tmp, args, proxy;
-
-			if (typeof context === "string") {
-				tmp = fn[context];
-				context = fn;
-				fn = tmp;
-			}
-
-			// Quick check to determine if target is callable, in the spec
-			// this throws a TypeError, but we will just return undefined.
-			if (!jQuery.isFunction(fn)) {
-				return undefined;
-			}
-
-			// Simulated bind
-			args = slice.call(arguments, 2);
-			proxy = function () {
-				return fn.apply(context || this, args.concat(slice.call(arguments)));
-			};
-
-			// Set the guid of unique handler to the same of original handler, so it can be removed
-			proxy.guid = fn.guid = fn.guid || jQuery.guid++;
-
-			return proxy;
-		},
-
-		now: Date.now,
-
-		// jQuery.support is not used in Core but other projects attach their
-		// properties to it so it needs to exist.
-		support: support
-	});
-
-	// JSHint would error on this code due to the Symbol not being defined in ES5.
-	// Defining this global in .jshintrc would create a danger of using the global
-	// unguarded in another place, it seems safer to just disable JSHint for these
-	// three lines.
-	/* jshint ignore: start */
-	if (typeof Symbol === "function") {
-		jQuery.fn[Symbol.iterator] = arr[Symbol.iterator];
-	}
-	/* jshint ignore: end */
-
-	// Populate the class2type map
-	jQuery.each("Boolean Number String Function Array Date RegExp Object Error Symbol".split(" "), function (i, name) {
-		class2type["[object " + name + "]"] = name.toLowerCase();
-	});
-
-	function isArrayLike(obj) {
-
-		// Support: iOS 8.2 (not reproducible in simulator)
-		// `in` check used to prevent JIT error (gh-2145)
-		// hasOwn isn't used here due to false negatives
-		// regarding Nodelist length in IE
-		var length = !!obj && "length" in obj && obj.length,
-		    type = jQuery.type(obj);
-
-		if (type === "function" || jQuery.isWindow(obj)) {
-			return false;
-		}
-
-		return type === "array" || length === 0 || typeof length === "number" && length > 0 && length - 1 in obj;
-	}
-	var Sizzle =
-	/*!
-  * Sizzle CSS Selector Engine v2.2.1
-  * http://sizzlejs.com/
-  *
-  * Copyright jQuery Foundation and other contributors
-  * Released under the MIT license
-  * http://jquery.org/license
-  *
-  * Date: 2015-10-17
-  */
-	function (window) {
-
-		var i,
-		    support,
-		    Expr,
-		    getText,
-		    isXML,
-		    tokenize,
-		    compile,
-		    select,
-		    outermostContext,
-		    sortInput,
-		    hasDuplicate,
-
-
-		// Local document vars
-		setDocument,
-		    document,
-		    docElem,
-		    documentIsHTML,
-		    rbuggyQSA,
-		    rbuggyMatches,
-		    matches,
-		    contains,
-
-
-		// Instance-specific data
-		expando = "sizzle" + 1 * new Date(),
-		    preferredDoc = window.document,
-		    dirruns = 0,
-		    done = 0,
-		    classCache = createCache(),
-		    tokenCache = createCache(),
-		    compilerCache = createCache(),
-		    sortOrder = function (a, b) {
-			if (a === b) {
-				hasDuplicate = true;
-			}
-			return 0;
-		},
-
-
-		// General-purpose constants
-		MAX_NEGATIVE = 1 << 31,
-
-
-		// Instance methods
-		hasOwn = {}.hasOwnProperty,
-		    arr = [],
-		    pop = arr.pop,
-		    push_native = arr.push,
-		    push = arr.push,
-		    slice = arr.slice,
-
-		// Use a stripped-down indexOf as it's faster than native
-		// http://jsperf.com/thor-indexof-vs-for/5
-		indexOf = function (list, elem) {
-			var i = 0,
-			    len = list.length;
-			for (; i < len; i++) {
-				if (list[i] === elem) {
-					return i;
-				}
-			}
-			return -1;
-		},
-		    booleans = "checked|selected|async|autofocus|autoplay|controls|defer|disabled|hidden|ismap|loop|multiple|open|readonly|required|scoped",
-
-
-		// Regular expressions
-
-		// http://www.w3.org/TR/css3-selectors/#whitespace
-		whitespace = "[\\x20\\t\\r\\n\\f]",
-
-
-		// http://www.w3.org/TR/CSS21/syndata.html#value-def-identifier
-		identifier = "(?:\\\\.|[\\w-]|[^\\x00-\\xa0])+",
-
-
-		// Attribute selectors: http://www.w3.org/TR/selectors/#attribute-selectors
-		attributes = "\\[" + whitespace + "*(" + identifier + ")(?:" + whitespace +
-		// Operator (capture 2)
-		"*([*^$|!~]?=)" + whitespace +
-		// "Attribute values must be CSS identifiers [capture 5] or strings [capture 3 or capture 4]"
-		"*(?:'((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\"|(" + identifier + "))|)" + whitespace + "*\\]",
-		    pseudos = ":(" + identifier + ")(?:\\((" +
-		// To reduce the number of selectors needing tokenize in the preFilter, prefer arguments:
-		// 1. quoted (capture 3; capture 4 or capture 5)
-		"('((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\")|" +
-		// 2. simple (capture 6)
-		"((?:\\\\.|[^\\\\()[\\]]|" + attributes + ")*)|" +
-		// 3. anything else (capture 2)
-		".*" + ")\\)|)",
-
-
-		// Leading and non-escaped trailing whitespace, capturing some non-whitespace characters preceding the latter
-		rwhitespace = new RegExp(whitespace + "+", "g"),
-		    rtrim = new RegExp("^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" + whitespace + "+$", "g"),
-		    rcomma = new RegExp("^" + whitespace + "*," + whitespace + "*"),
-		    rcombinators = new RegExp("^" + whitespace + "*([>+~]|" + whitespace + ")" + whitespace + "*"),
-		    rattributeQuotes = new RegExp("=" + whitespace + "*([^\\]'\"]*?)" + whitespace + "*\\]", "g"),
-		    rpseudo = new RegExp(pseudos),
-		    ridentifier = new RegExp("^" + identifier + "$"),
-		    matchExpr = {
-			"ID": new RegExp("^#(" + identifier + ")"),
-			"CLASS": new RegExp("^\\.(" + identifier + ")"),
-			"TAG": new RegExp("^(" + identifier + "|[*])"),
-			"ATTR": new RegExp("^" + attributes),
-			"PSEUDO": new RegExp("^" + pseudos),
-			"CHILD": new RegExp("^:(only|first|last|nth|nth-last)-(child|of-type)(?:\\(" + whitespace + "*(even|odd|(([+-]|)(\\d*)n|)" + whitespace + "*(?:([+-]|)" + whitespace + "*(\\d+)|))" + whitespace + "*\\)|)", "i"),
-			"bool": new RegExp("^(?:" + booleans + ")$", "i"),
-			// For use in libraries implementing .is()
-			// We use this for POS matching in `select`
-			"needsContext": new RegExp("^" + whitespace + "*[>+~]|:(even|odd|eq|gt|lt|nth|first|last)(?:\\(" + whitespace + "*((?:-\\d)?\\d*)" + whitespace + "*\\)|)(?=[^-]|$)", "i")
-		},
-		    rinputs = /^(?:input|select|textarea|button)$/i,
-		    rheader = /^h\d$/i,
-		    rnative = /^[^{]+\{\s*\[native \w/,
-
-
-		// Easily-parseable/retrievable ID or TAG or CLASS selectors
-		rquickExpr = /^(?:#([\w-]+)|(\w+)|\.([\w-]+))$/,
-		    rsibling = /[+~]/,
-		    rescape = /'|\\/g,
-
-
-		// CSS escapes http://www.w3.org/TR/CSS21/syndata.html#escaped-characters
-		runescape = new RegExp("\\\\([\\da-f]{1,6}" + whitespace + "?|(" + whitespace + ")|.)", "ig"),
-		    funescape = function (_, escaped, escapedWhitespace) {
-			var high = "0x" + escaped - 0x10000;
-			// NaN means non-codepoint
-			// Support: Firefox<24
-			// Workaround erroneous numeric interpretation of +"0x"
-			return high !== high || escapedWhitespace ? escaped : high < 0 ?
-			// BMP codepoint
-			String.fromCharCode(high + 0x10000) :
-			// Supplemental Plane codepoint (surrogate pair)
-			String.fromCharCode(high >> 10 | 0xD800, high & 0x3FF | 0xDC00);
-		},
-
-
-		// Used for iframes
-		// See setDocument()
-		// Removing the function wrapper causes a "Permission Denied"
-		// error in IE
-		unloadHandler = function () {
-			setDocument();
-		};
-
-		// Optimize for push.apply( _, NodeList )
-		try {
-			push.apply(arr = slice.call(preferredDoc.childNodes), preferredDoc.childNodes);
-			// Support: Android<4.0
-			// Detect silently failing push.apply
-			arr[preferredDoc.childNodes.length].nodeType;
-		} catch (e) {
-			push = { apply: arr.length ?
-
-				// Leverage slice if possible
-				function (target, els) {
-					push_native.apply(target, slice.call(els));
-				} :
-
-				// Support: IE<9
-				// Otherwise append directly
-				function (target, els) {
-					var j = target.length,
-					    i = 0;
-					// Can't trust NodeList.length
-					while (target[j++] = els[i++]) {}
-					target.length = j - 1;
-				}
-			};
-		}
-
-		function Sizzle(selector, context, results, seed) {
-			var m,
-			    i,
-			    elem,
-			    nid,
-			    nidselect,
-			    match,
-			    groups,
-			    newSelector,
-			    newContext = context && context.ownerDocument,
-
-
-			// nodeType defaults to 9, since context defaults to document
-			nodeType = context ? context.nodeType : 9;
-
-			results = results || [];
-
-			// Return early from calls with invalid selector or context
-			if (typeof selector !== "string" || !selector || nodeType !== 1 && nodeType !== 9 && nodeType !== 11) {
-
-				return results;
-			}
-
-			// Try to shortcut find operations (as opposed to filters) in HTML documents
-			if (!seed) {
-
-				if ((context ? context.ownerDocument || context : preferredDoc) !== document) {
-					setDocument(context);
-				}
-				context = context || document;
-
-				if (documentIsHTML) {
-
-					// If the selector is sufficiently simple, try using a "get*By*" DOM method
-					// (excepting DocumentFragment context, where the methods don't exist)
-					if (nodeType !== 11 && (match = rquickExpr.exec(selector))) {
-
-						// ID selector
-						if (m = match[1]) {
-
-							// Document context
-							if (nodeType === 9) {
-								if (elem = context.getElementById(m)) {
-
-									// Support: IE, Opera, Webkit
-									// TODO: identify versions
-									// getElementById can match elements by name instead of ID
-									if (elem.id === m) {
-										results.push(elem);
-										return results;
-									}
-								} else {
-									return results;
-								}
-
-								// Element context
-							} else {
-
-								// Support: IE, Opera, Webkit
-								// TODO: identify versions
-								// getElementById can match elements by name instead of ID
-								if (newContext && (elem = newContext.getElementById(m)) && contains(context, elem) && elem.id === m) {
-
-									results.push(elem);
-									return results;
-								}
-							}
-
-							// Type selector
-						} else if (match[2]) {
-							push.apply(results, context.getElementsByTagName(selector));
-							return results;
-
-							// Class selector
-						} else if ((m = match[3]) && support.getElementsByClassName && context.getElementsByClassName) {
-
-							push.apply(results, context.getElementsByClassName(m));
-							return results;
-						}
-					}
-
-					// Take advantage of querySelectorAll
-					if (support.qsa && !compilerCache[selector + " "] && (!rbuggyQSA || !rbuggyQSA.test(selector))) {
-
-						if (nodeType !== 1) {
-							newContext = context;
-							newSelector = selector;
-
-							// qSA looks outside Element context, which is not what we want
-							// Thanks to Andrew Dupont for this workaround technique
-							// Support: IE <=8
-							// Exclude object elements
-						} else if (context.nodeName.toLowerCase() !== "object") {
-
-							// Capture the context ID, setting it first if necessary
-							if (nid = context.getAttribute("id")) {
-								nid = nid.replace(rescape, "\\$&");
-							} else {
-								context.setAttribute("id", nid = expando);
-							}
-
-							// Prefix every selector in the list
-							groups = tokenize(selector);
-							i = groups.length;
-							nidselect = ridentifier.test(nid) ? "#" + nid : "[id='" + nid + "']";
-							while (i--) {
-								groups[i] = nidselect + " " + toSelector(groups[i]);
-							}
-							newSelector = groups.join(",");
-
-							// Expand context for sibling selectors
-							newContext = rsibling.test(selector) && testContext(context.parentNode) || context;
-						}
-
-						if (newSelector) {
-							try {
-								push.apply(results, newContext.querySelectorAll(newSelector));
-								return results;
-							} catch (qsaError) {} finally {
-								if (nid === expando) {
-									context.removeAttribute("id");
-								}
-							}
-						}
-					}
-				}
-			}
-
-			// All others
-			return select(selector.replace(rtrim, "$1"), context, results, seed);
-		}
-
-		/**
-   * Create key-value caches of limited size
-   * @returns {function(string, object)} Returns the Object data after storing it on itself with
-   *	property name the (space-suffixed) string and (if the cache is larger than Expr.cacheLength)
-   *	deleting the oldest entry
-   */
-		function createCache() {
-			var keys = [];
-
-			function cache(key, value) {
-				// Use (key + " ") to avoid collision with native prototype properties (see Issue #157)
-				if (keys.push(key + " ") > Expr.cacheLength) {
-					// Only keep the most recent entries
-					delete cache[keys.shift()];
-				}
-				return cache[key + " "] = value;
-			}
-			return cache;
-		}
-
-		/**
-   * Mark a function for special use by Sizzle
-   * @param {Function} fn The function to mark
-   */
-		function markFunction(fn) {
-			fn[expando] = true;
-			return fn;
-		}
-
-		/**
-   * Support testing using an element
-   * @param {Function} fn Passed the created div and expects a boolean result
-   */
-		function assert(fn) {
-			var div = document.createElement("div");
-
-			try {
-				return !!fn(div);
-			} catch (e) {
-				return false;
-			} finally {
-				// Remove from its parent by default
-				if (div.parentNode) {
-					div.parentNode.removeChild(div);
-				}
-				// release memory in IE
-				div = null;
-			}
-		}
-
-		/**
-   * Adds the same handler for all of the specified attrs
-   * @param {String} attrs Pipe-separated list of attributes
-   * @param {Function} handler The method that will be applied
-   */
-		function addHandle(attrs, handler) {
-			var arr = attrs.split("|"),
-			    i = arr.length;
-
-			while (i--) {
-				Expr.attrHandle[arr[i]] = handler;
-			}
-		}
-
-		/**
-   * Checks document order of two siblings
-   * @param {Element} a
-   * @param {Element} b
-   * @returns {Number} Returns less than 0 if a precedes b, greater than 0 if a follows b
-   */
-		function siblingCheck(a, b) {
-			var cur = b && a,
-			    diff = cur && a.nodeType === 1 && b.nodeType === 1 && (~b.sourceIndex || MAX_NEGATIVE) - (~a.sourceIndex || MAX_NEGATIVE);
-
-			// Use IE sourceIndex if available on both nodes
-			if (diff) {
-				return diff;
-			}
-
-			// Check if b follows a
-			if (cur) {
-				while (cur = cur.nextSibling) {
-					if (cur === b) {
-						return -1;
-					}
-				}
-			}
-
-			return a ? 1 : -1;
-		}
-
-		/**
-   * Returns a function to use in pseudos for input types
-   * @param {String} type
-   */
-		function createInputPseudo(type) {
-			return function (elem) {
-				var name = elem.nodeName.toLowerCase();
-				return name === "input" && elem.type === type;
-			};
-		}
-
-		/**
-   * Returns a function to use in pseudos for buttons
-   * @param {String} type
-   */
-		function createButtonPseudo(type) {
-			return function (elem) {
-				var name = elem.nodeName.toLowerCase();
-				return (name === "input" || name === "button") && elem.type === type;
-			};
-		}
-
-		/**
-   * Returns a function to use in pseudos for positionals
-   * @param {Function} fn
-   */
-		function createPositionalPseudo(fn) {
-			return markFunction(function (argument) {
-				argument = +argument;
-				return markFunction(function (seed, matches) {
-					var j,
-					    matchIndexes = fn([], seed.length, argument),
-					    i = matchIndexes.length;
-
-					// Match elements found at the specified indexes
-					while (i--) {
-						if (seed[j = matchIndexes[i]]) {
-							seed[j] = !(matches[j] = seed[j]);
-						}
-					}
-				});
-			});
-		}
-
-		/**
-   * Checks a node for validity as a Sizzle context
-   * @param {Element|Object=} context
-   * @returns {Element|Object|Boolean} The input node if acceptable, otherwise a falsy value
-   */
-		function testContext(context) {
-			return context && typeof context.getElementsByTagName !== "undefined" && context;
-		}
-
-		// Expose support vars for convenience
-		support = Sizzle.support = {};
-
-		/**
-   * Detects XML nodes
-   * @param {Element|Object} elem An element or a document
-   * @returns {Boolean} True iff elem is a non-HTML XML node
-   */
-		isXML = Sizzle.isXML = function (elem) {
-			// documentElement is verified for cases where it doesn't yet exist
-			// (such as loading iframes in IE - #4833)
-			var documentElement = elem && (elem.ownerDocument || elem).documentElement;
-			return documentElement ? documentElement.nodeName !== "HTML" : false;
-		};
-
-		/**
-   * Sets document-related variables once based on the current document
-   * @param {Element|Object} [doc] An element or document object to use to set the document
-   * @returns {Object} Returns the current document
-   */
-		setDocument = Sizzle.setDocument = function (node) {
-			var hasCompare,
-			    parent,
-			    doc = node ? node.ownerDocument || node : preferredDoc;
-
-			// Return early if doc is invalid or already selected
-			if (doc === document || doc.nodeType !== 9 || !doc.documentElement) {
-				return document;
-			}
-
-			// Update global variables
-			document = doc;
-			docElem = document.documentElement;
-			documentIsHTML = !isXML(document);
-
-			// Support: IE 9-11, Edge
-			// Accessing iframe documents after unload throws "permission denied" errors (jQuery #13936)
-			if ((parent = document.defaultView) && parent.top !== parent) {
-				// Support: IE 11
-				if (parent.addEventListener) {
-					parent.addEventListener("unload", unloadHandler, false);
-
-					// Support: IE 9 - 10 only
-				} else if (parent.attachEvent) {
-					parent.attachEvent("onunload", unloadHandler);
-				}
-			}
-
-			/* Attributes
-   ---------------------------------------------------------------------- */
-
-			// Support: IE<8
-			// Verify that getAttribute really returns attributes and not properties
-			// (excepting IE8 booleans)
-			support.attributes = assert(function (div) {
-				div.className = "i";
-				return !div.getAttribute("className");
-			});
-
-			/* getElement(s)By*
-   ---------------------------------------------------------------------- */
-
-			// Check if getElementsByTagName("*") returns only elements
-			support.getElementsByTagName = assert(function (div) {
-				div.appendChild(document.createComment(""));
-				return !div.getElementsByTagName("*").length;
-			});
-
-			// Support: IE<9
-			support.getElementsByClassName = rnative.test(document.getElementsByClassName);
-
-			// Support: IE<10
-			// Check if getElementById returns elements by name
-			// The broken getElementById methods don't pick up programatically-set names,
-			// so use a roundabout getElementsByName test
-			support.getById = assert(function (div) {
-				docElem.appendChild(div).id = expando;
-				return !document.getElementsByName || !document.getElementsByName(expando).length;
-			});
-
-			// ID find and filter
-			if (support.getById) {
-				Expr.find["ID"] = function (id, context) {
-					if (typeof context.getElementById !== "undefined" && documentIsHTML) {
-						var m = context.getElementById(id);
-						return m ? [m] : [];
-					}
-				};
-				Expr.filter["ID"] = function (id) {
-					var attrId = id.replace(runescape, funescape);
-					return function (elem) {
-						return elem.getAttribute("id") === attrId;
-					};
-				};
-			} else {
-				// Support: IE6/7
-				// getElementById is not reliable as a find shortcut
-				delete Expr.find["ID"];
-
-				Expr.filter["ID"] = function (id) {
-					var attrId = id.replace(runescape, funescape);
-					return function (elem) {
-						var node = typeof elem.getAttributeNode !== "undefined" && elem.getAttributeNode("id");
-						return node && node.value === attrId;
-					};
-				};
-			}
-
-			// Tag
-			Expr.find["TAG"] = support.getElementsByTagName ? function (tag, context) {
-				if (typeof context.getElementsByTagName !== "undefined") {
-					return context.getElementsByTagName(tag);
-
-					// DocumentFragment nodes don't have gEBTN
-				} else if (support.qsa) {
-					return context.querySelectorAll(tag);
-				}
-			} : function (tag, context) {
-				var elem,
-				    tmp = [],
-				    i = 0,
-
-				// By happy coincidence, a (broken) gEBTN appears on DocumentFragment nodes too
-				results = context.getElementsByTagName(tag);
-
-				// Filter out possible comments
-				if (tag === "*") {
-					while (elem = results[i++]) {
-						if (elem.nodeType === 1) {
-							tmp.push(elem);
-						}
-					}
-
-					return tmp;
-				}
-				return results;
-			};
-
-			// Class
-			Expr.find["CLASS"] = support.getElementsByClassName && function (className, context) {
-				if (typeof context.getElementsByClassName !== "undefined" && documentIsHTML) {
-					return context.getElementsByClassName(className);
-				}
-			};
-
-			/* QSA/matchesSelector
-   ---------------------------------------------------------------------- */
-
-			// QSA and matchesSelector support
-
-			// matchesSelector(:active) reports false when true (IE9/Opera 11.5)
-			rbuggyMatches = [];
-
-			// qSa(:focus) reports false when true (Chrome 21)
-			// We allow this because of a bug in IE8/9 that throws an error
-			// whenever `document.activeElement` is accessed on an iframe
-			// So, we allow :focus to pass through QSA all the time to avoid the IE error
-			// See http://bugs.jquery.com/ticket/13378
-			rbuggyQSA = [];
-
-			if (support.qsa = rnative.test(document.querySelectorAll)) {
-				// Build QSA regex
-				// Regex strategy adopted from Diego Perini
-				assert(function (div) {
-					// Select is set to empty string on purpose
-					// This is to test IE's treatment of not explicitly
-					// setting a boolean content attribute,
-					// since its presence should be enough
-					// http://bugs.jquery.com/ticket/12359
-					docElem.appendChild(div).innerHTML = "<a id='" + expando + "'></a>" + "<select id='" + expando + "-\r\\' msallowcapture=''>" + "<option selected=''></option></select>";
-
-					// Support: IE8, Opera 11-12.16
-					// Nothing should be selected when empty strings follow ^= or $= or *=
-					// The test attribute must be unknown in Opera but "safe" for WinRT
-					// http://msdn.microsoft.com/en-us/library/ie/hh465388.aspx#attribute_section
-					if (div.querySelectorAll("[msallowcapture^='']").length) {
-						rbuggyQSA.push("[*^$]=" + whitespace + "*(?:''|\"\")");
-					}
-
-					// Support: IE8
-					// Boolean attributes and "value" are not treated correctly
-					if (!div.querySelectorAll("[selected]").length) {
-						rbuggyQSA.push("\\[" + whitespace + "*(?:value|" + booleans + ")");
-					}
-
-					// Support: Chrome<29, Android<4.4, Safari<7.0+, iOS<7.0+, PhantomJS<1.9.8+
-					if (!div.querySelectorAll("[id~=" + expando + "-]").length) {
-						rbuggyQSA.push("~=");
-					}
-
-					// Webkit/Opera - :checked should return selected option elements
-					// http://www.w3.org/TR/2011/REC-css3-selectors-20110929/#checked
-					// IE8 throws error here and will not see later tests
-					if (!div.querySelectorAll(":checked").length) {
-						rbuggyQSA.push(":checked");
-					}
-
-					// Support: Safari 8+, iOS 8+
-					// https://bugs.webkit.org/show_bug.cgi?id=136851
-					// In-page `selector#id sibing-combinator selector` fails
-					if (!div.querySelectorAll("a#" + expando + "+*").length) {
-						rbuggyQSA.push(".#.+[+~]");
-					}
-				});
-
-				assert(function (div) {
-					// Support: Windows 8 Native Apps
-					// The type and name attributes are restricted during .innerHTML assignment
-					var input = document.createElement("input");
-					input.setAttribute("type", "hidden");
-					div.appendChild(input).setAttribute("name", "D");
-
-					// Support: IE8
-					// Enforce case-sensitivity of name attribute
-					if (div.querySelectorAll("[name=d]").length) {
-						rbuggyQSA.push("name" + whitespace + "*[*^$|!~]?=");
-					}
-
-					// FF 3.5 - :enabled/:disabled and hidden elements (hidden elements are still enabled)
-					// IE8 throws error here and will not see later tests
-					if (!div.querySelectorAll(":enabled").length) {
-						rbuggyQSA.push(":enabled", ":disabled");
-					}
-
-					// Opera 10-11 does not throw on post-comma invalid pseudos
-					div.querySelectorAll("*,:x");
-					rbuggyQSA.push(",.*:");
-				});
-			}
-
-			if (support.matchesSelector = rnative.test(matches = docElem.matches || docElem.webkitMatchesSelector || docElem.mozMatchesSelector || docElem.oMatchesSelector || docElem.msMatchesSelector)) {
-
-				assert(function (div) {
-					// Check to see if it's possible to do matchesSelector
-					// on a disconnected node (IE 9)
-					support.disconnectedMatch = matches.call(div, "div");
-
-					// This should fail with an exception
-					// Gecko does not error, returns false instead
-					matches.call(div, "[s!='']:x");
-					rbuggyMatches.push("!=", pseudos);
-				});
-			}
-
-			rbuggyQSA = rbuggyQSA.length && new RegExp(rbuggyQSA.join("|"));
-			rbuggyMatches = rbuggyMatches.length && new RegExp(rbuggyMatches.join("|"));
-
-			/* Contains
-   ---------------------------------------------------------------------- */
-			hasCompare = rnative.test(docElem.compareDocumentPosition);
-
-			// Element contains another
-			// Purposefully self-exclusive
-			// As in, an element does not contain itself
-			contains = hasCompare || rnative.test(docElem.contains) ? function (a, b) {
-				var adown = a.nodeType === 9 ? a.documentElement : a,
-				    bup = b && b.parentNode;
-				return a === bup || !!(bup && bup.nodeType === 1 && (adown.contains ? adown.contains(bup) : a.compareDocumentPosition && a.compareDocumentPosition(bup) & 16));
-			} : function (a, b) {
-				if (b) {
-					while (b = b.parentNode) {
-						if (b === a) {
-							return true;
-						}
-					}
-				}
-				return false;
-			};
-
-			/* Sorting
-   ---------------------------------------------------------------------- */
-
-			// Document order sorting
-			sortOrder = hasCompare ? function (a, b) {
-
-				// Flag for duplicate removal
-				if (a === b) {
-					hasDuplicate = true;
-					return 0;
-				}
-
-				// Sort on method existence if only one input has compareDocumentPosition
-				var compare = !a.compareDocumentPosition - !b.compareDocumentPosition;
-				if (compare) {
-					return compare;
-				}
-
-				// Calculate position if both inputs belong to the same document
-				compare = (a.ownerDocument || a) === (b.ownerDocument || b) ? a.compareDocumentPosition(b) :
-
-				// Otherwise we know they are disconnected
-				1;
-
-				// Disconnected nodes
-				if (compare & 1 || !support.sortDetached && b.compareDocumentPosition(a) === compare) {
-
-					// Choose the first element that is related to our preferred document
-					if (a === document || a.ownerDocument === preferredDoc && contains(preferredDoc, a)) {
-						return -1;
-					}
-					if (b === document || b.ownerDocument === preferredDoc && contains(preferredDoc, b)) {
-						return 1;
-					}
-
-					// Maintain original order
-					return sortInput ? indexOf(sortInput, a) - indexOf(sortInput, b) : 0;
-				}
-
-				return compare & 4 ? -1 : 1;
-			} : function (a, b) {
-				// Exit early if the nodes are identical
-				if (a === b) {
-					hasDuplicate = true;
-					return 0;
-				}
-
-				var cur,
-				    i = 0,
-				    aup = a.parentNode,
-				    bup = b.parentNode,
-				    ap = [a],
-				    bp = [b];
-
-				// Parentless nodes are either documents or disconnected
-				if (!aup || !bup) {
-					return a === document ? -1 : b === document ? 1 : aup ? -1 : bup ? 1 : sortInput ? indexOf(sortInput, a) - indexOf(sortInput, b) : 0;
-
-					// If the nodes are siblings, we can do a quick check
-				} else if (aup === bup) {
-					return siblingCheck(a, b);
-				}
-
-				// Otherwise we need full lists of their ancestors for comparison
-				cur = a;
-				while (cur = cur.parentNode) {
-					ap.unshift(cur);
-				}
-				cur = b;
-				while (cur = cur.parentNode) {
-					bp.unshift(cur);
-				}
-
-				// Walk down the tree looking for a discrepancy
-				while (ap[i] === bp[i]) {
-					i++;
-				}
-
-				return i ?
-				// Do a sibling check if the nodes have a common ancestor
-				siblingCheck(ap[i], bp[i]) :
-
-				// Otherwise nodes in our document sort first
-				ap[i] === preferredDoc ? -1 : bp[i] === preferredDoc ? 1 : 0;
-			};
-
-			return document;
-		};
-
-		Sizzle.matches = function (expr, elements) {
-			return Sizzle(expr, null, null, elements);
-		};
-
-		Sizzle.matchesSelector = function (elem, expr) {
-			// Set document vars if needed
-			if ((elem.ownerDocument || elem) !== document) {
-				setDocument(elem);
-			}
-
-			// Make sure that attribute selectors are quoted
-			expr = expr.replace(rattributeQuotes, "='$1']");
-
-			if (support.matchesSelector && documentIsHTML && !compilerCache[expr + " "] && (!rbuggyMatches || !rbuggyMatches.test(expr)) && (!rbuggyQSA || !rbuggyQSA.test(expr))) {
-
-				try {
-					var ret = matches.call(elem, expr);
-
-					// IE 9's matchesSelector returns false on disconnected nodes
-					if (ret || support.disconnectedMatch ||
-					// As well, disconnected nodes are said to be in a document
-					// fragment in IE 9
-					elem.document && elem.document.nodeType !== 11) {
-						return ret;
-					}
-				} catch (e) {}
-			}
-
-			return Sizzle(expr, document, null, [elem]).length > 0;
-		};
-
-		Sizzle.contains = function (context, elem) {
-			// Set document vars if needed
-			if ((context.ownerDocument || context) !== document) {
-				setDocument(context);
-			}
-			return contains(context, elem);
-		};
-
-		Sizzle.attr = function (elem, name) {
-			// Set document vars if needed
-			if ((elem.ownerDocument || elem) !== document) {
-				setDocument(elem);
-			}
-
-			var fn = Expr.attrHandle[name.toLowerCase()],
-
-			// Don't get fooled by Object.prototype properties (jQuery #13807)
-			val = fn && hasOwn.call(Expr.attrHandle, name.toLowerCase()) ? fn(elem, name, !documentIsHTML) : undefined;
-
-			return val !== undefined ? val : support.attributes || !documentIsHTML ? elem.getAttribute(name) : (val = elem.getAttributeNode(name)) && val.specified ? val.value : null;
-		};
-
-		Sizzle.error = function (msg) {
-			throw new Error("Syntax error, unrecognized expression: " + msg);
-		};
-
-		/**
-   * Document sorting and removing duplicates
-   * @param {ArrayLike} results
-   */
-		Sizzle.uniqueSort = function (results) {
-			var elem,
-			    duplicates = [],
-			    j = 0,
-			    i = 0;
-
-			// Unless we *know* we can detect duplicates, assume their presence
-			hasDuplicate = !support.detectDuplicates;
-			sortInput = !support.sortStable && results.slice(0);
-			results.sort(sortOrder);
-
-			if (hasDuplicate) {
-				while (elem = results[i++]) {
-					if (elem === results[i]) {
-						j = duplicates.push(i);
-					}
-				}
-				while (j--) {
-					results.splice(duplicates[j], 1);
-				}
-			}
-
-			// Clear input after sorting to release objects
-			// See https://github.com/jquery/sizzle/pull/225
-			sortInput = null;
-
-			return results;
-		};
-
-		/**
-   * Utility function for retrieving the text value of an array of DOM nodes
-   * @param {Array|Element} elem
-   */
-		getText = Sizzle.getText = function (elem) {
-			var node,
-			    ret = "",
-			    i = 0,
-			    nodeType = elem.nodeType;
-
-			if (!nodeType) {
-				// If no nodeType, this is expected to be an array
-				while (node = elem[i++]) {
-					// Do not traverse comment nodes
-					ret += getText(node);
-				}
-			} else if (nodeType === 1 || nodeType === 9 || nodeType === 11) {
-				// Use textContent for elements
-				// innerText usage removed for consistency of new lines (jQuery #11153)
-				if (typeof elem.textContent === "string") {
-					return elem.textContent;
-				} else {
-					// Traverse its children
-					for (elem = elem.firstChild; elem; elem = elem.nextSibling) {
-						ret += getText(elem);
-					}
-				}
-			} else if (nodeType === 3 || nodeType === 4) {
-				return elem.nodeValue;
-			}
-			// Do not include comment or processing instruction nodes
-
-			return ret;
-		};
-
-		Expr = Sizzle.selectors = {
-
-			// Can be adjusted by the user
-			cacheLength: 50,
-
-			createPseudo: markFunction,
-
-			match: matchExpr,
-
-			attrHandle: {},
-
-			find: {},
-
-			relative: {
-				">": { dir: "parentNode", first: true },
-				" ": { dir: "parentNode" },
-				"+": { dir: "previousSibling", first: true },
-				"~": { dir: "previousSibling" }
-			},
-
-			preFilter: {
-				"ATTR": function (match) {
-					match[1] = match[1].replace(runescape, funescape);
-
-					// Move the given value to match[3] whether quoted or unquoted
-					match[3] = (match[3] || match[4] || match[5] || "").replace(runescape, funescape);
-
-					if (match[2] === "~=") {
-						match[3] = " " + match[3] + " ";
-					}
-
-					return match.slice(0, 4);
-				},
-
-				"CHILD": function (match) {
-					/* matches from matchExpr["CHILD"]
-     	1 type (only|nth|...)
-     	2 what (child|of-type)
-     	3 argument (even|odd|\d*|\d*n([+-]\d+)?|...)
-     	4 xn-component of xn+y argument ([+-]?\d*n|)
-     	5 sign of xn-component
-     	6 x of xn-component
-     	7 sign of y-component
-     	8 y of y-component
-     */
-					match[1] = match[1].toLowerCase();
-
-					if (match[1].slice(0, 3) === "nth") {
-						// nth-* requires argument
-						if (!match[3]) {
-							Sizzle.error(match[0]);
-						}
-
-						// numeric x and y parameters for Expr.filter.CHILD
-						// remember that false/true cast respectively to 0/1
-						match[4] = +(match[4] ? match[5] + (match[6] || 1) : 2 * (match[3] === "even" || match[3] === "odd"));
-						match[5] = +(match[7] + match[8] || match[3] === "odd");
-
-						// other types prohibit arguments
-					} else if (match[3]) {
-						Sizzle.error(match[0]);
-					}
-
-					return match;
-				},
-
-				"PSEUDO": function (match) {
-					var excess,
-					    unquoted = !match[6] && match[2];
-
-					if (matchExpr["CHILD"].test(match[0])) {
-						return null;
-					}
-
-					// Accept quoted arguments as-is
-					if (match[3]) {
-						match[2] = match[4] || match[5] || "";
-
-						// Strip excess characters from unquoted arguments
-					} else if (unquoted && rpseudo.test(unquoted) && (
-					// Get excess from tokenize (recursively)
-					excess = tokenize(unquoted, true)) && (
-					// advance to the next closing parenthesis
-					excess = unquoted.indexOf(")", unquoted.length - excess) - unquoted.length)) {
-
-						// excess is a negative index
-						match[0] = match[0].slice(0, excess);
-						match[2] = unquoted.slice(0, excess);
-					}
-
-					// Return only captures needed by the pseudo filter method (type and argument)
-					return match.slice(0, 3);
-				}
-			},
-
-			filter: {
-
-				"TAG": function (nodeNameSelector) {
-					var nodeName = nodeNameSelector.replace(runescape, funescape).toLowerCase();
-					return nodeNameSelector === "*" ? function () {
-						return true;
-					} : function (elem) {
-						return elem.nodeName && elem.nodeName.toLowerCase() === nodeName;
-					};
-				},
-
-				"CLASS": function (className) {
-					var pattern = classCache[className + " "];
-
-					return pattern || (pattern = new RegExp("(^|" + whitespace + ")" + className + "(" + whitespace + "|$)")) && classCache(className, function (elem) {
-						return pattern.test(typeof elem.className === "string" && elem.className || typeof elem.getAttribute !== "undefined" && elem.getAttribute("class") || "");
-					});
-				},
-
-				"ATTR": function (name, operator, check) {
-					return function (elem) {
-						var result = Sizzle.attr(elem, name);
-
-						if (result == null) {
-							return operator === "!=";
-						}
-						if (!operator) {
-							return true;
-						}
-
-						result += "";
-
-						return operator === "=" ? result === check : operator === "!=" ? result !== check : operator === "^=" ? check && result.indexOf(check) === 0 : operator === "*=" ? check && result.indexOf(check) > -1 : operator === "$=" ? check && result.slice(-check.length) === check : operator === "~=" ? (" " + result.replace(rwhitespace, " ") + " ").indexOf(check) > -1 : operator === "|=" ? result === check || result.slice(0, check.length + 1) === check + "-" : false;
-					};
-				},
-
-				"CHILD": function (type, what, argument, first, last) {
-					var simple = type.slice(0, 3) !== "nth",
-					    forward = type.slice(-4) !== "last",
-					    ofType = what === "of-type";
-
-					return first === 1 && last === 0 ?
-
-					// Shortcut for :nth-*(n)
-					function (elem) {
-						return !!elem.parentNode;
-					} : function (elem, context, xml) {
-						var cache,
-						    uniqueCache,
-						    outerCache,
-						    node,
-						    nodeIndex,
-						    start,
-						    dir = simple !== forward ? "nextSibling" : "previousSibling",
-						    parent = elem.parentNode,
-						    name = ofType && elem.nodeName.toLowerCase(),
-						    useCache = !xml && !ofType,
-						    diff = false;
-
-						if (parent) {
-
-							// :(first|last|only)-(child|of-type)
-							if (simple) {
-								while (dir) {
-									node = elem;
-									while (node = node[dir]) {
-										if (ofType ? node.nodeName.toLowerCase() === name : node.nodeType === 1) {
-
-											return false;
-										}
-									}
-									// Reverse direction for :only-* (if we haven't yet done so)
-									start = dir = type === "only" && !start && "nextSibling";
-								}
-								return true;
-							}
-
-							start = [forward ? parent.firstChild : parent.lastChild];
-
-							// non-xml :nth-child(...) stores cache data on `parent`
-							if (forward && useCache) {
-
-								// Seek `elem` from a previously-cached index
-
-								// ...in a gzip-friendly way
-								node = parent;
-								outerCache = node[expando] || (node[expando] = {});
-
-								// Support: IE <9 only
-								// Defend against cloned attroperties (jQuery gh-1709)
-								uniqueCache = outerCache[node.uniqueID] || (outerCache[node.uniqueID] = {});
-
-								cache = uniqueCache[type] || [];
-								nodeIndex = cache[0] === dirruns && cache[1];
-								diff = nodeIndex && cache[2];
-								node = nodeIndex && parent.childNodes[nodeIndex];
-
-								while (node = ++nodeIndex && node && node[dir] || (
-
-								// Fallback to seeking `elem` from the start
-								diff = nodeIndex = 0) || start.pop()) {
-
-									// When found, cache indexes on `parent` and break
-									if (node.nodeType === 1 && ++diff && node === elem) {
-										uniqueCache[type] = [dirruns, nodeIndex, diff];
-										break;
-									}
-								}
-							} else {
-								// Use previously-cached element index if available
-								if (useCache) {
-									// ...in a gzip-friendly way
-									node = elem;
-									outerCache = node[expando] || (node[expando] = {});
-
-									// Support: IE <9 only
-									// Defend against cloned attroperties (jQuery gh-1709)
-									uniqueCache = outerCache[node.uniqueID] || (outerCache[node.uniqueID] = {});
-
-									cache = uniqueCache[type] || [];
-									nodeIndex = cache[0] === dirruns && cache[1];
-									diff = nodeIndex;
-								}
-
-								// xml :nth-child(...)
-								// or :nth-last-child(...) or :nth(-last)?-of-type(...)
-								if (diff === false) {
-									// Use the same loop as above to seek `elem` from the start
-									while (node = ++nodeIndex && node && node[dir] || (diff = nodeIndex = 0) || start.pop()) {
-
-										if ((ofType ? node.nodeName.toLowerCase() === name : node.nodeType === 1) && ++diff) {
-
-											// Cache the index of each encountered element
-											if (useCache) {
-												outerCache = node[expando] || (node[expando] = {});
-
-												// Support: IE <9 only
-												// Defend against cloned attroperties (jQuery gh-1709)
-												uniqueCache = outerCache[node.uniqueID] || (outerCache[node.uniqueID] = {});
-
-												uniqueCache[type] = [dirruns, diff];
-											}
-
-											if (node === elem) {
-												break;
-											}
-										}
-									}
-								}
-							}
-
-							// Incorporate the offset, then check against cycle size
-							diff -= last;
-							return diff === first || diff % first === 0 && diff / first >= 0;
-						}
-					};
-				},
-
-				"PSEUDO": function (pseudo, argument) {
-					// pseudo-class names are case-insensitive
-					// http://www.w3.org/TR/selectors/#pseudo-classes
-					// Prioritize by case sensitivity in case custom pseudos are added with uppercase letters
-					// Remember that setFilters inherits from pseudos
-					var args,
-					    fn = Expr.pseudos[pseudo] || Expr.setFilters[pseudo.toLowerCase()] || Sizzle.error("unsupported pseudo: " + pseudo);
-
-					// The user may use createPseudo to indicate that
-					// arguments are needed to create the filter function
-					// just as Sizzle does
-					if (fn[expando]) {
-						return fn(argument);
-					}
-
-					// But maintain support for old signatures
-					if (fn.length > 1) {
-						args = [pseudo, pseudo, "", argument];
-						return Expr.setFilters.hasOwnProperty(pseudo.toLowerCase()) ? markFunction(function (seed, matches) {
-							var idx,
-							    matched = fn(seed, argument),
-							    i = matched.length;
-							while (i--) {
-								idx = indexOf(seed, matched[i]);
-								seed[idx] = !(matches[idx] = matched[i]);
-							}
-						}) : function (elem) {
-							return fn(elem, 0, args);
-						};
-					}
-
-					return fn;
-				}
-			},
-
-			pseudos: {
-				// Potentially complex pseudos
-				"not": markFunction(function (selector) {
-					// Trim the selector passed to compile
-					// to avoid treating leading and trailing
-					// spaces as combinators
-					var input = [],
-					    results = [],
-					    matcher = compile(selector.replace(rtrim, "$1"));
-
-					return matcher[expando] ? markFunction(function (seed, matches, context, xml) {
-						var elem,
-						    unmatched = matcher(seed, null, xml, []),
-						    i = seed.length;
-
-						// Match elements unmatched by `matcher`
-						while (i--) {
-							if (elem = unmatched[i]) {
-								seed[i] = !(matches[i] = elem);
-							}
-						}
-					}) : function (elem, context, xml) {
-						input[0] = elem;
-						matcher(input, null, xml, results);
-						// Don't keep the element (issue #299)
-						input[0] = null;
-						return !results.pop();
-					};
-				}),
-
-				"has": markFunction(function (selector) {
-					return function (elem) {
-						return Sizzle(selector, elem).length > 0;
-					};
-				}),
-
-				"contains": markFunction(function (text) {
-					text = text.replace(runescape, funescape);
-					return function (elem) {
-						return (elem.textContent || elem.innerText || getText(elem)).indexOf(text) > -1;
-					};
-				}),
-
-				// "Whether an element is represented by a :lang() selector
-				// is based solely on the element's language value
-				// being equal to the identifier C,
-				// or beginning with the identifier C immediately followed by "-".
-				// The matching of C against the element's language value is performed case-insensitively.
-				// The identifier C does not have to be a valid language name."
-				// http://www.w3.org/TR/selectors/#lang-pseudo
-				"lang": markFunction(function (lang) {
-					// lang value must be a valid identifier
-					if (!ridentifier.test(lang || "")) {
-						Sizzle.error("unsupported lang: " + lang);
-					}
-					lang = lang.replace(runescape, funescape).toLowerCase();
-					return function (elem) {
-						var elemLang;
-						do {
-							if (elemLang = documentIsHTML ? elem.lang : elem.getAttribute("xml:lang") || elem.getAttribute("lang")) {
-
-								elemLang = elemLang.toLowerCase();
-								return elemLang === lang || elemLang.indexOf(lang + "-") === 0;
-							}
-						} while ((elem = elem.parentNode) && elem.nodeType === 1);
-						return false;
-					};
-				}),
-
-				// Miscellaneous
-				"target": function (elem) {
-					var hash = window.location && window.location.hash;
-					return hash && hash.slice(1) === elem.id;
-				},
-
-				"root": function (elem) {
-					return elem === docElem;
-				},
-
-				"focus": function (elem) {
-					return elem === document.activeElement && (!document.hasFocus || document.hasFocus()) && !!(elem.type || elem.href || ~elem.tabIndex);
-				},
-
-				// Boolean properties
-				"enabled": function (elem) {
-					return elem.disabled === false;
-				},
-
-				"disabled": function (elem) {
-					return elem.disabled === true;
-				},
-
-				"checked": function (elem) {
-					// In CSS3, :checked should return both checked and selected elements
-					// http://www.w3.org/TR/2011/REC-css3-selectors-20110929/#checked
-					var nodeName = elem.nodeName.toLowerCase();
-					return nodeName === "input" && !!elem.checked || nodeName === "option" && !!elem.selected;
-				},
-
-				"selected": function (elem) {
-					// Accessing this property makes selected-by-default
-					// options in Safari work properly
-					if (elem.parentNode) {
-						elem.parentNode.selectedIndex;
-					}
-
-					return elem.selected === true;
-				},
-
-				// Contents
-				"empty": function (elem) {
-					// http://www.w3.org/TR/selectors/#empty-pseudo
-					// :empty is negated by element (1) or content nodes (text: 3; cdata: 4; entity ref: 5),
-					//   but not by others (comment: 8; processing instruction: 7; etc.)
-					// nodeType < 6 works because attributes (2) do not appear as children
-					for (elem = elem.firstChild; elem; elem = elem.nextSibling) {
-						if (elem.nodeType < 6) {
-							return false;
-						}
-					}
-					return true;
-				},
-
-				"parent": function (elem) {
-					return !Expr.pseudos["empty"](elem);
-				},
-
-				// Element/input types
-				"header": function (elem) {
-					return rheader.test(elem.nodeName);
-				},
-
-				"input": function (elem) {
-					return rinputs.test(elem.nodeName);
-				},
-
-				"button": function (elem) {
-					var name = elem.nodeName.toLowerCase();
-					return name === "input" && elem.type === "button" || name === "button";
-				},
-
-				"text": function (elem) {
-					var attr;
-					return elem.nodeName.toLowerCase() === "input" && elem.type === "text" && (
-
-					// Support: IE<8
-					// New HTML5 attribute values (e.g., "search") appear with elem.type === "text"
-					(attr = elem.getAttribute("type")) == null || attr.toLowerCase() === "text");
-				},
-
-				// Position-in-collection
-				"first": createPositionalPseudo(function () {
-					return [0];
-				}),
-
-				"last": createPositionalPseudo(function (matchIndexes, length) {
-					return [length - 1];
-				}),
-
-				"eq": createPositionalPseudo(function (matchIndexes, length, argument) {
-					return [argument < 0 ? argument + length : argument];
-				}),
-
-				"even": createPositionalPseudo(function (matchIndexes, length) {
-					var i = 0;
-					for (; i < length; i += 2) {
-						matchIndexes.push(i);
-					}
-					return matchIndexes;
-				}),
-
-				"odd": createPositionalPseudo(function (matchIndexes, length) {
-					var i = 1;
-					for (; i < length; i += 2) {
-						matchIndexes.push(i);
-					}
-					return matchIndexes;
-				}),
-
-				"lt": createPositionalPseudo(function (matchIndexes, length, argument) {
-					var i = argument < 0 ? argument + length : argument;
-					for (; --i >= 0;) {
-						matchIndexes.push(i);
-					}
-					return matchIndexes;
-				}),
-
-				"gt": createPositionalPseudo(function (matchIndexes, length, argument) {
-					var i = argument < 0 ? argument + length : argument;
-					for (; ++i < length;) {
-						matchIndexes.push(i);
-					}
-					return matchIndexes;
-				})
-			}
-		};
-
-		Expr.pseudos["nth"] = Expr.pseudos["eq"];
-
-		// Add button/input type pseudos
-		for (i in { radio: true, checkbox: true, file: true, password: true, image: true }) {
-			Expr.pseudos[i] = createInputPseudo(i);
-		}
-		for (i in { submit: true, reset: true }) {
-			Expr.pseudos[i] = createButtonPseudo(i);
-		}
-
-		// Easy API for creating new setFilters
-		function setFilters() {}
-		setFilters.prototype = Expr.filters = Expr.pseudos;
-		Expr.setFilters = new setFilters();
-
-		tokenize = Sizzle.tokenize = function (selector, parseOnly) {
-			var matched,
-			    match,
-			    tokens,
-			    type,
-			    soFar,
-			    groups,
-			    preFilters,
-			    cached = tokenCache[selector + " "];
-
-			if (cached) {
-				return parseOnly ? 0 : cached.slice(0);
-			}
-
-			soFar = selector;
-			groups = [];
-			preFilters = Expr.preFilter;
-
-			while (soFar) {
-
-				// Comma and first run
-				if (!matched || (match = rcomma.exec(soFar))) {
-					if (match) {
-						// Don't consume trailing commas as valid
-						soFar = soFar.slice(match[0].length) || soFar;
-					}
-					groups.push(tokens = []);
-				}
-
-				matched = false;
-
-				// Combinators
-				if (match = rcombinators.exec(soFar)) {
-					matched = match.shift();
-					tokens.push({
-						value: matched,
-						// Cast descendant combinators to space
-						type: match[0].replace(rtrim, " ")
-					});
-					soFar = soFar.slice(matched.length);
-				}
-
-				// Filters
-				for (type in Expr.filter) {
-					if ((match = matchExpr[type].exec(soFar)) && (!preFilters[type] || (match = preFilters[type](match)))) {
-						matched = match.shift();
-						tokens.push({
-							value: matched,
-							type: type,
-							matches: match
-						});
-						soFar = soFar.slice(matched.length);
-					}
-				}
-
-				if (!matched) {
-					break;
-				}
-			}
-
-			// Return the length of the invalid excess
-			// if we're just parsing
-			// Otherwise, throw an error or return tokens
-			return parseOnly ? soFar.length : soFar ? Sizzle.error(selector) :
-			// Cache the tokens
-			tokenCache(selector, groups).slice(0);
-		};
-
-		function toSelector(tokens) {
-			var i = 0,
-			    len = tokens.length,
-			    selector = "";
-			for (; i < len; i++) {
-				selector += tokens[i].value;
-			}
-			return selector;
-		}
-
-		function addCombinator(matcher, combinator, base) {
-			var dir = combinator.dir,
-			    checkNonElements = base && dir === "parentNode",
-			    doneName = done++;
-
-			return combinator.first ?
-			// Check against closest ancestor/preceding element
-			function (elem, context, xml) {
-				while (elem = elem[dir]) {
-					if (elem.nodeType === 1 || checkNonElements) {
-						return matcher(elem, context, xml);
-					}
-				}
-			} :
-
-			// Check against all ancestor/preceding elements
-			function (elem, context, xml) {
-				var oldCache,
-				    uniqueCache,
-				    outerCache,
-				    newCache = [dirruns, doneName];
-
-				// We can't set arbitrary data on XML nodes, so they don't benefit from combinator caching
-				if (xml) {
-					while (elem = elem[dir]) {
-						if (elem.nodeType === 1 || checkNonElements) {
-							if (matcher(elem, context, xml)) {
-								return true;
-							}
-						}
-					}
-				} else {
-					while (elem = elem[dir]) {
-						if (elem.nodeType === 1 || checkNonElements) {
-							outerCache = elem[expando] || (elem[expando] = {});
-
-							// Support: IE <9 only
-							// Defend against cloned attroperties (jQuery gh-1709)
-							uniqueCache = outerCache[elem.uniqueID] || (outerCache[elem.uniqueID] = {});
-
-							if ((oldCache = uniqueCache[dir]) && oldCache[0] === dirruns && oldCache[1] === doneName) {
-
-								// Assign to newCache so results back-propagate to previous elements
-								return newCache[2] = oldCache[2];
-							} else {
-								// Reuse newcache so results back-propagate to previous elements
-								uniqueCache[dir] = newCache;
-
-								// A match means we're done; a fail means we have to keep checking
-								if (newCache[2] = matcher(elem, context, xml)) {
-									return true;
-								}
-							}
-						}
-					}
-				}
-			};
-		}
-
-		function elementMatcher(matchers) {
-			return matchers.length > 1 ? function (elem, context, xml) {
-				var i = matchers.length;
-				while (i--) {
-					if (!matchers[i](elem, context, xml)) {
-						return false;
-					}
-				}
-				return true;
-			} : matchers[0];
-		}
-
-		function multipleContexts(selector, contexts, results) {
-			var i = 0,
-			    len = contexts.length;
-			for (; i < len; i++) {
-				Sizzle(selector, contexts[i], results);
-			}
-			return results;
-		}
-
-		function condense(unmatched, map, filter, context, xml) {
-			var elem,
-			    newUnmatched = [],
-			    i = 0,
-			    len = unmatched.length,
-			    mapped = map != null;
-
-			for (; i < len; i++) {
-				if (elem = unmatched[i]) {
-					if (!filter || filter(elem, context, xml)) {
-						newUnmatched.push(elem);
-						if (mapped) {
-							map.push(i);
-						}
-					}
-				}
-			}
-
-			return newUnmatched;
-		}
-
-		function setMatcher(preFilter, selector, matcher, postFilter, postFinder, postSelector) {
-			if (postFilter && !postFilter[expando]) {
-				postFilter = setMatcher(postFilter);
-			}
-			if (postFinder && !postFinder[expando]) {
-				postFinder = setMatcher(postFinder, postSelector);
-			}
-			return markFunction(function (seed, results, context, xml) {
-				var temp,
-				    i,
-				    elem,
-				    preMap = [],
-				    postMap = [],
-				    preexisting = results.length,
-
-
-				// Get initial elements from seed or context
-				elems = seed || multipleContexts(selector || "*", context.nodeType ? [context] : context, []),
-
-
-				// Prefilter to get matcher input, preserving a map for seed-results synchronization
-				matcherIn = preFilter && (seed || !selector) ? condense(elems, preMap, preFilter, context, xml) : elems,
-				    matcherOut = matcher ?
-				// If we have a postFinder, or filtered seed, or non-seed postFilter or preexisting results,
-				postFinder || (seed ? preFilter : preexisting || postFilter) ?
-
-				// ...intermediate processing is necessary
-				[] :
-
-				// ...otherwise use results directly
-				results : matcherIn;
-
-				// Find primary matches
-				if (matcher) {
-					matcher(matcherIn, matcherOut, context, xml);
-				}
-
-				// Apply postFilter
-				if (postFilter) {
-					temp = condense(matcherOut, postMap);
-					postFilter(temp, [], context, xml);
-
-					// Un-match failing elements by moving them back to matcherIn
-					i = temp.length;
-					while (i--) {
-						if (elem = temp[i]) {
-							matcherOut[postMap[i]] = !(matcherIn[postMap[i]] = elem);
-						}
-					}
-				}
-
-				if (seed) {
-					if (postFinder || preFilter) {
-						if (postFinder) {
-							// Get the final matcherOut by condensing this intermediate into postFinder contexts
-							temp = [];
-							i = matcherOut.length;
-							while (i--) {
-								if (elem = matcherOut[i]) {
-									// Restore matcherIn since elem is not yet a final match
-									temp.push(matcherIn[i] = elem);
-								}
-							}
-							postFinder(null, matcherOut = [], temp, xml);
-						}
-
-						// Move matched elements from seed to results to keep them synchronized
-						i = matcherOut.length;
-						while (i--) {
-							if ((elem = matcherOut[i]) && (temp = postFinder ? indexOf(seed, elem) : preMap[i]) > -1) {
-
-								seed[temp] = !(results[temp] = elem);
-							}
-						}
-					}
-
-					// Add elements to results, through postFinder if defined
-				} else {
-					matcherOut = condense(matcherOut === results ? matcherOut.splice(preexisting, matcherOut.length) : matcherOut);
-					if (postFinder) {
-						postFinder(null, results, matcherOut, xml);
-					} else {
-						push.apply(results, matcherOut);
-					}
-				}
-			});
-		}
-
-		function matcherFromTokens(tokens) {
-			var checkContext,
-			    matcher,
-			    j,
-			    len = tokens.length,
-			    leadingRelative = Expr.relative[tokens[0].type],
-			    implicitRelative = leadingRelative || Expr.relative[" "],
-			    i = leadingRelative ? 1 : 0,
-
-
-			// The foundational matcher ensures that elements are reachable from top-level context(s)
-			matchContext = addCombinator(function (elem) {
-				return elem === checkContext;
-			}, implicitRelative, true),
-			    matchAnyContext = addCombinator(function (elem) {
-				return indexOf(checkContext, elem) > -1;
-			}, implicitRelative, true),
-			    matchers = [function (elem, context, xml) {
-				var ret = !leadingRelative && (xml || context !== outermostContext) || ((checkContext = context).nodeType ? matchContext(elem, context, xml) : matchAnyContext(elem, context, xml));
-				// Avoid hanging onto element (issue #299)
-				checkContext = null;
-				return ret;
-			}];
-
-			for (; i < len; i++) {
-				if (matcher = Expr.relative[tokens[i].type]) {
-					matchers = [addCombinator(elementMatcher(matchers), matcher)];
-				} else {
-					matcher = Expr.filter[tokens[i].type].apply(null, tokens[i].matches);
-
-					// Return special upon seeing a positional matcher
-					if (matcher[expando]) {
-						// Find the next relative operator (if any) for proper handling
-						j = ++i;
-						for (; j < len; j++) {
-							if (Expr.relative[tokens[j].type]) {
-								break;
-							}
-						}
-						return setMatcher(i > 1 && elementMatcher(matchers), i > 1 && toSelector(
-						// If the preceding token was a descendant combinator, insert an implicit any-element `*`
-						tokens.slice(0, i - 1).concat({ value: tokens[i - 2].type === " " ? "*" : "" })).replace(rtrim, "$1"), matcher, i < j && matcherFromTokens(tokens.slice(i, j)), j < len && matcherFromTokens(tokens = tokens.slice(j)), j < len && toSelector(tokens));
-					}
-					matchers.push(matcher);
-				}
-			}
-
-			return elementMatcher(matchers);
-		}
-
-		function matcherFromGroupMatchers(elementMatchers, setMatchers) {
-			var bySet = setMatchers.length > 0,
-			    byElement = elementMatchers.length > 0,
-			    superMatcher = function (seed, context, xml, results, outermost) {
-				var elem,
-				    j,
-				    matcher,
-				    matchedCount = 0,
-				    i = "0",
-				    unmatched = seed && [],
-				    setMatched = [],
-				    contextBackup = outermostContext,
-
-				// We must always have either seed elements or outermost context
-				elems = seed || byElement && Expr.find["TAG"]("*", outermost),
-
-				// Use integer dirruns iff this is the outermost matcher
-				dirrunsUnique = dirruns += contextBackup == null ? 1 : Math.random() || 0.1,
-				    len = elems.length;
-
-				if (outermost) {
-					outermostContext = context === document || context || outermost;
-				}
-
-				// Add elements passing elementMatchers directly to results
-				// Support: IE<9, Safari
-				// Tolerate NodeList properties (IE: "length"; Safari: <number>) matching elements by id
-				for (; i !== len && (elem = elems[i]) != null; i++) {
-					if (byElement && elem) {
-						j = 0;
-						if (!context && elem.ownerDocument !== document) {
-							setDocument(elem);
-							xml = !documentIsHTML;
-						}
-						while (matcher = elementMatchers[j++]) {
-							if (matcher(elem, context || document, xml)) {
-								results.push(elem);
-								break;
-							}
-						}
-						if (outermost) {
-							dirruns = dirrunsUnique;
-						}
-					}
-
-					// Track unmatched elements for set filters
-					if (bySet) {
-						// They will have gone through all possible matchers
-						if (elem = !matcher && elem) {
-							matchedCount--;
-						}
-
-						// Lengthen the array for every element, matched or not
-						if (seed) {
-							unmatched.push(elem);
-						}
-					}
-				}
-
-				// `i` is now the count of elements visited above, and adding it to `matchedCount`
-				// makes the latter nonnegative.
-				matchedCount += i;
-
-				// Apply set filters to unmatched elements
-				// NOTE: This can be skipped if there are no unmatched elements (i.e., `matchedCount`
-				// equals `i`), unless we didn't visit _any_ elements in the above loop because we have
-				// no element matchers and no seed.
-				// Incrementing an initially-string "0" `i` allows `i` to remain a string only in that
-				// case, which will result in a "00" `matchedCount` that differs from `i` but is also
-				// numerically zero.
-				if (bySet && i !== matchedCount) {
-					j = 0;
-					while (matcher = setMatchers[j++]) {
-						matcher(unmatched, setMatched, context, xml);
-					}
-
-					if (seed) {
-						// Reintegrate element matches to eliminate the need for sorting
-						if (matchedCount > 0) {
-							while (i--) {
-								if (!(unmatched[i] || setMatched[i])) {
-									setMatched[i] = pop.call(results);
-								}
-							}
-						}
-
-						// Discard index placeholder values to get only actual matches
-						setMatched = condense(setMatched);
-					}
-
-					// Add matches to results
-					push.apply(results, setMatched);
-
-					// Seedless set matches succeeding multiple successful matchers stipulate sorting
-					if (outermost && !seed && setMatched.length > 0 && matchedCount + setMatchers.length > 1) {
-
-						Sizzle.uniqueSort(results);
-					}
-				}
-
-				// Override manipulation of globals by nested matchers
-				if (outermost) {
-					dirruns = dirrunsUnique;
-					outermostContext = contextBackup;
-				}
-
-				return unmatched;
-			};
-
-			return bySet ? markFunction(superMatcher) : superMatcher;
-		}
-
-		compile = Sizzle.compile = function (selector, match /* Internal Use Only */) {
-			var i,
-			    setMatchers = [],
-			    elementMatchers = [],
-			    cached = compilerCache[selector + " "];
-
-			if (!cached) {
-				// Generate a function of recursive functions that can be used to check each element
-				if (!match) {
-					match = tokenize(selector);
-				}
-				i = match.length;
-				while (i--) {
-					cached = matcherFromTokens(match[i]);
-					if (cached[expando]) {
-						setMatchers.push(cached);
-					} else {
-						elementMatchers.push(cached);
-					}
-				}
-
-				// Cache the compiled function
-				cached = compilerCache(selector, matcherFromGroupMatchers(elementMatchers, setMatchers));
-
-				// Save selector and tokenization
-				cached.selector = selector;
-			}
-			return cached;
-		};
-
-		/**
-   * A low-level selection function that works with Sizzle's compiled
-   *  selector functions
-   * @param {String|Function} selector A selector or a pre-compiled
-   *  selector function built with Sizzle.compile
-   * @param {Element} context
-   * @param {Array} [results]
-   * @param {Array} [seed] A set of elements to match against
-   */
-		select = Sizzle.select = function (selector, context, results, seed) {
-			var i,
-			    tokens,
-			    token,
-			    type,
-			    find,
-			    compiled = typeof selector === "function" && selector,
-			    match = !seed && tokenize(selector = compiled.selector || selector);
-
-			results = results || [];
-
-			// Try to minimize operations if there is only one selector in the list and no seed
-			// (the latter of which guarantees us context)
-			if (match.length === 1) {
-
-				// Reduce context if the leading compound selector is an ID
-				tokens = match[0] = match[0].slice(0);
-				if (tokens.length > 2 && (token = tokens[0]).type === "ID" && support.getById && context.nodeType === 9 && documentIsHTML && Expr.relative[tokens[1].type]) {
-
-					context = (Expr.find["ID"](token.matches[0].replace(runescape, funescape), context) || [])[0];
-					if (!context) {
-						return results;
-
-						// Precompiled matchers will still verify ancestry, so step up a level
-					} else if (compiled) {
-						context = context.parentNode;
-					}
-
-					selector = selector.slice(tokens.shift().value.length);
-				}
-
-				// Fetch a seed set for right-to-left matching
-				i = matchExpr["needsContext"].test(selector) ? 0 : tokens.length;
-				while (i--) {
-					token = tokens[i];
-
-					// Abort if we hit a combinator
-					if (Expr.relative[type = token.type]) {
-						break;
-					}
-					if (find = Expr.find[type]) {
-						// Search, expanding context for leading sibling combinators
-						if (seed = find(token.matches[0].replace(runescape, funescape), rsibling.test(tokens[0].type) && testContext(context.parentNode) || context)) {
-
-							// If seed is empty or no tokens remain, we can return early
-							tokens.splice(i, 1);
-							selector = seed.length && toSelector(tokens);
-							if (!selector) {
-								push.apply(results, seed);
-								return results;
-							}
-
-							break;
-						}
-					}
-				}
-			}
-
-			// Compile and execute a filtering function if one is not provided
-			// Provide `match` to avoid retokenization if we modified the selector above
-			(compiled || compile(selector, match))(seed, context, !documentIsHTML, results, !context || rsibling.test(selector) && testContext(context.parentNode) || context);
-			return results;
-		};
-
-		// One-time assignments
-
-		// Sort stability
-		support.sortStable = expando.split("").sort(sortOrder).join("") === expando;
-
-		// Support: Chrome 14-35+
-		// Always assume duplicates if they aren't passed to the comparison function
-		support.detectDuplicates = !!hasDuplicate;
-
-		// Initialize against the default document
-		setDocument();
-
-		// Support: Webkit<537.32 - Safari 6.0.3/Chrome 25 (fixed in Chrome 27)
-		// Detached nodes confoundingly follow *each other*
-		support.sortDetached = assert(function (div1) {
-			// Should return 1, but returns 4 (following)
-			return div1.compareDocumentPosition(document.createElement("div")) & 1;
-		});
-
-		// Support: IE<8
-		// Prevent attribute/property "interpolation"
-		// http://msdn.microsoft.com/en-us/library/ms536429%28VS.85%29.aspx
-		if (!assert(function (div) {
-			div.innerHTML = "<a href='#'></a>";
-			return div.firstChild.getAttribute("href") === "#";
-		})) {
-			addHandle("type|href|height|width", function (elem, name, isXML) {
-				if (!isXML) {
-					return elem.getAttribute(name, name.toLowerCase() === "type" ? 1 : 2);
-				}
-			});
-		}
-
-		// Support: IE<9
-		// Use defaultValue in place of getAttribute("value")
-		if (!support.attributes || !assert(function (div) {
-			div.innerHTML = "<input/>";
-			div.firstChild.setAttribute("value", "");
-			return div.firstChild.getAttribute("value") === "";
-		})) {
-			addHandle("value", function (elem, name, isXML) {
-				if (!isXML && elem.nodeName.toLowerCase() === "input") {
-					return elem.defaultValue;
-				}
-			});
-		}
-
-		// Support: IE<9
-		// Use getAttributeNode to fetch booleans when getAttribute lies
-		if (!assert(function (div) {
-			return div.getAttribute("disabled") == null;
-		})) {
-			addHandle(booleans, function (elem, name, isXML) {
-				var val;
-				if (!isXML) {
-					return elem[name] === true ? name.toLowerCase() : (val = elem.getAttributeNode(name)) && val.specified ? val.value : null;
-				}
-			});
-		}
-
-		return Sizzle;
-	}(window);
-
-	jQuery.find = Sizzle;
-	jQuery.expr = Sizzle.selectors;
-	jQuery.expr[":"] = jQuery.expr.pseudos;
-	jQuery.uniqueSort = jQuery.unique = Sizzle.uniqueSort;
-	jQuery.text = Sizzle.getText;
-	jQuery.isXMLDoc = Sizzle.isXML;
-	jQuery.contains = Sizzle.contains;
-
-	var dir = function (elem, dir, until) {
-		var matched = [],
-		    truncate = until !== undefined;
-
-		while ((elem = elem[dir]) && elem.nodeType !== 9) {
-			if (elem.nodeType === 1) {
-				if (truncate && jQuery(elem).is(until)) {
-					break;
-				}
-				matched.push(elem);
-			}
-		}
-		return matched;
-	};
-
-	var siblings = function (n, elem) {
-		var matched = [];
-
-		for (; n; n = n.nextSibling) {
-			if (n.nodeType === 1 && n !== elem) {
-				matched.push(n);
-			}
-		}
-
-		return matched;
-	};
-
-	var rneedsContext = jQuery.expr.match.needsContext;
-
-	var rsingleTag = /^<([\w-]+)\s*\/?>(?:<\/\1>|)$/;
-
-	var risSimple = /^.[^:#\[\.,]*$/;
-
-	// Implement the identical functionality for filter and not
-	function winnow(elements, qualifier, not) {
-		if (jQuery.isFunction(qualifier)) {
-			return jQuery.grep(elements, function (elem, i) {
-				/* jshint -W018 */
-				return !!qualifier.call(elem, i, elem) !== not;
-			});
-		}
-
-		if (qualifier.nodeType) {
-			return jQuery.grep(elements, function (elem) {
-				return elem === qualifier !== not;
-			});
-		}
-
-		if (typeof qualifier === "string") {
-			if (risSimple.test(qualifier)) {
-				return jQuery.filter(qualifier, elements, not);
-			}
-
-			qualifier = jQuery.filter(qualifier, elements);
-		}
-
-		return jQuery.grep(elements, function (elem) {
-			return indexOf.call(qualifier, elem) > -1 !== not;
-		});
-	}
-
-	jQuery.filter = function (expr, elems, not) {
-		var elem = elems[0];
-
-		if (not) {
-			expr = ":not(" + expr + ")";
-		}
-
-		return elems.length === 1 && elem.nodeType === 1 ? jQuery.find.matchesSelector(elem, expr) ? [elem] : [] : jQuery.find.matches(expr, jQuery.grep(elems, function (elem) {
-			return elem.nodeType === 1;
-		}));
-	};
-
-	jQuery.fn.extend({
-		find: function (selector) {
-			var i,
-			    len = this.length,
-			    ret = [],
-			    self = this;
-
-			if (typeof selector !== "string") {
-				return this.pushStack(jQuery(selector).filter(function () {
-					for (i = 0; i < len; i++) {
-						if (jQuery.contains(self[i], this)) {
-							return true;
-						}
-					}
-				}));
-			}
-
-			for (i = 0; i < len; i++) {
-				jQuery.find(selector, self[i], ret);
-			}
-
-			// Needed because $( selector, context ) becomes $( context ).find( selector )
-			ret = this.pushStack(len > 1 ? jQuery.unique(ret) : ret);
-			ret.selector = this.selector ? this.selector + " " + selector : selector;
-			return ret;
-		},
-		filter: function (selector) {
-			return this.pushStack(winnow(this, selector || [], false));
-		},
-		not: function (selector) {
-			return this.pushStack(winnow(this, selector || [], true));
-		},
-		is: function (selector) {
-			return !!winnow(this,
-
-			// If this is a positional/relative selector, check membership in the returned set
-			// so $("p:first").is("p:last") won't return true for a doc with two "p".
-			typeof selector === "string" && rneedsContext.test(selector) ? jQuery(selector) : selector || [], false).length;
-		}
-	});
-
-	// Initialize a jQuery object
-
-
-	// A central reference to the root jQuery(document)
-	var rootjQuery,
-
-
-	// A simple way to check for HTML strings
-	// Prioritize #id over <tag> to avoid XSS via location.hash (#9521)
-	// Strict HTML recognition (#11290: must start with <)
-	rquickExpr = /^(?:\s*(<[\w\W]+>)[^>]*|#([\w-]*))$/,
-	    init = jQuery.fn.init = function (selector, context, root) {
-		var match, elem;
-
-		// HANDLE: $(""), $(null), $(undefined), $(false)
-		if (!selector) {
-			return this;
-		}
-
-		// Method init() accepts an alternate rootjQuery
-		// so migrate can support jQuery.sub (gh-2101)
-		root = root || rootjQuery;
-
-		// Handle HTML strings
-		if (typeof selector === "string") {
-			if (selector[0] === "<" && selector[selector.length - 1] === ">" && selector.length >= 3) {
-
-				// Assume that strings that start and end with <> are HTML and skip the regex check
-				match = [null, selector, null];
-			} else {
-				match = rquickExpr.exec(selector);
-			}
-
-			// Match html or make sure no context is specified for #id
-			if (match && (match[1] || !context)) {
-
-				// HANDLE: $(html) -> $(array)
-				if (match[1]) {
-					context = context instanceof jQuery ? context[0] : context;
-
-					// Option to run scripts is true for back-compat
-					// Intentionally let the error be thrown if parseHTML is not present
-					jQuery.merge(this, jQuery.parseHTML(match[1], context && context.nodeType ? context.ownerDocument || context : document, true));
-
-					// HANDLE: $(html, props)
-					if (rsingleTag.test(match[1]) && jQuery.isPlainObject(context)) {
-						for (match in context) {
-
-							// Properties of context are called as methods if possible
-							if (jQuery.isFunction(this[match])) {
-								this[match](context[match]);
-
-								// ...and otherwise set as attributes
-							} else {
-								this.attr(match, context[match]);
-							}
-						}
-					}
-
-					return this;
-
-					// HANDLE: $(#id)
-				} else {
-					elem = document.getElementById(match[2]);
-
-					// Support: Blackberry 4.6
-					// gEBID returns nodes no longer in the document (#6963)
-					if (elem && elem.parentNode) {
-
-						// Inject the element directly into the jQuery object
-						this.length = 1;
-						this[0] = elem;
-					}
-
-					this.context = document;
-					this.selector = selector;
-					return this;
-				}
-
-				// HANDLE: $(expr, $(...))
-			} else if (!context || context.jquery) {
-				return (context || root).find(selector);
-
-				// HANDLE: $(expr, context)
-				// (which is just equivalent to: $(context).find(expr)
-			} else {
-				return this.constructor(context).find(selector);
-			}
-
-			// HANDLE: $(DOMElement)
-		} else if (selector.nodeType) {
-			this.context = this[0] = selector;
-			this.length = 1;
-			return this;
-
-			// HANDLE: $(function)
-			// Shortcut for document ready
-		} else if (jQuery.isFunction(selector)) {
-			return root.ready !== undefined ? root.ready(selector) :
-
-			// Execute immediately if ready is not present
-			selector(jQuery);
-		}
-
-		if (selector.selector !== undefined) {
-			this.selector = selector.selector;
-			this.context = selector.context;
-		}
-
-		return jQuery.makeArray(selector, this);
-	};
-
-	// Give the init function the jQuery prototype for later instantiation
-	init.prototype = jQuery.fn;
-
-	// Initialize central reference
-	rootjQuery = jQuery(document);
-
-	var rparentsprev = /^(?:parents|prev(?:Until|All))/,
-
-
-	// Methods guaranteed to produce a unique set when starting from a unique set
-	guaranteedUnique = {
-		children: true,
-		contents: true,
-		next: true,
-		prev: true
-	};
-
-	jQuery.fn.extend({
-		has: function (target) {
-			var targets = jQuery(target, this),
-			    l = targets.length;
-
-			return this.filter(function () {
-				var i = 0;
-				for (; i < l; i++) {
-					if (jQuery.contains(this, targets[i])) {
-						return true;
-					}
-				}
-			});
-		},
-
-		closest: function (selectors, context) {
-			var cur,
-			    i = 0,
-			    l = this.length,
-			    matched = [],
-			    pos = rneedsContext.test(selectors) || typeof selectors !== "string" ? jQuery(selectors, context || this.context) : 0;
-
-			for (; i < l; i++) {
-				for (cur = this[i]; cur && cur !== context; cur = cur.parentNode) {
-
-					// Always skip document fragments
-					if (cur.nodeType < 11 && (pos ? pos.index(cur) > -1 :
-
-					// Don't pass non-elements to Sizzle
-					cur.nodeType === 1 && jQuery.find.matchesSelector(cur, selectors))) {
-
-						matched.push(cur);
-						break;
-					}
-				}
-			}
-
-			return this.pushStack(matched.length > 1 ? jQuery.uniqueSort(matched) : matched);
-		},
-
-		// Determine the position of an element within the set
-		index: function (elem) {
-
-			// No argument, return index in parent
-			if (!elem) {
-				return this[0] && this[0].parentNode ? this.first().prevAll().length : -1;
-			}
-
-			// Index in selector
-			if (typeof elem === "string") {
-				return indexOf.call(jQuery(elem), this[0]);
-			}
-
-			// Locate the position of the desired element
-			return indexOf.call(this,
-
-			// If it receives a jQuery object, the first element is used
-			elem.jquery ? elem[0] : elem);
-		},
-
-		add: function (selector, context) {
-			return this.pushStack(jQuery.uniqueSort(jQuery.merge(this.get(), jQuery(selector, context))));
-		},
-
-		addBack: function (selector) {
-			return this.add(selector == null ? this.prevObject : this.prevObject.filter(selector));
-		}
-	});
-
-	function sibling(cur, dir) {
-		while ((cur = cur[dir]) && cur.nodeType !== 1) {}
-		return cur;
-	}
-
-	jQuery.each({
-		parent: function (elem) {
-			var parent = elem.parentNode;
-			return parent && parent.nodeType !== 11 ? parent : null;
-		},
-		parents: function (elem) {
-			return dir(elem, "parentNode");
-		},
-		parentsUntil: function (elem, i, until) {
-			return dir(elem, "parentNode", until);
-		},
-		next: function (elem) {
-			return sibling(elem, "nextSibling");
-		},
-		prev: function (elem) {
-			return sibling(elem, "previousSibling");
-		},
-		nextAll: function (elem) {
-			return dir(elem, "nextSibling");
-		},
-		prevAll: function (elem) {
-			return dir(elem, "previousSibling");
-		},
-		nextUntil: function (elem, i, until) {
-			return dir(elem, "nextSibling", until);
-		},
-		prevUntil: function (elem, i, until) {
-			return dir(elem, "previousSibling", until);
-		},
-		siblings: function (elem) {
-			return siblings((elem.parentNode || {}).firstChild, elem);
-		},
-		children: function (elem) {
-			return siblings(elem.firstChild);
-		},
-		contents: function (elem) {
-			return elem.contentDocument || jQuery.merge([], elem.childNodes);
-		}
-	}, function (name, fn) {
-		jQuery.fn[name] = function (until, selector) {
-			var matched = jQuery.map(this, fn, until);
-
-			if (name.slice(-5) !== "Until") {
-				selector = until;
-			}
-
-			if (selector && typeof selector === "string") {
-				matched = jQuery.filter(selector, matched);
-			}
-
-			if (this.length > 1) {
-
-				// Remove duplicates
-				if (!guaranteedUnique[name]) {
-					jQuery.uniqueSort(matched);
-				}
-
-				// Reverse order for parents* and prev-derivatives
-				if (rparentsprev.test(name)) {
-					matched.reverse();
-				}
-			}
-
-			return this.pushStack(matched);
-		};
-	});
-	var rnotwhite = /\S+/g;
-
-	// Convert String-formatted options into Object-formatted ones
-	function createOptions(options) {
-		var object = {};
-		jQuery.each(options.match(rnotwhite) || [], function (_, flag) {
-			object[flag] = true;
-		});
-		return object;
-	}
-
-	/*
-  * Create a callback list using the following parameters:
-  *
-  *	options: an optional list of space-separated options that will change how
-  *			the callback list behaves or a more traditional option object
-  *
-  * By default a callback list will act like an event callback list and can be
-  * "fired" multiple times.
-  *
-  * Possible options:
-  *
-  *	once:			will ensure the callback list can only be fired once (like a Deferred)
-  *
-  *	memory:			will keep track of previous values and will call any callback added
-  *					after the list has been fired right away with the latest "memorized"
-  *					values (like a Deferred)
-  *
-  *	unique:			will ensure a callback can only be added once (no duplicate in the list)
-  *
-  *	stopOnFalse:	interrupt callings when a callback returns false
-  *
-  */
-	jQuery.Callbacks = function (options) {
-
-		// Convert options from String-formatted to Object-formatted if needed
-		// (we check in cache first)
-		options = typeof options === "string" ? createOptions(options) : jQuery.extend({}, options);
-
-		var // Flag to know if list is currently firing
-		firing,
-
-
-		// Last fire value for non-forgettable lists
-		memory,
-
-
-		// Flag to know if list was already fired
-		fired,
-
-
-		// Flag to prevent firing
-		locked,
-
-
-		// Actual callback list
-		list = [],
-
-
-		// Queue of execution data for repeatable lists
-		queue = [],
-
-
-		// Index of currently firing callback (modified by add/remove as needed)
-		firingIndex = -1,
-
-
-		// Fire callbacks
-		fire = function () {
-
-			// Enforce single-firing
-			locked = options.once;
-
-			// Execute callbacks for all pending executions,
-			// respecting firingIndex overrides and runtime changes
-			fired = firing = true;
-			for (; queue.length; firingIndex = -1) {
-				memory = queue.shift();
-				while (++firingIndex < list.length) {
-
-					// Run callback and check for early termination
-					if (list[firingIndex].apply(memory[0], memory[1]) === false && options.stopOnFalse) {
-
-						// Jump to end and forget the data so .add doesn't re-fire
-						firingIndex = list.length;
-						memory = false;
-					}
-				}
-			}
-
-			// Forget the data if we're done with it
-			if (!options.memory) {
-				memory = false;
-			}
-
-			firing = false;
-
-			// Clean up if we're done firing for good
-			if (locked) {
-
-				// Keep an empty list if we have data for future add calls
-				if (memory) {
-					list = [];
-
-					// Otherwise, this object is spent
-				} else {
-					list = "";
-				}
-			}
-		},
-
-
-		// Actual Callbacks object
-		self = {
-
-			// Add a callback or a collection of callbacks to the list
-			add: function () {
-				if (list) {
-
-					// If we have memory from a past run, we should fire after adding
-					if (memory && !firing) {
-						firingIndex = list.length - 1;
-						queue.push(memory);
-					}
-
-					(function add(args) {
-						jQuery.each(args, function (_, arg) {
-							if (jQuery.isFunction(arg)) {
-								if (!options.unique || !self.has(arg)) {
-									list.push(arg);
-								}
-							} else if (arg && arg.length && jQuery.type(arg) !== "string") {
-
-								// Inspect recursively
-								add(arg);
-							}
-						});
-					})(arguments);
-
-					if (memory && !firing) {
-						fire();
-					}
-				}
-				return this;
-			},
-
-			// Remove a callback from the list
-			remove: function () {
-				jQuery.each(arguments, function (_, arg) {
-					var index;
-					while ((index = jQuery.inArray(arg, list, index)) > -1) {
-						list.splice(index, 1);
-
-						// Handle firing indexes
-						if (index <= firingIndex) {
-							firingIndex--;
-						}
-					}
-				});
-				return this;
-			},
-
-			// Check if a given callback is in the list.
-			// If no argument is given, return whether or not list has callbacks attached.
-			has: function (fn) {
-				return fn ? jQuery.inArray(fn, list) > -1 : list.length > 0;
-			},
-
-			// Remove all callbacks from the list
-			empty: function () {
-				if (list) {
-					list = [];
-				}
-				return this;
-			},
-
-			// Disable .fire and .add
-			// Abort any current/pending executions
-			// Clear all callbacks and values
-			disable: function () {
-				locked = queue = [];
-				list = memory = "";
-				return this;
-			},
-			disabled: function () {
-				return !list;
-			},
-
-			// Disable .fire
-			// Also disable .add unless we have memory (since it would have no effect)
-			// Abort any pending executions
-			lock: function () {
-				locked = queue = [];
-				if (!memory) {
-					list = memory = "";
-				}
-				return this;
-			},
-			locked: function () {
-				return !!locked;
-			},
-
-			// Call all callbacks with the given context and arguments
-			fireWith: function (context, args) {
-				if (!locked) {
-					args = args || [];
-					args = [context, args.slice ? args.slice() : args];
-					queue.push(args);
-					if (!firing) {
-						fire();
-					}
-				}
-				return this;
-			},
-
-			// Call all the callbacks with the given arguments
-			fire: function () {
-				self.fireWith(this, arguments);
-				return this;
-			},
-
-			// To know if the callbacks have already been called at least once
-			fired: function () {
-				return !!fired;
-			}
-		};
-
-		return self;
-	};
-
-	jQuery.extend({
-
-		Deferred: function (func) {
-			var tuples = [
-
-			// action, add listener, listener list, final state
-			["resolve", "done", jQuery.Callbacks("once memory"), "resolved"], ["reject", "fail", jQuery.Callbacks("once memory"), "rejected"], ["notify", "progress", jQuery.Callbacks("memory")]],
-			    state = "pending",
-			    promise = {
-				state: function () {
-					return state;
-				},
-				always: function () {
-					deferred.done(arguments).fail(arguments);
-					return this;
-				},
-				then: function () /* fnDone, fnFail, fnProgress */{
-					var fns = arguments;
-					return jQuery.Deferred(function (newDefer) {
-						jQuery.each(tuples, function (i, tuple) {
-							var fn = jQuery.isFunction(fns[i]) && fns[i];
-
-							// deferred[ done | fail | progress ] for forwarding actions to newDefer
-							deferred[tuple[1]](function () {
-								var returned = fn && fn.apply(this, arguments);
-								if (returned && jQuery.isFunction(returned.promise)) {
-									returned.promise().progress(newDefer.notify).done(newDefer.resolve).fail(newDefer.reject);
-								} else {
-									newDefer[tuple[0] + "With"](this === promise ? newDefer.promise() : this, fn ? [returned] : arguments);
-								}
-							});
-						});
-						fns = null;
-					}).promise();
-				},
-
-				// Get a promise for this deferred
-				// If obj is provided, the promise aspect is added to the object
-				promise: function (obj) {
-					return obj != null ? jQuery.extend(obj, promise) : promise;
-				}
-			},
-			    deferred = {};
-
-			// Keep pipe for back-compat
-			promise.pipe = promise.then;
-
-			// Add list-specific methods
-			jQuery.each(tuples, function (i, tuple) {
-				var list = tuple[2],
-				    stateString = tuple[3];
-
-				// promise[ done | fail | progress ] = list.add
-				promise[tuple[1]] = list.add;
-
-				// Handle state
-				if (stateString) {
-					list.add(function () {
-
-						// state = [ resolved | rejected ]
-						state = stateString;
-
-						// [ reject_list | resolve_list ].disable; progress_list.lock
-					}, tuples[i ^ 1][2].disable, tuples[2][2].lock);
-				}
-
-				// deferred[ resolve | reject | notify ]
-				deferred[tuple[0]] = function () {
-					deferred[tuple[0] + "With"](this === deferred ? promise : this, arguments);
-					return this;
-				};
-				deferred[tuple[0] + "With"] = list.fireWith;
-			});
-
-			// Make the deferred a promise
-			promise.promise(deferred);
-
-			// Call given func if any
-			if (func) {
-				func.call(deferred, deferred);
-			}
-
-			// All done!
-			return deferred;
-		},
-
-		// Deferred helper
-		when: function (subordinate /* , ..., subordinateN */) {
-			var i = 0,
-			    resolveValues = slice.call(arguments),
-			    length = resolveValues.length,
-
-
-			// the count of uncompleted subordinates
-			remaining = length !== 1 || subordinate && jQuery.isFunction(subordinate.promise) ? length : 0,
-
-
-			// the master Deferred.
-			// If resolveValues consist of only a single Deferred, just use that.
-			deferred = remaining === 1 ? subordinate : jQuery.Deferred(),
-
-
-			// Update function for both resolve and progress values
-			updateFunc = function (i, contexts, values) {
-				return function (value) {
-					contexts[i] = this;
-					values[i] = arguments.length > 1 ? slice.call(arguments) : value;
-					if (values === progressValues) {
-						deferred.notifyWith(contexts, values);
-					} else if (! --remaining) {
-						deferred.resolveWith(contexts, values);
-					}
-				};
-			},
-			    progressValues,
-			    progressContexts,
-			    resolveContexts;
-
-			// Add listeners to Deferred subordinates; treat others as resolved
-			if (length > 1) {
-				progressValues = new Array(length);
-				progressContexts = new Array(length);
-				resolveContexts = new Array(length);
-				for (; i < length; i++) {
-					if (resolveValues[i] && jQuery.isFunction(resolveValues[i].promise)) {
-						resolveValues[i].promise().progress(updateFunc(i, progressContexts, progressValues)).done(updateFunc(i, resolveContexts, resolveValues)).fail(deferred.reject);
-					} else {
-						--remaining;
-					}
-				}
-			}
-
-			// If we're not waiting on anything, resolve the master
-			if (!remaining) {
-				deferred.resolveWith(resolveContexts, resolveValues);
-			}
-
-			return deferred.promise();
-		}
-	});
-
-	// The deferred used on DOM ready
-	var readyList;
-
-	jQuery.fn.ready = function (fn) {
-
-		// Add the callback
-		jQuery.ready.promise().done(fn);
-
-		return this;
-	};
-
-	jQuery.extend({
-
-		// Is the DOM ready to be used? Set to true once it occurs.
-		isReady: false,
-
-		// A counter to track how many items to wait for before
-		// the ready event fires. See #6781
-		readyWait: 1,
-
-		// Hold (or release) the ready event
-		holdReady: function (hold) {
-			if (hold) {
-				jQuery.readyWait++;
-			} else {
-				jQuery.ready(true);
-			}
-		},
-
-		// Handle when the DOM is ready
-		ready: function (wait) {
-
-			// Abort if there are pending holds or we're already ready
-			if (wait === true ? --jQuery.readyWait : jQuery.isReady) {
-				return;
-			}
-
-			// Remember that the DOM is ready
-			jQuery.isReady = true;
-
-			// If a normal DOM Ready event fired, decrement, and wait if need be
-			if (wait !== true && --jQuery.readyWait > 0) {
-				return;
-			}
-
-			// If there are functions bound, to execute
-			readyList.resolveWith(document, [jQuery]);
-
-			// Trigger any bound ready events
-			if (jQuery.fn.triggerHandler) {
-				jQuery(document).triggerHandler("ready");
-				jQuery(document).off("ready");
-			}
-		}
-	});
-
-	/**
-  * The ready event handler and self cleanup method
-  */
-	function completed() {
-		document.removeEventListener("DOMContentLoaded", completed);
-		window.removeEventListener("load", completed);
-		jQuery.ready();
-	}
-
-	jQuery.ready.promise = function (obj) {
-		if (!readyList) {
-
-			readyList = jQuery.Deferred();
-
-			// Catch cases where $(document).ready() is called
-			// after the browser event has already occurred.
-			// Support: IE9-10 only
-			// Older IE sometimes signals "interactive" too soon
-			if (document.readyState === "complete" || document.readyState !== "loading" && !document.documentElement.doScroll) {
-
-				// Handle it asynchronously to allow scripts the opportunity to delay ready
-				window.setTimeout(jQuery.ready);
-			} else {
-
-				// Use the handy event callback
-				document.addEventListener("DOMContentLoaded", completed);
-
-				// A fallback to window.onload, that will always work
-				window.addEventListener("load", completed);
-			}
-		}
-		return readyList.promise(obj);
-	};
-
-	// Kick off the DOM ready check even if the user does not
-	jQuery.ready.promise();
-
-	// Multifunctional method to get and set values of a collection
-	// The value/s can optionally be executed if it's a function
-	var access = function (elems, fn, key, value, chainable, emptyGet, raw) {
-		var i = 0,
-		    len = elems.length,
-		    bulk = key == null;
-
-		// Sets many values
-		if (jQuery.type(key) === "object") {
-			chainable = true;
-			for (i in key) {
-				access(elems, fn, i, key[i], true, emptyGet, raw);
-			}
-
-			// Sets one value
-		} else if (value !== undefined) {
-			chainable = true;
-
-			if (!jQuery.isFunction(value)) {
-				raw = true;
-			}
-
-			if (bulk) {
-
-				// Bulk operations run against the entire set
-				if (raw) {
-					fn.call(elems, value);
-					fn = null;
-
-					// ...except when executing function values
-				} else {
-					bulk = fn;
-					fn = function (elem, key, value) {
-						return bulk.call(jQuery(elem), value);
-					};
-				}
-			}
-
-			if (fn) {
-				for (; i < len; i++) {
-					fn(elems[i], key, raw ? value : value.call(elems[i], i, fn(elems[i], key)));
-				}
-			}
-		}
-
-		return chainable ? elems :
-
-		// Gets
-		bulk ? fn.call(elems) : len ? fn(elems[0], key) : emptyGet;
-	};
-	var acceptData = function (owner) {
-
-		// Accepts only:
-		//  - Node
-		//    - Node.ELEMENT_NODE
-		//    - Node.DOCUMENT_NODE
-		//  - Object
-		//    - Any
-		/* jshint -W018 */
-		return owner.nodeType === 1 || owner.nodeType === 9 || !+owner.nodeType;
-	};
-
-	function Data() {
-		this.expando = jQuery.expando + Data.uid++;
-	}
-
-	Data.uid = 1;
-
-	Data.prototype = {
-
-		register: function (owner, initial) {
-			var value = initial || {};
-
-			// If it is a node unlikely to be stringify-ed or looped over
-			// use plain assignment
-			if (owner.nodeType) {
-				owner[this.expando] = value;
-
-				// Otherwise secure it in a non-enumerable, non-writable property
-				// configurability must be true to allow the property to be
-				// deleted with the delete operator
-			} else {
-				Object.defineProperty(owner, this.expando, {
-					value: value,
-					writable: true,
-					configurable: true
-				});
-			}
-			return owner[this.expando];
-		},
-		cache: function (owner) {
-
-			// We can accept data for non-element nodes in modern browsers,
-			// but we should not, see #8335.
-			// Always return an empty object.
-			if (!acceptData(owner)) {
-				return {};
-			}
-
-			// Check if the owner object already has a cache
-			var value = owner[this.expando];
-
-			// If not, create one
-			if (!value) {
-				value = {};
-
-				// We can accept data for non-element nodes in modern browsers,
-				// but we should not, see #8335.
-				// Always return an empty object.
-				if (acceptData(owner)) {
-
-					// If it is a node unlikely to be stringify-ed or looped over
-					// use plain assignment
-					if (owner.nodeType) {
-						owner[this.expando] = value;
-
-						// Otherwise secure it in a non-enumerable property
-						// configurable must be true to allow the property to be
-						// deleted when data is removed
-					} else {
-						Object.defineProperty(owner, this.expando, {
-							value: value,
-							configurable: true
-						});
-					}
-				}
-			}
-
-			return value;
-		},
-		set: function (owner, data, value) {
-			var prop,
-			    cache = this.cache(owner);
-
-			// Handle: [ owner, key, value ] args
-			if (typeof data === "string") {
-				cache[data] = value;
-
-				// Handle: [ owner, { properties } ] args
-			} else {
-
-				// Copy the properties one-by-one to the cache object
-				for (prop in data) {
-					cache[prop] = data[prop];
-				}
-			}
-			return cache;
-		},
-		get: function (owner, key) {
-			return key === undefined ? this.cache(owner) : owner[this.expando] && owner[this.expando][key];
-		},
-		access: function (owner, key, value) {
-			var stored;
-
-			// In cases where either:
-			//
-			//   1. No key was specified
-			//   2. A string key was specified, but no value provided
-			//
-			// Take the "read" path and allow the get method to determine
-			// which value to return, respectively either:
-			//
-			//   1. The entire cache object
-			//   2. The data stored at the key
-			//
-			if (key === undefined || key && typeof key === "string" && value === undefined) {
-
-				stored = this.get(owner, key);
-
-				return stored !== undefined ? stored : this.get(owner, jQuery.camelCase(key));
-			}
-
-			// When the key is not a string, or both a key and value
-			// are specified, set or extend (existing objects) with either:
-			//
-			//   1. An object of properties
-			//   2. A key and value
-			//
-			this.set(owner, key, value);
-
-			// Since the "set" path can have two possible entry points
-			// return the expected data based on which path was taken[*]
-			return value !== undefined ? value : key;
-		},
-		remove: function (owner, key) {
-			var i,
-			    name,
-			    camel,
-			    cache = owner[this.expando];
-
-			if (cache === undefined) {
-				return;
-			}
-
-			if (key === undefined) {
-				this.register(owner);
-			} else {
-
-				// Support array or space separated string of keys
-				if (jQuery.isArray(key)) {
-
-					// If "name" is an array of keys...
-					// When data is initially created, via ("key", "val") signature,
-					// keys will be converted to camelCase.
-					// Since there is no way to tell _how_ a key was added, remove
-					// both plain key and camelCase key. #12786
-					// This will only penalize the array argument path.
-					name = key.concat(key.map(jQuery.camelCase));
-				} else {
-					camel = jQuery.camelCase(key);
-
-					// Try the string as a key before any manipulation
-					if (key in cache) {
-						name = [key, camel];
-					} else {
-
-						// If a key with the spaces exists, use it.
-						// Otherwise, create an array by matching non-whitespace
-						name = camel;
-						name = name in cache ? [name] : name.match(rnotwhite) || [];
-					}
-				}
-
-				i = name.length;
-
-				while (i--) {
-					delete cache[name[i]];
-				}
-			}
-
-			// Remove the expando if there's no more data
-			if (key === undefined || jQuery.isEmptyObject(cache)) {
-
-				// Support: Chrome <= 35-45+
-				// Webkit & Blink performance suffers when deleting properties
-				// from DOM nodes, so set to undefined instead
-				// https://code.google.com/p/chromium/issues/detail?id=378607
-				if (owner.nodeType) {
-					owner[this.expando] = undefined;
-				} else {
-					delete owner[this.expando];
-				}
-			}
-		},
-		hasData: function (owner) {
-			var cache = owner[this.expando];
-			return cache !== undefined && !jQuery.isEmptyObject(cache);
-		}
-	};
-	var dataPriv = new Data();
-
-	var dataUser = new Data();
-
-	//	Implementation Summary
-	//
-	//	1. Enforce API surface and semantic compatibility with 1.9.x branch
-	//	2. Improve the module's maintainability by reducing the storage
-	//		paths to a single mechanism.
-	//	3. Use the same single mechanism to support "private" and "user" data.
-	//	4. _Never_ expose "private" data to user code (TODO: Drop _data, _removeData)
-	//	5. Avoid exposing implementation details on user objects (eg. expando properties)
-	//	6. Provide a clear path for implementation upgrade to WeakMap in 2014
-
-	var rbrace = /^(?:\{[\w\W]*\}|\[[\w\W]*\])$/,
-	    rmultiDash = /[A-Z]/g;
-
-	function dataAttr(elem, key, data) {
-		var name;
-
-		// If nothing was found internally, try to fetch any
-		// data from the HTML5 data-* attribute
-		if (data === undefined && elem.nodeType === 1) {
-			name = "data-" + key.replace(rmultiDash, "-$&").toLowerCase();
-			data = elem.getAttribute(name);
-
-			if (typeof data === "string") {
-				try {
-					data = data === "true" ? true : data === "false" ? false : data === "null" ? null :
-
-					// Only convert to a number if it doesn't change the string
-					+data + "" === data ? +data : rbrace.test(data) ? jQuery.parseJSON(data) : data;
-				} catch (e) {}
-
-				// Make sure we set the data so it isn't changed later
-				dataUser.set(elem, key, data);
-			} else {
-				data = undefined;
-			}
-		}
-		return data;
-	}
-
-	jQuery.extend({
-		hasData: function (elem) {
-			return dataUser.hasData(elem) || dataPriv.hasData(elem);
-		},
-
-		data: function (elem, name, data) {
-			return dataUser.access(elem, name, data);
-		},
-
-		removeData: function (elem, name) {
-			dataUser.remove(elem, name);
-		},
-
-		// TODO: Now that all calls to _data and _removeData have been replaced
-		// with direct calls to dataPriv methods, these can be deprecated.
-		_data: function (elem, name, data) {
-			return dataPriv.access(elem, name, data);
-		},
-
-		_removeData: function (elem, name) {
-			dataPriv.remove(elem, name);
-		}
-	});
-
-	jQuery.fn.extend({
-		data: function (key, value) {
-			var i,
-			    name,
-			    data,
-			    elem = this[0],
-			    attrs = elem && elem.attributes;
-
-			// Gets all values
-			if (key === undefined) {
-				if (this.length) {
-					data = dataUser.get(elem);
-
-					if (elem.nodeType === 1 && !dataPriv.get(elem, "hasDataAttrs")) {
-						i = attrs.length;
-						while (i--) {
-
-							// Support: IE11+
-							// The attrs elements can be null (#14894)
-							if (attrs[i]) {
-								name = attrs[i].name;
-								if (name.indexOf("data-") === 0) {
-									name = jQuery.camelCase(name.slice(5));
-									dataAttr(elem, name, data[name]);
-								}
-							}
-						}
-						dataPriv.set(elem, "hasDataAttrs", true);
-					}
-				}
-
-				return data;
-			}
-
-			// Sets multiple values
-			if (typeof key === "object") {
-				return this.each(function () {
-					dataUser.set(this, key);
-				});
-			}
-
-			return access(this, function (value) {
-				var data, camelKey;
-
-				// The calling jQuery object (element matches) is not empty
-				// (and therefore has an element appears at this[ 0 ]) and the
-				// `value` parameter was not undefined. An empty jQuery object
-				// will result in `undefined` for elem = this[ 0 ] which will
-				// throw an exception if an attempt to read a data cache is made.
-				if (elem && value === undefined) {
-
-					// Attempt to get data from the cache
-					// with the key as-is
-					data = dataUser.get(elem, key) ||
-
-					// Try to find dashed key if it exists (gh-2779)
-					// This is for 2.2.x only
-					dataUser.get(elem, key.replace(rmultiDash, "-$&").toLowerCase());
-
-					if (data !== undefined) {
-						return data;
-					}
-
-					camelKey = jQuery.camelCase(key);
-
-					// Attempt to get data from the cache
-					// with the key camelized
-					data = dataUser.get(elem, camelKey);
-					if (data !== undefined) {
-						return data;
-					}
-
-					// Attempt to "discover" the data in
-					// HTML5 custom data-* attrs
-					data = dataAttr(elem, camelKey, undefined);
-					if (data !== undefined) {
-						return data;
-					}
-
-					// We tried really hard, but the data doesn't exist.
-					return;
-				}
-
-				// Set the data...
-				camelKey = jQuery.camelCase(key);
-				this.each(function () {
-
-					// First, attempt to store a copy or reference of any
-					// data that might've been store with a camelCased key.
-					var data = dataUser.get(this, camelKey);
-
-					// For HTML5 data-* attribute interop, we have to
-					// store property names with dashes in a camelCase form.
-					// This might not apply to all properties...*
-					dataUser.set(this, camelKey, value);
-
-					// *... In the case of properties that might _actually_
-					// have dashes, we need to also store a copy of that
-					// unchanged property.
-					if (key.indexOf("-") > -1 && data !== undefined) {
-						dataUser.set(this, key, value);
-					}
-				});
-			}, null, value, arguments.length > 1, null, true);
-		},
-
-		removeData: function (key) {
-			return this.each(function () {
-				dataUser.remove(this, key);
-			});
-		}
-	});
-
-	jQuery.extend({
-		queue: function (elem, type, data) {
-			var queue;
-
-			if (elem) {
-				type = (type || "fx") + "queue";
-				queue = dataPriv.get(elem, type);
-
-				// Speed up dequeue by getting out quickly if this is just a lookup
-				if (data) {
-					if (!queue || jQuery.isArray(data)) {
-						queue = dataPriv.access(elem, type, jQuery.makeArray(data));
-					} else {
-						queue.push(data);
-					}
-				}
-				return queue || [];
-			}
-		},
-
-		dequeue: function (elem, type) {
-			type = type || "fx";
-
-			var queue = jQuery.queue(elem, type),
-			    startLength = queue.length,
-			    fn = queue.shift(),
-			    hooks = jQuery._queueHooks(elem, type),
-			    next = function () {
-				jQuery.dequeue(elem, type);
-			};
-
-			// If the fx queue is dequeued, always remove the progress sentinel
-			if (fn === "inprogress") {
-				fn = queue.shift();
-				startLength--;
-			}
-
-			if (fn) {
-
-				// Add a progress sentinel to prevent the fx queue from being
-				// automatically dequeued
-				if (type === "fx") {
-					queue.unshift("inprogress");
-				}
-
-				// Clear up the last queue stop function
-				delete hooks.stop;
-				fn.call(elem, next, hooks);
-			}
-
-			if (!startLength && hooks) {
-				hooks.empty.fire();
-			}
-		},
-
-		// Not public - generate a queueHooks object, or return the current one
-		_queueHooks: function (elem, type) {
-			var key = type + "queueHooks";
-			return dataPriv.get(elem, key) || dataPriv.access(elem, key, {
-				empty: jQuery.Callbacks("once memory").add(function () {
-					dataPriv.remove(elem, [type + "queue", key]);
-				})
-			});
-		}
-	});
-
-	jQuery.fn.extend({
-		queue: function (type, data) {
-			var setter = 2;
-
-			if (typeof type !== "string") {
-				data = type;
-				type = "fx";
-				setter--;
-			}
-
-			if (arguments.length < setter) {
-				return jQuery.queue(this[0], type);
-			}
-
-			return data === undefined ? this : this.each(function () {
-				var queue = jQuery.queue(this, type, data);
-
-				// Ensure a hooks for this queue
-				jQuery._queueHooks(this, type);
-
-				if (type === "fx" && queue[0] !== "inprogress") {
-					jQuery.dequeue(this, type);
-				}
-			});
-		},
-		dequeue: function (type) {
-			return this.each(function () {
-				jQuery.dequeue(this, type);
-			});
-		},
-		clearQueue: function (type) {
-			return this.queue(type || "fx", []);
-		},
-
-		// Get a promise resolved when queues of a certain type
-		// are emptied (fx is the type by default)
-		promise: function (type, obj) {
-			var tmp,
-			    count = 1,
-			    defer = jQuery.Deferred(),
-			    elements = this,
-			    i = this.length,
-			    resolve = function () {
-				if (! --count) {
-					defer.resolveWith(elements, [elements]);
-				}
-			};
-
-			if (typeof type !== "string") {
-				obj = type;
-				type = undefined;
-			}
-			type = type || "fx";
-
-			while (i--) {
-				tmp = dataPriv.get(elements[i], type + "queueHooks");
-				if (tmp && tmp.empty) {
-					count++;
-					tmp.empty.add(resolve);
-				}
-			}
-			resolve();
-			return defer.promise(obj);
-		}
-	});
-	var pnum = /[+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|)/.source;
-
-	var rcssNum = new RegExp("^(?:([+-])=|)(" + pnum + ")([a-z%]*)$", "i");
-
-	var cssExpand = ["Top", "Right", "Bottom", "Left"];
-
-	var isHidden = function (elem, el) {
-
-		// isHidden might be called from jQuery#filter function;
-		// in that case, element will be second argument
-		elem = el || elem;
-		return jQuery.css(elem, "display") === "none" || !jQuery.contains(elem.ownerDocument, elem);
-	};
-
-	function adjustCSS(elem, prop, valueParts, tween) {
-		var adjusted,
-		    scale = 1,
-		    maxIterations = 20,
-		    currentValue = tween ? function () {
-			return tween.cur();
-		} : function () {
-			return jQuery.css(elem, prop, "");
-		},
-		    initial = currentValue(),
-		    unit = valueParts && valueParts[3] || (jQuery.cssNumber[prop] ? "" : "px"),
-
-
-		// Starting value computation is required for potential unit mismatches
-		initialInUnit = (jQuery.cssNumber[prop] || unit !== "px" && +initial) && rcssNum.exec(jQuery.css(elem, prop));
-
-		if (initialInUnit && initialInUnit[3] !== unit) {
-
-			// Trust units reported by jQuery.css
-			unit = unit || initialInUnit[3];
-
-			// Make sure we update the tween properties later on
-			valueParts = valueParts || [];
-
-			// Iteratively approximate from a nonzero starting point
-			initialInUnit = +initial || 1;
-
-			do {
-
-				// If previous iteration zeroed out, double until we get *something*.
-				// Use string for doubling so we don't accidentally see scale as unchanged below
-				scale = scale || ".5";
-
-				// Adjust and apply
-				initialInUnit = initialInUnit / scale;
-				jQuery.style(elem, prop, initialInUnit + unit);
-
-				// Update scale, tolerating zero or NaN from tween.cur()
-				// Break the loop if scale is unchanged or perfect, or if we've just had enough.
-			} while (scale !== (scale = currentValue() / initial) && scale !== 1 && --maxIterations);
-		}
-
-		if (valueParts) {
-			initialInUnit = +initialInUnit || +initial || 0;
-
-			// Apply relative offset (+=/-=) if specified
-			adjusted = valueParts[1] ? initialInUnit + (valueParts[1] + 1) * valueParts[2] : +valueParts[2];
-			if (tween) {
-				tween.unit = unit;
-				tween.start = initialInUnit;
-				tween.end = adjusted;
-			}
-		}
-		return adjusted;
-	}
-	var rcheckableType = /^(?:checkbox|radio)$/i;
-
-	var rtagName = /<([\w:-]+)/;
-
-	var rscriptType = /^$|\/(?:java|ecma)script/i;
-
-	// We have to close these tags to support XHTML (#13200)
-	var wrapMap = {
-
-		// Support: IE9
-		option: [1, "<select multiple='multiple'>", "</select>"],
-
-		// XHTML parsers do not magically insert elements in the
-		// same way that tag soup parsers do. So we cannot shorten
-		// this by omitting <tbody> or other required elements.
-		thead: [1, "<table>", "</table>"],
-		col: [2, "<table><colgroup>", "</colgroup></table>"],
-		tr: [2, "<table><tbody>", "</tbody></table>"],
-		td: [3, "<table><tbody><tr>", "</tr></tbody></table>"],
-
-		_default: [0, "", ""]
-	};
-
-	// Support: IE9
-	wrapMap.optgroup = wrapMap.option;
-
-	wrapMap.tbody = wrapMap.tfoot = wrapMap.colgroup = wrapMap.caption = wrapMap.thead;
-	wrapMap.th = wrapMap.td;
-
-	function getAll(context, tag) {
-
-		// Support: IE9-11+
-		// Use typeof to avoid zero-argument method invocation on host objects (#15151)
-		var ret = typeof context.getElementsByTagName !== "undefined" ? context.getElementsByTagName(tag || "*") : typeof context.querySelectorAll !== "undefined" ? context.querySelectorAll(tag || "*") : [];
-
-		return tag === undefined || tag && jQuery.nodeName(context, tag) ? jQuery.merge([context], ret) : ret;
-	}
-
-	// Mark scripts as having already been evaluated
-	function setGlobalEval(elems, refElements) {
-		var i = 0,
-		    l = elems.length;
-
-		for (; i < l; i++) {
-			dataPriv.set(elems[i], "globalEval", !refElements || dataPriv.get(refElements[i], "globalEval"));
-		}
-	}
-
-	var rhtml = /<|&#?\w+;/;
-
-	function buildFragment(elems, context, scripts, selection, ignored) {
-		var elem,
-		    tmp,
-		    tag,
-		    wrap,
-		    contains,
-		    j,
-		    fragment = context.createDocumentFragment(),
-		    nodes = [],
-		    i = 0,
-		    l = elems.length;
-
-		for (; i < l; i++) {
-			elem = elems[i];
-
-			if (elem || elem === 0) {
-
-				// Add nodes directly
-				if (jQuery.type(elem) === "object") {
-
-					// Support: Android<4.1, PhantomJS<2
-					// push.apply(_, arraylike) throws on ancient WebKit
-					jQuery.merge(nodes, elem.nodeType ? [elem] : elem);
-
-					// Convert non-html into a text node
-				} else if (!rhtml.test(elem)) {
-					nodes.push(context.createTextNode(elem));
-
-					// Convert html into DOM nodes
-				} else {
-					tmp = tmp || fragment.appendChild(context.createElement("div"));
-
-					// Deserialize a standard representation
-					tag = (rtagName.exec(elem) || ["", ""])[1].toLowerCase();
-					wrap = wrapMap[tag] || wrapMap._default;
-					tmp.innerHTML = wrap[1] + jQuery.htmlPrefilter(elem) + wrap[2];
-
-					// Descend through wrappers to the right content
-					j = wrap[0];
-					while (j--) {
-						tmp = tmp.lastChild;
-					}
-
-					// Support: Android<4.1, PhantomJS<2
-					// push.apply(_, arraylike) throws on ancient WebKit
-					jQuery.merge(nodes, tmp.childNodes);
-
-					// Remember the top-level container
-					tmp = fragment.firstChild;
-
-					// Ensure the created nodes are orphaned (#12392)
-					tmp.textContent = "";
-				}
-			}
-		}
-
-		// Remove wrapper from fragment
-		fragment.textContent = "";
-
-		i = 0;
-		while (elem = nodes[i++]) {
-
-			// Skip elements already in the context collection (trac-4087)
-			if (selection && jQuery.inArray(elem, selection) > -1) {
-				if (ignored) {
-					ignored.push(elem);
-				}
-				continue;
-			}
-
-			contains = jQuery.contains(elem.ownerDocument, elem);
-
-			// Append to fragment
-			tmp = getAll(fragment.appendChild(elem), "script");
-
-			// Preserve script evaluation history
-			if (contains) {
-				setGlobalEval(tmp);
-			}
-
-			// Capture executables
-			if (scripts) {
-				j = 0;
-				while (elem = tmp[j++]) {
-					if (rscriptType.test(elem.type || "")) {
-						scripts.push(elem);
-					}
-				}
-			}
-		}
-
-		return fragment;
-	}
-
-	(function () {
-		var fragment = document.createDocumentFragment(),
-		    div = fragment.appendChild(document.createElement("div")),
-		    input = document.createElement("input");
-
-		// Support: Android 4.0-4.3, Safari<=5.1
-		// Check state lost if the name is set (#11217)
-		// Support: Windows Web Apps (WWA)
-		// `name` and `type` must use .setAttribute for WWA (#14901)
-		input.setAttribute("type", "radio");
-		input.setAttribute("checked", "checked");
-		input.setAttribute("name", "t");
-
-		div.appendChild(input);
-
-		// Support: Safari<=5.1, Android<4.2
-		// Older WebKit doesn't clone checked state correctly in fragments
-		support.checkClone = div.cloneNode(true).cloneNode(true).lastChild.checked;
-
-		// Support: IE<=11+
-		// Make sure textarea (and checkbox) defaultValue is properly cloned
-		div.innerHTML = "<textarea>x</textarea>";
-		support.noCloneChecked = !!div.cloneNode(true).lastChild.defaultValue;
-	})();
-
-	var rkeyEvent = /^key/,
-	    rmouseEvent = /^(?:mouse|pointer|contextmenu|drag|drop)|click/,
-	    rtypenamespace = /^([^.]*)(?:\.(.+)|)/;
-
-	function returnTrue() {
-		return true;
-	}
-
-	function returnFalse() {
-		return false;
-	}
-
-	// Support: IE9
-	// See #13393 for more info
-	function safeActiveElement() {
-		try {
-			return document.activeElement;
-		} catch (err) {}
-	}
-
-	function on(elem, types, selector, data, fn, one) {
-		var origFn, type;
-
-		// Types can be a map of types/handlers
-		if (typeof types === "object") {
-
-			// ( types-Object, selector, data )
-			if (typeof selector !== "string") {
-
-				// ( types-Object, data )
-				data = data || selector;
-				selector = undefined;
-			}
-			for (type in types) {
-				on(elem, type, selector, data, types[type], one);
-			}
-			return elem;
-		}
-
-		if (data == null && fn == null) {
-
-			// ( types, fn )
-			fn = selector;
-			data = selector = undefined;
-		} else if (fn == null) {
-			if (typeof selector === "string") {
-
-				// ( types, selector, fn )
-				fn = data;
-				data = undefined;
-			} else {
-
-				// ( types, data, fn )
-				fn = data;
-				data = selector;
-				selector = undefined;
-			}
-		}
-		if (fn === false) {
-			fn = returnFalse;
-		} else if (!fn) {
-			return elem;
-		}
-
-		if (one === 1) {
-			origFn = fn;
-			fn = function (event) {
-
-				// Can use an empty set, since event contains the info
-				jQuery().off(event);
-				return origFn.apply(this, arguments);
-			};
-
-			// Use same guid so caller can remove using origFn
-			fn.guid = origFn.guid || (origFn.guid = jQuery.guid++);
-		}
-		return elem.each(function () {
-			jQuery.event.add(this, types, fn, data, selector);
-		});
-	}
-
-	/*
-  * Helper functions for managing events -- not part of the public interface.
-  * Props to Dean Edwards' addEvent library for many of the ideas.
-  */
-	jQuery.event = {
-
-		global: {},
-
-		add: function (elem, types, handler, data, selector) {
-
-			var handleObjIn,
-			    eventHandle,
-			    tmp,
-			    events,
-			    t,
-			    handleObj,
-			    special,
-			    handlers,
-			    type,
-			    namespaces,
-			    origType,
-			    elemData = dataPriv.get(elem);
-
-			// Don't attach events to noData or text/comment nodes (but allow plain objects)
-			if (!elemData) {
-				return;
-			}
-
-			// Caller can pass in an object of custom data in lieu of the handler
-			if (handler.handler) {
-				handleObjIn = handler;
-				handler = handleObjIn.handler;
-				selector = handleObjIn.selector;
-			}
-
-			// Make sure that the handler has a unique ID, used to find/remove it later
-			if (!handler.guid) {
-				handler.guid = jQuery.guid++;
-			}
-
-			// Init the element's event structure and main handler, if this is the first
-			if (!(events = elemData.events)) {
-				events = elemData.events = {};
-			}
-			if (!(eventHandle = elemData.handle)) {
-				eventHandle = elemData.handle = function (e) {
-
-					// Discard the second event of a jQuery.event.trigger() and
-					// when an event is called after a page has unloaded
-					return typeof jQuery !== "undefined" && jQuery.event.triggered !== e.type ? jQuery.event.dispatch.apply(elem, arguments) : undefined;
-				};
-			}
-
-			// Handle multiple events separated by a space
-			types = (types || "").match(rnotwhite) || [""];
-			t = types.length;
-			while (t--) {
-				tmp = rtypenamespace.exec(types[t]) || [];
-				type = origType = tmp[1];
-				namespaces = (tmp[2] || "").split(".").sort();
-
-				// There *must* be a type, no attaching namespace-only handlers
-				if (!type) {
-					continue;
-				}
-
-				// If event changes its type, use the special event handlers for the changed type
-				special = jQuery.event.special[type] || {};
-
-				// If selector defined, determine special event api type, otherwise given type
-				type = (selector ? special.delegateType : special.bindType) || type;
-
-				// Update special based on newly reset type
-				special = jQuery.event.special[type] || {};
-
-				// handleObj is passed to all event handlers
-				handleObj = jQuery.extend({
-					type: type,
-					origType: origType,
-					data: data,
-					handler: handler,
-					guid: handler.guid,
-					selector: selector,
-					needsContext: selector && jQuery.expr.match.needsContext.test(selector),
-					namespace: namespaces.join(".")
-				}, handleObjIn);
-
-				// Init the event handler queue if we're the first
-				if (!(handlers = events[type])) {
-					handlers = events[type] = [];
-					handlers.delegateCount = 0;
-
-					// Only use addEventListener if the special events handler returns false
-					if (!special.setup || special.setup.call(elem, data, namespaces, eventHandle) === false) {
-
-						if (elem.addEventListener) {
-							elem.addEventListener(type, eventHandle);
-						}
-					}
-				}
-
-				if (special.add) {
-					special.add.call(elem, handleObj);
-
-					if (!handleObj.handler.guid) {
-						handleObj.handler.guid = handler.guid;
-					}
-				}
-
-				// Add to the element's handler list, delegates in front
-				if (selector) {
-					handlers.splice(handlers.delegateCount++, 0, handleObj);
-				} else {
-					handlers.push(handleObj);
-				}
-
-				// Keep track of which events have ever been used, for event optimization
-				jQuery.event.global[type] = true;
-			}
-		},
-
-		// Detach an event or set of events from an element
-		remove: function (elem, types, handler, selector, mappedTypes) {
-
-			var j,
-			    origCount,
-			    tmp,
-			    events,
-			    t,
-			    handleObj,
-			    special,
-			    handlers,
-			    type,
-			    namespaces,
-			    origType,
-			    elemData = dataPriv.hasData(elem) && dataPriv.get(elem);
-
-			if (!elemData || !(events = elemData.events)) {
-				return;
-			}
-
-			// Once for each type.namespace in types; type may be omitted
-			types = (types || "").match(rnotwhite) || [""];
-			t = types.length;
-			while (t--) {
-				tmp = rtypenamespace.exec(types[t]) || [];
-				type = origType = tmp[1];
-				namespaces = (tmp[2] || "").split(".").sort();
-
-				// Unbind all events (on this namespace, if provided) for the element
-				if (!type) {
-					for (type in events) {
-						jQuery.event.remove(elem, type + types[t], handler, selector, true);
-					}
-					continue;
-				}
-
-				special = jQuery.event.special[type] || {};
-				type = (selector ? special.delegateType : special.bindType) || type;
-				handlers = events[type] || [];
-				tmp = tmp[2] && new RegExp("(^|\\.)" + namespaces.join("\\.(?:.*\\.|)") + "(\\.|$)");
-
-				// Remove matching events
-				origCount = j = handlers.length;
-				while (j--) {
-					handleObj = handlers[j];
-
-					if ((mappedTypes || origType === handleObj.origType) && (!handler || handler.guid === handleObj.guid) && (!tmp || tmp.test(handleObj.namespace)) && (!selector || selector === handleObj.selector || selector === "**" && handleObj.selector)) {
-						handlers.splice(j, 1);
-
-						if (handleObj.selector) {
-							handlers.delegateCount--;
-						}
-						if (special.remove) {
-							special.remove.call(elem, handleObj);
-						}
-					}
-				}
-
-				// Remove generic event handler if we removed something and no more handlers exist
-				// (avoids potential for endless recursion during removal of special event handlers)
-				if (origCount && !handlers.length) {
-					if (!special.teardown || special.teardown.call(elem, namespaces, elemData.handle) === false) {
-
-						jQuery.removeEvent(elem, type, elemData.handle);
-					}
-
-					delete events[type];
-				}
-			}
-
-			// Remove data and the expando if it's no longer used
-			if (jQuery.isEmptyObject(events)) {
-				dataPriv.remove(elem, "handle events");
-			}
-		},
-
-		dispatch: function (event) {
-
-			// Make a writable jQuery.Event from the native event object
-			event = jQuery.event.fix(event);
-
-			var i,
-			    j,
-			    ret,
-			    matched,
-			    handleObj,
-			    handlerQueue = [],
-			    args = slice.call(arguments),
-			    handlers = (dataPriv.get(this, "events") || {})[event.type] || [],
-			    special = jQuery.event.special[event.type] || {};
-
-			// Use the fix-ed jQuery.Event rather than the (read-only) native event
-			args[0] = event;
-			event.delegateTarget = this;
-
-			// Call the preDispatch hook for the mapped type, and let it bail if desired
-			if (special.preDispatch && special.preDispatch.call(this, event) === false) {
-				return;
-			}
-
-			// Determine handlers
-			handlerQueue = jQuery.event.handlers.call(this, event, handlers);
-
-			// Run delegates first; they may want to stop propagation beneath us
-			i = 0;
-			while ((matched = handlerQueue[i++]) && !event.isPropagationStopped()) {
-				event.currentTarget = matched.elem;
-
-				j = 0;
-				while ((handleObj = matched.handlers[j++]) && !event.isImmediatePropagationStopped()) {
-
-					// Triggered event must either 1) have no namespace, or 2) have namespace(s)
-					// a subset or equal to those in the bound event (both can have no namespace).
-					if (!event.rnamespace || event.rnamespace.test(handleObj.namespace)) {
-
-						event.handleObj = handleObj;
-						event.data = handleObj.data;
-
-						ret = ((jQuery.event.special[handleObj.origType] || {}).handle || handleObj.handler).apply(matched.elem, args);
-
-						if (ret !== undefined) {
-							if ((event.result = ret) === false) {
-								event.preventDefault();
-								event.stopPropagation();
-							}
-						}
-					}
-				}
-			}
-
-			// Call the postDispatch hook for the mapped type
-			if (special.postDispatch) {
-				special.postDispatch.call(this, event);
-			}
-
-			return event.result;
-		},
-
-		handlers: function (event, handlers) {
-			var i,
-			    matches,
-			    sel,
-			    handleObj,
-			    handlerQueue = [],
-			    delegateCount = handlers.delegateCount,
-			    cur = event.target;
-
-			// Support (at least): Chrome, IE9
-			// Find delegate handlers
-			// Black-hole SVG <use> instance trees (#13180)
-			//
-			// Support: Firefox<=42+
-			// Avoid non-left-click in FF but don't block IE radio events (#3861, gh-2343)
-			if (delegateCount && cur.nodeType && (event.type !== "click" || isNaN(event.button) || event.button < 1)) {
-
-				for (; cur !== this; cur = cur.parentNode || this) {
-
-					// Don't check non-elements (#13208)
-					// Don't process clicks on disabled elements (#6911, #8165, #11382, #11764)
-					if (cur.nodeType === 1 && (cur.disabled !== true || event.type !== "click")) {
-						matches = [];
-						for (i = 0; i < delegateCount; i++) {
-							handleObj = handlers[i];
-
-							// Don't conflict with Object.prototype properties (#13203)
-							sel = handleObj.selector + " ";
-
-							if (matches[sel] === undefined) {
-								matches[sel] = handleObj.needsContext ? jQuery(sel, this).index(cur) > -1 : jQuery.find(sel, this, null, [cur]).length;
-							}
-							if (matches[sel]) {
-								matches.push(handleObj);
-							}
-						}
-						if (matches.length) {
-							handlerQueue.push({ elem: cur, handlers: matches });
-						}
-					}
-				}
-			}
-
-			// Add the remaining (directly-bound) handlers
-			if (delegateCount < handlers.length) {
-				handlerQueue.push({ elem: this, handlers: handlers.slice(delegateCount) });
-			}
-
-			return handlerQueue;
-		},
-
-		// Includes some event props shared by KeyEvent and MouseEvent
-		props: ("altKey bubbles cancelable ctrlKey currentTarget detail eventPhase " + "metaKey relatedTarget shiftKey target timeStamp view which").split(" "),
-
-		fixHooks: {},
-
-		keyHooks: {
-			props: "char charCode key keyCode".split(" "),
-			filter: function (event, original) {
-
-				// Add which for key events
-				if (event.which == null) {
-					event.which = original.charCode != null ? original.charCode : original.keyCode;
-				}
-
-				return event;
-			}
-		},
-
-		mouseHooks: {
-			props: ("button buttons clientX clientY offsetX offsetY pageX pageY " + "screenX screenY toElement").split(" "),
-			filter: function (event, original) {
-				var eventDoc,
-				    doc,
-				    body,
-				    button = original.button;
-
-				// Calculate pageX/Y if missing and clientX/Y available
-				if (event.pageX == null && original.clientX != null) {
-					eventDoc = event.target.ownerDocument || document;
-					doc = eventDoc.documentElement;
-					body = eventDoc.body;
-
-					event.pageX = original.clientX + (doc && doc.scrollLeft || body && body.scrollLeft || 0) - (doc && doc.clientLeft || body && body.clientLeft || 0);
-					event.pageY = original.clientY + (doc && doc.scrollTop || body && body.scrollTop || 0) - (doc && doc.clientTop || body && body.clientTop || 0);
-				}
-
-				// Add which for click: 1 === left; 2 === middle; 3 === right
-				// Note: button is not normalized, so don't use it
-				if (!event.which && button !== undefined) {
-					event.which = button & 1 ? 1 : button & 2 ? 3 : button & 4 ? 2 : 0;
-				}
-
-				return event;
-			}
-		},
-
-		fix: function (event) {
-			if (event[jQuery.expando]) {
-				return event;
-			}
-
-			// Create a writable copy of the event object and normalize some properties
-			var i,
-			    prop,
-			    copy,
-			    type = event.type,
-			    originalEvent = event,
-			    fixHook = this.fixHooks[type];
-
-			if (!fixHook) {
-				this.fixHooks[type] = fixHook = rmouseEvent.test(type) ? this.mouseHooks : rkeyEvent.test(type) ? this.keyHooks : {};
-			}
-			copy = fixHook.props ? this.props.concat(fixHook.props) : this.props;
-
-			event = new jQuery.Event(originalEvent);
-
-			i = copy.length;
-			while (i--) {
-				prop = copy[i];
-				event[prop] = originalEvent[prop];
-			}
-
-			// Support: Cordova 2.5 (WebKit) (#13255)
-			// All events should have a target; Cordova deviceready doesn't
-			if (!event.target) {
-				event.target = document;
-			}
-
-			// Support: Safari 6.0+, Chrome<28
-			// Target should not be a text node (#504, #13143)
-			if (event.target.nodeType === 3) {
-				event.target = event.target.parentNode;
-			}
-
-			return fixHook.filter ? fixHook.filter(event, originalEvent) : event;
-		},
-
-		special: {
-			load: {
-
-				// Prevent triggered image.load events from bubbling to window.load
-				noBubble: true
-			},
-			focus: {
-
-				// Fire native event if possible so blur/focus sequence is correct
-				trigger: function () {
-					if (this !== safeActiveElement() && this.focus) {
-						this.focus();
-						return false;
-					}
-				},
-				delegateType: "focusin"
-			},
-			blur: {
-				trigger: function () {
-					if (this === safeActiveElement() && this.blur) {
-						this.blur();
-						return false;
-					}
-				},
-				delegateType: "focusout"
-			},
-			click: {
-
-				// For checkbox, fire native event so checked state will be right
-				trigger: function () {
-					if (this.type === "checkbox" && this.click && jQuery.nodeName(this, "input")) {
-						this.click();
-						return false;
-					}
-				},
-
-				// For cross-browser consistency, don't fire native .click() on links
-				_default: function (event) {
-					return jQuery.nodeName(event.target, "a");
-				}
-			},
-
-			beforeunload: {
-				postDispatch: function (event) {
-
-					// Support: Firefox 20+
-					// Firefox doesn't alert if the returnValue field is not set.
-					if (event.result !== undefined && event.originalEvent) {
-						event.originalEvent.returnValue = event.result;
-					}
-				}
-			}
-		}
-	};
-
-	jQuery.removeEvent = function (elem, type, handle) {
-
-		// This "if" is needed for plain objects
-		if (elem.removeEventListener) {
-			elem.removeEventListener(type, handle);
-		}
-	};
-
-	jQuery.Event = function (src, props) {
-
-		// Allow instantiation without the 'new' keyword
-		if (!(this instanceof jQuery.Event)) {
-			return new jQuery.Event(src, props);
-		}
-
-		// Event object
-		if (src && src.type) {
-			this.originalEvent = src;
-			this.type = src.type;
-
-			// Events bubbling up the document may have been marked as prevented
-			// by a handler lower down the tree; reflect the correct value.
-			this.isDefaultPrevented = src.defaultPrevented || src.defaultPrevented === undefined &&
-
-			// Support: Android<4.0
-			src.returnValue === false ? returnTrue : returnFalse;
-
-			// Event type
-		} else {
-			this.type = src;
-		}
-
-		// Put explicitly provided properties onto the event object
-		if (props) {
-			jQuery.extend(this, props);
-		}
-
-		// Create a timestamp if incoming event doesn't have one
-		this.timeStamp = src && src.timeStamp || jQuery.now();
-
-		// Mark it as fixed
-		this[jQuery.expando] = true;
-	};
-
-	// jQuery.Event is based on DOM3 Events as specified by the ECMAScript Language Binding
-	// http://www.w3.org/TR/2003/WD-DOM-Level-3-Events-20030331/ecma-script-binding.html
-	jQuery.Event.prototype = {
-		constructor: jQuery.Event,
-		isDefaultPrevented: returnFalse,
-		isPropagationStopped: returnFalse,
-		isImmediatePropagationStopped: returnFalse,
-		isSimulated: false,
-
-		preventDefault: function () {
-			var e = this.originalEvent;
-
-			this.isDefaultPrevented = returnTrue;
-
-			if (e && !this.isSimulated) {
-				e.preventDefault();
-			}
-		},
-		stopPropagation: function () {
-			var e = this.originalEvent;
-
-			this.isPropagationStopped = returnTrue;
-
-			if (e && !this.isSimulated) {
-				e.stopPropagation();
-			}
-		},
-		stopImmediatePropagation: function () {
-			var e = this.originalEvent;
-
-			this.isImmediatePropagationStopped = returnTrue;
-
-			if (e && !this.isSimulated) {
-				e.stopImmediatePropagation();
-			}
-
-			this.stopPropagation();
-		}
-	};
-
-	// Create mouseenter/leave events using mouseover/out and event-time checks
-	// so that event delegation works in jQuery.
-	// Do the same for pointerenter/pointerleave and pointerover/pointerout
-	//
-	// Support: Safari 7 only
-	// Safari sends mouseenter too often; see:
-	// https://code.google.com/p/chromium/issues/detail?id=470258
-	// for the description of the bug (it existed in older Chrome versions as well).
-	jQuery.each({
-		mouseenter: "mouseover",
-		mouseleave: "mouseout",
-		pointerenter: "pointerover",
-		pointerleave: "pointerout"
-	}, function (orig, fix) {
-		jQuery.event.special[orig] = {
-			delegateType: fix,
-			bindType: fix,
-
-			handle: function (event) {
-				var ret,
-				    target = this,
-				    related = event.relatedTarget,
-				    handleObj = event.handleObj;
-
-				// For mouseenter/leave call the handler if related is outside the target.
-				// NB: No relatedTarget if the mouse left/entered the browser window
-				if (!related || related !== target && !jQuery.contains(target, related)) {
-					event.type = handleObj.origType;
-					ret = handleObj.handler.apply(this, arguments);
-					event.type = fix;
-				}
-				return ret;
-			}
-		};
-	});
-
-	jQuery.fn.extend({
-		on: function (types, selector, data, fn) {
-			return on(this, types, selector, data, fn);
-		},
-		one: function (types, selector, data, fn) {
-			return on(this, types, selector, data, fn, 1);
-		},
-		off: function (types, selector, fn) {
-			var handleObj, type;
-			if (types && types.preventDefault && types.handleObj) {
-
-				// ( event )  dispatched jQuery.Event
-				handleObj = types.handleObj;
-				jQuery(types.delegateTarget).off(handleObj.namespace ? handleObj.origType + "." + handleObj.namespace : handleObj.origType, handleObj.selector, handleObj.handler);
-				return this;
-			}
-			if (typeof types === "object") {
-
-				// ( types-object [, selector] )
-				for (type in types) {
-					this.off(type, selector, types[type]);
-				}
-				return this;
-			}
-			if (selector === false || typeof selector === "function") {
-
-				// ( types [, fn] )
-				fn = selector;
-				selector = undefined;
-			}
-			if (fn === false) {
-				fn = returnFalse;
-			}
-			return this.each(function () {
-				jQuery.event.remove(this, types, fn, selector);
-			});
-		}
-	});
-
-	var rxhtmlTag = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:-]+)[^>]*)\/>/gi,
-
-
-	// Support: IE 10-11, Edge 10240+
-	// In IE/Edge using regex groups here causes severe slowdowns.
-	// See https://connect.microsoft.com/IE/feedback/details/1736512/
-	rnoInnerhtml = /<script|<style|<link/i,
-
-
-	// checked="checked" or checked
-	rchecked = /checked\s*(?:[^=]|=\s*.checked.)/i,
-	    rscriptTypeMasked = /^true\/(.*)/,
-	    rcleanScript = /^\s*<!(?:\[CDATA\[|--)|(?:\]\]|--)>\s*$/g;
-
-	// Manipulating tables requires a tbody
-	function manipulationTarget(elem, content) {
-		return jQuery.nodeName(elem, "table") && jQuery.nodeName(content.nodeType !== 11 ? content : content.firstChild, "tr") ? elem.getElementsByTagName("tbody")[0] || elem.appendChild(elem.ownerDocument.createElement("tbody")) : elem;
-	}
-
-	// Replace/restore the type attribute of script elements for safe DOM manipulation
-	function disableScript(elem) {
-		elem.type = (elem.getAttribute("type") !== null) + "/" + elem.type;
-		return elem;
-	}
-	function restoreScript(elem) {
-		var match = rscriptTypeMasked.exec(elem.type);
-
-		if (match) {
-			elem.type = match[1];
-		} else {
-			elem.removeAttribute("type");
-		}
-
-		return elem;
-	}
-
-	function cloneCopyEvent(src, dest) {
-		var i, l, type, pdataOld, pdataCur, udataOld, udataCur, events;
-
-		if (dest.nodeType !== 1) {
-			return;
-		}
-
-		// 1. Copy private data: events, handlers, etc.
-		if (dataPriv.hasData(src)) {
-			pdataOld = dataPriv.access(src);
-			pdataCur = dataPriv.set(dest, pdataOld);
-			events = pdataOld.events;
-
-			if (events) {
-				delete pdataCur.handle;
-				pdataCur.events = {};
-
-				for (type in events) {
-					for (i = 0, l = events[type].length; i < l; i++) {
-						jQuery.event.add(dest, type, events[type][i]);
-					}
-				}
-			}
-		}
-
-		// 2. Copy user data
-		if (dataUser.hasData(src)) {
-			udataOld = dataUser.access(src);
-			udataCur = jQuery.extend({}, udataOld);
-
-			dataUser.set(dest, udataCur);
-		}
-	}
-
-	// Fix IE bugs, see support tests
-	function fixInput(src, dest) {
-		var nodeName = dest.nodeName.toLowerCase();
-
-		// Fails to persist the checked state of a cloned checkbox or radio button.
-		if (nodeName === "input" && rcheckableType.test(src.type)) {
-			dest.checked = src.checked;
-
-			// Fails to return the selected option to the default selected state when cloning options
-		} else if (nodeName === "input" || nodeName === "textarea") {
-			dest.defaultValue = src.defaultValue;
-		}
-	}
-
-	function domManip(collection, args, callback, ignored) {
-
-		// Flatten any nested arrays
-		args = concat.apply([], args);
-
-		var fragment,
-		    first,
-		    scripts,
-		    hasScripts,
-		    node,
-		    doc,
-		    i = 0,
-		    l = collection.length,
-		    iNoClone = l - 1,
-		    value = args[0],
-		    isFunction = jQuery.isFunction(value);
-
-		// We can't cloneNode fragments that contain checked, in WebKit
-		if (isFunction || l > 1 && typeof value === "string" && !support.checkClone && rchecked.test(value)) {
-			return collection.each(function (index) {
-				var self = collection.eq(index);
-				if (isFunction) {
-					args[0] = value.call(this, index, self.html());
-				}
-				domManip(self, args, callback, ignored);
-			});
-		}
-
-		if (l) {
-			fragment = buildFragment(args, collection[0].ownerDocument, false, collection, ignored);
-			first = fragment.firstChild;
-
-			if (fragment.childNodes.length === 1) {
-				fragment = first;
-			}
-
-			// Require either new content or an interest in ignored elements to invoke the callback
-			if (first || ignored) {
-				scripts = jQuery.map(getAll(fragment, "script"), disableScript);
-				hasScripts = scripts.length;
-
-				// Use the original fragment for the last item
-				// instead of the first because it can end up
-				// being emptied incorrectly in certain situations (#8070).
-				for (; i < l; i++) {
-					node = fragment;
-
-					if (i !== iNoClone) {
-						node = jQuery.clone(node, true, true);
-
-						// Keep references to cloned scripts for later restoration
-						if (hasScripts) {
-
-							// Support: Android<4.1, PhantomJS<2
-							// push.apply(_, arraylike) throws on ancient WebKit
-							jQuery.merge(scripts, getAll(node, "script"));
-						}
-					}
-
-					callback.call(collection[i], node, i);
-				}
-
-				if (hasScripts) {
-					doc = scripts[scripts.length - 1].ownerDocument;
-
-					// Reenable scripts
-					jQuery.map(scripts, restoreScript);
-
-					// Evaluate executable scripts on first document insertion
-					for (i = 0; i < hasScripts; i++) {
-						node = scripts[i];
-						if (rscriptType.test(node.type || "") && !dataPriv.access(node, "globalEval") && jQuery.contains(doc, node)) {
-
-							if (node.src) {
-
-								// Optional AJAX dependency, but won't run scripts if not present
-								if (jQuery._evalUrl) {
-									jQuery._evalUrl(node.src);
-								}
-							} else {
-								jQuery.globalEval(node.textContent.replace(rcleanScript, ""));
-							}
-						}
-					}
-				}
-			}
-		}
-
-		return collection;
-	}
-
-	function remove(elem, selector, keepData) {
-		var node,
-		    nodes = selector ? jQuery.filter(selector, elem) : elem,
-		    i = 0;
-
-		for (; (node = nodes[i]) != null; i++) {
-			if (!keepData && node.nodeType === 1) {
-				jQuery.cleanData(getAll(node));
-			}
-
-			if (node.parentNode) {
-				if (keepData && jQuery.contains(node.ownerDocument, node)) {
-					setGlobalEval(getAll(node, "script"));
-				}
-				node.parentNode.removeChild(node);
-			}
-		}
-
-		return elem;
-	}
-
-	jQuery.extend({
-		htmlPrefilter: function (html) {
-			return html.replace(rxhtmlTag, "<$1></$2>");
-		},
-
-		clone: function (elem, dataAndEvents, deepDataAndEvents) {
-			var i,
-			    l,
-			    srcElements,
-			    destElements,
-			    clone = elem.cloneNode(true),
-			    inPage = jQuery.contains(elem.ownerDocument, elem);
-
-			// Fix IE cloning issues
-			if (!support.noCloneChecked && (elem.nodeType === 1 || elem.nodeType === 11) && !jQuery.isXMLDoc(elem)) {
-
-				// We eschew Sizzle here for performance reasons: http://jsperf.com/getall-vs-sizzle/2
-				destElements = getAll(clone);
-				srcElements = getAll(elem);
-
-				for (i = 0, l = srcElements.length; i < l; i++) {
-					fixInput(srcElements[i], destElements[i]);
-				}
-			}
-
-			// Copy the events from the original to the clone
-			if (dataAndEvents) {
-				if (deepDataAndEvents) {
-					srcElements = srcElements || getAll(elem);
-					destElements = destElements || getAll(clone);
-
-					for (i = 0, l = srcElements.length; i < l; i++) {
-						cloneCopyEvent(srcElements[i], destElements[i]);
-					}
-				} else {
-					cloneCopyEvent(elem, clone);
-				}
-			}
-
-			// Preserve script evaluation history
-			destElements = getAll(clone, "script");
-			if (destElements.length > 0) {
-				setGlobalEval(destElements, !inPage && getAll(elem, "script"));
-			}
-
-			// Return the cloned set
-			return clone;
-		},
-
-		cleanData: function (elems) {
-			var data,
-			    elem,
-			    type,
-			    special = jQuery.event.special,
-			    i = 0;
-
-			for (; (elem = elems[i]) !== undefined; i++) {
-				if (acceptData(elem)) {
-					if (data = elem[dataPriv.expando]) {
-						if (data.events) {
-							for (type in data.events) {
-								if (special[type]) {
-									jQuery.event.remove(elem, type);
-
-									// This is a shortcut to avoid jQuery.event.remove's overhead
-								} else {
-									jQuery.removeEvent(elem, type, data.handle);
-								}
-							}
-						}
-
-						// Support: Chrome <= 35-45+
-						// Assign undefined instead of using delete, see Data#remove
-						elem[dataPriv.expando] = undefined;
-					}
-					if (elem[dataUser.expando]) {
-
-						// Support: Chrome <= 35-45+
-						// Assign undefined instead of using delete, see Data#remove
-						elem[dataUser.expando] = undefined;
-					}
-				}
-			}
-		}
-	});
-
-	jQuery.fn.extend({
-
-		// Keep domManip exposed until 3.0 (gh-2225)
-		domManip: domManip,
-
-		detach: function (selector) {
-			return remove(this, selector, true);
-		},
-
-		remove: function (selector) {
-			return remove(this, selector);
-		},
-
-		text: function (value) {
-			return access(this, function (value) {
-				return value === undefined ? jQuery.text(this) : this.empty().each(function () {
-					if (this.nodeType === 1 || this.nodeType === 11 || this.nodeType === 9) {
-						this.textContent = value;
-					}
-				});
-			}, null, value, arguments.length);
-		},
-
-		append: function () {
-			return domManip(this, arguments, function (elem) {
-				if (this.nodeType === 1 || this.nodeType === 11 || this.nodeType === 9) {
-					var target = manipulationTarget(this, elem);
-					target.appendChild(elem);
-				}
-			});
-		},
-
-		prepend: function () {
-			return domManip(this, arguments, function (elem) {
-				if (this.nodeType === 1 || this.nodeType === 11 || this.nodeType === 9) {
-					var target = manipulationTarget(this, elem);
-					target.insertBefore(elem, target.firstChild);
-				}
-			});
-		},
-
-		before: function () {
-			return domManip(this, arguments, function (elem) {
-				if (this.parentNode) {
-					this.parentNode.insertBefore(elem, this);
-				}
-			});
-		},
-
-		after: function () {
-			return domManip(this, arguments, function (elem) {
-				if (this.parentNode) {
-					this.parentNode.insertBefore(elem, this.nextSibling);
-				}
-			});
-		},
-
-		empty: function () {
-			var elem,
-			    i = 0;
-
-			for (; (elem = this[i]) != null; i++) {
-				if (elem.nodeType === 1) {
-
-					// Prevent memory leaks
-					jQuery.cleanData(getAll(elem, false));
-
-					// Remove any remaining nodes
-					elem.textContent = "";
-				}
-			}
-
-			return this;
-		},
-
-		clone: function (dataAndEvents, deepDataAndEvents) {
-			dataAndEvents = dataAndEvents == null ? false : dataAndEvents;
-			deepDataAndEvents = deepDataAndEvents == null ? dataAndEvents : deepDataAndEvents;
-
-			return this.map(function () {
-				return jQuery.clone(this, dataAndEvents, deepDataAndEvents);
-			});
-		},
-
-		html: function (value) {
-			return access(this, function (value) {
-				var elem = this[0] || {},
-				    i = 0,
-				    l = this.length;
-
-				if (value === undefined && elem.nodeType === 1) {
-					return elem.innerHTML;
-				}
-
-				// See if we can take a shortcut and just use innerHTML
-				if (typeof value === "string" && !rnoInnerhtml.test(value) && !wrapMap[(rtagName.exec(value) || ["", ""])[1].toLowerCase()]) {
-
-					value = jQuery.htmlPrefilter(value);
-
-					try {
-						for (; i < l; i++) {
-							elem = this[i] || {};
-
-							// Remove element nodes and prevent memory leaks
-							if (elem.nodeType === 1) {
-								jQuery.cleanData(getAll(elem, false));
-								elem.innerHTML = value;
-							}
-						}
-
-						elem = 0;
-
-						// If using innerHTML throws an exception, use the fallback method
-					} catch (e) {}
-				}
-
-				if (elem) {
-					this.empty().append(value);
-				}
-			}, null, value, arguments.length);
-		},
-
-		replaceWith: function () {
-			var ignored = [];
-
-			// Make the changes, replacing each non-ignored context element with the new content
-			return domManip(this, arguments, function (elem) {
-				var parent = this.parentNode;
-
-				if (jQuery.inArray(this, ignored) < 0) {
-					jQuery.cleanData(getAll(this));
-					if (parent) {
-						parent.replaceChild(elem, this);
-					}
-				}
-
-				// Force callback invocation
-			}, ignored);
-		}
-	});
-
-	jQuery.each({
-		appendTo: "append",
-		prependTo: "prepend",
-		insertBefore: "before",
-		insertAfter: "after",
-		replaceAll: "replaceWith"
-	}, function (name, original) {
-		jQuery.fn[name] = function (selector) {
-			var elems,
-			    ret = [],
-			    insert = jQuery(selector),
-			    last = insert.length - 1,
-			    i = 0;
-
-			for (; i <= last; i++) {
-				elems = i === last ? this : this.clone(true);
-				jQuery(insert[i])[original](elems);
-
-				// Support: QtWebKit
-				// .get() because push.apply(_, arraylike) throws
-				push.apply(ret, elems.get());
-			}
-
-			return this.pushStack(ret);
-		};
-	});
-
-	var iframe,
-	    elemdisplay = {
-
-		// Support: Firefox
-		// We have to pre-define these values for FF (#10227)
-		HTML: "block",
-		BODY: "block"
-	};
-
-	/**
-  * Retrieve the actual display of a element
-  * @param {String} name nodeName of the element
-  * @param {Object} doc Document object
-  */
-
-	// Called only from within defaultDisplay
-	function actualDisplay(name, doc) {
-		var elem = jQuery(doc.createElement(name)).appendTo(doc.body),
-		    display = jQuery.css(elem[0], "display");
-
-		// We don't have any data stored on the element,
-		// so use "detach" method as fast way to get rid of the element
-		elem.detach();
-
-		return display;
-	}
-
-	/**
-  * Try to determine the default display value of an element
-  * @param {String} nodeName
-  */
-	function defaultDisplay(nodeName) {
-		var doc = document,
-		    display = elemdisplay[nodeName];
-
-		if (!display) {
-			display = actualDisplay(nodeName, doc);
-
-			// If the simple way fails, read from inside an iframe
-			if (display === "none" || !display) {
-
-				// Use the already-created iframe if possible
-				iframe = (iframe || jQuery("<iframe frameborder='0' width='0' height='0'/>")).appendTo(doc.documentElement);
-
-				// Always write a new HTML skeleton so Webkit and Firefox don't choke on reuse
-				doc = iframe[0].contentDocument;
-
-				// Support: IE
-				doc.write();
-				doc.close();
-
-				display = actualDisplay(nodeName, doc);
-				iframe.detach();
-			}
-
-			// Store the correct default display
-			elemdisplay[nodeName] = display;
-		}
-
-		return display;
-	}
-	var rmargin = /^margin/;
-
-	var rnumnonpx = new RegExp("^(" + pnum + ")(?!px)[a-z%]+$", "i");
-
-	var getStyles = function (elem) {
-
-		// Support: IE<=11+, Firefox<=30+ (#15098, #14150)
-		// IE throws on elements created in popups
-		// FF meanwhile throws on frame elements through "defaultView.getComputedStyle"
-		var view = elem.ownerDocument.defaultView;
-
-		if (!view || !view.opener) {
-			view = window;
-		}
-
-		return view.getComputedStyle(elem);
-	};
-
-	var swap = function (elem, options, callback, args) {
-		var ret,
-		    name,
-		    old = {};
-
-		// Remember the old values, and insert the new ones
-		for (name in options) {
-			old[name] = elem.style[name];
-			elem.style[name] = options[name];
-		}
-
-		ret = callback.apply(elem, args || []);
-
-		// Revert the old values
-		for (name in options) {
-			elem.style[name] = old[name];
-		}
-
-		return ret;
-	};
-
-	var documentElement = document.documentElement;
-
-	(function () {
-		var pixelPositionVal,
-		    boxSizingReliableVal,
-		    pixelMarginRightVal,
-		    reliableMarginLeftVal,
-		    container = document.createElement("div"),
-		    div = document.createElement("div");
-
-		// Finish early in limited (non-browser) environments
-		if (!div.style) {
-			return;
-		}
-
-		// Support: IE9-11+
-		// Style of cloned element affects source element cloned (#8908)
-		div.style.backgroundClip = "content-box";
-		div.cloneNode(true).style.backgroundClip = "";
-		support.clearCloneStyle = div.style.backgroundClip === "content-box";
-
-		container.style.cssText = "border:0;width:8px;height:0;top:0;left:-9999px;" + "padding:0;margin-top:1px;position:absolute";
-		container.appendChild(div);
-
-		// Executing both pixelPosition & boxSizingReliable tests require only one layout
-		// so they're executed at the same time to save the second computation.
-		function computeStyleTests() {
-			div.style.cssText =
-
-			// Support: Firefox<29, Android 2.3
-			// Vendor-prefix box-sizing
-			"-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;" + "position:relative;display:block;" + "margin:auto;border:1px;padding:1px;" + "top:1%;width:50%";
-			div.innerHTML = "";
-			documentElement.appendChild(container);
-
-			var divStyle = window.getComputedStyle(div);
-			pixelPositionVal = divStyle.top !== "1%";
-			reliableMarginLeftVal = divStyle.marginLeft === "2px";
-			boxSizingReliableVal = divStyle.width === "4px";
-
-			// Support: Android 4.0 - 4.3 only
-			// Some styles come back with percentage values, even though they shouldn't
-			div.style.marginRight = "50%";
-			pixelMarginRightVal = divStyle.marginRight === "4px";
-
-			documentElement.removeChild(container);
-		}
-
-		jQuery.extend(support, {
-			pixelPosition: function () {
-
-				// This test is executed only once but we still do memoizing
-				// since we can use the boxSizingReliable pre-computing.
-				// No need to check if the test was already performed, though.
-				computeStyleTests();
-				return pixelPositionVal;
-			},
-			boxSizingReliable: function () {
-				if (boxSizingReliableVal == null) {
-					computeStyleTests();
-				}
-				return boxSizingReliableVal;
-			},
-			pixelMarginRight: function () {
-
-				// Support: Android 4.0-4.3
-				// We're checking for boxSizingReliableVal here instead of pixelMarginRightVal
-				// since that compresses better and they're computed together anyway.
-				if (boxSizingReliableVal == null) {
-					computeStyleTests();
-				}
-				return pixelMarginRightVal;
-			},
-			reliableMarginLeft: function () {
-
-				// Support: IE <=8 only, Android 4.0 - 4.3 only, Firefox <=3 - 37
-				if (boxSizingReliableVal == null) {
-					computeStyleTests();
-				}
-				return reliableMarginLeftVal;
-			},
-			reliableMarginRight: function () {
-
-				// Support: Android 2.3
-				// Check if div with explicit width and no margin-right incorrectly
-				// gets computed margin-right based on width of container. (#3333)
-				// WebKit Bug 13343 - getComputedStyle returns wrong value for margin-right
-				// This support function is only executed once so no memoizing is needed.
-				var ret,
-				    marginDiv = div.appendChild(document.createElement("div"));
-
-				// Reset CSS: box-sizing; display; margin; border; padding
-				marginDiv.style.cssText = div.style.cssText =
-
-				// Support: Android 2.3
-				// Vendor-prefix box-sizing
-				"-webkit-box-sizing:content-box;box-sizing:content-box;" + "display:block;margin:0;border:0;padding:0";
-				marginDiv.style.marginRight = marginDiv.style.width = "0";
-				div.style.width = "1px";
-				documentElement.appendChild(container);
-
-				ret = !parseFloat(window.getComputedStyle(marginDiv).marginRight);
-
-				documentElement.removeChild(container);
-				div.removeChild(marginDiv);
-
-				return ret;
-			}
-		});
-	})();
-
-	function curCSS(elem, name, computed) {
-		var width,
-		    minWidth,
-		    maxWidth,
-		    ret,
-		    style = elem.style;
-
-		computed = computed || getStyles(elem);
-		ret = computed ? computed.getPropertyValue(name) || computed[name] : undefined;
-
-		// Support: Opera 12.1x only
-		// Fall back to style even without computed
-		// computed is undefined for elems on document fragments
-		if ((ret === "" || ret === undefined) && !jQuery.contains(elem.ownerDocument, elem)) {
-			ret = jQuery.style(elem, name);
-		}
-
-		// Support: IE9
-		// getPropertyValue is only needed for .css('filter') (#12537)
-		if (computed) {
-
-			// A tribute to the "awesome hack by Dean Edwards"
-			// Android Browser returns percentage for some values,
-			// but width seems to be reliably pixels.
-			// This is against the CSSOM draft spec:
-			// http://dev.w3.org/csswg/cssom/#resolved-values
-			if (!support.pixelMarginRight() && rnumnonpx.test(ret) && rmargin.test(name)) {
-
-				// Remember the original values
-				width = style.width;
-				minWidth = style.minWidth;
-				maxWidth = style.maxWidth;
-
-				// Put in the new values to get a computed value out
-				style.minWidth = style.maxWidth = style.width = ret;
-				ret = computed.width;
-
-				// Revert the changed values
-				style.width = width;
-				style.minWidth = minWidth;
-				style.maxWidth = maxWidth;
-			}
-		}
-
-		return ret !== undefined ?
-
-		// Support: IE9-11+
-		// IE returns zIndex value as an integer.
-		ret + "" : ret;
-	}
-
-	function addGetHookIf(conditionFn, hookFn) {
-
-		// Define the hook, we'll check on the first run if it's really needed.
-		return {
-			get: function () {
-				if (conditionFn()) {
-
-					// Hook not needed (or it's not possible to use it due
-					// to missing dependency), remove it.
-					delete this.get;
-					return;
-				}
-
-				// Hook needed; redefine it so that the support test is not executed again.
-				return (this.get = hookFn).apply(this, arguments);
-			}
-		};
-	}
-
-	var
-
-	// Swappable if display is none or starts with table
-	// except "table", "table-cell", or "table-caption"
-	// See here for display values: https://developer.mozilla.org/en-US/docs/CSS/display
-	rdisplayswap = /^(none|table(?!-c[ea]).+)/,
-	    cssShow = { position: "absolute", visibility: "hidden", display: "block" },
-	    cssNormalTransform = {
-		letterSpacing: "0",
-		fontWeight: "400"
-	},
-	    cssPrefixes = ["Webkit", "O", "Moz", "ms"],
-	    emptyStyle = document.createElement("div").style;
-
-	// Return a css property mapped to a potentially vendor prefixed property
-	function vendorPropName(name) {
-
-		// Shortcut for names that are not vendor prefixed
-		if (name in emptyStyle) {
-			return name;
-		}
-
-		// Check for vendor prefixed names
-		var capName = name[0].toUpperCase() + name.slice(1),
-		    i = cssPrefixes.length;
-
-		while (i--) {
-			name = cssPrefixes[i] + capName;
-			if (name in emptyStyle) {
-				return name;
-			}
-		}
-	}
-
-	function setPositiveNumber(elem, value, subtract) {
-
-		// Any relative (+/-) values have already been
-		// normalized at this point
-		var matches = rcssNum.exec(value);
-		return matches ?
-
-		// Guard against undefined "subtract", e.g., when used as in cssHooks
-		Math.max(0, matches[2] - (subtract || 0)) + (matches[3] || "px") : value;
-	}
-
-	function augmentWidthOrHeight(elem, name, extra, isBorderBox, styles) {
-		var i = extra === (isBorderBox ? "border" : "content") ?
-
-		// If we already have the right measurement, avoid augmentation
-		4 :
-
-		// Otherwise initialize for horizontal or vertical properties
-		name === "width" ? 1 : 0,
-		    val = 0;
-
-		for (; i < 4; i += 2) {
-
-			// Both box models exclude margin, so add it if we want it
-			if (extra === "margin") {
-				val += jQuery.css(elem, extra + cssExpand[i], true, styles);
-			}
-
-			if (isBorderBox) {
-
-				// border-box includes padding, so remove it if we want content
-				if (extra === "content") {
-					val -= jQuery.css(elem, "padding" + cssExpand[i], true, styles);
-				}
-
-				// At this point, extra isn't border nor margin, so remove border
-				if (extra !== "margin") {
-					val -= jQuery.css(elem, "border" + cssExpand[i] + "Width", true, styles);
-				}
-			} else {
-
-				// At this point, extra isn't content, so add padding
-				val += jQuery.css(elem, "padding" + cssExpand[i], true, styles);
-
-				// At this point, extra isn't content nor padding, so add border
-				if (extra !== "padding") {
-					val += jQuery.css(elem, "border" + cssExpand[i] + "Width", true, styles);
-				}
-			}
-		}
-
-		return val;
-	}
-
-	function getWidthOrHeight(elem, name, extra) {
-
-		// Start with offset property, which is equivalent to the border-box value
-		var valueIsBorderBox = true,
-		    val = name === "width" ? elem.offsetWidth : elem.offsetHeight,
-		    styles = getStyles(elem),
-		    isBorderBox = jQuery.css(elem, "boxSizing", false, styles) === "border-box";
-
-		// Some non-html elements return undefined for offsetWidth, so check for null/undefined
-		// svg - https://bugzilla.mozilla.org/show_bug.cgi?id=649285
-		// MathML - https://bugzilla.mozilla.org/show_bug.cgi?id=491668
-		if (val <= 0 || val == null) {
-
-			// Fall back to computed then uncomputed css if necessary
-			val = curCSS(elem, name, styles);
-			if (val < 0 || val == null) {
-				val = elem.style[name];
-			}
-
-			// Computed unit is not pixels. Stop here and return.
-			if (rnumnonpx.test(val)) {
-				return val;
-			}
-
-			// Check for style in case a browser which returns unreliable values
-			// for getComputedStyle silently falls back to the reliable elem.style
-			valueIsBorderBox = isBorderBox && (support.boxSizingReliable() || val === elem.style[name]);
-
-			// Normalize "", auto, and prepare for extra
-			val = parseFloat(val) || 0;
-		}
-
-		// Use the active box-sizing model to add/subtract irrelevant styles
-		return val + augmentWidthOrHeight(elem, name, extra || (isBorderBox ? "border" : "content"), valueIsBorderBox, styles) + "px";
-	}
-
-	function showHide(elements, show) {
-		var display,
-		    elem,
-		    hidden,
-		    values = [],
-		    index = 0,
-		    length = elements.length;
-
-		for (; index < length; index++) {
-			elem = elements[index];
-			if (!elem.style) {
-				continue;
-			}
-
-			values[index] = dataPriv.get(elem, "olddisplay");
-			display = elem.style.display;
-			if (show) {
-
-				// Reset the inline display of this element to learn if it is
-				// being hidden by cascaded rules or not
-				if (!values[index] && display === "none") {
-					elem.style.display = "";
-				}
-
-				// Set elements which have been overridden with display: none
-				// in a stylesheet to whatever the default browser style is
-				// for such an element
-				if (elem.style.display === "" && isHidden(elem)) {
-					values[index] = dataPriv.access(elem, "olddisplay", defaultDisplay(elem.nodeName));
-				}
-			} else {
-				hidden = isHidden(elem);
-
-				if (display !== "none" || !hidden) {
-					dataPriv.set(elem, "olddisplay", hidden ? display : jQuery.css(elem, "display"));
-				}
-			}
-		}
-
-		// Set the display of most of the elements in a second loop
-		// to avoid the constant reflow
-		for (index = 0; index < length; index++) {
-			elem = elements[index];
-			if (!elem.style) {
-				continue;
-			}
-			if (!show || elem.style.display === "none" || elem.style.display === "") {
-				elem.style.display = show ? values[index] || "" : "none";
-			}
-		}
-
-		return elements;
-	}
-
-	jQuery.extend({
-
-		// Add in style property hooks for overriding the default
-		// behavior of getting and setting a style property
-		cssHooks: {
-			opacity: {
-				get: function (elem, computed) {
-					if (computed) {
-
-						// We should always get a number back from opacity
-						var ret = curCSS(elem, "opacity");
-						return ret === "" ? "1" : ret;
-					}
-				}
-			}
-		},
-
-		// Don't automatically add "px" to these possibly-unitless properties
-		cssNumber: {
-			"animationIterationCount": true,
-			"columnCount": true,
-			"fillOpacity": true,
-			"flexGrow": true,
-			"flexShrink": true,
-			"fontWeight": true,
-			"lineHeight": true,
-			"opacity": true,
-			"order": true,
-			"orphans": true,
-			"widows": true,
-			"zIndex": true,
-			"zoom": true
-		},
-
-		// Add in properties whose names you wish to fix before
-		// setting or getting the value
-		cssProps: {
-			"float": "cssFloat"
-		},
-
-		// Get and set the style property on a DOM Node
-		style: function (elem, name, value, extra) {
-
-			// Don't set styles on text and comment nodes
-			if (!elem || elem.nodeType === 3 || elem.nodeType === 8 || !elem.style) {
-				return;
-			}
-
-			// Make sure that we're working with the right name
-			var ret,
-			    type,
-			    hooks,
-			    origName = jQuery.camelCase(name),
-			    style = elem.style;
-
-			name = jQuery.cssProps[origName] || (jQuery.cssProps[origName] = vendorPropName(origName) || origName);
-
-			// Gets hook for the prefixed version, then unprefixed version
-			hooks = jQuery.cssHooks[name] || jQuery.cssHooks[origName];
-
-			// Check if we're setting a value
-			if (value !== undefined) {
-				type = typeof value;
-
-				// Convert "+=" or "-=" to relative numbers (#7345)
-				if (type === "string" && (ret = rcssNum.exec(value)) && ret[1]) {
-					value = adjustCSS(elem, name, ret);
-
-					// Fixes bug #9237
-					type = "number";
-				}
-
-				// Make sure that null and NaN values aren't set (#7116)
-				if (value == null || value !== value) {
-					return;
-				}
-
-				// If a number was passed in, add the unit (except for certain CSS properties)
-				if (type === "number") {
-					value += ret && ret[3] || (jQuery.cssNumber[origName] ? "" : "px");
-				}
-
-				// Support: IE9-11+
-				// background-* props affect original clone's values
-				if (!support.clearCloneStyle && value === "" && name.indexOf("background") === 0) {
-					style[name] = "inherit";
-				}
-
-				// If a hook was provided, use that value, otherwise just set the specified value
-				if (!hooks || !("set" in hooks) || (value = hooks.set(elem, value, extra)) !== undefined) {
-
-					style[name] = value;
-				}
-			} else {
-
-				// If a hook was provided get the non-computed value from there
-				if (hooks && "get" in hooks && (ret = hooks.get(elem, false, extra)) !== undefined) {
-
-					return ret;
-				}
-
-				// Otherwise just get the value from the style object
-				return style[name];
-			}
-		},
-
-		css: function (elem, name, extra, styles) {
-			var val,
-			    num,
-			    hooks,
-			    origName = jQuery.camelCase(name);
-
-			// Make sure that we're working with the right name
-			name = jQuery.cssProps[origName] || (jQuery.cssProps[origName] = vendorPropName(origName) || origName);
-
-			// Try prefixed name followed by the unprefixed name
-			hooks = jQuery.cssHooks[name] || jQuery.cssHooks[origName];
-
-			// If a hook was provided get the computed value from there
-			if (hooks && "get" in hooks) {
-				val = hooks.get(elem, true, extra);
-			}
-
-			// Otherwise, if a way to get the computed value exists, use that
-			if (val === undefined) {
-				val = curCSS(elem, name, styles);
-			}
-
-			// Convert "normal" to computed value
-			if (val === "normal" && name in cssNormalTransform) {
-				val = cssNormalTransform[name];
-			}
-
-			// Make numeric if forced or a qualifier was provided and val looks numeric
-			if (extra === "" || extra) {
-				num = parseFloat(val);
-				return extra === true || isFinite(num) ? num || 0 : val;
-			}
-			return val;
-		}
-	});
-
-	jQuery.each(["height", "width"], function (i, name) {
-		jQuery.cssHooks[name] = {
-			get: function (elem, computed, extra) {
-				if (computed) {
-
-					// Certain elements can have dimension info if we invisibly show them
-					// but it must have a current display style that would benefit
-					return rdisplayswap.test(jQuery.css(elem, "display")) && elem.offsetWidth === 0 ? swap(elem, cssShow, function () {
-						return getWidthOrHeight(elem, name, extra);
-					}) : getWidthOrHeight(elem, name, extra);
-				}
-			},
-
-			set: function (elem, value, extra) {
-				var matches,
-				    styles = extra && getStyles(elem),
-				    subtract = extra && augmentWidthOrHeight(elem, name, extra, jQuery.css(elem, "boxSizing", false, styles) === "border-box", styles);
-
-				// Convert to pixels if value adjustment is needed
-				if (subtract && (matches = rcssNum.exec(value)) && (matches[3] || "px") !== "px") {
-
-					elem.style[name] = value;
-					value = jQuery.css(elem, name);
-				}
-
-				return setPositiveNumber(elem, value, subtract);
-			}
-		};
-	});
-
-	jQuery.cssHooks.marginLeft = addGetHookIf(support.reliableMarginLeft, function (elem, computed) {
-		if (computed) {
-			return (parseFloat(curCSS(elem, "marginLeft")) || elem.getBoundingClientRect().left - swap(elem, { marginLeft: 0 }, function () {
-				return elem.getBoundingClientRect().left;
-			})) + "px";
-		}
-	});
-
-	// Support: Android 2.3
-	jQuery.cssHooks.marginRight = addGetHookIf(support.reliableMarginRight, function (elem, computed) {
-		if (computed) {
-			return swap(elem, { "display": "inline-block" }, curCSS, [elem, "marginRight"]);
-		}
-	});
-
-	// These hooks are used by animate to expand properties
-	jQuery.each({
-		margin: "",
-		padding: "",
-		border: "Width"
-	}, function (prefix, suffix) {
-		jQuery.cssHooks[prefix + suffix] = {
-			expand: function (value) {
-				var i = 0,
-				    expanded = {},
-
-
-				// Assumes a single number if not a string
-				parts = typeof value === "string" ? value.split(" ") : [value];
-
-				for (; i < 4; i++) {
-					expanded[prefix + cssExpand[i] + suffix] = parts[i] || parts[i - 2] || parts[0];
-				}
-
-				return expanded;
-			}
-		};
-
-		if (!rmargin.test(prefix)) {
-			jQuery.cssHooks[prefix + suffix].set = setPositiveNumber;
-		}
-	});
-
-	jQuery.fn.extend({
-		css: function (name, value) {
-			return access(this, function (elem, name, value) {
-				var styles,
-				    len,
-				    map = {},
-				    i = 0;
-
-				if (jQuery.isArray(name)) {
-					styles = getStyles(elem);
-					len = name.length;
-
-					for (; i < len; i++) {
-						map[name[i]] = jQuery.css(elem, name[i], false, styles);
-					}
-
-					return map;
-				}
-
-				return value !== undefined ? jQuery.style(elem, name, value) : jQuery.css(elem, name);
-			}, name, value, arguments.length > 1);
-		},
-		show: function () {
-			return showHide(this, true);
-		},
-		hide: function () {
-			return showHide(this);
-		},
-		toggle: function (state) {
-			if (typeof state === "boolean") {
-				return state ? this.show() : this.hide();
-			}
-
-			return this.each(function () {
-				if (isHidden(this)) {
-					jQuery(this).show();
-				} else {
-					jQuery(this).hide();
-				}
-			});
-		}
-	});
-
-	function Tween(elem, options, prop, end, easing) {
-		return new Tween.prototype.init(elem, options, prop, end, easing);
-	}
-	jQuery.Tween = Tween;
-
-	Tween.prototype = {
-		constructor: Tween,
-		init: function (elem, options, prop, end, easing, unit) {
-			this.elem = elem;
-			this.prop = prop;
-			this.easing = easing || jQuery.easing._default;
-			this.options = options;
-			this.start = this.now = this.cur();
-			this.end = end;
-			this.unit = unit || (jQuery.cssNumber[prop] ? "" : "px");
-		},
-		cur: function () {
-			var hooks = Tween.propHooks[this.prop];
-
-			return hooks && hooks.get ? hooks.get(this) : Tween.propHooks._default.get(this);
-		},
-		run: function (percent) {
-			var eased,
-			    hooks = Tween.propHooks[this.prop];
-
-			if (this.options.duration) {
-				this.pos = eased = jQuery.easing[this.easing](percent, this.options.duration * percent, 0, 1, this.options.duration);
-			} else {
-				this.pos = eased = percent;
-			}
-			this.now = (this.end - this.start) * eased + this.start;
-
-			if (this.options.step) {
-				this.options.step.call(this.elem, this.now, this);
-			}
-
-			if (hooks && hooks.set) {
-				hooks.set(this);
-			} else {
-				Tween.propHooks._default.set(this);
-			}
-			return this;
-		}
-	};
-
-	Tween.prototype.init.prototype = Tween.prototype;
-
-	Tween.propHooks = {
-		_default: {
-			get: function (tween) {
-				var result;
-
-				// Use a property on the element directly when it is not a DOM element,
-				// or when there is no matching style property that exists.
-				if (tween.elem.nodeType !== 1 || tween.elem[tween.prop] != null && tween.elem.style[tween.prop] == null) {
-					return tween.elem[tween.prop];
-				}
-
-				// Passing an empty string as a 3rd parameter to .css will automatically
-				// attempt a parseFloat and fallback to a string if the parse fails.
-				// Simple values such as "10px" are parsed to Float;
-				// complex values such as "rotate(1rad)" are returned as-is.
-				result = jQuery.css(tween.elem, tween.prop, "");
-
-				// Empty strings, null, undefined and "auto" are converted to 0.
-				return !result || result === "auto" ? 0 : result;
-			},
-			set: function (tween) {
-
-				// Use step hook for back compat.
-				// Use cssHook if its there.
-				// Use .style if available and use plain properties where available.
-				if (jQuery.fx.step[tween.prop]) {
-					jQuery.fx.step[tween.prop](tween);
-				} else if (tween.elem.nodeType === 1 && (tween.elem.style[jQuery.cssProps[tween.prop]] != null || jQuery.cssHooks[tween.prop])) {
-					jQuery.style(tween.elem, tween.prop, tween.now + tween.unit);
-				} else {
-					tween.elem[tween.prop] = tween.now;
-				}
-			}
-		}
-	};
-
-	// Support: IE9
-	// Panic based approach to setting things on disconnected nodes
-	Tween.propHooks.scrollTop = Tween.propHooks.scrollLeft = {
-		set: function (tween) {
-			if (tween.elem.nodeType && tween.elem.parentNode) {
-				tween.elem[tween.prop] = tween.now;
-			}
-		}
-	};
-
-	jQuery.easing = {
-		linear: function (p) {
-			return p;
-		},
-		swing: function (p) {
-			return 0.5 - Math.cos(p * Math.PI) / 2;
-		},
-		_default: "swing"
-	};
-
-	jQuery.fx = Tween.prototype.init;
-
-	// Back Compat <1.8 extension point
-	jQuery.fx.step = {};
-
-	var fxNow,
-	    timerId,
-	    rfxtypes = /^(?:toggle|show|hide)$/,
-	    rrun = /queueHooks$/;
-
-	// Animations created synchronously will run synchronously
-	function createFxNow() {
-		window.setTimeout(function () {
-			fxNow = undefined;
-		});
-		return fxNow = jQuery.now();
-	}
-
-	// Generate parameters to create a standard animation
-	function genFx(type, includeWidth) {
-		var which,
-		    i = 0,
-		    attrs = { height: type };
-
-		// If we include width, step value is 1 to do all cssExpand values,
-		// otherwise step value is 2 to skip over Left and Right
-		includeWidth = includeWidth ? 1 : 0;
-		for (; i < 4; i += 2 - includeWidth) {
-			which = cssExpand[i];
-			attrs["margin" + which] = attrs["padding" + which] = type;
-		}
-
-		if (includeWidth) {
-			attrs.opacity = attrs.width = type;
-		}
-
-		return attrs;
-	}
-
-	function createTween(value, prop, animation) {
-		var tween,
-		    collection = (Animation.tweeners[prop] || []).concat(Animation.tweeners["*"]),
-		    index = 0,
-		    length = collection.length;
-		for (; index < length; index++) {
-			if (tween = collection[index].call(animation, prop, value)) {
-
-				// We're done with this property
-				return tween;
-			}
-		}
-	}
-
-	function defaultPrefilter(elem, props, opts) {
-		/* jshint validthis: true */
-		var prop,
-		    value,
-		    toggle,
-		    tween,
-		    hooks,
-		    oldfire,
-		    display,
-		    checkDisplay,
-		    anim = this,
-		    orig = {},
-		    style = elem.style,
-		    hidden = elem.nodeType && isHidden(elem),
-		    dataShow = dataPriv.get(elem, "fxshow");
-
-		// Handle queue: false promises
-		if (!opts.queue) {
-			hooks = jQuery._queueHooks(elem, "fx");
-			if (hooks.unqueued == null) {
-				hooks.unqueued = 0;
-				oldfire = hooks.empty.fire;
-				hooks.empty.fire = function () {
-					if (!hooks.unqueued) {
-						oldfire();
-					}
-				};
-			}
-			hooks.unqueued++;
-
-			anim.always(function () {
-
-				// Ensure the complete handler is called before this completes
-				anim.always(function () {
-					hooks.unqueued--;
-					if (!jQuery.queue(elem, "fx").length) {
-						hooks.empty.fire();
-					}
-				});
-			});
-		}
-
-		// Height/width overflow pass
-		if (elem.nodeType === 1 && ("height" in props || "width" in props)) {
-
-			// Make sure that nothing sneaks out
-			// Record all 3 overflow attributes because IE9-10 do not
-			// change the overflow attribute when overflowX and
-			// overflowY are set to the same value
-			opts.overflow = [style.overflow, style.overflowX, style.overflowY];
-
-			// Set display property to inline-block for height/width
-			// animations on inline elements that are having width/height animated
-			display = jQuery.css(elem, "display");
-
-			// Test default display if display is currently "none"
-			checkDisplay = display === "none" ? dataPriv.get(elem, "olddisplay") || defaultDisplay(elem.nodeName) : display;
-
-			if (checkDisplay === "inline" && jQuery.css(elem, "float") === "none") {
-				style.display = "inline-block";
-			}
-		}
-
-		if (opts.overflow) {
-			style.overflow = "hidden";
-			anim.always(function () {
-				style.overflow = opts.overflow[0];
-				style.overflowX = opts.overflow[1];
-				style.overflowY = opts.overflow[2];
-			});
-		}
-
-		// show/hide pass
-		for (prop in props) {
-			value = props[prop];
-			if (rfxtypes.exec(value)) {
-				delete props[prop];
-				toggle = toggle || value === "toggle";
-				if (value === (hidden ? "hide" : "show")) {
-
-					// If there is dataShow left over from a stopped hide or show
-					// and we are going to proceed with show, we should pretend to be hidden
-					if (value === "show" && dataShow && dataShow[prop] !== undefined) {
-						hidden = true;
-					} else {
-						continue;
-					}
-				}
-				orig[prop] = dataShow && dataShow[prop] || jQuery.style(elem, prop);
-
-				// Any non-fx value stops us from restoring the original display value
-			} else {
-				display = undefined;
-			}
-		}
-
-		if (!jQuery.isEmptyObject(orig)) {
-			if (dataShow) {
-				if ("hidden" in dataShow) {
-					hidden = dataShow.hidden;
-				}
-			} else {
-				dataShow = dataPriv.access(elem, "fxshow", {});
-			}
-
-			// Store state if its toggle - enables .stop().toggle() to "reverse"
-			if (toggle) {
-				dataShow.hidden = !hidden;
-			}
-			if (hidden) {
-				jQuery(elem).show();
-			} else {
-				anim.done(function () {
-					jQuery(elem).hide();
-				});
-			}
-			anim.done(function () {
-				var prop;
-
-				dataPriv.remove(elem, "fxshow");
-				for (prop in orig) {
-					jQuery.style(elem, prop, orig[prop]);
-				}
-			});
-			for (prop in orig) {
-				tween = createTween(hidden ? dataShow[prop] : 0, prop, anim);
-
-				if (!(prop in dataShow)) {
-					dataShow[prop] = tween.start;
-					if (hidden) {
-						tween.end = tween.start;
-						tween.start = prop === "width" || prop === "height" ? 1 : 0;
-					}
-				}
-			}
-
-			// If this is a noop like .hide().hide(), restore an overwritten display value
-		} else if ((display === "none" ? defaultDisplay(elem.nodeName) : display) === "inline") {
-			style.display = display;
-		}
-	}
-
-	function propFilter(props, specialEasing) {
-		var index, name, easing, value, hooks;
-
-		// camelCase, specialEasing and expand cssHook pass
-		for (index in props) {
-			name = jQuery.camelCase(index);
-			easing = specialEasing[name];
-			value = props[index];
-			if (jQuery.isArray(value)) {
-				easing = value[1];
-				value = props[index] = value[0];
-			}
-
-			if (index !== name) {
-				props[name] = value;
-				delete props[index];
-			}
-
-			hooks = jQuery.cssHooks[name];
-			if (hooks && "expand" in hooks) {
-				value = hooks.expand(value);
-				delete props[name];
-
-				// Not quite $.extend, this won't overwrite existing keys.
-				// Reusing 'index' because we have the correct "name"
-				for (index in value) {
-					if (!(index in props)) {
-						props[index] = value[index];
-						specialEasing[index] = easing;
-					}
-				}
-			} else {
-				specialEasing[name] = easing;
-			}
-		}
-	}
-
-	function Animation(elem, properties, options) {
-		var result,
-		    stopped,
-		    index = 0,
-		    length = Animation.prefilters.length,
-		    deferred = jQuery.Deferred().always(function () {
-
-			// Don't match elem in the :animated selector
-			delete tick.elem;
-		}),
-		    tick = function () {
-			if (stopped) {
-				return false;
-			}
-			var currentTime = fxNow || createFxNow(),
-			    remaining = Math.max(0, animation.startTime + animation.duration - currentTime),
-
-
-			// Support: Android 2.3
-			// Archaic crash bug won't allow us to use `1 - ( 0.5 || 0 )` (#12497)
-			temp = remaining / animation.duration || 0,
-			    percent = 1 - temp,
-			    index = 0,
-			    length = animation.tweens.length;
-
-			for (; index < length; index++) {
-				animation.tweens[index].run(percent);
-			}
-
-			deferred.notifyWith(elem, [animation, percent, remaining]);
-
-			if (percent < 1 && length) {
-				return remaining;
-			} else {
-				deferred.resolveWith(elem, [animation]);
-				return false;
-			}
-		},
-		    animation = deferred.promise({
-			elem: elem,
-			props: jQuery.extend({}, properties),
-			opts: jQuery.extend(true, {
-				specialEasing: {},
-				easing: jQuery.easing._default
-			}, options),
-			originalProperties: properties,
-			originalOptions: options,
-			startTime: fxNow || createFxNow(),
-			duration: options.duration,
-			tweens: [],
-			createTween: function (prop, end) {
-				var tween = jQuery.Tween(elem, animation.opts, prop, end, animation.opts.specialEasing[prop] || animation.opts.easing);
-				animation.tweens.push(tween);
-				return tween;
-			},
-			stop: function (gotoEnd) {
-				var index = 0,
-
-
-				// If we are going to the end, we want to run all the tweens
-				// otherwise we skip this part
-				length = gotoEnd ? animation.tweens.length : 0;
-				if (stopped) {
-					return this;
-				}
-				stopped = true;
-				for (; index < length; index++) {
-					animation.tweens[index].run(1);
-				}
-
-				// Resolve when we played the last frame; otherwise, reject
-				if (gotoEnd) {
-					deferred.notifyWith(elem, [animation, 1, 0]);
-					deferred.resolveWith(elem, [animation, gotoEnd]);
-				} else {
-					deferred.rejectWith(elem, [animation, gotoEnd]);
-				}
-				return this;
-			}
-		}),
-		    props = animation.props;
-
-		propFilter(props, animation.opts.specialEasing);
-
-		for (; index < length; index++) {
-			result = Animation.prefilters[index].call(animation, elem, props, animation.opts);
-			if (result) {
-				if (jQuery.isFunction(result.stop)) {
-					jQuery._queueHooks(animation.elem, animation.opts.queue).stop = jQuery.proxy(result.stop, result);
-				}
-				return result;
-			}
-		}
-
-		jQuery.map(props, createTween, animation);
-
-		if (jQuery.isFunction(animation.opts.start)) {
-			animation.opts.start.call(elem, animation);
-		}
-
-		jQuery.fx.timer(jQuery.extend(tick, {
-			elem: elem,
-			anim: animation,
-			queue: animation.opts.queue
-		}));
-
-		// attach callbacks from options
-		return animation.progress(animation.opts.progress).done(animation.opts.done, animation.opts.complete).fail(animation.opts.fail).always(animation.opts.always);
-	}
-
-	jQuery.Animation = jQuery.extend(Animation, {
-		tweeners: {
-			"*": [function (prop, value) {
-				var tween = this.createTween(prop, value);
-				adjustCSS(tween.elem, prop, rcssNum.exec(value), tween);
-				return tween;
-			}]
-		},
-
-		tweener: function (props, callback) {
-			if (jQuery.isFunction(props)) {
-				callback = props;
-				props = ["*"];
-			} else {
-				props = props.match(rnotwhite);
-			}
-
-			var prop,
-			    index = 0,
-			    length = props.length;
-
-			for (; index < length; index++) {
-				prop = props[index];
-				Animation.tweeners[prop] = Animation.tweeners[prop] || [];
-				Animation.tweeners[prop].unshift(callback);
-			}
-		},
-
-		prefilters: [defaultPrefilter],
-
-		prefilter: function (callback, prepend) {
-			if (prepend) {
-				Animation.prefilters.unshift(callback);
-			} else {
-				Animation.prefilters.push(callback);
-			}
-		}
-	});
-
-	jQuery.speed = function (speed, easing, fn) {
-		var opt = speed && typeof speed === "object" ? jQuery.extend({}, speed) : {
-			complete: fn || !fn && easing || jQuery.isFunction(speed) && speed,
-			duration: speed,
-			easing: fn && easing || easing && !jQuery.isFunction(easing) && easing
-		};
-
-		opt.duration = jQuery.fx.off ? 0 : typeof opt.duration === "number" ? opt.duration : opt.duration in jQuery.fx.speeds ? jQuery.fx.speeds[opt.duration] : jQuery.fx.speeds._default;
-
-		// Normalize opt.queue - true/undefined/null -> "fx"
-		if (opt.queue == null || opt.queue === true) {
-			opt.queue = "fx";
-		}
-
-		// Queueing
-		opt.old = opt.complete;
-
-		opt.complete = function () {
-			if (jQuery.isFunction(opt.old)) {
-				opt.old.call(this);
-			}
-
-			if (opt.queue) {
-				jQuery.dequeue(this, opt.queue);
-			}
-		};
-
-		return opt;
-	};
-
-	jQuery.fn.extend({
-		fadeTo: function (speed, to, easing, callback) {
-
-			// Show any hidden elements after setting opacity to 0
-			return this.filter(isHidden).css("opacity", 0).show()
-
-			// Animate to the value specified
-			.end().animate({ opacity: to }, speed, easing, callback);
-		},
-		animate: function (prop, speed, easing, callback) {
-			var empty = jQuery.isEmptyObject(prop),
-			    optall = jQuery.speed(speed, easing, callback),
-			    doAnimation = function () {
-
-				// Operate on a copy of prop so per-property easing won't be lost
-				var anim = Animation(this, jQuery.extend({}, prop), optall);
-
-				// Empty animations, or finishing resolves immediately
-				if (empty || dataPriv.get(this, "finish")) {
-					anim.stop(true);
-				}
-			};
-			doAnimation.finish = doAnimation;
-
-			return empty || optall.queue === false ? this.each(doAnimation) : this.queue(optall.queue, doAnimation);
-		},
-		stop: function (type, clearQueue, gotoEnd) {
-			var stopQueue = function (hooks) {
-				var stop = hooks.stop;
-				delete hooks.stop;
-				stop(gotoEnd);
-			};
-
-			if (typeof type !== "string") {
-				gotoEnd = clearQueue;
-				clearQueue = type;
-				type = undefined;
-			}
-			if (clearQueue && type !== false) {
-				this.queue(type || "fx", []);
-			}
-
-			return this.each(function () {
-				var dequeue = true,
-				    index = type != null && type + "queueHooks",
-				    timers = jQuery.timers,
-				    data = dataPriv.get(this);
-
-				if (index) {
-					if (data[index] && data[index].stop) {
-						stopQueue(data[index]);
-					}
-				} else {
-					for (index in data) {
-						if (data[index] && data[index].stop && rrun.test(index)) {
-							stopQueue(data[index]);
-						}
-					}
-				}
-
-				for (index = timers.length; index--;) {
-					if (timers[index].elem === this && (type == null || timers[index].queue === type)) {
-
-						timers[index].anim.stop(gotoEnd);
-						dequeue = false;
-						timers.splice(index, 1);
-					}
-				}
-
-				// Start the next in the queue if the last step wasn't forced.
-				// Timers currently will call their complete callbacks, which
-				// will dequeue but only if they were gotoEnd.
-				if (dequeue || !gotoEnd) {
-					jQuery.dequeue(this, type);
-				}
-			});
-		},
-		finish: function (type) {
-			if (type !== false) {
-				type = type || "fx";
-			}
-			return this.each(function () {
-				var index,
-				    data = dataPriv.get(this),
-				    queue = data[type + "queue"],
-				    hooks = data[type + "queueHooks"],
-				    timers = jQuery.timers,
-				    length = queue ? queue.length : 0;
-
-				// Enable finishing flag on private data
-				data.finish = true;
-
-				// Empty the queue first
-				jQuery.queue(this, type, []);
-
-				if (hooks && hooks.stop) {
-					hooks.stop.call(this, true);
-				}
-
-				// Look for any active animations, and finish them
-				for (index = timers.length; index--;) {
-					if (timers[index].elem === this && timers[index].queue === type) {
-						timers[index].anim.stop(true);
-						timers.splice(index, 1);
-					}
-				}
-
-				// Look for any animations in the old queue and finish them
-				for (index = 0; index < length; index++) {
-					if (queue[index] && queue[index].finish) {
-						queue[index].finish.call(this);
-					}
-				}
-
-				// Turn off finishing flag
-				delete data.finish;
-			});
-		}
-	});
-
-	jQuery.each(["toggle", "show", "hide"], function (i, name) {
-		var cssFn = jQuery.fn[name];
-		jQuery.fn[name] = function (speed, easing, callback) {
-			return speed == null || typeof speed === "boolean" ? cssFn.apply(this, arguments) : this.animate(genFx(name, true), speed, easing, callback);
-		};
-	});
-
-	// Generate shortcuts for custom animations
-	jQuery.each({
-		slideDown: genFx("show"),
-		slideUp: genFx("hide"),
-		slideToggle: genFx("toggle"),
-		fadeIn: { opacity: "show" },
-		fadeOut: { opacity: "hide" },
-		fadeToggle: { opacity: "toggle" }
-	}, function (name, props) {
-		jQuery.fn[name] = function (speed, easing, callback) {
-			return this.animate(props, speed, easing, callback);
-		};
-	});
-
-	jQuery.timers = [];
-	jQuery.fx.tick = function () {
-		var timer,
-		    i = 0,
-		    timers = jQuery.timers;
-
-		fxNow = jQuery.now();
-
-		for (; i < timers.length; i++) {
-			timer = timers[i];
-
-			// Checks the timer has not already been removed
-			if (!timer() && timers[i] === timer) {
-				timers.splice(i--, 1);
-			}
-		}
-
-		if (!timers.length) {
-			jQuery.fx.stop();
-		}
-		fxNow = undefined;
-	};
-
-	jQuery.fx.timer = function (timer) {
-		jQuery.timers.push(timer);
-		if (timer()) {
-			jQuery.fx.start();
-		} else {
-			jQuery.timers.pop();
-		}
-	};
-
-	jQuery.fx.interval = 13;
-	jQuery.fx.start = function () {
-		if (!timerId) {
-			timerId = window.setInterval(jQuery.fx.tick, jQuery.fx.interval);
-		}
-	};
-
-	jQuery.fx.stop = function () {
-		window.clearInterval(timerId);
-
-		timerId = null;
-	};
-
-	jQuery.fx.speeds = {
-		slow: 600,
-		fast: 200,
-
-		// Default speed
-		_default: 400
-	};
-
-	// Based off of the plugin by Clint Helfers, with permission.
-	// http://web.archive.org/web/20100324014747/http://blindsignals.com/index.php/2009/07/jquery-delay/
-	jQuery.fn.delay = function (time, type) {
-		time = jQuery.fx ? jQuery.fx.speeds[time] || time : time;
-		type = type || "fx";
-
-		return this.queue(type, function (next, hooks) {
-			var timeout = window.setTimeout(next, time);
-			hooks.stop = function () {
-				window.clearTimeout(timeout);
-			};
-		});
-	};
-
-	(function () {
-		var input = document.createElement("input"),
-		    select = document.createElement("select"),
-		    opt = select.appendChild(document.createElement("option"));
-
-		input.type = "checkbox";
-
-		// Support: iOS<=5.1, Android<=4.2+
-		// Default value for a checkbox should be "on"
-		support.checkOn = input.value !== "";
-
-		// Support: IE<=11+
-		// Must access selectedIndex to make default options select
-		support.optSelected = opt.selected;
-
-		// Support: Android<=2.3
-		// Options inside disabled selects are incorrectly marked as disabled
-		select.disabled = true;
-		support.optDisabled = !opt.disabled;
-
-		// Support: IE<=11+
-		// An input loses its value after becoming a radio
-		input = document.createElement("input");
-		input.value = "t";
-		input.type = "radio";
-		support.radioValue = input.value === "t";
-	})();
-
-	var boolHook,
-	    attrHandle = jQuery.expr.attrHandle;
-
-	jQuery.fn.extend({
-		attr: function (name, value) {
-			return access(this, jQuery.attr, name, value, arguments.length > 1);
-		},
-
-		removeAttr: function (name) {
-			return this.each(function () {
-				jQuery.removeAttr(this, name);
-			});
-		}
-	});
-
-	jQuery.extend({
-		attr: function (elem, name, value) {
-			var ret,
-			    hooks,
-			    nType = elem.nodeType;
-
-			// Don't get/set attributes on text, comment and attribute nodes
-			if (nType === 3 || nType === 8 || nType === 2) {
-				return;
-			}
-
-			// Fallback to prop when attributes are not supported
-			if (typeof elem.getAttribute === "undefined") {
-				return jQuery.prop(elem, name, value);
-			}
-
-			// All attributes are lowercase
-			// Grab necessary hook if one is defined
-			if (nType !== 1 || !jQuery.isXMLDoc(elem)) {
-				name = name.toLowerCase();
-				hooks = jQuery.attrHooks[name] || (jQuery.expr.match.bool.test(name) ? boolHook : undefined);
-			}
-
-			if (value !== undefined) {
-				if (value === null) {
-					jQuery.removeAttr(elem, name);
-					return;
-				}
-
-				if (hooks && "set" in hooks && (ret = hooks.set(elem, value, name)) !== undefined) {
-					return ret;
-				}
-
-				elem.setAttribute(name, value + "");
-				return value;
-			}
-
-			if (hooks && "get" in hooks && (ret = hooks.get(elem, name)) !== null) {
-				return ret;
-			}
-
-			ret = jQuery.find.attr(elem, name);
-
-			// Non-existent attributes return null, we normalize to undefined
-			return ret == null ? undefined : ret;
-		},
-
-		attrHooks: {
-			type: {
-				set: function (elem, value) {
-					if (!support.radioValue && value === "radio" && jQuery.nodeName(elem, "input")) {
-						var val = elem.value;
-						elem.setAttribute("type", value);
-						if (val) {
-							elem.value = val;
-						}
-						return value;
-					}
-				}
-			}
-		},
-
-		removeAttr: function (elem, value) {
-			var name,
-			    propName,
-			    i = 0,
-			    attrNames = value && value.match(rnotwhite);
-
-			if (attrNames && elem.nodeType === 1) {
-				while (name = attrNames[i++]) {
-					propName = jQuery.propFix[name] || name;
-
-					// Boolean attributes get special treatment (#10870)
-					if (jQuery.expr.match.bool.test(name)) {
-
-						// Set corresponding property to false
-						elem[propName] = false;
-					}
-
-					elem.removeAttribute(name);
-				}
-			}
-		}
-	});
-
-	// Hooks for boolean attributes
-	boolHook = {
-		set: function (elem, value, name) {
-			if (value === false) {
-
-				// Remove boolean attributes when set to false
-				jQuery.removeAttr(elem, name);
-			} else {
-				elem.setAttribute(name, name);
-			}
-			return name;
-		}
-	};
-	jQuery.each(jQuery.expr.match.bool.source.match(/\w+/g), function (i, name) {
-		var getter = attrHandle[name] || jQuery.find.attr;
-
-		attrHandle[name] = function (elem, name, isXML) {
-			var ret, handle;
-			if (!isXML) {
-
-				// Avoid an infinite loop by temporarily removing this function from the getter
-				handle = attrHandle[name];
-				attrHandle[name] = ret;
-				ret = getter(elem, name, isXML) != null ? name.toLowerCase() : null;
-				attrHandle[name] = handle;
-			}
-			return ret;
-		};
-	});
-
-	var rfocusable = /^(?:input|select|textarea|button)$/i,
-	    rclickable = /^(?:a|area)$/i;
-
-	jQuery.fn.extend({
-		prop: function (name, value) {
-			return access(this, jQuery.prop, name, value, arguments.length > 1);
-		},
-
-		removeProp: function (name) {
-			return this.each(function () {
-				delete this[jQuery.propFix[name] || name];
-			});
-		}
-	});
-
-	jQuery.extend({
-		prop: function (elem, name, value) {
-			var ret,
-			    hooks,
-			    nType = elem.nodeType;
-
-			// Don't get/set properties on text, comment and attribute nodes
-			if (nType === 3 || nType === 8 || nType === 2) {
-				return;
-			}
-
-			if (nType !== 1 || !jQuery.isXMLDoc(elem)) {
-
-				// Fix name and attach hooks
-				name = jQuery.propFix[name] || name;
-				hooks = jQuery.propHooks[name];
-			}
-
-			if (value !== undefined) {
-				if (hooks && "set" in hooks && (ret = hooks.set(elem, value, name)) !== undefined) {
-					return ret;
-				}
-
-				return elem[name] = value;
-			}
-
-			if (hooks && "get" in hooks && (ret = hooks.get(elem, name)) !== null) {
-				return ret;
-			}
-
-			return elem[name];
-		},
-
-		propHooks: {
-			tabIndex: {
-				get: function (elem) {
-
-					// elem.tabIndex doesn't always return the
-					// correct value when it hasn't been explicitly set
-					// http://fluidproject.org/blog/2008/01/09/getting-setting-and-removing-tabindex-values-with-javascript/
-					// Use proper attribute retrieval(#12072)
-					var tabindex = jQuery.find.attr(elem, "tabindex");
-
-					return tabindex ? parseInt(tabindex, 10) : rfocusable.test(elem.nodeName) || rclickable.test(elem.nodeName) && elem.href ? 0 : -1;
-				}
-			}
-		},
-
-		propFix: {
-			"for": "htmlFor",
-			"class": "className"
-		}
-	});
-
-	// Support: IE <=11 only
-	// Accessing the selectedIndex property
-	// forces the browser to respect setting selected
-	// on the option
-	// The getter ensures a default option is selected
-	// when in an optgroup
-	if (!support.optSelected) {
-		jQuery.propHooks.selected = {
-			get: function (elem) {
-				var parent = elem.parentNode;
-				if (parent && parent.parentNode) {
-					parent.parentNode.selectedIndex;
-				}
-				return null;
-			},
-			set: function (elem) {
-				var parent = elem.parentNode;
-				if (parent) {
-					parent.selectedIndex;
-
-					if (parent.parentNode) {
-						parent.parentNode.selectedIndex;
-					}
-				}
-			}
-		};
-	}
-
-	jQuery.each(["tabIndex", "readOnly", "maxLength", "cellSpacing", "cellPadding", "rowSpan", "colSpan", "useMap", "frameBorder", "contentEditable"], function () {
-		jQuery.propFix[this.toLowerCase()] = this;
-	});
-
-	var rclass = /[\t\r\n\f]/g;
-
-	function getClass(elem) {
-		return elem.getAttribute && elem.getAttribute("class") || "";
-	}
-
-	jQuery.fn.extend({
-		addClass: function (value) {
-			var classes,
-			    elem,
-			    cur,
-			    curValue,
-			    clazz,
-			    j,
-			    finalValue,
-			    i = 0;
-
-			if (jQuery.isFunction(value)) {
-				return this.each(function (j) {
-					jQuery(this).addClass(value.call(this, j, getClass(this)));
-				});
-			}
-
-			if (typeof value === "string" && value) {
-				classes = value.match(rnotwhite) || [];
-
-				while (elem = this[i++]) {
-					curValue = getClass(elem);
-					cur = elem.nodeType === 1 && (" " + curValue + " ").replace(rclass, " ");
-
-					if (cur) {
-						j = 0;
-						while (clazz = classes[j++]) {
-							if (cur.indexOf(" " + clazz + " ") < 0) {
-								cur += clazz + " ";
-							}
-						}
-
-						// Only assign if different to avoid unneeded rendering.
-						finalValue = jQuery.trim(cur);
-						if (curValue !== finalValue) {
-							elem.setAttribute("class", finalValue);
-						}
-					}
-				}
-			}
-
-			return this;
-		},
-
-		removeClass: function (value) {
-			var classes,
-			    elem,
-			    cur,
-			    curValue,
-			    clazz,
-			    j,
-			    finalValue,
-			    i = 0;
-
-			if (jQuery.isFunction(value)) {
-				return this.each(function (j) {
-					jQuery(this).removeClass(value.call(this, j, getClass(this)));
-				});
-			}
-
-			if (!arguments.length) {
-				return this.attr("class", "");
-			}
-
-			if (typeof value === "string" && value) {
-				classes = value.match(rnotwhite) || [];
-
-				while (elem = this[i++]) {
-					curValue = getClass(elem);
-
-					// This expression is here for better compressibility (see addClass)
-					cur = elem.nodeType === 1 && (" " + curValue + " ").replace(rclass, " ");
-
-					if (cur) {
-						j = 0;
-						while (clazz = classes[j++]) {
-
-							// Remove *all* instances
-							while (cur.indexOf(" " + clazz + " ") > -1) {
-								cur = cur.replace(" " + clazz + " ", " ");
-							}
-						}
-
-						// Only assign if different to avoid unneeded rendering.
-						finalValue = jQuery.trim(cur);
-						if (curValue !== finalValue) {
-							elem.setAttribute("class", finalValue);
-						}
-					}
-				}
-			}
-
-			return this;
-		},
-
-		toggleClass: function (value, stateVal) {
-			var type = typeof value;
-
-			if (typeof stateVal === "boolean" && type === "string") {
-				return stateVal ? this.addClass(value) : this.removeClass(value);
-			}
-
-			if (jQuery.isFunction(value)) {
-				return this.each(function (i) {
-					jQuery(this).toggleClass(value.call(this, i, getClass(this), stateVal), stateVal);
-				});
-			}
-
-			return this.each(function () {
-				var className, i, self, classNames;
-
-				if (type === "string") {
-
-					// Toggle individual class names
-					i = 0;
-					self = jQuery(this);
-					classNames = value.match(rnotwhite) || [];
-
-					while (className = classNames[i++]) {
-
-						// Check each className given, space separated list
-						if (self.hasClass(className)) {
-							self.removeClass(className);
-						} else {
-							self.addClass(className);
-						}
-					}
-
-					// Toggle whole class name
-				} else if (value === undefined || type === "boolean") {
-					className = getClass(this);
-					if (className) {
-
-						// Store className if set
-						dataPriv.set(this, "__className__", className);
-					}
-
-					// If the element has a class name or if we're passed `false`,
-					// then remove the whole classname (if there was one, the above saved it).
-					// Otherwise bring back whatever was previously saved (if anything),
-					// falling back to the empty string if nothing was stored.
-					if (this.setAttribute) {
-						this.setAttribute("class", className || value === false ? "" : dataPriv.get(this, "__className__") || "");
-					}
-				}
-			});
-		},
-
-		hasClass: function (selector) {
-			var className,
-			    elem,
-			    i = 0;
-
-			className = " " + selector + " ";
-			while (elem = this[i++]) {
-				if (elem.nodeType === 1 && (" " + getClass(elem) + " ").replace(rclass, " ").indexOf(className) > -1) {
-					return true;
-				}
-			}
-
-			return false;
-		}
-	});
-
-	var rreturn = /\r/g,
-	    rspaces = /[\x20\t\r\n\f]+/g;
-
-	jQuery.fn.extend({
-		val: function (value) {
-			var hooks,
-			    ret,
-			    isFunction,
-			    elem = this[0];
-
-			if (!arguments.length) {
-				if (elem) {
-					hooks = jQuery.valHooks[elem.type] || jQuery.valHooks[elem.nodeName.toLowerCase()];
-
-					if (hooks && "get" in hooks && (ret = hooks.get(elem, "value")) !== undefined) {
-						return ret;
-					}
-
-					ret = elem.value;
-
-					return typeof ret === "string" ?
-
-					// Handle most common string cases
-					ret.replace(rreturn, "") :
-
-					// Handle cases where value is null/undef or number
-					ret == null ? "" : ret;
-				}
-
-				return;
-			}
-
-			isFunction = jQuery.isFunction(value);
-
-			return this.each(function (i) {
-				var val;
-
-				if (this.nodeType !== 1) {
-					return;
-				}
-
-				if (isFunction) {
-					val = value.call(this, i, jQuery(this).val());
-				} else {
-					val = value;
-				}
-
-				// Treat null/undefined as ""; convert numbers to string
-				if (val == null) {
-					val = "";
-				} else if (typeof val === "number") {
-					val += "";
-				} else if (jQuery.isArray(val)) {
-					val = jQuery.map(val, function (value) {
-						return value == null ? "" : value + "";
-					});
-				}
-
-				hooks = jQuery.valHooks[this.type] || jQuery.valHooks[this.nodeName.toLowerCase()];
-
-				// If set returns undefined, fall back to normal setting
-				if (!hooks || !("set" in hooks) || hooks.set(this, val, "value") === undefined) {
-					this.value = val;
-				}
-			});
-		}
-	});
-
-	jQuery.extend({
-		valHooks: {
-			option: {
-				get: function (elem) {
-
-					var val = jQuery.find.attr(elem, "value");
-					return val != null ? val :
-
-					// Support: IE10-11+
-					// option.text throws exceptions (#14686, #14858)
-					// Strip and collapse whitespace
-					// https://html.spec.whatwg.org/#strip-and-collapse-whitespace
-					jQuery.trim(jQuery.text(elem)).replace(rspaces, " ");
-				}
-			},
-			select: {
-				get: function (elem) {
-					var value,
-					    option,
-					    options = elem.options,
-					    index = elem.selectedIndex,
-					    one = elem.type === "select-one" || index < 0,
-					    values = one ? null : [],
-					    max = one ? index + 1 : options.length,
-					    i = index < 0 ? max : one ? index : 0;
-
-					// Loop through all the selected options
-					for (; i < max; i++) {
-						option = options[i];
-
-						// IE8-9 doesn't update selected after form reset (#2551)
-						if ((option.selected || i === index) && (
-
-						// Don't return options that are disabled or in a disabled optgroup
-						support.optDisabled ? !option.disabled : option.getAttribute("disabled") === null) && (!option.parentNode.disabled || !jQuery.nodeName(option.parentNode, "optgroup"))) {
-
-							// Get the specific value for the option
-							value = jQuery(option).val();
-
-							// We don't need an array for one selects
-							if (one) {
-								return value;
-							}
-
-							// Multi-Selects return an array
-							values.push(value);
-						}
-					}
-
-					return values;
-				},
-
-				set: function (elem, value) {
-					var optionSet,
-					    option,
-					    options = elem.options,
-					    values = jQuery.makeArray(value),
-					    i = options.length;
-
-					while (i--) {
-						option = options[i];
-						if (option.selected = jQuery.inArray(jQuery.valHooks.option.get(option), values) > -1) {
-							optionSet = true;
-						}
-					}
-
-					// Force browsers to behave consistently when non-matching value is set
-					if (!optionSet) {
-						elem.selectedIndex = -1;
-					}
-					return values;
-				}
-			}
-		}
-	});
-
-	// Radios and checkboxes getter/setter
-	jQuery.each(["radio", "checkbox"], function () {
-		jQuery.valHooks[this] = {
-			set: function (elem, value) {
-				if (jQuery.isArray(value)) {
-					return elem.checked = jQuery.inArray(jQuery(elem).val(), value) > -1;
-				}
-			}
-		};
-		if (!support.checkOn) {
-			jQuery.valHooks[this].get = function (elem) {
-				return elem.getAttribute("value") === null ? "on" : elem.value;
-			};
-		}
-	});
-
-	// Return jQuery for attributes-only inclusion
-
-
-	var rfocusMorph = /^(?:focusinfocus|focusoutblur)$/;
-
-	jQuery.extend(jQuery.event, {
-
-		trigger: function (event, data, elem, onlyHandlers) {
-
-			var i,
-			    cur,
-			    tmp,
-			    bubbleType,
-			    ontype,
-			    handle,
-			    special,
-			    eventPath = [elem || document],
-			    type = hasOwn.call(event, "type") ? event.type : event,
-			    namespaces = hasOwn.call(event, "namespace") ? event.namespace.split(".") : [];
-
-			cur = tmp = elem = elem || document;
-
-			// Don't do events on text and comment nodes
-			if (elem.nodeType === 3 || elem.nodeType === 8) {
-				return;
-			}
-
-			// focus/blur morphs to focusin/out; ensure we're not firing them right now
-			if (rfocusMorph.test(type + jQuery.event.triggered)) {
-				return;
-			}
-
-			if (type.indexOf(".") > -1) {
-
-				// Namespaced trigger; create a regexp to match event type in handle()
-				namespaces = type.split(".");
-				type = namespaces.shift();
-				namespaces.sort();
-			}
-			ontype = type.indexOf(":") < 0 && "on" + type;
-
-			// Caller can pass in a jQuery.Event object, Object, or just an event type string
-			event = event[jQuery.expando] ? event : new jQuery.Event(type, typeof event === "object" && event);
-
-			// Trigger bitmask: & 1 for native handlers; & 2 for jQuery (always true)
-			event.isTrigger = onlyHandlers ? 2 : 3;
-			event.namespace = namespaces.join(".");
-			event.rnamespace = event.namespace ? new RegExp("(^|\\.)" + namespaces.join("\\.(?:.*\\.|)") + "(\\.|$)") : null;
-
-			// Clean up the event in case it is being reused
-			event.result = undefined;
-			if (!event.target) {
-				event.target = elem;
-			}
-
-			// Clone any incoming data and prepend the event, creating the handler arg list
-			data = data == null ? [event] : jQuery.makeArray(data, [event]);
-
-			// Allow special events to draw outside the lines
-			special = jQuery.event.special[type] || {};
-			if (!onlyHandlers && special.trigger && special.trigger.apply(elem, data) === false) {
-				return;
-			}
-
-			// Determine event propagation path in advance, per W3C events spec (#9951)
-			// Bubble up to document, then to window; watch for a global ownerDocument var (#9724)
-			if (!onlyHandlers && !special.noBubble && !jQuery.isWindow(elem)) {
-
-				bubbleType = special.delegateType || type;
-				if (!rfocusMorph.test(bubbleType + type)) {
-					cur = cur.parentNode;
-				}
-				for (; cur; cur = cur.parentNode) {
-					eventPath.push(cur);
-					tmp = cur;
-				}
-
-				// Only add window if we got to document (e.g., not plain obj or detached DOM)
-				if (tmp === (elem.ownerDocument || document)) {
-					eventPath.push(tmp.defaultView || tmp.parentWindow || window);
-				}
-			}
-
-			// Fire handlers on the event path
-			i = 0;
-			while ((cur = eventPath[i++]) && !event.isPropagationStopped()) {
-
-				event.type = i > 1 ? bubbleType : special.bindType || type;
-
-				// jQuery handler
-				handle = (dataPriv.get(cur, "events") || {})[event.type] && dataPriv.get(cur, "handle");
-				if (handle) {
-					handle.apply(cur, data);
-				}
-
-				// Native handler
-				handle = ontype && cur[ontype];
-				if (handle && handle.apply && acceptData(cur)) {
-					event.result = handle.apply(cur, data);
-					if (event.result === false) {
-						event.preventDefault();
-					}
-				}
-			}
-			event.type = type;
-
-			// If nobody prevented the default action, do it now
-			if (!onlyHandlers && !event.isDefaultPrevented()) {
-
-				if ((!special._default || special._default.apply(eventPath.pop(), data) === false) && acceptData(elem)) {
-
-					// Call a native DOM method on the target with the same name name as the event.
-					// Don't do default actions on window, that's where global variables be (#6170)
-					if (ontype && jQuery.isFunction(elem[type]) && !jQuery.isWindow(elem)) {
-
-						// Don't re-trigger an onFOO event when we call its FOO() method
-						tmp = elem[ontype];
-
-						if (tmp) {
-							elem[ontype] = null;
-						}
-
-						// Prevent re-triggering of the same event, since we already bubbled it above
-						jQuery.event.triggered = type;
-						elem[type]();
-						jQuery.event.triggered = undefined;
-
-						if (tmp) {
-							elem[ontype] = tmp;
-						}
-					}
-				}
-			}
-
-			return event.result;
-		},
-
-		// Piggyback on a donor event to simulate a different one
-		// Used only for `focus(in | out)` events
-		simulate: function (type, elem, event) {
-			var e = jQuery.extend(new jQuery.Event(), event, {
-				type: type,
-				isSimulated: true
-			});
-
-			jQuery.event.trigger(e, null, elem);
-		}
-
-	});
-
-	jQuery.fn.extend({
-
-		trigger: function (type, data) {
-			return this.each(function () {
-				jQuery.event.trigger(type, data, this);
-			});
-		},
-		triggerHandler: function (type, data) {
-			var elem = this[0];
-			if (elem) {
-				return jQuery.event.trigger(type, data, elem, true);
-			}
-		}
-	});
-
-	jQuery.each(("blur focus focusin focusout load resize scroll unload click dblclick " + "mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave " + "change select submit keydown keypress keyup error contextmenu").split(" "), function (i, name) {
-
-		// Handle event binding
-		jQuery.fn[name] = function (data, fn) {
-			return arguments.length > 0 ? this.on(name, null, data, fn) : this.trigger(name);
-		};
-	});
-
-	jQuery.fn.extend({
-		hover: function (fnOver, fnOut) {
-			return this.mouseenter(fnOver).mouseleave(fnOut || fnOver);
-		}
-	});
-
-	support.focusin = "onfocusin" in window;
-
-	// Support: Firefox
-	// Firefox doesn't have focus(in | out) events
-	// Related ticket - https://bugzilla.mozilla.org/show_bug.cgi?id=687787
-	//
-	// Support: Chrome, Safari
-	// focus(in | out) events fire after focus & blur events,
-	// which is spec violation - http://www.w3.org/TR/DOM-Level-3-Events/#events-focusevent-event-order
-	// Related ticket - https://code.google.com/p/chromium/issues/detail?id=449857
-	if (!support.focusin) {
-		jQuery.each({ focus: "focusin", blur: "focusout" }, function (orig, fix) {
-
-			// Attach a single capturing handler on the document while someone wants focusin/focusout
-			var handler = function (event) {
-				jQuery.event.simulate(fix, event.target, jQuery.event.fix(event));
-			};
-
-			jQuery.event.special[fix] = {
-				setup: function () {
-					var doc = this.ownerDocument || this,
-					    attaches = dataPriv.access(doc, fix);
-
-					if (!attaches) {
-						doc.addEventListener(orig, handler, true);
-					}
-					dataPriv.access(doc, fix, (attaches || 0) + 1);
-				},
-				teardown: function () {
-					var doc = this.ownerDocument || this,
-					    attaches = dataPriv.access(doc, fix) - 1;
-
-					if (!attaches) {
-						doc.removeEventListener(orig, handler, true);
-						dataPriv.remove(doc, fix);
-					} else {
-						dataPriv.access(doc, fix, attaches);
-					}
-				}
-			};
-		});
-	}
-	var location = window.location;
-
-	var nonce = jQuery.now();
-
-	var rquery = /\?/;
-
-	// Support: Android 2.3
-	// Workaround failure to string-cast null input
-	jQuery.parseJSON = function (data) {
-		return JSON.parse(data + "");
-	};
-
-	// Cross-browser xml parsing
-	jQuery.parseXML = function (data) {
-		var xml;
-		if (!data || typeof data !== "string") {
-			return null;
-		}
-
-		// Support: IE9
-		try {
-			xml = new window.DOMParser().parseFromString(data, "text/xml");
-		} catch (e) {
-			xml = undefined;
-		}
-
-		if (!xml || xml.getElementsByTagName("parsererror").length) {
-			jQuery.error("Invalid XML: " + data);
-		}
-		return xml;
-	};
-
-	var rhash = /#.*$/,
-	    rts = /([?&])_=[^&]*/,
-	    rheaders = /^(.*?):[ \t]*([^\r\n]*)$/mg,
-
-
-	// #7653, #8125, #8152: local protocol detection
-	rlocalProtocol = /^(?:about|app|app-storage|.+-extension|file|res|widget):$/,
-	    rnoContent = /^(?:GET|HEAD)$/,
-	    rprotocol = /^\/\//,
-
-
-	/* Prefilters
-  * 1) They are useful to introduce custom dataTypes (see ajax/jsonp.js for an example)
-  * 2) These are called:
-  *    - BEFORE asking for a transport
-  *    - AFTER param serialization (s.data is a string if s.processData is true)
-  * 3) key is the dataType
-  * 4) the catchall symbol "*" can be used
-  * 5) execution will start with transport dataType and THEN continue down to "*" if needed
-  */
-	prefilters = {},
-
-
-	/* Transports bindings
-  * 1) key is the dataType
-  * 2) the catchall symbol "*" can be used
-  * 3) selection will start with transport dataType and THEN go to "*" if needed
-  */
-	transports = {},
-
-
-	// Avoid comment-prolog char sequence (#10098); must appease lint and evade compression
-	allTypes = "*/".concat("*"),
-
-
-	// Anchor tag for parsing the document origin
-	originAnchor = document.createElement("a");
-	originAnchor.href = location.href;
-
-	// Base "constructor" for jQuery.ajaxPrefilter and jQuery.ajaxTransport
-	function addToPrefiltersOrTransports(structure) {
-
-		// dataTypeExpression is optional and defaults to "*"
-		return function (dataTypeExpression, func) {
-
-			if (typeof dataTypeExpression !== "string") {
-				func = dataTypeExpression;
-				dataTypeExpression = "*";
-			}
-
-			var dataType,
-			    i = 0,
-			    dataTypes = dataTypeExpression.toLowerCase().match(rnotwhite) || [];
-
-			if (jQuery.isFunction(func)) {
-
-				// For each dataType in the dataTypeExpression
-				while (dataType = dataTypes[i++]) {
-
-					// Prepend if requested
-					if (dataType[0] === "+") {
-						dataType = dataType.slice(1) || "*";
-						(structure[dataType] = structure[dataType] || []).unshift(func);
-
-						// Otherwise append
-					} else {
-						(structure[dataType] = structure[dataType] || []).push(func);
-					}
-				}
-			}
-		};
-	}
-
-	// Base inspection function for prefilters and transports
-	function inspectPrefiltersOrTransports(structure, options, originalOptions, jqXHR) {
-
-		var inspected = {},
-		    seekingTransport = structure === transports;
-
-		function inspect(dataType) {
-			var selected;
-			inspected[dataType] = true;
-			jQuery.each(structure[dataType] || [], function (_, prefilterOrFactory) {
-				var dataTypeOrTransport = prefilterOrFactory(options, originalOptions, jqXHR);
-				if (typeof dataTypeOrTransport === "string" && !seekingTransport && !inspected[dataTypeOrTransport]) {
-
-					options.dataTypes.unshift(dataTypeOrTransport);
-					inspect(dataTypeOrTransport);
-					return false;
-				} else if (seekingTransport) {
-					return !(selected = dataTypeOrTransport);
-				}
-			});
-			return selected;
-		}
-
-		return inspect(options.dataTypes[0]) || !inspected["*"] && inspect("*");
-	}
-
-	// A special extend for ajax options
-	// that takes "flat" options (not to be deep extended)
-	// Fixes #9887
-	function ajaxExtend(target, src) {
-		var key,
-		    deep,
-		    flatOptions = jQuery.ajaxSettings.flatOptions || {};
-
-		for (key in src) {
-			if (src[key] !== undefined) {
-				(flatOptions[key] ? target : deep || (deep = {}))[key] = src[key];
-			}
-		}
-		if (deep) {
-			jQuery.extend(true, target, deep);
-		}
-
-		return target;
-	}
-
-	/* Handles responses to an ajax request:
-  * - finds the right dataType (mediates between content-type and expected dataType)
-  * - returns the corresponding response
-  */
-	function ajaxHandleResponses(s, jqXHR, responses) {
-
-		var ct,
-		    type,
-		    finalDataType,
-		    firstDataType,
-		    contents = s.contents,
-		    dataTypes = s.dataTypes;
-
-		// Remove auto dataType and get content-type in the process
-		while (dataTypes[0] === "*") {
-			dataTypes.shift();
-			if (ct === undefined) {
-				ct = s.mimeType || jqXHR.getResponseHeader("Content-Type");
-			}
-		}
-
-		// Check if we're dealing with a known content-type
-		if (ct) {
-			for (type in contents) {
-				if (contents[type] && contents[type].test(ct)) {
-					dataTypes.unshift(type);
-					break;
-				}
-			}
-		}
-
-		// Check to see if we have a response for the expected dataType
-		if (dataTypes[0] in responses) {
-			finalDataType = dataTypes[0];
-		} else {
-
-			// Try convertible dataTypes
-			for (type in responses) {
-				if (!dataTypes[0] || s.converters[type + " " + dataTypes[0]]) {
-					finalDataType = type;
-					break;
-				}
-				if (!firstDataType) {
-					firstDataType = type;
-				}
-			}
-
-			// Or just use first one
-			finalDataType = finalDataType || firstDataType;
-		}
-
-		// If we found a dataType
-		// We add the dataType to the list if needed
-		// and return the corresponding response
-		if (finalDataType) {
-			if (finalDataType !== dataTypes[0]) {
-				dataTypes.unshift(finalDataType);
-			}
-			return responses[finalDataType];
-		}
-	}
-
-	/* Chain conversions given the request and the original response
-  * Also sets the responseXXX fields on the jqXHR instance
-  */
-	function ajaxConvert(s, response, jqXHR, isSuccess) {
-		var conv2,
-		    current,
-		    conv,
-		    tmp,
-		    prev,
-		    converters = {},
-
-
-		// Work with a copy of dataTypes in case we need to modify it for conversion
-		dataTypes = s.dataTypes.slice();
-
-		// Create converters map with lowercased keys
-		if (dataTypes[1]) {
-			for (conv in s.converters) {
-				converters[conv.toLowerCase()] = s.converters[conv];
-			}
-		}
-
-		current = dataTypes.shift();
-
-		// Convert to each sequential dataType
-		while (current) {
-
-			if (s.responseFields[current]) {
-				jqXHR[s.responseFields[current]] = response;
-			}
-
-			// Apply the dataFilter if provided
-			if (!prev && isSuccess && s.dataFilter) {
-				response = s.dataFilter(response, s.dataType);
-			}
-
-			prev = current;
-			current = dataTypes.shift();
-
-			if (current) {
-
-				// There's only work to do if current dataType is non-auto
-				if (current === "*") {
-
-					current = prev;
-
-					// Convert response if prev dataType is non-auto and differs from current
-				} else if (prev !== "*" && prev !== current) {
-
-					// Seek a direct converter
-					conv = converters[prev + " " + current] || converters["* " + current];
-
-					// If none found, seek a pair
-					if (!conv) {
-						for (conv2 in converters) {
-
-							// If conv2 outputs current
-							tmp = conv2.split(" ");
-							if (tmp[1] === current) {
-
-								// If prev can be converted to accepted input
-								conv = converters[prev + " " + tmp[0]] || converters["* " + tmp[0]];
-								if (conv) {
-
-									// Condense equivalence converters
-									if (conv === true) {
-										conv = converters[conv2];
-
-										// Otherwise, insert the intermediate dataType
-									} else if (converters[conv2] !== true) {
-										current = tmp[0];
-										dataTypes.unshift(tmp[1]);
-									}
-									break;
-								}
-							}
-						}
-					}
-
-					// Apply converter (if not an equivalence)
-					if (conv !== true) {
-
-						// Unless errors are allowed to bubble, catch and return them
-						if (conv && s.throws) {
-							response = conv(response);
-						} else {
-							try {
-								response = conv(response);
-							} catch (e) {
-								return {
-									state: "parsererror",
-									error: conv ? e : "No conversion from " + prev + " to " + current
-								};
-							}
-						}
-					}
-				}
-			}
-		}
-
-		return { state: "success", data: response };
-	}
-
-	jQuery.extend({
-
-		// Counter for holding the number of active queries
-		active: 0,
-
-		// Last-Modified header cache for next request
-		lastModified: {},
-		etag: {},
-
-		ajaxSettings: {
-			url: location.href,
-			type: "GET",
-			isLocal: rlocalProtocol.test(location.protocol),
-			global: true,
-			processData: true,
-			async: true,
-			contentType: "application/x-www-form-urlencoded; charset=UTF-8",
-			/*
-   timeout: 0,
-   data: null,
-   dataType: null,
-   username: null,
-   password: null,
-   cache: null,
-   throws: false,
-   traditional: false,
-   headers: {},
-   */
-
-			accepts: {
-				"*": allTypes,
-				text: "text/plain",
-				html: "text/html",
-				xml: "application/xml, text/xml",
-				json: "application/json, text/javascript"
-			},
-
-			contents: {
-				xml: /\bxml\b/,
-				html: /\bhtml/,
-				json: /\bjson\b/
-			},
-
-			responseFields: {
-				xml: "responseXML",
-				text: "responseText",
-				json: "responseJSON"
-			},
-
-			// Data converters
-			// Keys separate source (or catchall "*") and destination types with a single space
-			converters: {
-
-				// Convert anything to text
-				"* text": String,
-
-				// Text to html (true = no transformation)
-				"text html": true,
-
-				// Evaluate text as a json expression
-				"text json": jQuery.parseJSON,
-
-				// Parse text as xml
-				"text xml": jQuery.parseXML
-			},
-
-			// For options that shouldn't be deep extended:
-			// you can add your own custom options here if
-			// and when you create one that shouldn't be
-			// deep extended (see ajaxExtend)
-			flatOptions: {
-				url: true,
-				context: true
-			}
-		},
-
-		// Creates a full fledged settings object into target
-		// with both ajaxSettings and settings fields.
-		// If target is omitted, writes into ajaxSettings.
-		ajaxSetup: function (target, settings) {
-			return settings ?
-
-			// Building a settings object
-			ajaxExtend(ajaxExtend(target, jQuery.ajaxSettings), settings) :
-
-			// Extending ajaxSettings
-			ajaxExtend(jQuery.ajaxSettings, target);
-		},
-
-		ajaxPrefilter: addToPrefiltersOrTransports(prefilters),
-		ajaxTransport: addToPrefiltersOrTransports(transports),
-
-		// Main method
-		ajax: function (url, options) {
-
-			// If url is an object, simulate pre-1.5 signature
-			if (typeof url === "object") {
-				options = url;
-				url = undefined;
-			}
-
-			// Force options to be an object
-			options = options || {};
-
-			var transport,
-
-
-			// URL without anti-cache param
-			cacheURL,
-
-
-			// Response headers
-			responseHeadersString,
-			    responseHeaders,
-
-
-			// timeout handle
-			timeoutTimer,
-
-
-			// Url cleanup var
-			urlAnchor,
-
-
-			// To know if global events are to be dispatched
-			fireGlobals,
-
-
-			// Loop variable
-			i,
-
-
-			// Create the final options object
-			s = jQuery.ajaxSetup({}, options),
-
-
-			// Callbacks context
-			callbackContext = s.context || s,
-
-
-			// Context for global events is callbackContext if it is a DOM node or jQuery collection
-			globalEventContext = s.context && (callbackContext.nodeType || callbackContext.jquery) ? jQuery(callbackContext) : jQuery.event,
-
-
-			// Deferreds
-			deferred = jQuery.Deferred(),
-			    completeDeferred = jQuery.Callbacks("once memory"),
-
-
-			// Status-dependent callbacks
-			statusCode = s.statusCode || {},
-
-
-			// Headers (they are sent all at once)
-			requestHeaders = {},
-			    requestHeadersNames = {},
-
-
-			// The jqXHR state
-			state = 0,
-
-
-			// Default abort message
-			strAbort = "canceled",
-
-
-			// Fake xhr
-			jqXHR = {
-				readyState: 0,
-
-				// Builds headers hashtable if needed
-				getResponseHeader: function (key) {
-					var match;
-					if (state === 2) {
-						if (!responseHeaders) {
-							responseHeaders = {};
-							while (match = rheaders.exec(responseHeadersString)) {
-								responseHeaders[match[1].toLowerCase()] = match[2];
-							}
-						}
-						match = responseHeaders[key.toLowerCase()];
-					}
-					return match == null ? null : match;
-				},
-
-				// Raw string
-				getAllResponseHeaders: function () {
-					return state === 2 ? responseHeadersString : null;
-				},
-
-				// Caches the header
-				setRequestHeader: function (name, value) {
-					var lname = name.toLowerCase();
-					if (!state) {
-						name = requestHeadersNames[lname] = requestHeadersNames[lname] || name;
-						requestHeaders[name] = value;
-					}
-					return this;
-				},
-
-				// Overrides response content-type header
-				overrideMimeType: function (type) {
-					if (!state) {
-						s.mimeType = type;
-					}
-					return this;
-				},
-
-				// Status-dependent callbacks
-				statusCode: function (map) {
-					var code;
-					if (map) {
-						if (state < 2) {
-							for (code in map) {
-
-								// Lazy-add the new callback in a way that preserves old ones
-								statusCode[code] = [statusCode[code], map[code]];
-							}
-						} else {
-
-							// Execute the appropriate callbacks
-							jqXHR.always(map[jqXHR.status]);
-						}
-					}
-					return this;
-				},
-
-				// Cancel the request
-				abort: function (statusText) {
-					var finalText = statusText || strAbort;
-					if (transport) {
-						transport.abort(finalText);
-					}
-					done(0, finalText);
-					return this;
-				}
-			};
-
-			// Attach deferreds
-			deferred.promise(jqXHR).complete = completeDeferred.add;
-			jqXHR.success = jqXHR.done;
-			jqXHR.error = jqXHR.fail;
-
-			// Remove hash character (#7531: and string promotion)
-			// Add protocol if not provided (prefilters might expect it)
-			// Handle falsy url in the settings object (#10093: consistency with old signature)
-			// We also use the url parameter if available
-			s.url = ((url || s.url || location.href) + "").replace(rhash, "").replace(rprotocol, location.protocol + "//");
-
-			// Alias method option to type as per ticket #12004
-			s.type = options.method || options.type || s.method || s.type;
-
-			// Extract dataTypes list
-			s.dataTypes = jQuery.trim(s.dataType || "*").toLowerCase().match(rnotwhite) || [""];
-
-			// A cross-domain request is in order when the origin doesn't match the current origin.
-			if (s.crossDomain == null) {
-				urlAnchor = document.createElement("a");
-
-				// Support: IE8-11+
-				// IE throws exception if url is malformed, e.g. http://example.com:80x/
-				try {
-					urlAnchor.href = s.url;
-
-					// Support: IE8-11+
-					// Anchor's host property isn't correctly set when s.url is relative
-					urlAnchor.href = urlAnchor.href;
-					s.crossDomain = originAnchor.protocol + "//" + originAnchor.host !== urlAnchor.protocol + "//" + urlAnchor.host;
-				} catch (e) {
-
-					// If there is an error parsing the URL, assume it is crossDomain,
-					// it can be rejected by the transport if it is invalid
-					s.crossDomain = true;
-				}
-			}
-
-			// Convert data if not already a string
-			if (s.data && s.processData && typeof s.data !== "string") {
-				s.data = jQuery.param(s.data, s.traditional);
-			}
-
-			// Apply prefilters
-			inspectPrefiltersOrTransports(prefilters, s, options, jqXHR);
-
-			// If request was aborted inside a prefilter, stop there
-			if (state === 2) {
-				return jqXHR;
-			}
-
-			// We can fire global events as of now if asked to
-			// Don't fire events if jQuery.event is undefined in an AMD-usage scenario (#15118)
-			fireGlobals = jQuery.event && s.global;
-
-			// Watch for a new set of requests
-			if (fireGlobals && jQuery.active++ === 0) {
-				jQuery.event.trigger("ajaxStart");
-			}
-
-			// Uppercase the type
-			s.type = s.type.toUpperCase();
-
-			// Determine if request has content
-			s.hasContent = !rnoContent.test(s.type);
-
-			// Save the URL in case we're toying with the If-Modified-Since
-			// and/or If-None-Match header later on
-			cacheURL = s.url;
-
-			// More options handling for requests with no content
-			if (!s.hasContent) {
-
-				// If data is available, append data to url
-				if (s.data) {
-					cacheURL = s.url += (rquery.test(cacheURL) ? "&" : "?") + s.data;
-
-					// #9682: remove data so that it's not used in an eventual retry
-					delete s.data;
-				}
-
-				// Add anti-cache in url if needed
-				if (s.cache === false) {
-					s.url = rts.test(cacheURL) ?
-
-					// If there is already a '_' parameter, set its value
-					cacheURL.replace(rts, "$1_=" + nonce++) :
-
-					// Otherwise add one to the end
-					cacheURL + (rquery.test(cacheURL) ? "&" : "?") + "_=" + nonce++;
-				}
-			}
-
-			// Set the If-Modified-Since and/or If-None-Match header, if in ifModified mode.
-			if (s.ifModified) {
-				if (jQuery.lastModified[cacheURL]) {
-					jqXHR.setRequestHeader("If-Modified-Since", jQuery.lastModified[cacheURL]);
-				}
-				if (jQuery.etag[cacheURL]) {
-					jqXHR.setRequestHeader("If-None-Match", jQuery.etag[cacheURL]);
-				}
-			}
-
-			// Set the correct header, if data is being sent
-			if (s.data && s.hasContent && s.contentType !== false || options.contentType) {
-				jqXHR.setRequestHeader("Content-Type", s.contentType);
-			}
-
-			// Set the Accepts header for the server, depending on the dataType
-			jqXHR.setRequestHeader("Accept", s.dataTypes[0] && s.accepts[s.dataTypes[0]] ? s.accepts[s.dataTypes[0]] + (s.dataTypes[0] !== "*" ? ", " + allTypes + "; q=0.01" : "") : s.accepts["*"]);
-
-			// Check for headers option
-			for (i in s.headers) {
-				jqXHR.setRequestHeader(i, s.headers[i]);
-			}
-
-			// Allow custom headers/mimetypes and early abort
-			if (s.beforeSend && (s.beforeSend.call(callbackContext, jqXHR, s) === false || state === 2)) {
-
-				// Abort if not done already and return
-				return jqXHR.abort();
-			}
-
-			// Aborting is no longer a cancellation
-			strAbort = "abort";
-
-			// Install callbacks on deferreds
-			for (i in { success: 1, error: 1, complete: 1 }) {
-				jqXHR[i](s[i]);
-			}
-
-			// Get transport
-			transport = inspectPrefiltersOrTransports(transports, s, options, jqXHR);
-
-			// If no transport, we auto-abort
-			if (!transport) {
-				done(-1, "No Transport");
-			} else {
-				jqXHR.readyState = 1;
-
-				// Send global event
-				if (fireGlobals) {
-					globalEventContext.trigger("ajaxSend", [jqXHR, s]);
-				}
-
-				// If request was aborted inside ajaxSend, stop there
-				if (state === 2) {
-					return jqXHR;
-				}
-
-				// Timeout
-				if (s.async && s.timeout > 0) {
-					timeoutTimer = window.setTimeout(function () {
-						jqXHR.abort("timeout");
-					}, s.timeout);
-				}
-
-				try {
-					state = 1;
-					transport.send(requestHeaders, done);
-				} catch (e) {
-
-					// Propagate exception as error if not done
-					if (state < 2) {
-						done(-1, e);
-
-						// Simply rethrow otherwise
-					} else {
-						throw e;
-					}
-				}
-			}
-
-			// Callback for when everything is done
-			function done(status, nativeStatusText, responses, headers) {
-				var isSuccess,
-				    success,
-				    error,
-				    response,
-				    modified,
-				    statusText = nativeStatusText;
-
-				// Called once
-				if (state === 2) {
-					return;
-				}
-
-				// State is "done" now
-				state = 2;
-
-				// Clear timeout if it exists
-				if (timeoutTimer) {
-					window.clearTimeout(timeoutTimer);
-				}
-
-				// Dereference transport for early garbage collection
-				// (no matter how long the jqXHR object will be used)
-				transport = undefined;
-
-				// Cache response headers
-				responseHeadersString = headers || "";
-
-				// Set readyState
-				jqXHR.readyState = status > 0 ? 4 : 0;
-
-				// Determine if successful
-				isSuccess = status >= 200 && status < 300 || status === 304;
-
-				// Get response data
-				if (responses) {
-					response = ajaxHandleResponses(s, jqXHR, responses);
-				}
-
-				// Convert no matter what (that way responseXXX fields are always set)
-				response = ajaxConvert(s, response, jqXHR, isSuccess);
-
-				// If successful, handle type chaining
-				if (isSuccess) {
-
-					// Set the If-Modified-Since and/or If-None-Match header, if in ifModified mode.
-					if (s.ifModified) {
-						modified = jqXHR.getResponseHeader("Last-Modified");
-						if (modified) {
-							jQuery.lastModified[cacheURL] = modified;
-						}
-						modified = jqXHR.getResponseHeader("etag");
-						if (modified) {
-							jQuery.etag[cacheURL] = modified;
-						}
-					}
-
-					// if no content
-					if (status === 204 || s.type === "HEAD") {
-						statusText = "nocontent";
-
-						// if not modified
-					} else if (status === 304) {
-						statusText = "notmodified";
-
-						// If we have data, let's convert it
-					} else {
-						statusText = response.state;
-						success = response.data;
-						error = response.error;
-						isSuccess = !error;
-					}
-				} else {
-
-					// Extract error from statusText and normalize for non-aborts
-					error = statusText;
-					if (status || !statusText) {
-						statusText = "error";
-						if (status < 0) {
-							status = 0;
-						}
-					}
-				}
-
-				// Set data for the fake xhr object
-				jqXHR.status = status;
-				jqXHR.statusText = (nativeStatusText || statusText) + "";
-
-				// Success/Error
-				if (isSuccess) {
-					deferred.resolveWith(callbackContext, [success, statusText, jqXHR]);
-				} else {
-					deferred.rejectWith(callbackContext, [jqXHR, statusText, error]);
-				}
-
-				// Status-dependent callbacks
-				jqXHR.statusCode(statusCode);
-				statusCode = undefined;
-
-				if (fireGlobals) {
-					globalEventContext.trigger(isSuccess ? "ajaxSuccess" : "ajaxError", [jqXHR, s, isSuccess ? success : error]);
-				}
-
-				// Complete
-				completeDeferred.fireWith(callbackContext, [jqXHR, statusText]);
-
-				if (fireGlobals) {
-					globalEventContext.trigger("ajaxComplete", [jqXHR, s]);
-
-					// Handle the global AJAX counter
-					if (! --jQuery.active) {
-						jQuery.event.trigger("ajaxStop");
-					}
-				}
-			}
-
-			return jqXHR;
-		},
-
-		getJSON: function (url, data, callback) {
-			return jQuery.get(url, data, callback, "json");
-		},
-
-		getScript: function (url, callback) {
-			return jQuery.get(url, undefined, callback, "script");
-		}
-	});
-
-	jQuery.each(["get", "post"], function (i, method) {
-		jQuery[method] = function (url, data, callback, type) {
-
-			// Shift arguments if data argument was omitted
-			if (jQuery.isFunction(data)) {
-				type = type || callback;
-				callback = data;
-				data = undefined;
-			}
-
-			// The url can be an options object (which then must have .url)
-			return jQuery.ajax(jQuery.extend({
-				url: url,
-				type: method,
-				dataType: type,
-				data: data,
-				success: callback
-			}, jQuery.isPlainObject(url) && url));
-		};
-	});
-
-	jQuery._evalUrl = function (url) {
-		return jQuery.ajax({
-			url: url,
-
-			// Make this explicit, since user can override this through ajaxSetup (#11264)
-			type: "GET",
-			dataType: "script",
-			async: false,
-			global: false,
-			"throws": true
-		});
-	};
-
-	jQuery.fn.extend({
-		wrapAll: function (html) {
-			var wrap;
-
-			if (jQuery.isFunction(html)) {
-				return this.each(function (i) {
-					jQuery(this).wrapAll(html.call(this, i));
-				});
-			}
-
-			if (this[0]) {
-
-				// The elements to wrap the target around
-				wrap = jQuery(html, this[0].ownerDocument).eq(0).clone(true);
-
-				if (this[0].parentNode) {
-					wrap.insertBefore(this[0]);
-				}
-
-				wrap.map(function () {
-					var elem = this;
-
-					while (elem.firstElementChild) {
-						elem = elem.firstElementChild;
-					}
-
-					return elem;
-				}).append(this);
-			}
-
-			return this;
-		},
-
-		wrapInner: function (html) {
-			if (jQuery.isFunction(html)) {
-				return this.each(function (i) {
-					jQuery(this).wrapInner(html.call(this, i));
-				});
-			}
-
-			return this.each(function () {
-				var self = jQuery(this),
-				    contents = self.contents();
-
-				if (contents.length) {
-					contents.wrapAll(html);
-				} else {
-					self.append(html);
-				}
-			});
-		},
-
-		wrap: function (html) {
-			var isFunction = jQuery.isFunction(html);
-
-			return this.each(function (i) {
-				jQuery(this).wrapAll(isFunction ? html.call(this, i) : html);
-			});
-		},
-
-		unwrap: function () {
-			return this.parent().each(function () {
-				if (!jQuery.nodeName(this, "body")) {
-					jQuery(this).replaceWith(this.childNodes);
-				}
-			}).end();
-		}
-	});
-
-	jQuery.expr.filters.hidden = function (elem) {
-		return !jQuery.expr.filters.visible(elem);
-	};
-	jQuery.expr.filters.visible = function (elem) {
-
-		// Support: Opera <= 12.12
-		// Opera reports offsetWidths and offsetHeights less than zero on some elements
-		// Use OR instead of AND as the element is not visible if either is true
-		// See tickets #10406 and #13132
-		return elem.offsetWidth > 0 || elem.offsetHeight > 0 || elem.getClientRects().length > 0;
-	};
-
-	var r20 = /%20/g,
-	    rbracket = /\[\]$/,
-	    rCRLF = /\r?\n/g,
-	    rsubmitterTypes = /^(?:submit|button|image|reset|file)$/i,
-	    rsubmittable = /^(?:input|select|textarea|keygen)/i;
-
-	function buildParams(prefix, obj, traditional, add) {
-		var name;
-
-		if (jQuery.isArray(obj)) {
-
-			// Serialize array item.
-			jQuery.each(obj, function (i, v) {
-				if (traditional || rbracket.test(prefix)) {
-
-					// Treat each array item as a scalar.
-					add(prefix, v);
-				} else {
-
-					// Item is non-scalar (array or object), encode its numeric index.
-					buildParams(prefix + "[" + (typeof v === "object" && v != null ? i : "") + "]", v, traditional, add);
-				}
-			});
-		} else if (!traditional && jQuery.type(obj) === "object") {
-
-			// Serialize object item.
-			for (name in obj) {
-				buildParams(prefix + "[" + name + "]", obj[name], traditional, add);
-			}
-		} else {
-
-			// Serialize scalar item.
-			add(prefix, obj);
-		}
-	}
-
-	// Serialize an array of form elements or a set of
-	// key/values into a query string
-	jQuery.param = function (a, traditional) {
-		var prefix,
-		    s = [],
-		    add = function (key, value) {
-
-			// If value is a function, invoke it and return its value
-			value = jQuery.isFunction(value) ? value() : value == null ? "" : value;
-			s[s.length] = encodeURIComponent(key) + "=" + encodeURIComponent(value);
-		};
-
-		// Set traditional to true for jQuery <= 1.3.2 behavior.
-		if (traditional === undefined) {
-			traditional = jQuery.ajaxSettings && jQuery.ajaxSettings.traditional;
-		}
-
-		// If an array was passed in, assume that it is an array of form elements.
-		if (jQuery.isArray(a) || a.jquery && !jQuery.isPlainObject(a)) {
-
-			// Serialize the form elements
-			jQuery.each(a, function () {
-				add(this.name, this.value);
-			});
-		} else {
-
-			// If traditional, encode the "old" way (the way 1.3.2 or older
-			// did it), otherwise encode params recursively.
-			for (prefix in a) {
-				buildParams(prefix, a[prefix], traditional, add);
-			}
-		}
-
-		// Return the resulting serialization
-		return s.join("&").replace(r20, "+");
-	};
-
-	jQuery.fn.extend({
-		serialize: function () {
-			return jQuery.param(this.serializeArray());
-		},
-		serializeArray: function () {
-			return this.map(function () {
-
-				// Can add propHook for "elements" to filter or add form elements
-				var elements = jQuery.prop(this, "elements");
-				return elements ? jQuery.makeArray(elements) : this;
-			}).filter(function () {
-				var type = this.type;
-
-				// Use .is( ":disabled" ) so that fieldset[disabled] works
-				return this.name && !jQuery(this).is(":disabled") && rsubmittable.test(this.nodeName) && !rsubmitterTypes.test(type) && (this.checked || !rcheckableType.test(type));
-			}).map(function (i, elem) {
-				var val = jQuery(this).val();
-
-				return val == null ? null : jQuery.isArray(val) ? jQuery.map(val, function (val) {
-					return { name: elem.name, value: val.replace(rCRLF, "\r\n") };
-				}) : { name: elem.name, value: val.replace(rCRLF, "\r\n") };
-			}).get();
-		}
-	});
-
-	jQuery.ajaxSettings.xhr = function () {
-		try {
-			return new window.XMLHttpRequest();
-		} catch (e) {}
-	};
-
-	var xhrSuccessStatus = {
-
-		// File protocol always yields status code 0, assume 200
-		0: 200,
-
-		// Support: IE9
-		// #1450: sometimes IE returns 1223 when it should be 204
-		1223: 204
-	},
-	    xhrSupported = jQuery.ajaxSettings.xhr();
-
-	support.cors = !!xhrSupported && "withCredentials" in xhrSupported;
-	support.ajax = xhrSupported = !!xhrSupported;
-
-	jQuery.ajaxTransport(function (options) {
-		var callback, errorCallback;
-
-		// Cross domain only allowed if supported through XMLHttpRequest
-		if (support.cors || xhrSupported && !options.crossDomain) {
-			return {
-				send: function (headers, complete) {
-					var i,
-					    xhr = options.xhr();
-
-					xhr.open(options.type, options.url, options.async, options.username, options.password);
-
-					// Apply custom fields if provided
-					if (options.xhrFields) {
-						for (i in options.xhrFields) {
-							xhr[i] = options.xhrFields[i];
-						}
-					}
-
-					// Override mime type if needed
-					if (options.mimeType && xhr.overrideMimeType) {
-						xhr.overrideMimeType(options.mimeType);
-					}
-
-					// X-Requested-With header
-					// For cross-domain requests, seeing as conditions for a preflight are
-					// akin to a jigsaw puzzle, we simply never set it to be sure.
-					// (it can always be set on a per-request basis or even using ajaxSetup)
-					// For same-domain requests, won't change header if already provided.
-					if (!options.crossDomain && !headers["X-Requested-With"]) {
-						headers["X-Requested-With"] = "XMLHttpRequest";
-					}
-
-					// Set headers
-					for (i in headers) {
-						xhr.setRequestHeader(i, headers[i]);
-					}
-
-					// Callback
-					callback = function (type) {
-						return function () {
-							if (callback) {
-								callback = errorCallback = xhr.onload = xhr.onerror = xhr.onabort = xhr.onreadystatechange = null;
-
-								if (type === "abort") {
-									xhr.abort();
-								} else if (type === "error") {
-
-									// Support: IE9
-									// On a manual native abort, IE9 throws
-									// errors on any property access that is not readyState
-									if (typeof xhr.status !== "number") {
-										complete(0, "error");
-									} else {
-										complete(
-
-										// File: protocol always yields status 0; see #8605, #14207
-										xhr.status, xhr.statusText);
-									}
-								} else {
-									complete(xhrSuccessStatus[xhr.status] || xhr.status, xhr.statusText,
-
-									// Support: IE9 only
-									// IE9 has no XHR2 but throws on binary (trac-11426)
-									// For XHR2 non-text, let the caller handle it (gh-2498)
-									(xhr.responseType || "text") !== "text" || typeof xhr.responseText !== "string" ? { binary: xhr.response } : { text: xhr.responseText }, xhr.getAllResponseHeaders());
-								}
-							}
-						};
-					};
-
-					// Listen to events
-					xhr.onload = callback();
-					errorCallback = xhr.onerror = callback("error");
-
-					// Support: IE9
-					// Use onreadystatechange to replace onabort
-					// to handle uncaught aborts
-					if (xhr.onabort !== undefined) {
-						xhr.onabort = errorCallback;
-					} else {
-						xhr.onreadystatechange = function () {
-
-							// Check readyState before timeout as it changes
-							if (xhr.readyState === 4) {
-
-								// Allow onerror to be called first,
-								// but that will not handle a native abort
-								// Also, save errorCallback to a variable
-								// as xhr.onerror cannot be accessed
-								window.setTimeout(function () {
-									if (callback) {
-										errorCallback();
-									}
-								});
-							}
-						};
-					}
-
-					// Create the abort callback
-					callback = callback("abort");
-
-					try {
-
-						// Do send the request (this may raise an exception)
-						xhr.send(options.hasContent && options.data || null);
-					} catch (e) {
-
-						// #14683: Only rethrow if this hasn't been notified as an error yet
-						if (callback) {
-							throw e;
-						}
-					}
-				},
-
-				abort: function () {
-					if (callback) {
-						callback();
-					}
-				}
-			};
-		}
-	});
-
-	// Install script dataType
-	jQuery.ajaxSetup({
-		accepts: {
-			script: "text/javascript, application/javascript, " + "application/ecmascript, application/x-ecmascript"
-		},
-		contents: {
-			script: /\b(?:java|ecma)script\b/
-		},
-		converters: {
-			"text script": function (text) {
-				jQuery.globalEval(text);
-				return text;
-			}
-		}
-	});
-
-	// Handle cache's special case and crossDomain
-	jQuery.ajaxPrefilter("script", function (s) {
-		if (s.cache === undefined) {
-			s.cache = false;
-		}
-		if (s.crossDomain) {
-			s.type = "GET";
-		}
-	});
-
-	// Bind script tag hack transport
-	jQuery.ajaxTransport("script", function (s) {
-
-		// This transport only deals with cross domain requests
-		if (s.crossDomain) {
-			var script, callback;
-			return {
-				send: function (_, complete) {
-					script = jQuery("<script>").prop({
-						charset: s.scriptCharset,
-						src: s.url
-					}).on("load error", callback = function (evt) {
-						script.remove();
-						callback = null;
-						if (evt) {
-							complete(evt.type === "error" ? 404 : 200, evt.type);
-						}
-					});
-
-					// Use native DOM manipulation to avoid our domManip AJAX trickery
-					document.head.appendChild(script[0]);
-				},
-				abort: function () {
-					if (callback) {
-						callback();
-					}
-				}
-			};
-		}
-	});
-
-	var oldCallbacks = [],
-	    rjsonp = /(=)\?(?=&|$)|\?\?/;
-
-	// Default jsonp settings
-	jQuery.ajaxSetup({
-		jsonp: "callback",
-		jsonpCallback: function () {
-			var callback = oldCallbacks.pop() || jQuery.expando + "_" + nonce++;
-			this[callback] = true;
-			return callback;
-		}
-	});
-
-	// Detect, normalize options and install callbacks for jsonp requests
-	jQuery.ajaxPrefilter("json jsonp", function (s, originalSettings, jqXHR) {
-
-		var callbackName,
-		    overwritten,
-		    responseContainer,
-		    jsonProp = s.jsonp !== false && (rjsonp.test(s.url) ? "url" : typeof s.data === "string" && (s.contentType || "").indexOf("application/x-www-form-urlencoded") === 0 && rjsonp.test(s.data) && "data");
-
-		// Handle iff the expected data type is "jsonp" or we have a parameter to set
-		if (jsonProp || s.dataTypes[0] === "jsonp") {
-
-			// Get callback name, remembering preexisting value associated with it
-			callbackName = s.jsonpCallback = jQuery.isFunction(s.jsonpCallback) ? s.jsonpCallback() : s.jsonpCallback;
-
-			// Insert callback into url or form data
-			if (jsonProp) {
-				s[jsonProp] = s[jsonProp].replace(rjsonp, "$1" + callbackName);
-			} else if (s.jsonp !== false) {
-				s.url += (rquery.test(s.url) ? "&" : "?") + s.jsonp + "=" + callbackName;
-			}
-
-			// Use data converter to retrieve json after script execution
-			s.converters["script json"] = function () {
-				if (!responseContainer) {
-					jQuery.error(callbackName + " was not called");
-				}
-				return responseContainer[0];
-			};
-
-			// Force json dataType
-			s.dataTypes[0] = "json";
-
-			// Install callback
-			overwritten = window[callbackName];
-			window[callbackName] = function () {
-				responseContainer = arguments;
-			};
-
-			// Clean-up function (fires after converters)
-			jqXHR.always(function () {
-
-				// If previous value didn't exist - remove it
-				if (overwritten === undefined) {
-					jQuery(window).removeProp(callbackName);
-
-					// Otherwise restore preexisting value
-				} else {
-					window[callbackName] = overwritten;
-				}
-
-				// Save back as free
-				if (s[callbackName]) {
-
-					// Make sure that re-using the options doesn't screw things around
-					s.jsonpCallback = originalSettings.jsonpCallback;
-
-					// Save the callback name for future use
-					oldCallbacks.push(callbackName);
-				}
-
-				// Call if it was a function and we have a response
-				if (responseContainer && jQuery.isFunction(overwritten)) {
-					overwritten(responseContainer[0]);
-				}
-
-				responseContainer = overwritten = undefined;
-			});
-
-			// Delegate to script
-			return "script";
-		}
-	});
-
-	// Argument "data" should be string of html
-	// context (optional): If specified, the fragment will be created in this context,
-	// defaults to document
-	// keepScripts (optional): If true, will include scripts passed in the html string
-	jQuery.parseHTML = function (data, context, keepScripts) {
-		if (!data || typeof data !== "string") {
-			return null;
-		}
-		if (typeof context === "boolean") {
-			keepScripts = context;
-			context = false;
-		}
-		context = context || document;
-
-		var parsed = rsingleTag.exec(data),
-		    scripts = !keepScripts && [];
-
-		// Single tag
-		if (parsed) {
-			return [context.createElement(parsed[1])];
-		}
-
-		parsed = buildFragment([data], context, scripts);
-
-		if (scripts && scripts.length) {
-			jQuery(scripts).remove();
-		}
-
-		return jQuery.merge([], parsed.childNodes);
-	};
-
-	// Keep a copy of the old load method
-	var _load = jQuery.fn.load;
-
-	/**
-  * Load a url into a page
-  */
-	jQuery.fn.load = function (url, params, callback) {
-		if (typeof url !== "string" && _load) {
-			return _load.apply(this, arguments);
-		}
-
-		var selector,
-		    type,
-		    response,
-		    self = this,
-		    off = url.indexOf(" ");
-
-		if (off > -1) {
-			selector = jQuery.trim(url.slice(off));
-			url = url.slice(0, off);
-		}
-
-		// If it's a function
-		if (jQuery.isFunction(params)) {
-
-			// We assume that it's the callback
-			callback = params;
-			params = undefined;
-
-			// Otherwise, build a param string
-		} else if (params && typeof params === "object") {
-			type = "POST";
-		}
-
-		// If we have elements to modify, make the request
-		if (self.length > 0) {
-			jQuery.ajax({
-				url: url,
-
-				// If "type" variable is undefined, then "GET" method will be used.
-				// Make value of this field explicit since
-				// user can override it through ajaxSetup method
-				type: type || "GET",
-				dataType: "html",
-				data: params
-			}).done(function (responseText) {
-
-				// Save response for use in complete callback
-				response = arguments;
-
-				self.html(selector ?
-
-				// If a selector was specified, locate the right elements in a dummy div
-				// Exclude scripts to avoid IE 'Permission Denied' errors
-				jQuery("<div>").append(jQuery.parseHTML(responseText)).find(selector) :
-
-				// Otherwise use the full result
-				responseText);
-
-				// If the request succeeds, this function gets "data", "status", "jqXHR"
-				// but they are ignored because response was set above.
-				// If it fails, this function gets "jqXHR", "status", "error"
-			}).always(callback && function (jqXHR, status) {
-				self.each(function () {
-					callback.apply(this, response || [jqXHR.responseText, status, jqXHR]);
-				});
-			});
-		}
-
-		return this;
-	};
-
-	// Attach a bunch of functions for handling common AJAX events
-	jQuery.each(["ajaxStart", "ajaxStop", "ajaxComplete", "ajaxError", "ajaxSuccess", "ajaxSend"], function (i, type) {
-		jQuery.fn[type] = function (fn) {
-			return this.on(type, fn);
-		};
-	});
-
-	jQuery.expr.filters.animated = function (elem) {
-		return jQuery.grep(jQuery.timers, function (fn) {
-			return elem === fn.elem;
-		}).length;
-	};
-
-	/**
-  * Gets a window from an element
-  */
-	function getWindow(elem) {
-		return jQuery.isWindow(elem) ? elem : elem.nodeType === 9 && elem.defaultView;
-	}
-
-	jQuery.offset = {
-		setOffset: function (elem, options, i) {
-			var curPosition,
-			    curLeft,
-			    curCSSTop,
-			    curTop,
-			    curOffset,
-			    curCSSLeft,
-			    calculatePosition,
-			    position = jQuery.css(elem, "position"),
-			    curElem = jQuery(elem),
-			    props = {};
-
-			// Set position first, in-case top/left are set even on static elem
-			if (position === "static") {
-				elem.style.position = "relative";
-			}
-
-			curOffset = curElem.offset();
-			curCSSTop = jQuery.css(elem, "top");
-			curCSSLeft = jQuery.css(elem, "left");
-			calculatePosition = (position === "absolute" || position === "fixed") && (curCSSTop + curCSSLeft).indexOf("auto") > -1;
-
-			// Need to be able to calculate position if either
-			// top or left is auto and position is either absolute or fixed
-			if (calculatePosition) {
-				curPosition = curElem.position();
-				curTop = curPosition.top;
-				curLeft = curPosition.left;
-			} else {
-				curTop = parseFloat(curCSSTop) || 0;
-				curLeft = parseFloat(curCSSLeft) || 0;
-			}
-
-			if (jQuery.isFunction(options)) {
-
-				// Use jQuery.extend here to allow modification of coordinates argument (gh-1848)
-				options = options.call(elem, i, jQuery.extend({}, curOffset));
-			}
-
-			if (options.top != null) {
-				props.top = options.top - curOffset.top + curTop;
-			}
-			if (options.left != null) {
-				props.left = options.left - curOffset.left + curLeft;
-			}
-
-			if ("using" in options) {
-				options.using.call(elem, props);
-			} else {
-				curElem.css(props);
-			}
-		}
-	};
-
-	jQuery.fn.extend({
-		offset: function (options) {
-			if (arguments.length) {
-				return options === undefined ? this : this.each(function (i) {
-					jQuery.offset.setOffset(this, options, i);
-				});
-			}
-
-			var docElem,
-			    win,
-			    elem = this[0],
-			    box = { top: 0, left: 0 },
-			    doc = elem && elem.ownerDocument;
-
-			if (!doc) {
-				return;
-			}
-
-			docElem = doc.documentElement;
-
-			// Make sure it's not a disconnected DOM node
-			if (!jQuery.contains(docElem, elem)) {
-				return box;
-			}
-
-			box = elem.getBoundingClientRect();
-			win = getWindow(doc);
-			return {
-				top: box.top + win.pageYOffset - docElem.clientTop,
-				left: box.left + win.pageXOffset - docElem.clientLeft
-			};
-		},
-
-		position: function () {
-			if (!this[0]) {
-				return;
-			}
-
-			var offsetParent,
-			    offset,
-			    elem = this[0],
-			    parentOffset = { top: 0, left: 0 };
-
-			// Fixed elements are offset from window (parentOffset = {top:0, left: 0},
-			// because it is its only offset parent
-			if (jQuery.css(elem, "position") === "fixed") {
-
-				// Assume getBoundingClientRect is there when computed position is fixed
-				offset = elem.getBoundingClientRect();
-			} else {
-
-				// Get *real* offsetParent
-				offsetParent = this.offsetParent();
-
-				// Get correct offsets
-				offset = this.offset();
-				if (!jQuery.nodeName(offsetParent[0], "html")) {
-					parentOffset = offsetParent.offset();
-				}
-
-				// Add offsetParent borders
-				parentOffset.top += jQuery.css(offsetParent[0], "borderTopWidth", true);
-				parentOffset.left += jQuery.css(offsetParent[0], "borderLeftWidth", true);
-			}
-
-			// Subtract parent offsets and element margins
-			return {
-				top: offset.top - parentOffset.top - jQuery.css(elem, "marginTop", true),
-				left: offset.left - parentOffset.left - jQuery.css(elem, "marginLeft", true)
-			};
-		},
-
-		// This method will return documentElement in the following cases:
-		// 1) For the element inside the iframe without offsetParent, this method will return
-		//    documentElement of the parent window
-		// 2) For the hidden or detached element
-		// 3) For body or html element, i.e. in case of the html node - it will return itself
-		//
-		// but those exceptions were never presented as a real life use-cases
-		// and might be considered as more preferable results.
-		//
-		// This logic, however, is not guaranteed and can change at any point in the future
-		offsetParent: function () {
-			return this.map(function () {
-				var offsetParent = this.offsetParent;
-
-				while (offsetParent && jQuery.css(offsetParent, "position") === "static") {
-					offsetParent = offsetParent.offsetParent;
-				}
-
-				return offsetParent || documentElement;
-			});
-		}
-	});
-
-	// Create scrollLeft and scrollTop methods
-	jQuery.each({ scrollLeft: "pageXOffset", scrollTop: "pageYOffset" }, function (method, prop) {
-		var top = "pageYOffset" === prop;
-
-		jQuery.fn[method] = function (val) {
-			return access(this, function (elem, method, val) {
-				var win = getWindow(elem);
-
-				if (val === undefined) {
-					return win ? win[prop] : elem[method];
-				}
-
-				if (win) {
-					win.scrollTo(!top ? val : win.pageXOffset, top ? val : win.pageYOffset);
-				} else {
-					elem[method] = val;
-				}
-			}, method, val, arguments.length);
-		};
-	});
-
-	// Support: Safari<7-8+, Chrome<37-44+
-	// Add the top/left cssHooks using jQuery.fn.position
-	// Webkit bug: https://bugs.webkit.org/show_bug.cgi?id=29084
-	// Blink bug: https://code.google.com/p/chromium/issues/detail?id=229280
-	// getComputedStyle returns percent when specified for top/left/bottom/right;
-	// rather than make the css module depend on the offset module, just check for it here
-	jQuery.each(["top", "left"], function (i, prop) {
-		jQuery.cssHooks[prop] = addGetHookIf(support.pixelPosition, function (elem, computed) {
-			if (computed) {
-				computed = curCSS(elem, prop);
-
-				// If curCSS returns percentage, fallback to offset
-				return rnumnonpx.test(computed) ? jQuery(elem).position()[prop] + "px" : computed;
-			}
-		});
-	});
-
-	// Create innerHeight, innerWidth, height, width, outerHeight and outerWidth methods
-	jQuery.each({ Height: "height", Width: "width" }, function (name, type) {
-		jQuery.each({ padding: "inner" + name, content: type, "": "outer" + name }, function (defaultExtra, funcName) {
-
-			// Margin is only for outerHeight, outerWidth
-			jQuery.fn[funcName] = function (margin, value) {
-				var chainable = arguments.length && (defaultExtra || typeof margin !== "boolean"),
-				    extra = defaultExtra || (margin === true || value === true ? "margin" : "border");
-
-				return access(this, function (elem, type, value) {
-					var doc;
-
-					if (jQuery.isWindow(elem)) {
-
-						// As of 5/8/2012 this will yield incorrect results for Mobile Safari, but there
-						// isn't a whole lot we can do. See pull request at this URL for discussion:
-						// https://github.com/jquery/jquery/pull/764
-						return elem.document.documentElement["client" + name];
-					}
-
-					// Get document width or height
-					if (elem.nodeType === 9) {
-						doc = elem.documentElement;
-
-						// Either scroll[Width/Height] or offset[Width/Height] or client[Width/Height],
-						// whichever is greatest
-						return Math.max(elem.body["scroll" + name], doc["scroll" + name], elem.body["offset" + name], doc["offset" + name], doc["client" + name]);
-					}
-
-					return value === undefined ?
-
-					// Get width or height on the element, requesting but not forcing parseFloat
-					jQuery.css(elem, type, extra) :
-
-					// Set width or height on the element
-					jQuery.style(elem, type, value, extra);
-				}, type, chainable ? margin : undefined, chainable, null);
-			};
-		});
-	});
-
-	jQuery.fn.extend({
-
-		bind: function (types, data, fn) {
-			return this.on(types, null, data, fn);
-		},
-		unbind: function (types, fn) {
-			return this.off(types, null, fn);
-		},
-
-		delegate: function (selector, types, data, fn) {
-			return this.on(types, selector, data, fn);
-		},
-		undelegate: function (selector, types, fn) {
-
-			// ( namespace ) or ( selector, types [, fn] )
-			return arguments.length === 1 ? this.off(selector, "**") : this.off(types, selector || "**", fn);
-		},
-		size: function () {
-			return this.length;
-		}
-	});
-
-	jQuery.fn.andSelf = jQuery.fn.addBack;
-
-	// Register as a named AMD module, since jQuery can be concatenated with other
-	// files that may use define, but not via a proper concatenation script that
-	// understands anonymous AMD modules. A named AMD is safest and most robust
-	// way to register. Lowercase jquery is used because AMD module names are
-	// derived from file names, and jQuery is normally delivered in a lowercase
-	// file name. Do this after creating the global so that if an AMD module wants
-	// to call noConflict to hide this version of jQuery, it will work.
-
-	// Note that for maximum portability, libraries that are not jQuery should
-	// declare themselves as anonymous modules, and avoid setting a global if an
-	// AMD loader is present. jQuery is a special case. For more information, see
-	// https://github.com/jrburke/requirejs/wiki/Updating-existing-libraries#wiki-anon
-
-	if (true) {
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
-			return jQuery;
-		}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	}
-
-	var
-
-	// Map over jQuery in case of overwrite
-	_jQuery = window.jQuery,
-
-
-	// Map over the $ in case of overwrite
-	_$ = window.$;
-
-	jQuery.noConflict = function (deep) {
-		if (window.$ === jQuery) {
-			window.$ = _$;
-		}
-
-		if (deep && window.jQuery === jQuery) {
-			window.jQuery = _jQuery;
-		}
-
-		return jQuery;
-	};
-
-	// Expose jQuery and $ identifiers, even in AMD
-	// (#7102#comment:10, https://github.com/jquery/jquery/pull/557)
-	// and CommonJS for browser emulators (#13566)
-	if (!noGlobal) {
-		window.jQuery = window.$ = jQuery;
-	}
-
-	return jQuery;
-});
+module.exports = undefined;
 
 /***/ }),
 /* 5 */
@@ -10359,28 +1091,31 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 
 // these helpers produces better vm code in JS engines due to their
 // explicitness and function inlining
-
-function isUndef(v) {
-  return v === undefined || v === null;
+function isUndef (v) {
+  return v === undefined || v === null
 }
 
-function isDef(v) {
-  return v !== undefined && v !== null;
+function isDef (v) {
+  return v !== undefined && v !== null
 }
 
-function isTrue(v) {
-  return v === true;
+function isTrue (v) {
+  return v === true
 }
 
-function isFalse(v) {
-  return v === false;
+function isFalse (v) {
+  return v === false
 }
 
 /**
  * Check if value is primitive
  */
-function isPrimitive(value) {
-  return typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean';
+function isPrimitive (value) {
+  return (
+    typeof value === 'string' ||
+    typeof value === 'number' ||
+    typeof value === 'boolean'
+  )
 }
 
 /**
@@ -10388,8 +1123,8 @@ function isPrimitive(value) {
  * Objects from primitive values when we know the value
  * is a JSON-compliant type.
  */
-function isObject(obj) {
-  return obj !== null && typeof obj === 'object';
+function isObject (obj) {
+  return obj !== null && typeof obj === 'object'
 }
 
 var _toString = Object.prototype.toString;
@@ -10398,53 +1133,58 @@ var _toString = Object.prototype.toString;
  * Strict object type check. Only returns true
  * for plain JavaScript objects.
  */
-function isPlainObject(obj) {
-  return _toString.call(obj) === '[object Object]';
+function isPlainObject (obj) {
+  return _toString.call(obj) === '[object Object]'
 }
 
-function isRegExp(v) {
-  return _toString.call(v) === '[object RegExp]';
+function isRegExp (v) {
+  return _toString.call(v) === '[object RegExp]'
 }
 
 /**
  * Check if val is a valid array index.
  */
-function isValidArrayIndex(val) {
+function isValidArrayIndex (val) {
   var n = parseFloat(val);
-  return n >= 0 && Math.floor(n) === n && isFinite(val);
+  return n >= 0 && Math.floor(n) === n && isFinite(val)
 }
 
 /**
  * Convert a value to a string that is actually rendered.
  */
-function toString(val) {
-  return val == null ? '' : typeof val === 'object' ? JSON.stringify(val, null, 2) : String(val);
+function toString (val) {
+  return val == null
+    ? ''
+    : typeof val === 'object'
+      ? JSON.stringify(val, null, 2)
+      : String(val)
 }
 
 /**
  * Convert a input value to a number for persistence.
  * If the conversion fails, return original string.
  */
-function toNumber(val) {
+function toNumber (val) {
   var n = parseFloat(val);
-  return isNaN(n) ? val : n;
+  return isNaN(n) ? val : n
 }
 
 /**
  * Make a map and return a function for checking if a key
  * is in that map.
  */
-function makeMap(str, expectsLowerCase) {
+function makeMap (
+  str,
+  expectsLowerCase
+) {
   var map = Object.create(null);
   var list = str.split(',');
   for (var i = 0; i < list.length; i++) {
     map[list[i]] = true;
   }
-  return expectsLowerCase ? function (val) {
-    return map[val.toLowerCase()];
-  } : function (val) {
-    return map[val];
-  };
+  return expectsLowerCase
+    ? function (val) { return map[val.toLowerCase()]; }
+    : function (val) { return map[val]; }
 }
 
 /**
@@ -10460,11 +1200,11 @@ var isReservedAttribute = makeMap('key,ref,slot,is');
 /**
  * Remove an item from an array
  */
-function remove(arr, item) {
+function remove (arr, item) {
   if (arr.length) {
     var index = arr.indexOf(item);
     if (index > -1) {
-      return arr.splice(index, 1);
+      return arr.splice(index, 1)
     }
   }
 }
@@ -10473,19 +1213,19 @@ function remove(arr, item) {
  * Check whether the object has the property.
  */
 var hasOwnProperty = Object.prototype.hasOwnProperty;
-function hasOwn(obj, key) {
-  return hasOwnProperty.call(obj, key);
+function hasOwn (obj, key) {
+  return hasOwnProperty.call(obj, key)
 }
 
 /**
  * Create a cached version of a pure function.
  */
-function cached(fn) {
+function cached (fn) {
   var cache = Object.create(null);
-  return function cachedFn(str) {
+  return (function cachedFn (str) {
     var hit = cache[str];
-    return hit || (cache[str] = fn(str));
-  };
+    return hit || (cache[str] = fn(str))
+  })
 }
 
 /**
@@ -10493,16 +1233,14 @@ function cached(fn) {
  */
 var camelizeRE = /-(\w)/g;
 var camelize = cached(function (str) {
-  return str.replace(camelizeRE, function (_, c) {
-    return c ? c.toUpperCase() : '';
-  });
+  return str.replace(camelizeRE, function (_, c) { return c ? c.toUpperCase() : ''; })
 });
 
 /**
  * Capitalize a string.
  */
 var capitalize = cached(function (str) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
+  return str.charAt(0).toUpperCase() + str.slice(1)
 });
 
 /**
@@ -10510,56 +1248,60 @@ var capitalize = cached(function (str) {
  */
 var hyphenateRE = /\B([A-Z])/g;
 var hyphenate = cached(function (str) {
-  return str.replace(hyphenateRE, '-$1').toLowerCase();
+  return str.replace(hyphenateRE, '-$1').toLowerCase()
 });
 
 /**
  * Simple bind, faster than native
  */
-function bind(fn, ctx) {
-  function boundFn(a) {
+function bind (fn, ctx) {
+  function boundFn (a) {
     var l = arguments.length;
-    return l ? l > 1 ? fn.apply(ctx, arguments) : fn.call(ctx, a) : fn.call(ctx);
+    return l
+      ? l > 1
+        ? fn.apply(ctx, arguments)
+        : fn.call(ctx, a)
+      : fn.call(ctx)
   }
   // record original fn length
   boundFn._length = fn.length;
-  return boundFn;
+  return boundFn
 }
 
 /**
  * Convert an Array-like object to a real Array.
  */
-function toArray(list, start) {
+function toArray (list, start) {
   start = start || 0;
   var i = list.length - start;
   var ret = new Array(i);
   while (i--) {
     ret[i] = list[i + start];
   }
-  return ret;
+  return ret
 }
 
 /**
  * Mix properties into target object.
  */
-function extend(to, _from) {
+function extend (to, _from) {
   for (var key in _from) {
     to[key] = _from[key];
   }
-  return to;
+  return to
 }
 
 /**
  * Merge an Array of Objects into a single Object.
  */
-function toObject(arr) {
+function toObject (arr) {
   var res = {};
   for (var i = 0; i < arr.length; i++) {
     if (arr[i]) {
       extend(res, arr[i]);
     }
   }
-  return res;
+  return res
 }
 
 /**
@@ -10567,39 +1309,33 @@ function toObject(arr) {
  * Stubbing args to make Flow happy without leaving useless transpiled code
  * with ...rest (https://flow.org/blog/2017/05/07/Strict-Function-Call-Arity/)
  */
-function noop(a, b, c) {}
+function noop (a, b, c) {}
 
 /**
  * Always return false.
  */
-var no = function (a, b, c) {
-  return false;
-};
+var no = function (a, b, c) { return false; };
 
 /**
  * Return same value
  */
-var identity = function (_) {
-  return _;
-};
+var identity = function (_) { return _; };
 
 /**
  * Generate a static keys string from compiler modules.
  */
-function genStaticKeys(modules) {
+function genStaticKeys (modules) {
   return modules.reduce(function (keys, m) {
-    return keys.concat(m.staticKeys || []);
-  }, []).join(',');
+    return keys.concat(m.staticKeys || [])
+  }, []).join(',')
 }
 
 /**
  * Check if two values are loosely equal - that is,
  * if they are plain objects, do they have the same shape?
  */
-function looseEqual(a, b) {
-  if (a === b) {
-    return true;
-  }
+function looseEqual (a, b) {
+  if (a === b) { return true }
   var isObjectA = isObject(a);
   var isObjectB = isObject(b);
   if (isObjectA && isObjectB) {
@@ -10608,60 +1344,73 @@ function looseEqual(a, b) {
       var isArrayB = Array.isArray(b);
       if (isArrayA && isArrayB) {
         return a.length === b.length && a.every(function (e, i) {
-          return looseEqual(e, b[i]);
-        });
+          return looseEqual(e, b[i])
+        })
       } else if (!isArrayA && !isArrayB) {
         var keysA = Object.keys(a);
         var keysB = Object.keys(b);
         return keysA.length === keysB.length && keysA.every(function (key) {
-          return looseEqual(a[key], b[key]);
-        });
+          return looseEqual(a[key], b[key])
+        })
       } else {
         /* istanbul ignore next */
-        return false;
+        return false
       }
     } catch (e) {
       /* istanbul ignore next */
-      return false;
+      return false
     }
   } else if (!isObjectA && !isObjectB) {
-    return String(a) === String(b);
+    return String(a) === String(b)
   } else {
-    return false;
+    return false
   }
 }
 
-function looseIndexOf(arr, val) {
+function looseIndexOf (arr, val) {
   for (var i = 0; i < arr.length; i++) {
-    if (looseEqual(arr[i], val)) {
-      return i;
-    }
+    if (looseEqual(arr[i], val)) { return i }
   }
-  return -1;
+  return -1
 }
 
 /**
  * Ensure a function is called only once.
  */
-function once(fn) {
+function once (fn) {
   var called = false;
   return function () {
     if (!called) {
       called = true;
       fn.apply(this, arguments);
     }
-  };
+  }
 }
 
 var SSR_ATTR = 'data-server-rendered';
 
-var ASSET_TYPES = ['component', 'directive', 'filter'];
+var ASSET_TYPES = [
+  'component',
+  'directive',
+  'filter'
+];
 
-var LIFECYCLE_HOOKS = ['beforeCreate', 'created', 'beforeMount', 'mounted', 'beforeUpdate', 'updated', 'beforeDestroy', 'destroyed', 'activated', 'deactivated'];
+var LIFECYCLE_HOOKS = [
+  'beforeCreate',
+  'created',
+  'beforeMount',
+  'mounted',
+  'beforeUpdate',
+  'updated',
+  'beforeDestroy',
+  'destroyed',
+  'activated',
+  'deactivated'
+];
 
 /*  */
 
-var config = {
+var config = ({
   /**
    * Option merge strategies (used in core/util/options)
    */
@@ -10745,7 +1494,7 @@ var config = {
    * Exposed for legacy reasons
    */
   _lifecycleHooks: LIFECYCLE_HOOKS
-};
+});
 
 /*  */
 
@@ -10754,15 +1503,15 @@ var emptyObject = Object.freeze({});
 /**
  * Check if a string starts with $ or _
  */
-function isReserved(str) {
+function isReserved (str) {
   var c = (str + '').charCodeAt(0);
-  return c === 0x24 || c === 0x5F;
+  return c === 0x24 || c === 0x5F
 }
 
 /**
  * Define a property.
  */
-function def(obj, key, val, enumerable) {
+function def (obj, key, val, enumerable) {
   Object.defineProperty(obj, key, {
     value: val,
     enumerable: !!enumerable,
@@ -10775,58 +1524,62 @@ function def(obj, key, val, enumerable) {
  * Parse simple path.
  */
 var bailRE = /[^\w.$]/;
-function parsePath(path) {
+function parsePath (path) {
   if (bailRE.test(path)) {
-    return;
+    return
   }
   var segments = path.split('.');
   return function (obj) {
     for (var i = 0; i < segments.length; i++) {
-      if (!obj) {
-        return;
-      }
+      if (!obj) { return }
       obj = obj[segments[i]];
     }
-    return obj;
-  };
+    return obj
+  }
 }
 
 /*  */
 
 var warn = noop;
 var tip = noop;
-var formatComponentName = null; // work around flow check
+var formatComponentName = (null); // work around flow check
 
 if (process.env.NODE_ENV !== 'production') {
   var hasConsole = typeof console !== 'undefined';
   var classifyRE = /(?:^|[-_])(\w)/g;
-  var classify = function (str) {
-    return str.replace(classifyRE, function (c) {
-      return c.toUpperCase();
-    }).replace(/[-_]/g, '');
-  };
+  var classify = function (str) { return str
+    .replace(classifyRE, function (c) { return c.toUpperCase(); })
+    .replace(/[-_]/g, ''); };
 
   warn = function (msg, vm) {
     var trace = vm ? generateComponentTrace(vm) : '';
 
     if (config.warnHandler) {
       config.warnHandler.call(null, msg, vm, trace);
-    } else if (hasConsole && !config.silent) {
-      console.error("[Vue warn]: " + msg + trace);
+    } else if (hasConsole && (!config.silent)) {
+      console.error(("[Vue warn]: " + msg + trace));
     }
   };
 
   tip = function (msg, vm) {
-    if (hasConsole && !config.silent) {
-      console.warn("[Vue tip]: " + msg + (vm ? generateComponentTrace(vm) : ''));
+    if (hasConsole && (!config.silent)) {
+      console.warn("[Vue tip]: " + msg + (
+        vm ? generateComponentTrace(vm) : ''
+      ));
     }
   };
 
   formatComponentName = function (vm, includeFile) {
     if (vm.$root === vm) {
-      return '<Root>';
+      return '<Root>'
     }
-    var name = typeof vm === 'string' ? vm : typeof vm === 'function' && vm.options ? vm.options.name : vm._isVue ? vm.$options.name || vm.$options._componentTag : vm.name;
+    var name = typeof vm === 'string'
+      ? vm
+      : typeof vm === 'function' && vm.options
+        ? vm.options.name
+        : vm._isVue
+          ? vm.$options.name || vm.$options._componentTag
+          : vm.name;
 
     var file = vm._isVue && vm.$options.__file;
     if (!name && file) {
@@ -10834,21 +1587,20 @@ if (process.env.NODE_ENV !== 'production') {
       name = match && match[1];
     }
 
-    return (name ? "<" + classify(name) + ">" : "<Anonymous>") + (file && includeFile !== false ? " at " + file : '');
+    return (
+      (name ? ("<" + (classify(name)) + ">") : "<Anonymous>") +
+      (file && includeFile !== false ? (" at " + file) : '')
+    )
   };
 
   var repeat = function (str, n) {
     var res = '';
     while (n) {
-      if (n % 2 === 1) {
-        res += str;
-      }
-      if (n > 1) {
-        str += str;
-      }
+      if (n % 2 === 1) { res += str; }
+      if (n > 1) { str += str; }
       n >>= 1;
     }
-    return res;
+    return res
   };
 
   var generateComponentTrace = function (vm) {
@@ -10861,7 +1613,7 @@ if (process.env.NODE_ENV !== 'production') {
           if (last.constructor === vm.constructor) {
             currentRecursiveSequence++;
             vm = vm.$parent;
-            continue;
+            continue
           } else if (currentRecursiveSequence > 0) {
             tree[tree.length - 1] = [last, currentRecursiveSequence];
             currentRecursiveSequence = 0;
@@ -10870,29 +1622,31 @@ if (process.env.NODE_ENV !== 'production') {
         tree.push(vm);
         vm = vm.$parent;
       }
-      return '\n\nfound in\n\n' + tree.map(function (vm, i) {
-        return "" + (i === 0 ? '---> ' : repeat(' ', 5 + i * 2)) + (Array.isArray(vm) ? formatComponentName(vm[0]) + "... (" + vm[1] + " recursive calls)" : formatComponentName(vm));
-      }).join('\n');
+      return '\n\nfound in\n\n' + tree
+        .map(function (vm, i) { return ("" + (i === 0 ? '---> ' : repeat(' ', 5 + i * 2)) + (Array.isArray(vm)
+            ? ((formatComponentName(vm[0])) + "... (" + (vm[1]) + " recursive calls)")
+            : formatComponentName(vm))); })
+        .join('\n')
     } else {
-      return "\n\n(found in " + formatComponentName(vm) + ")";
+      return ("\n\n(found in " + (formatComponentName(vm)) + ")")
     }
   };
 }
 
 /*  */
 
-function handleError(err, vm, info) {
+function handleError (err, vm, info) {
   if (config.errorHandler) {
     config.errorHandler.call(null, err, vm, info);
   } else {
     if (process.env.NODE_ENV !== 'production') {
-      warn("Error in " + info + ": \"" + err.toString() + "\"", vm);
+      warn(("Error in " + info + ": \"" + (err.toString()) + "\""), vm);
     }
     /* istanbul ignore else */
     if (inBrowser && typeof console !== 'undefined') {
       console.error(err);
     } else {
-      throw err;
+      throw err
     }
   }
 }
@@ -10914,18 +1668,18 @@ var isIOS = UA && /iphone|ipad|ipod|ios/.test(UA);
 var isChrome = UA && /chrome\/\d+/.test(UA) && !isEdge;
 
 // Firefox has a "watch" function on Object.prototype...
-var nativeWatch = {}.watch;
+var nativeWatch = ({}).watch;
 
 var supportsPassive = false;
 if (inBrowser) {
   try {
     var opts = {};
-    Object.defineProperty(opts, 'passive', {
-      get: function get() {
+    Object.defineProperty(opts, 'passive', ({
+      get: function get () {
         /* istanbul ignore next */
         supportsPassive = true;
       }
-    }); // https://github.com/facebook/flow/issues/285
+    })); // https://github.com/facebook/flow/issues/285
     window.addEventListener('test-passive', null, opts);
   } catch (e) {}
 }
@@ -10944,28 +1698,30 @@ var isServerRendering = function () {
       _isServer = false;
     }
   }
-  return _isServer;
+  return _isServer
 };
 
 // detect devtools
 var devtools = inBrowser && window.__VUE_DEVTOOLS_GLOBAL_HOOK__;
 
 /* istanbul ignore next */
-function isNative(Ctor) {
-  return typeof Ctor === 'function' && /native code/.test(Ctor.toString());
+function isNative (Ctor) {
+  return typeof Ctor === 'function' && /native code/.test(Ctor.toString())
 }
 
-var hasSymbol = typeof Symbol !== 'undefined' && isNative(Symbol) && typeof Reflect !== 'undefined' && isNative(Reflect.ownKeys);
+var hasSymbol =
+  typeof Symbol !== 'undefined' && isNative(Symbol) &&
+  typeof Reflect !== 'undefined' && isNative(Reflect.ownKeys);
 
 /**
  * Defer a task to execute it asynchronously.
  */
-var nextTick = function () {
+var nextTick = (function () {
   var callbacks = [];
   var pending = false;
   var timerFunc;
 
-  function nextTickHandler() {
+  function nextTickHandler () {
     pending = false;
     var copies = callbacks.slice(0);
     callbacks.length = 0;
@@ -10983,9 +1739,7 @@ var nextTick = function () {
   /* istanbul ignore if */
   if (typeof Promise !== 'undefined' && isNative(Promise)) {
     var p = Promise.resolve();
-    var logError = function (err) {
-      console.error(err);
-    };
+    var logError = function (err) { console.error(err); };
     timerFunc = function () {
       p.then(nextTickHandler).catch(logError);
       // in problematic UIWebViews, Promise.then doesn't completely break, but
@@ -10993,13 +1747,13 @@ var nextTick = function () {
       // microtask queue but the queue isn't being flushed, until the browser
       // needs to do some other work, e.g. handle a timer. Therefore we can
       // "force" the microtask queue to be flushed by adding an empty timer.
-      if (isIOS) {
-        setTimeout(noop);
-      }
+      if (isIOS) { setTimeout(noop); }
     };
-  } else if (!isIE && typeof MutationObserver !== 'undefined' && (isNative(MutationObserver) ||
-  // PhantomJS and iOS 7.x
-  MutationObserver.toString() === '[object MutationObserverConstructor]')) {
+  } else if (!isIE && typeof MutationObserver !== 'undefined' && (
+    isNative(MutationObserver) ||
+    // PhantomJS and iOS 7.x
+    MutationObserver.toString() === '[object MutationObserverConstructor]'
+  )) {
     // use MutationObserver where native Promise is not available,
     // e.g. PhantomJS, iOS7, Android 4.4
     var counter = 1;
@@ -11020,7 +1774,7 @@ var nextTick = function () {
     };
   }
 
-  return function queueNextTick(cb, ctx) {
+  return function queueNextTick (cb, ctx) {
     var _resolve;
     callbacks.push(function () {
       if (cb) {
@@ -11040,10 +1794,10 @@ var nextTick = function () {
     if (!cb && typeof Promise !== 'undefined') {
       return new Promise(function (resolve, reject) {
         _resolve = resolve;
-      });
+      })
     }
-  };
-}();
+  }
+})();
 
 var _Set;
 /* istanbul ignore if */
@@ -11052,25 +1806,26 @@ if (typeof Set !== 'undefined' && isNative(Set)) {
   _Set = Set;
 } else {
   // a non-standard Set polyfill that only works with primitive keys.
-  _Set = function () {
-    function Set() {
+  _Set = (function () {
+    function Set () {
       this.set = Object.create(null);
     }
-    Set.prototype.has = function has(key) {
-      return this.set[key] === true;
+    Set.prototype.has = function has (key) {
+      return this.set[key] === true
     };
-    Set.prototype.add = function add(key) {
+    Set.prototype.add = function add (key) {
       this.set[key] = true;
     };
-    Set.prototype.clear = function clear() {
+    Set.prototype.clear = function clear () {
       this.set = Object.create(null);
     };
 
     return Set;
-  }();
+  }());
 }
 
 /*  */
+
 
 var uid = 0;
 
@@ -11078,26 +1833,26 @@ var uid = 0;
  * A dep is an observable that can have multiple
  * directives subscribing to it.
  */
-var Dep = function Dep() {
+var Dep = function Dep () {
   this.id = uid++;
   this.subs = [];
 };
 
-Dep.prototype.addSub = function addSub(sub) {
+Dep.prototype.addSub = function addSub (sub) {
   this.subs.push(sub);
 };
 
-Dep.prototype.removeSub = function removeSub(sub) {
+Dep.prototype.removeSub = function removeSub (sub) {
   remove(this.subs, sub);
 };
 
-Dep.prototype.depend = function depend() {
+Dep.prototype.depend = function depend () {
   if (Dep.target) {
     Dep.target.addDep(this);
   }
 };
 
-Dep.prototype.notify = function notify() {
+Dep.prototype.notify = function notify () {
   // stabilize the subscriber list first
   var subs = this.subs.slice();
   for (var i = 0, l = subs.length; i < l; i++) {
@@ -11111,14 +1866,12 @@ Dep.prototype.notify = function notify() {
 Dep.target = null;
 var targetStack = [];
 
-function pushTarget(_target) {
-  if (Dep.target) {
-    targetStack.push(Dep.target);
-  }
+function pushTarget (_target) {
+  if (Dep.target) { targetStack.push(Dep.target); }
   Dep.target = _target;
 }
 
-function popTarget() {
+function popTarget () {
   Dep.target = targetStack.pop();
 }
 
@@ -11128,13 +1881,21 @@ function popTarget() {
  */
 
 var arrayProto = Array.prototype;
-var arrayMethods = Object.create(arrayProto);['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse'].forEach(function (method) {
+var arrayMethods = Object.create(arrayProto);[
+  'push',
+  'pop',
+  'shift',
+  'unshift',
+  'splice',
+  'sort',
+  'reverse'
+]
+.forEach(function (method) {
   // cache original method
   var original = arrayProto[method];
-  def(arrayMethods, method, function mutator() {
-    var args = [],
-        len = arguments.length;
-    while (len--) args[len] = arguments[len];
+  def(arrayMethods, method, function mutator () {
+    var args = [], len = arguments.length;
+    while ( len-- ) args[ len ] = arguments[ len ];
 
     var result = original.apply(this, args);
     var ob = this.__ob__;
@@ -11143,17 +1904,15 @@ var arrayMethods = Object.create(arrayProto);['push', 'pop', 'shift', 'unshift',
       case 'push':
       case 'unshift':
         inserted = args;
-        break;
+        break
       case 'splice':
         inserted = args.slice(2);
-        break;
+        break
     }
-    if (inserted) {
-      ob.observeArray(inserted);
-    }
+    if (inserted) { ob.observeArray(inserted); }
     // notify change
     ob.dep.notify();
-    return result;
+    return result
   });
 });
 
@@ -11177,13 +1936,15 @@ var observerState = {
  * object's property keys into getter/setters that
  * collect dependencies and dispatches updates.
  */
-var Observer = function Observer(value) {
+var Observer = function Observer (value) {
   this.value = value;
   this.dep = new Dep();
   this.vmCount = 0;
   def(value, '__ob__', this);
   if (Array.isArray(value)) {
-    var augment = hasProto ? protoAugment : copyAugment;
+    var augment = hasProto
+      ? protoAugment
+      : copyAugment;
     augment(value, arrayMethods, arrayKeys);
     this.observeArray(value);
   } else {
@@ -11196,7 +1957,7 @@ var Observer = function Observer(value) {
  * getter/setters. This method should only be called when
  * value type is Object.
  */
-Observer.prototype.walk = function walk(obj) {
+Observer.prototype.walk = function walk (obj) {
   var keys = Object.keys(obj);
   for (var i = 0; i < keys.length; i++) {
     defineReactive$$1(obj, keys[i], obj[keys[i]]);
@@ -11206,7 +1967,7 @@ Observer.prototype.walk = function walk(obj) {
 /**
  * Observe a list of Array items.
  */
-Observer.prototype.observeArray = function observeArray(items) {
+Observer.prototype.observeArray = function observeArray (items) {
   for (var i = 0, l = items.length; i < l; i++) {
     observe(items[i]);
   }
@@ -11218,7 +1979,7 @@ Observer.prototype.observeArray = function observeArray(items) {
  * Augment an target Object or Array by intercepting
  * the prototype chain using __proto__
  */
-function protoAugment(target, src, keys) {
+function protoAugment (target, src, keys) {
   /* eslint-disable no-proto */
   target.__proto__ = src;
   /* eslint-enable no-proto */
@@ -11229,7 +1990,7 @@ function protoAugment(target, src, keys) {
  * hidden properties.
  */
 /* istanbul ignore next */
-function copyAugment(target, src, keys) {
+function copyAugment (target, src, keys) {
   for (var i = 0, l = keys.length; i < l; i++) {
     var key = keys[i];
     def(target, key, src[key]);
@@ -11241,31 +2002,43 @@ function copyAugment(target, src, keys) {
  * returns the new observer if successfully observed,
  * or the existing observer if the value already has one.
  */
-function observe(value, asRootData) {
+function observe (value, asRootData) {
   if (!isObject(value)) {
-    return;
+    return
   }
   var ob;
   if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observer) {
     ob = value.__ob__;
-  } else if (observerState.shouldConvert && !isServerRendering() && (Array.isArray(value) || isPlainObject(value)) && Object.isExtensible(value) && !value._isVue) {
+  } else if (
+    observerState.shouldConvert &&
+    !isServerRendering() &&
+    (Array.isArray(value) || isPlainObject(value)) &&
+    Object.isExtensible(value) &&
+    !value._isVue
+  ) {
     ob = new Observer(value);
   }
   if (asRootData && ob) {
     ob.vmCount++;
   }
-  return ob;
+  return ob
 }
 
 /**
  * Define a reactive property on an Object.
  */
-function defineReactive$$1(obj, key, val, customSetter, shallow) {
+function defineReactive$$1 (
+  obj,
+  key,
+  val,
+  customSetter,
+  shallow
+) {
   var dep = new Dep();
 
   var property = Object.getOwnPropertyDescriptor(obj, key);
   if (property && property.configurable === false) {
-    return;
+    return
   }
 
   // cater for pre-defined getter/setters
@@ -11276,7 +2049,7 @@ function defineReactive$$1(obj, key, val, customSetter, shallow) {
   Object.defineProperty(obj, key, {
     enumerable: true,
     configurable: true,
-    get: function reactiveGetter() {
+    get: function reactiveGetter () {
       var value = getter ? getter.call(obj) : val;
       if (Dep.target) {
         dep.depend();
@@ -11287,13 +2060,13 @@ function defineReactive$$1(obj, key, val, customSetter, shallow) {
           }
         }
       }
-      return value;
+      return value
     },
-    set: function reactiveSetter(newVal) {
+    set: function reactiveSetter (newVal) {
       var value = getter ? getter.call(obj) : val;
       /* eslint-disable no-self-compare */
-      if (newVal === value || newVal !== newVal && value !== value) {
-        return;
+      if (newVal === value || (newVal !== newVal && value !== value)) {
+        return
       }
       /* eslint-enable no-self-compare */
       if (process.env.NODE_ENV !== 'production' && customSetter) {
@@ -11315,49 +2088,55 @@ function defineReactive$$1(obj, key, val, customSetter, shallow) {
  * triggers change notification if the property doesn't
  * already exist.
  */
-function set(target, key, val) {
+function set (target, key, val) {
   if (Array.isArray(target) && isValidArrayIndex(key)) {
     target.length = Math.max(target.length, key);
     target.splice(key, 1, val);
-    return val;
+    return val
   }
   if (hasOwn(target, key)) {
     target[key] = val;
-    return val;
+    return val
   }
-  var ob = target.__ob__;
-  if (target._isVue || ob && ob.vmCount) {
-    process.env.NODE_ENV !== 'production' && warn('Avoid adding reactive properties to a Vue instance or its root $data ' + 'at runtime - declare it upfront in the data option.');
-    return val;
+  var ob = (target).__ob__;
+  if (target._isVue || (ob && ob.vmCount)) {
+    process.env.NODE_ENV !== 'production' && warn(
+      'Avoid adding reactive properties to a Vue instance or its root $data ' +
+      'at runtime - declare it upfront in the data option.'
+    );
+    return val
   }
   if (!ob) {
     target[key] = val;
-    return val;
+    return val
   }
   defineReactive$$1(ob.value, key, val);
   ob.dep.notify();
-  return val;
+  return val
 }
 
 /**
  * Delete a property and trigger change if necessary.
  */
-function del(target, key) {
+function del (target, key) {
   if (Array.isArray(target) && isValidArrayIndex(key)) {
     target.splice(key, 1);
-    return;
+    return
   }
-  var ob = target.__ob__;
-  if (target._isVue || ob && ob.vmCount) {
-    process.env.NODE_ENV !== 'production' && warn('Avoid deleting properties on a Vue instance or its root $data ' + '- just set it to null.');
-    return;
+  var ob = (target).__ob__;
+  if (target._isVue || (ob && ob.vmCount)) {
+    process.env.NODE_ENV !== 'production' && warn(
+      'Avoid deleting properties on a Vue instance or its root $data ' +
+      '- just set it to null.'
+    );
+    return
   }
   if (!hasOwn(target, key)) {
-    return;
+    return
   }
   delete target[key];
   if (!ob) {
-    return;
+    return
   }
   ob.dep.notify();
 }
@@ -11366,8 +2145,8 @@ function del(target, key) {
  * Collect dependencies on array elements when the array is touched, since
  * we cannot intercept array element access like property getters.
  */
-function dependArray(value) {
-  for (var e = void 0, i = 0, l = value.length; i < l; i++) {
+function dependArray (value) {
+  for (var e = (void 0), i = 0, l = value.length; i < l; i++) {
     e = value[i];
     e && e.__ob__ && e.__ob__.dep.depend();
     if (Array.isArray(e)) {
@@ -11391,19 +2170,20 @@ var strats = config.optionMergeStrategies;
 if (process.env.NODE_ENV !== 'production') {
   strats.el = strats.propsData = function (parent, child, vm, key) {
     if (!vm) {
-      warn("option \"" + key + "\" can only be used during instance " + 'creation with the `new` keyword.');
+      warn(
+        "option \"" + key + "\" can only be used during instance " +
+        'creation with the `new` keyword.'
+      );
     }
-    return defaultStrat(parent, child);
+    return defaultStrat(parent, child)
   };
 }
 
 /**
  * Helper that recursively merges two data objects together.
  */
-function mergeData(to, from) {
-  if (!from) {
-    return to;
-  }
+function mergeData (to, from) {
+  if (!from) { return to }
   var key, toVal, fromVal;
   var keys = Object.keys(from);
   for (var i = 0; i < keys.length; i++) {
@@ -11416,61 +2196,90 @@ function mergeData(to, from) {
       mergeData(toVal, fromVal);
     }
   }
-  return to;
+  return to
 }
 
 /**
  * Data
  */
-function mergeDataOrFn(parentVal, childVal, vm) {
+function mergeDataOrFn (
+  parentVal,
+  childVal,
+  vm
+) {
   if (!vm) {
     // in a Vue.extend merge, both should be functions
     if (!childVal) {
-      return parentVal;
+      return parentVal
     }
     if (!parentVal) {
-      return childVal;
+      return childVal
     }
     // when parentVal & childVal are both present,
     // we need to return a function that returns the
     // merged result of both functions... no need to
     // check if parentVal is a function here because
     // it has to be a function to pass previous merges.
-    return function mergedDataFn() {
-      return mergeData(typeof childVal === 'function' ? childVal.call(this) : childVal, typeof parentVal === 'function' ? parentVal.call(this) : parentVal);
-    };
+    return function mergedDataFn () {
+      return mergeData(
+        typeof childVal === 'function' ? childVal.call(this) : childVal,
+        typeof parentVal === 'function' ? parentVal.call(this) : parentVal
+      )
+    }
   } else if (parentVal || childVal) {
-    return function mergedInstanceDataFn() {
+    return function mergedInstanceDataFn () {
       // instance merge
-      var instanceData = typeof childVal === 'function' ? childVal.call(vm) : childVal;
-      var defaultData = typeof parentVal === 'function' ? parentVal.call(vm) : parentVal;
+      var instanceData = typeof childVal === 'function'
+        ? childVal.call(vm)
+        : childVal;
+      var defaultData = typeof parentVal === 'function'
+        ? parentVal.call(vm)
+        : parentVal;
       if (instanceData) {
-        return mergeData(instanceData, defaultData);
+        return mergeData(instanceData, defaultData)
       } else {
-        return defaultData;
+        return defaultData
       }
-    };
+    }
   }
 }
 
-strats.data = function (parentVal, childVal, vm) {
+strats.data = function (
+  parentVal,
+  childVal,
+  vm
+) {
   if (!vm) {
     if (childVal && typeof childVal !== 'function') {
-      process.env.NODE_ENV !== 'production' && warn('The "data" option should be a function ' + 'that returns a per-instance value in component ' + 'definitions.', vm);
+      process.env.NODE_ENV !== 'production' && warn(
+        'The "data" option should be a function ' +
+        'that returns a per-instance value in component ' +
+        'definitions.',
+        vm
+      );
 
-      return parentVal;
+      return parentVal
     }
-    return mergeDataOrFn.call(this, parentVal, childVal);
+    return mergeDataOrFn.call(this, parentVal, childVal)
   }
 
-  return mergeDataOrFn(parentVal, childVal, vm);
+  return mergeDataOrFn(parentVal, childVal, vm)
 };
 
 /**
  * Hooks and props are merged as arrays.
  */
-function mergeHook(parentVal, childVal) {
-  return childVal ? parentVal ? parentVal.concat(childVal) : Array.isArray(childVal) ? childVal : [childVal] : parentVal;
+function mergeHook (
+  parentVal,
+  childVal
+) {
+  return childVal
+    ? parentVal
+      ? parentVal.concat(childVal)
+      : Array.isArray(childVal)
+        ? childVal
+        : [childVal]
+    : parentVal
 }
 
 LIFECYCLE_HOOKS.forEach(function (hook) {
@@ -11484,9 +2293,11 @@ LIFECYCLE_HOOKS.forEach(function (hook) {
  * a three-way merge between constructor options, instance
  * options and parent options.
  */
-function mergeAssets(parentVal, childVal) {
+function mergeAssets (parentVal, childVal) {
   var res = Object.create(parentVal || null);
-  return childVal ? extend(res, childVal) : res;
+  return childVal
+    ? extend(res, childVal)
+    : res
 }
 
 ASSET_TYPES.forEach(function (type) {
@@ -11501,19 +2312,11 @@ ASSET_TYPES.forEach(function (type) {
  */
 strats.watch = function (parentVal, childVal) {
   // work around Firefox's Object.prototype.watch...
-  if (parentVal === nativeWatch) {
-    parentVal = undefined;
-  }
-  if (childVal === nativeWatch) {
-    childVal = undefined;
-  }
+  if (parentVal === nativeWatch) { parentVal = undefined; }
+  if (childVal === nativeWatch) { childVal = undefined; }
   /* istanbul ignore if */
-  if (!childVal) {
-    return Object.create(parentVal || null);
-  }
-  if (!parentVal) {
-    return childVal;
-  }
+  if (!childVal) { return Object.create(parentVal || null) }
+  if (!parentVal) { return childVal }
   var ret = {};
   extend(ret, parentVal);
   for (var key in childVal) {
@@ -11522,24 +2325,25 @@ strats.watch = function (parentVal, childVal) {
     if (parent && !Array.isArray(parent)) {
       parent = [parent];
     }
-    ret[key] = parent ? parent.concat(child) : Array.isArray(child) ? child : [child];
+    ret[key] = parent
+      ? parent.concat(child)
+      : Array.isArray(child) ? child : [child];
   }
-  return ret;
+  return ret
 };
 
 /**
  * Other object hashes.
  */
-strats.props = strats.methods = strats.inject = strats.computed = function (parentVal, childVal) {
-  if (!parentVal) {
-    return childVal;
-  }
+strats.props =
+strats.methods =
+strats.inject =
+strats.computed = function (parentVal, childVal) {
+  if (!parentVal) { return childVal }
   var ret = Object.create(null);
   extend(ret, parentVal);
-  if (childVal) {
-    extend(ret, childVal);
-  }
-  return ret;
+  if (childVal) { extend(ret, childVal); }
+  return ret
 };
 strats.provide = mergeDataOrFn;
 
@@ -11547,17 +2351,22 @@ strats.provide = mergeDataOrFn;
  * Default strategy.
  */
 var defaultStrat = function (parentVal, childVal) {
-  return childVal === undefined ? parentVal : childVal;
+  return childVal === undefined
+    ? parentVal
+    : childVal
 };
 
 /**
  * Validate component names
  */
-function checkComponents(options) {
+function checkComponents (options) {
   for (var key in options.components) {
     var lower = key.toLowerCase();
     if (isBuiltInTag(lower) || config.isReservedTag(lower)) {
-      warn('Do not use built-in or reserved HTML elements as component ' + 'id: ' + key);
+      warn(
+        'Do not use built-in or reserved HTML elements as component ' +
+        'id: ' + key
+      );
     }
   }
 }
@@ -11566,11 +2375,9 @@ function checkComponents(options) {
  * Ensure all props option syntax are normalized into the
  * Object-based format.
  */
-function normalizeProps(options) {
+function normalizeProps (options) {
   var props = options.props;
-  if (!props) {
-    return;
-  }
+  if (!props) { return }
   var res = {};
   var i, val, name;
   if (Array.isArray(props)) {
@@ -11588,7 +2395,9 @@ function normalizeProps(options) {
     for (var key in props) {
       val = props[key];
       name = camelize(key);
-      res[name] = isPlainObject(val) ? val : { type: val };
+      res[name] = isPlainObject(val)
+        ? val
+        : { type: val };
     }
   }
   options.props = res;
@@ -11597,7 +2406,7 @@ function normalizeProps(options) {
 /**
  * Normalize all injections into Object-based format
  */
-function normalizeInject(options) {
+function normalizeInject (options) {
   var inject = options.inject;
   if (Array.isArray(inject)) {
     var normalized = options.inject = {};
@@ -11610,7 +2419,7 @@ function normalizeInject(options) {
 /**
  * Normalize raw function directives into object format.
  */
-function normalizeDirectives(options) {
+function normalizeDirectives (options) {
   var dirs = options.directives;
   if (dirs) {
     for (var key in dirs) {
@@ -11626,7 +2435,11 @@ function normalizeDirectives(options) {
  * Merge two option objects into a new one.
  * Core utility used in both instantiation and inheritance.
  */
-function mergeOptions(parent, child, vm) {
+function mergeOptions (
+  parent,
+  child,
+  vm
+) {
   if (process.env.NODE_ENV !== 'production') {
     checkComponents(child);
   }
@@ -11657,11 +2470,11 @@ function mergeOptions(parent, child, vm) {
       mergeField(key);
     }
   }
-  function mergeField(key) {
+  function mergeField (key) {
     var strat = strats[key] || defaultStrat;
     options[key] = strat(parent[key], child[key], vm, key);
   }
-  return options;
+  return options
 }
 
 /**
@@ -11669,35 +2482,42 @@ function mergeOptions(parent, child, vm) {
  * This function is used because child instances need access
  * to assets defined in its ancestor chain.
  */
-function resolveAsset(options, type, id, warnMissing) {
+function resolveAsset (
+  options,
+  type,
+  id,
+  warnMissing
+) {
   /* istanbul ignore if */
   if (typeof id !== 'string') {
-    return;
+    return
   }
   var assets = options[type];
   // check local registration variations first
-  if (hasOwn(assets, id)) {
-    return assets[id];
-  }
+  if (hasOwn(assets, id)) { return assets[id] }
   var camelizedId = camelize(id);
-  if (hasOwn(assets, camelizedId)) {
-    return assets[camelizedId];
-  }
+  if (hasOwn(assets, camelizedId)) { return assets[camelizedId] }
   var PascalCaseId = capitalize(camelizedId);
-  if (hasOwn(assets, PascalCaseId)) {
-    return assets[PascalCaseId];
-  }
+  if (hasOwn(assets, PascalCaseId)) { return assets[PascalCaseId] }
   // fallback to prototype chain
   var res = assets[id] || assets[camelizedId] || assets[PascalCaseId];
   if (process.env.NODE_ENV !== 'production' && warnMissing && !res) {
-    warn('Failed to resolve ' + type.slice(0, -1) + ': ' + id, options);
+    warn(
+      'Failed to resolve ' + type.slice(0, -1) + ': ' + id,
+      options
+    );
   }
-  return res;
+  return res
 }
 
 /*  */
 
-function validateProp(key, propOptions, propsData, vm) {
+function validateProp (
+  key,
+  propOptions,
+  propsData,
+  vm
+) {
   var prop = propOptions[key];
   var absent = !hasOwn(propsData, key);
   var value = propsData[key];
@@ -11722,42 +2542,61 @@ function validateProp(key, propOptions, propsData, vm) {
   if (process.env.NODE_ENV !== 'production') {
     assertProp(prop, key, value, vm, absent);
   }
-  return value;
+  return value
 }
 
 /**
  * Get the default value of a prop.
  */
-function getPropDefaultValue(vm, prop, key) {
+function getPropDefaultValue (vm, prop, key) {
   // no default, return undefined
   if (!hasOwn(prop, 'default')) {
-    return undefined;
+    return undefined
   }
   var def = prop.default;
   // warn against non-factory defaults for Object & Array
   if (process.env.NODE_ENV !== 'production' && isObject(def)) {
-    warn('Invalid default value for prop "' + key + '": ' + 'Props with type Object/Array must use a factory function ' + 'to return the default value.', vm);
+    warn(
+      'Invalid default value for prop "' + key + '": ' +
+      'Props with type Object/Array must use a factory function ' +
+      'to return the default value.',
+      vm
+    );
   }
   // the raw prop value was also undefined from previous render,
   // return previous default value to avoid unnecessary watcher trigger
-  if (vm && vm.$options.propsData && vm.$options.propsData[key] === undefined && vm._props[key] !== undefined) {
-    return vm._props[key];
+  if (vm && vm.$options.propsData &&
+    vm.$options.propsData[key] === undefined &&
+    vm._props[key] !== undefined
+  ) {
+    return vm._props[key]
   }
   // call factory function for non-Function types
   // a value is Function if its prototype is function even across different execution context
-  return typeof def === 'function' && getType(prop.type) !== 'Function' ? def.call(vm) : def;
+  return typeof def === 'function' && getType(prop.type) !== 'Function'
+    ? def.call(vm)
+    : def
 }
 
 /**
  * Assert whether a prop is valid.
  */
-function assertProp(prop, name, value, vm, absent) {
+function assertProp (
+  prop,
+  name,
+  value,
+  vm,
+  absent
+) {
   if (prop.required && absent) {
-    warn('Missing required prop: "' + name + '"', vm);
-    return;
+    warn(
+      'Missing required prop: "' + name + '"',
+      vm
+    );
+    return
   }
   if (value == null && !prop.required) {
-    return;
+    return
   }
   var type = prop.type;
   var valid = !type || type === true;
@@ -11773,20 +2612,28 @@ function assertProp(prop, name, value, vm, absent) {
     }
   }
   if (!valid) {
-    warn('Invalid prop: type check failed for prop "' + name + '".' + ' Expected ' + expectedTypes.map(capitalize).join(', ') + ', got ' + Object.prototype.toString.call(value).slice(8, -1) + '.', vm);
-    return;
+    warn(
+      'Invalid prop: type check failed for prop "' + name + '".' +
+      ' Expected ' + expectedTypes.map(capitalize).join(', ') +
+      ', got ' + Object.prototype.toString.call(value).slice(8, -1) + '.',
+      vm
+    );
+    return
   }
   var validator = prop.validator;
   if (validator) {
     if (!validator(value)) {
-      warn('Invalid prop: custom validator check failed for prop "' + name + '".', vm);
+      warn(
+        'Invalid prop: custom validator check failed for prop "' + name + '".',
+        vm
+      );
     }
   }
 }
 
 var simpleCheckRE = /^(String|Number|Boolean|Function|Symbol)$/;
 
-function assertType(value, type) {
+function assertType (value, type) {
   var valid;
   var expectedType = getType(type);
   if (simpleCheckRE.test(expectedType)) {
@@ -11806,7 +2653,7 @@ function assertType(value, type) {
   return {
     valid: valid,
     expectedType: expectedType
-  };
+  }
 }
 
 /**
@@ -11814,22 +2661,22 @@ function assertType(value, type) {
  * because a simple equality check will fail when running
  * across different vms / iframes.
  */
-function getType(fn) {
+function getType (fn) {
   var match = fn && fn.toString().match(/^\s*function (\w+)/);
-  return match ? match[1] : '';
+  return match ? match[1] : ''
 }
 
-function isType(type, fn) {
+function isType (type, fn) {
   if (!Array.isArray(fn)) {
-    return getType(fn) === getType(type);
+    return getType(fn) === getType(type)
   }
   for (var i = 0, len = fn.length; i < len; i++) {
     if (getType(fn[i]) === getType(type)) {
-      return true;
+      return true
     }
   }
   /* istanbul ignore next */
-  return false;
+  return false
 }
 
 /*  */
@@ -11840,10 +2687,14 @@ var measure;
 if (process.env.NODE_ENV !== 'production') {
   var perf = inBrowser && window.performance;
   /* istanbul ignore if */
-  if (perf && perf.mark && perf.measure && perf.clearMarks && perf.clearMeasures) {
-    mark = function (tag) {
-      return perf.mark(tag);
-    };
+  if (
+    perf &&
+    perf.mark &&
+    perf.measure &&
+    perf.clearMarks &&
+    perf.clearMeasures
+  ) {
+    mark = function (tag) { return perf.mark(tag); };
     measure = function (name, startTag, endTag) {
       perf.measure(name, startTag, endTag);
       perf.clearMarks(startTag);
@@ -11858,55 +2709,68 @@ if (process.env.NODE_ENV !== 'production') {
 var initProxy;
 
 if (process.env.NODE_ENV !== 'production') {
-  var allowedGlobals = makeMap('Infinity,undefined,NaN,isFinite,isNaN,' + 'parseFloat,parseInt,decodeURI,decodeURIComponent,encodeURI,encodeURIComponent,' + 'Math,Number,Date,Array,Object,Boolean,String,RegExp,Map,Set,JSON,Intl,' + 'require' // for Webpack/Browserify
+  var allowedGlobals = makeMap(
+    'Infinity,undefined,NaN,isFinite,isNaN,' +
+    'parseFloat,parseInt,decodeURI,decodeURIComponent,encodeURI,encodeURIComponent,' +
+    'Math,Number,Date,Array,Object,Boolean,String,RegExp,Map,Set,JSON,Intl,' +
+    'require' // for Webpack/Browserify
   );
 
   var warnNonPresent = function (target, key) {
-    warn("Property or method \"" + key + "\" is not defined on the instance but " + "referenced during render. Make sure to declare reactive data " + "properties in the data option.", target);
+    warn(
+      "Property or method \"" + key + "\" is not defined on the instance but " +
+      "referenced during render. Make sure to declare reactive data " +
+      "properties in the data option.",
+      target
+    );
   };
 
-  var hasProxy = typeof Proxy !== 'undefined' && Proxy.toString().match(/native code/);
+  var hasProxy =
+    typeof Proxy !== 'undefined' &&
+    Proxy.toString().match(/native code/);
 
   if (hasProxy) {
     var isBuiltInModifier = makeMap('stop,prevent,self,ctrl,shift,alt,meta');
     config.keyCodes = new Proxy(config.keyCodes, {
-      set: function set(target, key, value) {
+      set: function set (target, key, value) {
         if (isBuiltInModifier(key)) {
-          warn("Avoid overwriting built-in modifier in config.keyCodes: ." + key);
-          return false;
+          warn(("Avoid overwriting built-in modifier in config.keyCodes: ." + key));
+          return false
         } else {
           target[key] = value;
-          return true;
+          return true
         }
       }
     });
   }
 
   var hasHandler = {
-    has: function has(target, key) {
+    has: function has (target, key) {
       var has = key in target;
       var isAllowed = allowedGlobals(key) || key.charAt(0) === '_';
       if (!has && !isAllowed) {
         warnNonPresent(target, key);
       }
-      return has || !isAllowed;
+      return has || !isAllowed
     }
   };
 
   var getHandler = {
-    get: function get(target, key) {
+    get: function get (target, key) {
       if (typeof key === 'string' && !(key in target)) {
         warnNonPresent(target, key);
       }
-      return target[key];
+      return target[key]
     }
   };
 
-  initProxy = function initProxy(vm) {
+  initProxy = function initProxy (vm) {
     if (hasProxy) {
       // determine which proxy handler to use
       var options = vm.$options;
-      var handlers = options.render && options.render._withStripped ? getHandler : hasHandler;
+      var handlers = options.render && options.render._withStripped
+        ? getHandler
+        : hasHandler;
       vm._renderProxy = new Proxy(vm, handlers);
     } else {
       vm._renderProxy = vm;
@@ -11916,7 +2780,16 @@ if (process.env.NODE_ENV !== 'production') {
 
 /*  */
 
-var VNode = function VNode(tag, data, children, text, elm, context, componentOptions, asyncFactory) {
+var VNode = function VNode (
+  tag,
+  data,
+  children,
+  text,
+  elm,
+  context,
+  componentOptions,
+  asyncFactory
+) {
   this.tag = tag;
   this.data = data;
   this.children = children;
@@ -11945,30 +2818,39 @@ var prototypeAccessors = { child: {} };
 // DEPRECATED: alias for componentInstance for backwards compat.
 /* istanbul ignore next */
 prototypeAccessors.child.get = function () {
-  return this.componentInstance;
+  return this.componentInstance
 };
 
-Object.defineProperties(VNode.prototype, prototypeAccessors);
+Object.defineProperties( VNode.prototype, prototypeAccessors );
 
 var createEmptyVNode = function (text) {
-  if (text === void 0) text = '';
+  if ( text === void 0 ) text = '';
 
   var node = new VNode();
   node.text = text;
   node.isComment = true;
-  return node;
+  return node
 };
 
-function createTextVNode(val) {
-  return new VNode(undefined, undefined, undefined, String(val));
+function createTextVNode (val) {
+  return new VNode(undefined, undefined, undefined, String(val))
 }
 
 // optimized shallow clone
 // used for static nodes and slot nodes because they may be reused across
 // multiple renders, cloning them avoids errors when DOM manipulations rely
 // on their elm reference.
-function cloneVNode(vnode, deep) {
-  var cloned = new VNode(vnode.tag, vnode.data, vnode.children, vnode.text, vnode.elm, vnode.context, vnode.componentOptions, vnode.asyncFactory);
+function cloneVNode (vnode, deep) {
+  var cloned = new VNode(
+    vnode.tag,
+    vnode.data,
+    vnode.children,
+    vnode.text,
+    vnode.elm,
+    vnode.context,
+    vnode.componentOptions,
+    vnode.asyncFactory
+  );
   cloned.ns = vnode.ns;
   cloned.isStatic = vnode.isStatic;
   cloned.key = vnode.key;
@@ -11977,16 +2859,16 @@ function cloneVNode(vnode, deep) {
   if (deep && vnode.children) {
     cloned.children = cloneVNodes(vnode.children);
   }
-  return cloned;
+  return cloned
 }
 
-function cloneVNodes(vnodes, deep) {
+function cloneVNodes (vnodes, deep) {
   var len = vnodes.length;
   var res = new Array(len);
   for (var i = 0; i < len; i++) {
     res[i] = cloneVNode(vnodes[i], deep);
   }
-  return res;
+  return res
 }
 
 /*  */
@@ -12005,11 +2887,11 @@ var normalizeEvent = cached(function (name) {
     once: once$$1,
     capture: capture,
     passive: passive
-  };
+  }
 });
 
-function createFnInvoker(fns) {
-  function invoker() {
+function createFnInvoker (fns) {
+  function invoker () {
     var arguments$1 = arguments;
 
     var fns = invoker.fns;
@@ -12020,19 +2902,25 @@ function createFnInvoker(fns) {
       }
     } else {
       // return handler return value for single handlers
-      return fns.apply(null, arguments);
+      return fns.apply(null, arguments)
     }
   }
   invoker.fns = fns;
-  return invoker;
+  return invoker
 }
 
 // #6552
-function prioritizePlainEvents(a, b) {
-  return a.plain ? -1 : b.plain ? 1 : 0;
+function prioritizePlainEvents (a, b) {
+  return a.plain ? -1 : b.plain ? 1 : 0
 }
 
-function updateListeners(on, oldOn, add, remove$$1, vm) {
+function updateListeners (
+  on,
+  oldOn,
+  add,
+  remove$$1,
+  vm
+) {
   var name, cur, old, event;
   var toAdd = [];
   var hasModifier = false;
@@ -12040,11 +2928,12 @@ function updateListeners(on, oldOn, add, remove$$1, vm) {
     cur = on[name];
     old = oldOn[name];
     event = normalizeEvent(name);
-    if (!event.plain) {
-      hasModifier = true;
-    }
+    if (!event.plain) { hasModifier = true; }
     if (isUndef(cur)) {
-      process.env.NODE_ENV !== 'production' && warn("Invalid handler for event \"" + event.name + "\": got " + String(cur), vm);
+      process.env.NODE_ENV !== 'production' && warn(
+        "Invalid handler for event \"" + (event.name) + "\": got " + String(cur),
+        vm
+      );
     } else if (isUndef(old)) {
       if (isUndef(cur.fns)) {
         cur = on[name] = createFnInvoker(cur);
@@ -12057,9 +2946,7 @@ function updateListeners(on, oldOn, add, remove$$1, vm) {
     }
   }
   if (toAdd.length) {
-    if (hasModifier) {
-      toAdd.sort(prioritizePlainEvents);
-    }
+    if (hasModifier) { toAdd.sort(prioritizePlainEvents); }
     for (var i = 0; i < toAdd.length; i++) {
       var event$1 = toAdd[i];
       add(event$1.name, event$1.handler, event$1.once, event$1.capture, event$1.passive);
@@ -12075,11 +2962,11 @@ function updateListeners(on, oldOn, add, remove$$1, vm) {
 
 /*  */
 
-function mergeVNodeHook(def, hookKey, hook) {
+function mergeVNodeHook (def, hookKey, hook) {
   var invoker;
   var oldHook = def[hookKey];
 
-  function wrappedHook() {
+  function wrappedHook () {
     hook.apply(this, arguments);
     // important: remove merged hook to ensure it's called only once
     // and prevent memory leak
@@ -12107,13 +2994,17 @@ function mergeVNodeHook(def, hookKey, hook) {
 
 /*  */
 
-function extractPropsFromVNodeData(data, Ctor, tag) {
+function extractPropsFromVNodeData (
+  data,
+  Ctor,
+  tag
+) {
   // we are only extracting raw values here.
   // validation and default values are handled in the child
   // component itself.
   var propOptions = Ctor.options.props;
   if (isUndef(propOptions)) {
-    return;
+    return
   }
   var res = {};
   var attrs = data.attrs;
@@ -12123,33 +3014,50 @@ function extractPropsFromVNodeData(data, Ctor, tag) {
       var altKey = hyphenate(key);
       if (process.env.NODE_ENV !== 'production') {
         var keyInLowerCase = key.toLowerCase();
-        if (key !== keyInLowerCase && attrs && hasOwn(attrs, keyInLowerCase)) {
-          tip("Prop \"" + keyInLowerCase + "\" is passed to component " + formatComponentName(tag || Ctor) + ", but the declared prop name is" + " \"" + key + "\". " + "Note that HTML attributes are case-insensitive and camelCased " + "props need to use their kebab-case equivalents when using in-DOM " + "templates. You should probably use \"" + altKey + "\" instead of \"" + key + "\".");
+        if (
+          key !== keyInLowerCase &&
+          attrs && hasOwn(attrs, keyInLowerCase)
+        ) {
+          tip(
+            "Prop \"" + keyInLowerCase + "\" is passed to component " +
+            (formatComponentName(tag || Ctor)) + ", but the declared prop name is" +
+            " \"" + key + "\". " +
+            "Note that HTML attributes are case-insensitive and camelCased " +
+            "props need to use their kebab-case equivalents when using in-DOM " +
+            "templates. You should probably use \"" + altKey + "\" instead of \"" + key + "\"."
+          );
         }
       }
-      checkProp(res, props, key, altKey, true) || checkProp(res, attrs, key, altKey, false);
+      checkProp(res, props, key, altKey, true) ||
+      checkProp(res, attrs, key, altKey, false);
     }
   }
-  return res;
+  return res
 }
 
-function checkProp(res, hash, key, altKey, preserve) {
+function checkProp (
+  res,
+  hash,
+  key,
+  altKey,
+  preserve
+) {
   if (isDef(hash)) {
     if (hasOwn(hash, key)) {
       res[key] = hash[key];
       if (!preserve) {
         delete hash[key];
       }
-      return true;
+      return true
     } else if (hasOwn(hash, altKey)) {
       res[key] = hash[altKey];
       if (!preserve) {
         delete hash[altKey];
       }
-      return true;
+      return true
     }
   }
-  return false;
+  return false
 }
 
 /*  */
@@ -12166,45 +3074,47 @@ function checkProp(res, hash, key, altKey, preserve) {
 // normalization is needed - if any child is an Array, we flatten the whole
 // thing with Array.prototype.concat. It is guaranteed to be only 1-level deep
 // because functional components already normalize their own children.
-function simpleNormalizeChildren(children) {
+function simpleNormalizeChildren (children) {
   for (var i = 0; i < children.length; i++) {
     if (Array.isArray(children[i])) {
-      return Array.prototype.concat.apply([], children);
+      return Array.prototype.concat.apply([], children)
     }
   }
-  return children;
+  return children
 }
 
 // 2. When the children contains constructs that always generated nested Arrays,
 // e.g. <template>, <slot>, v-for, or when the children is provided by user
 // with hand-written render functions / JSX. In such cases a full normalization
 // is needed to cater to all possible types of children values.
-function normalizeChildren(children) {
-  return isPrimitive(children) ? [createTextVNode(children)] : Array.isArray(children) ? normalizeArrayChildren(children) : undefined;
+function normalizeChildren (children) {
+  return isPrimitive(children)
+    ? [createTextVNode(children)]
+    : Array.isArray(children)
+      ? normalizeArrayChildren(children)
+      : undefined
 }
 
-function isTextNode(node) {
-  return isDef(node) && isDef(node.text) && isFalse(node.isComment);
+function isTextNode (node) {
+  return isDef(node) && isDef(node.text) && isFalse(node.isComment)
 }
 
-function normalizeArrayChildren(children, nestedIndex) {
+function normalizeArrayChildren (children, nestedIndex) {
   var res = [];
   var i, c, last;
   for (i = 0; i < children.length; i++) {
     c = children[i];
-    if (isUndef(c) || typeof c === 'boolean') {
-      continue;
-    }
+    if (isUndef(c) || typeof c === 'boolean') { continue }
     last = res[res.length - 1];
     //  nested
     if (Array.isArray(c)) {
-      res.push.apply(res, normalizeArrayChildren(c, (nestedIndex || '') + "_" + i));
+      res.push.apply(res, normalizeArrayChildren(c, ((nestedIndex || '') + "_" + i)));
     } else if (isPrimitive(c)) {
       if (isTextNode(last)) {
         // merge adjacent text nodes
         // this is necessary for SSR hydration because text nodes are
         // essentially merged when rendered to HTML strings
-        last.text += String(c);
+        (last).text += String(c);
       } else if (c !== '') {
         // convert primitive to vnode
         res.push(createTextVNode(c));
@@ -12215,43 +3125,58 @@ function normalizeArrayChildren(children, nestedIndex) {
         res[res.length - 1] = createTextVNode(last.text + c.text);
       } else {
         // default key for nested array children (likely generated by v-for)
-        if (isTrue(children._isVList) && isDef(c.tag) && isUndef(c.key) && isDef(nestedIndex)) {
+        if (isTrue(children._isVList) &&
+          isDef(c.tag) &&
+          isUndef(c.key) &&
+          isDef(nestedIndex)) {
           c.key = "__vlist" + nestedIndex + "_" + i + "__";
         }
         res.push(c);
       }
     }
   }
-  return res;
+  return res
 }
 
 /*  */
 
-function ensureCtor(comp, base) {
+function ensureCtor (comp, base) {
   if (comp.__esModule && comp.default) {
     comp = comp.default;
   }
-  return isObject(comp) ? base.extend(comp) : comp;
+  return isObject(comp)
+    ? base.extend(comp)
+    : comp
 }
 
-function createAsyncPlaceholder(factory, data, context, children, tag) {
+function createAsyncPlaceholder (
+  factory,
+  data,
+  context,
+  children,
+  tag
+) {
   var node = createEmptyVNode();
   node.asyncFactory = factory;
   node.asyncMeta = { data: data, context: context, children: children, tag: tag };
-  return node;
+  return node
 }
 
-function resolveAsyncComponent(factory, baseCtor, context) {
+function resolveAsyncComponent (
+  factory,
+  baseCtor,
+  context
+) {
   if (isTrue(factory.error) && isDef(factory.errorComp)) {
-    return factory.errorComp;
+    return factory.errorComp
   }
 
   if (isDef(factory.resolved)) {
-    return factory.resolved;
+    return factory.resolved
   }
 
   if (isTrue(factory.loading) && isDef(factory.loadingComp)) {
-    return factory.loadingComp;
+    return factory.loadingComp
   }
 
   if (isDef(factory.contexts)) {
@@ -12278,7 +3203,10 @@ function resolveAsyncComponent(factory, baseCtor, context) {
     });
 
     var reject = once(function (reason) {
-      process.env.NODE_ENV !== 'production' && warn("Failed to resolve async component: " + String(factory) + (reason ? "\nReason: " + reason : ''));
+      process.env.NODE_ENV !== 'production' && warn(
+        "Failed to resolve async component: " + (String(factory)) +
+        (reason ? ("\nReason: " + reason) : '')
+      );
       if (isDef(factory.errorComp)) {
         factory.error = true;
         forceRender();
@@ -12317,7 +3245,11 @@ function resolveAsyncComponent(factory, baseCtor, context) {
         if (isDef(res.timeout)) {
           setTimeout(function () {
             if (isUndef(factory.resolved)) {
-              reject(process.env.NODE_ENV !== 'production' ? "timeout (" + res.timeout + "ms)" : null);
+              reject(
+                process.env.NODE_ENV !== 'production'
+                  ? ("timeout (" + (res.timeout) + "ms)")
+                  : null
+              );
             }
           }, res.timeout);
         }
@@ -12326,24 +3258,26 @@ function resolveAsyncComponent(factory, baseCtor, context) {
 
     sync = false;
     // return in case resolved synchronously
-    return factory.loading ? factory.loadingComp : factory.resolved;
+    return factory.loading
+      ? factory.loadingComp
+      : factory.resolved
   }
 }
 
 /*  */
 
-function isAsyncPlaceholder(node) {
-  return node.isComment && node.asyncFactory;
+function isAsyncPlaceholder (node) {
+  return node.isComment && node.asyncFactory
 }
 
 /*  */
 
-function getFirstComponentChild(children) {
+function getFirstComponentChild (children) {
   if (Array.isArray(children)) {
     for (var i = 0; i < children.length; i++) {
       var c = children[i];
       if (isDef(c) && (isDef(c.componentOptions) || isAsyncPlaceholder(c))) {
-        return c;
+        return c
       }
     }
   }
@@ -12353,7 +3287,7 @@ function getFirstComponentChild(children) {
 
 /*  */
 
-function initEvents(vm) {
+function initEvents (vm) {
   vm._events = Object.create(null);
   vm._hasHookEvent = false;
   // init parent attached events
@@ -12365,7 +3299,7 @@ function initEvents(vm) {
 
 var target;
 
-function add(event, fn, once$$1) {
+function add (event, fn, once$$1) {
   if (once$$1) {
     target.$once(event, fn);
   } else {
@@ -12373,16 +3307,20 @@ function add(event, fn, once$$1) {
   }
 }
 
-function remove$1(event, fn) {
+function remove$1 (event, fn) {
   target.$off(event, fn);
 }
 
-function updateComponentListeners(vm, listeners, oldListeners) {
+function updateComponentListeners (
+  vm,
+  listeners,
+  oldListeners
+) {
   target = vm;
   updateListeners(listeners, oldListeners || {}, add, remove$1, vm);
 }
 
-function eventsMixin(Vue) {
+function eventsMixin (Vue) {
   var hookRE = /^hook:/;
   Vue.prototype.$on = function (event, fn) {
     var this$1 = this;
@@ -12400,18 +3338,18 @@ function eventsMixin(Vue) {
         vm._hasHookEvent = true;
       }
     }
-    return vm;
+    return vm
   };
 
   Vue.prototype.$once = function (event, fn) {
     var vm = this;
-    function on() {
+    function on () {
       vm.$off(event, on);
       fn.apply(vm, arguments);
     }
     on.fn = fn;
     vm.$on(event, on);
-    return vm;
+    return vm
   };
 
   Vue.prototype.$off = function (event, fn) {
@@ -12421,23 +3359,23 @@ function eventsMixin(Vue) {
     // all
     if (!arguments.length) {
       vm._events = Object.create(null);
-      return vm;
+      return vm
     }
     // array of events
     if (Array.isArray(event)) {
       for (var i = 0, l = event.length; i < l; i++) {
         this$1.$off(event[i], fn);
       }
-      return vm;
+      return vm
     }
     // specific event
     var cbs = vm._events[event];
     if (!cbs) {
-      return vm;
+      return vm
     }
     if (arguments.length === 1) {
       vm._events[event] = null;
-      return vm;
+      return vm
     }
     if (fn) {
       // specific handler
@@ -12447,11 +3385,11 @@ function eventsMixin(Vue) {
         cb = cbs[i$1];
         if (cb === fn || cb.fn === fn) {
           cbs.splice(i$1, 1);
-          break;
+          break
         }
       }
     }
-    return vm;
+    return vm
   };
 
   Vue.prototype.$emit = function (event) {
@@ -12459,7 +3397,13 @@ function eventsMixin(Vue) {
     if (process.env.NODE_ENV !== 'production') {
       var lowerCaseEvent = event.toLowerCase();
       if (lowerCaseEvent !== event && vm._events[lowerCaseEvent]) {
-        tip("Event \"" + lowerCaseEvent + "\" is emitted in component " + formatComponentName(vm) + " but the handler is registered for \"" + event + "\". " + "Note that HTML attributes are case-insensitive and you cannot use " + "v-on to listen to camelCase events when using in-DOM templates. " + "You should probably use \"" + hyphenate(event) + "\" instead of \"" + event + "\".");
+        tip(
+          "Event \"" + lowerCaseEvent + "\" is emitted in component " +
+          (formatComponentName(vm)) + " but the handler is registered for \"" + event + "\". " +
+          "Note that HTML attributes are case-insensitive and you cannot use " +
+          "v-on to listen to camelCase events when using in-DOM templates. " +
+          "You should probably use \"" + (hyphenate(event)) + "\" instead of \"" + event + "\"."
+        );
       }
     }
     var cbs = vm._events[event];
@@ -12470,11 +3414,11 @@ function eventsMixin(Vue) {
         try {
           cbs[i].apply(vm, args);
         } catch (e) {
-          handleError(e, vm, "event handler for \"" + event + "\"");
+          handleError(e, vm, ("event handler for \"" + event + "\""));
         }
       }
     }
-    return vm;
+    return vm
   };
 }
 
@@ -12483,10 +3427,13 @@ function eventsMixin(Vue) {
 /**
  * Runtime helper for resolving raw children VNodes into a slot object.
  */
-function resolveSlots(children, context) {
+function resolveSlots (
+  children,
+  context
+) {
   var slots = {};
   if (!children) {
-    return slots;
+    return slots
   }
   var defaultSlot = [];
   for (var i = 0, l = children.length; i < l; i++) {
@@ -12498,9 +3445,11 @@ function resolveSlots(children, context) {
     }
     // named slots should only be respected if the vnode was rendered in the
     // same context.
-    if ((child.context === context || child.functionalContext === context) && data && data.slot != null) {
+    if ((child.context === context || child.functionalContext === context) &&
+      data && data.slot != null
+    ) {
       var name = child.data.slot;
-      var slot = slots[name] || (slots[name] = []);
+      var slot = (slots[name] || (slots[name] = []));
       if (child.tag === 'template') {
         slot.push.apply(slot, child.children);
       } else {
@@ -12514,15 +3463,17 @@ function resolveSlots(children, context) {
   if (!defaultSlot.every(isWhitespace)) {
     slots.default = defaultSlot;
   }
-  return slots;
+  return slots
 }
 
-function isWhitespace(node) {
-  return node.isComment || node.text === ' ';
+function isWhitespace (node) {
+  return node.isComment || node.text === ' '
 }
 
-function resolveScopedSlots(fns, // see flow/vnode
-res) {
+function resolveScopedSlots (
+  fns, // see flow/vnode
+  res
+) {
   res = res || {};
   for (var i = 0; i < fns.length; i++) {
     if (Array.isArray(fns[i])) {
@@ -12531,7 +3482,7 @@ res) {
       res[fns[i].key] = fns[i].fn;
     }
   }
-  return res;
+  return res
 }
 
 /*  */
@@ -12539,7 +3490,7 @@ res) {
 var activeInstance = null;
 var isUpdatingChildComponent = false;
 
-function initLifecycle(vm) {
+function initLifecycle (vm) {
   var options = vm.$options;
 
   // locate first non-abstract parent
@@ -12565,7 +3516,7 @@ function initLifecycle(vm) {
   vm._isBeingDestroyed = false;
 }
 
-function lifecycleMixin(Vue) {
+function lifecycleMixin (Vue) {
   Vue.prototype._update = function (vnode, hydrating) {
     var vm = this;
     if (vm._isMounted) {
@@ -12580,8 +3531,11 @@ function lifecycleMixin(Vue) {
     // based on the rendering backend used.
     if (!prevVnode) {
       // initial render
-      vm.$el = vm.__patch__(vm.$el, vnode, hydrating, false /* removeOnly */
-      , vm.$options._parentElm, vm.$options._refElm);
+      vm.$el = vm.__patch__(
+        vm.$el, vnode, hydrating, false /* removeOnly */,
+        vm.$options._parentElm,
+        vm.$options._refElm
+      );
       // no need for the ref nodes after initial patch
       // this prevents keeping a detached DOM tree in memory (#5851)
       vm.$options._parentElm = vm.$options._refElm = null;
@@ -12615,7 +3569,7 @@ function lifecycleMixin(Vue) {
   Vue.prototype.$destroy = function () {
     var vm = this;
     if (vm._isBeingDestroyed) {
-      return;
+      return
     }
     callHook(vm, 'beforeDestroy');
     vm._isBeingDestroyed = true;
@@ -12652,16 +3606,29 @@ function lifecycleMixin(Vue) {
   };
 }
 
-function mountComponent(vm, el, hydrating) {
+function mountComponent (
+  vm,
+  el,
+  hydrating
+) {
   vm.$el = el;
   if (!vm.$options.render) {
     vm.$options.render = createEmptyVNode;
     if (process.env.NODE_ENV !== 'production') {
       /* istanbul ignore if */
-      if (vm.$options.template && vm.$options.template.charAt(0) !== '#' || vm.$options.el || el) {
-        warn('You are using the runtime-only build of Vue where the template ' + 'compiler is not available. Either pre-compile the templates into ' + 'render functions, or use the compiler-included build.', vm);
+      if ((vm.$options.template && vm.$options.template.charAt(0) !== '#') ||
+        vm.$options.el || el) {
+        warn(
+          'You are using the runtime-only build of Vue where the template ' +
+          'compiler is not available. Either pre-compile the templates into ' +
+          'render functions, or use the compiler-included build.',
+          vm
+        );
       } else {
-        warn('Failed to mount component: template or render function not defined.', vm);
+        warn(
+          'Failed to mount component: template or render function not defined.',
+          vm
+        );
       }
     }
   }
@@ -12679,12 +3646,12 @@ function mountComponent(vm, el, hydrating) {
       mark(startTag);
       var vnode = vm._render();
       mark(endTag);
-      measure(name + " render", startTag, endTag);
+      measure((name + " render"), startTag, endTag);
 
       mark(startTag);
       vm._update(vnode, hydrating);
       mark(endTag);
-      measure(name + " patch", startTag, endTag);
+      measure((name + " patch"), startTag, endTag);
     };
   } else {
     updateComponent = function () {
@@ -12701,27 +3668,33 @@ function mountComponent(vm, el, hydrating) {
     vm._isMounted = true;
     callHook(vm, 'mounted');
   }
-  return vm;
+  return vm
 }
 
-function updateChildComponent(vm, propsData, listeners, parentVnode, renderChildren) {
+function updateChildComponent (
+  vm,
+  propsData,
+  listeners,
+  parentVnode,
+  renderChildren
+) {
   if (process.env.NODE_ENV !== 'production') {
     isUpdatingChildComponent = true;
   }
 
   // determine whether component has slot children
   // we need to do this before overwriting $options._renderChildren
-  var hasChildren = !!(renderChildren || // has new static slots
-  vm.$options._renderChildren || // has old static slots
-  parentVnode.data.scopedSlots || // has new scoped slots
-  vm.$scopedSlots !== emptyObject // has old scoped slots
+  var hasChildren = !!(
+    renderChildren ||               // has new static slots
+    vm.$options._renderChildren ||  // has old static slots
+    parentVnode.data.scopedSlots || // has new scoped slots
+    vm.$scopedSlots !== emptyObject // has old scoped slots
   );
 
   vm.$options._parentVnode = parentVnode;
   vm.$vnode = parentVnode; // update vm's placeholder node without re-render
 
-  if (vm._vnode) {
-    // update child tree's parent
+  if (vm._vnode) { // update child tree's parent
     vm._vnode.parent = parentVnode;
   }
   vm.$options._renderChildren = renderChildren;
@@ -12729,7 +3702,7 @@ function updateChildComponent(vm, propsData, listeners, parentVnode, renderChild
   // update $attrs and $listeners hash
   // these are also reactive so they may trigger child update if the child
   // used them during render
-  vm.$attrs = parentVnode.data && parentVnode.data.attrs || emptyObject;
+  vm.$attrs = (parentVnode.data && parentVnode.data.attrs) || emptyObject;
   vm.$listeners = listeners || emptyObject;
 
   // update props
@@ -12763,23 +3736,21 @@ function updateChildComponent(vm, propsData, listeners, parentVnode, renderChild
   }
 }
 
-function isInInactiveTree(vm) {
+function isInInactiveTree (vm) {
   while (vm && (vm = vm.$parent)) {
-    if (vm._inactive) {
-      return true;
-    }
+    if (vm._inactive) { return true }
   }
-  return false;
+  return false
 }
 
-function activateChildComponent(vm, direct) {
+function activateChildComponent (vm, direct) {
   if (direct) {
     vm._directInactive = false;
     if (isInInactiveTree(vm)) {
-      return;
+      return
     }
   } else if (vm._directInactive) {
-    return;
+    return
   }
   if (vm._inactive || vm._inactive === null) {
     vm._inactive = false;
@@ -12790,11 +3761,11 @@ function activateChildComponent(vm, direct) {
   }
 }
 
-function deactivateChildComponent(vm, direct) {
+function deactivateChildComponent (vm, direct) {
   if (direct) {
     vm._directInactive = true;
     if (isInInactiveTree(vm)) {
-      return;
+      return
     }
   }
   if (!vm._inactive) {
@@ -12806,14 +3777,14 @@ function deactivateChildComponent(vm, direct) {
   }
 }
 
-function callHook(vm, hook) {
+function callHook (vm, hook) {
   var handlers = vm.$options[hook];
   if (handlers) {
     for (var i = 0, j = handlers.length; i < j; i++) {
       try {
         handlers[i].call(vm);
       } catch (e) {
-        handleError(e, vm, hook + " hook");
+        handleError(e, vm, (hook + " hook"));
       }
     }
   }
@@ -12823,6 +3794,7 @@ function callHook(vm, hook) {
 }
 
 /*  */
+
 
 var MAX_UPDATE_COUNT = 100;
 
@@ -12837,7 +3809,7 @@ var index = 0;
 /**
  * Reset the scheduler's state.
  */
-function resetSchedulerState() {
+function resetSchedulerState () {
   index = queue.length = activatedChildren.length = 0;
   has = {};
   if (process.env.NODE_ENV !== 'production') {
@@ -12849,7 +3821,7 @@ function resetSchedulerState() {
 /**
  * Flush both queues and run the watchers.
  */
-function flushSchedulerQueue() {
+function flushSchedulerQueue () {
   flushing = true;
   var watcher, id;
 
@@ -12861,9 +3833,7 @@ function flushSchedulerQueue() {
   //    user watchers are created before the render watcher)
   // 3. If a component is destroyed during a parent component's watcher run,
   //    its watchers can be skipped.
-  queue.sort(function (a, b) {
-    return a.id - b.id;
-  });
+  queue.sort(function (a, b) { return a.id - b.id; });
 
   // do not cache length because more watchers might be pushed
   // as we run existing watchers
@@ -12876,8 +3846,15 @@ function flushSchedulerQueue() {
     if (process.env.NODE_ENV !== 'production' && has[id] != null) {
       circular[id] = (circular[id] || 0) + 1;
       if (circular[id] > MAX_UPDATE_COUNT) {
-        warn('You may have an infinite update loop ' + (watcher.user ? "in watcher with expression \"" + watcher.expression + "\"" : "in a component render function."), watcher.vm);
-        break;
+        warn(
+          'You may have an infinite update loop ' + (
+            watcher.user
+              ? ("in watcher with expression \"" + (watcher.expression) + "\"")
+              : "in a component render function."
+          ),
+          watcher.vm
+        );
+        break
       }
     }
   }
@@ -12899,7 +3876,7 @@ function flushSchedulerQueue() {
   }
 }
 
-function callUpdatedHooks(queue) {
+function callUpdatedHooks (queue) {
   var i = queue.length;
   while (i--) {
     var watcher = queue[i];
@@ -12914,14 +3891,14 @@ function callUpdatedHooks(queue) {
  * Queue a kept-alive component that was activated during patch.
  * The queue will be processed after the entire tree has been patched.
  */
-function queueActivatedComponent(vm) {
+function queueActivatedComponent (vm) {
   // setting _inactive to false here so that a render function can
   // rely on checking whether it's in an inactive tree (e.g. router-view)
   vm._inactive = false;
   activatedChildren.push(vm);
 }
 
-function callActivatedHooks(queue) {
+function callActivatedHooks (queue) {
   for (var i = 0; i < queue.length; i++) {
     queue[i]._inactive = true;
     activateChildComponent(queue[i], true /* true */);
@@ -12933,7 +3910,7 @@ function callActivatedHooks(queue) {
  * Jobs with duplicate IDs will be skipped unless it's
  * pushed when the queue is being flushed.
  */
-function queueWatcher(watcher) {
+function queueWatcher (watcher) {
   var id = watcher.id;
   if (has[id] == null) {
     has[id] = true;
@@ -12965,7 +3942,12 @@ var uid$2 = 0;
  * and fires callback when the expression value changes.
  * This is used for both the $watch() api and directives.
  */
-var Watcher = function Watcher(vm, expOrFn, cb, options) {
+var Watcher = function Watcher (
+  vm,
+  expOrFn,
+  cb,
+  options
+) {
   this.vm = vm;
   vm._watchers.push(this);
   // options
@@ -12985,7 +3967,9 @@ var Watcher = function Watcher(vm, expOrFn, cb, options) {
   this.newDeps = [];
   this.depIds = new _Set();
   this.newDepIds = new _Set();
-  this.expression = process.env.NODE_ENV !== 'production' ? expOrFn.toString() : '';
+  this.expression = process.env.NODE_ENV !== 'production'
+    ? expOrFn.toString()
+    : '';
   // parse expression for getter
   if (typeof expOrFn === 'function') {
     this.getter = expOrFn;
@@ -12993,16 +3977,23 @@ var Watcher = function Watcher(vm, expOrFn, cb, options) {
     this.getter = parsePath(expOrFn);
     if (!this.getter) {
       this.getter = function () {};
-      process.env.NODE_ENV !== 'production' && warn("Failed watching path: \"" + expOrFn + "\" " + 'Watcher only accepts simple dot-delimited paths. ' + 'For full control, use a function instead.', vm);
+      process.env.NODE_ENV !== 'production' && warn(
+        "Failed watching path: \"" + expOrFn + "\" " +
+        'Watcher only accepts simple dot-delimited paths. ' +
+        'For full control, use a function instead.',
+        vm
+      );
     }
   }
-  this.value = this.lazy ? undefined : this.get();
+  this.value = this.lazy
+    ? undefined
+    : this.get();
 };
 
 /**
  * Evaluate the getter, and re-collect dependencies.
  */
-Watcher.prototype.get = function get() {
+Watcher.prototype.get = function get () {
   pushTarget(this);
   var value;
   var vm = this.vm;
@@ -13010,9 +4001,9 @@ Watcher.prototype.get = function get() {
     value = this.getter.call(vm, vm);
   } catch (e) {
     if (this.user) {
-      handleError(e, vm, "getter for watcher \"" + this.expression + "\"");
+      handleError(e, vm, ("getter for watcher \"" + (this.expression) + "\""));
     } else {
-      throw e;
+      throw e
     }
   } finally {
     // "touch" every property so they are all tracked as
@@ -13023,13 +4014,13 @@ Watcher.prototype.get = function get() {
     popTarget();
     this.cleanupDeps();
   }
-  return value;
+  return value
 };
 
 /**
  * Add a dependency to this directive.
  */
-Watcher.prototype.addDep = function addDep(dep) {
+Watcher.prototype.addDep = function addDep (dep) {
   var id = dep.id;
   if (!this.newDepIds.has(id)) {
     this.newDepIds.add(id);
@@ -13043,8 +4034,8 @@ Watcher.prototype.addDep = function addDep(dep) {
 /**
  * Clean up for dependency collection.
  */
-Watcher.prototype.cleanupDeps = function cleanupDeps() {
-  var this$1 = this;
+Watcher.prototype.cleanupDeps = function cleanupDeps () {
+    var this$1 = this;
 
   var i = this.deps.length;
   while (i--) {
@@ -13067,7 +4058,7 @@ Watcher.prototype.cleanupDeps = function cleanupDeps() {
  * Subscriber interface.
  * Will be called when a dependency changes.
  */
-Watcher.prototype.update = function update() {
+Watcher.prototype.update = function update () {
   /* istanbul ignore else */
   if (this.lazy) {
     this.dirty = true;
@@ -13082,14 +4073,17 @@ Watcher.prototype.update = function update() {
  * Scheduler job interface.
  * Will be called by the scheduler.
  */
-Watcher.prototype.run = function run() {
+Watcher.prototype.run = function run () {
   if (this.active) {
     var value = this.get();
-    if (value !== this.value ||
-    // Deep watchers and watchers on Object/Arrays should fire even
-    // when the value is the same, because the value may
-    // have mutated.
-    isObject(value) || this.deep) {
+    if (
+      value !== this.value ||
+      // Deep watchers and watchers on Object/Arrays should fire even
+      // when the value is the same, because the value may
+      // have mutated.
+      isObject(value) ||
+      this.deep
+    ) {
       // set new value
       var oldValue = this.value;
       this.value = value;
@@ -13097,7 +4091,7 @@ Watcher.prototype.run = function run() {
         try {
           this.cb.call(this.vm, value, oldValue);
         } catch (e) {
-          handleError(e, this.vm, "callback for watcher \"" + this.expression + "\"");
+          handleError(e, this.vm, ("callback for watcher \"" + (this.expression) + "\""));
         }
       } else {
         this.cb.call(this.vm, value, oldValue);
@@ -13110,7 +4104,7 @@ Watcher.prototype.run = function run() {
  * Evaluate the value of the watcher.
  * This only gets called for lazy watchers.
  */
-Watcher.prototype.evaluate = function evaluate() {
+Watcher.prototype.evaluate = function evaluate () {
   this.value = this.get();
   this.dirty = false;
 };
@@ -13118,8 +4112,8 @@ Watcher.prototype.evaluate = function evaluate() {
 /**
  * Depend on all deps collected by this watcher.
  */
-Watcher.prototype.depend = function depend() {
-  var this$1 = this;
+Watcher.prototype.depend = function depend () {
+    var this$1 = this;
 
   var i = this.deps.length;
   while (i--) {
@@ -13130,8 +4124,8 @@ Watcher.prototype.depend = function depend() {
 /**
  * Remove self from all dependencies' subscriber list.
  */
-Watcher.prototype.teardown = function teardown() {
-  var this$1 = this;
+Watcher.prototype.teardown = function teardown () {
+    var this$1 = this;
 
   if (this.active) {
     // remove self from vm's watcher list
@@ -13154,35 +4148,31 @@ Watcher.prototype.teardown = function teardown() {
  * is collected as a "deep" dependency.
  */
 var seenObjects = new _Set();
-function traverse(val) {
+function traverse (val) {
   seenObjects.clear();
   _traverse(val, seenObjects);
 }
 
-function _traverse(val, seen) {
+function _traverse (val, seen) {
   var i, keys;
   var isA = Array.isArray(val);
-  if (!isA && !isObject(val) || !Object.isExtensible(val)) {
-    return;
+  if ((!isA && !isObject(val)) || !Object.isExtensible(val)) {
+    return
   }
   if (val.__ob__) {
     var depId = val.__ob__.dep.id;
     if (seen.has(depId)) {
-      return;
+      return
     }
     seen.add(depId);
   }
   if (isA) {
     i = val.length;
-    while (i--) {
-      _traverse(val[i], seen);
-    }
+    while (i--) { _traverse(val[i], seen); }
   } else {
     keys = Object.keys(val);
     i = keys.length;
-    while (i--) {
-      _traverse(val[keys[i]], seen);
-    }
+    while (i--) { _traverse(val[keys[i]], seen); }
   }
 }
 
@@ -13195,46 +4185,43 @@ var sharedPropertyDefinition = {
   set: noop
 };
 
-function proxy(target, sourceKey, key) {
-  sharedPropertyDefinition.get = function proxyGetter() {
-    return this[sourceKey][key];
+function proxy (target, sourceKey, key) {
+  sharedPropertyDefinition.get = function proxyGetter () {
+    return this[sourceKey][key]
   };
-  sharedPropertyDefinition.set = function proxySetter(val) {
+  sharedPropertyDefinition.set = function proxySetter (val) {
     this[sourceKey][key] = val;
   };
   Object.defineProperty(target, key, sharedPropertyDefinition);
 }
 
-function initState(vm) {
+function initState (vm) {
   vm._watchers = [];
   var opts = vm.$options;
-  if (opts.props) {
-    initProps(vm, opts.props);
-  }
-  if (opts.methods) {
-    initMethods(vm, opts.methods);
-  }
+  if (opts.props) { initProps(vm, opts.props); }
+  if (opts.methods) { initMethods(vm, opts.methods); }
   if (opts.data) {
     initData(vm);
   } else {
     observe(vm._data = {}, true /* asRootData */);
   }
-  if (opts.computed) {
-    initComputed(vm, opts.computed);
-  }
+  if (opts.computed) { initComputed(vm, opts.computed); }
   if (opts.watch && opts.watch !== nativeWatch) {
     initWatch(vm, opts.watch);
   }
 }
 
-function checkOptionType(vm, name) {
+function checkOptionType (vm, name) {
   var option = vm.$options[name];
   if (!isPlainObject(option)) {
-    warn("component option \"" + name + "\" should be an object.", vm);
+    warn(
+      ("component option \"" + name + "\" should be an object."),
+      vm
+    );
   }
 }
 
-function initProps(vm, propsOptions) {
+function initProps (vm, propsOptions) {
   var propsData = vm.$options.propsData || {};
   var props = vm._props = {};
   // cache prop keys so that future props updates can iterate using Array
@@ -13243,17 +4230,26 @@ function initProps(vm, propsOptions) {
   var isRoot = !vm.$parent;
   // root instance props should be converted
   observerState.shouldConvert = isRoot;
-  var loop = function (key) {
+  var loop = function ( key ) {
     keys.push(key);
     var value = validateProp(key, propsOptions, propsData, vm);
     /* istanbul ignore else */
     if (process.env.NODE_ENV !== 'production') {
       if (isReservedAttribute(key) || config.isReservedAttr(key)) {
-        warn("\"" + key + "\" is a reserved attribute and cannot be used as component prop.", vm);
+        warn(
+          ("\"" + key + "\" is a reserved attribute and cannot be used as component prop."),
+          vm
+        );
       }
       defineReactive$$1(props, key, value, function () {
         if (vm.$parent && !isUpdatingChildComponent) {
-          warn("Avoid mutating a prop directly since the value will be " + "overwritten whenever the parent component re-renders. " + "Instead, use a data or computed property based on the prop's " + "value. Prop being mutated: \"" + key + "\"", vm);
+          warn(
+            "Avoid mutating a prop directly since the value will be " +
+            "overwritten whenever the parent component re-renders. " +
+            "Instead, use a data or computed property based on the prop's " +
+            "value. Prop being mutated: \"" + key + "\"",
+            vm
+          );
         }
       });
     } else {
@@ -13267,16 +4263,22 @@ function initProps(vm, propsOptions) {
     }
   };
 
-  for (var key in propsOptions) loop(key);
+  for (var key in propsOptions) loop( key );
   observerState.shouldConvert = true;
 }
 
-function initData(vm) {
+function initData (vm) {
   var data = vm.$options.data;
-  data = vm._data = typeof data === 'function' ? getData(data, vm) : data || {};
+  data = vm._data = typeof data === 'function'
+    ? getData(data, vm)
+    : data || {};
   if (!isPlainObject(data)) {
     data = {};
-    process.env.NODE_ENV !== 'production' && warn('data functions should return an object:\n' + 'https://vuejs.org/v2/guide/components.html#data-Must-Be-a-Function', vm);
+    process.env.NODE_ENV !== 'production' && warn(
+      'data functions should return an object:\n' +
+      'https://vuejs.org/v2/guide/components.html#data-Must-Be-a-Function',
+      vm
+    );
   }
   // proxy data on instance
   var keys = Object.keys(data);
@@ -13287,11 +4289,18 @@ function initData(vm) {
     var key = keys[i];
     if (process.env.NODE_ENV !== 'production') {
       if (methods && hasOwn(methods, key)) {
-        warn("Method \"" + key + "\" has already been defined as a data property.", vm);
+        warn(
+          ("Method \"" + key + "\" has already been defined as a data property."),
+          vm
+        );
       }
     }
     if (props && hasOwn(props, key)) {
-      process.env.NODE_ENV !== 'production' && warn("The data property \"" + key + "\" is already declared as a prop. " + "Use prop default value instead.", vm);
+      process.env.NODE_ENV !== 'production' && warn(
+        "The data property \"" + key + "\" is already declared as a prop. " +
+        "Use prop default value instead.",
+        vm
+      );
     } else if (!isReserved(key)) {
       proxy(vm, "_data", key);
     }
@@ -13300,18 +4309,18 @@ function initData(vm) {
   observe(data, true /* asRootData */);
 }
 
-function getData(data, vm) {
+function getData (data, vm) {
   try {
-    return data.call(vm);
+    return data.call(vm)
   } catch (e) {
     handleError(e, vm, "data()");
-    return {};
+    return {}
   }
 }
 
 var computedWatcherOptions = { lazy: true };
 
-function initComputed(vm, computed) {
+function initComputed (vm, computed) {
   process.env.NODE_ENV !== 'production' && checkOptionType(vm, 'computed');
   var watchers = vm._computedWatchers = Object.create(null);
   // computed properties are just getters during SSR
@@ -13321,12 +4330,20 @@ function initComputed(vm, computed) {
     var userDef = computed[key];
     var getter = typeof userDef === 'function' ? userDef : userDef.get;
     if (process.env.NODE_ENV !== 'production' && getter == null) {
-      warn("Getter is missing for computed property \"" + key + "\".", vm);
+      warn(
+        ("Getter is missing for computed property \"" + key + "\"."),
+        vm
+      );
     }
 
     if (!isSSR) {
       // create internal watcher for the computed property.
-      watchers[key] = new Watcher(vm, getter || noop, noop, computedWatcherOptions);
+      watchers[key] = new Watcher(
+        vm,
+        getter || noop,
+        noop,
+        computedWatcherOptions
+      );
     }
 
     // component-defined computed properties are already defined on the
@@ -13336,33 +4353,49 @@ function initComputed(vm, computed) {
       defineComputed(vm, key, userDef);
     } else if (process.env.NODE_ENV !== 'production') {
       if (key in vm.$data) {
-        warn("The computed property \"" + key + "\" is already defined in data.", vm);
+        warn(("The computed property \"" + key + "\" is already defined in data."), vm);
       } else if (vm.$options.props && key in vm.$options.props) {
-        warn("The computed property \"" + key + "\" is already defined as a prop.", vm);
+        warn(("The computed property \"" + key + "\" is already defined as a prop."), vm);
       }
     }
   }
 }
 
-function defineComputed(target, key, userDef) {
+function defineComputed (
+  target,
+  key,
+  userDef
+) {
   var shouldCache = !isServerRendering();
   if (typeof userDef === 'function') {
-    sharedPropertyDefinition.get = shouldCache ? createComputedGetter(key) : userDef;
+    sharedPropertyDefinition.get = shouldCache
+      ? createComputedGetter(key)
+      : userDef;
     sharedPropertyDefinition.set = noop;
   } else {
-    sharedPropertyDefinition.get = userDef.get ? shouldCache && userDef.cache !== false ? createComputedGetter(key) : userDef.get : noop;
-    sharedPropertyDefinition.set = userDef.set ? userDef.set : noop;
+    sharedPropertyDefinition.get = userDef.get
+      ? shouldCache && userDef.cache !== false
+        ? createComputedGetter(key)
+        : userDef.get
+      : noop;
+    sharedPropertyDefinition.set = userDef.set
+      ? userDef.set
+      : noop;
   }
-  if (process.env.NODE_ENV !== 'production' && sharedPropertyDefinition.set === noop) {
+  if (process.env.NODE_ENV !== 'production' &&
+      sharedPropertyDefinition.set === noop) {
     sharedPropertyDefinition.set = function () {
-      warn("Computed property \"" + key + "\" was assigned to but it has no setter.", this);
+      warn(
+        ("Computed property \"" + key + "\" was assigned to but it has no setter."),
+        this
+      );
     };
   }
   Object.defineProperty(target, key, sharedPropertyDefinition);
 }
 
-function createComputedGetter(key) {
-  return function computedGetter() {
+function createComputedGetter (key) {
+  return function computedGetter () {
     var watcher = this._computedWatchers && this._computedWatchers[key];
     if (watcher) {
       if (watcher.dirty) {
@@ -13371,31 +4404,41 @@ function createComputedGetter(key) {
       if (Dep.target) {
         watcher.depend();
       }
-      return watcher.value;
+      return watcher.value
     }
-  };
+  }
 }
 
-function initMethods(vm, methods) {
+function initMethods (vm, methods) {
   process.env.NODE_ENV !== 'production' && checkOptionType(vm, 'methods');
   var props = vm.$options.props;
   for (var key in methods) {
     if (process.env.NODE_ENV !== 'production') {
       if (methods[key] == null) {
-        warn("Method \"" + key + "\" has an undefined value in the component definition. " + "Did you reference the function correctly?", vm);
+        warn(
+          "Method \"" + key + "\" has an undefined value in the component definition. " +
+          "Did you reference the function correctly?",
+          vm
+        );
       }
       if (props && hasOwn(props, key)) {
-        warn("Method \"" + key + "\" has already been defined as a prop.", vm);
+        warn(
+          ("Method \"" + key + "\" has already been defined as a prop."),
+          vm
+        );
       }
-      if (key in vm && isReserved(key)) {
-        warn("Method \"" + key + "\" conflicts with an existing Vue instance method. " + "Avoid defining component methods that start with _ or $.");
+      if ((key in vm) && isReserved(key)) {
+        warn(
+          "Method \"" + key + "\" conflicts with an existing Vue instance method. " +
+          "Avoid defining component methods that start with _ or $."
+        );
       }
     }
     vm[key] = methods[key] == null ? noop : bind(methods[key], vm);
   }
 }
 
-function initWatch(vm, watch) {
+function initWatch (vm, watch) {
   process.env.NODE_ENV !== 'production' && checkOptionType(vm, 'watch');
   for (var key in watch) {
     var handler = watch[key];
@@ -13409,7 +4452,12 @@ function initWatch(vm, watch) {
   }
 }
 
-function createWatcher(vm, keyOrFn, handler, options) {
+function createWatcher (
+  vm,
+  keyOrFn,
+  handler,
+  options
+) {
   if (isPlainObject(handler)) {
     options = handler;
     handler = handler.handler;
@@ -13417,24 +4465,24 @@ function createWatcher(vm, keyOrFn, handler, options) {
   if (typeof handler === 'string') {
     handler = vm[handler];
   }
-  return vm.$watch(keyOrFn, handler, options);
+  return vm.$watch(keyOrFn, handler, options)
 }
 
-function stateMixin(Vue) {
+function stateMixin (Vue) {
   // flow somehow has problems with directly declared definition object
   // when using Object.defineProperty, so we have to procedurally build up
   // the object here.
   var dataDef = {};
-  dataDef.get = function () {
-    return this._data;
-  };
+  dataDef.get = function () { return this._data };
   var propsDef = {};
-  propsDef.get = function () {
-    return this._props;
-  };
+  propsDef.get = function () { return this._props };
   if (process.env.NODE_ENV !== 'production') {
     dataDef.set = function (newData) {
-      warn('Avoid replacing instance root $data. ' + 'Use nested data properties instead.', this);
+      warn(
+        'Avoid replacing instance root $data. ' +
+        'Use nested data properties instead.',
+        this
+      );
     };
     propsDef.set = function () {
       warn("$props is readonly.", this);
@@ -13446,10 +4494,14 @@ function stateMixin(Vue) {
   Vue.prototype.$set = set;
   Vue.prototype.$delete = del;
 
-  Vue.prototype.$watch = function (expOrFn, cb, options) {
+  Vue.prototype.$watch = function (
+    expOrFn,
+    cb,
+    options
+  ) {
     var vm = this;
     if (isPlainObject(cb)) {
-      return createWatcher(vm, expOrFn, cb, options);
+      return createWatcher(vm, expOrFn, cb, options)
     }
     options = options || {};
     options.user = true;
@@ -13457,22 +4509,24 @@ function stateMixin(Vue) {
     if (options.immediate) {
       cb.call(vm, watcher.value);
     }
-    return function unwatchFn() {
+    return function unwatchFn () {
       watcher.teardown();
-    };
+    }
   };
 }
 
 /*  */
 
-function initProvide(vm) {
+function initProvide (vm) {
   var provide = vm.$options.provide;
   if (provide) {
-    vm._provided = typeof provide === 'function' ? provide.call(vm) : provide;
+    vm._provided = typeof provide === 'function'
+      ? provide.call(vm)
+      : provide;
   }
 }
 
-function initInjections(vm) {
+function initInjections (vm) {
   var result = resolveInject(vm.$options.inject, vm);
   if (result) {
     observerState.shouldConvert = false;
@@ -13480,7 +4534,12 @@ function initInjections(vm) {
       /* istanbul ignore else */
       if (process.env.NODE_ENV !== 'production') {
         defineReactive$$1(vm, key, result[key], function () {
-          warn("Avoid mutating an injected value directly since the changes will be " + "overwritten whenever the provided component re-renders. " + "injection being mutated: \"" + key + "\"", vm);
+          warn(
+            "Avoid mutating an injected value directly since the changes will be " +
+            "overwritten whenever the provided component re-renders. " +
+            "injection being mutated: \"" + key + "\"",
+            vm
+          );
         });
       } else {
         defineReactive$$1(vm, key, result[key]);
@@ -13490,14 +4549,16 @@ function initInjections(vm) {
   }
 }
 
-function resolveInject(inject, vm) {
+function resolveInject (inject, vm) {
   if (inject) {
     // inject is :any because flow is not smart enough to figure out cached
     var result = Object.create(null);
-    var keys = hasSymbol ? Reflect.ownKeys(inject).filter(function (key) {
-      /* istanbul ignore next */
-      return Object.getOwnPropertyDescriptor(inject, key).enumerable;
-    }) : Object.keys(inject);
+    var keys = hasSymbol
+        ? Reflect.ownKeys(inject).filter(function (key) {
+          /* istanbul ignore next */
+          return Object.getOwnPropertyDescriptor(inject, key).enumerable
+        })
+        : Object.keys(inject);
 
     for (var i = 0; i < keys.length; i++) {
       var key = keys[i];
@@ -13506,21 +4567,27 @@ function resolveInject(inject, vm) {
       while (source) {
         if (source._provided && provideKey in source._provided) {
           result[key] = source._provided[provideKey];
-          break;
+          break
         }
         source = source.$parent;
       }
       if (process.env.NODE_ENV !== 'production' && !source) {
-        warn("Injection \"" + key + "\" not found", vm);
+        warn(("Injection \"" + key + "\" not found"), vm);
       }
     }
-    return result;
+    return result
   }
 }
 
 /*  */
 
-function createFunctionalComponent(Ctor, propsData, data, context, children) {
+function createFunctionalComponent (
+  Ctor,
+  propsData,
+  data,
+  context,
+  children
+) {
   var props = {};
   var propOptions = Ctor.options.props;
   if (isDef(propOptions)) {
@@ -13528,19 +4595,13 @@ function createFunctionalComponent(Ctor, propsData, data, context, children) {
       props[key] = validateProp(key, propOptions, propsData || emptyObject);
     }
   } else {
-    if (isDef(data.attrs)) {
-      mergeProps(props, data.attrs);
-    }
-    if (isDef(data.props)) {
-      mergeProps(props, data.props);
-    }
+    if (isDef(data.attrs)) { mergeProps(props, data.attrs); }
+    if (isDef(data.props)) { mergeProps(props, data.props); }
   }
   // ensure the createElement function in functional components
   // gets a unique context - this is necessary for correct named slot check
   var _context = Object.create(context);
-  var h = function (a, b, c, d) {
-    return createElement(_context, a, b, c, d, true);
-  };
+  var h = function (a, b, c, d) { return createElement(_context, a, b, c, d, true); };
   var vnode = Ctor.options.render.call(null, h, {
     data: data,
     props: props,
@@ -13548,9 +4609,7 @@ function createFunctionalComponent(Ctor, propsData, data, context, children) {
     parent: context,
     listeners: data.on || emptyObject,
     injections: resolveInject(Ctor.options.inject, context),
-    slots: function () {
-      return resolveSlots(children, context);
-    }
+    slots: function () { return resolveSlots(children, context); }
   });
   if (vnode instanceof VNode) {
     vnode.functionalContext = context;
@@ -13559,10 +4618,10 @@ function createFunctionalComponent(Ctor, propsData, data, context, children) {
       (vnode.data || (vnode.data = {})).slot = data.slot;
     }
   }
-  return vnode;
+  return vnode
 }
 
-function mergeProps(to, from) {
+function mergeProps (to, from) {
   for (var key in from) {
     to[camelize(key)] = from[key];
   }
@@ -13572,9 +4631,19 @@ function mergeProps(to, from) {
 
 // hooks to be invoked on component VNodes during patch
 var componentVNodeHooks = {
-  init: function init(vnode, hydrating, parentElm, refElm) {
+  init: function init (
+    vnode,
+    hydrating,
+    parentElm,
+    refElm
+  ) {
     if (!vnode.componentInstance || vnode.componentInstance._isDestroyed) {
-      var child = vnode.componentInstance = createComponentInstanceForVnode(vnode, activeInstance, parentElm, refElm);
+      var child = vnode.componentInstance = createComponentInstanceForVnode(
+        vnode,
+        activeInstance,
+        parentElm,
+        refElm
+      );
       child.$mount(hydrating ? vnode.elm : undefined, hydrating);
     } else if (vnode.data.keepAlive) {
       // kept-alive components, treat as a patch
@@ -13583,17 +4652,19 @@ var componentVNodeHooks = {
     }
   },
 
-  prepatch: function prepatch(oldVnode, vnode) {
+  prepatch: function prepatch (oldVnode, vnode) {
     var options = vnode.componentOptions;
     var child = vnode.componentInstance = oldVnode.componentInstance;
-    updateChildComponent(child, options.propsData, // updated props
-    options.listeners, // updated listeners
-    vnode, // new parent vnode
-    options.children // new children
+    updateChildComponent(
+      child,
+      options.propsData, // updated props
+      options.listeners, // updated listeners
+      vnode, // new parent vnode
+      options.children // new children
     );
   },
 
-  insert: function insert(vnode) {
+  insert: function insert (vnode) {
     var context = vnode.context;
     var componentInstance = vnode.componentInstance;
     if (!componentInstance._isMounted) {
@@ -13614,7 +4685,7 @@ var componentVNodeHooks = {
     }
   },
 
-  destroy: function destroy(vnode) {
+  destroy: function destroy (vnode) {
     var componentInstance = vnode.componentInstance;
     if (!componentInstance._isDestroyed) {
       if (!vnode.data.keepAlive) {
@@ -13628,9 +4699,15 @@ var componentVNodeHooks = {
 
 var hooksToMerge = Object.keys(componentVNodeHooks);
 
-function createComponent(Ctor, data, context, children, tag) {
+function createComponent (
+  Ctor,
+  data,
+  context,
+  children,
+  tag
+) {
   if (isUndef(Ctor)) {
-    return;
+    return
   }
 
   var baseCtor = context.$options._base;
@@ -13644,9 +4721,9 @@ function createComponent(Ctor, data, context, children, tag) {
   // reject.
   if (typeof Ctor !== 'function') {
     if (process.env.NODE_ENV !== 'production') {
-      warn("Invalid Component definition: " + String(Ctor), context);
+      warn(("Invalid Component definition: " + (String(Ctor))), context);
     }
-    return;
+    return
   }
 
   // async component
@@ -13658,7 +4735,13 @@ function createComponent(Ctor, data, context, children, tag) {
       // return a placeholder node for async component, which is rendered
       // as a comment node but preserves all the raw information for the node.
       // the information will be used for async server-rendering and hydration.
-      return createAsyncPlaceholder(asyncFactory, data, context, children, tag);
+      return createAsyncPlaceholder(
+        asyncFactory,
+        data,
+        context,
+        children,
+        tag
+      )
     }
   }
 
@@ -13678,7 +4761,7 @@ function createComponent(Ctor, data, context, children, tag) {
 
   // functional component
   if (isTrue(Ctor.options.functional)) {
-    return createFunctionalComponent(Ctor, propsData, data, context, children);
+    return createFunctionalComponent(Ctor, propsData, data, context, children)
   }
 
   // extract listeners, since these needs to be treated as
@@ -13705,13 +4788,21 @@ function createComponent(Ctor, data, context, children, tag) {
 
   // return a placeholder vnode
   var name = Ctor.options.name || tag;
-  var vnode = new VNode("vue-component-" + Ctor.cid + (name ? "-" + name : ''), data, undefined, undefined, undefined, context, { Ctor: Ctor, propsData: propsData, listeners: listeners, tag: tag, children: children }, asyncFactory);
-  return vnode;
+  var vnode = new VNode(
+    ("vue-component-" + (Ctor.cid) + (name ? ("-" + name) : '')),
+    data, undefined, undefined, undefined, context,
+    { Ctor: Ctor, propsData: propsData, listeners: listeners, tag: tag, children: children },
+    asyncFactory
+  );
+  return vnode
 }
 
-function createComponentInstanceForVnode(vnode, // we know it's MountedComponentVNode but flow doesn't
-parent, // activeInstance in lifecycle state
-parentElm, refElm) {
+function createComponentInstanceForVnode (
+  vnode, // we know it's MountedComponentVNode but flow doesn't
+  parent, // activeInstance in lifecycle state
+  parentElm,
+  refElm
+) {
   var vnodeComponentOptions = vnode.componentOptions;
   var options = {
     _isComponent: true,
@@ -13730,10 +4821,10 @@ parentElm, refElm) {
     options.render = inlineTemplate.render;
     options.staticRenderFns = inlineTemplate.staticRenderFns;
   }
-  return new vnodeComponentOptions.Ctor(options);
+  return new vnodeComponentOptions.Ctor(options)
 }
 
-function mergeHooks(data) {
+function mergeHooks (data) {
   if (!data.hook) {
     data.hook = {};
   }
@@ -13745,18 +4836,18 @@ function mergeHooks(data) {
   }
 }
 
-function mergeHook$1(one, two) {
+function mergeHook$1 (one, two) {
   return function (a, b, c, d) {
     one(a, b, c, d);
     two(a, b, c, d);
-  };
+  }
 }
 
 // transform component v-model info (value and callback) into
 // prop and event handler respectively.
-function transformModel(options, data) {
-  var prop = options.model && options.model.prop || 'value';
-  var event = options.model && options.model.event || 'input';(data.props || (data.props = {}))[prop] = data.model.value;
+function transformModel (options, data) {
+  var prop = (options.model && options.model.prop) || 'value';
+  var event = (options.model && options.model.event) || 'input';(data.props || (data.props = {}))[prop] = data.model.value;
   var on = data.on || (data.on = {});
   if (isDef(on[event])) {
     on[event] = [data.model.callback].concat(on[event]);
@@ -13772,7 +4863,14 @@ var ALWAYS_NORMALIZE = 2;
 
 // wrapper function for providing a more flexible interface
 // without getting yelled at by flow
-function createElement(context, tag, data, children, normalizationType, alwaysNormalize) {
+function createElement (
+  context,
+  tag,
+  data,
+  children,
+  normalizationType,
+  alwaysNormalize
+) {
   if (Array.isArray(data) || isPrimitive(data)) {
     normalizationType = children;
     children = data;
@@ -13781,13 +4879,23 @@ function createElement(context, tag, data, children, normalizationType, alwaysNo
   if (isTrue(alwaysNormalize)) {
     normalizationType = ALWAYS_NORMALIZE;
   }
-  return _createElement(context, tag, data, children, normalizationType);
+  return _createElement(context, tag, data, children, normalizationType)
 }
 
-function _createElement(context, tag, data, children, normalizationType) {
-  if (isDef(data) && isDef(data.__ob__)) {
-    process.env.NODE_ENV !== 'production' && warn("Avoid using observed data object as vnode data: " + JSON.stringify(data) + "\n" + 'Always create fresh vnode data objects in each render!', context);
-    return createEmptyVNode();
+function _createElement (
+  context,
+  tag,
+  data,
+  children,
+  normalizationType
+) {
+  if (isDef(data) && isDef((data).__ob__)) {
+    process.env.NODE_ENV !== 'production' && warn(
+      "Avoid using observed data object as vnode data: " + (JSON.stringify(data)) + "\n" +
+      'Always create fresh vnode data objects in each render!',
+      context
+    );
+    return createEmptyVNode()
   }
   // object syntax in v-bind
   if (isDef(data) && isDef(data.is)) {
@@ -13795,14 +4903,22 @@ function _createElement(context, tag, data, children, normalizationType) {
   }
   if (!tag) {
     // in case of component :is set to falsy value
-    return createEmptyVNode();
+    return createEmptyVNode()
   }
   // warn against non-primitive key
-  if (process.env.NODE_ENV !== 'production' && isDef(data) && isDef(data.key) && !isPrimitive(data.key)) {
-    warn('Avoid using non-primitive value as key, ' + 'use string/number value instead.', context);
+  if (process.env.NODE_ENV !== 'production' &&
+    isDef(data) && isDef(data.key) && !isPrimitive(data.key)
+  ) {
+    warn(
+      'Avoid using non-primitive value as key, ' +
+      'use string/number value instead.',
+      context
+    );
   }
   // support single function children as default scoped slot
-  if (Array.isArray(children) && typeof children[0] === 'function') {
+  if (Array.isArray(children) &&
+    typeof children[0] === 'function'
+  ) {
     data = data || {};
     data.scopedSlots = { default: children[0] };
     children.length = 0;
@@ -13815,10 +4931,13 @@ function _createElement(context, tag, data, children, normalizationType) {
   var vnode, ns;
   if (typeof tag === 'string') {
     var Ctor;
-    ns = context.$vnode && context.$vnode.ns || config.getTagNamespace(tag);
+    ns = (context.$vnode && context.$vnode.ns) || config.getTagNamespace(tag);
     if (config.isReservedTag(tag)) {
       // platform built-in elements
-      vnode = new VNode(config.parsePlatformTagName(tag), data, children, undefined, undefined, context);
+      vnode = new VNode(
+        config.parsePlatformTagName(tag), data, children,
+        undefined, undefined, context
+      );
     } else if (isDef(Ctor = resolveAsset(context.$options, 'components', tag))) {
       // component
       vnode = createComponent(Ctor, data, context, children, tag);
@@ -13826,27 +4945,28 @@ function _createElement(context, tag, data, children, normalizationType) {
       // unknown or unlisted namespaced elements
       // check at runtime because it may get assigned a namespace when its
       // parent normalizes children
-      vnode = new VNode(tag, data, children, undefined, undefined, context);
+      vnode = new VNode(
+        tag, data, children,
+        undefined, undefined, context
+      );
     }
   } else {
     // direct component options / constructor
     vnode = createComponent(tag, data, context, children);
   }
   if (isDef(vnode)) {
-    if (ns) {
-      applyNS(vnode, ns);
-    }
-    return vnode;
+    if (ns) { applyNS(vnode, ns); }
+    return vnode
   } else {
-    return createEmptyVNode();
+    return createEmptyVNode()
   }
 }
 
-function applyNS(vnode, ns) {
+function applyNS (vnode, ns) {
   vnode.ns = ns;
   if (vnode.tag === 'foreignObject') {
     // use default namespace inside foreignObject
-    return;
+    return
   }
   if (isDef(vnode.children)) {
     for (var i = 0, l = vnode.children.length; i < l; i++) {
@@ -13863,7 +4983,10 @@ function applyNS(vnode, ns) {
 /**
  * Runtime helper for rendering v-for lists.
  */
-function renderList(val, render) {
+function renderList (
+  val,
+  render
+) {
   var ret, i, l, keys, key;
   if (Array.isArray(val) || typeof val === 'string') {
     ret = new Array(val.length);
@@ -13884,9 +5007,9 @@ function renderList(val, render) {
     }
   }
   if (isDef(ret)) {
-    ret._isVList = true;
+    (ret)._isVList = true;
   }
-  return ret;
+  return ret
 }
 
 /*  */
@@ -13894,23 +5017,31 @@ function renderList(val, render) {
 /**
  * Runtime helper for rendering <slot>
  */
-function renderSlot(name, fallback, props, bindObject) {
+function renderSlot (
+  name,
+  fallback,
+  props,
+  bindObject
+) {
   var scopedSlotFn = this.$scopedSlots[name];
-  if (scopedSlotFn) {
-    // scoped slot
+  if (scopedSlotFn) { // scoped slot
     props = props || {};
     if (bindObject) {
       props = extend(extend({}, bindObject), props);
     }
-    return scopedSlotFn(props) || fallback;
+    return scopedSlotFn(props) || fallback
   } else {
     var slotNodes = this.$slots[name];
     // warn duplicate slot usage
     if (slotNodes && process.env.NODE_ENV !== 'production') {
-      slotNodes._rendered && warn("Duplicate presence of slot \"" + name + "\" found in the same render tree " + "- this will likely cause render errors.", this);
+      slotNodes._rendered && warn(
+        "Duplicate presence of slot \"" + name + "\" found in the same render tree " +
+        "- this will likely cause render errors.",
+        this
+      );
       slotNodes._rendered = true;
     }
-    return slotNodes || fallback;
+    return slotNodes || fallback
   }
 }
 
@@ -13919,8 +5050,8 @@ function renderSlot(name, fallback, props, bindObject) {
 /**
  * Runtime helper for resolving filters
  */
-function resolveFilter(id) {
-  return resolveAsset(this.$options, 'filters', id, true) || identity;
+function resolveFilter (id) {
+  return resolveAsset(this.$options, 'filters', id, true) || identity
 }
 
 /*  */
@@ -13928,12 +5059,16 @@ function resolveFilter(id) {
 /**
  * Runtime helper for checking keyCodes from config.
  */
-function checkKeyCodes(eventKeyCode, key, builtInAlias) {
+function checkKeyCodes (
+  eventKeyCode,
+  key,
+  builtInAlias
+) {
   var keyCodes = config.keyCodes[key] || builtInAlias;
   if (Array.isArray(keyCodes)) {
-    return keyCodes.indexOf(eventKeyCode) === -1;
+    return keyCodes.indexOf(eventKeyCode) === -1
   } else {
-    return keyCodes !== eventKeyCode;
+    return keyCodes !== eventKeyCode
   }
 }
 
@@ -13942,38 +5077,53 @@ function checkKeyCodes(eventKeyCode, key, builtInAlias) {
 /**
  * Runtime helper for merging v-bind="object" into a VNode's data.
  */
-function bindObjectProps(data, tag, value, asProp, isSync) {
+function bindObjectProps (
+  data,
+  tag,
+  value,
+  asProp,
+  isSync
+) {
   if (value) {
     if (!isObject(value)) {
-      process.env.NODE_ENV !== 'production' && warn('v-bind without argument expects an Object or Array value', this);
+      process.env.NODE_ENV !== 'production' && warn(
+        'v-bind without argument expects an Object or Array value',
+        this
+      );
     } else {
       if (Array.isArray(value)) {
         value = toObject(value);
       }
       var hash;
-      var loop = function (key) {
-        if (key === 'class' || key === 'style' || isReservedAttribute(key)) {
+      var loop = function ( key ) {
+        if (
+          key === 'class' ||
+          key === 'style' ||
+          isReservedAttribute(key)
+        ) {
           hash = data;
         } else {
           var type = data.attrs && data.attrs.type;
-          hash = asProp || config.mustUseProp(tag, type, key) ? data.domProps || (data.domProps = {}) : data.attrs || (data.attrs = {});
+          hash = asProp || config.mustUseProp(tag, type, key)
+            ? data.domProps || (data.domProps = {})
+            : data.attrs || (data.attrs = {});
         }
         if (!(key in hash)) {
           hash[key] = value[key];
 
           if (isSync) {
             var on = data.on || (data.on = {});
-            on["update:" + key] = function ($event) {
+            on[("update:" + key)] = function ($event) {
               value[key] = $event;
             };
           }
         }
       };
 
-      for (var key in value) loop(key);
+      for (var key in value) loop( key );
     }
   }
-  return data;
+  return data
 }
 
 /*  */
@@ -13981,33 +5131,47 @@ function bindObjectProps(data, tag, value, asProp, isSync) {
 /**
  * Runtime helper for rendering static trees.
  */
-function renderStatic(index, isInFor) {
+function renderStatic (
+  index,
+  isInFor
+) {
   var tree = this._staticTrees[index];
   // if has already-rendered static tree and not inside v-for,
   // we can reuse the same tree by doing a shallow clone.
   if (tree && !isInFor) {
-    return Array.isArray(tree) ? cloneVNodes(tree) : cloneVNode(tree);
+    return Array.isArray(tree)
+      ? cloneVNodes(tree)
+      : cloneVNode(tree)
   }
   // otherwise, render a fresh tree.
-  tree = this._staticTrees[index] = this.$options.staticRenderFns[index].call(this._renderProxy);
-  markStatic(tree, "__static__" + index, false);
-  return tree;
+  tree = this._staticTrees[index] =
+    this.$options.staticRenderFns[index].call(this._renderProxy);
+  markStatic(tree, ("__static__" + index), false);
+  return tree
 }
 
 /**
  * Runtime helper for v-once.
  * Effectively it means marking the node as static with a unique key.
  */
-function markOnce(tree, index, key) {
-  markStatic(tree, "__once__" + index + (key ? "_" + key : ""), true);
-  return tree;
+function markOnce (
+  tree,
+  index,
+  key
+) {
+  markStatic(tree, ("__once__" + index + (key ? ("_" + key) : "")), true);
+  return tree
 }
 
-function markStatic(tree, key, isOnce) {
+function markStatic (
+  tree,
+  key,
+  isOnce
+) {
   if (Array.isArray(tree)) {
     for (var i = 0; i < tree.length; i++) {
       if (tree[i] && typeof tree[i] !== 'string') {
-        markStaticNode(tree[i], key + "_" + i, isOnce);
+        markStaticNode(tree[i], (key + "_" + i), isOnce);
       }
     }
   } else {
@@ -14015,7 +5179,7 @@ function markStatic(tree, key, isOnce) {
   }
 }
 
-function markStaticNode(node, key, isOnce) {
+function markStaticNode (node, key, isOnce) {
   node.isStatic = true;
   node.key = key;
   node.isOnce = isOnce;
@@ -14023,10 +5187,13 @@ function markStaticNode(node, key, isOnce) {
 
 /*  */
 
-function bindObjectListeners(data, value) {
+function bindObjectListeners (data, value) {
   if (value) {
     if (!isPlainObject(value)) {
-      process.env.NODE_ENV !== 'production' && warn('v-on without argument expects an Object value', this);
+      process.env.NODE_ENV !== 'production' && warn(
+        'v-on without argument expects an Object value',
+        this
+      );
     } else {
       var on = data.on = data.on ? extend({}, data.on) : {};
       for (var key in value) {
@@ -14036,12 +5203,12 @@ function bindObjectListeners(data, value) {
       }
     }
   }
-  return data;
+  return data
 }
 
 /*  */
 
-function initRender(vm) {
+function initRender (vm) {
   vm._vnode = null; // the root of the child tree
   vm._staticTrees = null;
   var parentVnode = vm.$vnode = vm.$options._parentVnode; // the placeholder node in parent tree
@@ -14052,14 +5219,10 @@ function initRender(vm) {
   // so that we get proper render context inside it.
   // args order: tag, data, children, normalizationType, alwaysNormalize
   // internal version is used by render functions compiled from templates
-  vm._c = function (a, b, c, d) {
-    return createElement(vm, a, b, c, d, false);
-  };
+  vm._c = function (a, b, c, d) { return createElement(vm, a, b, c, d, false); };
   // normalization is always applied for the public version, used in
   // user-written render functions.
-  vm.$createElement = function (a, b, c, d) {
-    return createElement(vm, a, b, c, d, true);
-  };
+  vm.$createElement = function (a, b, c, d) { return createElement(vm, a, b, c, d, true); };
 
   // $attrs & $listeners are exposed for easier HOC creation.
   // they need to be reactive so that HOCs using them are always updated
@@ -14079,9 +5242,9 @@ function initRender(vm) {
   }
 }
 
-function renderMixin(Vue) {
+function renderMixin (Vue) {
   Vue.prototype.$nextTick = function (fn) {
-    return nextTick(fn, this);
+    return nextTick(fn, this)
   };
 
   Vue.prototype._render = function () {
@@ -14102,7 +5265,7 @@ function renderMixin(Vue) {
       }
     }
 
-    vm.$scopedSlots = _parentVnode && _parentVnode.data.scopedSlots || emptyObject;
+    vm.$scopedSlots = (_parentVnode && _parentVnode.data.scopedSlots) || emptyObject;
 
     if (staticRenderFns && !vm._staticTrees) {
       vm._staticTrees = [];
@@ -14120,7 +5283,9 @@ function renderMixin(Vue) {
       // or previous vnode to prevent render error causing blank component
       /* istanbul ignore else */
       if (process.env.NODE_ENV !== 'production') {
-        vnode = vm.$options.renderError ? vm.$options.renderError.call(vm._renderProxy, vm.$createElement, e) : vm._vnode;
+        vnode = vm.$options.renderError
+          ? vm.$options.renderError.call(vm._renderProxy, vm.$createElement, e)
+          : vm._vnode;
       } else {
         vnode = vm._vnode;
       }
@@ -14128,13 +5293,17 @@ function renderMixin(Vue) {
     // return empty vnode in case the render function errored out
     if (!(vnode instanceof VNode)) {
       if (process.env.NODE_ENV !== 'production' && Array.isArray(vnode)) {
-        warn('Multiple root nodes returned from render function. Render function ' + 'should return a single root node.', vm);
+        warn(
+          'Multiple root nodes returned from render function. Render function ' +
+          'should return a single root node.',
+          vm
+        );
       }
       vnode = createEmptyVNode();
     }
     // set parent
     vnode.parent = _parentVnode;
-    return vnode;
+    return vnode
   };
 
   // internal render helpers.
@@ -14161,7 +5330,7 @@ function renderMixin(Vue) {
 
 var uid$1 = 0;
 
-function initMixin(Vue) {
+function initMixin (Vue) {
   Vue.prototype._init = function (options) {
     var vm = this;
     // a uid
@@ -14170,8 +5339,8 @@ function initMixin(Vue) {
     var startTag, endTag;
     /* istanbul ignore if */
     if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
-      startTag = "vue-perf-init:" + vm._uid;
-      endTag = "vue-perf-end:" + vm._uid;
+      startTag = "vue-perf-init:" + (vm._uid);
+      endTag = "vue-perf-end:" + (vm._uid);
       mark(startTag);
     }
 
@@ -14184,7 +5353,11 @@ function initMixin(Vue) {
       // internal component options needs special treatment.
       initInternalComponent(vm, options);
     } else {
-      vm.$options = mergeOptions(resolveConstructorOptions(vm.constructor), options || {}, vm);
+      vm.$options = mergeOptions(
+        resolveConstructorOptions(vm.constructor),
+        options || {},
+        vm
+      );
     }
     /* istanbul ignore else */
     if (process.env.NODE_ENV !== 'production') {
@@ -14207,7 +5380,7 @@ function initMixin(Vue) {
     if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
       vm._name = formatComponentName(vm, false);
       mark(endTag);
-      measure(vm._name + " init", startTag, endTag);
+      measure(((vm._name) + " init"), startTag, endTag);
     }
 
     if (vm.$options.el) {
@@ -14216,7 +5389,7 @@ function initMixin(Vue) {
   };
 }
 
-function initInternalComponent(vm, options) {
+function initInternalComponent (vm, options) {
   var opts = vm.$options = Object.create(vm.constructor.options);
   // doing this because it's faster than dynamic enumeration.
   opts.parent = options.parent;
@@ -14233,7 +5406,7 @@ function initInternalComponent(vm, options) {
   }
 }
 
-function resolveConstructorOptions(Ctor) {
+function resolveConstructorOptions (Ctor) {
   var options = Ctor.options;
   if (Ctor.super) {
     var superOptions = resolveConstructorOptions(Ctor.super);
@@ -14254,26 +5427,24 @@ function resolveConstructorOptions(Ctor) {
       }
     }
   }
-  return options;
+  return options
 }
 
-function resolveModifiedOptions(Ctor) {
+function resolveModifiedOptions (Ctor) {
   var modified;
   var latest = Ctor.options;
   var extended = Ctor.extendOptions;
   var sealed = Ctor.sealedOptions;
   for (var key in latest) {
     if (latest[key] !== sealed[key]) {
-      if (!modified) {
-        modified = {};
-      }
+      if (!modified) { modified = {}; }
       modified[key] = dedupe(latest[key], extended[key], sealed[key]);
     }
   }
-  return modified;
+  return modified
 }
 
-function dedupe(latest, extended, sealed) {
+function dedupe (latest, extended, sealed) {
   // compare latest and sealed to ensure lifecycle hooks won't be duplicated
   // between merges
   if (Array.isArray(latest)) {
@@ -14286,14 +5457,16 @@ function dedupe(latest, extended, sealed) {
         res.push(latest[i]);
       }
     }
-    return res;
+    return res
   } else {
-    return latest;
+    return latest
   }
 }
 
-function Vue$3(options) {
-  if (process.env.NODE_ENV !== 'production' && !(this instanceof Vue$3)) {
+function Vue$3 (options) {
+  if (process.env.NODE_ENV !== 'production' &&
+    !(this instanceof Vue$3)
+  ) {
     warn('Vue is a constructor and should be called with the `new` keyword');
   }
   this._init(options);
@@ -14307,11 +5480,11 @@ renderMixin(Vue$3);
 
 /*  */
 
-function initUse(Vue) {
+function initUse (Vue) {
   Vue.use = function (plugin) {
-    var installedPlugins = this._installedPlugins || (this._installedPlugins = []);
+    var installedPlugins = (this._installedPlugins || (this._installedPlugins = []));
     if (installedPlugins.indexOf(plugin) > -1) {
-      return this;
+      return this
     }
 
     // additional parameters
@@ -14323,22 +5496,22 @@ function initUse(Vue) {
       plugin.apply(null, args);
     }
     installedPlugins.push(plugin);
-    return this;
+    return this
   };
 }
 
 /*  */
 
-function initMixin$1(Vue) {
+function initMixin$1 (Vue) {
   Vue.mixin = function (mixin) {
     this.options = mergeOptions(this.options, mixin);
-    return this;
+    return this
   };
 }
 
 /*  */
 
-function initExtend(Vue) {
+function initExtend (Vue) {
   /**
    * Each instance constructor, including Vue, has a unique
    * cid. This enables us to create wrapped "child
@@ -14356,23 +5529,30 @@ function initExtend(Vue) {
     var SuperId = Super.cid;
     var cachedCtors = extendOptions._Ctor || (extendOptions._Ctor = {});
     if (cachedCtors[SuperId]) {
-      return cachedCtors[SuperId];
+      return cachedCtors[SuperId]
     }
 
     var name = extendOptions.name || Super.options.name;
     if (process.env.NODE_ENV !== 'production') {
       if (!/^[a-zA-Z][\w-]*$/.test(name)) {
-        warn('Invalid component name: "' + name + '". Component names ' + 'can only contain alphanumeric characters and the hyphen, ' + 'and must start with a letter.');
+        warn(
+          'Invalid component name: "' + name + '". Component names ' +
+          'can only contain alphanumeric characters and the hyphen, ' +
+          'and must start with a letter.'
+        );
       }
     }
 
-    var Sub = function VueComponent(options) {
+    var Sub = function VueComponent (options) {
       this._init(options);
     };
     Sub.prototype = Object.create(Super.prototype);
     Sub.prototype.constructor = Sub;
     Sub.cid = cid++;
-    Sub.options = mergeOptions(Super.options, extendOptions);
+    Sub.options = mergeOptions(
+      Super.options,
+      extendOptions
+    );
     Sub['super'] = Super;
 
     // For props and computed properties, we define the proxy getters on
@@ -14409,18 +5589,18 @@ function initExtend(Vue) {
 
     // cache constructor
     cachedCtors[SuperId] = Sub;
-    return Sub;
+    return Sub
   };
 }
 
-function initProps$1(Comp) {
+function initProps$1 (Comp) {
   var props = Comp.options.props;
   for (var key in props) {
     proxy(Comp.prototype, "_props", key);
   }
 }
 
-function initComputed$1(Comp) {
+function initComputed$1 (Comp) {
   var computed = Comp.options.computed;
   for (var key in computed) {
     defineComputed(Comp.prototype, key, computed[key]);
@@ -14429,19 +5609,25 @@ function initComputed$1(Comp) {
 
 /*  */
 
-function initAssetRegisters(Vue) {
+function initAssetRegisters (Vue) {
   /**
    * Create asset registration methods.
    */
   ASSET_TYPES.forEach(function (type) {
-    Vue[type] = function (id, definition) {
+    Vue[type] = function (
+      id,
+      definition
+    ) {
       if (!definition) {
-        return this.options[type + 's'][id];
+        return this.options[type + 's'][id]
       } else {
         /* istanbul ignore if */
         if (process.env.NODE_ENV !== 'production') {
           if (type === 'component' && config.isReservedTag(id)) {
-            warn('Do not use built-in or reserved HTML elements as component ' + 'id: ' + id);
+            warn(
+              'Do not use built-in or reserved HTML elements as component ' +
+              'id: ' + id
+            );
           }
         }
         if (type === 'component' && isPlainObject(definition)) {
@@ -14452,7 +5638,7 @@ function initAssetRegisters(Vue) {
           definition = { bind: definition, update: definition };
         }
         this.options[type + 's'][id] = definition;
-        return definition;
+        return definition
       }
     };
   });
@@ -14462,23 +5648,23 @@ function initAssetRegisters(Vue) {
 
 var patternTypes = [String, RegExp, Array];
 
-function getComponentName(opts) {
-  return opts && (opts.Ctor.options.name || opts.tag);
+function getComponentName (opts) {
+  return opts && (opts.Ctor.options.name || opts.tag)
 }
 
-function matches(pattern, name) {
+function matches (pattern, name) {
   if (Array.isArray(pattern)) {
-    return pattern.indexOf(name) > -1;
+    return pattern.indexOf(name) > -1
   } else if (typeof pattern === 'string') {
-    return pattern.split(',').indexOf(name) > -1;
+    return pattern.split(',').indexOf(name) > -1
   } else if (isRegExp(pattern)) {
-    return pattern.test(name);
+    return pattern.test(name)
   }
   /* istanbul ignore next */
-  return false;
+  return false
 }
 
-function pruneCache(cache, current, filter) {
+function pruneCache (cache, current, filter) {
   for (var key in cache) {
     var cachedNode = cache[key];
     if (cachedNode) {
@@ -14493,7 +5679,7 @@ function pruneCache(cache, current, filter) {
   }
 }
 
-function pruneCacheEntry(vnode) {
+function pruneCacheEntry (vnode) {
   if (vnode) {
     vnode.componentInstance.$destroy();
   }
@@ -14508,11 +5694,11 @@ var KeepAlive = {
     exclude: patternTypes
   },
 
-  created: function created() {
+  created: function created () {
     this.cache = Object.create(null);
   },
 
-  destroyed: function destroyed() {
+  destroyed: function destroyed () {
     var this$1 = this;
 
     for (var key in this$1.cache) {
@@ -14521,31 +5707,31 @@ var KeepAlive = {
   },
 
   watch: {
-    include: function include(val) {
-      pruneCache(this.cache, this._vnode, function (name) {
-        return matches(val, name);
-      });
+    include: function include (val) {
+      pruneCache(this.cache, this._vnode, function (name) { return matches(val, name); });
     },
-    exclude: function exclude(val) {
-      pruneCache(this.cache, this._vnode, function (name) {
-        return !matches(val, name);
-      });
+    exclude: function exclude (val) {
+      pruneCache(this.cache, this._vnode, function (name) { return !matches(val, name); });
     }
   },
 
-  render: function render() {
+  render: function render () {
     var vnode = getFirstComponentChild(this.$slots.default);
     var componentOptions = vnode && vnode.componentOptions;
     if (componentOptions) {
       // check pattern
       var name = getComponentName(componentOptions);
-      if (name && (this.include && !matches(this.include, name) || this.exclude && matches(this.exclude, name))) {
-        return vnode;
+      if (name && (
+        (this.include && !matches(this.include, name)) ||
+        (this.exclude && matches(this.exclude, name))
+      )) {
+        return vnode
       }
       var key = vnode.key == null
-      // same constructor may get registered as different local components
-      // so cid alone is not enough (#3269)
-      ? componentOptions.Ctor.cid + (componentOptions.tag ? "::" + componentOptions.tag : '') : vnode.key;
+        // same constructor may get registered as different local components
+        // so cid alone is not enough (#3269)
+        ? componentOptions.Ctor.cid + (componentOptions.tag ? ("::" + (componentOptions.tag)) : '')
+        : vnode.key;
       if (this.cache[key]) {
         vnode.componentInstance = this.cache[key].componentInstance;
       } else {
@@ -14553,7 +5739,7 @@ var KeepAlive = {
       }
       vnode.data.keepAlive = true;
     }
-    return vnode;
+    return vnode
   }
 };
 
@@ -14563,15 +5749,15 @@ var builtInComponents = {
 
 /*  */
 
-function initGlobalAPI(Vue) {
+function initGlobalAPI (Vue) {
   // config
   var configDef = {};
-  configDef.get = function () {
-    return config;
-  };
+  configDef.get = function () { return config; };
   if (process.env.NODE_ENV !== 'production') {
     configDef.set = function () {
-      warn('Do not replace the Vue.config object, set individual fields instead.');
+      warn(
+        'Do not replace the Vue.config object, set individual fields instead.'
+      );
     };
   }
   Object.defineProperty(Vue, 'config', configDef);
@@ -14614,9 +5800,9 @@ Object.defineProperty(Vue$3.prototype, '$isServer', {
 });
 
 Object.defineProperty(Vue$3.prototype, '$ssrContext', {
-  get: function get() {
+  get: function get () {
     /* istanbul ignore next */
-    return this.$vnode && this.$vnode.ssrContext;
+    return this.$vnode && this.$vnode.ssrContext
   }
 });
 
@@ -14631,30 +5817,42 @@ var isReservedAttr = makeMap('style,class');
 // attributes that should be using props for binding
 var acceptValue = makeMap('input,textarea,option,select,progress');
 var mustUseProp = function (tag, type, attr) {
-  return attr === 'value' && acceptValue(tag) && type !== 'button' || attr === 'selected' && tag === 'option' || attr === 'checked' && tag === 'input' || attr === 'muted' && tag === 'video';
+  return (
+    (attr === 'value' && acceptValue(tag)) && type !== 'button' ||
+    (attr === 'selected' && tag === 'option') ||
+    (attr === 'checked' && tag === 'input') ||
+    (attr === 'muted' && tag === 'video')
+  )
 };
 
 var isEnumeratedAttr = makeMap('contenteditable,draggable,spellcheck');
 
-var isBooleanAttr = makeMap('allowfullscreen,async,autofocus,autoplay,checked,compact,controls,declare,' + 'default,defaultchecked,defaultmuted,defaultselected,defer,disabled,' + 'enabled,formnovalidate,hidden,indeterminate,inert,ismap,itemscope,loop,multiple,' + 'muted,nohref,noresize,noshade,novalidate,nowrap,open,pauseonexit,readonly,' + 'required,reversed,scoped,seamless,selected,sortable,translate,' + 'truespeed,typemustmatch,visible');
+var isBooleanAttr = makeMap(
+  'allowfullscreen,async,autofocus,autoplay,checked,compact,controls,declare,' +
+  'default,defaultchecked,defaultmuted,defaultselected,defer,disabled,' +
+  'enabled,formnovalidate,hidden,indeterminate,inert,ismap,itemscope,loop,multiple,' +
+  'muted,nohref,noresize,noshade,novalidate,nowrap,open,pauseonexit,readonly,' +
+  'required,reversed,scoped,seamless,selected,sortable,translate,' +
+  'truespeed,typemustmatch,visible'
+);
 
 var xlinkNS = 'http://www.w3.org/1999/xlink';
 
 var isXlink = function (name) {
-  return name.charAt(5) === ':' && name.slice(0, 5) === 'xlink';
+  return name.charAt(5) === ':' && name.slice(0, 5) === 'xlink'
 };
 
 var getXlinkProp = function (name) {
-  return isXlink(name) ? name.slice(6, name.length) : '';
+  return isXlink(name) ? name.slice(6, name.length) : ''
 };
 
 var isFalsyAttrValue = function (val) {
-  return val == null || val === false;
+  return val == null || val === false
 };
 
 /*  */
 
-function genClassForVnode(vnode) {
+function genClassForVnode (vnode) {
   var data = vnode.data;
   var parentNode = vnode;
   var childNode = vnode;
@@ -14669,67 +5867,68 @@ function genClassForVnode(vnode) {
       data = mergeClassData(data, parentNode.data);
     }
   }
-  return renderClass(data.staticClass, data.class);
+  return renderClass(data.staticClass, data.class)
 }
 
-function mergeClassData(child, parent) {
+function mergeClassData (child, parent) {
   return {
     staticClass: concat(child.staticClass, parent.staticClass),
-    class: isDef(child.class) ? [child.class, parent.class] : parent.class
-  };
+    class: isDef(child.class)
+      ? [child.class, parent.class]
+      : parent.class
+  }
 }
 
-function renderClass(staticClass, dynamicClass) {
+function renderClass (
+  staticClass,
+  dynamicClass
+) {
   if (isDef(staticClass) || isDef(dynamicClass)) {
-    return concat(staticClass, stringifyClass(dynamicClass));
+    return concat(staticClass, stringifyClass(dynamicClass))
   }
   /* istanbul ignore next */
-  return '';
+  return ''
 }
 
-function concat(a, b) {
-  return a ? b ? a + ' ' + b : a : b || '';
+function concat (a, b) {
+  return a ? b ? (a + ' ' + b) : a : (b || '')
 }
 
-function stringifyClass(value) {
+function stringifyClass (value) {
   if (Array.isArray(value)) {
-    return stringifyArray(value);
+    return stringifyArray(value)
   }
   if (isObject(value)) {
-    return stringifyObject(value);
+    return stringifyObject(value)
   }
   if (typeof value === 'string') {
-    return value;
+    return value
   }
   /* istanbul ignore next */
-  return '';
+  return ''
 }
 
-function stringifyArray(value) {
+function stringifyArray (value) {
   var res = '';
   var stringified;
   for (var i = 0, l = value.length; i < l; i++) {
     if (isDef(stringified = stringifyClass(value[i])) && stringified !== '') {
-      if (res) {
-        res += ' ';
-      }
+      if (res) { res += ' '; }
       res += stringified;
     }
   }
-  return res;
+  return res
 }
 
-function stringifyObject(value) {
+function stringifyObject (value) {
   var res = '';
   for (var key in value) {
     if (value[key]) {
-      if (res) {
-        res += ' ';
-      }
+      if (res) { res += ' '; }
       res += key;
     }
   }
-  return res;
+  return res
 }
 
 /*  */
@@ -14739,51 +5938,69 @@ var namespaceMap = {
   math: 'http://www.w3.org/1998/Math/MathML'
 };
 
-var isHTMLTag = makeMap('html,body,base,head,link,meta,style,title,' + 'address,article,aside,footer,header,h1,h2,h3,h4,h5,h6,hgroup,nav,section,' + 'div,dd,dl,dt,figcaption,figure,picture,hr,img,li,main,ol,p,pre,ul,' + 'a,b,abbr,bdi,bdo,br,cite,code,data,dfn,em,i,kbd,mark,q,rp,rt,rtc,ruby,' + 's,samp,small,span,strong,sub,sup,time,u,var,wbr,area,audio,map,track,video,' + 'embed,object,param,source,canvas,script,noscript,del,ins,' + 'caption,col,colgroup,table,thead,tbody,td,th,tr,' + 'button,datalist,fieldset,form,input,label,legend,meter,optgroup,option,' + 'output,progress,select,textarea,' + 'details,dialog,menu,menuitem,summary,' + 'content,element,shadow,template,blockquote,iframe,tfoot');
+var isHTMLTag = makeMap(
+  'html,body,base,head,link,meta,style,title,' +
+  'address,article,aside,footer,header,h1,h2,h3,h4,h5,h6,hgroup,nav,section,' +
+  'div,dd,dl,dt,figcaption,figure,picture,hr,img,li,main,ol,p,pre,ul,' +
+  'a,b,abbr,bdi,bdo,br,cite,code,data,dfn,em,i,kbd,mark,q,rp,rt,rtc,ruby,' +
+  's,samp,small,span,strong,sub,sup,time,u,var,wbr,area,audio,map,track,video,' +
+  'embed,object,param,source,canvas,script,noscript,del,ins,' +
+  'caption,col,colgroup,table,thead,tbody,td,th,tr,' +
+  'button,datalist,fieldset,form,input,label,legend,meter,optgroup,option,' +
+  'output,progress,select,textarea,' +
+  'details,dialog,menu,menuitem,summary,' +
+  'content,element,shadow,template,blockquote,iframe,tfoot'
+);
 
 // this map is intentionally selective, only covering SVG elements that may
 // contain child elements.
-var isSVG = makeMap('svg,animate,circle,clippath,cursor,defs,desc,ellipse,filter,font-face,' + 'foreignObject,g,glyph,image,line,marker,mask,missing-glyph,path,pattern,' + 'polygon,polyline,rect,switch,symbol,text,textpath,tspan,use,view', true);
+var isSVG = makeMap(
+  'svg,animate,circle,clippath,cursor,defs,desc,ellipse,filter,font-face,' +
+  'foreignObject,g,glyph,image,line,marker,mask,missing-glyph,path,pattern,' +
+  'polygon,polyline,rect,switch,symbol,text,textpath,tspan,use,view',
+  true
+);
 
-var isPreTag = function (tag) {
-  return tag === 'pre';
-};
+var isPreTag = function (tag) { return tag === 'pre'; };
 
 var isReservedTag = function (tag) {
-  return isHTMLTag(tag) || isSVG(tag);
+  return isHTMLTag(tag) || isSVG(tag)
 };
 
-function getTagNamespace(tag) {
+function getTagNamespace (tag) {
   if (isSVG(tag)) {
-    return 'svg';
+    return 'svg'
   }
   // basic support for MathML
   // note it doesn't support other MathML elements being component roots
   if (tag === 'math') {
-    return 'math';
+    return 'math'
   }
 }
 
 var unknownElementCache = Object.create(null);
-function isUnknownElement(tag) {
+function isUnknownElement (tag) {
   /* istanbul ignore if */
   if (!inBrowser) {
-    return true;
+    return true
   }
   if (isReservedTag(tag)) {
-    return false;
+    return false
   }
   tag = tag.toLowerCase();
   /* istanbul ignore if */
   if (unknownElementCache[tag] != null) {
-    return unknownElementCache[tag];
+    return unknownElementCache[tag]
   }
   var el = document.createElement(tag);
   if (tag.indexOf('-') > -1) {
     // http://stackoverflow.com/a/28210364/1070244
-    return unknownElementCache[tag] = el.constructor === window.HTMLUnknownElement || el.constructor === window.HTMLElement;
+    return (unknownElementCache[tag] = (
+      el.constructor === window.HTMLUnknownElement ||
+      el.constructor === window.HTMLElement
+    ))
   } else {
-    return unknownElementCache[tag] = /HTMLUnknownElement/.test(el.toString());
+    return (unknownElementCache[tag] = /HTMLUnknownElement/.test(el.toString()))
   }
 }
 
@@ -14794,114 +6011,115 @@ var isTextInputType = makeMap('text,number,password,search,email,tel,url');
 /**
  * Query an element selector if it's not an element already.
  */
-function query(el) {
+function query (el) {
   if (typeof el === 'string') {
     var selected = document.querySelector(el);
     if (!selected) {
-      process.env.NODE_ENV !== 'production' && warn('Cannot find element: ' + el);
-      return document.createElement('div');
+      process.env.NODE_ENV !== 'production' && warn(
+        'Cannot find element: ' + el
+      );
+      return document.createElement('div')
     }
-    return selected;
+    return selected
   } else {
-    return el;
+    return el
   }
 }
 
 /*  */
 
-function createElement$1(tagName, vnode) {
+function createElement$1 (tagName, vnode) {
   var elm = document.createElement(tagName);
   if (tagName !== 'select') {
-    return elm;
+    return elm
   }
   // false or null will remove the attribute but undefined will not
   if (vnode.data && vnode.data.attrs && vnode.data.attrs.multiple !== undefined) {
     elm.setAttribute('multiple', 'multiple');
   }
-  return elm;
+  return elm
 }
 
-function createElementNS(namespace, tagName) {
-  return document.createElementNS(namespaceMap[namespace], tagName);
+function createElementNS (namespace, tagName) {
+  return document.createElementNS(namespaceMap[namespace], tagName)
 }
 
-function createTextNode(text) {
-  return document.createTextNode(text);
+function createTextNode (text) {
+  return document.createTextNode(text)
 }
 
-function createComment(text) {
-  return document.createComment(text);
+function createComment (text) {
+  return document.createComment(text)
 }
 
-function insertBefore(parentNode, newNode, referenceNode) {
+function insertBefore (parentNode, newNode, referenceNode) {
   parentNode.insertBefore(newNode, referenceNode);
 }
 
-function removeChild(node, child) {
+function removeChild (node, child) {
   node.removeChild(child);
 }
 
-function appendChild(node, child) {
+function appendChild (node, child) {
   node.appendChild(child);
 }
 
-function parentNode(node) {
-  return node.parentNode;
+function parentNode (node) {
+  return node.parentNode
 }
 
-function nextSibling(node) {
-  return node.nextSibling;
+function nextSibling (node) {
+  return node.nextSibling
 }
 
-function tagName(node) {
-  return node.tagName;
+function tagName (node) {
+  return node.tagName
 }
 
-function setTextContent(node, text) {
+function setTextContent (node, text) {
   node.textContent = text;
 }
 
-function setAttribute(node, key, val) {
+function setAttribute (node, key, val) {
   node.setAttribute(key, val);
 }
 
+
 var nodeOps = Object.freeze({
-  createElement: createElement$1,
-  createElementNS: createElementNS,
-  createTextNode: createTextNode,
-  createComment: createComment,
-  insertBefore: insertBefore,
-  removeChild: removeChild,
-  appendChild: appendChild,
-  parentNode: parentNode,
-  nextSibling: nextSibling,
-  tagName: tagName,
-  setTextContent: setTextContent,
-  setAttribute: setAttribute
+	createElement: createElement$1,
+	createElementNS: createElementNS,
+	createTextNode: createTextNode,
+	createComment: createComment,
+	insertBefore: insertBefore,
+	removeChild: removeChild,
+	appendChild: appendChild,
+	parentNode: parentNode,
+	nextSibling: nextSibling,
+	tagName: tagName,
+	setTextContent: setTextContent,
+	setAttribute: setAttribute
 });
 
 /*  */
 
 var ref = {
-  create: function create(_, vnode) {
+  create: function create (_, vnode) {
     registerRef(vnode);
   },
-  update: function update(oldVnode, vnode) {
+  update: function update (oldVnode, vnode) {
     if (oldVnode.data.ref !== vnode.data.ref) {
       registerRef(oldVnode, true);
       registerRef(vnode);
     }
   },
-  destroy: function destroy(vnode) {
+  destroy: function destroy (vnode) {
     registerRef(vnode, true);
   }
 };
 
-function registerRef(vnode, isRemoval) {
+function registerRef (vnode, isRemoval) {
   var key = vnode.data.ref;
-  if (!key) {
-    return;
-  }
+  if (!key) { return }
 
   var vm = vnode.context;
   var ref = vnode.componentInstance || vnode.elm;
@@ -14942,33 +6160,42 @@ var emptyNode = new VNode('', {}, []);
 
 var hooks = ['create', 'activate', 'update', 'remove', 'destroy'];
 
-function sameVnode(a, b) {
-  return a.key === b.key && (a.tag === b.tag && a.isComment === b.isComment && isDef(a.data) === isDef(b.data) && sameInputType(a, b) || isTrue(a.isAsyncPlaceholder) && a.asyncFactory === b.asyncFactory && isUndef(b.asyncFactory.error));
+function sameVnode (a, b) {
+  return (
+    a.key === b.key && (
+      (
+        a.tag === b.tag &&
+        a.isComment === b.isComment &&
+        isDef(a.data) === isDef(b.data) &&
+        sameInputType(a, b)
+      ) || (
+        isTrue(a.isAsyncPlaceholder) &&
+        a.asyncFactory === b.asyncFactory &&
+        isUndef(b.asyncFactory.error)
+      )
+    )
+  )
 }
 
-function sameInputType(a, b) {
-  if (a.tag !== 'input') {
-    return true;
-  }
+function sameInputType (a, b) {
+  if (a.tag !== 'input') { return true }
   var i;
   var typeA = isDef(i = a.data) && isDef(i = i.attrs) && i.type;
   var typeB = isDef(i = b.data) && isDef(i = i.attrs) && i.type;
-  return typeA === typeB || isTextInputType(typeA) && isTextInputType(typeB);
+  return typeA === typeB || isTextInputType(typeA) && isTextInputType(typeB)
 }
 
-function createKeyToOldIdx(children, beginIdx, endIdx) {
+function createKeyToOldIdx (children, beginIdx, endIdx) {
   var i, key;
   var map = {};
   for (i = beginIdx; i <= endIdx; ++i) {
     key = children[i].key;
-    if (isDef(key)) {
-      map[key] = i;
-    }
+    if (isDef(key)) { map[key] = i; }
   }
-  return map;
+  return map
 }
 
-function createPatchFunction(backend) {
+function createPatchFunction (backend) {
   var i, j;
   var cbs = {};
 
@@ -14984,21 +6211,21 @@ function createPatchFunction(backend) {
     }
   }
 
-  function emptyNodeAt(elm) {
-    return new VNode(nodeOps.tagName(elm).toLowerCase(), {}, [], undefined, elm);
+  function emptyNodeAt (elm) {
+    return new VNode(nodeOps.tagName(elm).toLowerCase(), {}, [], undefined, elm)
   }
 
-  function createRmCb(childElm, listeners) {
-    function remove$$1() {
+  function createRmCb (childElm, listeners) {
+    function remove$$1 () {
       if (--remove$$1.listeners === 0) {
         removeNode(childElm);
       }
     }
     remove$$1.listeners = listeners;
-    return remove$$1;
+    return remove$$1
   }
 
-  function removeNode(el) {
+  function removeNode (el) {
     var parent = nodeOps.parentNode(el);
     // element may have already been removed due to v-html / v-text
     if (isDef(parent)) {
@@ -15007,10 +6234,10 @@ function createPatchFunction(backend) {
   }
 
   var inPre = 0;
-  function createElm(vnode, insertedVnodeQueue, parentElm, refElm, nested) {
+  function createElm (vnode, insertedVnodeQueue, parentElm, refElm, nested) {
     vnode.isRootInsert = !nested; // for transition enter check
     if (createComponent(vnode, insertedVnodeQueue, parentElm, refElm)) {
-      return;
+      return
     }
 
     var data = vnode.data;
@@ -15021,11 +6248,23 @@ function createPatchFunction(backend) {
         if (data && data.pre) {
           inPre++;
         }
-        if (!inPre && !vnode.ns && !(config.ignoredElements.length && config.ignoredElements.indexOf(tag) > -1) && config.isUnknownElement(tag)) {
-          warn('Unknown custom element: <' + tag + '> - did you ' + 'register the component correctly? For recursive components, ' + 'make sure to provide the "name" option.', vnode.context);
+        if (
+          !inPre &&
+          !vnode.ns &&
+          !(config.ignoredElements.length && config.ignoredElements.indexOf(tag) > -1) &&
+          config.isUnknownElement(tag)
+        ) {
+          warn(
+            'Unknown custom element: <' + tag + '> - did you ' +
+            'register the component correctly? For recursive components, ' +
+            'make sure to provide the "name" option.',
+            vnode.context
+          );
         }
       }
-      vnode.elm = vnode.ns ? nodeOps.createElementNS(vnode.ns, tag) : nodeOps.createElement(tag, vnode);
+      vnode.elm = vnode.ns
+        ? nodeOps.createElementNS(vnode.ns, tag)
+        : nodeOps.createElement(tag, vnode);
       setScope(vnode);
 
       /* istanbul ignore if */
@@ -15049,7 +6288,7 @@ function createPatchFunction(backend) {
     }
   }
 
-  function createComponent(vnode, insertedVnodeQueue, parentElm, refElm) {
+  function createComponent (vnode, insertedVnodeQueue, parentElm, refElm) {
     var i = vnode.data;
     if (isDef(i)) {
       var isReactivated = isDef(vnode.componentInstance) && i.keepAlive;
@@ -15065,12 +6304,12 @@ function createPatchFunction(backend) {
         if (isTrue(isReactivated)) {
           reactivateComponent(vnode, insertedVnodeQueue, parentElm, refElm);
         }
-        return true;
+        return true
       }
     }
   }
 
-  function initComponent(vnode, insertedVnodeQueue) {
+  function initComponent (vnode, insertedVnodeQueue) {
     if (isDef(vnode.data.pendingInsert)) {
       insertedVnodeQueue.push.apply(insertedVnodeQueue, vnode.data.pendingInsert);
       vnode.data.pendingInsert = null;
@@ -15088,7 +6327,7 @@ function createPatchFunction(backend) {
     }
   }
 
-  function reactivateComponent(vnode, insertedVnodeQueue, parentElm, refElm) {
+  function reactivateComponent (vnode, insertedVnodeQueue, parentElm, refElm) {
     var i;
     // hack for #4339: a reactivated component with inner transition
     // does not trigger because the inner node's created hooks are not called
@@ -15102,7 +6341,7 @@ function createPatchFunction(backend) {
           cbs.activate[i](emptyNode, innerNode);
         }
         insertedVnodeQueue.push(innerNode);
-        break;
+        break
       }
     }
     // unlike a newly created component,
@@ -15110,7 +6349,7 @@ function createPatchFunction(backend) {
     insert(parentElm, vnode.elm, refElm);
   }
 
-  function insert(parent, elm, ref$$1) {
+  function insert (parent, elm, ref$$1) {
     if (isDef(parent)) {
       if (isDef(ref$$1)) {
         if (ref$$1.parentNode === parent) {
@@ -15122,7 +6361,7 @@ function createPatchFunction(backend) {
     }
   }
 
-  function createChildren(vnode, children, insertedVnodeQueue) {
+  function createChildren (vnode, children, insertedVnodeQueue) {
     if (Array.isArray(children)) {
       for (var i = 0; i < children.length; ++i) {
         createElm(children[i], insertedVnodeQueue, vnode.elm, null, true);
@@ -15132,32 +6371,28 @@ function createPatchFunction(backend) {
     }
   }
 
-  function isPatchable(vnode) {
+  function isPatchable (vnode) {
     while (vnode.componentInstance) {
       vnode = vnode.componentInstance._vnode;
     }
-    return isDef(vnode.tag);
+    return isDef(vnode.tag)
   }
 
-  function invokeCreateHooks(vnode, insertedVnodeQueue) {
+  function invokeCreateHooks (vnode, insertedVnodeQueue) {
     for (var i$1 = 0; i$1 < cbs.create.length; ++i$1) {
       cbs.create[i$1](emptyNode, vnode);
     }
     i = vnode.data.hook; // Reuse variable
     if (isDef(i)) {
-      if (isDef(i.create)) {
-        i.create(emptyNode, vnode);
-      }
-      if (isDef(i.insert)) {
-        insertedVnodeQueue.push(vnode);
-      }
+      if (isDef(i.create)) { i.create(emptyNode, vnode); }
+      if (isDef(i.insert)) { insertedVnodeQueue.push(vnode); }
     }
   }
 
   // set scope id attribute for scoped CSS.
   // this is implemented as a special case to avoid the overhead
   // of going through the normal attribute patching process.
-  function setScope(vnode) {
+  function setScope (vnode) {
     var i;
     var ancestor = vnode;
     while (ancestor) {
@@ -15167,27 +6402,26 @@ function createPatchFunction(backend) {
       ancestor = ancestor.parent;
     }
     // for slot content they should also get the scopeId from the host instance.
-    if (isDef(i = activeInstance) && i !== vnode.context && isDef(i = i.$options._scopeId)) {
+    if (isDef(i = activeInstance) &&
+      i !== vnode.context &&
+      isDef(i = i.$options._scopeId)
+    ) {
       nodeOps.setAttribute(vnode.elm, i, '');
     }
   }
 
-  function addVnodes(parentElm, refElm, vnodes, startIdx, endIdx, insertedVnodeQueue) {
+  function addVnodes (parentElm, refElm, vnodes, startIdx, endIdx, insertedVnodeQueue) {
     for (; startIdx <= endIdx; ++startIdx) {
       createElm(vnodes[startIdx], insertedVnodeQueue, parentElm, refElm);
     }
   }
 
-  function invokeDestroyHook(vnode) {
+  function invokeDestroyHook (vnode) {
     var i, j;
     var data = vnode.data;
     if (isDef(data)) {
-      if (isDef(i = data.hook) && isDef(i = i.destroy)) {
-        i(vnode);
-      }
-      for (i = 0; i < cbs.destroy.length; ++i) {
-        cbs.destroy[i](vnode);
-      }
+      if (isDef(i = data.hook) && isDef(i = i.destroy)) { i(vnode); }
+      for (i = 0; i < cbs.destroy.length; ++i) { cbs.destroy[i](vnode); }
     }
     if (isDef(i = vnode.children)) {
       for (j = 0; j < vnode.children.length; ++j) {
@@ -15196,22 +6430,21 @@ function createPatchFunction(backend) {
     }
   }
 
-  function removeVnodes(parentElm, vnodes, startIdx, endIdx) {
+  function removeVnodes (parentElm, vnodes, startIdx, endIdx) {
     for (; startIdx <= endIdx; ++startIdx) {
       var ch = vnodes[startIdx];
       if (isDef(ch)) {
         if (isDef(ch.tag)) {
           removeAndInvokeRemoveHook(ch);
           invokeDestroyHook(ch);
-        } else {
-          // Text node
+        } else { // Text node
           removeNode(ch.elm);
         }
       }
     }
   }
 
-  function removeAndInvokeRemoveHook(vnode, rm) {
+  function removeAndInvokeRemoveHook (vnode, rm) {
     if (isDef(rm) || isDef(vnode.data)) {
       var i;
       var listeners = cbs.remove.length + 1;
@@ -15240,7 +6473,7 @@ function createPatchFunction(backend) {
     }
   }
 
-  function updateChildren(parentElm, oldCh, newCh, insertedVnodeQueue, removeOnly) {
+  function updateChildren (parentElm, oldCh, newCh, insertedVnodeQueue, removeOnly) {
     var oldStartIdx = 0;
     var newStartIdx = 0;
     var oldEndIdx = oldCh.length - 1;
@@ -15269,31 +6502,31 @@ function createPatchFunction(backend) {
         patchVnode(oldEndVnode, newEndVnode, insertedVnodeQueue);
         oldEndVnode = oldCh[--oldEndIdx];
         newEndVnode = newCh[--newEndIdx];
-      } else if (sameVnode(oldStartVnode, newEndVnode)) {
-        // Vnode moved right
+      } else if (sameVnode(oldStartVnode, newEndVnode)) { // Vnode moved right
         patchVnode(oldStartVnode, newEndVnode, insertedVnodeQueue);
         canMove && nodeOps.insertBefore(parentElm, oldStartVnode.elm, nodeOps.nextSibling(oldEndVnode.elm));
         oldStartVnode = oldCh[++oldStartIdx];
         newEndVnode = newCh[--newEndIdx];
-      } else if (sameVnode(oldEndVnode, newStartVnode)) {
-        // Vnode moved left
+      } else if (sameVnode(oldEndVnode, newStartVnode)) { // Vnode moved left
         patchVnode(oldEndVnode, newStartVnode, insertedVnodeQueue);
         canMove && nodeOps.insertBefore(parentElm, oldEndVnode.elm, oldStartVnode.elm);
         oldEndVnode = oldCh[--oldEndIdx];
         newStartVnode = newCh[++newStartIdx];
       } else {
-        if (isUndef(oldKeyToIdx)) {
-          oldKeyToIdx = createKeyToOldIdx(oldCh, oldStartIdx, oldEndIdx);
-        }
-        idxInOld = isDef(newStartVnode.key) ? oldKeyToIdx[newStartVnode.key] : findIdxInOld(newStartVnode, oldCh, oldStartIdx, oldEndIdx);
-        if (isUndef(idxInOld)) {
-          // New element
+        if (isUndef(oldKeyToIdx)) { oldKeyToIdx = createKeyToOldIdx(oldCh, oldStartIdx, oldEndIdx); }
+        idxInOld = isDef(newStartVnode.key)
+          ? oldKeyToIdx[newStartVnode.key]
+          : findIdxInOld(newStartVnode, oldCh, oldStartIdx, oldEndIdx);
+        if (isUndef(idxInOld)) { // New element
           createElm(newStartVnode, insertedVnodeQueue, parentElm, oldStartVnode.elm);
         } else {
           elmToMove = oldCh[idxInOld];
           /* istanbul ignore if */
           if (process.env.NODE_ENV !== 'production' && !elmToMove) {
-            warn('It seems there are duplicate keys that is causing an update error. ' + 'Make sure each v-for item has a unique key.');
+            warn(
+              'It seems there are duplicate keys that is causing an update error. ' +
+              'Make sure each v-for item has a unique key.'
+            );
           }
           if (sameVnode(elmToMove, newStartVnode)) {
             patchVnode(elmToMove, newStartVnode, insertedVnodeQueue);
@@ -15315,18 +6548,16 @@ function createPatchFunction(backend) {
     }
   }
 
-  function findIdxInOld(node, oldCh, start, end) {
+  function findIdxInOld (node, oldCh, start, end) {
     for (var i = start; i < end; i++) {
       var c = oldCh[i];
-      if (isDef(c) && sameVnode(node, c)) {
-        return i;
-      }
+      if (isDef(c) && sameVnode(node, c)) { return i }
     }
   }
 
-  function patchVnode(oldVnode, vnode, insertedVnodeQueue, removeOnly) {
+  function patchVnode (oldVnode, vnode, insertedVnodeQueue, removeOnly) {
     if (oldVnode === vnode) {
-      return;
+      return
     }
 
     var elm = vnode.elm = oldVnode.elm;
@@ -15337,16 +6568,20 @@ function createPatchFunction(backend) {
       } else {
         vnode.isAsyncPlaceholder = true;
       }
-      return;
+      return
     }
 
     // reuse element for static trees.
     // note we only do this if the vnode is cloned -
     // if the new node is not cloned it means the render functions have been
     // reset by the hot-reload-api and we need to do a proper re-render.
-    if (isTrue(vnode.isStatic) && isTrue(oldVnode.isStatic) && vnode.key === oldVnode.key && (isTrue(vnode.isCloned) || isTrue(vnode.isOnce))) {
+    if (isTrue(vnode.isStatic) &&
+      isTrue(oldVnode.isStatic) &&
+      vnode.key === oldVnode.key &&
+      (isTrue(vnode.isCloned) || isTrue(vnode.isOnce))
+    ) {
       vnode.componentInstance = oldVnode.componentInstance;
-      return;
+      return
     }
 
     var i;
@@ -15358,22 +6593,14 @@ function createPatchFunction(backend) {
     var oldCh = oldVnode.children;
     var ch = vnode.children;
     if (isDef(data) && isPatchable(vnode)) {
-      for (i = 0; i < cbs.update.length; ++i) {
-        cbs.update[i](oldVnode, vnode);
-      }
-      if (isDef(i = data.hook) && isDef(i = i.update)) {
-        i(oldVnode, vnode);
-      }
+      for (i = 0; i < cbs.update.length; ++i) { cbs.update[i](oldVnode, vnode); }
+      if (isDef(i = data.hook) && isDef(i = i.update)) { i(oldVnode, vnode); }
     }
     if (isUndef(vnode.text)) {
       if (isDef(oldCh) && isDef(ch)) {
-        if (oldCh !== ch) {
-          updateChildren(elm, oldCh, ch, insertedVnodeQueue, removeOnly);
-        }
+        if (oldCh !== ch) { updateChildren(elm, oldCh, ch, insertedVnodeQueue, removeOnly); }
       } else if (isDef(ch)) {
-        if (isDef(oldVnode.text)) {
-          nodeOps.setTextContent(elm, '');
-        }
+        if (isDef(oldVnode.text)) { nodeOps.setTextContent(elm, ''); }
         addVnodes(elm, null, ch, 0, ch.length - 1, insertedVnodeQueue);
       } else if (isDef(oldCh)) {
         removeVnodes(elm, oldCh, 0, oldCh.length - 1);
@@ -15384,13 +6611,11 @@ function createPatchFunction(backend) {
       nodeOps.setTextContent(elm, vnode.text);
     }
     if (isDef(data)) {
-      if (isDef(i = data.hook) && isDef(i = i.postpatch)) {
-        i(oldVnode, vnode);
-      }
+      if (isDef(i = data.hook) && isDef(i = i.postpatch)) { i(oldVnode, vnode); }
     }
   }
 
-  function invokeInsertHook(vnode, queue, initial) {
+  function invokeInsertHook (vnode, queue, initial) {
     // delay insert hooks for component root nodes, invoke them after the
     // element is really inserted
     if (isTrue(initial) && isDef(vnode.parent)) {
@@ -15408,15 +6633,15 @@ function createPatchFunction(backend) {
   var isRenderedModule = makeMap('attrs,style,class,staticClass,staticStyle,key');
 
   // Note: this is a browser-only function so we can assume elms are DOM nodes.
-  function hydrate(elm, vnode, insertedVnodeQueue) {
+  function hydrate (elm, vnode, insertedVnodeQueue) {
     if (isTrue(vnode.isComment) && isDef(vnode.asyncFactory)) {
       vnode.elm = elm;
       vnode.isAsyncPlaceholder = true;
-      return true;
+      return true
     }
     if (process.env.NODE_ENV !== 'production') {
       if (!assertNodeMatch(elm, vnode)) {
-        return false;
+        return false
       }
     }
     vnode.elm = elm;
@@ -15424,13 +6649,11 @@ function createPatchFunction(backend) {
     var data = vnode.data;
     var children = vnode.children;
     if (isDef(data)) {
-      if (isDef(i = data.hook) && isDef(i = i.init)) {
-        i(vnode, true /* hydrating */);
-      }
+      if (isDef(i = data.hook) && isDef(i = i.init)) { i(vnode, true /* hydrating */); }
       if (isDef(i = vnode.componentInstance)) {
         // child component. it should have hydrated its own tree.
         initComponent(vnode, insertedVnodeQueue);
-        return true;
+        return true
       }
     }
     if (isDef(tag)) {
@@ -15443,13 +6666,16 @@ function createPatchFunction(backend) {
           if (isDef(i = data) && isDef(i = i.domProps) && isDef(i = i.innerHTML)) {
             if (i !== elm.innerHTML) {
               /* istanbul ignore if */
-              if (process.env.NODE_ENV !== 'production' && typeof console !== 'undefined' && !bailed) {
+              if (process.env.NODE_ENV !== 'production' &&
+                typeof console !== 'undefined' &&
+                !bailed
+              ) {
                 bailed = true;
                 console.warn('Parent: ', elm);
                 console.warn('server innerHTML: ', i);
                 console.warn('client innerHTML: ', elm.innerHTML);
               }
-              return false;
+              return false
             }
           } else {
             // iterate and compare children lists
@@ -15458,7 +6684,7 @@ function createPatchFunction(backend) {
             for (var i$1 = 0; i$1 < children.length; i$1++) {
               if (!childNode || !hydrate(childNode, children[i$1], insertedVnodeQueue)) {
                 childrenMatch = false;
-                break;
+                break
               }
               childNode = childNode.nextSibling;
             }
@@ -15466,12 +6692,15 @@ function createPatchFunction(backend) {
             // longer than the virtual children list.
             if (!childrenMatch || childNode) {
               /* istanbul ignore if */
-              if (process.env.NODE_ENV !== 'production' && typeof console !== 'undefined' && !bailed) {
+              if (process.env.NODE_ENV !== 'production' &&
+                typeof console !== 'undefined' &&
+                !bailed
+              ) {
                 bailed = true;
                 console.warn('Parent: ', elm);
                 console.warn('Mismatching childNodes vs. VNodes: ', elm.childNodes, children);
               }
-              return false;
+              return false
             }
           }
         }
@@ -15480,30 +6709,31 @@ function createPatchFunction(backend) {
         for (var key in data) {
           if (!isRenderedModule(key)) {
             invokeCreateHooks(vnode, insertedVnodeQueue);
-            break;
+            break
           }
         }
       }
     } else if (elm.data !== vnode.text) {
       elm.data = vnode.text;
     }
-    return true;
+    return true
   }
 
-  function assertNodeMatch(node, vnode) {
+  function assertNodeMatch (node, vnode) {
     if (isDef(vnode.tag)) {
-      return vnode.tag.indexOf('vue-component') === 0 || vnode.tag.toLowerCase() === (node.tagName && node.tagName.toLowerCase());
+      return (
+        vnode.tag.indexOf('vue-component') === 0 ||
+        vnode.tag.toLowerCase() === (node.tagName && node.tagName.toLowerCase())
+      )
     } else {
-      return node.nodeType === (vnode.isComment ? 8 : 3);
+      return node.nodeType === (vnode.isComment ? 8 : 3)
     }
   }
 
-  return function patch(oldVnode, vnode, hydrating, removeOnly, parentElm, refElm) {
+  return function patch (oldVnode, vnode, hydrating, removeOnly, parentElm, refElm) {
     if (isUndef(vnode)) {
-      if (isDef(oldVnode)) {
-        invokeDestroyHook(oldVnode);
-      }
-      return;
+      if (isDef(oldVnode)) { invokeDestroyHook(oldVnode); }
+      return
     }
 
     var isInitialPatch = false;
@@ -15530,9 +6760,15 @@ function createPatchFunction(backend) {
           if (isTrue(hydrating)) {
             if (hydrate(oldVnode, vnode, insertedVnodeQueue)) {
               invokeInsertHook(vnode, insertedVnodeQueue, true);
-              return oldVnode;
+              return oldVnode
             } else if (process.env.NODE_ENV !== 'production') {
-              warn('The client-side rendered virtual DOM tree is not matching ' + 'server-rendered content. This is likely caused by incorrect ' + 'HTML markup, for example nesting block-level elements inside ' + '<p>, or missing <tbody>. Bailing hydration and performing ' + 'full client-side render.');
+              warn(
+                'The client-side rendered virtual DOM tree is not matching ' +
+                'server-rendered content. This is likely caused by incorrect ' +
+                'HTML markup, for example nesting block-level elements inside ' +
+                '<p>, or missing <tbody>. Bailing hydration and performing ' +
+                'full client-side render.'
+              );
             }
           }
           // either not server-rendered, or hydration failed.
@@ -15542,11 +6778,15 @@ function createPatchFunction(backend) {
         // replacing existing element
         var oldElm = oldVnode.elm;
         var parentElm$1 = nodeOps.parentNode(oldElm);
-        createElm(vnode, insertedVnodeQueue,
-        // extremely rare edge case: do not insert if old element is in a
-        // leaving transition. Only happens when combining transition +
-        // keep-alive + HOCs. (#4590)
-        oldElm._leaveCb ? null : parentElm$1, nodeOps.nextSibling(oldElm));
+        createElm(
+          vnode,
+          insertedVnodeQueue,
+          // extremely rare edge case: do not insert if old element is in a
+          // leaving transition. Only happens when combining transition +
+          // keep-alive + HOCs. (#4590)
+          oldElm._leaveCb ? null : parentElm$1,
+          nodeOps.nextSibling(oldElm)
+        );
 
         if (isDef(vnode.parent)) {
           // component root element replaced.
@@ -15586,8 +6826,8 @@ function createPatchFunction(backend) {
     }
 
     invokeInsertHook(vnode, insertedVnodeQueue, isInitialPatch);
-    return vnode.elm;
-  };
+    return vnode.elm
+  }
 }
 
 /*  */
@@ -15595,18 +6835,18 @@ function createPatchFunction(backend) {
 var directives = {
   create: updateDirectives,
   update: updateDirectives,
-  destroy: function unbindDirectives(vnode) {
+  destroy: function unbindDirectives (vnode) {
     updateDirectives(vnode, emptyNode);
   }
 };
 
-function updateDirectives(oldVnode, vnode) {
+function updateDirectives (oldVnode, vnode) {
   if (oldVnode.data.directives || vnode.data.directives) {
     _update(oldVnode, vnode);
   }
 }
 
-function _update(oldVnode, vnode) {
+function _update (oldVnode, vnode) {
   var isCreate = oldVnode === emptyNode;
   var isDestroy = vnode === emptyNode;
   var oldDirs = normalizeDirectives$1(oldVnode.data.directives, oldVnode.context);
@@ -15668,10 +6908,13 @@ function _update(oldVnode, vnode) {
 
 var emptyModifiers = Object.create(null);
 
-function normalizeDirectives$1(dirs, vm) {
+function normalizeDirectives$1 (
+  dirs,
+  vm
+) {
   var res = Object.create(null);
   if (!dirs) {
-    return res;
+    return res
   }
   var i, dir;
   for (i = 0; i < dirs.length; i++) {
@@ -15682,35 +6925,38 @@ function normalizeDirectives$1(dirs, vm) {
     res[getRawDirName(dir)] = dir;
     dir.def = resolveAsset(vm.$options, 'directives', dir.name, true);
   }
-  return res;
+  return res
 }
 
-function getRawDirName(dir) {
-  return dir.rawName || dir.name + "." + Object.keys(dir.modifiers || {}).join('.');
+function getRawDirName (dir) {
+  return dir.rawName || ((dir.name) + "." + (Object.keys(dir.modifiers || {}).join('.')))
 }
 
-function callHook$1(dir, hook, vnode, oldVnode, isDestroy) {
+function callHook$1 (dir, hook, vnode, oldVnode, isDestroy) {
   var fn = dir.def && dir.def[hook];
   if (fn) {
     try {
       fn(vnode.elm, dir, vnode, oldVnode, isDestroy);
     } catch (e) {
-      handleError(e, vnode.context, "directive " + dir.name + " " + hook + " hook");
+      handleError(e, vnode.context, ("directive " + (dir.name) + " " + hook + " hook"));
     }
   }
 }
 
-var baseModules = [ref, directives];
+var baseModules = [
+  ref,
+  directives
+];
 
 /*  */
 
-function updateAttrs(oldVnode, vnode) {
+function updateAttrs (oldVnode, vnode) {
   var opts = vnode.componentOptions;
   if (isDef(opts) && opts.Ctor.options.inheritAttrs === false) {
-    return;
+    return
   }
   if (isUndef(oldVnode.data.attrs) && isUndef(vnode.data.attrs)) {
-    return;
+    return
   }
   var key, cur, old;
   var elm = vnode.elm;
@@ -15744,7 +6990,7 @@ function updateAttrs(oldVnode, vnode) {
   }
 }
 
-function setAttr(el, key, value) {
+function setAttr (el, key, value) {
   if (isBooleanAttr(key)) {
     // set attribute for blank value
     // e.g. <option disabled>Select one</option>
@@ -15753,7 +6999,9 @@ function setAttr(el, key, value) {
     } else {
       // technically allowfullscreen is a boolean attribute for <iframe>,
       // but Flash expects a value of "true" when used on <embed> tag
-      value = key === 'allowfullscreen' && el.tagName === 'EMBED' ? 'true' : key;
+      value = key === 'allowfullscreen' && el.tagName === 'EMBED'
+        ? 'true'
+        : key;
       el.setAttribute(key, value);
     }
   } else if (isEnumeratedAttr(key)) {
@@ -15780,12 +7028,20 @@ var attrs = {
 
 /*  */
 
-function updateClass(oldVnode, vnode) {
+function updateClass (oldVnode, vnode) {
   var el = vnode.elm;
   var data = vnode.data;
   var oldData = oldVnode.data;
-  if (isUndef(data.staticClass) && isUndef(data.class) && (isUndef(oldData) || isUndef(oldData.staticClass) && isUndef(oldData.class))) {
-    return;
+  if (
+    isUndef(data.staticClass) &&
+    isUndef(data.class) && (
+      isUndef(oldData) || (
+        isUndef(oldData.staticClass) &&
+        isUndef(oldData.class)
+      )
+    )
+  ) {
+    return
   }
 
   var cls = genClassForVnode(vnode);
@@ -15812,7 +7068,7 @@ var klass = {
 
 var validDivisionCharRE = /[\w).+\-_$\]]/;
 
-function parseFilters(exp) {
+function parseFilters (exp) {
   var inSingle = false;
   var inDouble = false;
   var inTemplateString = false;
@@ -15827,23 +7083,19 @@ function parseFilters(exp) {
     prev = c;
     c = exp.charCodeAt(i);
     if (inSingle) {
-      if (c === 0x27 && prev !== 0x5C) {
-        inSingle = false;
-      }
+      if (c === 0x27 && prev !== 0x5C) { inSingle = false; }
     } else if (inDouble) {
-      if (c === 0x22 && prev !== 0x5C) {
-        inDouble = false;
-      }
+      if (c === 0x22 && prev !== 0x5C) { inDouble = false; }
     } else if (inTemplateString) {
-      if (c === 0x60 && prev !== 0x5C) {
-        inTemplateString = false;
-      }
+      if (c === 0x60 && prev !== 0x5C) { inTemplateString = false; }
     } else if (inRegex) {
-      if (c === 0x2f && prev !== 0x5C) {
-        inRegex = false;
-      }
-    } else if (c === 0x7C && // pipe
-    exp.charCodeAt(i + 1) !== 0x7C && exp.charCodeAt(i - 1) !== 0x7C && !curly && !square && !paren) {
+      if (c === 0x2f && prev !== 0x5C) { inRegex = false; }
+    } else if (
+      c === 0x7C && // pipe
+      exp.charCodeAt(i + 1) !== 0x7C &&
+      exp.charCodeAt(i - 1) !== 0x7C &&
+      !curly && !square && !paren
+    ) {
       if (expression === undefined) {
         // first filter, end of expression
         lastFilterIndex = i + 1;
@@ -15853,35 +7105,23 @@ function parseFilters(exp) {
       }
     } else {
       switch (c) {
-        case 0x22:
-          inDouble = true;break; // "
-        case 0x27:
-          inSingle = true;break; // '
-        case 0x60:
-          inTemplateString = true;break; // `
-        case 0x28:
-          paren++;break; // (
-        case 0x29:
-          paren--;break; // )
-        case 0x5B:
-          square++;break; // [
-        case 0x5D:
-          square--;break; // ]
-        case 0x7B:
-          curly++;break; // {
-        case 0x7D:
-          curly--;break; // }
+        case 0x22: inDouble = true; break         // "
+        case 0x27: inSingle = true; break         // '
+        case 0x60: inTemplateString = true; break // `
+        case 0x28: paren++; break                 // (
+        case 0x29: paren--; break                 // )
+        case 0x5B: square++; break                // [
+        case 0x5D: square--; break                // ]
+        case 0x7B: curly++; break                 // {
+        case 0x7D: curly--; break                 // }
       }
-      if (c === 0x2f) {
-        // /
+      if (c === 0x2f) { // /
         var j = i - 1;
-        var p = void 0;
+        var p = (void 0);
         // find first non-whitespace prev char
         for (; j >= 0; j--) {
           p = exp.charAt(j);
-          if (p !== ' ') {
-            break;
-          }
+          if (p !== ' ') { break }
         }
         if (!p || !validDivisionCharRE.test(p)) {
           inRegex = true;
@@ -15896,7 +7136,7 @@ function parseFilters(exp) {
     pushFilter();
   }
 
-  function pushFilter() {
+  function pushFilter () {
     (filters || (filters = [])).push(exp.slice(lastFilterIndex, i).trim());
     lastFilterIndex = i + 1;
   }
@@ -15907,52 +7147,73 @@ function parseFilters(exp) {
     }
   }
 
-  return expression;
+  return expression
 }
 
-function wrapFilter(exp, filter) {
+function wrapFilter (exp, filter) {
   var i = filter.indexOf('(');
   if (i < 0) {
     // _f: resolveFilter
-    return "_f(\"" + filter + "\")(" + exp + ")";
+    return ("_f(\"" + filter + "\")(" + exp + ")")
   } else {
     var name = filter.slice(0, i);
     var args = filter.slice(i + 1);
-    return "_f(\"" + name + "\")(" + exp + "," + args;
+    return ("_f(\"" + name + "\")(" + exp + "," + args)
   }
 }
 
 /*  */
 
-function baseWarn(msg) {
-  console.error("[Vue compiler]: " + msg);
+function baseWarn (msg) {
+  console.error(("[Vue compiler]: " + msg));
 }
 
-function pluckModuleFunction(modules, key) {
-  return modules ? modules.map(function (m) {
-    return m[key];
-  }).filter(function (_) {
-    return _;
-  }) : [];
+function pluckModuleFunction (
+  modules,
+  key
+) {
+  return modules
+    ? modules.map(function (m) { return m[key]; }).filter(function (_) { return _; })
+    : []
 }
 
-function addProp(el, name, value) {
+function addProp (el, name, value) {
   (el.props || (el.props = [])).push({ name: name, value: value });
 }
 
-function addAttr(el, name, value) {
+function addAttr (el, name, value) {
   (el.attrs || (el.attrs = [])).push({ name: name, value: value });
 }
 
-function addDirective(el, name, rawName, value, arg, modifiers) {
+function addDirective (
+  el,
+  name,
+  rawName,
+  value,
+  arg,
+  modifiers
+) {
   (el.directives || (el.directives = [])).push({ name: name, rawName: rawName, value: value, arg: arg, modifiers: modifiers });
 }
 
-function addHandler(el, name, value, modifiers, important, warn) {
+function addHandler (
+  el,
+  name,
+  value,
+  modifiers,
+  important,
+  warn
+) {
   // warn prevent and passive modifier
   /* istanbul ignore if */
-  if (process.env.NODE_ENV !== 'production' && warn && modifiers && modifiers.prevent && modifiers.passive) {
-    warn('passive and prevent can\'t be used together. ' + 'Passive handler can\'t prevent default event.');
+  if (
+    process.env.NODE_ENV !== 'production' && warn &&
+    modifiers && modifiers.prevent && modifiers.passive
+  ) {
+    warn(
+      'passive and prevent can\'t be used together. ' +
+      'Passive handler can\'t prevent default event.'
+    );
   }
   // check capture modifier
   if (modifiers && modifiers.capture) {
@@ -15987,30 +7248,36 @@ function addHandler(el, name, value, modifiers, important, warn) {
   }
 }
 
-function getBindingAttr(el, name, getStatic) {
-  var dynamicValue = getAndRemoveAttr(el, ':' + name) || getAndRemoveAttr(el, 'v-bind:' + name);
+function getBindingAttr (
+  el,
+  name,
+  getStatic
+) {
+  var dynamicValue =
+    getAndRemoveAttr(el, ':' + name) ||
+    getAndRemoveAttr(el, 'v-bind:' + name);
   if (dynamicValue != null) {
-    return parseFilters(dynamicValue);
+    return parseFilters(dynamicValue)
   } else if (getStatic !== false) {
     var staticValue = getAndRemoveAttr(el, name);
     if (staticValue != null) {
-      return JSON.stringify(staticValue);
+      return JSON.stringify(staticValue)
     }
   }
 }
 
-function getAndRemoveAttr(el, name) {
+function getAndRemoveAttr (el, name) {
   var val;
   if ((val = el.attrsMap[name]) != null) {
     var list = el.attrsList;
     for (var i = 0, l = list.length; i < l; i++) {
       if (list[i].name === name) {
         list.splice(i, 1);
-        break;
+        break
       }
     }
   }
-  return val;
+  return val
 }
 
 /*  */
@@ -16018,7 +7285,11 @@ function getAndRemoveAttr(el, name) {
 /**
  * Cross-platform code generation for component v-model
  */
-function genComponentModel(el, value, modifiers) {
+function genComponentModel (
+  el,
+  value,
+  modifiers
+) {
   var ref = modifiers || {};
   var number = ref.number;
   var trim = ref.trim;
@@ -16026,7 +7297,10 @@ function genComponentModel(el, value, modifiers) {
   var baseValueExpression = '$$v';
   var valueExpression = baseValueExpression;
   if (trim) {
-    valueExpression = "(typeof " + baseValueExpression + " === 'string'" + "? " + baseValueExpression + ".trim()" + ": " + baseValueExpression + ")";
+    valueExpression =
+      "(typeof " + baseValueExpression + " === 'string'" +
+        "? " + baseValueExpression + ".trim()" +
+        ": " + baseValueExpression + ")";
   }
   if (number) {
     valueExpression = "_n(" + valueExpression + ")";
@@ -16034,21 +7308,24 @@ function genComponentModel(el, value, modifiers) {
   var assignment = genAssignmentCode(value, valueExpression);
 
   el.model = {
-    value: "(" + value + ")",
-    expression: "\"" + value + "\"",
-    callback: "function (" + baseValueExpression + ") {" + assignment + "}"
+    value: ("(" + value + ")"),
+    expression: ("\"" + value + "\""),
+    callback: ("function (" + baseValueExpression + ") {" + assignment + "}")
   };
 }
 
 /**
  * Cross-platform codegen helper for generating v-model value assignment code.
  */
-function genAssignmentCode(value, assignment) {
+function genAssignmentCode (
+  value,
+  assignment
+) {
   var modelRs = parseModel(value);
   if (modelRs.idx === null) {
-    return value + "=" + assignment;
+    return (value + "=" + assignment)
   } else {
-    return "$set(" + modelRs.exp + ", " + modelRs.idx + ", " + assignment + ")";
+    return ("$set(" + (modelRs.exp) + ", " + (modelRs.idx) + ", " + assignment + ")")
   }
 }
 
@@ -16073,7 +7350,7 @@ var index$1;
 var expressionPos;
 var expressionEndPos;
 
-function parseModel(val) {
+function parseModel (val) {
   str = val;
   len = str.length;
   index$1 = expressionPos = expressionEndPos = 0;
@@ -16082,7 +7359,7 @@ function parseModel(val) {
     return {
       exp: val,
       idx: null
-    };
+    }
   }
 
   while (!eof()) {
@@ -16098,49 +7375,45 @@ function parseModel(val) {
   return {
     exp: val.substring(0, expressionPos),
     idx: val.substring(expressionPos + 1, expressionEndPos)
-  };
+  }
 }
 
-function next() {
-  return str.charCodeAt(++index$1);
+function next () {
+  return str.charCodeAt(++index$1)
 }
 
-function eof() {
-  return index$1 >= len;
+function eof () {
+  return index$1 >= len
 }
 
-function isStringStart(chr) {
-  return chr === 0x22 || chr === 0x27;
+function isStringStart (chr) {
+  return chr === 0x22 || chr === 0x27
 }
 
-function parseBracket(chr) {
+function parseBracket (chr) {
   var inBracket = 1;
   expressionPos = index$1;
   while (!eof()) {
     chr = next();
     if (isStringStart(chr)) {
       parseString(chr);
-      continue;
+      continue
     }
-    if (chr === 0x5B) {
-      inBracket++;
-    }
-    if (chr === 0x5D) {
-      inBracket--;
-    }
+    if (chr === 0x5B) { inBracket++; }
+    if (chr === 0x5D) { inBracket--; }
     if (inBracket === 0) {
       expressionEndPos = index$1;
-      break;
+      break
     }
   }
 }
 
-function parseString(chr) {
+function parseString (chr) {
   var stringQuote = chr;
   while (!eof()) {
     chr = next();
     if (chr === stringQuote) {
-      break;
+      break
     }
   }
 }
@@ -16154,7 +7427,11 @@ var warn$1;
 var RANGE_TOKEN = '__r';
 var CHECKBOX_RADIO_TOKEN = '__c';
 
-function model(el, dir, _warn) {
+function model (
+  el,
+  dir,
+  _warn
+) {
   warn$1 = _warn;
   var value = dir.value;
   var modifiers = dir.modifiers;
@@ -16164,19 +7441,25 @@ function model(el, dir, _warn) {
   if (process.env.NODE_ENV !== 'production') {
     var dynamicType = el.attrsMap['v-bind:type'] || el.attrsMap[':type'];
     if (tag === 'input' && dynamicType) {
-      warn$1("<input :type=\"" + dynamicType + "\" v-model=\"" + value + "\">:\n" + "v-model does not support dynamic input types. Use v-if branches instead.");
+      warn$1(
+        "<input :type=\"" + dynamicType + "\" v-model=\"" + value + "\">:\n" +
+        "v-model does not support dynamic input types. Use v-if branches instead."
+      );
     }
     // inputs with type="file" are read only and setting the input's
     // value will throw an error.
     if (tag === 'input' && type === 'file') {
-      warn$1("<" + el.tag + " v-model=\"" + value + "\" type=\"file\">:\n" + "File inputs are read only. Use a v-on:change listener instead.");
+      warn$1(
+        "<" + (el.tag) + " v-model=\"" + value + "\" type=\"file\">:\n" +
+        "File inputs are read only. Use a v-on:change listener instead."
+      );
     }
   }
 
   if (el.component) {
     genComponentModel(el, value, modifiers);
     // component v-model doesn't need extra runtime
-    return false;
+    return false
   } else if (tag === 'select') {
     genSelect(el, value, modifiers);
   } else if (tag === 'input' && type === 'checkbox') {
@@ -16188,50 +7471,96 @@ function model(el, dir, _warn) {
   } else if (!config.isReservedTag(tag)) {
     genComponentModel(el, value, modifiers);
     // component v-model doesn't need extra runtime
-    return false;
+    return false
   } else if (process.env.NODE_ENV !== 'production') {
-    warn$1("<" + el.tag + " v-model=\"" + value + "\">: " + "v-model is not supported on this element type. " + 'If you are working with contenteditable, it\'s recommended to ' + 'wrap a library dedicated for that purpose inside a custom component.');
+    warn$1(
+      "<" + (el.tag) + " v-model=\"" + value + "\">: " +
+      "v-model is not supported on this element type. " +
+      'If you are working with contenteditable, it\'s recommended to ' +
+      'wrap a library dedicated for that purpose inside a custom component.'
+    );
   }
 
   // ensure runtime directive metadata
-  return true;
+  return true
 }
 
-function genCheckboxModel(el, value, modifiers) {
+function genCheckboxModel (
+  el,
+  value,
+  modifiers
+) {
   var number = modifiers && modifiers.number;
   var valueBinding = getBindingAttr(el, 'value') || 'null';
   var trueValueBinding = getBindingAttr(el, 'true-value') || 'true';
   var falseValueBinding = getBindingAttr(el, 'false-value') || 'false';
-  addProp(el, 'checked', "Array.isArray(" + value + ")" + "?_i(" + value + "," + valueBinding + ")>-1" + (trueValueBinding === 'true' ? ":(" + value + ")" : ":_q(" + value + "," + trueValueBinding + ")"));
-  addHandler(el, CHECKBOX_RADIO_TOKEN, "var $$a=" + value + "," + '$$el=$event.target,' + "$$c=$$el.checked?(" + trueValueBinding + "):(" + falseValueBinding + ");" + 'if(Array.isArray($$a)){' + "var $$v=" + (number ? '_n(' + valueBinding + ')' : valueBinding) + "," + '$$i=_i($$a,$$v);' + "if($$el.checked){$$i<0&&(" + value + "=$$a.concat([$$v]))}" + "else{$$i>-1&&(" + value + "=$$a.slice(0,$$i).concat($$a.slice($$i+1)))}" + "}else{" + genAssignmentCode(value, '$$c') + "}", null, true);
+  addProp(el, 'checked',
+    "Array.isArray(" + value + ")" +
+      "?_i(" + value + "," + valueBinding + ")>-1" + (
+        trueValueBinding === 'true'
+          ? (":(" + value + ")")
+          : (":_q(" + value + "," + trueValueBinding + ")")
+      )
+  );
+  addHandler(el, CHECKBOX_RADIO_TOKEN,
+    "var $$a=" + value + "," +
+        '$$el=$event.target,' +
+        "$$c=$$el.checked?(" + trueValueBinding + "):(" + falseValueBinding + ");" +
+    'if(Array.isArray($$a)){' +
+      "var $$v=" + (number ? '_n(' + valueBinding + ')' : valueBinding) + "," +
+          '$$i=_i($$a,$$v);' +
+      "if($$el.checked){$$i<0&&(" + value + "=$$a.concat([$$v]))}" +
+      "else{$$i>-1&&(" + value + "=$$a.slice(0,$$i).concat($$a.slice($$i+1)))}" +
+    "}else{" + (genAssignmentCode(value, '$$c')) + "}",
+    null, true
+  );
 }
 
-function genRadioModel(el, value, modifiers) {
+function genRadioModel (
+    el,
+    value,
+    modifiers
+) {
   var number = modifiers && modifiers.number;
   var valueBinding = getBindingAttr(el, 'value') || 'null';
-  valueBinding = number ? "_n(" + valueBinding + ")" : valueBinding;
-  addProp(el, 'checked', "_q(" + value + "," + valueBinding + ")");
+  valueBinding = number ? ("_n(" + valueBinding + ")") : valueBinding;
+  addProp(el, 'checked', ("_q(" + value + "," + valueBinding + ")"));
   addHandler(el, CHECKBOX_RADIO_TOKEN, genAssignmentCode(value, valueBinding), null, true);
 }
 
-function genSelect(el, value, modifiers) {
+function genSelect (
+    el,
+    value,
+    modifiers
+) {
   var number = modifiers && modifiers.number;
-  var selectedVal = "Array.prototype.filter" + ".call($event.target.options,function(o){return o.selected})" + ".map(function(o){var val = \"_value\" in o ? o._value : o.value;" + "return " + (number ? '_n(val)' : 'val') + "})";
+  var selectedVal = "Array.prototype.filter" +
+    ".call($event.target.options,function(o){return o.selected})" +
+    ".map(function(o){var val = \"_value\" in o ? o._value : o.value;" +
+    "return " + (number ? '_n(val)' : 'val') + "})";
 
   var assignment = '$event.target.multiple ? $$selectedVal : $$selectedVal[0]';
   var code = "var $$selectedVal = " + selectedVal + ";";
-  code = code + " " + genAssignmentCode(value, assignment);
+  code = code + " " + (genAssignmentCode(value, assignment));
   addHandler(el, 'change', code, null, true);
 }
 
-function genDefaultModel(el, value, modifiers) {
+function genDefaultModel (
+  el,
+  value,
+  modifiers
+) {
   var type = el.attrsMap.type;
   var ref = modifiers || {};
   var lazy = ref.lazy;
   var number = ref.number;
   var trim = ref.trim;
   var needCompositionGuard = !lazy && type !== 'range';
-  var event = lazy ? 'change' : type === 'range' ? RANGE_TOKEN : 'input';
+  var event = lazy
+    ? 'change'
+    : type === 'range'
+      ? RANGE_TOKEN
+      : 'input';
 
   var valueExpression = '$event.target.value';
   if (trim) {
@@ -16246,7 +7575,7 @@ function genDefaultModel(el, value, modifiers) {
     code = "if($event.target.composing)return;" + code;
   }
 
-  addProp(el, 'value', "(" + value + ")");
+  addProp(el, 'value', ("(" + value + ")"));
   addHandler(el, event, code, null, true);
   if (trim || number) {
     addHandler(el, 'blur', '$forceUpdate()');
@@ -16259,7 +7588,7 @@ function genDefaultModel(el, value, modifiers) {
 // it's important to place the event as the first in the array because
 // the whole point is ensuring the v-model callback gets called before
 // user-attached handlers.
-function normalizeEvents(on) {
+function normalizeEvents (on) {
   var event;
   /* istanbul ignore if */
   if (isDef(on[RANGE_TOKEN])) {
@@ -16278,27 +7607,46 @@ function normalizeEvents(on) {
 
 var target$1;
 
-function add$1(event, handler, once$$1, capture, passive) {
+function add$1 (
+  event,
+  handler,
+  once$$1,
+  capture,
+  passive
+) {
   if (once$$1) {
     var oldHandler = handler;
     var _target = target$1; // save current target element in closure
     handler = function (ev) {
-      var res = arguments.length === 1 ? oldHandler(ev) : oldHandler.apply(null, arguments);
+      var res = arguments.length === 1
+        ? oldHandler(ev)
+        : oldHandler.apply(null, arguments);
       if (res !== null) {
         remove$2(event, handler, capture, _target);
       }
     };
   }
-  target$1.addEventListener(event, handler, supportsPassive ? { capture: capture, passive: passive } : capture);
+  target$1.addEventListener(
+    event,
+    handler,
+    supportsPassive
+      ? { capture: capture, passive: passive }
+      : capture
+  );
 }
 
-function remove$2(event, handler, capture, _target) {
+function remove$2 (
+  event,
+  handler,
+  capture,
+  _target
+) {
   (_target || target$1).removeEventListener(event, handler, capture);
 }
 
-function updateDOMListeners(oldVnode, vnode) {
+function updateDOMListeners (oldVnode, vnode) {
   if (isUndef(oldVnode.data.on) && isUndef(vnode.data.on)) {
-    return;
+    return
   }
   var on = vnode.data.on || {};
   var oldOn = oldVnode.data.on || {};
@@ -16314,9 +7662,9 @@ var events = {
 
 /*  */
 
-function updateDOMProps(oldVnode, vnode) {
+function updateDOMProps (oldVnode, vnode) {
   if (isUndef(oldVnode.data.domProps) && isUndef(vnode.data.domProps)) {
-    return;
+    return
   }
   var key, cur;
   var elm = vnode.elm;
@@ -16338,12 +7686,8 @@ function updateDOMProps(oldVnode, vnode) {
     // as these will throw away existing DOM nodes and cause removal errors
     // on subsequent patches (#3360)
     if (key === 'textContent' || key === 'innerHTML') {
-      if (vnode.children) {
-        vnode.children.length = 0;
-      }
-      if (cur === oldProps[key]) {
-        continue;
-      }
+      if (vnode.children) { vnode.children.length = 0; }
+      if (cur === oldProps[key]) { continue }
     }
 
     if (key === 'value') {
@@ -16364,32 +7708,38 @@ function updateDOMProps(oldVnode, vnode) {
 // check platforms/web/util/attrs.js acceptValue
 
 
-function shouldUpdateValue(elm, vnode, checkVal) {
-  return !elm.composing && (vnode.tag === 'option' || isDirty(elm, checkVal) || isInputChanged(elm, checkVal));
+function shouldUpdateValue (
+  elm,
+  vnode,
+  checkVal
+) {
+  return (!elm.composing && (
+    vnode.tag === 'option' ||
+    isDirty(elm, checkVal) ||
+    isInputChanged(elm, checkVal)
+  ))
 }
 
-function isDirty(elm, checkVal) {
+function isDirty (elm, checkVal) {
   // return true when textbox (.number and .trim) loses focus and its value is
   // not equal to the updated value
   var notInFocus = true;
   // #6157
   // work around IE bug when accessing document.activeElement in an iframe
-  try {
-    notInFocus = document.activeElement !== elm;
-  } catch (e) {}
-  return notInFocus && elm.value !== checkVal;
+  try { notInFocus = document.activeElement !== elm; } catch (e) {}
+  return notInFocus && elm.value !== checkVal
 }
 
-function isInputChanged(elm, newVal) {
+function isInputChanged (elm, newVal) {
   var value = elm.value;
   var modifiers = elm._vModifiers; // injected by v-model runtime
   if (isDef(modifiers) && modifiers.number) {
-    return toNumber(value) !== toNumber(newVal);
+    return toNumber(value) !== toNumber(newVal)
   }
   if (isDef(modifiers) && modifiers.trim) {
-    return value.trim() !== newVal.trim();
+    return value.trim() !== newVal.trim()
   }
-  return value !== newVal;
+  return value !== newVal
 }
 
 var domProps = {
@@ -16409,33 +7759,35 @@ var parseStyleText = cached(function (cssText) {
       tmp.length > 1 && (res[tmp[0].trim()] = tmp[1].trim());
     }
   });
-  return res;
+  return res
 });
 
 // merge static and dynamic style data on the same vnode
-function normalizeStyleData(data) {
+function normalizeStyleData (data) {
   var style = normalizeStyleBinding(data.style);
   // static style is pre-processed into an object during compilation
   // and is always a fresh object, so it's safe to merge into it
-  return data.staticStyle ? extend(data.staticStyle, style) : style;
+  return data.staticStyle
+    ? extend(data.staticStyle, style)
+    : style
 }
 
 // normalize possible array / string values into Object
-function normalizeStyleBinding(bindingStyle) {
+function normalizeStyleBinding (bindingStyle) {
   if (Array.isArray(bindingStyle)) {
-    return toObject(bindingStyle);
+    return toObject(bindingStyle)
   }
   if (typeof bindingStyle === 'string') {
-    return parseStyleText(bindingStyle);
+    return parseStyleText(bindingStyle)
   }
-  return bindingStyle;
+  return bindingStyle
 }
 
 /**
  * parent component style should be after child's
  * so that parent component's style could override it
  */
-function getStyle(vnode, checkChild) {
+function getStyle (vnode, checkChild) {
   var res = {};
   var styleData;
 
@@ -16449,17 +7801,17 @@ function getStyle(vnode, checkChild) {
     }
   }
 
-  if (styleData = normalizeStyleData(vnode.data)) {
+  if ((styleData = normalizeStyleData(vnode.data))) {
     extend(res, styleData);
   }
 
   var parentNode = vnode;
-  while (parentNode = parentNode.parent) {
+  while ((parentNode = parentNode.parent)) {
     if (parentNode.data && (styleData = normalizeStyleData(parentNode.data))) {
       extend(res, styleData);
     }
   }
-  return res;
+  return res
 }
 
 /*  */
@@ -16493,24 +7845,26 @@ var emptyStyle;
 var normalize = cached(function (prop) {
   emptyStyle = emptyStyle || document.createElement('div').style;
   prop = camelize(prop);
-  if (prop !== 'filter' && prop in emptyStyle) {
-    return prop;
+  if (prop !== 'filter' && (prop in emptyStyle)) {
+    return prop
   }
   var capName = prop.charAt(0).toUpperCase() + prop.slice(1);
   for (var i = 0; i < vendorNames.length; i++) {
     var name = vendorNames[i] + capName;
     if (name in emptyStyle) {
-      return name;
+      return name
     }
   }
 });
 
-function updateStyle(oldVnode, vnode) {
+function updateStyle (oldVnode, vnode) {
   var data = vnode.data;
   var oldData = oldVnode.data;
 
-  if (isUndef(data.staticStyle) && isUndef(data.style) && isUndef(oldData.staticStyle) && isUndef(oldData.style)) {
-    return;
+  if (isUndef(data.staticStyle) && isUndef(data.style) &&
+    isUndef(oldData.staticStyle) && isUndef(oldData.style)
+  ) {
+    return
   }
 
   var cur, name;
@@ -16526,7 +7880,9 @@ function updateStyle(oldVnode, vnode) {
   // store normalized style under a different key for next diff
   // make sure to clone it if it's reactive, since the user likely wants
   // to mutate it.
-  vnode.data.normalizedStyle = isDef(style.__ob__) ? extend({}, style) : style;
+  vnode.data.normalizedStyle = isDef(style.__ob__)
+    ? extend({}, style)
+    : style;
 
   var newStyle = getStyle(vnode, true);
 
@@ -16555,18 +7911,16 @@ var style = {
  * Add class with compatibility for SVG since classList is not supported on
  * SVG elements in IE
  */
-function addClass(el, cls) {
+function addClass (el, cls) {
   /* istanbul ignore if */
   if (!cls || !(cls = cls.trim())) {
-    return;
+    return
   }
 
   /* istanbul ignore else */
   if (el.classList) {
     if (cls.indexOf(' ') > -1) {
-      cls.split(/\s+/).forEach(function (c) {
-        return el.classList.add(c);
-      });
+      cls.split(/\s+/).forEach(function (c) { return el.classList.add(c); });
     } else {
       el.classList.add(cls);
     }
@@ -16582,18 +7936,16 @@ function addClass(el, cls) {
  * Remove class with compatibility for SVG since classList is not supported on
  * SVG elements in IE
  */
-function removeClass(el, cls) {
+function removeClass (el, cls) {
   /* istanbul ignore if */
   if (!cls || !(cls = cls.trim())) {
-    return;
+    return
   }
 
   /* istanbul ignore else */
   if (el.classList) {
     if (cls.indexOf(' ') > -1) {
-      cls.split(/\s+/).forEach(function (c) {
-        return el.classList.remove(c);
-      });
+      cls.split(/\s+/).forEach(function (c) { return el.classList.remove(c); });
     } else {
       el.classList.remove(cls);
     }
@@ -16617,9 +7969,9 @@ function removeClass(el, cls) {
 
 /*  */
 
-function resolveTransition(def$$1) {
+function resolveTransition (def$$1) {
   if (!def$$1) {
-    return;
+    return
   }
   /* istanbul ignore else */
   if (typeof def$$1 === 'object') {
@@ -16628,21 +7980,21 @@ function resolveTransition(def$$1) {
       extend(res, autoCssTransition(def$$1.name || 'v'));
     }
     extend(res, def$$1);
-    return res;
+    return res
   } else if (typeof def$$1 === 'string') {
-    return autoCssTransition(def$$1);
+    return autoCssTransition(def$$1)
   }
 }
 
 var autoCssTransition = cached(function (name) {
   return {
-    enterClass: name + "-enter",
-    enterToClass: name + "-enter-to",
-    enterActiveClass: name + "-enter-active",
-    leaveClass: name + "-leave",
-    leaveToClass: name + "-leave-to",
-    leaveActiveClass: name + "-leave-active"
-  };
+    enterClass: (name + "-enter"),
+    enterToClass: (name + "-enter-to"),
+    enterActiveClass: (name + "-enter-active"),
+    leaveClass: (name + "-leave"),
+    leaveToClass: (name + "-leave-to"),
+    leaveActiveClass: (name + "-leave-active")
+  }
 });
 
 var hasTransition = inBrowser && !isIE9;
@@ -16656,26 +8008,32 @@ var animationProp = 'animation';
 var animationEndEvent = 'animationend';
 if (hasTransition) {
   /* istanbul ignore if */
-  if (window.ontransitionend === undefined && window.onwebkittransitionend !== undefined) {
+  if (window.ontransitionend === undefined &&
+    window.onwebkittransitionend !== undefined
+  ) {
     transitionProp = 'WebkitTransition';
     transitionEndEvent = 'webkitTransitionEnd';
   }
-  if (window.onanimationend === undefined && window.onwebkitanimationend !== undefined) {
+  if (window.onanimationend === undefined &&
+    window.onwebkitanimationend !== undefined
+  ) {
     animationProp = 'WebkitAnimation';
     animationEndEvent = 'webkitAnimationEnd';
   }
 }
 
 // binding to window is necessary to make hot reload work in IE in strict mode
-var raf = inBrowser && window.requestAnimationFrame ? window.requestAnimationFrame.bind(window) : setTimeout;
+var raf = inBrowser && window.requestAnimationFrame
+  ? window.requestAnimationFrame.bind(window)
+  : setTimeout;
 
-function nextFrame(fn) {
+function nextFrame (fn) {
   raf(function () {
     raf(fn);
   });
 }
 
-function addTransitionClass(el, cls) {
+function addTransitionClass (el, cls) {
   var transitionClasses = el._transitionClasses || (el._transitionClasses = []);
   if (transitionClasses.indexOf(cls) < 0) {
     transitionClasses.push(cls);
@@ -16683,21 +8041,23 @@ function addTransitionClass(el, cls) {
   }
 }
 
-function removeTransitionClass(el, cls) {
+function removeTransitionClass (el, cls) {
   if (el._transitionClasses) {
     remove(el._transitionClasses, cls);
   }
   removeClass(el, cls);
 }
 
-function whenTransitionEnds(el, expectedType, cb) {
+function whenTransitionEnds (
+  el,
+  expectedType,
+  cb
+) {
   var ref = getTransitionInfo(el, expectedType);
   var type = ref.type;
   var timeout = ref.timeout;
   var propCount = ref.propCount;
-  if (!type) {
-    return cb();
-  }
+  if (!type) { return cb() }
   var event = type === TRANSITION ? transitionEndEvent : animationEndEvent;
   var ended = 0;
   var end = function () {
@@ -16721,7 +8081,7 @@ function whenTransitionEnds(el, expectedType, cb) {
 
 var transformRE = /\b(transform|all)(,|$)/;
 
-function getTransitionInfo(el, expectedType) {
+function getTransitionInfo (el, expectedType) {
   var styles = window.getComputedStyle(el);
   var transitionDelays = styles[transitionProp + 'Delay'].split(', ');
   var transitionDurations = styles[transitionProp + 'Duration'].split(', ');
@@ -16748,36 +8108,46 @@ function getTransitionInfo(el, expectedType) {
     }
   } else {
     timeout = Math.max(transitionTimeout, animationTimeout);
-    type = timeout > 0 ? transitionTimeout > animationTimeout ? TRANSITION : ANIMATION : null;
-    propCount = type ? type === TRANSITION ? transitionDurations.length : animationDurations.length : 0;
+    type = timeout > 0
+      ? transitionTimeout > animationTimeout
+        ? TRANSITION
+        : ANIMATION
+      : null;
+    propCount = type
+      ? type === TRANSITION
+        ? transitionDurations.length
+        : animationDurations.length
+      : 0;
   }
-  var hasTransform = type === TRANSITION && transformRE.test(styles[transitionProp + 'Property']);
+  var hasTransform =
+    type === TRANSITION &&
+    transformRE.test(styles[transitionProp + 'Property']);
   return {
     type: type,
     timeout: timeout,
     propCount: propCount,
     hasTransform: hasTransform
-  };
+  }
 }
 
-function getTimeout(delays, durations) {
+function getTimeout (delays, durations) {
   /* istanbul ignore next */
   while (delays.length < durations.length) {
     delays = delays.concat(delays);
   }
 
   return Math.max.apply(null, durations.map(function (d, i) {
-    return toMs(d) + toMs(delays[i]);
-  }));
+    return toMs(d) + toMs(delays[i])
+  }))
 }
 
-function toMs(s) {
-  return Number(s.slice(0, -1)) * 1000;
+function toMs (s) {
+  return Number(s.slice(0, -1)) * 1000
 }
 
 /*  */
 
-function enter(vnode, toggleDisplay) {
+function enter (vnode, toggleDisplay) {
   var el = vnode.elm;
 
   // call leave callback now
@@ -16788,12 +8158,12 @@ function enter(vnode, toggleDisplay) {
 
   var data = resolveTransition(vnode.data.transition);
   if (isUndef(data)) {
-    return;
+    return
   }
 
   /* istanbul ignore if */
   if (isDef(el._enterCb) || el.nodeType !== 1) {
-    return;
+    return
   }
 
   var css = data.css;
@@ -16828,19 +8198,37 @@ function enter(vnode, toggleDisplay) {
   var isAppear = !context._isMounted || !vnode.isRootInsert;
 
   if (isAppear && !appear && appear !== '') {
-    return;
+    return
   }
 
-  var startClass = isAppear && appearClass ? appearClass : enterClass;
-  var activeClass = isAppear && appearActiveClass ? appearActiveClass : enterActiveClass;
-  var toClass = isAppear && appearToClass ? appearToClass : enterToClass;
+  var startClass = isAppear && appearClass
+    ? appearClass
+    : enterClass;
+  var activeClass = isAppear && appearActiveClass
+    ? appearActiveClass
+    : enterActiveClass;
+  var toClass = isAppear && appearToClass
+    ? appearToClass
+    : enterToClass;
 
-  var beforeEnterHook = isAppear ? beforeAppear || beforeEnter : beforeEnter;
-  var enterHook = isAppear ? typeof appear === 'function' ? appear : enter : enter;
-  var afterEnterHook = isAppear ? afterAppear || afterEnter : afterEnter;
-  var enterCancelledHook = isAppear ? appearCancelled || enterCancelled : enterCancelled;
+  var beforeEnterHook = isAppear
+    ? (beforeAppear || beforeEnter)
+    : beforeEnter;
+  var enterHook = isAppear
+    ? (typeof appear === 'function' ? appear : enter)
+    : enter;
+  var afterEnterHook = isAppear
+    ? (afterAppear || afterEnter)
+    : afterEnter;
+  var enterCancelledHook = isAppear
+    ? (appearCancelled || enterCancelled)
+    : enterCancelled;
 
-  var explicitEnterDuration = toNumber(isObject(duration) ? duration.enter : duration);
+  var explicitEnterDuration = toNumber(
+    isObject(duration)
+      ? duration.enter
+      : duration
+  );
 
   if (process.env.NODE_ENV !== 'production' && explicitEnterDuration != null) {
     checkDuration(explicitEnterDuration, 'enter', vnode);
@@ -16870,7 +8258,10 @@ function enter(vnode, toggleDisplay) {
     mergeVNodeHook(vnode.data.hook || (vnode.data.hook = {}), 'insert', function () {
       var parent = el.parentNode;
       var pendingNode = parent && parent._pending && parent._pending[vnode.key];
-      if (pendingNode && pendingNode.tag === vnode.tag && pendingNode.elm._leaveCb) {
+      if (pendingNode &&
+        pendingNode.tag === vnode.tag &&
+        pendingNode.elm._leaveCb
+      ) {
         pendingNode.elm._leaveCb();
       }
       enterHook && enterHook(el, cb);
@@ -16905,7 +8296,7 @@ function enter(vnode, toggleDisplay) {
   }
 }
 
-function leave(vnode, rm) {
+function leave (vnode, rm) {
   var el = vnode.elm;
 
   // call enter callback now
@@ -16916,12 +8307,12 @@ function leave(vnode, rm) {
 
   var data = resolveTransition(vnode.data.transition);
   if (isUndef(data)) {
-    return rm();
+    return rm()
   }
 
   /* istanbul ignore if */
   if (isDef(el._leaveCb) || el.nodeType !== 1) {
-    return;
+    return
   }
 
   var css = data.css;
@@ -16939,7 +8330,11 @@ function leave(vnode, rm) {
   var expectsCSS = css !== false && !isIE9;
   var userWantsControl = getHookArgumentsLength(leave);
 
-  var explicitLeaveDuration = toNumber(isObject(duration) ? duration.leave : duration);
+  var explicitLeaveDuration = toNumber(
+    isObject(duration)
+      ? duration.leave
+      : duration
+  );
 
   if (process.env.NODE_ENV !== 'production' && isDef(explicitLeaveDuration)) {
     checkDuration(explicitLeaveDuration, 'leave', vnode);
@@ -16971,14 +8366,14 @@ function leave(vnode, rm) {
     performLeave();
   }
 
-  function performLeave() {
+  function performLeave () {
     // the delayed leave may have already been cancelled
     if (cb.cancelled) {
-      return;
+      return
     }
     // record leaving element
     if (!vnode.data.show) {
-      (el.parentNode._pending || (el.parentNode._pending = {}))[vnode.key] = vnode;
+      (el.parentNode._pending || (el.parentNode._pending = {}))[(vnode.key)] = vnode;
     }
     beforeLeave && beforeLeave(el);
     if (expectsCSS) {
@@ -17004,16 +8399,24 @@ function leave(vnode, rm) {
 }
 
 // only used in dev mode
-function checkDuration(val, name, vnode) {
+function checkDuration (val, name, vnode) {
   if (typeof val !== 'number') {
-    warn("<transition> explicit " + name + " duration is not a valid number - " + "got " + JSON.stringify(val) + ".", vnode.context);
+    warn(
+      "<transition> explicit " + name + " duration is not a valid number - " +
+      "got " + (JSON.stringify(val)) + ".",
+      vnode.context
+    );
   } else if (isNaN(val)) {
-    warn("<transition> explicit " + name + " duration is NaN - " + 'the duration expression might be incorrect.', vnode.context);
+    warn(
+      "<transition> explicit " + name + " duration is NaN - " +
+      'the duration expression might be incorrect.',
+      vnode.context
+    );
   }
 }
 
-function isValidDuration(val) {
-  return typeof val === 'number' && !isNaN(val);
+function isValidDuration (val) {
+  return typeof val === 'number' && !isNaN(val)
 }
 
 /**
@@ -17022,20 +8425,24 @@ function isValidDuration(val) {
  * - a wrapped component method (check ._length)
  * - a plain function (.length)
  */
-function getHookArgumentsLength(fn) {
+function getHookArgumentsLength (fn) {
   if (isUndef(fn)) {
-    return false;
+    return false
   }
   var invokerFns = fn.fns;
   if (isDef(invokerFns)) {
     // invoker
-    return getHookArgumentsLength(Array.isArray(invokerFns) ? invokerFns[0] : invokerFns);
+    return getHookArgumentsLength(
+      Array.isArray(invokerFns)
+        ? invokerFns[0]
+        : invokerFns
+    )
   } else {
-    return (fn._length || fn.length) > 1;
+    return (fn._length || fn.length) > 1
   }
 }
 
-function _enter(_, vnode) {
+function _enter (_, vnode) {
   if (vnode.data.show !== true) {
     enter(vnode);
   }
@@ -17044,7 +8451,7 @@ function _enter(_, vnode) {
 var transition = inBrowser ? {
   create: _enter,
   activate: _enter,
-  remove: function remove$$1(vnode, rm) {
+  remove: function remove$$1 (vnode, rm) {
     /* istanbul ignore else */
     if (vnode.data.show !== true) {
       leave(vnode, rm);
@@ -17054,7 +8461,14 @@ var transition = inBrowser ? {
   }
 } : {};
 
-var platformModules = [attrs, klass, events, domProps, style, transition];
+var platformModules = [
+  attrs,
+  klass,
+  events,
+  domProps,
+  style,
+  transition
+];
 
 /*  */
 
@@ -17081,7 +8495,7 @@ if (isIE9) {
 }
 
 var model$1 = {
-  inserted: function inserted(el, binding, vnode) {
+  inserted: function inserted (el, binding, vnode) {
     if (vnode.tag === 'select') {
       setSelected(el, binding, vnode.context);
       el._vOptions = [].map.call(el.options, getValue);
@@ -17104,7 +8518,7 @@ var model$1 = {
       }
     }
   },
-  componentUpdated: function componentUpdated(el, binding, vnode) {
+  componentUpdated: function componentUpdated (el, binding, vnode) {
     if (vnode.tag === 'select') {
       setSelected(el, binding, vnode.context);
       // in case the options rendered by v-for have changed,
@@ -17113,14 +8527,12 @@ var model$1 = {
       // option in the DOM.
       var prevOptions = el._vOptions;
       var curOptions = el._vOptions = [].map.call(el.options, getValue);
-      if (curOptions.some(function (o, i) {
-        return !looseEqual(o, prevOptions[i]);
-      })) {
+      if (curOptions.some(function (o, i) { return !looseEqual(o, prevOptions[i]); })) {
         // trigger change event if
         // no matching option found for at least one value
-        var needReset = el.multiple ? binding.value.some(function (v) {
-          return hasNoMatchingOption(v, curOptions);
-        }) : binding.value !== binding.oldValue && hasNoMatchingOption(binding.value, curOptions);
+        var needReset = el.multiple
+          ? binding.value.some(function (v) { return hasNoMatchingOption(v, curOptions); })
+          : binding.value !== binding.oldValue && hasNoMatchingOption(binding.value, curOptions);
         if (needReset) {
           trigger(el, 'change');
         }
@@ -17129,7 +8541,7 @@ var model$1 = {
   }
 };
 
-function setSelected(el, binding, vm) {
+function setSelected (el, binding, vm) {
   actuallySetSelected(el, binding, vm);
   /* istanbul ignore if */
   if (isIE || isEdge) {
@@ -17139,12 +8551,16 @@ function setSelected(el, binding, vm) {
   }
 }
 
-function actuallySetSelected(el, binding, vm) {
+function actuallySetSelected (el, binding, vm) {
   var value = binding.value;
   var isMultiple = el.multiple;
   if (isMultiple && !Array.isArray(value)) {
-    process.env.NODE_ENV !== 'production' && warn("<select multiple v-model=\"" + binding.expression + "\"> " + "expects an Array value for its binding, but got " + Object.prototype.toString.call(value).slice(8, -1), vm);
-    return;
+    process.env.NODE_ENV !== 'production' && warn(
+      "<select multiple v-model=\"" + (binding.expression) + "\"> " +
+      "expects an Array value for its binding, but got " + (Object.prototype.toString.call(value).slice(8, -1)),
+      vm
+    );
+    return
   }
   var selected, option;
   for (var i = 0, l = el.options.length; i < l; i++) {
@@ -17159,7 +8575,7 @@ function actuallySetSelected(el, binding, vm) {
         if (el.selectedIndex !== i) {
           el.selectedIndex = i;
         }
-        return;
+        return
       }
     }
   }
@@ -17168,30 +8584,28 @@ function actuallySetSelected(el, binding, vm) {
   }
 }
 
-function hasNoMatchingOption(value, options) {
-  return options.every(function (o) {
-    return !looseEqual(o, value);
-  });
+function hasNoMatchingOption (value, options) {
+  return options.every(function (o) { return !looseEqual(o, value); })
 }
 
-function getValue(option) {
-  return '_value' in option ? option._value : option.value;
+function getValue (option) {
+  return '_value' in option
+    ? option._value
+    : option.value
 }
 
-function onCompositionStart(e) {
+function onCompositionStart (e) {
   e.target.composing = true;
 }
 
-function onCompositionEnd(e) {
+function onCompositionEnd (e) {
   // prevent triggering an input event for no reason
-  if (!e.target.composing) {
-    return;
-  }
+  if (!e.target.composing) { return }
   e.target.composing = false;
   trigger(e.target, 'input');
 }
 
-function trigger(el, type) {
+function trigger (el, type) {
   var e = document.createEvent('HTMLEvents');
   e.initEvent(type, true, true);
   el.dispatchEvent(e);
@@ -17200,17 +8614,20 @@ function trigger(el, type) {
 /*  */
 
 // recursively search for possible transition defined inside the component root
-function locateNode(vnode) {
-  return vnode.componentInstance && (!vnode.data || !vnode.data.transition) ? locateNode(vnode.componentInstance._vnode) : vnode;
+function locateNode (vnode) {
+  return vnode.componentInstance && (!vnode.data || !vnode.data.transition)
+    ? locateNode(vnode.componentInstance._vnode)
+    : vnode
 }
 
 var show = {
-  bind: function bind(el, ref, vnode) {
+  bind: function bind (el, ref, vnode) {
     var value = ref.value;
 
     vnode = locateNode(vnode);
     var transition$$1 = vnode.data && vnode.data.transition;
-    var originalDisplay = el.__vOriginalDisplay = el.style.display === 'none' ? '' : el.style.display;
+    var originalDisplay = el.__vOriginalDisplay =
+      el.style.display === 'none' ? '' : el.style.display;
     if (value && transition$$1) {
       vnode.data.show = true;
       enter(vnode, function () {
@@ -17221,14 +8638,12 @@ var show = {
     }
   },
 
-  update: function update(el, ref, vnode) {
+  update: function update (el, ref, vnode) {
     var value = ref.value;
     var oldValue = ref.oldValue;
 
     /* istanbul ignore if */
-    if (value === oldValue) {
-      return;
-    }
+    if (value === oldValue) { return }
     vnode = locateNode(vnode);
     var transition$$1 = vnode.data && vnode.data.transition;
     if (transition$$1) {
@@ -17247,7 +8662,13 @@ var show = {
     }
   },
 
-  unbind: function unbind(el, binding, vnode, oldVnode, isDestroy) {
+  unbind: function unbind (
+    el,
+    binding,
+    vnode,
+    oldVnode,
+    isDestroy
+  ) {
     if (!isDestroy) {
       el.style.display = el.__vOriginalDisplay;
     }
@@ -17284,16 +8705,16 @@ var transitionProps = {
 
 // in case the child is also an abstract component, e.g. <keep-alive>
 // we want to recursively retrieve the real component to be rendered
-function getRealChild(vnode) {
+function getRealChild (vnode) {
   var compOptions = vnode && vnode.componentOptions;
   if (compOptions && compOptions.Ctor.options.abstract) {
-    return getRealChild(getFirstComponentChild(compOptions.children));
+    return getRealChild(getFirstComponentChild(compOptions.children))
   } else {
-    return vnode;
+    return vnode
   }
 }
 
-function extractTransitionData(comp) {
+function extractTransitionData (comp) {
   var data = {};
   var options = comp.$options;
   // props
@@ -17306,27 +8727,27 @@ function extractTransitionData(comp) {
   for (var key$1 in listeners) {
     data[camelize(key$1)] = listeners[key$1];
   }
-  return data;
+  return data
 }
 
-function placeholder(h, rawChild) {
+function placeholder (h, rawChild) {
   if (/\d-keep-alive$/.test(rawChild.tag)) {
     return h('keep-alive', {
       props: rawChild.componentOptions.propsData
-    });
+    })
   }
 }
 
-function hasParentTransition(vnode) {
-  while (vnode = vnode.parent) {
+function hasParentTransition (vnode) {
+  while ((vnode = vnode.parent)) {
     if (vnode.data.transition) {
-      return true;
+      return true
     }
   }
 }
 
-function isSameChild(child, oldChild) {
-  return oldChild.key === child.key && oldChild.tag === child.tag;
+function isSameChild (child, oldChild) {
+  return oldChild.key === child.key && oldChild.tag === child.tag
 }
 
 var Transition = {
@@ -17334,33 +8755,40 @@ var Transition = {
   props: transitionProps,
   abstract: true,
 
-  render: function render(h) {
+  render: function render (h) {
     var this$1 = this;
 
     var children = this.$options._renderChildren;
     if (!children) {
-      return;
+      return
     }
 
     // filter out text nodes (possible whitespaces)
-    children = children.filter(function (c) {
-      return c.tag || isAsyncPlaceholder(c);
-    });
+    children = children.filter(function (c) { return c.tag || isAsyncPlaceholder(c); });
     /* istanbul ignore if */
     if (!children.length) {
-      return;
+      return
     }
 
     // warn multiple elements
     if (process.env.NODE_ENV !== 'production' && children.length > 1) {
-      warn('<transition> can only be used on a single element. Use ' + '<transition-group> for lists.', this.$parent);
+      warn(
+        '<transition> can only be used on a single element. Use ' +
+        '<transition-group> for lists.',
+        this.$parent
+      );
     }
 
     var mode = this.mode;
 
     // warn invalid mode
-    if (process.env.NODE_ENV !== 'production' && mode && mode !== 'in-out' && mode !== 'out-in') {
-      warn('invalid <transition> mode: ' + mode, this.$parent);
+    if (process.env.NODE_ENV !== 'production' &&
+      mode && mode !== 'in-out' && mode !== 'out-in'
+    ) {
+      warn(
+        'invalid <transition> mode: ' + mode,
+        this.$parent
+      );
     }
 
     var rawChild = children[0];
@@ -17368,7 +8796,7 @@ var Transition = {
     // if this is a component root node and the component's
     // parent container node also has transition, skip.
     if (hasParentTransition(this.$vnode)) {
-      return rawChild;
+      return rawChild
     }
 
     // apply transition data to child
@@ -17376,18 +8804,24 @@ var Transition = {
     var child = getRealChild(rawChild);
     /* istanbul ignore if */
     if (!child) {
-      return rawChild;
+      return rawChild
     }
 
     if (this._leaving) {
-      return placeholder(h, rawChild);
+      return placeholder(h, rawChild)
     }
 
     // ensure a key that is unique to the vnode type and to this transition
     // component instance. This key will be used to remove pending leaving nodes
     // during entering.
-    var id = "__transition-" + this._uid + "-";
-    child.key = child.key == null ? child.isComment ? id + 'comment' : id + child.tag : isPrimitive(child.key) ? String(child.key).indexOf(id) === 0 ? child.key : id + child.key : child.key;
+    var id = "__transition-" + (this._uid) + "-";
+    child.key = child.key == null
+      ? child.isComment
+        ? id + 'comment'
+        : id + child.tag
+      : isPrimitive(child.key)
+        ? (String(child.key).indexOf(id) === 0 ? child.key : id + child.key)
+        : child.key;
 
     var data = (child.data || (child.data = {})).transition = extractTransitionData(this);
     var oldRawChild = this._vnode;
@@ -17395,13 +8829,16 @@ var Transition = {
 
     // mark v-show
     // so that the transition module can hand over the control to the directive
-    if (child.data.directives && child.data.directives.some(function (d) {
-      return d.name === 'show';
-    })) {
+    if (child.data.directives && child.data.directives.some(function (d) { return d.name === 'show'; })) {
       child.data.show = true;
     }
 
-    if (oldChild && oldChild.data && !isSameChild(child, oldChild) && !isAsyncPlaceholder(oldChild)) {
+    if (
+      oldChild &&
+      oldChild.data &&
+      !isSameChild(child, oldChild) &&
+      !isAsyncPlaceholder(oldChild)
+    ) {
       // replace old child transition data with fresh one
       // important for dynamic transitions!
       var oldData = oldChild && (oldChild.data.transition = extend({}, data));
@@ -17413,24 +8850,20 @@ var Transition = {
           this$1._leaving = false;
           this$1.$forceUpdate();
         });
-        return placeholder(h, rawChild);
+        return placeholder(h, rawChild)
       } else if (mode === 'in-out') {
         if (isAsyncPlaceholder(child)) {
-          return oldRawChild;
+          return oldRawChild
         }
         var delayedLeave;
-        var performLeave = function () {
-          delayedLeave();
-        };
+        var performLeave = function () { delayedLeave(); };
         mergeVNodeHook(data, 'afterEnter', performLeave);
         mergeVNodeHook(data, 'enterCancelled', performLeave);
-        mergeVNodeHook(oldData, 'delayLeave', function (leave) {
-          delayedLeave = leave;
-        });
+        mergeVNodeHook(oldData, 'delayLeave', function (leave) { delayedLeave = leave; });
       }
     }
 
-    return rawChild;
+    return rawChild
   }
 };
 
@@ -17457,7 +8890,7 @@ delete props.mode;
 var TransitionGroup = {
   props: props,
 
-  render: function render(h) {
+  render: function render (h) {
     var tag = this.tag || this.$vnode.data.tag || 'span';
     var map = Object.create(null);
     var prevChildren = this.prevChildren = this.children;
@@ -17470,11 +8903,12 @@ var TransitionGroup = {
       if (c.tag) {
         if (c.key != null && String(c.key).indexOf('__vlist') !== 0) {
           children.push(c);
-          map[c.key] = c;(c.data || (c.data = {})).transition = transitionData;
+          map[c.key] = c
+          ;(c.data || (c.data = {})).transition = transitionData;
         } else if (process.env.NODE_ENV !== 'production') {
           var opts = c.componentOptions;
-          var name = opts ? opts.Ctor.options.name || opts.tag || '' : c.tag;
-          warn("<transition-group> children must be keyed: <" + name + ">");
+          var name = opts ? (opts.Ctor.options.name || opts.tag || '') : c.tag;
+          warn(("<transition-group> children must be keyed: <" + name + ">"));
         }
       }
     }
@@ -17496,22 +8930,25 @@ var TransitionGroup = {
       this.removed = removed;
     }
 
-    return h(tag, null, children);
+    return h(tag, null, children)
   },
 
-  beforeUpdate: function beforeUpdate() {
+  beforeUpdate: function beforeUpdate () {
     // force removing pass
-    this.__patch__(this._vnode, this.kept, false, // hydrating
-    true // removeOnly (!important, avoids unnecessary moves)
+    this.__patch__(
+      this._vnode,
+      this.kept,
+      false, // hydrating
+      true // removeOnly (!important, avoids unnecessary moves)
     );
     this._vnode = this.kept;
   },
 
-  updated: function updated() {
+  updated: function updated () {
     var children = this.prevChildren;
-    var moveClass = this.moveClass || (this.name || 'v') + '-move';
+    var moveClass = this.moveClass || ((this.name || 'v') + '-move');
     if (!children.length || !this.hasMove(children[0].elm, moveClass)) {
-      return;
+      return
     }
 
     // we divide the work into three loops to avoid mixing DOM reads and writes
@@ -17530,7 +8967,7 @@ var TransitionGroup = {
         var s = el.style;
         addTransitionClass(el, moveClass);
         s.transform = s.WebkitTransform = s.transitionDuration = '';
-        el.addEventListener(transitionEndEvent, el._moveCb = function cb(e) {
+        el.addEventListener(transitionEndEvent, el._moveCb = function cb (e) {
           if (!e || /transform$/.test(e.propertyName)) {
             el.removeEventListener(transitionEndEvent, cb);
             el._moveCb = null;
@@ -17542,14 +8979,14 @@ var TransitionGroup = {
   },
 
   methods: {
-    hasMove: function hasMove(el, moveClass) {
+    hasMove: function hasMove (el, moveClass) {
       /* istanbul ignore if */
       if (!hasTransition) {
-        return false;
+        return false
       }
       /* istanbul ignore if */
       if (this._hasMove) {
-        return this._hasMove;
+        return this._hasMove
       }
       // Detect whether an element with the move class applied has
       // CSS transitions. Since the element may be inside an entering
@@ -17558,21 +8995,19 @@ var TransitionGroup = {
       // is applied.
       var clone = el.cloneNode();
       if (el._transitionClasses) {
-        el._transitionClasses.forEach(function (cls) {
-          removeClass(clone, cls);
-        });
+        el._transitionClasses.forEach(function (cls) { removeClass(clone, cls); });
       }
       addClass(clone, moveClass);
       clone.style.display = 'none';
       this.$el.appendChild(clone);
       var info = getTransitionInfo(clone);
       this.$el.removeChild(clone);
-      return this._hasMove = info.hasTransform;
+      return (this._hasMove = info.hasTransform)
     }
   }
 };
 
-function callPendingCbs(c) {
+function callPendingCbs (c) {
   /* istanbul ignore if */
   if (c.elm._moveCb) {
     c.elm._moveCb();
@@ -17583,11 +9018,11 @@ function callPendingCbs(c) {
   }
 }
 
-function recordPosition(c) {
+function recordPosition (c) {
   c.data.newPos = c.elm.getBoundingClientRect();
 }
 
-function applyTranslation(c) {
+function applyTranslation (c) {
   var oldPos = c.data.pos;
   var newPos = c.data.newPos;
   var dx = oldPos.left - newPos.left;
@@ -17622,9 +9057,12 @@ extend(Vue$3.options.components, platformComponents);
 Vue$3.prototype.__patch__ = inBrowser ? patch : noop;
 
 // public mount method
-Vue$3.prototype.$mount = function (el, hydrating) {
+Vue$3.prototype.$mount = function (
+  el,
+  hydrating
+) {
   el = el && inBrowser ? query(el) : undefined;
-  return mountComponent(this, el, hydrating);
+  return mountComponent(this, el, hydrating)
 };
 
 // devtools global hook
@@ -17634,21 +9072,31 @@ setTimeout(function () {
     if (devtools) {
       devtools.emit('init', Vue$3);
     } else if (process.env.NODE_ENV !== 'production' && isChrome) {
-      console[console.info ? 'info' : 'log']('Download the Vue Devtools extension for a better development experience:\n' + 'https://github.com/vuejs/vue-devtools');
+      console[console.info ? 'info' : 'log'](
+        'Download the Vue Devtools extension for a better development experience:\n' +
+        'https://github.com/vuejs/vue-devtools'
+      );
     }
   }
-  if (process.env.NODE_ENV !== 'production' && config.productionTip !== false && inBrowser && typeof console !== 'undefined') {
-    console[console.info ? 'info' : 'log']("You are running Vue in development mode.\n" + "Make sure to turn on production mode when deploying for production.\n" + "See more tips at https://vuejs.org/guide/deployment.html");
+  if (process.env.NODE_ENV !== 'production' &&
+    config.productionTip !== false &&
+    inBrowser && typeof console !== 'undefined'
+  ) {
+    console[console.info ? 'info' : 'log'](
+      "You are running Vue in development mode.\n" +
+      "Make sure to turn on production mode when deploying for production.\n" +
+      "See more tips at https://vuejs.org/guide/deployment.html"
+    );
   }
 }, 0);
 
 /*  */
 
 // check whether current browser encodes a char inside attribute values
-function shouldDecode(content, encoded) {
+function shouldDecode (content, encoded) {
   var div = document.createElement('div');
   div.innerHTML = "<div a=\"" + content + "\"/>";
-  return div.innerHTML.indexOf(encoded) > 0;
+  return div.innerHTML.indexOf(encoded) > 0
 }
 
 // #3663
@@ -17663,18 +9111,21 @@ var regexEscapeRE = /[-.*+?^${}()|[\]\/\\]/g;
 var buildRegex = cached(function (delimiters) {
   var open = delimiters[0].replace(regexEscapeRE, '\\$&');
   var close = delimiters[1].replace(regexEscapeRE, '\\$&');
-  return new RegExp(open + '((?:.|\\n)+?)' + close, 'g');
+  return new RegExp(open + '((?:.|\\n)+?)' + close, 'g')
 });
 
-function parseText(text, delimiters) {
+function parseText (
+  text,
+  delimiters
+) {
   var tagRE = delimiters ? buildRegex(delimiters) : defaultTagRE;
   if (!tagRE.test(text)) {
-    return;
+    return
   }
   var tokens = [];
   var lastIndex = tagRE.lastIndex = 0;
   var match, index;
-  while (match = tagRE.exec(text)) {
+  while ((match = tagRE.exec(text))) {
     index = match.index;
     // push text token
     if (index > lastIndex) {
@@ -17682,24 +9133,29 @@ function parseText(text, delimiters) {
     }
     // tag token
     var exp = parseFilters(match[1].trim());
-    tokens.push("_s(" + exp + ")");
+    tokens.push(("_s(" + exp + ")"));
     lastIndex = index + match[0].length;
   }
   if (lastIndex < text.length) {
     tokens.push(JSON.stringify(text.slice(lastIndex)));
   }
-  return tokens.join('+');
+  return tokens.join('+')
 }
 
 /*  */
 
-function transformNode(el, options) {
+function transformNode (el, options) {
   var warn = options.warn || baseWarn;
   var staticClass = getAndRemoveAttr(el, 'class');
   if (process.env.NODE_ENV !== 'production' && staticClass) {
     var expression = parseText(staticClass, options.delimiters);
     if (expression) {
-      warn("class=\"" + staticClass + "\": " + 'Interpolation inside attributes has been removed. ' + 'Use v-bind or the colon shorthand instead. For example, ' + 'instead of <div class="{{ val }}">, use <div :class="val">.');
+      warn(
+        "class=\"" + staticClass + "\": " +
+        'Interpolation inside attributes has been removed. ' +
+        'Use v-bind or the colon shorthand instead. For example, ' +
+        'instead of <div class="{{ val }}">, use <div :class="val">.'
+      );
     }
   }
   if (staticClass) {
@@ -17711,15 +9167,15 @@ function transformNode(el, options) {
   }
 }
 
-function genData(el) {
+function genData (el) {
   var data = '';
   if (el.staticClass) {
-    data += "staticClass:" + el.staticClass + ",";
+    data += "staticClass:" + (el.staticClass) + ",";
   }
   if (el.classBinding) {
-    data += "class:" + el.classBinding + ",";
+    data += "class:" + (el.classBinding) + ",";
   }
-  return data;
+  return data
 }
 
 var klass$1 = {
@@ -17730,7 +9186,7 @@ var klass$1 = {
 
 /*  */
 
-function transformNode$1(el, options) {
+function transformNode$1 (el, options) {
   var warn = options.warn || baseWarn;
   var staticStyle = getAndRemoveAttr(el, 'style');
   if (staticStyle) {
@@ -17738,7 +9194,12 @@ function transformNode$1(el, options) {
     if (process.env.NODE_ENV !== 'production') {
       var expression = parseText(staticStyle, options.delimiters);
       if (expression) {
-        warn("style=\"" + staticStyle + "\": " + 'Interpolation inside attributes has been removed. ' + 'Use v-bind or the colon shorthand instead. For example, ' + 'instead of <div style="{{ val }}">, use <div :style="val">.');
+        warn(
+          "style=\"" + staticStyle + "\": " +
+          'Interpolation inside attributes has been removed. ' +
+          'Use v-bind or the colon shorthand instead. For example, ' +
+          'instead of <div style="{{ val }}">, use <div :style="val">.'
+        );
       }
     }
     el.staticStyle = JSON.stringify(parseStyleText(staticStyle));
@@ -17750,15 +9211,15 @@ function transformNode$1(el, options) {
   }
 }
 
-function genData$1(el) {
+function genData$1 (el) {
   var data = '';
   if (el.staticStyle) {
-    data += "staticStyle:" + el.staticStyle + ",";
+    data += "staticStyle:" + (el.staticStyle) + ",";
   }
   if (el.styleBinding) {
-    data += "style:(" + el.styleBinding + "),";
+    data += "style:(" + (el.styleBinding) + "),";
   }
-  return data;
+  return data
 }
 
 var style$1 = {
@@ -17767,21 +9228,24 @@ var style$1 = {
   genData: genData$1
 };
 
-var modules$1 = [klass$1, style$1];
+var modules$1 = [
+  klass$1,
+  style$1
+];
 
 /*  */
 
-function text(el, dir) {
+function text (el, dir) {
   if (dir.value) {
-    addProp(el, 'textContent', "_s(" + dir.value + ")");
+    addProp(el, 'textContent', ("_s(" + (dir.value) + ")"));
   }
 }
 
 /*  */
 
-function html(el, dir) {
+function html (el, dir) {
   if (dir.value) {
-    addProp(el, 'innerHTML', "_s(" + dir.value + ")");
+    addProp(el, 'innerHTML', ("_s(" + (dir.value) + ")"));
   }
 }
 
@@ -17793,15 +9257,26 @@ var directives$1 = {
 
 /*  */
 
-var isUnaryTag = makeMap('area,base,br,col,embed,frame,hr,img,input,isindex,keygen,' + 'link,meta,param,source,track,wbr');
+var isUnaryTag = makeMap(
+  'area,base,br,col,embed,frame,hr,img,input,isindex,keygen,' +
+  'link,meta,param,source,track,wbr'
+);
 
 // Elements that you can, intentionally, leave open
 // (and which close themselves)
-var canBeLeftOpenTag = makeMap('colgroup,dd,dt,li,options,p,td,tfoot,th,thead,tr,source');
+var canBeLeftOpenTag = makeMap(
+  'colgroup,dd,dt,li,options,p,td,tfoot,th,thead,tr,source'
+);
 
 // HTML5 tags https://html.spec.whatwg.org/multipage/indices.html#elements-3
 // Phrasing Content https://html.spec.whatwg.org/multipage/dom.html#phrasing-content
-var isNonPhrasingTag = makeMap('address,article,aside,base,blockquote,body,caption,col,colgroup,dd,' + 'details,dialog,div,dl,dt,fieldset,figcaption,figure,footer,form,' + 'h1,h2,h3,h4,h5,h6,head,header,hgroup,hr,html,legend,li,menuitem,meta,' + 'optgroup,option,param,rp,rt,source,style,summary,tbody,td,tfoot,th,thead,' + 'title,tr,track');
+var isNonPhrasingTag = makeMap(
+  'address,article,aside,base,blockquote,body,caption,col,colgroup,dd,' +
+  'details,dialog,div,dl,dt,fieldset,figcaption,figure,footer,form,' +
+  'h1,h2,h3,h4,h5,h6,head,header,hgroup,hr,html,legend,li,menuitem,meta,' +
+  'optgroup,option,param,rp,rt,source,style,summary,tbody,td,tfoot,th,thead,' +
+  'title,tr,track'
+);
 
 /*  */
 
@@ -17823,10 +9298,10 @@ var baseOptions = {
 var decoder;
 
 var he = {
-  decode: function decode(html) {
+  decode: function decode (html) {
     decoder = decoder || document.createElement('div');
     decoder.innerHTML = html;
-    return decoder.textContent;
+    return decoder.textContent
   }
 };
 
@@ -17847,9 +9322,9 @@ var attribute = /^\s*([^\s"'<>\/=]+)(?:\s*(=)\s*(?:"([^"]*)"+|'([^']*)'+|([^\s"'
 // but for Vue templates we can enforce a simple charset
 var ncname = '[a-zA-Z_][\\w\\-\\.]*';
 var qnameCapture = "((?:" + ncname + "\\:)?" + ncname + ")";
-var startTagOpen = new RegExp("^<" + qnameCapture);
+var startTagOpen = new RegExp(("^<" + qnameCapture));
 var startTagClose = /^\s*(\/?)>/;
-var endTag = new RegExp("^<\\/" + qnameCapture + "[^>]*>");
+var endTag = new RegExp(("^<\\/" + qnameCapture + "[^>]*>"));
 var doctype = /^<!DOCTYPE [^>]+>/i;
 var comment = /^<!--/;
 var conditionalComment = /^<!\[/;
@@ -17875,18 +9350,14 @@ var encodedAttrWithNewLines = /&(?:lt|gt|quot|amp|#10);/g;
 
 // #5992
 var isIgnoreNewlineTag = makeMap('pre,textarea', true);
-var shouldIgnoreFirstNewline = function (tag, html) {
-  return tag && isIgnoreNewlineTag(tag) && html[0] === '\n';
-};
+var shouldIgnoreFirstNewline = function (tag, html) { return tag && isIgnoreNewlineTag(tag) && html[0] === '\n'; };
 
-function decodeAttr(value, shouldDecodeNewlines) {
+function decodeAttr (value, shouldDecodeNewlines) {
   var re = shouldDecodeNewlines ? encodedAttrWithNewLines : encodedAttr;
-  return value.replace(re, function (match) {
-    return decodingMap[match];
-  });
+  return value.replace(re, function (match) { return decodingMap[match]; })
 }
 
-function parseHTML(html, options) {
+function parseHTML (html, options) {
   var stack = [];
   var expectHTML = options.expectHTML;
   var isUnaryTag$$1 = options.isUnaryTag || no;
@@ -17908,7 +9379,7 @@ function parseHTML(html, options) {
               options.comment(html.substring(4, commentEnd));
             }
             advance(commentEnd + 3);
-            continue;
+            continue
           }
         }
 
@@ -17918,7 +9389,7 @@ function parseHTML(html, options) {
 
           if (conditionalEnd >= 0) {
             advance(conditionalEnd + 2);
-            continue;
+            continue
           }
         }
 
@@ -17926,7 +9397,7 @@ function parseHTML(html, options) {
         var doctypeMatch = html.match(doctype);
         if (doctypeMatch) {
           advance(doctypeMatch[0].length);
-          continue;
+          continue
         }
 
         // End tag:
@@ -17935,7 +9406,7 @@ function parseHTML(html, options) {
           var curIndex = index;
           advance(endTagMatch[0].length);
           parseEndTag(endTagMatch[1], curIndex, index);
-          continue;
+          continue
         }
 
         // Start tag:
@@ -17945,21 +9416,22 @@ function parseHTML(html, options) {
           if (shouldIgnoreFirstNewline(lastTag, html)) {
             advance(1);
           }
-          continue;
+          continue
         }
       }
 
-      var text = void 0,
-          rest = void 0,
-          next = void 0;
+      var text = (void 0), rest = (void 0), next = (void 0);
       if (textEnd >= 0) {
         rest = html.slice(textEnd);
-        while (!endTag.test(rest) && !startTagOpen.test(rest) && !comment.test(rest) && !conditionalComment.test(rest)) {
+        while (
+          !endTag.test(rest) &&
+          !startTagOpen.test(rest) &&
+          !comment.test(rest) &&
+          !conditionalComment.test(rest)
+        ) {
           // < in plain text, be forgiving and treat it as text
           next = rest.indexOf('<', 1);
-          if (next < 0) {
-            break;
-          }
+          if (next < 0) { break }
           textEnd += next;
           rest = html.slice(textEnd);
         }
@@ -17982,7 +9454,9 @@ function parseHTML(html, options) {
       var rest$1 = html.replace(reStackedTag, function (all, text, endTag) {
         endTagLength = endTag.length;
         if (!isPlainTextElement(stackedTag) && stackedTag !== 'noscript') {
-          text = text.replace(/<!--([\s\S]*?)-->/g, '$1').replace(/<!\[CDATA\[([\s\S]*?)]]>/g, '$1');
+          text = text
+            .replace(/<!--([\s\S]*?)-->/g, '$1')
+            .replace(/<!\[CDATA\[([\s\S]*?)]]>/g, '$1');
         }
         if (shouldIgnoreFirstNewline(stackedTag, text)) {
           text = text.slice(1);
@@ -17990,7 +9464,7 @@ function parseHTML(html, options) {
         if (options.chars) {
           options.chars(text);
         }
-        return '';
+        return ''
       });
       index += html.length - rest$1.length;
       html = rest$1;
@@ -18000,21 +9474,21 @@ function parseHTML(html, options) {
     if (html === last) {
       options.chars && options.chars(html);
       if (process.env.NODE_ENV !== 'production' && !stack.length && options.warn) {
-        options.warn("Mal-formatted tag at end of template: \"" + html + "\"");
+        options.warn(("Mal-formatted tag at end of template: \"" + html + "\""));
       }
-      break;
+      break
     }
   }
 
   // Clean up any remaining tags
   parseEndTag();
 
-  function advance(n) {
+  function advance (n) {
     index += n;
     html = html.substring(n);
   }
 
-  function parseStartTag() {
+  function parseStartTag () {
     var start = html.match(startTagOpen);
     if (start) {
       var match = {
@@ -18032,12 +9506,12 @@ function parseHTML(html, options) {
         match.unarySlash = end[1];
         advance(end[0].length);
         match.end = index;
-        return match;
+        return match
       }
     }
   }
 
-  function handleStartTag(match) {
+  function handleStartTag (match) {
     var tagName = match.tagName;
     var unarySlash = match.unarySlash;
 
@@ -18058,20 +9532,17 @@ function parseHTML(html, options) {
       var args = match.attrs[i];
       // hackish work around FF bug https://bugzilla.mozilla.org/show_bug.cgi?id=369778
       if (IS_REGEX_CAPTURING_BROKEN && args[0].indexOf('""') === -1) {
-        if (args[3] === '') {
-          delete args[3];
-        }
-        if (args[4] === '') {
-          delete args[4];
-        }
-        if (args[5] === '') {
-          delete args[5];
-        }
+        if (args[3] === '') { delete args[3]; }
+        if (args[4] === '') { delete args[4]; }
+        if (args[5] === '') { delete args[5]; }
       }
       var value = args[3] || args[4] || args[5] || '';
       attrs[i] = {
         name: args[1],
-        value: decodeAttr(value, options.shouldDecodeNewlines)
+        value: decodeAttr(
+          value,
+          options.shouldDecodeNewlines
+        )
       };
     }
 
@@ -18085,14 +9556,10 @@ function parseHTML(html, options) {
     }
   }
 
-  function parseEndTag(tagName, start, end) {
+  function parseEndTag (tagName, start, end) {
     var pos, lowerCasedTagName;
-    if (start == null) {
-      start = index;
-    }
-    if (end == null) {
-      end = index;
-    }
+    if (start == null) { start = index; }
+    if (end == null) { end = index; }
 
     if (tagName) {
       lowerCasedTagName = tagName.toLowerCase();
@@ -18102,7 +9569,7 @@ function parseHTML(html, options) {
     if (tagName) {
       for (pos = stack.length - 1; pos >= 0; pos--) {
         if (stack[pos].lowerCasedTag === lowerCasedTagName) {
-          break;
+          break
         }
       }
     } else {
@@ -18113,8 +9580,13 @@ function parseHTML(html, options) {
     if (pos >= 0) {
       // Close all the open elements, up the stack
       for (var i = stack.length - 1; i >= pos; i--) {
-        if (process.env.NODE_ENV !== 'production' && (i > pos || !tagName) && options.warn) {
-          options.warn("tag <" + stack[i].tag + "> has no matching end tag.");
+        if (process.env.NODE_ENV !== 'production' &&
+          (i > pos || !tagName) &&
+          options.warn
+        ) {
+          options.warn(
+            ("tag <" + (stack[i].tag) + "> has no matching end tag.")
+          );
         }
         if (options.end) {
           options.end(stack[i].tag, start, end);
@@ -18165,7 +9637,10 @@ var platformGetTagNamespace;
 /**
  * Convert HTML string to AST.
  */
-function parse(template, options) {
+function parse (
+  template,
+  options
+) {
   warn$2 = options.warn || baseWarn;
 
   platformIsPreTag = options.isPreTag || no;
@@ -18186,14 +9661,14 @@ function parse(template, options) {
   var inPre = false;
   var warned = false;
 
-  function warnOnce(msg) {
+  function warnOnce (msg) {
     if (!warned) {
       warned = true;
       warn$2(msg);
     }
   }
 
-  function endPre(element) {
+  function endPre (element) {
     // check pre state
     if (element.pre) {
       inVPre = false;
@@ -18210,10 +9685,10 @@ function parse(template, options) {
     canBeLeftOpenTag: options.canBeLeftOpenTag,
     shouldDecodeNewlines: options.shouldDecodeNewlines,
     shouldKeepComment: options.comments,
-    start: function start(tag, attrs, unary) {
+    start: function start (tag, attrs, unary) {
       // check namespace.
       // inherit parent ns if there is one
-      var ns = currentParent && currentParent.ns || platformGetTagNamespace(tag);
+      var ns = (currentParent && currentParent.ns) || platformGetTagNamespace(tag);
 
       // handle IE svg bug
       /* istanbul ignore if */
@@ -18235,7 +9710,11 @@ function parse(template, options) {
 
       if (isForbiddenTag(element) && !isServerRendering()) {
         element.forbidden = true;
-        process.env.NODE_ENV !== 'production' && warn$2('Templates should only be responsible for mapping the state to the ' + 'UI. Avoid placing tags with side-effects in your templates, such as ' + "<" + tag + ">" + ', as they will not be parsed.');
+        process.env.NODE_ENV !== 'production' && warn$2(
+          'Templates should only be responsible for mapping the state to the ' +
+          'UI. Avoid placing tags with side-effects in your templates, such as ' +
+          "<" + tag + ">" + ', as they will not be parsed.'
+        );
       }
 
       // apply pre-transforms
@@ -18273,13 +9752,19 @@ function parse(template, options) {
         processAttrs(element);
       }
 
-      function checkRootConstraints(el) {
+      function checkRootConstraints (el) {
         if (process.env.NODE_ENV !== 'production') {
           if (el.tag === 'slot' || el.tag === 'template') {
-            warnOnce("Cannot use <" + el.tag + "> as component root element because it may " + 'contain multiple nodes.');
+            warnOnce(
+              "Cannot use <" + (el.tag) + "> as component root element because it may " +
+              'contain multiple nodes.'
+            );
           }
           if (el.attrsMap.hasOwnProperty('v-for')) {
-            warnOnce('Cannot use v-for on stateful component root element because ' + 'it renders multiple elements.');
+            warnOnce(
+              'Cannot use v-for on stateful component root element because ' +
+              'it renders multiple elements.'
+            );
           }
         }
       }
@@ -18297,14 +9782,17 @@ function parse(template, options) {
             block: element
           });
         } else if (process.env.NODE_ENV !== 'production') {
-          warnOnce("Component template should contain exactly one root element. " + "If you are using v-if on multiple elements, " + "use v-else-if to chain them instead.");
+          warnOnce(
+            "Component template should contain exactly one root element. " +
+            "If you are using v-if on multiple elements, " +
+            "use v-else-if to chain them instead."
+          );
         }
       }
       if (currentParent && !element.forbidden) {
         if (element.elseif || element.else) {
           processIfConditions(element, currentParent);
-        } else if (element.slotScope) {
-          // scoped slot
+        } else if (element.slotScope) { // scoped slot
           currentParent.plain = false;
           var name = element.slotTarget || '"default"';(currentParent.scopedSlots || (currentParent.scopedSlots = {}))[name] = element;
         } else {
@@ -18324,7 +9812,7 @@ function parse(template, options) {
       }
     },
 
-    end: function end() {
+    end: function end () {
       // remove trailing whitespace
       var element = stack[stack.length - 1];
       var lastNode = element.children[element.children.length - 1];
@@ -18337,26 +9825,34 @@ function parse(template, options) {
       endPre(element);
     },
 
-    chars: function chars(text) {
+    chars: function chars (text) {
       if (!currentParent) {
         if (process.env.NODE_ENV !== 'production') {
           if (text === template) {
-            warnOnce('Component template requires a root element, rather than just text.');
-          } else if (text = text.trim()) {
-            warnOnce("text \"" + text + "\" outside root element will be ignored.");
+            warnOnce(
+              'Component template requires a root element, rather than just text.'
+            );
+          } else if ((text = text.trim())) {
+            warnOnce(
+              ("text \"" + text + "\" outside root element will be ignored.")
+            );
           }
         }
-        return;
+        return
       }
       // IE textarea placeholder bug
       /* istanbul ignore if */
-      if (isIE && currentParent.tag === 'textarea' && currentParent.attrsMap.placeholder === text) {
-        return;
+      if (isIE &&
+        currentParent.tag === 'textarea' &&
+        currentParent.attrsMap.placeholder === text
+      ) {
+        return
       }
       var children = currentParent.children;
-      text = inPre || text.trim() ? isTextTag(currentParent) ? text : decodeHTMLCached(text)
-      // only preserve whitespace if its not right after a starting tag
-      : preserveWhitespace && children.length ? ' ' : '';
+      text = inPre || text.trim()
+        ? isTextTag(currentParent) ? text : decodeHTMLCached(text)
+        // only preserve whitespace if its not right after a starting tag
+        : preserveWhitespace && children.length ? ' ' : '';
       if (text) {
         var expression;
         if (!inVPre && text !== ' ' && (expression = parseText(text, delimiters))) {
@@ -18373,7 +9869,7 @@ function parse(template, options) {
         }
       }
     },
-    comment: function comment(text) {
+    comment: function comment (text) {
       currentParent.children.push({
         type: 3,
         text: text,
@@ -18381,16 +9877,16 @@ function parse(template, options) {
       });
     }
   });
-  return root;
+  return root
 }
 
-function processPre(el) {
+function processPre (el) {
   if (getAndRemoveAttr(el, 'v-pre') != null) {
     el.pre = true;
   }
 }
 
-function processRawAttrs(el) {
+function processRawAttrs (el) {
   var l = el.attrsList.length;
   if (l) {
     var attrs = el.attrs = new Array(l);
@@ -18406,7 +9902,7 @@ function processRawAttrs(el) {
   }
 }
 
-function processKey(el) {
+function processKey (el) {
   var exp = getBindingAttr(el, 'key');
   if (exp) {
     if (process.env.NODE_ENV !== 'production' && el.tag === 'template') {
@@ -18416,7 +9912,7 @@ function processKey(el) {
   }
 }
 
-function processRef(el) {
+function processRef (el) {
   var ref = getBindingAttr(el, 'ref');
   if (ref) {
     el.ref = ref;
@@ -18424,13 +9920,15 @@ function processRef(el) {
   }
 }
 
-function processFor(el) {
+function processFor (el) {
   var exp;
-  if (exp = getAndRemoveAttr(el, 'v-for')) {
+  if ((exp = getAndRemoveAttr(el, 'v-for'))) {
     var inMatch = exp.match(forAliasRE);
     if (!inMatch) {
-      process.env.NODE_ENV !== 'production' && warn$2("Invalid v-for expression: " + exp);
-      return;
+      process.env.NODE_ENV !== 'production' && warn$2(
+        ("Invalid v-for expression: " + exp)
+      );
+      return
     }
     el.for = inMatch[2].trim();
     var alias = inMatch[1].trim();
@@ -18447,7 +9945,7 @@ function processFor(el) {
   }
 }
 
-function processIf(el) {
+function processIf (el) {
   var exp = getAndRemoveAttr(el, 'v-if');
   if (exp) {
     el.if = exp;
@@ -18466,7 +9964,7 @@ function processIf(el) {
   }
 }
 
-function processIfConditions(el, parent) {
+function processIfConditions (el, parent) {
   var prev = findPrevElement(parent.children);
   if (prev && prev.if) {
     addIfCondition(prev, {
@@ -18474,43 +9972,53 @@ function processIfConditions(el, parent) {
       block: el
     });
   } else if (process.env.NODE_ENV !== 'production') {
-    warn$2("v-" + (el.elseif ? 'else-if="' + el.elseif + '"' : 'else') + " " + "used on element <" + el.tag + "> without corresponding v-if.");
+    warn$2(
+      "v-" + (el.elseif ? ('else-if="' + el.elseif + '"') : 'else') + " " +
+      "used on element <" + (el.tag) + "> without corresponding v-if."
+    );
   }
 }
 
-function findPrevElement(children) {
+function findPrevElement (children) {
   var i = children.length;
   while (i--) {
     if (children[i].type === 1) {
-      return children[i];
+      return children[i]
     } else {
       if (process.env.NODE_ENV !== 'production' && children[i].text !== ' ') {
-        warn$2("text \"" + children[i].text.trim() + "\" between v-if and v-else(-if) " + "will be ignored.");
+        warn$2(
+          "text \"" + (children[i].text.trim()) + "\" between v-if and v-else(-if) " +
+          "will be ignored."
+        );
       }
       children.pop();
     }
   }
 }
 
-function addIfCondition(el, condition) {
+function addIfCondition (el, condition) {
   if (!el.ifConditions) {
     el.ifConditions = [];
   }
   el.ifConditions.push(condition);
 }
 
-function processOnce(el) {
+function processOnce (el) {
   var once$$1 = getAndRemoveAttr(el, 'v-once');
   if (once$$1 != null) {
     el.once = true;
   }
 }
 
-function processSlot(el) {
+function processSlot (el) {
   if (el.tag === 'slot') {
     el.slotName = getBindingAttr(el, 'name');
     if (process.env.NODE_ENV !== 'production' && el.key) {
-      warn$2("`key` does not work on <slot> because slots are abstract outlets " + "and can possibly expand into multiple elements. " + "Use the key on a wrapping element instead.");
+      warn$2(
+        "`key` does not work on <slot> because slots are abstract outlets " +
+        "and can possibly expand into multiple elements. " +
+        "Use the key on a wrapping element instead."
+      );
     }
   } else {
     var slotTarget = getBindingAttr(el, 'slot');
@@ -18525,9 +10033,9 @@ function processSlot(el) {
   }
 }
 
-function processComponent(el) {
+function processComponent (el) {
   var binding;
-  if (binding = getBindingAttr(el, 'is')) {
+  if ((binding = getBindingAttr(el, 'is'))) {
     el.component = binding;
   }
   if (getAndRemoveAttr(el, 'inline-template') != null) {
@@ -18535,7 +10043,7 @@ function processComponent(el) {
   }
 }
 
-function processAttrs(el) {
+function processAttrs (el) {
   var list = el.attrsList;
   var i, l, name, rawName, value, modifiers, isProp;
   for (i = 0, l = list.length; i < l; i++) {
@@ -18549,8 +10057,7 @@ function processAttrs(el) {
       if (modifiers) {
         name = name.replace(modifierRE, '');
       }
-      if (bindRE.test(name)) {
-        // v-bind
+      if (bindRE.test(name)) { // v-bind
         name = name.replace(bindRE, '');
         value = parseFilters(value);
         isProp = false;
@@ -18558,28 +10065,30 @@ function processAttrs(el) {
           if (modifiers.prop) {
             isProp = true;
             name = camelize(name);
-            if (name === 'innerHtml') {
-              name = 'innerHTML';
-            }
+            if (name === 'innerHtml') { name = 'innerHTML'; }
           }
           if (modifiers.camel) {
             name = camelize(name);
           }
           if (modifiers.sync) {
-            addHandler(el, "update:" + camelize(name), genAssignmentCode(value, "$event"));
+            addHandler(
+              el,
+              ("update:" + (camelize(name))),
+              genAssignmentCode(value, "$event")
+            );
           }
         }
-        if (isProp || !el.component && platformMustUseProp(el.tag, el.attrsMap.type, name)) {
+        if (isProp || (
+          !el.component && platformMustUseProp(el.tag, el.attrsMap.type, name)
+        )) {
           addProp(el, name, value);
         } else {
           addAttr(el, name, value);
         }
-      } else if (onRE.test(name)) {
-        // v-on
+      } else if (onRE.test(name)) { // v-on
         name = name.replace(onRE, '');
         addHandler(el, name, value, modifiers, false, warn$2);
-      } else {
-        // normal directives
+      } else { // normal directives
         name = name.replace(dirRE, '');
         // parse arg
         var argMatch = name.match(argRE);
@@ -18597,7 +10106,12 @@ function processAttrs(el) {
       if (process.env.NODE_ENV !== 'production') {
         var expression = parseText(value, delimiters);
         if (expression) {
-          warn$2(name + "=\"" + value + "\": " + 'Interpolation inside attributes has been removed. ' + 'Use v-bind or the colon shorthand instead. For example, ' + 'instead of <div id="{{ val }}">, use <div :id="val">.');
+          warn$2(
+            name + "=\"" + value + "\": " +
+            'Interpolation inside attributes has been removed. ' +
+            'Use v-bind or the colon shorthand instead. For example, ' +
+            'instead of <div id="{{ val }}">, use <div :id="val">.'
+          );
         }
       }
       addAttr(el, name, JSON.stringify(value));
@@ -18605,53 +10119,60 @@ function processAttrs(el) {
   }
 }
 
-function checkInFor(el) {
+function checkInFor (el) {
   var parent = el;
   while (parent) {
     if (parent.for !== undefined) {
-      return true;
+      return true
     }
     parent = parent.parent;
   }
-  return false;
+  return false
 }
 
-function parseModifiers(name) {
+function parseModifiers (name) {
   var match = name.match(modifierRE);
   if (match) {
     var ret = {};
-    match.forEach(function (m) {
-      ret[m.slice(1)] = true;
-    });
-    return ret;
+    match.forEach(function (m) { ret[m.slice(1)] = true; });
+    return ret
   }
 }
 
-function makeAttrsMap(attrs) {
+function makeAttrsMap (attrs) {
   var map = {};
   for (var i = 0, l = attrs.length; i < l; i++) {
-    if (process.env.NODE_ENV !== 'production' && map[attrs[i].name] && !isIE && !isEdge) {
+    if (
+      process.env.NODE_ENV !== 'production' &&
+      map[attrs[i].name] && !isIE && !isEdge
+    ) {
       warn$2('duplicate attribute: ' + attrs[i].name);
     }
     map[attrs[i].name] = attrs[i].value;
   }
-  return map;
+  return map
 }
 
 // for script (e.g. type="x/template") or style, do not decode content
-function isTextTag(el) {
-  return el.tag === 'script' || el.tag === 'style';
+function isTextTag (el) {
+  return el.tag === 'script' || el.tag === 'style'
 }
 
-function isForbiddenTag(el) {
-  return el.tag === 'style' || el.tag === 'script' && (!el.attrsMap.type || el.attrsMap.type === 'text/javascript');
+function isForbiddenTag (el) {
+  return (
+    el.tag === 'style' ||
+    (el.tag === 'script' && (
+      !el.attrsMap.type ||
+      el.attrsMap.type === 'text/javascript'
+    ))
+  )
 }
 
 var ieNSBug = /^xmlns:NS\d+/;
 var ieNSPrefix = /^NS\d+:/;
 
 /* istanbul ignore next */
-function guardIESVGBug(attrs) {
+function guardIESVGBug (attrs) {
   var res = [];
   for (var i = 0; i < attrs.length; i++) {
     var attr = attrs[i];
@@ -18660,14 +10181,20 @@ function guardIESVGBug(attrs) {
       res.push(attr);
     }
   }
-  return res;
+  return res
 }
 
-function checkForAliasModel(el, value) {
+function checkForAliasModel (el, value) {
   var _el = el;
   while (_el) {
     if (_el.for && _el.alias === value) {
-      warn$2("<" + el.tag + " v-model=\"" + value + "\">: " + "You are binding v-model directly to a v-for iteration alias. " + "This will not be able to modify the v-for source array because " + "writing to the alias is like modifying a function local variable. " + "Consider using an array of objects and use v-model on an object property instead.");
+      warn$2(
+        "<" + (el.tag) + " v-model=\"" + value + "\">: " +
+        "You are binding v-model directly to a v-for iteration alias. " +
+        "This will not be able to modify the v-for source array because " +
+        "writing to the alias is like modifying a function local variable. " +
+        "Consider using an array of objects and use v-model on an object property instead."
+      );
     }
     _el = _el.parent;
   }
@@ -18691,10 +10218,8 @@ var genStaticKeysCached = cached(genStaticKeys$1);
  *    create fresh nodes for them on each re-render;
  * 2. Completely skip them in the patching process.
  */
-function optimize(root, options) {
-  if (!root) {
-    return;
-  }
+function optimize (root, options) {
+  if (!root) { return }
   isStaticKey = genStaticKeysCached(options.staticKeys || '');
   isPlatformReservedTag = options.isReservedTag || no;
   // first pass: mark all non-static nodes.
@@ -18703,18 +10228,25 @@ function optimize(root, options) {
   markStaticRoots(root, false);
 }
 
-function genStaticKeys$1(keys) {
-  return makeMap('type,tag,attrsList,attrsMap,plain,parent,children,attrs' + (keys ? ',' + keys : ''));
+function genStaticKeys$1 (keys) {
+  return makeMap(
+    'type,tag,attrsList,attrsMap,plain,parent,children,attrs' +
+    (keys ? ',' + keys : '')
+  )
 }
 
-function markStatic$1(node) {
+function markStatic$1 (node) {
   node.static = isStatic(node);
   if (node.type === 1) {
     // do not make component slot content static. this avoids
     // 1. components not able to mutate slot nodes
     // 2. static slot content fails for hot-reloading
-    if (!isPlatformReservedTag(node.tag) && node.tag !== 'slot' && node.attrsMap['inline-template'] == null) {
-      return;
+    if (
+      !isPlatformReservedTag(node.tag) &&
+      node.tag !== 'slot' &&
+      node.attrsMap['inline-template'] == null
+    ) {
+      return
     }
     for (var i = 0, l = node.children.length; i < l; i++) {
       var child = node.children[i];
@@ -18735,7 +10267,7 @@ function markStatic$1(node) {
   }
 }
 
-function markStaticRoots(node, isInFor) {
+function markStaticRoots (node, isInFor) {
   if (node.type === 1) {
     if (node.static || node.once) {
       node.staticInFor = isInFor;
@@ -18743,9 +10275,12 @@ function markStaticRoots(node, isInFor) {
     // For a node to qualify as a static root, it should have children that
     // are not just static text. Otherwise the cost of hoisting out will
     // outweigh the benefits and it's better off to just always render it fresh.
-    if (node.static && node.children.length && !(node.children.length === 1 && node.children[0].type === 3)) {
+    if (node.static && node.children.length && !(
+      node.children.length === 1 &&
+      node.children[0].type === 3
+    )) {
       node.staticRoot = true;
-      return;
+      return
     } else {
       node.staticRoot = false;
     }
@@ -18762,33 +10297,34 @@ function markStaticRoots(node, isInFor) {
   }
 }
 
-function isStatic(node) {
-  if (node.type === 2) {
-    // expression
-    return false;
+function isStatic (node) {
+  if (node.type === 2) { // expression
+    return false
   }
-  if (node.type === 3) {
-    // text
-    return true;
+  if (node.type === 3) { // text
+    return true
   }
-  return !!(node.pre || !node.hasBindings && // no dynamic bindings
-  !node.if && !node.for && // not v-if or v-for or v-else
-  !isBuiltInTag(node.tag) && // not a built-in
-  isPlatformReservedTag(node.tag) && // not a component
-  !isDirectChildOfTemplateFor(node) && Object.keys(node).every(isStaticKey));
+  return !!(node.pre || (
+    !node.hasBindings && // no dynamic bindings
+    !node.if && !node.for && // not v-if or v-for or v-else
+    !isBuiltInTag(node.tag) && // not a built-in
+    isPlatformReservedTag(node.tag) && // not a component
+    !isDirectChildOfTemplateFor(node) &&
+    Object.keys(node).every(isStaticKey)
+  ))
 }
 
-function isDirectChildOfTemplateFor(node) {
+function isDirectChildOfTemplateFor (node) {
   while (node.parent) {
     node = node.parent;
     if (node.tag !== 'template') {
-      return false;
+      return false
     }
     if (node.for) {
-      return true;
+      return true
     }
   }
-  return false;
+  return false
 }
 
 /*  */
@@ -18812,9 +10348,7 @@ var keyCodes = {
 // #4868: modifiers that prevent the execution of the listener
 // need to explicitly return null so that we can determine whether to remove
 // the listener for .once
-var genGuard = function (condition) {
-  return "if(" + condition + ")return null;";
-};
+var genGuard = function (condition) { return ("if(" + condition + ")return null;"); };
 
 var modifierCode = {
   stop: '$event.stopPropagation();',
@@ -18829,35 +10363,48 @@ var modifierCode = {
   right: genGuard("'button' in $event && $event.button !== 2")
 };
 
-function genHandlers(events, isNative, warn) {
+function genHandlers (
+  events,
+  isNative,
+  warn
+) {
   var res = isNative ? 'nativeOn:{' : 'on:{';
   for (var name in events) {
     var handler = events[name];
     // #5330: warn click.right, since right clicks do not actually fire click events.
-    if (process.env.NODE_ENV !== 'production' && name === 'click' && handler && handler.modifiers && handler.modifiers.right) {
-      warn("Use \"contextmenu\" instead of \"click.right\" since right clicks " + "do not actually fire \"click\" events.");
+    if (process.env.NODE_ENV !== 'production' &&
+      name === 'click' &&
+      handler && handler.modifiers && handler.modifiers.right
+    ) {
+      warn(
+        "Use \"contextmenu\" instead of \"click.right\" since right clicks " +
+        "do not actually fire \"click\" events."
+      );
     }
-    res += "\"" + name + "\":" + genHandler(name, handler) + ",";
+    res += "\"" + name + "\":" + (genHandler(name, handler)) + ",";
   }
-  return res.slice(0, -1) + '}';
+  return res.slice(0, -1) + '}'
 }
 
-function genHandler(name, handler) {
+function genHandler (
+  name,
+  handler
+) {
   if (!handler) {
-    return 'function(){}';
+    return 'function(){}'
   }
 
   if (Array.isArray(handler)) {
-    return "[" + handler.map(function (handler) {
-      return genHandler(name, handler);
-    }).join(',') + "]";
+    return ("[" + (handler.map(function (handler) { return genHandler(name, handler); }).join(',')) + "]")
   }
 
   var isMethodPath = simplePathRE.test(handler.value);
   var isFunctionExpression = fnExpRE.test(handler.value);
 
   if (!handler.modifiers) {
-    return isMethodPath || isFunctionExpression ? handler.value : "function($event){" + handler.value + "}"; // inline statement
+    return isMethodPath || isFunctionExpression
+      ? handler.value
+      : ("function($event){" + (handler.value) + "}") // inline statement
   } else {
     var code = '';
     var genModifierCode = '';
@@ -18880,40 +10427,42 @@ function genHandler(name, handler) {
     if (genModifierCode) {
       code += genModifierCode;
     }
-    var handlerCode = isMethodPath ? handler.value + '($event)' : isFunctionExpression ? "(" + handler.value + ")($event)" : handler.value;
-    return "function($event){" + code + handlerCode + "}";
+    var handlerCode = isMethodPath
+      ? handler.value + '($event)'
+      : isFunctionExpression
+        ? ("(" + (handler.value) + ")($event)")
+        : handler.value;
+    return ("function($event){" + code + handlerCode + "}")
   }
 }
 
-function genKeyFilter(keys) {
-  return "if(!('button' in $event)&&" + keys.map(genFilterCode).join('&&') + ")return null;";
+function genKeyFilter (keys) {
+  return ("if(!('button' in $event)&&" + (keys.map(genFilterCode).join('&&')) + ")return null;")
 }
 
-function genFilterCode(key) {
+function genFilterCode (key) {
   var keyVal = parseInt(key, 10);
   if (keyVal) {
-    return "$event.keyCode!==" + keyVal;
+    return ("$event.keyCode!==" + keyVal)
   }
   var alias = keyCodes[key];
-  return "_k($event.keyCode," + JSON.stringify(key) + (alias ? ',' + JSON.stringify(alias) : '') + ")";
+  return ("_k($event.keyCode," + (JSON.stringify(key)) + (alias ? ',' + JSON.stringify(alias) : '') + ")")
 }
 
 /*  */
 
-function on(el, dir) {
+function on (el, dir) {
   if (process.env.NODE_ENV !== 'production' && dir.modifiers) {
     warn("v-on without argument does not support modifiers.");
   }
-  el.wrapListeners = function (code) {
-    return "_g(" + code + "," + dir.value + ")";
-  };
+  el.wrapListeners = function (code) { return ("_g(" + code + "," + (dir.value) + ")"); };
 }
 
 /*  */
 
-function bind$1(el, dir) {
+function bind$1 (el, dir) {
   el.wrapData = function (code) {
-    return "_b(" + code + ",'" + el.tag + "'," + dir.value + "," + (dir.modifiers && dir.modifiers.prop ? 'true' : 'false') + (dir.modifiers && dir.modifiers.sync ? ',true' : '') + ")";
+    return ("_b(" + code + ",'" + (el.tag) + "'," + (dir.value) + "," + (dir.modifiers && dir.modifiers.prop ? 'true' : 'false') + (dir.modifiers && dir.modifiers.sync ? ',true' : '') + ")")
   };
 }
 
@@ -18927,42 +10476,45 @@ var baseDirectives = {
 
 /*  */
 
-var CodegenState = function CodegenState(options) {
+var CodegenState = function CodegenState (options) {
   this.options = options;
   this.warn = options.warn || baseWarn;
   this.transforms = pluckModuleFunction(options.modules, 'transformCode');
   this.dataGenFns = pluckModuleFunction(options.modules, 'genData');
   this.directives = extend(extend({}, baseDirectives), options.directives);
   var isReservedTag = options.isReservedTag || no;
-  this.maybeComponent = function (el) {
-    return !isReservedTag(el.tag);
-  };
+  this.maybeComponent = function (el) { return !isReservedTag(el.tag); };
   this.onceId = 0;
   this.staticRenderFns = [];
 };
 
-function generate(ast, options) {
+
+
+function generate (
+  ast,
+  options
+) {
   var state = new CodegenState(options);
   var code = ast ? genElement(ast, state) : '_c("div")';
   return {
-    render: "with(this){return " + code + "}",
+    render: ("with(this){return " + code + "}"),
     staticRenderFns: state.staticRenderFns
-  };
+  }
 }
 
-function genElement(el, state) {
+function genElement (el, state) {
   if (el.staticRoot && !el.staticProcessed) {
-    return genStatic(el, state);
+    return genStatic(el, state)
   } else if (el.once && !el.onceProcessed) {
-    return genOnce(el, state);
+    return genOnce(el, state)
   } else if (el.for && !el.forProcessed) {
-    return genFor(el, state);
+    return genFor(el, state)
   } else if (el.if && !el.ifProcessed) {
-    return genIf(el, state);
+    return genIf(el, state)
   } else if (el.tag === 'template' && !el.slotTarget) {
-    return genChildren(el, state) || 'void 0';
+    return genChildren(el, state) || 'void 0'
   } else if (el.tag === 'slot') {
-    return genSlot(el, state);
+    return genSlot(el, state)
   } else {
     // component or element
     var code;
@@ -18972,103 +10524,134 @@ function genElement(el, state) {
       var data = el.plain ? undefined : genData$2(el, state);
 
       var children = el.inlineTemplate ? null : genChildren(el, state, true);
-      code = "_c('" + el.tag + "'" + (data ? "," + data : '') + (children ? "," + children : '') + ")";
+      code = "_c('" + (el.tag) + "'" + (data ? ("," + data) : '') + (children ? ("," + children) : '') + ")";
     }
     // module transforms
     for (var i = 0; i < state.transforms.length; i++) {
       code = state.transforms[i](el, code);
     }
-    return code;
+    return code
   }
 }
 
 // hoist static sub-trees out
-function genStatic(el, state) {
+function genStatic (el, state) {
   el.staticProcessed = true;
-  state.staticRenderFns.push("with(this){return " + genElement(el, state) + "}");
-  return "_m(" + (state.staticRenderFns.length - 1) + (el.staticInFor ? ',true' : '') + ")";
+  state.staticRenderFns.push(("with(this){return " + (genElement(el, state)) + "}"));
+  return ("_m(" + (state.staticRenderFns.length - 1) + (el.staticInFor ? ',true' : '') + ")")
 }
 
 // v-once
-function genOnce(el, state) {
+function genOnce (el, state) {
   el.onceProcessed = true;
   if (el.if && !el.ifProcessed) {
-    return genIf(el, state);
+    return genIf(el, state)
   } else if (el.staticInFor) {
     var key = '';
     var parent = el.parent;
     while (parent) {
       if (parent.for) {
         key = parent.key;
-        break;
+        break
       }
       parent = parent.parent;
     }
     if (!key) {
-      process.env.NODE_ENV !== 'production' && state.warn("v-once can only be used inside v-for that is keyed. ");
-      return genElement(el, state);
+      process.env.NODE_ENV !== 'production' && state.warn(
+        "v-once can only be used inside v-for that is keyed. "
+      );
+      return genElement(el, state)
     }
-    return "_o(" + genElement(el, state) + "," + state.onceId++ + "," + key + ")";
+    return ("_o(" + (genElement(el, state)) + "," + (state.onceId++) + "," + key + ")")
   } else {
-    return genStatic(el, state);
+    return genStatic(el, state)
   }
 }
 
-function genIf(el, state, altGen, altEmpty) {
+function genIf (
+  el,
+  state,
+  altGen,
+  altEmpty
+) {
   el.ifProcessed = true; // avoid recursion
-  return genIfConditions(el.ifConditions.slice(), state, altGen, altEmpty);
+  return genIfConditions(el.ifConditions.slice(), state, altGen, altEmpty)
 }
 
-function genIfConditions(conditions, state, altGen, altEmpty) {
+function genIfConditions (
+  conditions,
+  state,
+  altGen,
+  altEmpty
+) {
   if (!conditions.length) {
-    return altEmpty || '_e()';
+    return altEmpty || '_e()'
   }
 
   var condition = conditions.shift();
   if (condition.exp) {
-    return "(" + condition.exp + ")?" + genTernaryExp(condition.block) + ":" + genIfConditions(conditions, state, altGen, altEmpty);
+    return ("(" + (condition.exp) + ")?" + (genTernaryExp(condition.block)) + ":" + (genIfConditions(conditions, state, altGen, altEmpty)))
   } else {
-    return "" + genTernaryExp(condition.block);
+    return ("" + (genTernaryExp(condition.block)))
   }
 
   // v-if with v-once should generate code like (a)?_m(0):_m(1)
-  function genTernaryExp(el) {
-    return altGen ? altGen(el, state) : el.once ? genOnce(el, state) : genElement(el, state);
+  function genTernaryExp (el) {
+    return altGen
+      ? altGen(el, state)
+      : el.once
+        ? genOnce(el, state)
+        : genElement(el, state)
   }
 }
 
-function genFor(el, state, altGen, altHelper) {
+function genFor (
+  el,
+  state,
+  altGen,
+  altHelper
+) {
   var exp = el.for;
   var alias = el.alias;
-  var iterator1 = el.iterator1 ? "," + el.iterator1 : '';
-  var iterator2 = el.iterator2 ? "," + el.iterator2 : '';
+  var iterator1 = el.iterator1 ? ("," + (el.iterator1)) : '';
+  var iterator2 = el.iterator2 ? ("," + (el.iterator2)) : '';
 
-  if (process.env.NODE_ENV !== 'production' && state.maybeComponent(el) && el.tag !== 'slot' && el.tag !== 'template' && !el.key) {
-    state.warn("<" + el.tag + " v-for=\"" + alias + " in " + exp + "\">: component lists rendered with " + "v-for should have explicit keys. " + "See https://vuejs.org/guide/list.html#key for more info.", true /* tip */
+  if (process.env.NODE_ENV !== 'production' &&
+    state.maybeComponent(el) &&
+    el.tag !== 'slot' &&
+    el.tag !== 'template' &&
+    !el.key
+  ) {
+    state.warn(
+      "<" + (el.tag) + " v-for=\"" + alias + " in " + exp + "\">: component lists rendered with " +
+      "v-for should have explicit keys. " +
+      "See https://vuejs.org/guide/list.html#key for more info.",
+      true /* tip */
     );
   }
 
   el.forProcessed = true; // avoid recursion
-  return (altHelper || '_l') + "((" + exp + ")," + "function(" + alias + iterator1 + iterator2 + "){" + "return " + (altGen || genElement)(el, state) + '})';
+  return (altHelper || '_l') + "((" + exp + ")," +
+    "function(" + alias + iterator1 + iterator2 + "){" +
+      "return " + ((altGen || genElement)(el, state)) +
+    '})'
 }
 
-function genData$2(el, state) {
+function genData$2 (el, state) {
   var data = '{';
 
   // directives first.
   // directives may mutate the el's other properties before they are generated.
   var dirs = genDirectives(el, state);
-  if (dirs) {
-    data += dirs + ',';
-  }
+  if (dirs) { data += dirs + ','; }
 
   // key
   if (el.key) {
-    data += "key:" + el.key + ",";
+    data += "key:" + (el.key) + ",";
   }
   // ref
   if (el.ref) {
-    data += "ref:" + el.ref + ",";
+    data += "ref:" + (el.ref) + ",";
   }
   if (el.refInFor) {
     data += "refInFor:true,";
@@ -19079,7 +10662,7 @@ function genData$2(el, state) {
   }
   // record original tag name for components using "is" attribute
   if (el.component) {
-    data += "tag:\"" + el.tag + "\",";
+    data += "tag:\"" + (el.tag) + "\",";
   }
   // module data generation functions
   for (var i = 0; i < state.dataGenFns.length; i++) {
@@ -19087,30 +10670,30 @@ function genData$2(el, state) {
   }
   // attributes
   if (el.attrs) {
-    data += "attrs:{" + genProps(el.attrs) + "},";
+    data += "attrs:{" + (genProps(el.attrs)) + "},";
   }
   // DOM props
   if (el.props) {
-    data += "domProps:{" + genProps(el.props) + "},";
+    data += "domProps:{" + (genProps(el.props)) + "},";
   }
   // event handlers
   if (el.events) {
-    data += genHandlers(el.events, false, state.warn) + ",";
+    data += (genHandlers(el.events, false, state.warn)) + ",";
   }
   if (el.nativeEvents) {
-    data += genHandlers(el.nativeEvents, true, state.warn) + ",";
+    data += (genHandlers(el.nativeEvents, true, state.warn)) + ",";
   }
   // slot target
   if (el.slotTarget) {
-    data += "slot:" + el.slotTarget + ",";
+    data += "slot:" + (el.slotTarget) + ",";
   }
   // scoped slots
   if (el.scopedSlots) {
-    data += genScopedSlots(el.scopedSlots, state) + ",";
+    data += (genScopedSlots(el.scopedSlots, state)) + ",";
   }
   // component v-model
   if (el.model) {
-    data += "model:{value:" + el.model.value + ",callback:" + el.model.callback + ",expression:" + el.model.expression + "},";
+    data += "model:{value:" + (el.model.value) + ",callback:" + (el.model.callback) + ",expression:" + (el.model.expression) + "},";
   }
   // inline-template
   if (el.inlineTemplate) {
@@ -19128,14 +10711,12 @@ function genData$2(el, state) {
   if (el.wrapListeners) {
     data = el.wrapListeners(data);
   }
-  return data;
+  return data
 }
 
-function genDirectives(el, state) {
+function genDirectives (el, state) {
   var dirs = el.directives;
-  if (!dirs) {
-    return;
-  }
+  if (!dirs) { return }
   var res = 'directives:[';
   var hasRuntime = false;
   var i, l, dir, needRuntime;
@@ -19150,62 +10731,89 @@ function genDirectives(el, state) {
     }
     if (needRuntime) {
       hasRuntime = true;
-      res += "{name:\"" + dir.name + "\",rawName:\"" + dir.rawName + "\"" + (dir.value ? ",value:(" + dir.value + "),expression:" + JSON.stringify(dir.value) : '') + (dir.arg ? ",arg:\"" + dir.arg + "\"" : '') + (dir.modifiers ? ",modifiers:" + JSON.stringify(dir.modifiers) : '') + "},";
+      res += "{name:\"" + (dir.name) + "\",rawName:\"" + (dir.rawName) + "\"" + (dir.value ? (",value:(" + (dir.value) + "),expression:" + (JSON.stringify(dir.value))) : '') + (dir.arg ? (",arg:\"" + (dir.arg) + "\"") : '') + (dir.modifiers ? (",modifiers:" + (JSON.stringify(dir.modifiers))) : '') + "},";
     }
   }
   if (hasRuntime) {
-    return res.slice(0, -1) + ']';
+    return res.slice(0, -1) + ']'
   }
 }
 
-function genInlineTemplate(el, state) {
+function genInlineTemplate (el, state) {
   var ast = el.children[0];
-  if (process.env.NODE_ENV !== 'production' && (el.children.length > 1 || ast.type !== 1)) {
+  if (process.env.NODE_ENV !== 'production' && (
+    el.children.length > 1 || ast.type !== 1
+  )) {
     state.warn('Inline-template components must have exactly one child element.');
   }
   if (ast.type === 1) {
     var inlineRenderFns = generate(ast, state.options);
-    return "inlineTemplate:{render:function(){" + inlineRenderFns.render + "},staticRenderFns:[" + inlineRenderFns.staticRenderFns.map(function (code) {
-      return "function(){" + code + "}";
-    }).join(',') + "]}";
+    return ("inlineTemplate:{render:function(){" + (inlineRenderFns.render) + "},staticRenderFns:[" + (inlineRenderFns.staticRenderFns.map(function (code) { return ("function(){" + code + "}"); }).join(',')) + "]}")
   }
 }
 
-function genScopedSlots(slots, state) {
-  return "scopedSlots:_u([" + Object.keys(slots).map(function (key) {
-    return genScopedSlot(key, slots[key], state);
-  }).join(',') + "])";
+function genScopedSlots (
+  slots,
+  state
+) {
+  return ("scopedSlots:_u([" + (Object.keys(slots).map(function (key) {
+      return genScopedSlot(key, slots[key], state)
+    }).join(',')) + "])")
 }
 
-function genScopedSlot(key, el, state) {
+function genScopedSlot (
+  key,
+  el,
+  state
+) {
   if (el.for && !el.forProcessed) {
-    return genForScopedSlot(key, el, state);
+    return genForScopedSlot(key, el, state)
   }
-  return "{key:" + key + ",fn:function(" + String(el.attrsMap.scope) + "){" + "return " + (el.tag === 'template' ? genChildren(el, state) || 'void 0' : genElement(el, state)) + "}}";
+  return "{key:" + key + ",fn:function(" + (String(el.attrsMap.scope)) + "){" +
+    "return " + (el.tag === 'template'
+      ? genChildren(el, state) || 'void 0'
+      : genElement(el, state)) + "}}"
 }
 
-function genForScopedSlot(key, el, state) {
+function genForScopedSlot (
+  key,
+  el,
+  state
+) {
   var exp = el.for;
   var alias = el.alias;
-  var iterator1 = el.iterator1 ? "," + el.iterator1 : '';
-  var iterator2 = el.iterator2 ? "," + el.iterator2 : '';
+  var iterator1 = el.iterator1 ? ("," + (el.iterator1)) : '';
+  var iterator2 = el.iterator2 ? ("," + (el.iterator2)) : '';
   el.forProcessed = true; // avoid recursion
-  return "_l((" + exp + ")," + "function(" + alias + iterator1 + iterator2 + "){" + "return " + genScopedSlot(key, el, state) + '})';
+  return "_l((" + exp + ")," +
+    "function(" + alias + iterator1 + iterator2 + "){" +
+      "return " + (genScopedSlot(key, el, state)) +
+    '})'
 }
 
-function genChildren(el, state, checkSkip, altGenElement, altGenNode) {
+function genChildren (
+  el,
+  state,
+  checkSkip,
+  altGenElement,
+  altGenNode
+) {
   var children = el.children;
   if (children.length) {
     var el$1 = children[0];
     // optimize single v-for
-    if (children.length === 1 && el$1.for && el$1.tag !== 'template' && el$1.tag !== 'slot') {
-      return (altGenElement || genElement)(el$1, state);
+    if (children.length === 1 &&
+      el$1.for &&
+      el$1.tag !== 'template' &&
+      el$1.tag !== 'slot'
+    ) {
+      return (altGenElement || genElement)(el$1, state)
     }
-    var normalizationType = checkSkip ? getNormalizationType(children, state.maybeComponent) : 0;
+    var normalizationType = checkSkip
+      ? getNormalizationType(children, state.maybeComponent)
+      : 0;
     var gen = altGenNode || genNode;
-    return "[" + children.map(function (c) {
-      return gen(c, state);
-    }).join(',') + "]" + (normalizationType ? "," + normalizationType : '');
+    return ("[" + (children.map(function (c) { return gen(c, state); }).join(',')) + "]" + (normalizationType ? ("," + normalizationType) : ''))
   }
 }
 
@@ -19213,58 +10821,58 @@ function genChildren(el, state, checkSkip, altGenElement, altGenNode) {
 // 0: no normalization needed
 // 1: simple normalization needed (possible 1-level deep nested array)
 // 2: full normalization needed
-function getNormalizationType(children, maybeComponent) {
+function getNormalizationType (
+  children,
+  maybeComponent
+) {
   var res = 0;
   for (var i = 0; i < children.length; i++) {
     var el = children[i];
     if (el.type !== 1) {
-      continue;
+      continue
     }
-    if (needsNormalization(el) || el.ifConditions && el.ifConditions.some(function (c) {
-      return needsNormalization(c.block);
-    })) {
+    if (needsNormalization(el) ||
+        (el.ifConditions && el.ifConditions.some(function (c) { return needsNormalization(c.block); }))) {
       res = 2;
-      break;
+      break
     }
-    if (maybeComponent(el) || el.ifConditions && el.ifConditions.some(function (c) {
-      return maybeComponent(c.block);
-    })) {
+    if (maybeComponent(el) ||
+        (el.ifConditions && el.ifConditions.some(function (c) { return maybeComponent(c.block); }))) {
       res = 1;
     }
   }
-  return res;
+  return res
 }
 
-function needsNormalization(el) {
-  return el.for !== undefined || el.tag === 'template' || el.tag === 'slot';
+function needsNormalization (el) {
+  return el.for !== undefined || el.tag === 'template' || el.tag === 'slot'
 }
 
-function genNode(node, state) {
+function genNode (node, state) {
   if (node.type === 1) {
-    return genElement(node, state);
-  }if (node.type === 3 && node.isComment) {
-    return genComment(node);
+    return genElement(node, state)
+  } if (node.type === 3 && node.isComment) {
+    return genComment(node)
   } else {
-    return genText(node);
+    return genText(node)
   }
 }
 
-function genText(text) {
-  return "_v(" + (text.type === 2 ? text.expression // no need for () because already wrapped in _s()
-  : transformSpecialNewlines(JSON.stringify(text.text))) + ")";
+function genText (text) {
+  return ("_v(" + (text.type === 2
+    ? text.expression // no need for () because already wrapped in _s()
+    : transformSpecialNewlines(JSON.stringify(text.text))) + ")")
 }
 
-function genComment(comment) {
-  return "_e(" + JSON.stringify(comment.text) + ")";
+function genComment (comment) {
+  return ("_e(" + (JSON.stringify(comment.text)) + ")")
 }
 
-function genSlot(el, state) {
+function genSlot (el, state) {
   var slotName = el.slotName || '"default"';
   var children = genChildren(el, state);
-  var res = "_t(" + slotName + (children ? "," + children : '');
-  var attrs = el.attrs && "{" + el.attrs.map(function (a) {
-    return camelize(a.name) + ":" + a.value;
-  }).join(',') + "}";
+  var res = "_t(" + slotName + (children ? ("," + children) : '');
+  var attrs = el.attrs && ("{" + (el.attrs.map(function (a) { return ((camelize(a.name)) + ":" + (a.value)); }).join(',')) + "}");
   var bind$$1 = el.attrsMap['v-bind'];
   if ((attrs || bind$$1) && !children) {
     res += ",null";
@@ -19275,37 +10883,49 @@ function genSlot(el, state) {
   if (bind$$1) {
     res += (attrs ? '' : ',null') + "," + bind$$1;
   }
-  return res + ')';
+  return res + ')'
 }
 
 // componentName is el.component, take it as argument to shun flow's pessimistic refinement
-function genComponent(componentName, el, state) {
+function genComponent (
+  componentName,
+  el,
+  state
+) {
   var children = el.inlineTemplate ? null : genChildren(el, state, true);
-  return "_c(" + componentName + "," + genData$2(el, state) + (children ? "," + children : '') + ")";
+  return ("_c(" + componentName + "," + (genData$2(el, state)) + (children ? ("," + children) : '') + ")")
 }
 
-function genProps(props) {
+function genProps (props) {
   var res = '';
   for (var i = 0; i < props.length; i++) {
     var prop = props[i];
-    res += "\"" + prop.name + "\":" + transformSpecialNewlines(prop.value) + ",";
+    res += "\"" + (prop.name) + "\":" + (transformSpecialNewlines(prop.value)) + ",";
   }
-  return res.slice(0, -1);
+  return res.slice(0, -1)
 }
 
 // #3895, #4268
-function transformSpecialNewlines(text) {
-  return text.replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029');
+function transformSpecialNewlines (text) {
+  return text
+    .replace(/\u2028/g, '\\u2028')
+    .replace(/\u2029/g, '\\u2029')
 }
 
 /*  */
 
 // these keywords should not appear inside expressions, but operators like
 // typeof, instanceof and in are allowed
-var prohibitedKeywordRE = new RegExp('\\b' + ('do,if,for,let,new,try,var,case,else,with,await,break,catch,class,const,' + 'super,throw,while,yield,delete,export,import,return,switch,default,' + 'extends,finally,continue,debugger,function,arguments').split(',').join('\\b|\\b') + '\\b');
+var prohibitedKeywordRE = new RegExp('\\b' + (
+  'do,if,for,let,new,try,var,case,else,with,await,break,catch,class,const,' +
+  'super,throw,while,yield,delete,export,import,return,switch,default,' +
+  'extends,finally,continue,debugger,function,arguments'
+).split(',').join('\\b|\\b') + '\\b');
 
 // these unary operators should not be used as property/method names
-var unaryOperatorsRE = new RegExp('\\b' + 'delete,typeof,void'.split(',').join('\\s*\\([^\\)]*\\)|\\b') + '\\s*\\([^\\)]*\\)');
+var unaryOperatorsRE = new RegExp('\\b' + (
+  'delete,typeof,void'
+).split(',').join('\\s*\\([^\\)]*\\)|\\b') + '\\s*\\([^\\)]*\\)');
 
 // check valid identifier for v-for
 var identRE = /[A-Za-z_$][\w$]*/;
@@ -19314,26 +10934,26 @@ var identRE = /[A-Za-z_$][\w$]*/;
 var stripStringRE = /'(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*"|`(?:[^`\\]|\\.)*\$\{|\}(?:[^`\\]|\\.)*`|`(?:[^`\\]|\\.)*`/g;
 
 // detect problematic expressions in a template
-function detectErrors(ast) {
+function detectErrors (ast) {
   var errors = [];
   if (ast) {
     checkNode(ast, errors);
   }
-  return errors;
+  return errors
 }
 
-function checkNode(node, errors) {
+function checkNode (node, errors) {
   if (node.type === 1) {
     for (var name in node.attrsMap) {
       if (dirRE.test(name)) {
         var value = node.attrsMap[name];
         if (value) {
           if (name === 'v-for') {
-            checkFor(node, "v-for=\"" + value + "\"", errors);
+            checkFor(node, ("v-for=\"" + value + "\""), errors);
           } else if (onRE.test(name)) {
-            checkEvent(value, name + "=\"" + value + "\"", errors);
+            checkEvent(value, (name + "=\"" + value + "\""), errors);
           } else {
-            checkExpression(value, name + "=\"" + value + "\"", errors);
+            checkExpression(value, (name + "=\"" + value + "\""), errors);
           }
         }
       }
@@ -19348,56 +10968,66 @@ function checkNode(node, errors) {
   }
 }
 
-function checkEvent(exp, text, errors) {
+function checkEvent (exp, text, errors) {
   var stipped = exp.replace(stripStringRE, '');
   var keywordMatch = stipped.match(unaryOperatorsRE);
   if (keywordMatch && stipped.charAt(keywordMatch.index - 1) !== '$') {
-    errors.push("avoid using JavaScript unary operator as property name: " + "\"" + keywordMatch[0] + "\" in expression " + text.trim());
+    errors.push(
+      "avoid using JavaScript unary operator as property name: " +
+      "\"" + (keywordMatch[0]) + "\" in expression " + (text.trim())
+    );
   }
   checkExpression(exp, text, errors);
 }
 
-function checkFor(node, text, errors) {
+function checkFor (node, text, errors) {
   checkExpression(node.for || '', text, errors);
   checkIdentifier(node.alias, 'v-for alias', text, errors);
   checkIdentifier(node.iterator1, 'v-for iterator', text, errors);
   checkIdentifier(node.iterator2, 'v-for iterator', text, errors);
 }
 
-function checkIdentifier(ident, type, text, errors) {
+function checkIdentifier (ident, type, text, errors) {
   if (typeof ident === 'string' && !identRE.test(ident)) {
-    errors.push("invalid " + type + " \"" + ident + "\" in expression: " + text.trim());
+    errors.push(("invalid " + type + " \"" + ident + "\" in expression: " + (text.trim())));
   }
 }
 
-function checkExpression(exp, text, errors) {
+function checkExpression (exp, text, errors) {
   try {
-    new Function("return " + exp);
+    new Function(("return " + exp));
   } catch (e) {
     var keywordMatch = exp.replace(stripStringRE, '').match(prohibitedKeywordRE);
     if (keywordMatch) {
-      errors.push("avoid using JavaScript keyword as property name: " + "\"" + keywordMatch[0] + "\" in expression " + text.trim());
+      errors.push(
+        "avoid using JavaScript keyword as property name: " +
+        "\"" + (keywordMatch[0]) + "\" in expression " + (text.trim())
+      );
     } else {
-      errors.push("invalid expression: " + text.trim());
+      errors.push(("invalid expression: " + (text.trim())));
     }
   }
 }
 
 /*  */
 
-function createFunction(code, errors) {
+function createFunction (code, errors) {
   try {
-    return new Function(code);
+    return new Function(code)
   } catch (err) {
     errors.push({ err: err, code: code });
-    return noop;
+    return noop
   }
 }
 
-function createCompileToFunctionFn(compile) {
+function createCompileToFunctionFn (compile) {
   var cache = Object.create(null);
 
-  return function compileToFunctions(template, options, vm) {
+  return function compileToFunctions (
+    template,
+    options,
+    vm
+  ) {
     options = options || {};
 
     /* istanbul ignore if */
@@ -19407,15 +11037,23 @@ function createCompileToFunctionFn(compile) {
         new Function('return 1');
       } catch (e) {
         if (e.toString().match(/unsafe-eval|CSP/)) {
-          warn('It seems you are using the standalone build of Vue.js in an ' + 'environment with Content Security Policy that prohibits unsafe-eval. ' + 'The template compiler cannot work in this environment. Consider ' + 'relaxing the policy to allow unsafe-eval or pre-compiling your ' + 'templates into render functions.');
+          warn(
+            'It seems you are using the standalone build of Vue.js in an ' +
+            'environment with Content Security Policy that prohibits unsafe-eval. ' +
+            'The template compiler cannot work in this environment. Consider ' +
+            'relaxing the policy to allow unsafe-eval or pre-compiling your ' +
+            'templates into render functions.'
+          );
         }
       }
     }
 
     // check cache
-    var key = options.delimiters ? String(options.delimiters) + template : template;
+    var key = options.delimiters
+      ? String(options.delimiters) + template
+      : template;
     if (cache[key]) {
-      return cache[key];
+      return cache[key]
     }
 
     // compile
@@ -19424,14 +11062,14 @@ function createCompileToFunctionFn(compile) {
     // check compilation errors/tips
     if (process.env.NODE_ENV !== 'production') {
       if (compiled.errors && compiled.errors.length) {
-        warn("Error compiling template:\n\n" + template + "\n\n" + compiled.errors.map(function (e) {
-          return "- " + e;
-        }).join('\n') + '\n', vm);
+        warn(
+          "Error compiling template:\n\n" + template + "\n\n" +
+          compiled.errors.map(function (e) { return ("- " + e); }).join('\n') + '\n',
+          vm
+        );
       }
       if (compiled.tips && compiled.tips.length) {
-        compiled.tips.forEach(function (msg) {
-          return tip(msg, vm);
-        });
+        compiled.tips.forEach(function (msg) { return tip(msg, vm); });
       }
     }
 
@@ -19440,7 +11078,7 @@ function createCompileToFunctionFn(compile) {
     var fnGenErrors = [];
     res.render = createFunction(compiled.render, fnGenErrors);
     res.staticRenderFns = compiled.staticRenderFns.map(function (code) {
-      return createFunction(code, fnGenErrors);
+      return createFunction(code, fnGenErrors)
     });
 
     // check function generation errors.
@@ -19449,24 +11087,31 @@ function createCompileToFunctionFn(compile) {
     /* istanbul ignore if */
     if (process.env.NODE_ENV !== 'production') {
       if ((!compiled.errors || !compiled.errors.length) && fnGenErrors.length) {
-        warn("Failed to generate render function:\n\n" + fnGenErrors.map(function (ref) {
-          var err = ref.err;
-          var code = ref.code;
+        warn(
+          "Failed to generate render function:\n\n" +
+          fnGenErrors.map(function (ref) {
+            var err = ref.err;
+            var code = ref.code;
 
-          return err.toString() + " in\n\n" + code + "\n";
-        }).join('\n'), vm);
+            return ((err.toString()) + " in\n\n" + code + "\n");
+        }).join('\n'),
+          vm
+        );
       }
     }
 
-    return cache[key] = res;
-  };
+    return (cache[key] = res)
+  }
 }
 
 /*  */
 
-function createCompilerCreator(baseCompile) {
-  return function createCompiler(baseOptions) {
-    function compile(template, options) {
+function createCompilerCreator (baseCompile) {
+  return function createCompiler (baseOptions) {
+    function compile (
+      template,
+      options
+    ) {
       var finalOptions = Object.create(baseOptions);
       var errors = [];
       var tips = [];
@@ -19477,11 +11122,15 @@ function createCompilerCreator(baseCompile) {
       if (options) {
         // merge custom modules
         if (options.modules) {
-          finalOptions.modules = (baseOptions.modules || []).concat(options.modules);
+          finalOptions.modules =
+            (baseOptions.modules || []).concat(options.modules);
         }
         // merge custom directives
         if (options.directives) {
-          finalOptions.directives = extend(Object.create(baseOptions.directives), options.directives);
+          finalOptions.directives = extend(
+            Object.create(baseOptions.directives),
+            options.directives
+          );
         }
         // copy other options
         for (var key in options) {
@@ -19497,14 +11146,14 @@ function createCompilerCreator(baseCompile) {
       }
       compiled.errors = errors;
       compiled.tips = tips;
-      return compiled;
+      return compiled
     }
 
     return {
       compile: compile,
       compileToFunctions: createCompileToFunctionFn(compile)
-    };
-  };
+    }
+  }
 }
 
 /*  */
@@ -19512,7 +11161,10 @@ function createCompilerCreator(baseCompile) {
 // `createCompilerCreator` allows creating compilers that use alternative
 // parser/optimizer/codegen, e.g the SSR optimizing compiler.
 // Here we just export a default compiler using the default parts.
-var createCompiler = createCompilerCreator(function baseCompile(template, options) {
+var createCompiler = createCompilerCreator(function baseCompile (
+  template,
+  options
+) {
   var ast = parse(template.trim(), options);
   optimize(ast, options);
   var code = generate(ast, options);
@@ -19520,7 +11172,7 @@ var createCompiler = createCompilerCreator(function baseCompile(template, option
     ast: ast,
     render: code.render,
     staticRenderFns: code.staticRenderFns
-  };
+  }
 });
 
 /*  */
@@ -19532,17 +11184,22 @@ var compileToFunctions = ref$1.compileToFunctions;
 
 var idToTemplate = cached(function (id) {
   var el = query(id);
-  return el && el.innerHTML;
+  return el && el.innerHTML
 });
 
 var mount = Vue$3.prototype.$mount;
-Vue$3.prototype.$mount = function (el, hydrating) {
+Vue$3.prototype.$mount = function (
+  el,
+  hydrating
+) {
   el = el && query(el);
 
   /* istanbul ignore if */
   if (el === document.body || el === document.documentElement) {
-    process.env.NODE_ENV !== 'production' && warn("Do not mount Vue to <html> or <body> - mount to normal elements instead.");
-    return this;
+    process.env.NODE_ENV !== 'production' && warn(
+      "Do not mount Vue to <html> or <body> - mount to normal elements instead."
+    );
+    return this
   }
 
   var options = this.$options;
@@ -19555,7 +11212,10 @@ Vue$3.prototype.$mount = function (el, hydrating) {
           template = idToTemplate(template);
           /* istanbul ignore if */
           if (process.env.NODE_ENV !== 'production' && !template) {
-            warn("Template element not found or is empty: " + options.template, this);
+            warn(
+              ("Template element not found or is empty: " + (options.template)),
+              this
+            );
           }
         }
       } else if (template.nodeType) {
@@ -19564,7 +11224,7 @@ Vue$3.prototype.$mount = function (el, hydrating) {
         if (process.env.NODE_ENV !== 'production') {
           warn('invalid template option:' + template, this);
         }
-        return this;
+        return this
       }
     } else if (el) {
       template = getOuterHTML(el);
@@ -19588,56 +11248,65 @@ Vue$3.prototype.$mount = function (el, hydrating) {
       /* istanbul ignore if */
       if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
         mark('compile end');
-        measure(this._name + " compile", 'compile', 'compile end');
+        measure(((this._name) + " compile"), 'compile', 'compile end');
       }
     }
   }
-  return mount.call(this, el, hydrating);
+  return mount.call(this, el, hydrating)
 };
 
 /**
  * Get outerHTML of elements, taking care
  * of SVG elements in IE as well.
  */
-function getOuterHTML(el) {
+function getOuterHTML (el) {
   if (el.outerHTML) {
-    return el.outerHTML;
+    return el.outerHTML
   } else {
     var container = document.createElement('div');
     container.appendChild(el.cloneNode(true));
-    return container.innerHTML;
+    return container.innerHTML
   }
 }
 
 Vue$3.compile = compileToFunctions;
 
 module.exports = Vue$3;
+
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14), __webpack_require__(15)))
 
 /***/ }),
 /* 6 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_maple__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__api_index_js__ = __webpack_require__(45);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__api_index_js___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__api_index_js__);
 
 
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
 
+var _maple = __webpack_require__(16);
 
-let z = __WEBPACK_IMPORTED_MODULE_0_maple__["a" /* default */];
+var _maple2 = _interopRequireDefault(_maple);
 
+var _index = __webpack_require__(45);
 
+var api = _interopRequireWildcard(_index);
 
-z.api = __WEBPACK_IMPORTED_MODULE_1__api_index_js__;
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
-/* harmony default export */ __webpack_exports__["default"] = (z);
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var z = _maple2.default;
+
+z.api = api;
+
+exports.default = z;
 
 /***/ }),
 /* 7 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
@@ -19657,10 +11326,13 @@ z.api = __WEBPACK_IMPORTED_MODULE_1__api_index_js__;
  * @return      {Function}
  * */
 
-let debounce = function (func, wait, cancelCB) {
-	let timeout = null,
-	    result = function () {
-		let that = this || null,
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+var debounce = function debounce(func, wait, cancelCB) {
+	var timeout = null,
+	    result = function result() {
+		var that = this || null,
 		    argv = [].slice.call(arguments);
 
 		if (timeout) {
@@ -19687,7 +11359,10 @@ let debounce = function (func, wait, cancelCB) {
 	/**
   * 立刻调用函数
   * */
-	result.immediate = function (context = null, argv = []) {
+	result.immediate = function () {
+		var context = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+		var argv = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+
 		result.cancel();
 
 		func.apply(context, argv);
@@ -19696,11 +11371,11 @@ let debounce = function (func, wait, cancelCB) {
 	return result;
 };
 
-/* harmony default export */ __webpack_exports__["a"] = (debounce);
+exports.default = debounce;
 
 /***/ }),
 /* 8 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
@@ -19720,10 +11395,13 @@ let debounce = function (func, wait, cancelCB) {
  * @return      {Function}
  * */
 
-let throttle = function (func, wait, cancelCB) {
-	let timeout = null,
-	    result = function () {
-		let that = this || null,
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+var throttle = function throttle(func, wait, cancelCB) {
+	var timeout = null,
+	    result = function result() {
+		var that = this || null,
 		    argv = [].slice.call(arguments);
 
 		if (!timeout) {
@@ -19753,7 +11431,10 @@ let throttle = function (func, wait, cancelCB) {
   * @param   {Object}    [context=null]  执行函数时的 this 指向
   * @param   {Array}     [argv=[]]       执行函数时的传入参数
   * */
-	result.immediate = function (context = null, argv = []) {
+	result.immediate = function () {
+		var context = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+		var argv = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+
 		result.cancel();
 
 		func.apply(context, argv);
@@ -19767,21 +11448,28 @@ let throttle = function (func, wait, cancelCB) {
 	return result;
 };
 
-/* harmony default export */ __webpack_exports__["a"] = (throttle);
+exports.default = throttle;
 
 /***/ }),
 /* 9 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__tools_js__ = __webpack_require__(10);
 
 
 /**
  * @file    时间格式处理函数
  * */
 
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
 
+var _tools = __webpack_require__(10);
+
+var _tools2 = _interopRequireDefault(_tools);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
  * @summary     时间格式处理函数
@@ -19791,7 +11479,10 @@ let throttle = function (func, wait, cancelCB) {
  * @param       {String}    [format='YYYY-MM-DD']
  * @return      {String}
  * */
-let dateFormat = function (date = new Date(), format = 'YYYY-MM-DD') {
+var dateFormat = function dateFormat() {
+	var date = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : new Date();
+	var format = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'YYYY-MM-DD';
+
 	return format.replace(/YYYY|YY|MM|DD|hh|mm|ss|星期|周|www|week/, function (str) {
 		return str in dateFormat._dateStrReplace ? dateFormat[str](date) : '';
 	});
@@ -19806,7 +11497,7 @@ dateFormat._dateStrReplace = {
   * @param   {Date}      date
   * @return  {String}
   * */
-	YYYY(date) {
+	YYYY: function YYYY(date) {
 		return date.getFullYear() + '';
 	}
 	/**
@@ -19814,7 +11505,8 @@ dateFormat._dateStrReplace = {
   * @param   {Date}      date
   * @return  {String}
   * */
-	, YY(date) {
+	,
+	YY: function YY(date) {
 		return (date.getFullYear() + '').slice(2);
 	}
 	/**
@@ -19822,47 +11514,53 @@ dateFormat._dateStrReplace = {
   * @param   {Date}      date
   * @return  {String}
   * */
-	, MM(date) {
-		return __WEBPACK_IMPORTED_MODULE_0__tools_js__["a" /* default */].fillZero(date.getMonth() + 1, 2);
+	,
+	MM: function MM(date) {
+		return _tools2.default.fillZero(date.getMonth() + 1, 2);
 	}
 	/**
   * @summary 替换 DD
   * @param   {Date}      date
   * @return  {String}
   * */
-	, DD(date) {
-		return __WEBPACK_IMPORTED_MODULE_0__tools_js__["a" /* default */].fillZero(date.getDate(), 2);
+	,
+	DD: function DD(date) {
+		return _tools2.default.fillZero(date.getDate(), 2);
 	}
 	/**
   * @summary 替换 hh
   * @param   {Date}      date
   * @return  {String}
   * */
-	, hh(date) {
-		return __WEBPACK_IMPORTED_MODULE_0__tools_js__["a" /* default */].fillZero(date.getHours(), 2);
+	,
+	hh: function hh(date) {
+		return _tools2.default.fillZero(date.getHours(), 2);
 	}
 	/**
   * @summary 替换 mm
   * @param   {Date}      date
   * @return  {String}
   * */
-	, mm(date) {
-		return __WEBPACK_IMPORTED_MODULE_0__tools_js__["a" /* default */].fillZero(date.getMinutes(), 2);
+	,
+	mm: function mm(date) {
+		return _tools2.default.fillZero(date.getMinutes(), 2);
 	}
 	/**
   * @summary 替换 ss
   * @param   {Date}      date
   * @return  {String}
   * */
-	, ss(date) {
-		return __WEBPACK_IMPORTED_MODULE_0__tools_js__["a" /* default */].fillZero(date.getSeconds(), 2);
+	,
+	ss: function ss(date) {
+		return _tools2.default.fillZero(date.getSeconds(), 2);
 	}
 	/**
   * @summary 替换 www
   * @param   {Date}      date
   * @return  {String}
   * */
-	, www(date) {
+	,
+	www: function www(date) {
 		return dateFormat._WEEK_EN[date.getDay()].slice(0, 3);
 	}
 	/**
@@ -19870,7 +11568,8 @@ dateFormat._dateStrReplace = {
   * @param   {Date}      date
   * @return  {String}
   * */
-	, week(date) {
+	,
+	week: function week(date) {
 		return dateFormat._WEEK_EN[date.getDay()];
 	}
 	/**
@@ -19878,7 +11577,8 @@ dateFormat._dateStrReplace = {
   * @param   {Date}      date
   * @return  {String}
   * */
-	, '星期': function (date) {
+	,
+	'星期': function _(date) {
 		return '星期' + dateFormat._WEEK_CN[date.getDay()];
 	}
 	/**
@@ -19886,7 +11586,7 @@ dateFormat._dateStrReplace = {
   * @param   {Date}      date
   * @return  {String}
   * */
-	, '周': function (date) {
+	, '周': function _(date) {
 		return '周' + dateFormat._WEEK_CN[date.getDay()];
 	}
 };
@@ -19897,9 +11597,11 @@ dateFormat._dateStrReplace = {
  * @param   {String}        [unit='d']
  * @return  {Number}
  * */
-dateFormat.formatTimeStr = function (str, unit = 'd') {
-	let result = 0,
-	    temp;
+dateFormat.formatTimeStr = function (str) {
+	var unit = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'd';
+
+	var result = 0,
+	    temp = void 0;
 
 	if (typeof str === 'number') {
 		if (unit && unit in dateFormat._SHORT_TIME_NUM) {
@@ -19941,11 +11643,11 @@ dateFormat._SHORT_TIME_NUM = {
 	y: 31536e6
 };
 
-/* harmony default export */ __webpack_exports__["a"] = (dateFormat);
+exports.default = dateFormat;
 
 /***/ }),
 /* 10 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
@@ -19963,8 +11665,11 @@ dateFormat._SHORT_TIME_NUM = {
  * @return      {String}
  * */
 
-let fillZero = function (str, len) {
-	let i;
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+var fillZero = function fillZero(str, len) {
+	var i = void 0;
 
 	str += '';
 
@@ -19977,17 +11682,15 @@ let fillZero = function (str, len) {
 	return str;
 };
 
-/* harmony default export */ __webpack_exports__["a"] = ({
-	fillZero
-});
+exports.default = {
+	fillZero: fillZero
+};
 
 /***/ }),
 /* 11 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__config_js__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__listener_js__ = __webpack_require__(0);
 
 
 /**
@@ -20000,20 +11703,39 @@ let fillZero = function (str, len) {
 // 	]
 // 	;
 
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _config = __webpack_require__(19);
+
+var _config2 = _interopRequireDefault(_config);
+
+var _listener = __webpack_require__(0);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
  * @class
  * @classdesc   url 解析
  * */
-class Url {
+var Url = function () {
 	/**
   * @constructor
   * @param   {String}    [url]
   * */
-	constructor(url) {
-		let a = document.createElement('a', __WEBPACK_IMPORTED_MODULE_0__config_js__["a" /* default */].ceKey);
+	function Url(url) {
+		_classCallCheck(this, Url);
+
+		var a = document.createElement('a', _config2.default.ceKey);
 
 		a.href = url || location.href;
 
@@ -20042,82 +11764,104 @@ class Url {
 	}
 
 	// ---------- 公有属性 ----------
-	get query() {
-		// 当前页面参数拼接字符串
-		let query = Object.keys(this.params).reduce((all, d) => {
-			all.push(encodeURIComponent(d) + '=' + encodeURIComponent(this.params[d]));
 
-			return all;
-		}, []);
 
-		return query.length ? '?' + query.join('&') : '';
-	}
+	_createClass(Url, [{
+		key: 'parseSearch',
 
-	// ---------- 公有方法 ----------
-	/**
-  * @summary     解析 url 的 search 部分
-  * @param       {String}    [search='']
-  * @return      {Object}
-  * */
-	parseSearch(search = '') {
-		if (search && /^\?/.test(search)) {
-			search = search.slice(1);
-		}
 
-		return search ? search.split('&').reduce((all, d) => {
-			let temp;
+		// ---------- 公有方法 ----------
+		/**
+   * @summary     解析 url 的 search 部分
+   * @param       {String}    [search='']
+   * @return      {Object}
+   * */
+		value: function parseSearch() {
+			var search = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
 
-			if (d) {
-				temp = d.split('=');
-
-				// 解码
-				all[decodeURIComponent(temp[0])] = decodeURIComponent(temp[1] || '').replace(/\?10000skup(=true)?/, ''); // 删除微信下的?10000skip todo ?
+			if (search && /^\?/.test(search)) {
+				search = search.slice(1);
 			}
 
-			return all;
-		}, {}) : {};
-	}
+			return search ? search.split('&').reduce(function (all, d) {
+				var temp = void 0;
 
-	/**
-  * @summary     将现有参数组合成一个 url
-  * @return      {String}
-  * @todo        onlyPath 参数保留？
-  * */
-	pack() {
-		return this.protocol + '://' + this.host + (!this.port || this.port === '80' ? '' : ':' + this.port) + this.path + this.query + (this.hash ? '#' + this.hash : '');
-	}
-	/**
-  * @summary     替换当前的 params
-  * @param       {Object|String[]|...String} params
-  * @return      {Object}                    this
-  * @desc        当为多个 string 时，为删除当前 url 上参数，当为 object 时为设置当前 url 上参数
-  * */
-	changeParams(params) {
-		let argv;
+				if (d) {
+					temp = d.split('=');
 
-		if (typeof params === 'string') {
-			argv = [].slice.call(arguments);
-		} else {
-			argv = params;
-		}
-
-		if (Array.isArray(argv)) {
-			argv.forEach(d => {
-				if (typeof d === 'string') {
-					delete this.params[d];
+					// 解码
+					all[decodeURIComponent(temp[0])] = decodeURIComponent(temp[1] || '').replace(/\?10000skup(=true)?/, ''); // 删除微信下的?10000skip todo ?
 				}
-			});
-		} else if (typeof argv === 'object') {
-			Object.keys(argv).forEach(d => {
-				this.params[d] = params[d];
-			});
+
+				return all;
+			}, {}) : {};
 		}
 
-		return this;
-	}
-}
+		/**
+   * @summary     将现有参数组合成一个 url
+   * @return      {String}
+   * @todo        onlyPath 参数保留？
+   * */
 
-let url = new Url();
+	}, {
+		key: 'pack',
+		value: function pack() {
+			return this.protocol + '://' + this.host + (!this.port || this.port === '80' ? '' : ':' + this.port) + this.path + this.query + (this.hash ? '#' + this.hash : '');
+		}
+		/**
+   * @summary     替换当前的 params
+   * @param       {Object|String[]|...String} params
+   * @return      {Object}                    this
+   * @desc        当为多个 string 时，为删除当前 url 上参数，当为 object 时为设置当前 url 上参数
+   * */
+
+	}, {
+		key: 'changeParams',
+		value: function changeParams(params) {
+			var _this = this;
+
+			var argv = void 0;
+
+			if (typeof params === 'string') {
+				argv = [].slice.call(arguments);
+			} else {
+				argv = params;
+			}
+
+			if (Array.isArray(argv)) {
+				argv.forEach(function (d) {
+					if (typeof d === 'string') {
+						delete _this.params[d];
+					}
+				});
+			} else if ((typeof argv === 'undefined' ? 'undefined' : _typeof(argv)) === 'object') {
+				Object.keys(argv).forEach(function (d) {
+					_this.params[d] = params[d];
+				});
+			}
+
+			return this;
+		}
+	}, {
+		key: 'query',
+		get: function get() {
+			var _this2 = this;
+
+			// 当前页面参数拼接字符串
+			var query = Object.keys(this.params).reduce(function (all, d) {
+				all.push(encodeURIComponent(d) + '=' + encodeURIComponent(_this2.params[d]));
+
+				return all;
+			}, []);
+
+			return query.length ? '?' + query.join('&') : '';
+		}
+	}]);
+
+	return Url;
+}();
+
+var url = new Url();
 
 /**
  * @summary     Url 类对象
@@ -20133,7 +11877,7 @@ url.Url = Url;
  * @param       {String|Url}    url
  * @return      {Url}           若出入的 url 参数是一个 Url 对象，则不做处理直接返回
  * */
-url.parseUrl = url => {
+url.parseUrl = function (url) {
 	if (url instanceof Url) {
 		return url;
 	} else if (typeof url === 'string') {
@@ -20149,7 +11893,7 @@ url.parseUrl = url => {
  * @param       {String}    url
  * @return      {String}
  * */
-url.addProtocol = url => {
+url.addProtocol = function (url) {
 	return (/^\/\//.test(url) ? location.protocol + url : url
 	);
 };
@@ -20158,7 +11902,7 @@ url.addProtocol = url => {
  * @method
  * @memberOf    url
  * */
-url.reload = () => {
+url.reload = function () {
 	location.reload();
 };
 /**
@@ -20166,7 +11910,7 @@ url.reload = () => {
  * @method
  * @memberOf    url
  * */
-url.back = () => {
+url.back = function () {
 	history.back();
 };
 /**
@@ -20181,20 +11925,20 @@ url.back = () => {
  *              2.当不满足 1 条件时，参数中的最后一个为 Object 类型时，视为 pushState
  * */
 url.push = function (params, pushState) {
-	let argc = arguments.length,
+	var argc = arguments.length,
 	    argv = arguments,
 	    state = null;
 
 	if (argc > 1) {
-		if (typeof params === 'object') {
+		if ((typeof params === 'undefined' ? 'undefined' : _typeof(params)) === 'object') {
 			state = arguments[1];
-		} else if (typeof arguments[argc - 1] === 'object') {
+		} else if (_typeof(arguments[argc - 1]) === 'object') {
 			state = arguments[argc - 1];
 			argv = [].slice.call(arguments, 0, -1);
 		}
 	}
 
-	this.changeParams(...argv);
+	this.changeParams.apply(this, _toConsumableArray(argv));
 
 	// 将当前浏览器上 url 换为替换后组装出来的链接，当期 url 进入
 	history.pushState(state, '', this.pack());
@@ -20209,7 +11953,9 @@ url.push = function (params, pushState) {
  * @param       {Object}    [state=null]
  * @return      {Url}       this
  * */
-url.pushHistory = function (href, state = null) {
+url.pushHistory = function (href) {
+	var state = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
 	history.pushState(state, '', href);
 
 	return this;
@@ -20231,7 +11977,7 @@ url.changePage = function (href) {
  * @return      {Url}                       this
  * */
 url.replace = function (params) {
-	this.changeParams(...arguments);
+	this.changeParams.apply(this, arguments);
 
 	// 将当前浏览器上 url 换为替换后组装出来的链接
 	history.replaceState(null, '', this.pack());
@@ -20246,7 +11992,9 @@ url.replace = function (params) {
  * @param       {Object}    [state=null]
  * @return      {Url}       this
  * */
-url.replaceHistory = function (href, state = null) {
+url.replaceHistory = function (href) {
+	var state = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
 	history.replaceState(state, '', href);
 
 	return this;
@@ -20262,8 +12010,8 @@ url.replacePage = function (href) {
  * @type        {Listener}
  * @memberOf    url
  * */
-url.hashChange = Object(__WEBPACK_IMPORTED_MODULE_1__listener_js__["b" /* listener */])('hashchange', (e, newUrl) => {
-	let temp;
+url.hashChange = (0, _listener.listener)('hashchange', function (e, newUrl) {
+	var temp = void 0;
 
 	if (e.newUrl) {
 		temp = url.parseUrl(e.newUrl);
@@ -20280,8 +12028,8 @@ url.hashChange = Object(__WEBPACK_IMPORTED_MODULE_1__listener_js__["b" /* listen
  * @type        {Listener}
  * @memberOf    url
  * */
-url.popState = Object(__WEBPACK_IMPORTED_MODULE_1__listener_js__["b" /* listener */])('popstate', (e, newUrl) => {
-	let temp,
+url.popState = (0, _listener.listener)('popstate', function (e, newUrl) {
+	var temp = void 0,
 	    state = e.state;
 
 	if (newUrl) {
@@ -20300,7 +12048,7 @@ url.popState = Object(__WEBPACK_IMPORTED_MODULE_1__listener_js__["b" /* listener
 	console.log(state);
 
 	// 替换当期 url 对象属性 todo 更好的实现？
-	Object.keys(temp).forEach(k => {
+	Object.keys(temp).forEach(function (k) {
 		url[k] = temp[k];
 	});
 });
@@ -20310,11 +12058,11 @@ url.popState = Object(__WEBPACK_IMPORTED_MODULE_1__listener_js__["b" /* listener
  * @type        {Object}
  * @memberOf    maple
  * */
-/* harmony default export */ __webpack_exports__["a"] = (url);
+exports.default = url;
 
 /***/ }),
 /* 12 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
@@ -20323,14 +12071,26 @@ url.popState = Object(__WEBPACK_IMPORTED_MODULE_1__listener_js__["b" /* listener
  * @class   Animator
  * */
 
-class Animator {
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Animator = function () {
 	/**
   * @constructor
   * @param   {Number}            duration            运行时间，单位毫秒
   * @param   {Function}          progress            运行操作
   * @param   {String|Function}   [easing='linear']   变化速率
   * */
-	constructor(duration, progress, easing = 'linear') {
+	function Animator(duration, progress) {
+		var easing = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'linear';
+
+		_classCallCheck(this, Animator);
+
 		this.duration = duration;
 		this.progress = progress;
 
@@ -20350,67 +12110,80 @@ class Animator {
   * @param   {Boolean|Function}  [finished]  Boolean 值时表示是否继续运行，Function 时为运行结束的回调函数
   * @desc    运行动画
   * */
-	run(finished) {
-		let startTime = Date.now(),
-		    duration = this.duration,
-		    self = this;
 
-		this._animate = requestAnimationFrame(function step() {
-			let p = (Date.now() - startTime) / duration,
-			    next = true;
 
-			if (p < 1.0) {
-				self.progress(self.easing(p), p);
-			} else {
-				if (typeof finished === 'function') {
-					next = finished() === false;
-				} else {
-					next = finished === false;
-				}
+	_createClass(Animator, [{
+		key: 'run',
+		value: function run(finished) {
+			var startTime = Date.now(),
+			    duration = this.duration,
+			    self = this;
 
-				if (!next) {
-					self.progress(self.easing(1.0), 1.0);
-				} else {
-					startTime += duration;
+			this._animate = requestAnimationFrame(function step() {
+				var p = (Date.now() - startTime) / duration,
+				    next = true;
+
+				if (p < 1.0) {
 					self.progress(self.easing(p), p);
+				} else {
+					if (typeof finished === 'function') {
+						next = finished() === false;
+					} else {
+						next = finished === false;
+					}
+
+					if (!next) {
+						self.progress(self.easing(1.0), 1.0);
+					} else {
+						startTime += duration;
+						self.progress(self.easing(p), p);
+					}
 				}
-			}
 
-			if (next) {
-				self._animate = requestAnimationFrame(step);
-			} else {
-				self._animate = null;
-			}
-		});
-	}
-	/**
-  * @desc    停止动画
-  * */
-	stop() {
-		if (this._animate) {
-			cancelAnimationFrame(this._animate);
-
-			this._animate = null;
+				if (next) {
+					self._animate = requestAnimationFrame(step);
+				} else {
+					self._animate = null;
+				}
+			});
 		}
-	}
+		/**
+   * @desc    停止动画
+   * */
 
-	/**
-  * @desc    将动画代码渲染为 CSS 动画
-  * */
-	renderCSS() {}
-}
+	}, {
+		key: 'stop',
+		value: function stop() {
+			if (this._animate) {
+				cancelAnimationFrame(this._animate);
+
+				this._animate = null;
+			}
+		}
+
+		/**
+   * @desc    将动画代码渲染为 CSS 动画
+   * */
+
+	}, {
+		key: 'renderCSS',
+		value: function renderCSS() {}
+	}]);
+
+	return Animator;
+}();
 
 Animator.timing = {
-	linear: function (p) {
+	linear: function linear(p) {
 		return p;
 	},
-	easing: function (p) {},
-	easingIn: function (p) {},
-	easingInOut: function (p) {},
-	easingOut: function (p) {}
+	easing: function easing(p) {},
+	easingIn: function easingIn(p) {},
+	easingInOut: function easingInOut(p) {},
+	easingOut: function easingOut(p) {}
 };
 
-/* harmony default export */ __webpack_exports__["a"] = (Animator);
+exports.default = Animator;
 
 /***/ }),
 /* 13 */
@@ -20423,7 +12196,10 @@ module.exports = __webpack_require__(6);
 
 /***/ }),
 /* 14 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 
 // shim for using process in browser
 var process = module.exports = {};
@@ -20607,7 +12383,12 @@ process.umask = function () {
 
 /***/ }),
 /* 15 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var g;
 
@@ -20621,7 +12402,7 @@ try {
 	g = g || Function("return this")() || (1, eval)("this");
 } catch (e) {
 	// This works if the window reference is available
-	if (typeof window === "object") g = window;
+	if ((typeof window === "undefined" ? "undefined" : _typeof(window)) === "object") g = window;
 }
 
 // g can still be undefined, but nothing to do about it...
@@ -20632,20 +12413,9 @@ module.exports = g;
 
 /***/ }),
 /* 16 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__listener_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__util_index_js__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__runtime_url_js__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__runtime_device_js__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__model_index_js__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__view_index_js__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__router_index_js__ = __webpack_require__(37);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__position_js__ = __webpack_require__(38);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__animate_index_js__ = __webpack_require__(39);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__register_index_js__ = __webpack_require__(41);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__notify_js__ = __webpack_require__(44);
 
 
 /**
@@ -20697,20 +12467,59 @@ module.exports = g;
  * ---------- 事件队列监听 ----------
  * */
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
+var _listener = __webpack_require__(0);
+
+var _index = __webpack_require__(17);
+
+var _index2 = _interopRequireDefault(_index);
+
+var _url = __webpack_require__(11);
+
+var _url2 = _interopRequireDefault(_url);
+
+var _device = __webpack_require__(20);
+
+var _device2 = _interopRequireDefault(_device);
+
+var _index3 = __webpack_require__(21);
+
+var _index4 = _interopRequireDefault(_index3);
+
+var _index5 = __webpack_require__(30);
+
+var _index6 = _interopRequireDefault(_index5);
+
+var _index7 = __webpack_require__(37);
+
+var _index8 = _interopRequireDefault(_index7);
+
+var _position = __webpack_require__(38);
+
+var _position2 = _interopRequireDefault(_position);
+
+var _index9 = __webpack_require__(39);
+
+var animate = _interopRequireWildcard(_index9);
+
+var _index10 = __webpack_require__(41);
+
+var _index11 = _interopRequireDefault(_index10);
+
+var _notify = __webpack_require__(44);
+
+var _notify2 = _interopRequireDefault(_notify);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
- * ---------- 通用工具 ----------
+ * ---------- Router 路由控制 ----------
  * */
-
-
-/**
- * ---------- 全局运行时检测 ----------
- * */
-// 运行参数
-
-
-// 运行设备、系统、内核、浏览器
 
 
 /**
@@ -20719,46 +12528,53 @@ module.exports = g;
 
 
 /**
- * ---------- View 监控对象 ----------
+ * ---------- 全局运行时检测 ----------
  * */
+// 运行参数
+var maple = {
+  Listener: _listener.Listener,
+  listener: _listener.listener,
+  util: _index2.default,
 
+  url: _url2.default,
+  device: _device2.default,
 
-/**
- * ---------- Router 路由控制 ----------
- * */
+  Model: _index4.default,
+  model: _index4.default,
 
+  view: _index6.default,
+
+  router: _index8.default,
+
+  position: _position2.default
+
+  // 实验性功能
+  , animate: animate,
+  register: _index11.default,
+  notify: _notify2.default
+};
 
 /**
  * ---------- 获取地理位置 ----------
  * */
 
 
-let maple = {
-  Listener: __WEBPACK_IMPORTED_MODULE_0__listener_js__["a" /* Listener */],
-  listener: __WEBPACK_IMPORTED_MODULE_0__listener_js__["b" /* listener */],
-  util: __WEBPACK_IMPORTED_MODULE_1__util_index_js__["a" /* default */],
+/**
+ * ---------- View 监控对象 ----------
+ * */
 
-  url: __WEBPACK_IMPORTED_MODULE_2__runtime_url_js__["a" /* default */],
-  device: __WEBPACK_IMPORTED_MODULE_3__runtime_device_js__["a" /* default */],
 
-  Model: __WEBPACK_IMPORTED_MODULE_4__model_index_js__["a" /* default */],
-  model: __WEBPACK_IMPORTED_MODULE_4__model_index_js__["a" /* default */],
+// 运行设备、系统、内核、浏览器
 
-  view: __WEBPACK_IMPORTED_MODULE_5__view_index_js__["a" /* default */],
 
-  router: __WEBPACK_IMPORTED_MODULE_6__router_index_js__["a" /* default */],
+/**
+ * ---------- 通用工具 ----------
+ * */
 
-  position: __WEBPACK_IMPORTED_MODULE_7__position_js__["a" /* default */]
-
-  // 实验性功能
-  , animate: __WEBPACK_IMPORTED_MODULE_8__animate_index_js__,
-  register: __WEBPACK_IMPORTED_MODULE_9__register_index_js__["a" /* default */],
-  notify: __WEBPACK_IMPORTED_MODULE_10__notify_js__["a" /* default */]
-};
 
 window.maple = maple;
 
-/* harmony default export */ __webpack_exports__["a"] = (maple);
+exports.default = maple;
 
 /**
  * todo 实验性功能
@@ -20778,18 +12594,11 @@ window.maple = maple;
  * ---------- 桌面通知 ----------
  * */
 
-
 /***/ }),
 /* 17 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__debounce_js__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__throttle_js__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__lockup_js__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__merge_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__dateFormat_js__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__tools_js__ = __webpack_require__(10);
 
 
 /**
@@ -20802,15 +12611,47 @@ window.maple = maple;
 
 // 操作类
 
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
 
+var _debounce = __webpack_require__(7);
 
+var _debounce2 = _interopRequireDefault(_debounce);
 
+var _throttle = __webpack_require__(8);
 
-// 数据处理类
+var _throttle2 = _interopRequireDefault(_throttle);
 
+var _lockup = __webpack_require__(18);
+
+var _lockup2 = _interopRequireDefault(_lockup);
+
+var _merge = __webpack_require__(1);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+var _dateFormat = __webpack_require__(9);
+
+var _dateFormat2 = _interopRequireDefault(_dateFormat);
+
+var _tools = __webpack_require__(10);
+
+var _tools2 = _interopRequireDefault(_tools);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // 时间格式处理
+exports.default = {
+	debounce: _debounce2.default,
+	throttle: _throttle2.default,
+	lockup: _lockup2.default,
 
+	merge: _merge2.default,
+	dateFormat: _dateFormat2.default
+	// , validate
+	, tools: _tools2.default
+};
 
 // 验证
 // import validate     from './validate.js';
@@ -20818,20 +12659,11 @@ window.maple = maple;
 // 工具函数
 
 
-/* harmony default export */ __webpack_exports__["a"] = ({
-	debounce: __WEBPACK_IMPORTED_MODULE_0__debounce_js__["a" /* default */],
-	throttle: __WEBPACK_IMPORTED_MODULE_1__throttle_js__["a" /* default */],
-	lockup: __WEBPACK_IMPORTED_MODULE_2__lockup_js__["a" /* default */],
-
-	merge: __WEBPACK_IMPORTED_MODULE_3__merge_js__["a" /* default */],
-	dateFormat: __WEBPACK_IMPORTED_MODULE_4__dateFormat_js__["a" /* default */]
-	// , validate
-	, tools: __WEBPACK_IMPORTED_MODULE_5__tools_js__["a" /* default */]
-});
+// 数据处理类
 
 /***/ }),
 /* 18 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
@@ -20849,8 +12681,11 @@ window.maple = maple;
  * @return      {Function}
  * */
 
-let lockup = function (func) {
-	let result = function () {
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+var lockup = function lockup(func) {
+	var result = function result() {
 
 		if (result._enable) {
 			result._enable = false;
@@ -20868,11 +12703,11 @@ let lockup = function (func) {
 	return result;
 };
 
-/* harmony default export */ __webpack_exports__["a"] = (lockup);
+exports.default = lockup;
 
 /***/ }),
 /* 19 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
@@ -20881,17 +12716,20 @@ let lockup = function (func) {
  * @file    全局配置
  * */
 
-/* harmony default export */ __webpack_exports__["a"] = ({
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.default = {
 	dev: {},
 	test: {},
 	pre: {},
 	online: {},
 	ceKey: ''
-});
+};
 
 /***/ }),
 /* 20 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
@@ -20903,7 +12741,10 @@ let lockup = function (func) {
 
 // import $    from 'jquery';
 
-const alias = {
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+var alias = {
 	androidchorme: 'androidchrome',
 	guge: 'chrome',
 	webview: 'webView',
@@ -20913,7 +12754,7 @@ const alias = {
 	wechat: 'weixin',
 	wx: 'weixin'
 },
-      ua = navigator.userAgent;
+    ua = navigator.userAgent;
 
 /**
  * @summary     判断当前设备是否满足期望
@@ -20922,11 +12763,11 @@ const alias = {
  * @return      {Boolean}
  * @desc        可以传多个参数，当同时满足时，返回 true，否则 false
  * */
-let device = function () {
-	let argc = arguments.length,
+var device = function device() {
+	var argc = arguments.length,
 	    result = true,
-	    i,
-	    temp;
+	    i = void 0,
+	    temp = void 0;
 
 	if (argc === 0) {
 		result = false;
@@ -20956,10 +12797,10 @@ let device = function () {
 	return result;
 };
 
-let android = ua.match(/(Android);?[\s\/]+([\d.]+)?/);
-let ipad = ua.match(/(iPad).*OS\s([\d_]+)/);
-let ipod = ua.match(/(iPod)(.*OS\s([\d_]+))?/);
-let iphone = !ipad && ua.match(/(iPhone\sOS)\s([\d_]+)/);
+var android = ua.match(/(Android);?[\s\/]+([\d.]+)?/);
+var ipad = ua.match(/(iPad).*OS\s([\d_]+)/);
+var ipod = ua.match(/(iPod)(.*OS\s([\d_]+))?/);
+var iphone = !ipad && ua.match(/(iPhone\sOS)\s([\d_]+)/);
 
 device.ios = device.android = device.iphone = device.ipad = device.androidChrome = false;
 
@@ -21015,7 +12856,7 @@ device.webView = (iphone || ipad || ipod) && ua.match(/.*AppleWebKit(?!.*Safari)
 // }
 
 // Check for status bar and fullscreen app mode
-let windowHeight = document.documentElement.clientHeight,
+var windowHeight = document.documentElement.clientHeight,
     windowWidth = document.documentElement.clientWidth;
 
 device.statusBar = device.webView && windowWidth * windowHeight === screen.width * screen.height;
@@ -21037,7 +12878,7 @@ device.alipay = ua.indexOf("AlipayClient") > 0;
  * @type        {Object}
  * @memberOf    maple
  * */
-/* harmony default export */ __webpack_exports__["a"] = (device);
+exports.default = device;
 
 // /**
 //  * todo 更换位置
@@ -21075,17 +12916,9 @@ device.alipay = ua.indexOf("AlipayClient") > 0;
 
 /***/ }),
 /* 21 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__model_js__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__cookie_js__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__localStorage_js__ = __webpack_require__(23);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__sessionStorage_js__ = __webpack_require__(24);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__indexedDB_js__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__webSQL_js__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__service_js__ = __webpack_require__(27);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__webSocket_js__ = __webpack_require__(29);
 
 
 /**
@@ -21122,37 +12955,72 @@ device.alipay = ua.indexOf("AlipayClient") > 0;
 </pre>
  * */
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
+var _model = __webpack_require__(2);
 
-// 缓存
+var _model2 = _interopRequireDefault(_model);
 
+__webpack_require__(22);
 
+__webpack_require__(23);
 
+__webpack_require__(24);
 
+__webpack_require__(25);
 
+__webpack_require__(26);
 
-// 网络请求
+__webpack_require__(27);
 
+__webpack_require__(29);
 
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
  * post message
  * todo 功能用途？
  * */
 
-/* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_0__model_js__["a" /* default */]);
+// 网络请求
+exports.default = _model2.default;
+
+// 缓存
 
 /***/ }),
 /* 22 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__model_js__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__util_dateFormat_js__ = __webpack_require__(9);
 
 
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+var _model = __webpack_require__(2);
+
+var _model2 = _interopRequireDefault(_model);
+
+var _dateFormat = __webpack_require__(9);
+
+var _dateFormat2 = _interopRequireDefault(_dateFormat);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 /**
  * @class
@@ -21170,20 +13038,25 @@ console.log( cookie === c );    // 因为将对象实例进行了缓存，所以
 cookie.set('memberId', 1, '30d');   // 将 memberId 放入 cookie 中，过期时间 30 天
 </pre>
  * */
-class CookieModel extends __WEBPACK_IMPORTED_MODULE_0__model_js__["a" /* default */] {
+var CookieModel = function (_Model) {
+	_inherits(CookieModel, _Model);
+
 	/**
   * @constructor
   * */
-	constructor() {
-		super();
+	function CookieModel() {
+		_classCallCheck(this, CookieModel);
+
+		var _this = _possibleConstructorReturn(this, (CookieModel.__proto__ || Object.getPrototypeOf(CookieModel)).call(this));
 
 		if (navigator.cookieEnabled) {
-			this._enabled = true;
-			this._store = Promise.resolve(true);
+			_this._enabled = true;
+			_this._store = Promise.resolve(true);
 		} else {
-			this._enabled = false;
-			this._store = Promise.reject(new Error('此浏览器不支持 Cookie'));
+			_this._enabled = false;
+			_this._store = Promise.reject(new Error('此浏览器不支持 Cookie'));
 		}
+		return _this;
 	}
 
 	// ---------- 静态方法 ----------
@@ -21193,277 +13066,323 @@ class CookieModel extends __WEBPACK_IMPORTED_MODULE_0__model_js__["a" /* default
   * @param   {Date|Number|String}    date 为 Number 类型时默认单位为天
   * @return  {String}                返回一个 UTC 格式的时间字符串
   * */
-	static _transDate(date) {
-		if (date instanceof Date) {} else {
-			date = __WEBPACK_IMPORTED_MODULE_1__util_dateFormat_js__["a" /* default */].formatTimeStr(date);
 
-			date = date === 0 ? '' : new Date(Date.now() + date);
-		}
-		// else if( typeof date === 'number' ){
-		// 	temp = new Date();
-		// 	temp.setTime( +temp + CookieModel._SHORT_TIME_NUM.d * date );
-		// 	date = temp;
-		// }
-		// else if( temp = CookieModel._SHORT_TIME_EXPR.exec( date ) ){
-		// 	date = new Date();
-		// 	date.setTime( date.getTime() + Number( temp[1] ) * CookieModel._SHORT_TIME_NUM[temp[2]] );
-		// }
-		// else{
-		// 	date = '';
-		// }
 
-		return date && date.toUTCString();
-	}
+	_createClass(CookieModel, [{
+		key: '_setCookie',
 
-	// ---------- 私有方法 ----------
-	/**
-  * @summary     设置 cookie
-  * @protected
-  * @param       {String}                topic
-  * @param       {*}                     value
-  * @param       {Object|Number|String}  [options]           相关配置
-  * @param       {String}                [options.path]
-  * @param       {String}                [options.domain]
-  * @param       {Date|Number|String}    [options.expires]
-  * @param       {String}                [options.secure]
-  * @return      {Boolean}               在设置完成后返回 true
-  * @desc        因为设置 cookie 和删除 cookie 使用是相同的代码，只是传入的过期时间不同，所以提出一个共通方法
-  * */
-	_setCookie(topic, value, options) {
-		if (typeof options !== 'object') {
-			options = {
-				expires: options
-			};
-		}
 
-		if (options.expires) {
-			options.expires = CookieModel._transDate(options.expires);
-		}
-
-		document.cookie = encodeURIComponent(topic) + '=' + encodeURIComponent(this._stringify(value)) + Object.keys(CookieModel._DEFAULT).reduce((a, d) => {
-			// 整理配置
-
-			a += '; ' + d + '=';
-
-			if (d in options) {
-				a += options[d];
-			} else {
-				a += CookieModel._DEFAULT[d];
-			}
-
-			return a;
-		}, '');
-
-		return true;
-	}
-	/**
-  * @summary     设置 cookie
-  * @protected
-  * @param       {String|String[]}   topic
-  * @return      {Object|String}
-  * */
-	_getCookie(topic) {
-		let cookies = document.cookie,
-		    i = 0,
-		    l,
-		    value = '',
-		    t;
-
-		if (cookies) {
-			cookies = cookies.split('; ');
-		} else {
-			cookies = [];
-		}
-
+		// ---------- 私有方法 ----------
 		/**
-   * todo 调整机制
-   *
-   * 现在每次取值，都会将 cookie 进行一次解析
-   * 期望改为只解析一次
+   * @summary     设置 cookie
+   * @protected
+   * @param       {String}                topic
+   * @param       {*}                     value
+   * @param       {Object|Number|String}  [options]           相关配置
+   * @param       {String}                [options.path]
+   * @param       {String}                [options.domain]
+   * @param       {Date|Number|String}    [options.expires]
+   * @param       {String}                [options.secure]
+   * @return      {Boolean}               在设置完成后返回 true
+   * @desc        因为设置 cookie 和删除 cookie 使用是相同的代码，只是传入的过期时间不同，所以提出一个共通方法
    * */
-		for (l = cookies.length; i < l; i++) {
-			t = cookies[i].split('=');
-
-			if (topic === decodeURIComponent(t[0])) {
-				value = decodeURIComponent(t[1]);
-				break;
-			}
-		}
-
-		if (value) {
-			try {
-				value = JSON.parse(value);
-			} catch (e) {}
-
-			// 在内存中保留该值
-			super.setData(topic, value);
-		} else {
-			value = Promise.reject(null);
-		}
-
-		return value;
-	}
-	/**
-  * @summary     当 setData 传入一个 json 时内部调用函数
-  * @override
-  * @protected
-  * @param       {Object}    topic
-  * @param       {Object}    [options]
-  * @return      {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
-  * @desc        因为设置 cookie 时有相关配置，故重写覆盖父类的 _setByObject 方法
-  * */
-	_setByObject(topic, options) {
-		return Promise.all(Object.keys(topic).map(d => {
-			return this.setData(d, topic[d], options);
-		})).then(data => {
-			return !!data;
-		});
-	}
-
-	// ---------- 公有方法 ----------
-	/**
-  * @summary     设置数据
-  * @override
-  * @param       {String|Object}             topic
-  * @param       {*}                         value               当 topic 为 object 类型时，被视为 options
-  * @param       {Object|Number|String}      [options]           相关配置
-  * @param       {String}                    [options.path]
-  * @param       {String}                    [options.domain]
-  * @param       {Date|Number|String}        [options.expires]
-  * @param       {String}                    [options.secure]
-  * @return      {Promise}                   返回一个 Promise 对象，在 resolve 时传回 true
-  * @desc        保存值得时候，同时会保持在内存中，当 topic 类型为 object 时，value 会视为 options
-  * */
-	setData(topic, value, options) {
-		let result;
-
-		if (typeof topic === 'object') {
-			options = value;
-
-			result = this._setByObject(topic, options);
-		} else {
-			result = super.setData(topic, value).then(() => {
-				return this._store;
-			}).then(() => {
-				return this._setCookie(topic, value, options);
-			});
-		}
-
-		return result;
-	}
-	/**
-  * @summary 获取数据
-  * @param   {String|String[]|...String} topic
-  * @return  {Promise}                   返回一个 Promise 对象，若存在 topic 的值，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
-  * @desc    获取数据时会优先从内存中取值，若没有则从 cookie 中取值并将其存入内存中，当 topic 的类型为数组的时候，resolve 传入的结果为一个 json，key 为 topic 中的数据，value 为对应查找出来的值
-  * */
-	getData(topic) {
-		let argc = arguments.length,
-		    result;
-
-		if (Array.isArray(topic)) {
-			result = this._getByArray(topic);
-		} else if (argc > 1) {
-			result = this._getByArray([].slice.call(arguments));
-		} else {
-			result = super.getData(topic).catch(() => {
-				// 内存中不存在该值
-				return this._store.then(() => {
-					return this._getCookie(topic);
-				});
-			});
-		}
-
-		return result;
-	}
-	/**
-  * @summary 以同步的方式获取 cookie 中的数据
-  * @param   {String|String[]|...String} topic
-  * @return  {Object|String}             若存在 topic 的值，返回查询出来的 value，否则返回 null
-  * @desc    获取数据时会优先从内存中取值，若没有则从 cookie 中取值并将其存入内存中，当 topic 的类型为数组的时候，返回结果为一个 json，key 为 topic 中的数据，value 为对应查找出来的值
-  * */
-	getDataSync(topic) {
-		let argc = arguments.length,
-		    keyList,
-		    result;
-
-		// 判断当前环境是否支持 cookie
-		if (this._enabled) {
-
-			if (!Array.isArray(topic)) {
-				keyList = [topic];
-			} else if (argc > 1) {
-				keyList = [].slice.call(arguments);
-			} else {
-				keyList = topic;
+		value: function _setCookie(topic, value, options) {
+			if ((typeof options === 'undefined' ? 'undefined' : _typeof(options)) !== 'object') {
+				options = {
+					expires: options
+				};
 			}
 
-			result = keyList.reduce((all, d) => {
+			if (options.expires) {
+				options.expires = CookieModel._transDate(options.expires);
+			}
 
-				if (d in this._value) {
-					all[d] = this._value[d];
+			document.cookie = encodeURIComponent(topic) + '=' + encodeURIComponent(this._stringify(value)) + Object.keys(CookieModel._DEFAULT).reduce(function (a, d) {
+				// 整理配置
+
+				a += '; ' + d + '=';
+
+				if (d in options) {
+					a += options[d];
 				} else {
-					all[d] = this._getCookie(d) || null;
-
-					// 尝试解析
-					try {
-						all[d] = JSON.parse(all[d]);
-					} catch (e) {}
-
-					super.setData(d, all[d]);
+					a += CookieModel._DEFAULT[d];
 				}
 
-				return all;
-			}, {});
+				return a;
+			}, '');
 
-			if (!Array.isArray(topic)) {
-				result = result[topic];
-			}
-		} else {
-			result = null;
+			return true;
 		}
+		/**
+   * @summary     设置 cookie
+   * @protected
+   * @param       {String|String[]}   topic
+   * @return      {Object|String}
+   * */
 
-		return result;
-	}
-	/**
-  * @summary 将数据从缓存中删除
-  * @param   {String|String[]}   topic
-  * @return  {Promise}           返回一个 Promise 对象，在 resolve 时传回 true
-  * @desc    调用 _setCookie 方法，过期时间为负值
-  * */
-	removeData(topic) {
-		let result;
-		if (Array.isArray(topic)) {
-			result = this._removeByArray(topic);
-		} else {
-			result = super.removeData(topic).then(() => {
-				return this._setCookie(topic, '', -1);
+	}, {
+		key: '_getCookie',
+		value: function _getCookie(topic) {
+			var cookies = document.cookie,
+			    i = 0,
+			    l = void 0,
+			    value = '',
+			    t = void 0;
+
+			if (cookies) {
+				cookies = cookies.split('; ');
+			} else {
+				cookies = [];
+			}
+
+			/**
+    * todo 调整机制
+    *
+    * 现在每次取值，都会将 cookie 进行一次解析
+    * 期望改为只解析一次
+    * */
+			for (l = cookies.length; i < l; i++) {
+				t = cookies[i].split('=');
+
+				if (topic === decodeURIComponent(t[0])) {
+					value = decodeURIComponent(t[1]);
+					break;
+				}
+			}
+
+			if (value) {
+				try {
+					value = JSON.parse(value);
+				} catch (e) {}
+
+				// 在内存中保留该值
+				_get(CookieModel.prototype.__proto__ || Object.getPrototypeOf(CookieModel.prototype), 'setData', this).call(this, topic, value);
+			} else {
+				value = Promise.reject(null);
+			}
+
+			return value;
+		}
+		/**
+   * @summary     当 setData 传入一个 json 时内部调用函数
+   * @override
+   * @protected
+   * @param       {Object}    topic
+   * @param       {Object}    [options]
+   * @return      {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
+   * @desc        因为设置 cookie 时有相关配置，故重写覆盖父类的 _setByObject 方法
+   * */
+
+	}, {
+		key: '_setByObject',
+		value: function _setByObject(topic, options) {
+			var _this2 = this;
+
+			return Promise.all(Object.keys(topic).map(function (d) {
+				return _this2.setData(d, topic[d], options);
+			})).then(function (data) {
+				return !!data;
 			});
 		}
-		return result;
-	}
-	/**
-  * @summary 清空数据
-  * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
-  * @desc    只调用了父类的 clearData 方法，清楚了内存中的数据，对 cookie 实际没做任何处理
-  * */
-	clearData() {
-		return super.clearData();
-	}
-	/**
-  * @summary 获取 cookie 长度
-  * @return  {Number}
-  * */
-	getCookieLength() {
-		return this._enabled ? document.cookie.length : 0;
-	}
-}
+
+		// ---------- 公有方法 ----------
+		/**
+   * @summary     设置数据
+   * @override
+   * @param       {String|Object}             topic
+   * @param       {*}                         value               当 topic 为 object 类型时，被视为 options
+   * @param       {Object|Number|String}      [options]           相关配置
+   * @param       {String}                    [options.path]
+   * @param       {String}                    [options.domain]
+   * @param       {Date|Number|String}        [options.expires]
+   * @param       {String}                    [options.secure]
+   * @return      {Promise}                   返回一个 Promise 对象，在 resolve 时传回 true
+   * @desc        保存值得时候，同时会保持在内存中，当 topic 类型为 object 时，value 会视为 options
+   * */
+
+	}, {
+		key: 'setData',
+		value: function setData(topic, value, options) {
+			var _this3 = this;
+
+			var result = void 0;
+
+			if ((typeof topic === 'undefined' ? 'undefined' : _typeof(topic)) === 'object') {
+				options = value;
+
+				result = this._setByObject(topic, options);
+			} else {
+				result = _get(CookieModel.prototype.__proto__ || Object.getPrototypeOf(CookieModel.prototype), 'setData', this).call(this, topic, value).then(function () {
+					return _this3._store;
+				}).then(function () {
+					return _this3._setCookie(topic, value, options);
+				});
+			}
+
+			return result;
+		}
+		/**
+   * @summary 获取数据
+   * @param   {String|String[]|...String} topic
+   * @return  {Promise}                   返回一个 Promise 对象，若存在 topic 的值，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
+   * @desc    获取数据时会优先从内存中取值，若没有则从 cookie 中取值并将其存入内存中，当 topic 的类型为数组的时候，resolve 传入的结果为一个 json，key 为 topic 中的数据，value 为对应查找出来的值
+   * */
+
+	}, {
+		key: 'getData',
+		value: function getData(topic) {
+			var _this4 = this;
+
+			var argc = arguments.length,
+			    result = void 0;
+
+			if (Array.isArray(topic)) {
+				result = this._getByArray(topic);
+			} else if (argc > 1) {
+				result = this._getByArray([].slice.call(arguments));
+			} else {
+				result = _get(CookieModel.prototype.__proto__ || Object.getPrototypeOf(CookieModel.prototype), 'getData', this).call(this, topic).catch(function () {
+					// 内存中不存在该值
+					return _this4._store.then(function () {
+						return _this4._getCookie(topic);
+					});
+				});
+			}
+
+			return result;
+		}
+		/**
+   * @summary 以同步的方式获取 cookie 中的数据
+   * @param   {String|String[]|...String} topic
+   * @return  {Object|String}             若存在 topic 的值，返回查询出来的 value，否则返回 null
+   * @desc    获取数据时会优先从内存中取值，若没有则从 cookie 中取值并将其存入内存中，当 topic 的类型为数组的时候，返回结果为一个 json，key 为 topic 中的数据，value 为对应查找出来的值
+   * */
+
+	}, {
+		key: 'getDataSync',
+		value: function getDataSync(topic) {
+			var _this5 = this;
+
+			var argc = arguments.length,
+			    keyList = void 0,
+			    result = void 0;
+
+			// 判断当前环境是否支持 cookie
+			if (this._enabled) {
+
+				if (!Array.isArray(topic)) {
+					keyList = [topic];
+				} else if (argc > 1) {
+					keyList = [].slice.call(arguments);
+				} else {
+					keyList = topic;
+				}
+
+				result = keyList.reduce(function (all, d) {
+
+					if (d in _this5._value) {
+						all[d] = _this5._value[d];
+					} else {
+						all[d] = _this5._getCookie(d) || null;
+
+						// 尝试解析
+						try {
+							all[d] = JSON.parse(all[d]);
+						} catch (e) {}
+
+						_get(CookieModel.prototype.__proto__ || Object.getPrototypeOf(CookieModel.prototype), 'setData', _this5).call(_this5, d, all[d]);
+					}
+
+					return all;
+				}, {});
+
+				if (!Array.isArray(topic)) {
+					result = result[topic];
+				}
+			} else {
+				result = null;
+			}
+
+			return result;
+		}
+		/**
+   * @summary 将数据从缓存中删除
+   * @param   {String|String[]}   topic
+   * @return  {Promise}           返回一个 Promise 对象，在 resolve 时传回 true
+   * @desc    调用 _setCookie 方法，过期时间为负值
+   * */
+
+	}, {
+		key: 'removeData',
+		value: function removeData(topic) {
+			var _this6 = this;
+
+			var result = void 0;
+			if (Array.isArray(topic)) {
+				result = this._removeByArray(topic);
+			} else {
+				result = _get(CookieModel.prototype.__proto__ || Object.getPrototypeOf(CookieModel.prototype), 'removeData', this).call(this, topic).then(function () {
+					return _this6._setCookie(topic, '', -1);
+				});
+			}
+			return result;
+		}
+		/**
+   * @summary 清空数据
+   * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
+   * @desc    只调用了父类的 clearData 方法，清楚了内存中的数据，对 cookie 实际没做任何处理
+   * */
+
+	}, {
+		key: 'clearData',
+		value: function clearData() {
+			return _get(CookieModel.prototype.__proto__ || Object.getPrototypeOf(CookieModel.prototype), 'clearData', this).call(this);
+		}
+		/**
+   * @summary 获取 cookie 长度
+   * @return  {Number}
+   * */
+
+	}, {
+		key: 'getCookieLength',
+		value: function getCookieLength() {
+			return this._enabled ? document.cookie.length : 0;
+		}
+	}], [{
+		key: '_transDate',
+		value: function _transDate(date) {
+			if (date instanceof Date) {} else {
+				date = _dateFormat2.default.formatTimeStr(date);
+
+				date = date === 0 ? '' : new Date(Date.now() + date);
+			}
+			// else if( typeof date === 'number' ){
+			// 	temp = new Date();
+			// 	temp.setTime( +temp + CookieModel._SHORT_TIME_NUM.d * date );
+			// 	date = temp;
+			// }
+			// else if( temp = CookieModel._SHORT_TIME_EXPR.exec( date ) ){
+			// 	date = new Date();
+			// 	date.setTime( date.getTime() + Number( temp[1] ) * CookieModel._SHORT_TIME_NUM[temp[2]] );
+			// }
+			// else{
+			// 	date = '';
+			// }
+
+			return date && date.toUTCString();
+		}
+	}]);
+
+	return CookieModel;
+}(_model2.default);
 
 /**
  * 默认 cookie 设置参数
  * @const
  * @static
  * */
+
+
 CookieModel._DEFAULT = {
 	path: '/',
 	domain: '',
@@ -21492,27 +13411,48 @@ CookieModel._DEFAULT = {
 /**
  * 在 Model.factory 工厂方法注册，将可以使用工厂方法生成
  * */
-__WEBPACK_IMPORTED_MODULE_0__model_js__["a" /* default */].register('cookie', CookieModel);
+_model2.default.register('cookie', CookieModel);
 /**
  * 注册别名
  * */
-__WEBPACK_IMPORTED_MODULE_0__model_js__["a" /* default */].registerAlias('cookie', 'c');
+_model2.default.registerAlias('cookie', 'c');
 
-/* unused harmony default export */ var _unused_webpack_default_export = (CookieModel);
+exports.default = CookieModel;
 
 /***/ }),
 /* 23 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__model_js__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__util_merge_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__listener_js__ = __webpack_require__(0);
 
 
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+var _model = __webpack_require__(2);
+
+var _model2 = _interopRequireDefault(_model);
+
+var _merge = __webpack_require__(1);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+var _listener = __webpack_require__(0);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 /**
  * @class
@@ -21531,28 +13471,35 @@ storage.getData('fittingShow/index/first').then((value)=>{
 });
 </pre>
  * */
-class LocalStorageModel extends __WEBPACK_IMPORTED_MODULE_0__model_js__["a" /* default */] {
+var LocalStorageModel = function (_Model) {
+	_inherits(LocalStorageModel, _Model);
+
 	/**
   * @constructor
   * @param   {Object}    [config={}]
   * @param   {Boolean}   [config.listen] 是否开启监听事件
   * */
-	constructor(config = {}) {
-		super(config);
+	function LocalStorageModel() {
+		var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-		this._config = Object(__WEBPACK_IMPORTED_MODULE_1__util_merge_js__["a" /* default */])(config, LocalStorageModel._CONFIG);
+		_classCallCheck(this, LocalStorageModel);
+
+		var _this = _possibleConstructorReturn(this, (LocalStorageModel.__proto__ || Object.getPrototypeOf(LocalStorageModel)).call(this, config));
+
+		_this._config = (0, _merge2.default)(config, LocalStorageModel._CONFIG);
 
 		if ('localStorage' in self) {
-			this._enabled = true;
-			this._storeSync = self.localStorage;
-			this._store = Promise.resolve(self.localStorage);
+			_this._enabled = true;
+			_this._storeSync = self.localStorage;
+			_this._store = Promise.resolve(self.localStorage);
 
 			config.listen && !LocalStorageModel._listenOn && LocalStorageModel.listenOn();
 		} else {
-			this._enabled = false;
-			this._storeSync = null;
-			this._store = Promise.reject(new Error('此浏览器不支持 localStorage'));
+			_this._enabled = false;
+			_this._storeSync = null;
+			_this._store = Promise.reject(new Error('此浏览器不支持 localStorage'));
 		}
+		return _this;
 	}
 
 	// ---------- 静态方法 ----------
@@ -21561,207 +13508,251 @@ class LocalStorageModel extends __WEBPACK_IMPORTED_MODULE_0__model_js__["a" /* d
   * @static
   * @desc    只执行一次，执行后将 LocalStorageModel._listenOn 设为 true，该监听事件只能由其他页面修改 localStorage 的数据时触发
   * */
-	static listenOn() {
 
-		if (LocalStorageModel._listenOn) {
-			return;
-		}
 
-		LocalStorageModel._globalStorage = Object(__WEBPACK_IMPORTED_MODULE_2__listener_js__["b" /* listener */])('storage', function (e) {
-			let topic = e.key,
-			    newVal = e.newValue,
-			    oldVal = e.oldValue;
+	_createClass(LocalStorageModel, [{
+		key: 'setData',
 
-			if (LocalStorageModel._EVENT_LIST.length) {
 
-				LocalStorageModel._EVENT_LIST.forEach(d => d(topic, newVal, oldVal));
-			}
-		});
-		LocalStorageModel._listenOn = true;
-	}
-	static listenOff() {
-		if (LocalStorageModel._listenOn && LocalStorageModel._globalStorage) {
-			LocalStorageModel._globalStorage.off();
+		// ---------- 公有方法 ----------
+		/**
+   * @summary 设置数据
+   * @param   {String|Object} topic
+   * @param   {*}             value   当 topic 为 object 类型时被忽略
+   * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回 true
+   * @desc    保持值得时候，同时会保持在内存中
+   * */
+		value: function setData(topic, value) {
+			var _this2 = this;
 
-			LocalStorageModel._listenOn = false;
-		}
-	}
+			var result = void 0;
 
-	// ---------- 公有方法 ----------
-	/**
-  * @summary 设置数据
-  * @param   {String|Object} topic
-  * @param   {*}             value   当 topic 为 object 类型时被忽略
-  * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回 true
-  * @desc    保持值得时候，同时会保持在内存中
-  * */
-	setData(topic, value) {
-		let result;
+			if ((typeof topic === 'undefined' ? 'undefined' : _typeof(topic)) === 'object') {
+				result = this._setByObject(topic);
+			} else {
+				result = _get(LocalStorageModel.prototype.__proto__ || Object.getPrototypeOf(LocalStorageModel.prototype), 'setData', this).call(this, topic, value).then(function () {
+					return _this2._store.then(function (store) {
+						store.setItem(topic, _this2._stringify(value));
 
-		if (typeof topic === 'object') {
-			result = this._setByObject(topic);
-		} else {
-			result = super.setData(topic, value).then(() => {
-				return this._store.then(store => {
-					store.setItem(topic, this._stringify(value));
-
-					return true;
+						return true;
+					});
 				});
-			});
+			}
+
+			return result;
 		}
+		/**
+   * @summary 获取数据
+   * @param   {String|String[]|...String} topic
+   * @return  {Promise}                   返回一个 Promise 对象，若存在 topic 的值，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
+   * @desc    获取数据时会优先从内存中取值，若没有则从 localStorage 中取值并将其存入内存中，当 topic 的类型为数组的时候，resolve 传入的结果为一个 json，key 为 topic 中的数据，value 为对应查找出来的值
+   * */
 
-		return result;
-	}
-	/**
-  * @summary 获取数据
-  * @param   {String|String[]|...String} topic
-  * @return  {Promise}                   返回一个 Promise 对象，若存在 topic 的值，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
-  * @desc    获取数据时会优先从内存中取值，若没有则从 localStorage 中取值并将其存入内存中，当 topic 的类型为数组的时候，resolve 传入的结果为一个 json，key 为 topic 中的数据，value 为对应查找出来的值
-  * */
-	getData(topic) {
-		let argc = arguments.length,
-		    result;
+	}, {
+		key: 'getData',
+		value: function getData(topic) {
+			var _this3 = this;
 
-		if (Array.isArray(topic)) {
-			result = this._getByArray(topic);
-		} else if (argc.length > 1) {
-			result = this._getByArray([].slice.call(arguments));
-		} else {
-			result = super.getData(topic).catch(() => {
-				return this._store.then(store => {
-					let value = store.getItem(topic);
+			var argc = arguments.length,
+			    result = void 0;
 
-					if (value === null) {
-						value = Promise.reject(null);
+			if (Array.isArray(topic)) {
+				result = this._getByArray(topic);
+			} else if (argc.length > 1) {
+				result = this._getByArray([].slice.call(arguments));
+			} else {
+				result = _get(LocalStorageModel.prototype.__proto__ || Object.getPrototypeOf(LocalStorageModel.prototype), 'getData', this).call(this, topic).catch(function () {
+					return _this3._store.then(function (store) {
+						var value = store.getItem(topic);
+
+						if (value === null) {
+							value = Promise.reject(null);
+						} else {
+							try {
+								value = JSON.parse(value);
+							} catch (e) {}
+
+							// 在内存中保留该值
+							_get(LocalStorageModel.prototype.__proto__ || Object.getPrototypeOf(LocalStorageModel.prototype), 'setData', _this3).call(_this3, topic, value);
+						}
+
+						return value;
+					});
+				});
+			}
+
+			return result;
+		}
+		/**
+   * @summary 以同步的方式获取 localStorage 中的数据
+   * @param   {String|String[]|...String}   topic
+   * @return  {Object|String}     若存在 topic 的值，返回查询出来的 value，否则返回 null
+   * @desc    获取数据时会优先从内存中取值，若没有则从 localStorage 中取值并将其存入内存中，当 topic 的类型为数组的时候，返回结果为一个 json，key 为 topic 中的数据，value 为对应查找出来的值
+   * */
+
+	}, {
+		key: 'getDataSync',
+		value: function getDataSync(topic) {
+			var _this4 = this;
+
+			var argc = arguments.length,
+			    keyList = void 0,
+			    result = void 0;
+
+			if (this._enabled) {
+
+				if (!Array.isArray(topic)) {
+					keyList = [topic];
+				} else if (argc > 1) {
+					keyList = [].slice.call(arguments);
+				} else {
+					keyList = topic;
+				}
+
+				result = keyList.reduce(function (all, d) {
+					if (d in _this4._value) {
+						all[d] = _this4._value[d];
 					} else {
+						all[d] = _this4._storeSync.getItem(d);
+
 						try {
-							value = JSON.parse(value);
+							all[d] = JSON.parse(all[d]);
 						} catch (e) {}
 
-						// 在内存中保留该值
-						super.setData(topic, value);
+						_get(LocalStorageModel.prototype.__proto__ || Object.getPrototypeOf(LocalStorageModel.prototype), 'setData', _this4).call(_this4, d, all[d]);
 					}
+				}, {});
 
-					return value;
-				});
-			});
-		}
-
-		return result;
-	}
-	/**
-  * @summary 以同步的方式获取 localStorage 中的数据
-  * @param   {String|String[]|...String}   topic
-  * @return  {Object|String}     若存在 topic 的值，返回查询出来的 value，否则返回 null
-  * @desc    获取数据时会优先从内存中取值，若没有则从 localStorage 中取值并将其存入内存中，当 topic 的类型为数组的时候，返回结果为一个 json，key 为 topic 中的数据，value 为对应查找出来的值
-  * */
-	getDataSync(topic) {
-		let argc = arguments.length,
-		    keyList,
-		    result;
-
-		if (this._enabled) {
-
-			if (!Array.isArray(topic)) {
-				keyList = [topic];
-			} else if (argc > 1) {
-				keyList = [].slice.call(arguments);
-			} else {
-				keyList = topic;
-			}
-
-			result = keyList.reduce((all, d) => {
-				if (d in this._value) {
-					all[d] = this._value[d];
-				} else {
-					all[d] = this._storeSync.getItem(d);
-
-					try {
-						all[d] = JSON.parse(all[d]);
-					} catch (e) {}
-
-					super.setData(d, all[d]);
+				if (!Array.isArray(topic)) {
+					result = result[topic];
 				}
-			}, {});
-
-			if (!Array.isArray(topic)) {
-				result = result[topic];
+			} else {
+				result = null;
 			}
-		} else {
-			result = null;
+
+			return result;
 		}
+		/**
+   * @summary 将数据从缓存中删除
+   * @param   {String|String[]}   topic
+   * @return  {Promise}           返回一个 Promise 对象，在 resolve 时传回 true
+   * */
 
-		return result;
-	}
-	/**
-  * @summary 将数据从缓存中删除
-  * @param   {String|String[]}   topic
-  * @return  {Promise}           返回一个 Promise 对象，在 resolve 时传回 true
-  * */
-	removeData(topic) {
-		let result;
+	}, {
+		key: 'removeData',
+		value: function removeData(topic) {
+			var _this5 = this;
 
-		if (Array.isArray(topic)) {
-			result = this._removeByArray(topic);
-		} else {
-			result = super.removeData(topic).then(() => {
-				return this._store.then(store => {
-					store.removeItem(topic);
+			var result = void 0;
+
+			if (Array.isArray(topic)) {
+				result = this._removeByArray(topic);
+			} else {
+				result = _get(LocalStorageModel.prototype.__proto__ || Object.getPrototypeOf(LocalStorageModel.prototype), 'removeData', this).call(this, topic).then(function () {
+					return _this5._store.then(function (store) {
+						store.removeItem(topic);
+
+						return true;
+					});
+				});
+			}
+
+			return result;
+		}
+		/**
+   * @summary 清空数据
+   * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
+   * */
+
+	}, {
+		key: 'clearData',
+		value: function clearData() {
+			var _this6 = this;
+
+			return _get(LocalStorageModel.prototype.__proto__ || Object.getPrototypeOf(LocalStorageModel.prototype), 'clearData', this).call(this).then(function () {
+				return _this6._store.then(function (store) {
+					store.clear();
 
 					return true;
 				});
 			});
 		}
 
-		return result;
-	}
-	/**
-  * @summary 清空数据
-  * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
-  * */
-	clearData() {
-		return super.clearData().then(() => {
-			return this._store.then(store => {
-				store.clear();
+		/**
+   * @summary 绑定数据监视事件
+   * @param   {ModelChangeEvent}  callback
+   * */
 
-				return true;
+	}, {
+		key: 'on',
+		value: function on(callback) {
+
+			this._eventList.push(callback);
+
+			LocalStorageModel._EVENT_LIST.push(callback);
+		}
+		/**
+   * @summary 解除绑定数据监控回调函数
+   * @param   {ModelChangeEvent}  callback
+   * */
+
+	}, {
+		key: 'off',
+		value: function off(callback) {
+			var i = this._eventList.indexOf(callback);
+
+			if (i !== -1) {
+				this._eventList.splice(i, 1);
+			}
+
+			i = LocalStorageModel._EVENT_LIST.indexOf(callback);
+			if (i !== -1) {
+				LocalStorageModel._EVENT_LIST.splice(i, 1);
+			}
+		}
+	}], [{
+		key: 'listenOn',
+		value: function listenOn() {
+
+			if (LocalStorageModel._listenOn) {
+				return;
+			}
+
+			LocalStorageModel._globalStorage = (0, _listener.listener)('storage', function (e) {
+				var topic = e.key,
+				    newVal = e.newValue,
+				    oldVal = e.oldValue;
+
+				if (LocalStorageModel._EVENT_LIST.length) {
+
+					LocalStorageModel._EVENT_LIST.forEach(function (d) {
+						return d(topic, newVal, oldVal);
+					});
+				}
 			});
-		});
-	}
-
-	/**
-  * @summary 绑定数据监视事件
-  * @param   {ModelChangeEvent}  callback
-  * */
-	on(callback) {
-
-		this._eventList.push(callback);
-
-		LocalStorageModel._EVENT_LIST.push(callback);
-	}
-	/**
-  * @summary 解除绑定数据监控回调函数
-  * @param   {ModelChangeEvent}  callback
-  * */
-	off(callback) {
-		let i = this._eventList.indexOf(callback);
-
-		if (i !== -1) {
-			this._eventList.splice(i, 1);
+			LocalStorageModel._listenOn = true;
 		}
+	}, {
+		key: 'listenOff',
+		value: function listenOff() {
+			if (LocalStorageModel._listenOn && LocalStorageModel._globalStorage) {
+				LocalStorageModel._globalStorage.off();
 
-		i = LocalStorageModel._EVENT_LIST.indexOf(callback);
-		if (i !== -1) {
-			LocalStorageModel._EVENT_LIST.splice(i, 1);
+				LocalStorageModel._listenOn = false;
+			}
 		}
-	}
-}
+	}]);
+
+	return LocalStorageModel;
+}(_model2.default);
 
 /**
  * 默认参数
  * @const
  * @static
  * */
+
+
 LocalStorageModel._CONFIG = {
 	listen: true
 };
@@ -21779,23 +13770,42 @@ LocalStorageModel._listenOn = false;
 /**
  * 在 Model.factory 工厂方法注册，将可以使用工厂方法生成
  * */
-__WEBPACK_IMPORTED_MODULE_0__model_js__["a" /* default */].register('localStorage', LocalStorageModel);
+_model2.default.register('localStorage', LocalStorageModel);
 /**
  * 注册别名
  * */
-__WEBPACK_IMPORTED_MODULE_0__model_js__["a" /* default */].registerAlias('localStorage', 'ls');
+_model2.default.registerAlias('localStorage', 'ls');
 
-/* unused harmony default export */ var _unused_webpack_default_export = (LocalStorageModel);
+exports.default = LocalStorageModel;
 
 /***/ }),
 /* 24 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__model_js__ = __webpack_require__(2);
 
 
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+var _model = __webpack_require__(2);
+
+var _model2 = _interopRequireDefault(_model);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 /**
  * @class
@@ -21809,22 +13819,27 @@ let sessionStorageModel = new SessionStorageModel()
 	;
  </pre>
  * */
-class SessionStorageModel extends __WEBPACK_IMPORTED_MODULE_0__model_js__["a" /* default */] {
+var SessionStorageModel = function (_Model) {
+	_inherits(SessionStorageModel, _Model);
+
 	/**
   * @constructor
   * */
-	constructor() {
-		super();
+	function SessionStorageModel() {
+		_classCallCheck(this, SessionStorageModel);
+
+		var _this = _possibleConstructorReturn(this, (SessionStorageModel.__proto__ || Object.getPrototypeOf(SessionStorageModel)).call(this));
 
 		if ('sessionStorage' in self) {
-			this._enabled = true;
-			this._storeSync = self.sessionStorage;
-			this._store = Promise.resolve(self.sessionStorage);
+			_this._enabled = true;
+			_this._storeSync = self.sessionStorage;
+			_this._store = Promise.resolve(self.sessionStorage);
 		} else {
-			this._enabled = false;
-			this._storeSync = null;
-			this._store = Promise.reject(new Error('此浏览器不支持 sessionStorage'));
+			_this._enabled = false;
+			_this._storeSync = null;
+			_this._store = Promise.reject(new Error('此浏览器不支持 sessionStorage'));
 		}
+		return _this;
 	}
 
 	// ---------- 公有方法 ----------
@@ -21835,164 +13850,216 @@ class SessionStorageModel extends __WEBPACK_IMPORTED_MODULE_0__model_js__["a" /*
   * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回 true
   * @desc    保持值得时候，同时会保持在内存中
   * */
-	setData(topic, value) {
-		let result;
 
-		if (typeof topic === 'object') {
-			result = this._setByObject(topic);
-		} else {
-			result = super.setData(topic, value).then(() => {
-				return this._store.then(store => {
-					store.setItem(topic, this._stringify(value));
 
-					return true;
+	_createClass(SessionStorageModel, [{
+		key: 'setData',
+		value: function setData(topic, value) {
+			var _this2 = this;
+
+			var result = void 0;
+
+			if ((typeof topic === 'undefined' ? 'undefined' : _typeof(topic)) === 'object') {
+				result = this._setByObject(topic);
+			} else {
+				result = _get(SessionStorageModel.prototype.__proto__ || Object.getPrototypeOf(SessionStorageModel.prototype), 'setData', this).call(this, topic, value).then(function () {
+					return _this2._store.then(function (store) {
+						store.setItem(topic, _this2._stringify(value));
+
+						return true;
+					});
 				});
-			});
+			}
+
+			return result;
 		}
+		/**
+   * @summary 获取数据
+   * @param   {String|String[]|...String} topic
+   * @return  {Promise}                   返回一个 Promise 对象，若存在 topic 的值，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
+   * @desc    获取数据时会优先从内存中取值，若没有则从 sessionStorage 中取值并将其存入内存中，当 topic 的类型为数组的时候，resolve 传入的结果为一个 json，key 为 topic 中的数据，value 为对应查找出来的值
+   * */
 
-		return result;
-	}
-	/**
-  * @summary 获取数据
-  * @param   {String|String[]|...String} topic
-  * @return  {Promise}                   返回一个 Promise 对象，若存在 topic 的值，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
-  * @desc    获取数据时会优先从内存中取值，若没有则从 sessionStorage 中取值并将其存入内存中，当 topic 的类型为数组的时候，resolve 传入的结果为一个 json，key 为 topic 中的数据，value 为对应查找出来的值
-  * */
-	getData(topic) {
-		let argc = arguments.length,
-		    result;
+	}, {
+		key: 'getData',
+		value: function getData(topic) {
+			var _this3 = this;
 
-		if (Array.isArray(topic)) {
-			result = this._getByArray(topic);
-		} else if (argc > 1) {
-			result = this._getByArray([].slice.call(arguments));
-		} else {
-			result = super.getData(topic).catch(() => {
-				return this._store.then(store => {
-					let value = store.getItem(topic);
+			var argc = arguments.length,
+			    result = void 0;
 
-					if (value === null) {
-						value = Promise.reject(null);
+			if (Array.isArray(topic)) {
+				result = this._getByArray(topic);
+			} else if (argc > 1) {
+				result = this._getByArray([].slice.call(arguments));
+			} else {
+				result = _get(SessionStorageModel.prototype.__proto__ || Object.getPrototypeOf(SessionStorageModel.prototype), 'getData', this).call(this, topic).catch(function () {
+					return _this3._store.then(function (store) {
+						var value = store.getItem(topic);
+
+						if (value === null) {
+							value = Promise.reject(null);
+						} else {
+							try {
+								value = JSON.parse(value);
+							} catch (e) {}
+
+							// 在内存中保留该值
+							_get(SessionStorageModel.prototype.__proto__ || Object.getPrototypeOf(SessionStorageModel.prototype), 'setData', _this3).call(_this3, topic, value);
+						}
+
+						return value;
+					});
+				});
+			}
+
+			return result;
+		}
+		/**
+   * @summary 以同步的方式获取 sessionStorage 中的数据
+   * @param   {String|String[]|...String} topic
+   * @return  {Object|String}             若存在 topic 的值，返回查询出来的 value，否则返回 null
+   * @desc    获取数据时会优先从内存中取值，若没有则从 sessionStorage 中取值并将其存入内存中，当 topic 的类型为数组的时候，返回结果为一个 json，key 为 topic 中的数据，value 为对应查找出来的值
+   * */
+
+	}, {
+		key: 'getDataSync',
+		value: function getDataSync(topic) {
+			var _this4 = this;
+
+			var argc = arguments.length,
+			    keyList = void 0,
+			    result = void 0;
+
+			if (this._enabled) {
+
+				if (!Array.isArray(topic)) {
+					keyList = [topic];
+				} else if (argc > 1) {
+					keyList = [].slice.call(arguments);
+				} else {
+					keyList = topic;
+				}
+
+				result = keyList.reduce(function (all, d) {
+					if (d in _this4._value) {
+						all[d] = _this4._value[d];
 					} else {
+						all[d] = _this4._storeSync.getItem(d);
+
 						try {
-							value = JSON.parse(value);
+							all[d] = JSON.parse(all[d]);
 						} catch (e) {}
 
-						// 在内存中保留该值
-						super.setData(topic, value);
+						_get(SessionStorageModel.prototype.__proto__ || Object.getPrototypeOf(SessionStorageModel.prototype), 'setData', _this4).call(_this4, d, all[d]);
 					}
+				}, {});
 
-					return value;
-				});
-			});
-		}
-
-		return result;
-	}
-	/**
-  * @summary 以同步的方式获取 sessionStorage 中的数据
-  * @param   {String|String[]|...String} topic
-  * @return  {Object|String}             若存在 topic 的值，返回查询出来的 value，否则返回 null
-  * @desc    获取数据时会优先从内存中取值，若没有则从 sessionStorage 中取值并将其存入内存中，当 topic 的类型为数组的时候，返回结果为一个 json，key 为 topic 中的数据，value 为对应查找出来的值
-  * */
-	getDataSync(topic) {
-		let argc = arguments.length,
-		    keyList,
-		    result;
-
-		if (this._enabled) {
-
-			if (!Array.isArray(topic)) {
-				keyList = [topic];
-			} else if (argc > 1) {
-				keyList = [].slice.call(arguments);
-			} else {
-				keyList = topic;
-			}
-
-			result = keyList.reduce((all, d) => {
-				if (d in this._value) {
-					all[d] = this._value[d];
-				} else {
-					all[d] = this._storeSync.getItem(d);
-
-					try {
-						all[d] = JSON.parse(all[d]);
-					} catch (e) {}
-
-					super.setData(d, all[d]);
+				if (!Array.isArray(topic)) {
+					result = result[topic];
 				}
-			}, {});
-
-			if (!Array.isArray(topic)) {
-				result = result[topic];
+			} else {
+				result = null;
 			}
-		} else {
-			result = null;
+
+			return result;
 		}
+		/**
+   * @summary 将数据从缓存中删除
+   * @param   {String|String[]}   topic
+   * @return  {Promise}           返回一个 Promise 对象，在 resolve 时传回 true
+   * */
 
-		return result;
-	}
-	/**
-  * @summary 将数据从缓存中删除
-  * @param   {String|String[]}   topic
-  * @return  {Promise}           返回一个 Promise 对象，在 resolve 时传回 true
-  * */
-	removeData(topic) {
-		let result;
+	}, {
+		key: 'removeData',
+		value: function removeData(topic) {
+			var _this5 = this;
 
-		if (result) {
-			result = this._removeByArray(topic);
-		} else {
-			result = super.removeData(topic).then(() => {
-				return this._store.then(store => {
-					store.removeItem(topic);
+			var result = void 0;
+
+			if (result) {
+				result = this._removeByArray(topic);
+			} else {
+				result = _get(SessionStorageModel.prototype.__proto__ || Object.getPrototypeOf(SessionStorageModel.prototype), 'removeData', this).call(this, topic).then(function () {
+					return _this5._store.then(function (store) {
+						store.removeItem(topic);
+
+						return true;
+					});
+				});
+			}
+
+			return result;
+		}
+		/**
+   * @summary 清空数据
+   * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
+   * */
+
+	}, {
+		key: 'clearData',
+		value: function clearData() {
+			var _this6 = this;
+
+			return _get(SessionStorageModel.prototype.__proto__ || Object.getPrototypeOf(SessionStorageModel.prototype), 'clearData', this).call(this).then(function () {
+				return _this6._store.then(function (store) {
+					store.clear();
 
 					return true;
 				});
 			});
 		}
+	}]);
 
-		return result;
-	}
-	/**
-  * @summary 清空数据
-  * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
-  * */
-	clearData() {
-		return super.clearData().then(() => {
-			return this._store.then(store => {
-				store.clear();
-
-				return true;
-			});
-		});
-	}
-}
+	return SessionStorageModel;
+}(_model2.default);
 
 /**
  * 在 Model.factory 工厂方法注册，将可以使用工厂方法生成
  * */
-__WEBPACK_IMPORTED_MODULE_0__model_js__["a" /* default */].register('sessionStorage', SessionStorageModel);
+
+
+_model2.default.register('sessionStorage', SessionStorageModel);
 
 /**
  * 注册别名
  * */
-__WEBPACK_IMPORTED_MODULE_0__model_js__["a" /* default */].registerAlias('sessionStorage', 'ss');
+_model2.default.registerAlias('sessionStorage', 'ss');
 
-/* unused harmony default export */ var _unused_webpack_default_export = (SessionStorageModel);
+exports.default = SessionStorageModel;
 
 /***/ }),
 /* 25 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__model_js__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__util_merge_js__ = __webpack_require__(1);
 
 
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+var _model = __webpack_require__(2);
+
+var _model2 = _interopRequireDefault(_model);
+
+var _merge = __webpack_require__(1);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 /**
  * @class
@@ -22006,7 +14073,9 @@ let indexedDBModel = new IndexedDBModel()
 	;
 </pre>
  * */
-class IndexedDBModel extends __WEBPACK_IMPORTED_MODULE_0__model_js__["a" /* default */] {
+var IndexedDBModel = function (_Model) {
+	_inherits(IndexedDBModel, _Model);
+
 	/**
   * @constructor
   * @param   {Object}    [config={}]
@@ -22019,37 +14088,42 @@ class IndexedDBModel extends __WEBPACK_IMPORTED_MODULE_0__model_js__["a" /* defa
   * @param   {String}    [config.index[].keyPath]    未设置时默认使用 name
   * @param   {Boolean}   [config.index[].unique=false]   默认值 false
   * */
-	constructor(config = {}) {
-		super();
+	function IndexedDBModel() {
+		var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-		this._config = Object(__WEBPACK_IMPORTED_MODULE_1__util_merge_js__["a" /* default */])(config, IndexedDBModel._CONFIG);
+		_classCallCheck(this, IndexedDBModel);
+
+		var _this = _possibleConstructorReturn(this, (IndexedDBModel.__proto__ || Object.getPrototypeOf(IndexedDBModel)).call(this));
+
+		_this._config = (0, _merge2.default)(config, IndexedDBModel._CONFIG);
 
 		// this._store 为 Promise 类型，会在 resolve 中传入 db 实例，因为要保证数据库打开成功才可以操作
-		this._store = new Promise((resolve, reject) => {
-			let indexedDB, dbOpenRequest;
+		_this._store = new Promise(function (resolve, reject) {
+			var indexedDB = void 0,
+			    dbOpenRequest = void 0;
 
 			indexedDB = self.indexedDB || self.mozIndexedDB || self.webbkitIndexedDB || self.msIndexedDB || null;
 
 			if (indexedDB) {
-				dbOpenRequest = indexedDB.open(this._config.dbName, this._config.dbVersion);
+				dbOpenRequest = indexedDB.open(_this._config.dbName, _this._config.dbVersion);
 
 				/**
      * DB 版本设置或升级时回调
      * createObjectStore deleteObjectStore 只能在 onupgradeneeded 事件中使用
      * */
-				dbOpenRequest.onupgradeneeded = e => {
-					let db = e.target.result,
-					    store;
+				dbOpenRequest.onupgradeneeded = function (e) {
+					var db = e.target.result,
+					    store = void 0;
 
 					// 创建表
-					if (!db.objectStoreNames.contains(this._config.tableName)) {
+					if (!db.objectStoreNames.contains(_this._config.tableName)) {
 
 						// 创建存储对象
-						store = db.createObjectStore(this._config.tableName, {
-							keyPath: this._config.keyPath
+						store = db.createObjectStore(_this._config.tableName, {
+							keyPath: _this._config.keyPath
 						});
 
-						this._config.index.forEach(d => {
+						_this._config.index.forEach(function (d) {
 							store.createIndex(d.name, d.keyPath || d.name, {
 								unique: d.unique || false
 							});
@@ -22067,6 +14141,7 @@ class IndexedDBModel extends __WEBPACK_IMPORTED_MODULE_0__model_js__["a" /* defa
 				reject(new Error('此数据库不支持 IndexedDB'));
 			}
 		});
+		return _this;
 	}
 
 	// ---------- 私有方法 ----------
@@ -22076,250 +14151,304 @@ class IndexedDBModel extends __WEBPACK_IMPORTED_MODULE_0__model_js__["a" /* defa
   * @param   {String}    topic
   * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回查询出来的 value
   * */
-	_select(topic) {
-		return this._store.then(db => {
-			return new Promise((resolve, reject) => {
-				let objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore(this._config.tableName),
-				    objectStoreRequest = objectStore.get(topic);
 
-				objectStoreRequest.onsuccess = function (e) {
-					resolve(e.target.result);
-				};
-				objectStoreRequest.onerror = function (e) {
-					console.log(e);
-					reject(e);
-				};
-			});
-		});
-	}
-	/**
-  * @summary 新建或更新
-  * @private
-  * @param   {String}    topic
-  * @param   {String}    value
-  * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
-  * @desc    add 接口要求数据库中不能已经有相同键的对象存在，因此统一使用 put 接口
-  * */
-	_put(topic, value) {
-		return this._store.then(db => {
-			return new Promise((resolve, reject) => {
-				let objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore(this._config.tableName),
-				    objectStoreRequest = objectStore.put({
-					topic: topic,
-					value: value
+
+	_createClass(IndexedDBModel, [{
+		key: '_select',
+		value: function _select(topic) {
+			var _this2 = this;
+
+			return this._store.then(function (db) {
+				return new Promise(function (resolve, reject) {
+					var objectStore = db.transaction([_this2._config.tableName], 'readwrite').objectStore(_this2._config.tableName),
+					    objectStoreRequest = objectStore.get(topic);
+
+					objectStoreRequest.onsuccess = function (e) {
+						resolve(e.target.result);
+					};
+					objectStoreRequest.onerror = function (e) {
+						console.log(e);
+						reject(e);
+					};
 				});
-
-				objectStoreRequest.onsuccess = function (e) {
-					resolve(!!e.target.result);
-				};
-				objectStoreRequest.onerror = function (e) {
-					console.log(e);
-					reject(e);
-				};
 			});
-		});
-	}
-	/**
-  * @summary 删除
-  * @private
-  * @param   {String}    topic
-  * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
-  * */
-	_delete(topic) {
-		return this._store.then(db => {
-			return new Promise((resolve, reject) => {
-				let objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore(this._config.tableName),
-				    objectStoreRequest = objectStore.delete(topic);
+		}
+		/**
+   * @summary 新建或更新
+   * @private
+   * @param   {String}    topic
+   * @param   {String}    value
+   * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
+   * @desc    add 接口要求数据库中不能已经有相同键的对象存在，因此统一使用 put 接口
+   * */
 
-				objectStoreRequest.onsuccess = function (e) {
-					resolve(true);
-				};
-				objectStoreRequest.onerror = function (e) {
-					console.log(e);
-					reject(e);
-				};
+	}, {
+		key: '_put',
+		value: function _put(topic, value) {
+			var _this3 = this;
+
+			return this._store.then(function (db) {
+				return new Promise(function (resolve, reject) {
+					var objectStore = db.transaction([_this3._config.tableName], 'readwrite').objectStore(_this3._config.tableName),
+					    objectStoreRequest = objectStore.put({
+						topic: topic,
+						value: value
+					});
+
+					objectStoreRequest.onsuccess = function (e) {
+						resolve(!!e.target.result);
+					};
+					objectStoreRequest.onerror = function (e) {
+						console.log(e);
+						reject(e);
+					};
+				});
 			});
-		});
-	}
-	/**
-  * @summary 清空
-  * @private
-  * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
-  * */
-	_clear() {
-		return this._store.then(db => {
-			return new Promise((resolve, reject) => {
-				let objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore(this._config.tableName),
-				    objectStoreRequest = objectStore.clear();
+		}
+		/**
+   * @summary 删除
+   * @private
+   * @param   {String}    topic
+   * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
+   * */
 
-				objectStoreRequest.onsuccess = function (e) {
-					resolve(true);
-				};
-				objectStoreRequest.onerror = function (e) {
-					console.log(e);
-					reject(e);
-				};
+	}, {
+		key: '_delete',
+		value: function _delete(topic) {
+			var _this4 = this;
+
+			return this._store.then(function (db) {
+				return new Promise(function (resolve, reject) {
+					var objectStore = db.transaction([_this4._config.tableName], 'readwrite').objectStore(_this4._config.tableName),
+					    objectStoreRequest = objectStore.delete(topic);
+
+					objectStoreRequest.onsuccess = function (e) {
+						resolve(true);
+					};
+					objectStoreRequest.onerror = function (e) {
+						console.log(e);
+						reject(e);
+					};
+				});
 			});
-		});
-	}
+		}
+		/**
+   * @summary 清空
+   * @private
+   * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
+   * */
 
-	// ---------- 公有方法 ----------
-	/**
-  * @summary 设置数据
-  * @param   {String|Object} topic
-  * @param   {*}             value
-  * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回 true
-  * @desc    保持值得时候，同时会保持在内存中
-  * */
-	setData(topic, value) {
-		let result;
+	}, {
+		key: '_clear',
+		value: function _clear() {
+			var _this5 = this;
 
-		if (typeof topic === 'object') {
-			result = this._setByObject(topic);
-		} else {
-			result = super.setData(topic, value).then(() => {
-				return this._put(topic, value);
+			return this._store.then(function (db) {
+				return new Promise(function (resolve, reject) {
+					var objectStore = db.transaction([_this5._config.tableName], 'readwrite').objectStore(_this5._config.tableName),
+					    objectStoreRequest = objectStore.clear();
+
+					objectStoreRequest.onsuccess = function (e) {
+						resolve(true);
+					};
+					objectStoreRequest.onerror = function (e) {
+						console.log(e);
+						reject(e);
+					};
+				});
 			});
 		}
 
-		return result;
-	}
-	/**
-  * @summary 获取数据
-  * @param   {String|String[]|...String} topic
-  * @return  {Promise}                   返回一个 Promise 对象，若存在 topic 的值，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
-  * @desc    获取数据时会优先从内存中取值，若没有则从 indexedDB 中取值并将其存入内存中，当 topic 的类型为数组的时候，resolve 传入的结果为一个 json，key 为 topic 中的数据，value 为对应查找出来的值
-  * */
-	getData(topic) {
-		let argc = arguments.length,
-		    result;
+		// ---------- 公有方法 ----------
+		/**
+   * @summary 设置数据
+   * @param   {String|Object} topic
+   * @param   {*}             value
+   * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回 true
+   * @desc    保持值得时候，同时会保持在内存中
+   * */
 
-		if (Array.isArray(topic)) {
-			result = this._getByArray(topic);
-		} else if (argc > 1) {
-			result = this._getByArray([].slice.call(arguments));
-		} else {
-			result = super.getData(topic).catch(() => {
-				return this._select(topic).then(rs => {
-					let value;
+	}, {
+		key: 'setData',
+		value: function setData(topic, value) {
+			var _this6 = this;
 
-					if (rs) {
-						value = rs.value;
+			var result = void 0;
 
-						if (typeof value === 'string') {
-							// 若为字符串类型的数据，尝试进行解析
-							try {
-								value = JSON.parse(value);
-							} catch (e) {}
+			if ((typeof topic === 'undefined' ? 'undefined' : _typeof(topic)) === 'object') {
+				result = this._setByObject(topic);
+			} else {
+				result = _get(IndexedDBModel.prototype.__proto__ || Object.getPrototypeOf(IndexedDBModel.prototype), 'setData', this).call(this, topic, value).then(function () {
+					return _this6._put(topic, value);
+				});
+			}
+
+			return result;
+		}
+		/**
+   * @summary 获取数据
+   * @param   {String|String[]|...String} topic
+   * @return  {Promise}                   返回一个 Promise 对象，若存在 topic 的值，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
+   * @desc    获取数据时会优先从内存中取值，若没有则从 indexedDB 中取值并将其存入内存中，当 topic 的类型为数组的时候，resolve 传入的结果为一个 json，key 为 topic 中的数据，value 为对应查找出来的值
+   * */
+
+	}, {
+		key: 'getData',
+		value: function getData(topic) {
+			var _this7 = this;
+
+			var argc = arguments.length,
+			    result = void 0;
+
+			if (Array.isArray(topic)) {
+				result = this._getByArray(topic);
+			} else if (argc > 1) {
+				result = this._getByArray([].slice.call(arguments));
+			} else {
+				result = _get(IndexedDBModel.prototype.__proto__ || Object.getPrototypeOf(IndexedDBModel.prototype), 'getData', this).call(this, topic).catch(function () {
+					return _this7._select(topic).then(function (rs) {
+						var value = void 0;
+
+						if (rs) {
+							value = rs.value;
+
+							if (typeof value === 'string') {
+								// 若为字符串类型的数据，尝试进行解析
+								try {
+									value = JSON.parse(value);
+								} catch (e) {}
+							}
+
+							// 在内存中保留该值
+							_get(IndexedDBModel.prototype.__proto__ || Object.getPrototypeOf(IndexedDBModel.prototype), 'setData', _this7).call(_this7, topic, value);
+						} else {
+							value = Promise.reject(null);
 						}
 
-						// 在内存中保留该值
-						super.setData(topic, value);
-					} else {
-						value = Promise.reject(null);
-					}
+						return value;
+					});
+				});
+			}
 
-					return value;
+			return result;
+		}
+		/**
+   * @summary 将数据从缓存中删除
+   * @param   {String|String[]}   topic
+   * @return  {Promise}           返回一个 Promise 对象，在 resolve 时传回 true
+   * */
+
+	}, {
+		key: 'removeData',
+		value: function removeData(topic) {
+			var _this8 = this;
+
+			var result = void 0;
+
+			if (Array.isArray(topic)) {
+				result = this._removeByArray(topic);
+			} else {
+				result = _get(IndexedDBModel.prototype.__proto__ || Object.getPrototypeOf(IndexedDBModel.prototype), 'removeData', this).call(this, topic).then(function () {
+					return _this8._delete(topic);
+				});
+			}
+
+			return result;
+		}
+		/**
+   * @summary 清空数据
+   * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
+   * */
+
+	}, {
+		key: 'clearData',
+		value: function clearData() {
+			var _this9 = this;
+
+			return _get(IndexedDBModel.prototype.__proto__ || Object.getPrototypeOf(IndexedDBModel.prototype), 'clearData', this).call(this).then(function () {
+				return _this9._clear();
+			});
+		}
+		/**
+   * @summary 获取通过 range 获取数据
+   * @param   {Number}            [min]
+   * @param   {Number|Boolean}    [max]
+   * @param   {Boolean}           [eqMin=true]
+   * @param   {Boolean}           [eqMax=true]
+   * @return  {Promise}           返回一个 Promise 对象，在 resolve 时传回 cursor 列表
+   * @todo    区间取值功能
+   * */
+
+	}, {
+		key: 'getDataByRange',
+		value: function getDataByRange(min, max) {
+			var _this10 = this;
+
+			var eqMin = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+			var eqMax = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
+
+			var argc = arguments.length;
+
+			return this._store.then(function (db) {
+				return new Promise(function (resolve, reject) {
+					var objectStore = db.transaction([_this10._config.tableName], 'readwrite').objectStore(_this10._config.tableName)
+					// , keyRangeValue = IDBKeyRange.bound(min, max, eqMin, eqMax)
+					// , objectStoreRequest = objectStore.openCursor( keyRangeValue )
+					,
+					    objectStoreRequest = objectStore.openCursor(),
+					    cursorList = [];
+
+					// switch( argc ){
+					// 	case 1:
+					// 		keyRangeValue = IDBKeyRange.bound( min );
+					// 		break;
+					// 	case 2:
+					// 		if( typeof max === 'boolean' ){
+					// 			keyRangeValue = IDBKeyRange.lowerBound(min, max);
+					// 		}
+					// 		else{
+					// 			keyRangeValue = IDBKeyRange.bound(min, max);
+					// 		}
+					// 		break;
+					// 	case 3:
+					// 		keyRangeValue = IDBKeyRange.bound()
+					// 		break;
+					// 	case 4:
+					// 		break;
+					// 	default:
+					// 		break;
+					// }
+
+					objectStoreRequest.onsuccess = function (e) {
+						var cursor = e.target.result;
+
+						if (cursor) {
+							cursorList.push(cursor.value);
+
+							cursor.continue();
+						} else {
+							resolve(cursorList);
+						}
+					};
+					objectStoreRequest.onerror = function (e) {
+						console.log(e);
+						reject(e);
+					};
 				});
 			});
 		}
+	}]);
 
-		return result;
-	}
-	/**
-  * @summary 将数据从缓存中删除
-  * @param   {String|String[]}   topic
-  * @return  {Promise}           返回一个 Promise 对象，在 resolve 时传回 true
-  * */
-	removeData(topic) {
-		let result;
-
-		if (Array.isArray(topic)) {
-			result = this._removeByArray(topic);
-		} else {
-			result = super.removeData(topic).then(() => {
-				return this._delete(topic);
-			});
-		}
-
-		return result;
-	}
-	/**
-  * @summary 清空数据
-  * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
-  * */
-	clearData() {
-		return super.clearData().then(() => {
-			return this._clear();
-		});
-	}
-	/**
-  * @summary 获取通过 range 获取数据
-  * @param   {Number}            [min]
-  * @param   {Number|Boolean}    [max]
-  * @param   {Boolean}           [eqMin=true]
-  * @param   {Boolean}           [eqMax=true]
-  * @return  {Promise}           返回一个 Promise 对象，在 resolve 时传回 cursor 列表
-  * @todo    区间取值功能
-  * */
-	getDataByRange(min, max, eqMin = true, eqMax = true) {
-		let argc = arguments.length;
-
-		return this._store.then(db => {
-			return new Promise((resolve, reject) => {
-				let objectStore = db.transaction([this._config.tableName], 'readwrite').objectStore(this._config.tableName)
-				// , keyRangeValue = IDBKeyRange.bound(min, max, eqMin, eqMax)
-				// , objectStoreRequest = objectStore.openCursor( keyRangeValue )
-				,
-				    objectStoreRequest = objectStore.openCursor(),
-				    cursorList = [];
-
-				// switch( argc ){
-				// 	case 1:
-				// 		keyRangeValue = IDBKeyRange.bound( min );
-				// 		break;
-				// 	case 2:
-				// 		if( typeof max === 'boolean' ){
-				// 			keyRangeValue = IDBKeyRange.lowerBound(min, max);
-				// 		}
-				// 		else{
-				// 			keyRangeValue = IDBKeyRange.bound(min, max);
-				// 		}
-				// 		break;
-				// 	case 3:
-				// 		keyRangeValue = IDBKeyRange.bound()
-				// 		break;
-				// 	case 4:
-				// 		break;
-				// 	default:
-				// 		break;
-				// }
-
-				objectStoreRequest.onsuccess = function (e) {
-					let cursor = e.target.result;
-
-					if (cursor) {
-						cursorList.push(cursor.value);
-
-						cursor.continue();
-					} else {
-						resolve(cursorList);
-					}
-				};
-				objectStoreRequest.onerror = function (e) {
-					console.log(e);
-					reject(e);
-				};
-			});
-		});
-	}
-}
+	return IndexedDBModel;
+}(_model2.default);
 
 /**
  * 默认配置
  * @const
  * @static
  * */
+
+
 IndexedDBModel._CONFIG = {
 	dbName: 'storage',
 	tableName: 'storage',
@@ -22339,25 +14468,46 @@ IndexedDBModel._CONFIG = {
 /**
  * 在 Model.factory 工厂方法注册，将可以使用工厂方法生成
  * */
-__WEBPACK_IMPORTED_MODULE_0__model_js__["a" /* default */].register('indexedDB', IndexedDBModel);
+_model2.default.register('indexedDB', IndexedDBModel);
 /**
  * 注册别名
  * */
-__WEBPACK_IMPORTED_MODULE_0__model_js__["a" /* default */].registerAlias('indexedDB', 'idb');
+_model2.default.registerAlias('indexedDB', 'idb');
 
-/* unused harmony default export */ var _unused_webpack_default_export = (IndexedDBModel);
+exports.default = IndexedDBModel;
 
 /***/ }),
 /* 26 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__model_js__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__util_merge_js__ = __webpack_require__(1);
 
 
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+var _model = __webpack_require__(2);
+
+var _model2 = _interopRequireDefault(_model);
+
+var _merge = __webpack_require__(1);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 /**
  * @class
@@ -22377,7 +14527,9 @@ let webSQLModel = new WebSQLModel()
 newSQL.setData('index/data', {});   // newSQL 不会被缓存
 </pre>
  * */
-class WebSQLModel extends __WEBPACK_IMPORTED_MODULE_0__model_js__["a" /* default */] {
+var WebSQLModel = function (_Model) {
+	_inherits(WebSQLModel, _Model);
+
 	/**
   * @constructor
   * @param   {Object}    [config={}]
@@ -22394,35 +14546,39 @@ class WebSQLModel extends __WEBPACK_IMPORTED_MODULE_0__model_js__["a" /* default
   * @param   {String}    [config.sql.clear]  clearData 时执行的 sql 语句
   * @desc    传入 sql 语句时，可用 {{tableName}} 来代替表名
   * */
-	constructor(config = {}) {
-		super();
+	function WebSQLModel() {
+		var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-		let sql = config.sql;
+		_classCallCheck(this, WebSQLModel);
 
-		this._config = Object(__WEBPACK_IMPORTED_MODULE_1__util_merge_js__["a" /* default */])(config, WebSQLModel._CONFIG);
+		var _this = _possibleConstructorReturn(this, (WebSQLModel.__proto__ || Object.getPrototypeOf(WebSQLModel)).call(this));
 
-		if (sql && typeof sql === 'object') {
+		var sql = config.sql;
 
-			this._config.sql = Object(__WEBPACK_IMPORTED_MODULE_1__util_merge_js__["a" /* default */])(sql, WebSQLModel._CONFIG.sql);
+		_this._config = (0, _merge2.default)(config, WebSQLModel._CONFIG);
+
+		if (sql && (typeof sql === 'undefined' ? 'undefined' : _typeof(sql)) === 'object') {
+
+			_this._config.sql = (0, _merge2.default)(sql, WebSQLModel._CONFIG.sql);
 		}
 
-		Object.keys(this._config.sql).forEach(d => {
-			this._config.sql[d] = this._replaceTableName(this._config.sql[d]);
+		Object.keys(_this._config.sql).forEach(function (d) {
+			_this._config.sql[d] = _this._replaceTableName(_this._config.sql[d]);
 		});
 
 		// this._store 为 Promise 类型，会在 resolve 中传入 db 实例，因为要保证数据表存在才可以操作
-		this._store = new Promise((resolve, reject) => {
-			let db;
+		_this._store = new Promise(function (resolve, reject) {
+			var db = void 0;
 
 			if ('openDatabase' in self) {
 				// 打开数据库，若不存在则创建
-				db = openDatabase(this._config.dbName, '' + this._config.dbVersion, this._config.dbName, this._config.dbSize);
+				db = openDatabase(_this._config.dbName, '' + _this._config.dbVersion, _this._config.dbName, _this._config.dbSize);
 
-				db.transaction(tx => {
+				db.transaction(function (tx) {
 					// 若没有数据表则创建
-					tx.executeSql(this._config.sql.create, [], () => {
+					tx.executeSql(_this._config.sql.create, [], function () {
 						resolve(db);
-					}, (tx, e) => {
+					}, function (tx, e) {
 						console.log(e);
 						reject(e);
 					});
@@ -22431,6 +14587,7 @@ class WebSQLModel extends __WEBPACK_IMPORTED_MODULE_0__model_js__["a" /* default
 				reject(new Error('此浏览器不支持 Web SQL Database'));
 			}
 		});
+		return _this;
 	}
 
 	// ---------- 私有方法 ----------
@@ -22440,259 +14597,323 @@ class WebSQLModel extends __WEBPACK_IMPORTED_MODULE_0__model_js__["a" /* default
   * @param   {String}    sql
   * @return  {String}    替换完成的 sql 语句
   * */
-	_replaceTableName(sql) {
-		return sql.replace(/{{tableName}}/g, this._config.tableName);
-	}
-	/**
-  * @summary 查询
-  * @private
-  * @param   {String}    topic
-  * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回查询出来的数组
-  * */
-	_select(topic) {
-		return this._store.then(db => {
-			return new Promise((resolve, reject) => {
-				db.transaction(tx => {
-					tx.executeSql(this._config.sql.select, [topic], (tx, rs) => {
-						resolve(rs.rows);
-					}, (tx, e) => {
-						console.log(e);
-						reject(e);
+
+
+	_createClass(WebSQLModel, [{
+		key: '_replaceTableName',
+		value: function _replaceTableName(sql) {
+			return sql.replace(/{{tableName}}/g, this._config.tableName);
+		}
+		/**
+   * @summary 查询
+   * @private
+   * @param   {String}    topic
+   * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回查询出来的数组
+   * */
+
+	}, {
+		key: '_select',
+		value: function _select(topic) {
+			var _this2 = this;
+
+			return this._store.then(function (db) {
+				return new Promise(function (resolve, reject) {
+					db.transaction(function (tx) {
+						tx.executeSql(_this2._config.sql.select, [topic], function (tx, rs) {
+							resolve(rs.rows);
+						}, function (tx, e) {
+							console.log(e);
+							reject(e);
+						});
 					});
 				});
 			});
-		});
-	}
-	/**
-  * @summary 更新
-  * @private
-  * @param   {String}    topic
-  * @param   {String}    value
-  * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回影响行数的 boolean 值
-  * */
-	_update(topic, value) {
-		return this._store.then(db => {
-			return new Promise((resolve, reject) => {
-				db.transaction(tx => {
-					tx.executeSql(this._config.sql.update, [value, topic], (tx, rs) => {
-						resolve(!!rs.rowsAffected);
-					}, (tx, e) => {
-						console.log(e);
-						reject(e);
+		}
+		/**
+   * @summary 更新
+   * @private
+   * @param   {String}    topic
+   * @param   {String}    value
+   * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回影响行数的 boolean 值
+   * */
+
+	}, {
+		key: '_update',
+		value: function _update(topic, value) {
+			var _this3 = this;
+
+			return this._store.then(function (db) {
+				return new Promise(function (resolve, reject) {
+					db.transaction(function (tx) {
+						tx.executeSql(_this3._config.sql.update, [value, topic], function (tx, rs) {
+							resolve(!!rs.rowsAffected);
+						}, function (tx, e) {
+							console.log(e);
+							reject(e);
+						});
 					});
 				});
 			});
-		});
-	}
-	/**
-  * @summary 新建
-  * @private
-  * @param   {String}    topic
-  * @param   {String}    value
-  * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回新插入行 id 的 boolean 值
-  * */
-	_insert(topic, value) {
-		return this._store.then(db => {
-			return new Promise((resolve, reject) => {
-				db.transaction(tx => {
-					tx.executeSql(this._config.sql.insert, [topic, value], (tx, rs) => {
-						resolve(!!rs.insertId);
-					}, (tx, e) => {
-						console.log(e);
-						reject(e);
+		}
+		/**
+   * @summary 新建
+   * @private
+   * @param   {String}    topic
+   * @param   {String}    value
+   * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回新插入行 id 的 boolean 值
+   * */
+
+	}, {
+		key: '_insert',
+		value: function _insert(topic, value) {
+			var _this4 = this;
+
+			return this._store.then(function (db) {
+				return new Promise(function (resolve, reject) {
+					db.transaction(function (tx) {
+						tx.executeSql(_this4._config.sql.insert, [topic, value], function (tx, rs) {
+							resolve(!!rs.insertId);
+						}, function (tx, e) {
+							console.log(e);
+							reject(e);
+						});
 					});
 				});
 			});
-		});
-	}
-	/**
-  * @summary 删除
-  * @private
-  * @param   {String}    topic
-  * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回影响行数的 boolean 值
-  * */
-	_delete(topic) {
-		return this._store.then(db => {
-			return new Promise((resolve, reject) => {
-				db.transaction(tx => {
-					tx.executeSql(this._config.sql.delete, [topic], (tx, rs) => {
-						resolve(!!rs.rowsAffected);
-					}, (tx, e) => {
-						console.log(e);
-						reject(e);
+		}
+		/**
+   * @summary 删除
+   * @private
+   * @param   {String}    topic
+   * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回影响行数的 boolean 值
+   * */
+
+	}, {
+		key: '_delete',
+		value: function _delete(topic) {
+			var _this5 = this;
+
+			return this._store.then(function (db) {
+				return new Promise(function (resolve, reject) {
+					db.transaction(function (tx) {
+						tx.executeSql(_this5._config.sql.delete, [topic], function (tx, rs) {
+							resolve(!!rs.rowsAffected);
+						}, function (tx, e) {
+							console.log(e);
+							reject(e);
+						});
 					});
 				});
 			});
-		});
-	}
-	/**
-  * @summary 清空表
-  * @private
-  * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回影响行数的 boolean 值
-  * */
-	_clear() {
-		return this._store.then(db => {
-			return new Promise((resolve, reject) => {
-				db.transaction(tx => {
-					tx.executeSql(this._config.sql.clear, [], (tx, rs) => {
-						resolve(!!rs.rowsAffected);
-					}, (tx, e) => {
-						console.log(e);
-						reject(e);
+		}
+		/**
+   * @summary 清空表
+   * @private
+   * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回影响行数的 boolean 值
+   * */
+
+	}, {
+		key: '_clear',
+		value: function _clear() {
+			var _this6 = this;
+
+			return this._store.then(function (db) {
+				return new Promise(function (resolve, reject) {
+					db.transaction(function (tx) {
+						tx.executeSql(_this6._config.sql.clear, [], function (tx, rs) {
+							resolve(!!rs.rowsAffected);
+						}, function (tx, e) {
+							console.log(e);
+							reject(e);
+						});
 					});
 				});
-			});
-		});
-	}
-
-	// ---------- 公有方法 ----------
-	/**
-  * @summary 设置数据
-  * @param   {String|Object} topic
-  * @param   {*}             value
-  * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回影响行数的 boolean 值
-  * @desc    保持值得时候，同时会保持在内存中
-  * */
-	setData(topic, value) {
-		let result;
-
-		if (typeof topic === 'object') {
-			result = this._setByObject(topic);
-		} else {
-			result = super.setData(topic, value).then(() => {
-
-				value = this._stringify(value);
-
-				return this._select(topic);
-			}).then(rs => {
-				let result;
-
-				if (rs && rs.length) {
-					// topic 已存在
-					result = this._update(topic, value);
-				} else {
-					result = this._insert(topic, value);
-				}
-
-				return result;
 			});
 		}
 
-		return result;
-	}
-	/**
-  * @summary 获取数据
-  * @param   {String|String[]|...String} topic
-  * @return  {Promise}                   返回一个 Promise 对象，若存在 topic 的值，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
-  * @desc    获取数据时会优先从内存中取值，若没有则从 WebSQL Database 中取值并将其存入内存中，当 topic 的类型为数组的时候，resolve 传入的结果为一个 json，key 为 topic 中的数据，value 为对应查找出来的值
-  * */
-	getData(topic) {
-		let argc = arguments.length,
-		    result;
+		// ---------- 公有方法 ----------
+		/**
+   * @summary 设置数据
+   * @param   {String|Object} topic
+   * @param   {*}             value
+   * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回影响行数的 boolean 值
+   * @desc    保持值得时候，同时会保持在内存中
+   * */
 
-		if (Array.isArray(topic)) {
-			result = this._getByArray(topic);
-		} else if (argc > 1) {
-			result = this._getByArray([].slice.call(arguments));
-		} else {
-			result = super.getData(topic).catch(() => {
-				return this._select(topic).then(rs => {
-					let value = '';
+	}, {
+		key: 'setData',
+		value: function setData(topic, value) {
+			var _this7 = this;
+
+			var result = void 0;
+
+			if ((typeof topic === 'undefined' ? 'undefined' : _typeof(topic)) === 'object') {
+				result = this._setByObject(topic);
+			} else {
+				result = _get(WebSQLModel.prototype.__proto__ || Object.getPrototypeOf(WebSQLModel.prototype), 'setData', this).call(this, topic, value).then(function () {
+
+					value = _this7._stringify(value);
+
+					return _this7._select(topic);
+				}).then(function (rs) {
+					var result = void 0;
 
 					if (rs && rs.length) {
-						// 只返回第一条数据
-						value = rs[0].value;
-
-						try {
-							value = JSON.parse(value);
-						} catch (e) {}
-
-						// 在内存中保留该值
-						super.setData(topic, value);
+						// topic 已存在
+						result = _this7._update(topic, value);
 					} else {
-						value = Promise.reject(null);
+						result = _this7._insert(topic, value);
 					}
 
-					return value;
+					return result;
 				});
+			}
+
+			return result;
+		}
+		/**
+   * @summary 获取数据
+   * @param   {String|String[]|...String} topic
+   * @return  {Promise}                   返回一个 Promise 对象，若存在 topic 的值，在 resolve 时传回查询出来的 value，否则在 reject 时传回 null
+   * @desc    获取数据时会优先从内存中取值，若没有则从 WebSQL Database 中取值并将其存入内存中，当 topic 的类型为数组的时候，resolve 传入的结果为一个 json，key 为 topic 中的数据，value 为对应查找出来的值
+   * */
+
+	}, {
+		key: 'getData',
+		value: function getData(topic) {
+			var _this8 = this;
+
+			var argc = arguments.length,
+			    result = void 0;
+
+			if (Array.isArray(topic)) {
+				result = this._getByArray(topic);
+			} else if (argc > 1) {
+				result = this._getByArray([].slice.call(arguments));
+			} else {
+				result = _get(WebSQLModel.prototype.__proto__ || Object.getPrototypeOf(WebSQLModel.prototype), 'getData', this).call(this, topic).catch(function () {
+					return _this8._select(topic).then(function (rs) {
+						var value = '';
+
+						if (rs && rs.length) {
+							// 只返回第一条数据
+							value = rs[0].value;
+
+							try {
+								value = JSON.parse(value);
+							} catch (e) {}
+
+							// 在内存中保留该值
+							_get(WebSQLModel.prototype.__proto__ || Object.getPrototypeOf(WebSQLModel.prototype), 'setData', _this8).call(_this8, topic, value);
+						} else {
+							value = Promise.reject(null);
+						}
+
+						return value;
+					});
+				});
+			}
+
+			return result;
+		}
+		/**
+   * @summary 将数据从缓存中删除
+   * @param   {String|String[]}   topic
+   * @return  {Promise}           返回一个 Promise 对象，在 resolve 时传回影响行数的 boolean 值
+   * */
+
+	}, {
+		key: 'removeData',
+		value: function removeData(topic) {
+			var _this9 = this;
+
+			var result = void 0;
+
+			if (Array.isArray(topic)) {
+				result = this._removeByArray(topic);
+			} else {
+				result = _get(WebSQLModel.prototype.__proto__ || Object.getPrototypeOf(WebSQLModel.prototype), 'removeData', this).call(this, topic).then(function () {
+					return _this9._delete(topic);
+				});
+			}
+
+			return result;
+		}
+		/**
+   * @summary 清空数据
+   * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回影响行数的 boolean 值
+   * */
+
+	}, {
+		key: 'clearData',
+		value: function clearData() {
+			var _this10 = this;
+
+			return this.clearData().then(function () {
+				return _this10._clear();
 			});
 		}
 
-		return result;
-	}
-	/**
-  * @summary 将数据从缓存中删除
-  * @param   {String|String[]}   topic
-  * @return  {Promise}           返回一个 Promise 对象，在 resolve 时传回影响行数的 boolean 值
-  * */
-	removeData(topic) {
-		let result;
+		/**
+   * @summary 独立执行 sql 方法
+   * @param   {String}    sql
+   * @param   {Array}     [value=[]]
+   * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 sql 语句的执行结果
+   * */
 
-		if (Array.isArray(topic)) {
-			result = this._removeByArray(topic);
-		} else {
-			result = super.removeData(topic).then(() => {
-				return this._delete(topic);
+	}, {
+		key: 'executeSql',
+		value: function executeSql(sql) {
+			var value = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+
+			return this._store.then(function (db) {
+				return new Promise(function (resolve, reject) {
+					db.transaction(function (tx) {
+						tx.executeSql(sql, value, function (tx, rs) {
+							resolve(rs);
+						}, function (tx, e) {
+							console.log(e);
+							reject(e);
+						});
+					});
+				});
 			});
 		}
+		/**
+   * @summary 针对某列建立索引
+   * @param   {String}    col
+   * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 sql 语句的执行结果
+   * */
 
-		return result;
-	}
-	/**
-  * @summary 清空数据
-  * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回影响行数的 boolean 值
-  * */
-	clearData() {
-		return this.clearData().then(() => {
-			return this._clear();
-		});
-	}
+	}, {
+		key: 'createIndex',
+		value: function createIndex(col) {
+			var _this11 = this;
 
-	/**
-  * @summary 独立执行 sql 方法
-  * @param   {String}    sql
-  * @param   {Array}     [value=[]]
-  * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 sql 语句的执行结果
-  * */
-	executeSql(sql, value = []) {
-		return this._store.then(db => {
-			return new Promise((resolve, reject) => {
-				db.transaction(tx => {
-					tx.executeSql(sql, value, (tx, rs) => {
-						resolve(rs);
-					}, (tx, e) => {
-						console.log(e);
-						reject(e);
+			return this._store.then(function (db) {
+				return new Promise(function (resolve, reject) {
+					db.transaction(function (tx) {
+						tx.executeSql(_this11._config.sql.createIndex.replace(/{{col}}/g, col), [], function (tx, rs) {
+							resolve(!!rs.rowsAffected);
+						}, function (tx, e) {
+							reject(e);
+						});
 					});
 				});
 			});
-		});
-	}
-	/**
-  * @summary 针对某列建立索引
-  * @param   {String}    col
-  * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 sql 语句的执行结果
-  * */
-	createIndex(col) {
-		return this._store.then(db => {
-			return new Promise((resolve, reject) => {
-				db.transaction(tx => {
-					tx.executeSql(this._config.sql.createIndex.replace(/{{col}}/g, col), [], (tx, rs) => {
-						resolve(!!rs.rowsAffected);
-					}, (tx, e) => {
-						reject(e);
-					});
-				});
-			});
-		});
-	}
-}
+		}
+	}]);
+
+	return WebSQLModel;
+}(_model2.default);
 
 /**
  * 默认配置
  * @const
  * @static
  * */
+
+
 WebSQLModel._CONFIG = {
 	dbName: 'storage',
 	tableName: 'storage',
@@ -22713,31 +14934,50 @@ WebSQLModel._CONFIG = {
 /**
  * 在 Model.factory 工厂方法注册，将可以使用工厂方法生成
  * */
-__WEBPACK_IMPORTED_MODULE_0__model_js__["a" /* default */].register('webSQL', WebSQLModel);
+_model2.default.register('webSQL', WebSQLModel);
 /**
  * 注册别名
  * */
-__WEBPACK_IMPORTED_MODULE_0__model_js__["a" /* default */].registerAlias('webSQL', ['ws', 'sql']);
+_model2.default.registerAlias('webSQL', ['ws', 'sql']);
 
-/* unused harmony default export */ var _unused_webpack_default_export = (WebSQLModel);
+exports.default = WebSQLModel;
 
 /***/ }),
 /* 27 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jquery___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jquery__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__model_js__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__util_merge_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__util_handlerQueue_js__ = __webpack_require__(28);
 
 
+// import $            from 'jquery';
 
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _model = __webpack_require__(2);
 
+var _model2 = _interopRequireDefault(_model);
+
+var _merge = __webpack_require__(1);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+var _handlerQueue = __webpack_require__(28);
+
+var _handlerQueue2 = _interopRequireDefault(_handlerQueue);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 /**
  * @file    所有 ajax 请求基类
@@ -22754,7 +14994,9 @@ __WEBPACK_IMPORTED_MODULE_0__model_js__["a" /* default */].registerAlias('webSQL
  * @todo 通道功能，一个 topic 一次只能发送一条，其余保存在队列中，等待当前发送的返回，再发送下一条
  * @todo 限制同时发送的请求的最大数量
  * */
-class ServiceModel extends __WEBPACK_IMPORTED_MODULE_1__model_js__["a" /* default */] {
+var ServiceModel = function (_Model) {
+	_inherits(ServiceModel, _Model);
+
 	/**
   * @constructor
   * @param   {Object}    [config={}]
@@ -22763,17 +15005,22 @@ class ServiceModel extends __WEBPACK_IMPORTED_MODULE_1__model_js__["a" /* defaul
   // * @param   {Boolean}   [config.useLock]
   * @param   {Number}    [config.timeout]
   * */
-	constructor(config = {}) {
-		super();
+	function ServiceModel() {
+		var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-		this._config = Object(__WEBPACK_IMPORTED_MODULE_2__util_merge_js__["a" /* default */])(config, ServiceModel._CONFIG);
+		_classCallCheck(this, ServiceModel);
 
-		this._syncTo = null;
+		var _this = _possibleConstructorReturn(this, (ServiceModel.__proto__ || Object.getPrototypeOf(ServiceModel)).call(this));
 
-		this.interceptor = {
-			req: new __WEBPACK_IMPORTED_MODULE_3__util_handlerQueue_js__["a" /* default */](),
-			res: new __WEBPACK_IMPORTED_MODULE_3__util_handlerQueue_js__["a" /* default */]()
+		_this._config = (0, _merge2.default)(config, ServiceModel._CONFIG);
+
+		_this._syncTo = null;
+
+		_this.interceptor = {
+			req: new _handlerQueue2.default(),
+			res: new _handlerQueue2.default()
 		};
+		return _this;
 	}
 
 	// ---------- 私有方法 ----------
@@ -22782,241 +15029,287 @@ class ServiceModel extends __WEBPACK_IMPORTED_MODULE_1__model_js__["a" /* defaul
   * @param   {Object}    options setData 和 getData 的 options 参数
   * @return  {Object}
   * */
-	_setOpts(options) {
-		return Object(__WEBPACK_IMPORTED_MODULE_2__util_merge_js__["a" /* default */])(options, {
-			cache: false,
-			dataType: 'json',
-			timeout: this._config.timeout || 10000,
-			xhrFields: {
-				withCredentials: true
-			}
-		});
-	}
 
-	// ---------- 公有方法 ----------
-	/**
-  * @summary     设置数据，默认视为发送 POST 请求到服务器，不会将返回结果保存到本地缓存
-  * @override
-  * @param       {String|Object} topic               字符串类型为请求 url，对象类型为所有参数，其中 url 为必填
-  * @param       {String}        topic.url
-  * @param       {Object}        [options={}]
-  * @param       {Object}        [options.data]
-  * @param       {String}        [options.method]
-  * @return      {Promise}
-  * */
-	setData(topic, options = {}) {
-		let result;
 
-		if (typeof topic === 'object') {
-			options = topic;
-			topic = options.url;
-		}
-
-		topic = this._config.baseUrl + topic;
-
-		options = this._setOpts(options);
-
-		options.method = options.method || 'POST';
-
-		if (topic) {
-
-			// 执行请求拦截器
-			result = this.reqInterceptor(topic, options).then(rs => {
-
-				// 发送请求，向服务器发送数据
-				console.log('发送 post 请求', topic);
-
-				return this.request(topic, options);
-			}).then(res => {
-
-				// 执行响应拦截器
-				return this.resInterceptor(res);
+	_createClass(ServiceModel, [{
+		key: '_setOpts',
+		value: function _setOpts(options) {
+			return (0, _merge2.default)(options, {
+				cache: false,
+				dataType: 'json',
+				timeout: this._config.timeout || 10000,
+				xhrFields: {
+					withCredentials: true
+				}
 			});
-		} else {
-			// topic 无值不做任何处理
-			result = Promise.reject();
 		}
 
-		return result;
-	}
-	/**
-  * @summary     获取数据，默认视为发送 GET 请求到服务器，可以将返回结果保存到本地缓存
-  * @override
-  * @param       {String|Object}     topic               字符串类型为请求 url，对象类型为所有参数，其中 url 为必填
-  * @param       {Object|Boolean}    [options={}]        对象类型为 ajax 参数，Boolean 类型时将其赋值给 isCache，自身设置为 {}
-  * @param       {Object}            [options.data]
-  * @param       {String}            [options.method]
-  * @param       {Boolean}           [isCache=false]     是否优先从本地缓存中读取数据，同时发送请求后数据是否同步到本地缓存，默认为 false
-  * @return      {Promise}
-  * @todo    优先从本地 syncTo model 中读取数据，若没有则发送请求
-  * */
-	getData(topic, options = {}, isCache = false) {
-		let result;
+		// ---------- 公有方法 ----------
+		/**
+   * @summary     设置数据，默认视为发送 POST 请求到服务器，不会将返回结果保存到本地缓存
+   * @override
+   * @param       {String|Object} topic               字符串类型为请求 url，对象类型为所有参数，其中 url 为必填
+   * @param       {String}        topic.url
+   * @param       {Object}        [options={}]
+   * @param       {Object}        [options.data]
+   * @param       {String}        [options.method]
+   * @return      {Promise}
+   * */
 
-		if (typeof options === 'boolean') {
-			isCache = options;
-			options = {};
-		}
+	}, {
+		key: 'setData',
+		value: function setData(topic) {
+			var _this2 = this;
 
-		if (typeof topic === 'object') {
-			options = topic;
-			topic = options.url;
-		}
+			var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-		if (topic) {
-			// 判断是否设置了本地缓存以及是否从本地缓存中读取数据
-			if (isCache && this._syncTo) {
-				// todo 解决多个本地缓存优先级的问题
-				result = this._syncTo.getData(topic);
-			} else {
-				result = Promise.reject();
+			var result = void 0;
 
-				topic = this._config.baseUrl + topic;
-
-				options = this._setOpts(options);
-
-				options.method = options.method || 'GET';
+			if ((typeof topic === 'undefined' ? 'undefined' : _typeof(topic)) === 'object') {
+				options = topic;
+				topic = options.url;
 			}
 
-			// 当从本地缓存时未找到期望的数据会 reject，或者不从缓存中获取数据时也会 reject
-			result = result.catch(() => {
+			topic = this._config.baseUrl + topic;
+
+			options = this._setOpts(options);
+
+			options.method = options.method || 'POST';
+
+			if (topic) {
 
 				// 执行请求拦截器
-				return this.reqInterceptor(topic, options).then(() => {
+				result = this.reqInterceptor(topic, options).then(function (rs) {
 
-					// 发送请求，从服务器获取数据
-					console.log('发送 get 请求', topic);
+					// 发送请求，向服务器发送数据
+					console.log('发送 post 请求', topic);
 
-					return this.request(topic, options);
-				}).then(res => {
+					return _this2.request(topic, options);
+				}).then(function (res) {
 
 					// 执行响应拦截器
-					return this.resInterceptor(res);
-				}).then(data => {
-					// 将数据同步
-					let result;
-
-					if (isCache && this._syncTo) {
-						// 如果有设置缓存，则将请求返回的数据存入本地缓存
-						result = this._syncTo.setData(topic, data).then(() => {
-							return data;
-						}, e => {
-							console.log(e);
-
-							return data;
-						});
-					} else {
-						result = data;
-					}
-
-					return result;
+					return _this2.resInterceptor(res);
 				});
-			});
-		} else {
-			// topic 无值不做任何处理
-			result = Promise.reject();
-		}
-
-		return result;
-	}
-	/**
-  * @summary     删除数据
-  * @override
-  * @param       {String|Object} topic
-  * @param       {Object}        [options]
-  * @return      {Promise}
-  * @todo        可以考虑支持 RESTful API，发送 delete 类型的请求
-  * */
-	removeData(topic, options) {
-
-		return Promise.resolve(true);
-	}
-	/**
-  * @summary 清空数据，实际不做任何处理
-  * */
-	clearData() {
-		return Promise.resolve(true);
-	}
-	/**
-  * @summary     将数据同步到本地存储，一次只能设置一个本地缓存
-  * @override
-  * @param       {Model}     model
-  * @todo        目前只能将数据同步到一个本地缓存中，是否考虑可以同步到多个本地缓存，亦或由本地缓存之间设置同步
-  * */
-	syncTo(model) {
-
-		// 判断 model 是继承自 Model 的类但并不继承自 ServiceModel
-		if (model instanceof __WEBPACK_IMPORTED_MODULE_1__model_js__["a" /* default */] && !(model instanceof ServiceModel)) {
-			this._syncTo = model;
-		}
-	}
-	/**
-  * @summary 发送请求
-  * @param   {String}    topic
-  * @param   {Object}    options
-  * @return  {Promise}
-  * */
-	request(topic, options) {
-
-		try {
-			return __WEBPACK_IMPORTED_MODULE_0_jquery___default.a.ajax(topic, options).then(res => {
-				// 请求成功
-				return res;
-			}, () => {
-				// 请求失败
-				return new Error();
-			});
-		} catch (e) {
-			console.log('未加载 jquery');
-			return Promise.reject();
-		}
-	}
-	/**
-  * @summary 执行请求拦截器进行验证
-  * @param   {String}    topic
-  * @param   {Object}    options
-  * @return  {Promise}
-  * */
-	reqInterceptor(topic, options) {
-		let condition = rs => {
-			let result = rs.some(d => {
-				return d === false;
-			});
-
-			if (result) {
-				return Promise.reject();
 			} else {
-				return Promise.resolve();
+				// topic 无值不做任何处理
+				result = Promise.reject();
 			}
-		};
 
-		console.log('执行全局请求拦截器', topic);
-		return Promise.all(ServiceModel.interceptor.req.fireAll(null, topic, options)).then(condition).then(() => {
-			console.log('执行局部请求拦截器', topic);
+			return result;
+		}
+		/**
+   * @summary     获取数据，默认视为发送 GET 请求到服务器，可以将返回结果保存到本地缓存
+   * @override
+   * @param       {String|Object}     topic               字符串类型为请求 url，对象类型为所有参数，其中 url 为必填
+   * @param       {Object|Boolean}    [options={}]        对象类型为 ajax 参数，Boolean 类型时将其赋值给 isCache，自身设置为 {}
+   * @param       {Object}            [options.data]
+   * @param       {String}            [options.method]
+   * @param       {Boolean}           [isCache=false]     是否优先从本地缓存中读取数据，同时发送请求后数据是否同步到本地缓存，默认为 false
+   * @return      {Promise}
+   * @todo    优先从本地 syncTo model 中读取数据，若没有则发送请求
+   * */
 
-			return Promise.all(this.interceptor.req.fireAll(null, topic, options)).then(condition);
-		});
-	}
-	/**
-  * @summary 执行响应拦截器进行验证
-  * @param   {Object}    res
-  * @return  {Promise}
-  * */
-	resInterceptor(res) {
-		console.log('执行全局响应拦截器');
+	}, {
+		key: 'getData',
+		value: function getData(topic) {
+			var _this3 = this;
 
-		return ServiceModel.interceptor.res.fireReduce(res).then(res => {
-			console.log('执行局部响应拦截器');
+			var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+			var isCache = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
-			return this.interceptor.res.fireReduce(res);
-		});
-	}
-}
+			var result = void 0;
+
+			if (typeof options === 'boolean') {
+				isCache = options;
+				options = {};
+			}
+
+			if ((typeof topic === 'undefined' ? 'undefined' : _typeof(topic)) === 'object') {
+				options = topic;
+				topic = options.url;
+			}
+
+			if (topic) {
+				// 判断是否设置了本地缓存以及是否从本地缓存中读取数据
+				if (isCache && this._syncTo) {
+					// todo 解决多个本地缓存优先级的问题
+					result = this._syncTo.getData(topic);
+				} else {
+					result = Promise.reject();
+
+					topic = this._config.baseUrl + topic;
+
+					options = this._setOpts(options);
+
+					options.method = options.method || 'GET';
+				}
+
+				// 当从本地缓存时未找到期望的数据会 reject，或者不从缓存中获取数据时也会 reject
+				result = result.catch(function () {
+
+					// 执行请求拦截器
+					return _this3.reqInterceptor(topic, options).then(function () {
+
+						// 发送请求，从服务器获取数据
+						console.log('发送 get 请求', topic);
+
+						return _this3.request(topic, options);
+					}).then(function (res) {
+
+						// 执行响应拦截器
+						return _this3.resInterceptor(res);
+					}).then(function (data) {
+						// 将数据同步
+						var result = void 0;
+
+						if (isCache && _this3._syncTo) {
+							// 如果有设置缓存，则将请求返回的数据存入本地缓存
+							result = _this3._syncTo.setData(topic, data).then(function () {
+								return data;
+							}, function (e) {
+								console.log(e);
+
+								return data;
+							});
+						} else {
+							result = data;
+						}
+
+						return result;
+					});
+				});
+			} else {
+				// topic 无值不做任何处理
+				result = Promise.reject();
+			}
+
+			return result;
+		}
+		/**
+   * @summary     删除数据
+   * @override
+   * @param       {String|Object} topic
+   * @param       {Object}        [options]
+   * @return      {Promise}
+   * @todo        可以考虑支持 RESTful API，发送 delete 类型的请求
+   * */
+
+	}, {
+		key: 'removeData',
+		value: function removeData(topic, options) {
+
+			return Promise.resolve(true);
+		}
+		/**
+   * @summary 清空数据，实际不做任何处理
+   * */
+
+	}, {
+		key: 'clearData',
+		value: function clearData() {
+			return Promise.resolve(true);
+		}
+		/**
+   * @summary     将数据同步到本地存储，一次只能设置一个本地缓存
+   * @override
+   * @param       {Model}     model
+   * @todo        目前只能将数据同步到一个本地缓存中，是否考虑可以同步到多个本地缓存，亦或由本地缓存之间设置同步
+   * */
+
+	}, {
+		key: 'syncTo',
+		value: function syncTo(model) {
+
+			// 判断 model 是继承自 Model 的类但并不继承自 ServiceModel
+			if (model instanceof _model2.default && !(model instanceof ServiceModel)) {
+				this._syncTo = model;
+			}
+		}
+		/**
+   * @summary 发送请求
+   * @param   {String}    topic
+   * @param   {Object}    options
+   * @return  {Promise}
+   * */
+
+	}, {
+		key: 'request',
+		value: function request(topic, options) {
+
+			try {
+				return $.ajax(topic, options).then(function (res) {
+					// 请求成功
+					return res;
+				}, function () {
+					// 请求失败
+					return new Error();
+				});
+			} catch (e) {
+				console.log('未加载 jquery');
+				return Promise.reject();
+			}
+		}
+		/**
+   * @summary 执行请求拦截器进行验证
+   * @param   {String}    topic
+   * @param   {Object}    options
+   * @return  {Promise}
+   * */
+
+	}, {
+		key: 'reqInterceptor',
+		value: function reqInterceptor(topic, options) {
+			var _this4 = this;
+
+			var condition = function condition(rs) {
+				var result = rs.some(function (d) {
+					return d === false;
+				});
+
+				if (result) {
+					return Promise.reject();
+				} else {
+					return Promise.resolve();
+				}
+			};
+
+			console.log('执行全局请求拦截器', topic);
+			return Promise.all(ServiceModel.interceptor.req.fireAll(null, topic, options)).then(condition).then(function () {
+				console.log('执行局部请求拦截器', topic);
+
+				return Promise.all(_this4.interceptor.req.fireAll(null, topic, options)).then(condition);
+			});
+		}
+		/**
+   * @summary 执行响应拦截器进行验证
+   * @param   {Object}    res
+   * @return  {Promise}
+   * */
+
+	}, {
+		key: 'resInterceptor',
+		value: function resInterceptor(res) {
+			var _this5 = this;
+
+			console.log('执行全局响应拦截器');
+
+			return ServiceModel.interceptor.res.fireReduce(res).then(function (res) {
+				console.log('执行局部响应拦截器');
+
+				return _this5.interceptor.res.fireReduce(res);
+			});
+		}
+	}]);
+
+	return ServiceModel;
+}(_model2.default);
 
 /**
  * 默认配置
  * @static
  * */
+
+
 ServiceModel._CONFIG = {
 	baseUrl: ''
 	// , isCrossDomain: true
@@ -23030,38 +15323,50 @@ ServiceModel._CONFIG = {
  * @static
  * */
 ServiceModel.interceptor = {
-	req: new __WEBPACK_IMPORTED_MODULE_3__util_handlerQueue_js__["a" /* default */](),
-	res: new __WEBPACK_IMPORTED_MODULE_3__util_handlerQueue_js__["a" /* default */]()
+	req: new _handlerQueue2.default(),
+	res: new _handlerQueue2.default()
 };
 
 /**
  * 特别标记 ServiceModel
  * */
-__WEBPACK_IMPORTED_MODULE_1__model_js__["a" /* default */].ServiceModel = ServiceModel;
+_model2.default.ServiceModel = ServiceModel;
 
 /**
  * 在 Model.factory 工厂方法注册，将可以使用工厂方法生成
  * */
-__WEBPACK_IMPORTED_MODULE_1__model_js__["a" /* default */].register('service', ServiceModel);
+_model2.default.register('service', ServiceModel);
 /**
  * 注册别名
  * */
-__WEBPACK_IMPORTED_MODULE_1__model_js__["a" /* default */].registerAlias('service', 's');
+_model2.default.registerAlias('service', 's');
 
-/* unused harmony default export */ var _unused_webpack_default_export = (ServiceModel);
+exports.default = ServiceModel;
 
 /***/ }),
 /* 28 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-class HandlerQueue {
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var HandlerQueue = function () {
 	/**
   * @constructor
   * */
-	constructor() {
+	function HandlerQueue() {
+		_classCallCheck(this, HandlerQueue);
+
 		this._queue = [];
 		this._currIndex = 0;
 	}
@@ -23072,176 +15377,235 @@ class HandlerQueue {
   * @param   {Function}  handler
   * @return  {Number}    handler 在队列中的 id，方便删除
   * */
-	add(handler) {
-		if (typeof handler === 'function') {
-			return this._queue.push(handler);
-		} else {
-			return -1;
+
+
+	_createClass(HandlerQueue, [{
+		key: 'add',
+		value: function add(handler) {
+			if (typeof handler === 'function') {
+				return this._queue.push(handler);
+			} else {
+				return -1;
+			}
 		}
-	}
-	/**
-  * @summary 从队列中移除相应的 handler
-  * @param   {Number|Function}   findBy
-  * */
-	remove(findBy) {
+		/**
+   * @summary 从队列中移除相应的 handler
+   * @param   {Number|Function}   findBy
+   * */
 
-		if (typeof findBy === 'function') {
-			findBy = this._queue.indexOf(findBy);
-		} else if (typeof findBy === 'number') {
-			findBy = parseInt(findBy); // 去掉小数
-		} else {
-			return;
+	}, {
+		key: 'remove',
+		value: function remove(findBy) {
+
+			if (typeof findBy === 'function') {
+				findBy = this._queue.indexOf(findBy);
+			} else if (typeof findBy === 'number') {
+				findBy = parseInt(findBy); // 去掉小数
+			} else {
+				return;
+			}
+
+			if (findBy > -1) {
+				this._queue[findBy] = null;
+			}
 		}
+		/**
+   * @summary 清空队列
+   * */
 
-		if (findBy > -1) {
-			this._queue[findBy] = null;
+	}, {
+		key: 'empty',
+		value: function empty() {
+			this._queue = [];
+			this._currIndex = 0;
 		}
-	}
-	/**
-  * @summary 清空队列
-  * */
-	empty() {
-		this._queue = [];
-		this._currIndex = 0;
-	}
-	/**
-  * @summary 队列中是否还有剩余
-  * @return  {Boolean}
-  * */
-	remain() {
-		return this._currIndex < this._queue.length;
-	}
-	/**
-  * @summary 按顺序返回队列中的 handler
-  * @return  {Function|Null}
-  * @desc    当队列为空时或到队列末尾时返回 null
-  * */
-	next() {
-		let result = null,
-		    i = this._currIndex,
-		    j = this._queue.length;
+		/**
+   * @summary 队列中是否还有剩余
+   * @return  {Boolean}
+   * */
 
-		if (j) {
-			for (; i < j; i++) {
-				result = this._queue[i];
+	}, {
+		key: 'remain',
+		value: function remain() {
+			return this._currIndex < this._queue.length;
+		}
+		/**
+   * @summary 按顺序返回队列中的 handler
+   * @return  {Function|Null}
+   * @desc    当队列为空时或到队列末尾时返回 null
+   * */
 
-				if (result !== null) {
-					break;
+	}, {
+		key: 'next',
+		value: function next() {
+			var result = null,
+			    i = this._currIndex,
+			    j = this._queue.length;
+
+			if (j) {
+				for (; i < j; i++) {
+					result = this._queue[i];
+
+					if (result !== null) {
+						break;
+					}
+				}
+				if (i !== j) {
+					this._currIndex = i + 1;
 				}
 			}
-			if (i !== j) {
-				this._currIndex = i + 1;
-			}
+
+			return result;
 		}
+		/**
+   * @summary 重置队列
+   * */
 
-		return result;
-	}
-	/**
-  * @summary 重置队列
-  * */
-	reset() {
-		this._currIndex = 0;
-	}
-	/**
-  * @summary 执行队列中的一个 handler，内部指针将指向下一个 handler
-  * @param   {...*}
-  * @return  {*}
-  * @desc    当出入参数时，参数被视为传入 handler 的参数
-  * */
-	fire() {
-		return this.next()(...arguments);
-	}
-	/**
-  * @summary 执行队列中的全部 handler，将返回一个结果数组
-  * @param   {Object}    [context]
-  * @param   {...*}
-  * @return  {Array}
-  * @desc    当传入参数时，参数被视为传入 handler 的参数（所有 handler 都会传入相同的参数），全部执行后会重置
-  * */
-	fireAll(context) {
-		let args = arguments;
+	}, {
+		key: 'reset',
+		value: function reset() {
+			this._currIndex = 0;
+		}
+		/**
+   * @summary 执行队列中的一个 handler，内部指针将指向下一个 handler
+   * @param   {...*}
+   * @return  {*}
+   * @desc    当出入参数时，参数被视为传入 handler 的参数
+   * */
 
-		this.reset();
+	}, {
+		key: 'fire',
+		value: function fire() {
+			return this.next().apply(undefined, arguments);
+		}
+		/**
+   * @summary 执行队列中的全部 handler，将返回一个结果数组
+   * @param   {Object}    [context]
+   * @param   {...*}
+   * @return  {Array}
+   * @desc    当传入参数时，参数被视为传入 handler 的参数（所有 handler 都会传入相同的参数），全部执行后会重置
+   * */
 
-		return this._queue.filter(d => d !== null).map(d => d(...args));
-	}
-	/**
-  * @summary 以 reduce 的形式执行队列中的全部 handler，即前一个 handler 的返回结果作为下一个 handler 的参数
-  * @param   {*}         [init]
-  * @return  {Promise}
-  * @desc    当传入参数时，参数被视为传入第一个 handler 的参数，全部执行后会重置
-  *          由于为 reduce 方式调用，将只允许传入一个初始参数，并且原则上所有 handler 都应只有一个参数
-  *          由于为 reduce 方式调用，将返回 Promise 类型的结果
-  * */
-	fireReduce(init) {
+	}, {
+		key: 'fireAll',
+		value: function fireAll(context) {
+			var args = arguments;
 
-		this.reset();
+			this.reset();
 
-		return this._queue.filter(d => d !== null).reduce((promise, d) => {
-			return promise.then(rs => d(rs));
-		}, Promise.resolve(init));
-	}
-}
+			return this._queue.filter(function (d) {
+				return d !== null;
+			}).map(function (d) {
+				return d.apply(undefined, _toConsumableArray(args));
+			});
+		}
+		/**
+   * @summary 以 reduce 的形式执行队列中的全部 handler，即前一个 handler 的返回结果作为下一个 handler 的参数
+   * @param   {*}         [init]
+   * @return  {Promise}
+   * @desc    当传入参数时，参数被视为传入第一个 handler 的参数，全部执行后会重置
+   *          由于为 reduce 方式调用，将只允许传入一个初始参数，并且原则上所有 handler 都应只有一个参数
+   *          由于为 reduce 方式调用，将返回 Promise 类型的结果
+   * */
 
-/* harmony default export */ __webpack_exports__["a"] = (HandlerQueue);
+	}, {
+		key: 'fireReduce',
+		value: function fireReduce(init) {
+
+			this.reset();
+
+			return this._queue.filter(function (d) {
+				return d !== null;
+			}).reduce(function (promise, d) {
+				return promise.then(function (rs) {
+					return d(rs);
+				});
+			}, Promise.resolve(init));
+		}
+	}]);
+
+	return HandlerQueue;
+}();
+
+exports.default = HandlerQueue;
 
 /***/ }),
 /* 29 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__model_js__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__util_merge_js__ = __webpack_require__(1);
 
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
+var _model = __webpack_require__(2);
 
+var _model2 = _interopRequireDefault(_model);
+
+var _merge = __webpack_require__(1);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 /**
  * @class
  * @classdesc   WebSocket 接口，与 Model 统一接口，隔离数据与数据来源的问题，在 Model.factory 工厂方法注册为 webSocket，别名 socket，将可以使用工厂方法生成
  * @extends     Model
  * */
-class WebSocketModel extends __WEBPACK_IMPORTED_MODULE_0__model_js__["a" /* default */] {
+var WebSocketModel = function (_Model) {
+  _inherits(WebSocketModel, _Model);
+
   /**
    * @constructor
    * @param   {Object}    [config={}]
    * */
-  constructor(config = {}) {
-    super(config);
+  function WebSocketModel() {
+    var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-    this._config = Object(__WEBPACK_IMPORTED_MODULE_1__util_merge_js__["a" /* default */])(config, WebSocketModel._CONFIG);
+    _classCallCheck(this, WebSocketModel);
+
+    var _this = _possibleConstructorReturn(this, (WebSocketModel.__proto__ || Object.getPrototypeOf(WebSocketModel)).call(this, config));
+
+    _this._config = (0, _merge2.default)(config, WebSocketModel._CONFIG);
+    return _this;
   }
-}
+
+  return WebSocketModel;
+}(_model2.default);
 
 /**
  * 默认配置
  * @static
  * */
+
+
 WebSocketModel._CONFIG = {};
 
 /**
  * 在 Model.factory 工厂方法注册，将可以使用工厂方法生成
  * */
-__WEBPACK_IMPORTED_MODULE_0__model_js__["a" /* default */].register('webSocket', WebSocketModel);
+_model2.default.register('webSocket', WebSocketModel);
 /**
  * 注册别名
  * */
-__WEBPACK_IMPORTED_MODULE_0__model_js__["a" /* default */].registerAlias('webSocket', 'socket');
+_model2.default.registerAlias('webSocket', 'socket');
 
-/* unused harmony default export */ var _unused_webpack_default_export = (WebSocketModel);
+exports.default = WebSocketModel;
 
 /***/ }),
 /* 30 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__resize_js__ = __webpack_require__(31);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__scroll_js__ = __webpack_require__(32);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__deviceMotion_js__ = __webpack_require__(33);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__message_js__ = __webpack_require__(34);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__beforeunload_js__ = __webpack_require__(35);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__unload_js__ = __webpack_require__(36);
 
 
 /**
@@ -23252,10 +15616,35 @@ __WEBPACK_IMPORTED_MODULE_0__model_js__["a" /* default */].registerAlias('webSoc
  * @namespace   maple.view
  * */
 
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
 
+var _resize = __webpack_require__(31);
 
+var _resize2 = _interopRequireDefault(_resize);
 
+var _scroll = __webpack_require__(32);
 
+var _scroll2 = _interopRequireDefault(_scroll);
+
+var _deviceMotion = __webpack_require__(33);
+
+var _deviceMotion2 = _interopRequireDefault(_deviceMotion);
+
+var _message = __webpack_require__(34);
+
+var _message2 = _interopRequireDefault(_message);
+
+var _beforeunload = __webpack_require__(35);
+
+var _beforeunload2 = _interopRequireDefault(_beforeunload);
+
+var _unload = __webpack_require__(36);
+
+var _unload2 = _interopRequireDefault(_unload);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // todo ? 实现页面回退刷新
 // import pageShow     from './pageShow.js';
@@ -23263,10 +15652,7 @@ __WEBPACK_IMPORTED_MODULE_0__model_js__["a" /* default */].registerAlias('webSoc
 /**
  * 统计将用的的事件
  * */
-
-
-
-let needRefreshOn = false
+var needRefreshOn = false
 
 /**
  * @summary     设置页面回退时刷新该页面
@@ -23275,12 +15661,12 @@ let needRefreshOn = false
  * @desc        当 Chrome 由当前页面跳转到下一页面后，浏览回退到当前页面时，页面不会刷新，调用此函数以达成刷新页面的效果
  * */
 ,
-    needRefresh = () => {
+    needRefresh = function needRefresh() {
 	if (needRefreshOn) {
 		return;
 	}
 
-	window.onunload = () => {};
+	window.onunload = function () {};
 	// window.onpagehide = ()=>{
 	// 	window.onpageshow = ()=>{
 	// 		location.reload();
@@ -23298,8 +15684,8 @@ let needRefreshOn = false
  * @return      {Object|Number}
  * */
 ,
-    offset = (target, key) => {
-	let rs = null;
+    offset = function offset(target, key) {
+	var rs = null;
 
 	if ('getBoundingClientRect' in target) {
 		rs = target.getBoundingClientRect();
@@ -23322,35 +15708,37 @@ let needRefreshOn = false
  * @param       {*}             [transfer]
  * */
 ,
-    postMessage = (targetWindow, message, targetOrigin = '*', transfer) => {
+    postMessage = function postMessage(targetWindow, message) {
+	var targetOrigin = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '*';
+	var transfer = arguments[3];
+
 	targetWindow.postMessage(message, targetOrigin, transfer);
 };
 
 /**
  * @exports view
  * */
-/* harmony default export */ __webpack_exports__["a"] = ({
-	resize: __WEBPACK_IMPORTED_MODULE_0__resize_js__["a" /* default */],
-	scroll: __WEBPACK_IMPORTED_MODULE_1__scroll_js__["a" /* default */],
-	deviceMotion: __WEBPACK_IMPORTED_MODULE_2__deviceMotion_js__["a" /* default */],
-	message: __WEBPACK_IMPORTED_MODULE_3__message_js__["a" /* default */]
+exports.default = {
+	resize: _resize2.default,
+	scroll: _scroll2.default,
+	deviceMotion: _deviceMotion2.default,
+	message: _message2.default
 
 	// , pageShow
 
-	, beforeunload: __WEBPACK_IMPORTED_MODULE_4__beforeunload_js__["a" /* default */],
-	unload: __WEBPACK_IMPORTED_MODULE_5__unload_js__["a" /* default */],
+	, beforeunload: _beforeunload2.default,
+	unload: _unload2.default,
 
-	offset,
-	needRefresh,
-	postMessage
-});
+	offset: offset,
+	needRefresh: needRefresh,
+	postMessage: postMessage
+};
 
 /***/ }),
 /* 31 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__listener_js__ = __webpack_require__(0);
 
 
 /**
@@ -23358,24 +15746,25 @@ let needRefreshOn = false
  *          使用捕捉方式
  * */
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
+var _listener = __webpack_require__(0);
 
 /**
  * @memberOf    maple.view
  * @type        {Listener}
  * */
-let resize = Object(__WEBPACK_IMPORTED_MODULE_0__listener_js__["b" /* listener */])('resize', {
+var resize = (0, _listener.listener)('resize', {
   useDebounce: true
-});
-
-/* harmony default export */ __webpack_exports__["a"] = (resize);
+});exports.default = resize;
 
 /***/ }),
 /* 32 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__listener_js__ = __webpack_require__(0);
 
 
 /**
@@ -23383,13 +15772,17 @@ let resize = Object(__WEBPACK_IMPORTED_MODULE_0__listener_js__["b" /* listener *
  *          使用捕捉方式
  * */
 
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
 
+var _listener = __webpack_require__(0);
 
 /**
  * @memberOf    maple.view
  * @type        {Listener}
  * */
-let scroll = Object(__WEBPACK_IMPORTED_MODULE_0__listener_js__["b" /* listener */])('scroll', {
+var scroll = (0, _listener.listener)('scroll', {
 	useDebounce: true
 });
 
@@ -23417,14 +15810,14 @@ scroll.disabled = function (disabled) {
  * @return      {Object|Null}
  * */
 scroll.scrollBar = function (offset, value) {
-	let argc = arguments.length,
+	var argc = arguments.length,
 	    body = document.body,
 	    doc = document.documentElement,
 	    curr = 0,
 	    total = 1,
 	    view = 1,
 	    regexp = /^(\d+(?:\.\d+)?)(%|view)?$/,
-	    temp;
+	    temp = void 0;
 
 	if (argc === 1) {
 		// 读操作
@@ -23526,27 +15919,30 @@ scroll.scrollBar = function (offset, value) {
 	}
 };
 
-/* harmony default export */ __webpack_exports__["a"] = (scroll);
+exports.default = scroll;
 
 /***/ }),
 /* 33 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__listener_js__ = __webpack_require__(0);
 
 
 /**
  * @file    陀螺仪事件
  * */
 
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
 
+var _listener = __webpack_require__(0);
 
 /**
  * @memberOf    maple.view
  * @type        {Listener}
  * */
-let deviceMotion = null,
+var deviceMotion = null,
     type = '';
 
 if ('DeviceMotionEvent' in window) {
@@ -23558,84 +15954,106 @@ if ('DeviceMotionEvent' in window) {
 // }
 
 if (type) {
-	deviceMotion = Object(__WEBPACK_IMPORTED_MODULE_0__listener_js__["b" /* listener */])(type, {
+	deviceMotion = (0, _listener.listener)(type, {
 		useDebounce: true
 	});
 }
 
-/* harmony default export */ __webpack_exports__["a"] = (deviceMotion);
+exports.default = deviceMotion;
 
 /***/ }),
 /* 34 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__listener_js__ = __webpack_require__(0);
 
 
 /**
  * @file    postMessage 事件
  * */
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
+var _listener = __webpack_require__(0);
 
 /**
  * @memberOf    maple.view
  * @type        {Listener}
  * */
-let message = Object(__WEBPACK_IMPORTED_MODULE_0__listener_js__["b" /* listener */])('message');
-
-/* harmony default export */ __webpack_exports__["a"] = (message);
+var message = (0, _listener.listener)('message');exports.default = message;
 
 /***/ }),
 /* 35 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__listener_js__ = __webpack_require__(0);
 
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
+var _listener = __webpack_require__(0);
 
 /**
  * @memberOf    maple.view
  * @type        {Listener}
  * */
-let beforeunload = Object(__WEBPACK_IMPORTED_MODULE_0__listener_js__["b" /* listener */])('before');
+var beforeunload = (0, _listener.listener)('before');
 
-/* harmony default export */ __webpack_exports__["a"] = (beforeunload);
+exports.default = beforeunload;
 
 /***/ }),
 /* 36 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__listener_js__ = __webpack_require__(0);
 
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
+var _listener = __webpack_require__(0);
 
 /**
  * @memberOf    maple.view
  * @type        {Listener}
  * */
-let unload = Object(__WEBPACK_IMPORTED_MODULE_0__listener_js__["b" /* listener */])('unload');
+var unload = (0, _listener.listener)('unload');
 
-/* harmony default export */ __webpack_exports__["a"] = (unload);
+exports.default = unload;
 
 /***/ }),
 /* 37 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__runtime_url_js__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__util_merge_js__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__listener_js__ = __webpack_require__(0);
 
 
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _url = __webpack_require__(11);
+
+var _url2 = _interopRequireDefault(_url);
+
+var _merge = __webpack_require__(1);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+var _listener = __webpack_require__(0);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
  * @summary     路由回调函数
@@ -23649,19 +16067,25 @@ let unload = Object(__WEBPACK_IMPORTED_MODULE_0__listener_js__["b" /* listener *
  * @classdesc
  * @desc        路由配置类
  * */
-class Router {
+var Router = function () {
 	/**
   * @constructor
   * @param   {Object}    [config={}]
   * */
-	constructor(config = {}) {
-		this.listener = Object(__WEBPACK_IMPORTED_MODULE_2__listener_js__["b" /* listener */])(this, 'routerChange', (e, newUrl, oldUrl) => {});
+	function Router() {
+		var _this = this;
+
+		var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+		_classCallCheck(this, Router);
+
+		this.listener = (0, _listener.listener)(this, 'routerChange', function (e, newUrl, oldUrl) {});
 
 		this.routers = [];
 
 		if ('routers' in config && Array.isArray(config.routers)) {
-			config.routers.forEach(route => {
-				this.register(route);
+			config.routers.forEach(function (route) {
+				_this.register(route);
 			});
 		}
 	}
@@ -23670,207 +16094,238 @@ class Router {
 	/**
   * @summary 进入页面初始化 router
   * */
-	init() {
-		let tempUrl;
 
-		if (__WEBPACK_IMPORTED_MODULE_0__runtime_url_js__["a" /* default */].hash) {
-			tempUrl = __WEBPACK_IMPORTED_MODULE_0__runtime_url_js__["a" /* default */].parseUrl(__WEBPACK_IMPORTED_MODULE_0__runtime_url_js__["a" /* default */].hash);
 
-			if (this.has(tempUrl.path)) {
-				this.get(tempUrl);
-			}
-		}
-	}
-	hash() {}
-	/**
-  * @summary 注册路径
-  * @param   {Object|String|RegExp}  route           当 route 为 Object 类型时且不为 RegExp 视为路由配置对象
-  * @param   {String|RegExp}         route.path
-  * @param   {Function}              route.callback
-  * @param   {Array}                 [route.children]
-  * @param   {RouterEvent}           [callback]      当 route 为 String 或 RegExp 类型时有效
-  * @return  {Router}                this
-  * @desc    path 以 / 开始视为根目录开始，否则以当前路径目录下，不能带参数和 hash(? #)
-  *          可以配置动态路由，参数名以 :name 的形式
-  *          解析出来的路由参数将以组合到出入 RouterEvent 函数的参数 params 中
-  *          若存在同名属性则覆盖
-  * */
-	register(route, callback) {
-		let paramNames = [],
-		    pattern = null,
-		    path = '';
+	_createClass(Router, [{
+		key: 'init',
+		value: function init() {
+			var tempUrl = void 0;
 
-		// 处理 path
-		if (typeof route === 'object' && !(route instanceof RegExp)) {
-			path = route.path;
-			callback = route.callback;
-		} else {
-			path = route;
-		}
+			if (_url2.default.hash) {
+				tempUrl = _url2.default.parseUrl(_url2.default.hash);
 
-		// 处理 pattern
-		if (typeof path === 'object' && path instanceof RegExp) {
-			pattern = path;
-		} else if (typeof path === 'string') {
-
-			if (!/^\//.test(path)) {
-				// 当前目录下
-				path = __WEBPACK_IMPORTED_MODULE_0__runtime_url_js__["a" /* default */].dir + path; // 添加根目录
-			}
-
-			pattern = path.replace(/:([^\/]*)/g, (str, paramName) => {
-				paramNames.push(paramName);
-
-				return '([^\\\/]+)';
-			});
-
-			pattern = new RegExp('^' + pattern + '$');
-		}
-
-		// 添加到 routers
-		if (pattern) {
-			this.routers.push({
-				pattern,
-				paramNames,
-				callback
-			});
-		}
-
-		// todo 子路由
-		if (typeof router === 'object' && 'children' in router) {
-			// this.children = new Router({
-			// 	routers: router.children
-			// });
-		}
-
-		return this;
-	}
-	/**
-  * @summary 跳转到路径
-  * @param   {String|Url}        path
-  * @param   {Object|Boolean}    [params={}]
-  * @desc
-  * */
-	get(path, params = {}) {
-		let tempUrl = __WEBPACK_IMPORTED_MODULE_0__runtime_url_js__["a" /* default */].parseUrl(path);
-
-		path = tempUrl.path;
-
-		// return
-		// this.routers.reduce((promise, route)=>{
-		// 	let result = route.pattern.exec( path )
-		// 		, tempParams
-		// 		;
-		//
-		// 	if( result ){    // 存在匹配 path
-		//
-		// 		// 解析 url 中的参数
-		// 		tempParams = route.paramNames.reduce((all, d, i)=>{
-		// 			all[d] = result[i +1];
-		//
-		// 			return all;
-		// 		}, {});
-		// 		tempParams = merge(tempParams, params);
-		//
-		// 		if( 'before' in route && typeof route.before === 'function' ){
-		// 			promise = promise.then(()=>{
-		// 				return new Promise((resolve)=>{
-		// 					route.before(url.pack(), path, tempParams, resolve);
-		// 				});
-		// 			});
-		// 		}
-		//
-		// 		promise = promise.then((exec)=>{
-		// 			if( exec ){
-		// 				return route.callback( tempParams );
-		// 			}
-		// 		});
-		//
-		// 		if( 'after' in route && typeof route.after === 'function' ){
-		// 			promise = promise.then(()=>{
-		// 				return new Promise((resolve, reject)=>{
-		// 					route.after(url.pack(), path, tempParams, (execRemain)=>{
-		// 						if( execRemain ){
-		// 							resolve();
-		// 						}
-		// 						else{
-		// 							reject();
-		// 						}
-		// 					});
-		// 				});
-		// 			});
-		// 		}
-		// 	}
-		//
-		// 	return promise;
-		// }, Promise.resolve());
-
-		return this.routers.map(route => {
-			let result = route.pattern.exec(path),
-			    temp;
-
-			if (result) {
-				// 存在匹配 path
-				// 解析 url 中的参数
-				temp = result.slice(1).reduce((all, d, i) => {
-					all[route.paramNames[i]] = d;
-
-					return all;
-				}, {});
-
-				temp = Object(__WEBPACK_IMPORTED_MODULE_1__util_merge_js__["a" /* default */])(temp, params);
-
-				try {
-					// 执行路由程序
-
-					route.callback(temp);
-
-					this.listener.trigger(__WEBPACK_IMPORTED_MODULE_0__runtime_url_js__["a" /* default */].pack(), tempUrl.pack());
-				} catch (e) {
-					console.log(path, '路由执行错误', e);
+				if (this.has(tempUrl.path)) {
+					this.get(tempUrl);
 				}
 			}
+		}
+	}, {
+		key: 'hash',
+		value: function hash() {}
+		/**
+   * @summary 注册路径
+   * @param   {Object|String|RegExp}  route           当 route 为 Object 类型时且不为 RegExp 视为路由配置对象
+   * @param   {String|RegExp}         route.path
+   * @param   {Function}              route.callback
+   * @param   {Array}                 [route.children]
+   * @param   {RouterEvent}           [callback]      当 route 为 String 或 RegExp 类型时有效
+   * @return  {Router}                this
+   * @desc    path 以 / 开始视为根目录开始，否则以当前路径目录下，不能带参数和 hash(? #)
+   *          可以配置动态路由，参数名以 :name 的形式
+   *          解析出来的路由参数将以组合到出入 RouterEvent 函数的参数 params 中
+   *          若存在同名属性则覆盖
+   * */
 
-			return !!result;
-		}).some(d => d);
-	}
-	/**
-  * @summary 判断已注册的路由中是否有匹配该路径
-  * @param   {String}    path
-  * @return  {Boolean}
-  * */
-	has(path) {
-		return this.routers.some(route => {
-			return route.pattern.test(path);
-		});
-	}
-}
+	}, {
+		key: 'register',
+		value: function register(route, callback) {
+			var paramNames = [],
+			    pattern = null,
+			    path = '';
 
-let router = new Router();
+			// 处理 path
+			if ((typeof route === 'undefined' ? 'undefined' : _typeof(route)) === 'object' && !(route instanceof RegExp)) {
+				path = route.path;
+				callback = route.callback;
+			} else {
+				path = route;
+			}
 
-__WEBPACK_IMPORTED_MODULE_0__runtime_url_js__["a" /* default */].popState.add(() => {
-	let rs = router.get(location.href);
+			// 处理 pattern
+			if ((typeof path === 'undefined' ? 'undefined' : _typeof(path)) === 'object' && path instanceof RegExp) {
+				pattern = path;
+			} else if (typeof path === 'string') {
+
+				if (!/^\//.test(path)) {
+					// 当前目录下
+					path = _url2.default.dir + path; // 添加根目录
+				}
+
+				pattern = path.replace(/:([^\/]*)/g, function (str, paramName) {
+					paramNames.push(paramName);
+
+					return '([^\\\/]+)';
+				});
+
+				pattern = new RegExp('^' + pattern + '$');
+			}
+
+			// 添加到 routers
+			if (pattern) {
+				this.routers.push({
+					pattern: pattern,
+					paramNames: paramNames,
+					callback: callback
+				});
+			}
+
+			// todo 子路由
+			if ((typeof router === 'undefined' ? 'undefined' : _typeof(router)) === 'object' && 'children' in router) {
+				// this.children = new Router({
+				// 	routers: router.children
+				// });
+			}
+
+			return this;
+		}
+		/**
+   * @summary 跳转到路径
+   * @param   {String|Url}        path
+   * @param   {Object|Boolean}    [params={}]
+   * @desc
+   * */
+
+	}, {
+		key: 'get',
+		value: function get(path) {
+			var _this2 = this;
+
+			var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+			var tempUrl = _url2.default.parseUrl(path);
+
+			path = tempUrl.path;
+
+			// return
+			// this.routers.reduce((promise, route)=>{
+			// 	let result = route.pattern.exec( path )
+			// 		, tempParams
+			// 		;
+			//
+			// 	if( result ){    // 存在匹配 path
+			//
+			// 		// 解析 url 中的参数
+			// 		tempParams = route.paramNames.reduce((all, d, i)=>{
+			// 			all[d] = result[i +1];
+			//
+			// 			return all;
+			// 		}, {});
+			// 		tempParams = merge(tempParams, params);
+			//
+			// 		if( 'before' in route && typeof route.before === 'function' ){
+			// 			promise = promise.then(()=>{
+			// 				return new Promise((resolve)=>{
+			// 					route.before(url.pack(), path, tempParams, resolve);
+			// 				});
+			// 			});
+			// 		}
+			//
+			// 		promise = promise.then((exec)=>{
+			// 			if( exec ){
+			// 				return route.callback( tempParams );
+			// 			}
+			// 		});
+			//
+			// 		if( 'after' in route && typeof route.after === 'function' ){
+			// 			promise = promise.then(()=>{
+			// 				return new Promise((resolve, reject)=>{
+			// 					route.after(url.pack(), path, tempParams, (execRemain)=>{
+			// 						if( execRemain ){
+			// 							resolve();
+			// 						}
+			// 						else{
+			// 							reject();
+			// 						}
+			// 					});
+			// 				});
+			// 			});
+			// 		}
+			// 	}
+			//
+			// 	return promise;
+			// }, Promise.resolve());
+
+			return this.routers.map(function (route) {
+				var result = route.pattern.exec(path),
+				    temp = void 0;
+
+				if (result) {
+					// 存在匹配 path
+					// 解析 url 中的参数
+					temp = result.slice(1).reduce(function (all, d, i) {
+						all[route.paramNames[i]] = d;
+
+						return all;
+					}, {});
+
+					temp = (0, _merge2.default)(temp, params);
+
+					try {
+						// 执行路由程序
+
+						route.callback(temp);
+
+						_this2.listener.trigger(_url2.default.pack(), tempUrl.pack());
+					} catch (e) {
+						console.log(path, '路由执行错误', e);
+					}
+				}
+
+				return !!result;
+			}).some(function (d) {
+				return d;
+			});
+		}
+		/**
+   * @summary 判断已注册的路由中是否有匹配该路径
+   * @param   {String}    path
+   * @return  {Boolean}
+   * */
+
+	}, {
+		key: 'has',
+		value: function has(path) {
+			return this.routers.some(function (route) {
+				return route.pattern.test(path);
+			});
+		}
+	}]);
+
+	return Router;
+}();
+
+var router = new Router();
+
+_url2.default.popState.add(function () {
+	var rs = router.get(location.href);
 
 	if (!rs) {
 		console.log('router 中不存在', location.href);
 	}
 });
 
-/* harmony default export */ __webpack_exports__["a"] = (router);
+exports.default = router;
 
 /***/ }),
 /* 38 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util_merge_js__ = __webpack_require__(1);
 
 
 /**
  * @file    对地理定位接口进行封装
  * */
 
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
 
+var _merge = __webpack_require__(1);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
  * @summary     获取定位信息
@@ -23881,12 +16336,14 @@ __WEBPACK_IMPORTED_MODULE_0__runtime_url_js__["a" /* default */].popState.add(()
  * @param       {Number}    [options.maximumAge=5000]           最长有效期
  * @return      {Promise}
  * */
-let position = function (options = {}) {
-	let result;
+var position = function position() {
+	var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+	var result = void 0;
 
 	if ('geolocation' in navigator) {
 		result = new Promise(function (resolve, reject) {
-			let opts = Object(__WEBPACK_IMPORTED_MODULE_0__util_merge_js__["a" /* default */])(options, position._CONFIG);
+			var opts = (0, _merge2.default)(options, position._CONFIG);
 
 			navigator.geoposition.getCurrentPosition(resolve, reject, opts);
 		});
@@ -23909,105 +16366,148 @@ position._CONFIG = {
 /**
  * @exports position
  * */
-/* harmony default export */ __webpack_exports__["a"] = (position);
+exports.default = position;
 
 /***/ }),
 /* 39 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__animator_js__ = __webpack_require__(12);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__queue_js__ = __webpack_require__(40);
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "animator", function() { return __WEBPACK_IMPORTED_MODULE_0__animator_js__["a"]; });
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "queue", function() { return __WEBPACK_IMPORTED_MODULE_1__queue_js__["a"]; });
 
 
 /**
  * @namespace   maple.animate
  * */
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.queue = exports.animator = undefined;
 
+var _animator = __webpack_require__(12);
 
+var _animator2 = _interopRequireDefault(_animator);
 
+var _queue = __webpack_require__(40);
 
+var _queue2 = _interopRequireDefault(_queue);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.animator = _animator2.default;
+exports.queue = _queue2.default;
 
 /***/ }),
 /* 40 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__animator_js__ = __webpack_require__(12);
 
 
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-class AnimationQueue {
-	constructor(animators) {
+var _animator = __webpack_require__(12);
+
+var _animator2 = _interopRequireDefault(_animator);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var AnimationQueue = function () {
+	function AnimationQueue(animators) {
+		_classCallCheck(this, AnimationQueue);
+
 		this.animators = animators || [];
 	}
 
-	append() {
-		this.animators.push.apply(this.animators, arguments);
-	}
-	flush() {
-		let self = this;
+	_createClass(AnimationQueue, [{
+		key: 'append',
+		value: function append() {
+			this.animators.push.apply(this.animators, arguments);
+		}
+	}, {
+		key: 'flush',
+		value: function flush() {
+			var self = this;
 
-		if (this.animators.length) {
-			(function play() {
-				let animator = self.animators.shift();
+			if (this.animators.length) {
+				(function play() {
+					var animator = self.animators.shift();
 
-				if (animator instanceof __WEBPACK_IMPORTED_MODULE_0__animator_js__["a" /* default */]) {
-					animator.start(function () {
+					if (animator instanceof _animator2.default) {
+						animator.start(function () {
+							if (self.animators.length) {
+								play();
+							}
+						});
+					} else {
+						animator.apply(self);
+
 						if (self.animators.length) {
 							play();
 						}
-					});
-				} else {
-					animator.apply(self);
-
-					if (self.animators.length) {
-						play();
 					}
-				}
-			})();
+				})();
+			}
 		}
-	}
-}
+	}]);
 
-/* harmony default export */ __webpack_exports__["a"] = (AnimationQueue);
+	return AnimationQueue;
+}();
+
+exports.default = AnimationQueue;
 
 /***/ }),
 /* 41 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__serviceWorker_js__ = __webpack_require__(42);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__webWorker_js__ = __webpack_require__(43);
 
 
 /**
  * @module  register
  * */
 
-
-
-
-
-/* harmony default export */ __webpack_exports__["a"] = ({
-  serviceWorker: __WEBPACK_IMPORTED_MODULE_0__serviceWorker_js__["a" /* default */],
-  webWorker: __WEBPACK_IMPORTED_MODULE_1__webWorker_js__["a" /* default */]
+Object.defineProperty(exports, "__esModule", {
+  value: true
 });
+
+var _serviceWorker = __webpack_require__(42);
+
+var _serviceWorker2 = _interopRequireDefault(_serviceWorker);
+
+var _webWorker = __webpack_require__(43);
+
+var _webWorker2 = _interopRequireDefault(_webWorker);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+  serviceWorker: _serviceWorker2.default,
+  webWorker: _webWorker2.default
+};
 
 /***/ }),
 /* 42 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util_merge_js__ = __webpack_require__(1);
 
 
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
 
+var _merge = __webpack_require__(1);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
  * @summary     注册 Service Worker
@@ -24016,17 +16516,19 @@ class AnimationQueue {
  * @param       {String}    options.file
  * @return      {Promise}   返回一个 Promise 对象，在 resolve 时传入 true
  * */
-function registerServiceWorker(options = {}) {
-	let config = Object(__WEBPACK_IMPORTED_MODULE_0__util_merge_js__["a" /* default */])(options, registerServiceWorker._CONFIG);
+function registerServiceWorker() {
+	var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-	return new Promise((resolve, reject) => {
+	var config = (0, _merge2.default)(options, registerServiceWorker._CONFIG);
+
+	return new Promise(function (resolve, reject) {
 		if ('serviceWorker' in navigator) {
 			if (!(config.file in registerServiceWorker._CACHE)) {
 
 				registerServiceWorker._CACHE[config.file] = navigator.serviceWorker.register(config.file, {
 					scope: config.scope
-				}).then(regist => {
-					let serviceWorker;
+				}).then(function (regist) {
+					var serviceWorker = void 0;
 
 					if (regist.installing) {
 						serviceWorker = regist.installing;
@@ -24048,12 +16550,12 @@ function registerServiceWorker(options = {}) {
 					console.log(e);
 				});
 
-				navigator.serviceWorker.ready.then(reg => {
-					reg.pushManager.getSubscription().then(res => {
+				navigator.serviceWorker.ready.then(function (reg) {
+					reg.pushManager.getSubscription().then(function (res) {
 						if (!res) {
 							reg.pushManager.subscribe({
 								userVisibleOnly: true
-							}).then(sub => {
+							}).then(function (sub) {
 								console.log('Subscribed! Endpoint', sub.endpoint);
 							});
 						} else {
@@ -24079,17 +16581,24 @@ registerServiceWorker._CONFIG = {
 	scope: './'
 };
 
-/* harmony default export */ __webpack_exports__["a"] = (registerServiceWorker);
+exports.default = registerServiceWorker;
 
 /***/ }),
 /* 43 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util_merge_js__ = __webpack_require__(1);
 
 
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
 
+var _merge = __webpack_require__(1);
+
+var _merge2 = _interopRequireDefault(_merge);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
  * 运行 Web Worker
@@ -24098,10 +16607,12 @@ registerServiceWorker._CONFIG = {
  * @param   {String}    options.file
  * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传入生成的 Web Worker 实例
  * */
-function registerWebWorker(options = {}) {
-	let config = Object(__WEBPACK_IMPORTED_MODULE_0__util_merge_js__["a" /* default */])(options, registerWebWorker._CONFIG);
+function registerWebWorker() {
+	var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-	return new Promise((resolve, reject) => {
+	var config = (0, _merge2.default)(options, registerWebWorker._CONFIG);
+
+	return new Promise(function (resolve, reject) {
 		if ('Worker' in self) {
 
 			if (!(config.file in registerWebWorker._WORKER_CACHE)) {
@@ -24121,11 +16632,11 @@ registerWebWorker._CONFIG = {
 	file: 'ww.js'
 };
 
-/* harmony default export */ __webpack_exports__["a"] = (registerWebWorker);
+exports.default = registerWebWorker;
 
 /***/ }),
 /* 44 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
@@ -24137,13 +16648,16 @@ registerWebWorker._CONFIG = {
  * @param   {String}    content
  * */
 
-let notify = function (title, content) {};
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+var notify = function notify(title, content) {};
 
 if ('Notification' in self) {
-	notify = function (title, content) {
-		let Notify = self.Notification,
-		    notification,
-		    permission;
+	notify = function notify(title, content) {
+		var Notify = self.Notification,
+		    notification = void 0,
+		    permission = void 0;
 
 		//判断浏览器是否已允许桌面提醒
 		if (Notify.permission === 'granted') {
@@ -24156,7 +16670,7 @@ if ('Notification' in self) {
 
 		permission.then(function () {
 
-			return new Promise(resolve => {
+			return new Promise(function (resolve) {
 				notification = new Notify(title, {
 					icon: '/image/favicon.ico',
 					body: content
@@ -24194,12 +16708,12 @@ if ('Notification' in self) {
 // 	}
 // }
 else {
-		notify = function () {
+		notify = function notify() {
 			return Promise.reject();
 		};
 	}
 
-/* harmony default export */ __webpack_exports__["a"] = (notify);
+exports.default = notify;
 
 /***/ }),
 /* 45 */
