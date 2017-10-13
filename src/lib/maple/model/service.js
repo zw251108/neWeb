@@ -1,10 +1,9 @@
 'use strict';
 
-// import $            from 'jquery';
-
 import Model        from './model.js';
 import merge        from '../util/merge.js';
 import HandlerQueue from '../util/handlerQueue.js';
+import request      from '../request.js';
 
 /**
  * @file    所有 ajax 请求基类
@@ -94,7 +93,7 @@ class ServiceModel extends Model{
 				// 发送请求，向服务器发送数据
 				console.log('发送 post 请求', topic);
 
-				return this.request(topic, options);
+				return request(topic, options);
 			}).then((res)=>{
 
 				// 执行响应拦截器
@@ -157,7 +156,7 @@ class ServiceModel extends Model{
 					// 发送请求，从服务器获取数据
 					console.log('发送 get 请求', topic);
 
-					return this.request(topic, options);
+					return request(topic, options);
 				}).then((res)=>{
 
 					// 执行响应拦截器
@@ -221,26 +220,6 @@ class ServiceModel extends Model{
 		}
 	}
 	/**
-	 * @summary 发送请求
-	 * @param   {String}    topic
-	 * @param   {Object}    options
-	 * @return  {Promise}
-	 * */
-	request(topic, options){
-
-		try{
-			return $.ajax(topic, options).then((res)=>{ // 请求成功
-				return res;
-			}, ()=>{    // 请求失败
-				return new Error();
-			});
-		}
-		catch(e){
-			console.log('未加载 jquery');
-			return Promise.reject();
-		}
-	}
-	/**
 	 * @summary 执行请求拦截器进行验证
 	 * @param   {String}    topic
 	 * @param   {Object}    options
@@ -263,11 +242,11 @@ class ServiceModel extends Model{
 			;
 
 		console.log('执行全局请求拦截器', topic);
-		return Promise.all( ServiceModel.interceptor.req.fireAll(null, topic, options) ).then( condition ).then(()=>{
+		return Promise.all( ServiceModel.interceptor.req.fireAll(topic, options) ).then( condition ).then(()=>{
 			console.log('执行局部请求拦截器', topic);
 
-			return Promise.all( this.interceptor.req.fireAll(null, topic, options) ).then( condition );
-		});
+			return Promise.all( this.interceptor.req.fireAll(topic, options) );
+		}).then( condition );
 	}
 	/**
 	 * @summary 执行响应拦截器进行验证
@@ -279,7 +258,7 @@ class ServiceModel extends Model{
 
 		return ServiceModel.interceptor.res.fireReduce( res ).then((res)=>{
 			console.log('执行局部响应拦截器');
-
+			
 			return this.interceptor.res.fireReduce( res );
 		});
 	}

@@ -9,12 +9,9 @@ import $        from 'jquery';
 import Vue      from 'vue';
 import z        from 'z';
 
-console.log($)
-console.log(Vue)
-
-import module   from '../component/module/index.vue';
-import metro    from '../component/metro/index.vue';
-import dialog   from '../component/dialog/index.vue';
+import zModule   from '../component/module/index.vue';
+import zMetro    from '../component/metro/index.vue';
+import zDialog   from '../component/dialog/index.vue';
 
 let ls = z.model.factory('ls')
 	, service = z.model.factory('s')
@@ -41,18 +38,22 @@ let ls = z.model.factory('ls')
 			}]
 		}
 		, components: {
-			zModule: module
-			, zMetro: metro
-			, zDialog: dialog
+			zModule
+			, zMetro
+			, zDialog
 		}
 	})
 	;
 
-service.getData('/modules').then((res)=>{
-	                            console.log(res.data.modules)
-	vm.modules =res.data.modules.map((d)=>{
+service.getData('/modules').then((data)=>{
+
+	vm.modules =data.modules.map((d)=>{
 		d.size = d.metroSize;
 		
 		return d;
 	});
-});
+}).catch( e=>console.log(e) );
+
+ls.getData('user').then((user)=>{
+	
+}).catch( e=>console.log('用户尚未登录') );

@@ -54,3 +54,5 @@ src/lib/testFrame/track/
 src/lib/testFrame/url/
 static/tgouDoc/
 work/
+
+dist/

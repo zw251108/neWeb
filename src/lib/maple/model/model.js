@@ -6,14 +6,14 @@ import {listener}   from '../listener.js';
  * @class
  * @classdesc   数据层基类，将数据保存在内存中
  * @example
-let model = new Model();
+ let model = new Model();
 
-// 保存数据，以 key-value 的形式保存
-model.setData('index/first', true).then(()=>{
+ // 保存数据，以 key-value 的形式保存
+ model.setData('index/first', true).then(()=>{
 	console.log('数据保存成功');
 });
-// 保存对象
-model.setData({
+ // 保存对象
+ model.setData({
 	isLogin: true
 	, token: '123123123123123'
 	, hybrid: false
@@ -21,19 +21,19 @@ model.setData({
 	// do something
 });
 
-// 获取数据
-model.getData('index/first').then((value)=>{
+ // 获取数据
+ model.getData('index/first').then((value)=>{
 	console.log('获取到数据 ', value);
 }, (e)=>{
 	console.log('当数据不存在时，reject 传入 null');
 });
-// 以数组的形式获取数据，返回的数据会被组成一个 Json，若 key 对应的 value 不存在会设为 null
-model.getData(['isLogin', 'token', 'hybrid']).then(({isLogin, token, hybrid})=>{
+ // 以数组的形式获取数据，返回的数据会被组成一个 Json，若 key 对应的 value 不存在会设为 null
+ model.getData(['isLogin', 'token', 'hybrid']).then(({isLogin, token, hybrid})=>{
 	console.log(isLogin, token, hybrid);    // true, '123123123123123', false
 	// 利用 JSON.parse 可以解析出基础类型数据
 });
-// 获取多个数据的返回结果与数组形式相同
-model.getData('isLogin', 'token', 'hybrid').then(({isLogin, token, hybrid})=>{
+ // 获取多个数据的返回结果与数组形式相同
+ model.getData('isLogin', 'token', 'hybrid').then(({isLogin, token, hybrid})=>{
 	//
 })
  * */
@@ -43,6 +43,7 @@ class Model{
 	 * */
 	constructor(){
 		this._value = Object.create( null );    // 不会受到 prototype 的影响，适合用来存储数据，没有 hasOwnProperty、toString 方法
+		this._history = Object.create( null );  // 历史记录
 		this._eventList = [];
 		this._syncList = [];
 
@@ -99,7 +100,7 @@ class Model{
 	 * */
 	static factory(type, notCache=false, options={}){
 		let model
-			;
+		;
 
 		if( type ){
 
@@ -165,13 +166,49 @@ class Model{
 		return typeof value === 'object' ? JSON.stringify( value ) : value.toString();
 	}
 	/**
+	 * @summary     获取上一次该 topic 最后记录
+	 * @protected
+	 * @param       {String}    topic
+	 * @return      {*}
+	 * @desc        任何 topic 记录的第一个值都为 null
+	 * */
+	_lastData(topic){
+		let t = this._history[topic]
+		;
+
+		if( !t ){
+			t = this._history[topic] = [null];
+		}
+
+		return t[t.length -1];
+	}
+	/**
+	 * @summary     记录数据的改变
+	 * @protected
+	 * @param       {String}    topic
+	 * @param       {*}         newVal
+	 * */
+	_trackData(topic, newVal){
+		let oldVal = this._lastData( topic )
+		;
+
+		if( newVal !== oldVal ){
+			this._history[topic].push( newVal );
+
+			console.log('设置', topic, '的值为', newVal);
+
+			this._trigger(topic, newVal, oldVal);
+		}
+	}
+	/**
 	 * @summary     触发绑定的数据监控事件
 	 * @protected
 	 * @param       {String}    topic
-	 * @param       {*}         value
+	 * @param       {*}         newValue
+	 * @param       {*}         oldValue
 	 * */
-	_trigger(topic, value){
-		this._listener.trigger(topic, value);
+	_trigger(topic, newValue, oldValue){
+		this._listener.trigger(topic, newValue, oldValue);
 	}
 	/**
 	 * @summary     数据同步的内部实现
@@ -299,11 +336,11 @@ class Model{
 	 * @param   {*}             [value] 为 null、undefined 时会被保存为空字符串，当 topic 为 object 类型时被忽略
 	 * @return  {Promise}       返回一个 Promise 对象，在 resolve 时传回 true
 	 * @desc    设置数据的时候会使用 Object.defineProperty 定义该属性
-				目前子类的实现中都调用了 super.setData，若其它子类的实现中并没有调用，但需对数据监控，应在适当的时候调用 _trigger 方法
+	 目前子类的实现中都调用了 super.setData，若其它子类的实现中并没有调用，但需对数据监控，应在适当的时候调用 _trigger 方法
 	 * */
 	setData(topic, value){
 		let result
-			;
+		;
 
 		if( typeof topic === 'object' ){
 			result = this._setByObject( topic );
@@ -313,14 +350,13 @@ class Model{
 				this._value[topic] = value;
 			}
 			else{
-				// // todo 判断是 object 类型的进行深度 defineProperty
+				// todo 判断 value 是 object 类型的进行深度 defineProperty
+
 				// if( typeof value === 'object' ){
 				// 	Object.keys( value ).forEach((d)=>{
 				// 		this._setObserver(value[d], d, topic);
 				// 	});
 				// }
-
-				// console.log('监控', topic, '属性的值');
 
 				/**
 				 * 不能同时设置访问器 (get 和 set) 和 writable 或 value，否则会报错误
@@ -331,20 +367,14 @@ class Model{
 					, configurable: true
 					// , value: value
 					, set: (newVal)=>{
-						console.log('设置', topic, '的值为', newVal);
-
-						if( newVal !== value ){
-
-							this._trigger(topic, newVal);
-						}
+						this._trackData(topic, newVal);
 					}
-					, get(){
-						console.log('获取', topic, '的值', value, typeof value);
-						return value;
+					, get: ()=>{
+						return this._lastData( topic );
 					}
 				});
 
-				this._trigger(topic, value);
+				this._trackData(topic, value);
 			}
 
 			result = Promise.resolve( true );
@@ -361,7 +391,7 @@ class Model{
 	getData(topic){
 		let argc = arguments.length
 			, result
-			;
+		;
 
 		if( Array.isArray(topic) ){
 			result = this._getByArray( topic );
@@ -374,10 +404,10 @@ class Model{
 				result = Promise.resolve( this._value[topic] );
 			}
 			else{
-				result = Promise.reject( null );
+				result = Promise.reject( null );    // todo 调用 setData ?
 			}
 		}
-		
+
 		return result;
 	}
 	/**
@@ -388,31 +418,32 @@ class Model{
 	 * */
 	removeData(topic){
 		let result
-			;
+		;
 
 		if( Array.isArray(topic) ){
 			result = this._removeByArray( topic );
 		}
 		else{
 			try {
-				if( topic in this._value ){
-					// if( this._value.hasOwnProperty(topic) ){
+				// if( topic in this._value ){
+				//
+				// 	let t = this._value[topic]
+				// 		;
+				//
+				// 	delete this._value[topic];
+				//
+				// 	this._trigger(topic, null, t);
+				// }
+				// else{   // model 中不存在该数据
+				// 	this._trigger(topic, null, void 0);
+				// }
 
-						delete this._value[topic];
+				/**
+				 * 取消使用 delete 删除属性值，而将值设置为 null
+				 * */
+				this._value = null;
 
-						result = Promise.resolve(true);
-
-						this._trigger(topic, null);
-					// }
-					// else{
-					// 	result = Promise.reject( new Error('只能删除自定义属性') );
-					// }
-				}
-				else{   // model 中不存在该数据
-					result = Promise.resolve(true);
-
-					this._trigger(topic, null);
-				}
+				result = Promise.resolve( true );
 			}
 			catch(e){
 				result = Promise.reject( e );
@@ -424,11 +455,21 @@ class Model{
 	/**
 	 * @summary 清空数据
 	 * @return  {Promise}   返回一个 Promise 对象，在 resolve 时传回 true
+	 * @desc    清空操作将不触发监听事件
 	 * */
 	clearData(){
+		Object.keys( this._value ).forEach((k)=>{
+			let oldVal = this._lastData( k )
+			;
+
+			if( oldVal !== null ){
+				this._history[k].push( null );
+			}
+		});
+
 		this._value = {};
 
-		return Promise.resolve(true);
+		return Promise.resolve( true );
 	}
 
 	/**
@@ -459,7 +500,7 @@ class Model{
 	 * */
 	cleanSync(model){
 		let i = this._syncList.indexOf( model )
-			;
+		;
 
 		if( i !== -1 ){
 			this._syncList.splice(i, 1);

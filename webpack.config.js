@@ -176,7 +176,6 @@
 
 let webpack = require('webpack')
 	, path = require('path')
-	, compiler = require('vue-template-compiler')
 	, HtmlWebpackPlugin = require('html-webpack-plugin')
 	;
 
@@ -184,15 +183,13 @@ module.exports = {
 	devtool: '#source-map',
 	//插件项
 	plugins: [
-		// 提取公共文件
 		new webpack.optimize.CommonsChunkPlugin({
-			name: 'v'
+			name: 'vendor'
 		})
 		, new HtmlWebpackPlugin({
-			title: 'Hello Mobile app'
-			, template: path.resolve(__dirname, 'tpl/index.html')
+			template: path.resolve(__dirname, 'tpl/index.html')
 			, filename: 'index.html'
-			, chunks: ['v', 'index']
+			, chunks: ['vendor', 'z', 'index']
 			, inject: 'body'
 		})
 		// new webpack.optimize.UglifyJsPlugin({
@@ -212,7 +209,8 @@ module.exports = {
 	],
 	//页面入口文件配置
 	entry: {
-		v: ['jquery', 'vue', 'z']
+		vendor: ['jquery', 'vue']
+		, z: ['z']
 		, index: [path.resolve(__dirname, 'src/app/index.js')]
 	},
 	//入口文件输出配置
@@ -256,19 +254,12 @@ module.exports = {
 	},
 	externals:{
 		Vue:'vue'
-		// , maple: 'maple'
-		// , z: 'z'
-		// , $: 'window.$'
-		// , jquery: 'window.$'
-		, jquery: {
-			root: '$'
-		}
 	},
 	resolve: {
 		modules: ['node_modules', __dirname]
 		, alias: {
-			maple: path.resolve(__dirname, 'src/lib/maple/base.js'),
-			z: path.resolve(__dirname, 'src/lib/z/index.js')
+			maple: path.resolve(__dirname, 'src/lib/maple/base.js')
+			, z: path.resolve(__dirname, 'src/lib/z/index.js')
 			, vue$: 'vue/dist/vue.common.js'
 		}
 	}
