@@ -325,12 +325,12 @@ web.get('/admin/reader/bookmark', function(req, res){
 	});
 });
 
-web.get('/reader/bookmark/data', function(req, res){
+web.get('/reader/bookmark/count/data', function(req, res){
 	let query = req.query || {}
 		, user = UserHandler.getUserFromSession.fromReq( req )
 		;
 
-	ReaderHandler.getBookmarkReadPerDay( user).then(function(rs){
+	ReaderHandler.getBookmarkReadPerDay( user ).then(function(rs){
 		return {
 			data: rs
 			, msg: 'Done'
