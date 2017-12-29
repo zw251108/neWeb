@@ -35,13 +35,10 @@ var CONFIG = require('../../config.js')
 				if( name ){
 					data.userId = user.id;
 
-					execute = TagModel.add( data ).then(function(rs){
-						var result
-							;
-
-						if( rs.insertId ){
-							data.id = rs.insertId;
-							result = data;
+					execute = TagModel.add( data ).then(function(result){
+						if( result.id ){
+							// data.id = rs.insertId;
+							// result = data;
 						}
 						else{
 							result = TagHandler.getError(name +' 标签创建失败');
