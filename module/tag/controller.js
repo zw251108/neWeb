@@ -88,10 +88,10 @@ socket.register({
 			socket.emit('data', json);
 		});
 	}
-	, 'tag/add': function(socket, data){
+	, 'tag/add': function(socketFrom, data){
 		let topic = 'tag/add'
 			, query = data.query || {}
-			, user = UserHandler.getUserFromSession.fromSocket( socket )
+			, user = UserHandler.getUserFromSession.fromSocket( socketFrom )
 			;
 
 		TagHandler.newTag(user, query).then(function(data){
@@ -108,7 +108,7 @@ socket.register({
 				, msg: e.message
 			};
 		}).then(function(json){
-			socket.sendDataBySession(UserHandler.getUserAllSession( user.id ), json);
+			socket.sendDataBySession([UserHandler.getUserAllSession( user.id )], json);
 			// socket.emit('data', json);
 		});
 	}
