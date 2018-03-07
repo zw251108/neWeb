@@ -56,3 +56,4 @@ static/tgouDoc/
 work/
 
 dist/
+!/module/test/

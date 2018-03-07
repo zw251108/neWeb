@@ -28,8 +28,8 @@ require(['/script/config.js'], function(config){
 					;
 				if( title ){
 					$.ajax({
-						url: 'add'
-						, type: 'PUT'
+						url: location.href
+						, type: 'POST'
 						, data: {
 							title: title
 							, order: $document.find('.document_section').length +1
@@ -40,7 +40,7 @@ require(['/script/config.js'], function(config){
 
 								$title.val('');
 
-								$document.find('.module_content').append( sectionTpl({
+								$document.find('.article_content').append( sectionTpl({
 									sectionId: json.info.id
 									, sectionTitle: title
 									, dl: []

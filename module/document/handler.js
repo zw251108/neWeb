@@ -109,7 +109,7 @@ var CONFIG = require('../../config.js')
 					, sectionTitle: t.title
 				};
 
-				contentOrder = t.content_order.split(',');
+				contentOrder = t.content_order ? t.content_order.split(',') : [];
 
 				t = [];
 				for(m = 0, n = contentOrder.length; m < n; m++ ){

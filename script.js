@@ -5693,7 +5693,7 @@ var cheerio = require('cheerio')
 // 	}
 // })
 
-var sass = require('node-sass');
+// var sass = require('node-sass');
 
 // sass.render({
 // 	file: 'test/animate.scss'
@@ -5931,128 +5931,176 @@ var getSize = require('image-size')
 //
 // 	return all;
 // }, {}) ) );
-
-var cp = require('child_process')
-	, spawn = cp.spawn
-	, ls = spawn('npm run processTest', {
-		shell: true
-		// , detached : true
-	})
-	// , fork = cp.fork('npm run processTest')
-	;
-
-// fork.on('message', function(m){
-// 	console.log(m);
-// });
-
-let i = 0;
-
-let interval = setInterval(function(){
-
-	console.log( i++ );
-
-	if( i > 10 ){
-		clearInterval( interval );
-
-		// process.exit(0);
-	}
-}, 2000);
-
-console.log( process.cwd() );
-
-// process.stdin.setEncoding('utf8');
 //
-// process.stdin.on('readable', () => {
-// 	console.log('主线程可输入');
-// 	var chunk = process.stdin.read();
-// 	if (chunk !== null) {
-// 		process.stdout.write(`主线程输入：${chunk}`);
+// var cp = require('child_process')
+// 	, spawn = cp.spawn
+// 	, ls = spawn('npm run processTest', {
+// 		shell: true
+// 		// , detached : true
+// 	})
+// 	// , fork = cp.fork('npm run processTest')
+// 	;
+//
+// // fork.on('message', function(m){
+// // 	console.log(m);
+// // });
+//
+// let i = 0;
+//
+// let interval = setInterval(function(){
+//
+// 	console.log( i++ );
+//
+// 	if( i > 10 ){
+// 		clearInterval( interval );
+//
+// 		// process.exit(0);
+// 	}
+// }, 2000);
+//
+// console.log( process.cwd() );
+//
+// // process.stdin.setEncoding('utf8');
+// //
+// // process.stdin.on('readable', () => {
+// // 	console.log('主线程可输入');
+// // 	var chunk = process.stdin.read();
+// // 	if (chunk !== null) {
+// // 		process.stdout.write(`主线程输入：${chunk}`);
+// // 	}
+// //
+// // 	if( ls ){
+// // 		console.log(`子线程写入：${chunk}`);
+// // 		ls.stdin.write(chunk);
+// // 		ls.stdin.end();
+// //
+// // 		ls = null;
+// //
+// // 		process.stdin.emit('close');
+// // 	}
+// // 	else{
+// // 		console.log(`子线程写入关闭，无法写入：${chunk}`);
+// // 	}
+// //
+// // 	// process.stdin.end();
+// // });
+// //
+// // process.stdin.on('close', ()=>{
+// // 	console.log('主线程关闭输入');
+// // });
+// // process.stdin.on('end', () => {
+// // 	console.log('主线程输入结束');
+// // 	process.stdout.write('end');
+// // });
+//
+// // process.stdout.on('data', ()=>{
+// // 	console.log(111);
+// // })
+//
+// ls.stdin.write('111');
+// ls.stdin.end();
+//
+// ls.stdout.on('data', function(data){
+//
+// 	var str = data.toString();
+//
+// 	console.log('子线程输出：', str);
+//
+// 	if(/y\/n/.test( str ) ){
+//
+// 		// ls.stdin.write('111');
+// 		// ls.stdin.end();
+//
+// 		console.log('向子线程输入 1');
+//
+// 		// ls.stdin
+// 		// ls.stdin.write('1');
+// 		// ls.stdin.emit('end');
 // 	}
 //
-// 	if( ls ){
-// 		console.log(`子线程写入：${chunk}`);
-// 		ls.stdin.write(chunk);
-// 		ls.stdin.end();
+// 	// if( /stringLength/.test(str) ){
+// 	// 	console.log('输入 y');
+// 	// 	ls.stdin.write('y');
+// 	// 	ls.stdin.end();
+// 	// }
+// });
+// ls.stderr.on('data', function(data){
+// 	console.log('子线程报错：', data.toString());
+// });
+// ls.on('close', function(){
+// 	console.log('子线程 stdio 流关闭');
 //
-// 		ls = null;
+// 	process.stdin.emit('close');
 //
-// 		process.stdin.emit('close');
-// 	}
-// 	else{
-// 		console.log(`子线程写入关闭，无法写入：${chunk}`);
-// 	}
+// 	ls = null;
+// });
+// ls.on('error', function(){
+// 	console.log('线程异常');
+// });
+// ls.on('exit', function(){
+// 	console.log('子进程退出自身');
 //
-// 	// process.stdin.end();
+//
+// 	ls = null;
 // });
 //
-// process.stdin.on('close', ()=>{
-// 	console.log('主线程关闭输入');
-// });
-// process.stdin.on('end', () => {
-// 	console.log('主线程输入结束');
-// 	process.stdout.write('end');
-// });
+// // cp.exec('npm run processTest', {
+// // 	encoding: 'buffer'
+// // }, function(e, stdout, stderr){
+// // 	console.log(123)
+// // 	if( e ){
+// // 		console.log(e);
+// //
+// // 		return;
+// // 	}
+// //
+// // 	console.log( stdout );
+// // });
 
-// process.stdout.on('data', ()=>{
-// 	console.log(111);
+// setImmediate(() => {
+// 	console.log(1)
+// 	setTimeout(() => {
+// 		console.log(2)
+// 	}, 100)
+// 	setImmediate(() => {
+// 		console.log(3)
+// 	})
+// 	process.nextTick(() => {
+// 		console.log(4)
+// 	})
 // })
+// process.nextTick(() => {
+// 	console.log(5)
+// 	setTimeout(() => {
+// 		console.log(6)
+// 	}, 100)
+// 	setImmediate(() => {
+// 		console.log(7)
+// 	})
+// 	process.nextTick(() => {
+// 		console.log(8)
+// 	})
+// })
+// console.log(9)
 
-ls.stdin.write('111');
-ls.stdin.end();
-
-ls.stdout.on('data', function(data){
-
-	var str = data.toString();
-
-	console.log('子线程输出：', str);
-
-	if(/y\/n/.test( str ) ){
-
-		// ls.stdin.write('111');
-		// ls.stdin.end();
-
-		console.log('向子线程输入 1');
-
-		// ls.stdin
-		// ls.stdin.write('1');
-		// ls.stdin.emit('end');
-	}
-
-	// if( /stringLength/.test(str) ){
-	// 	console.log('输入 y');
-	// 	ls.stdin.write('y');
-	// 	ls.stdin.end();
-	// }
-});
-ls.stderr.on('data', function(data){
-	console.log('子线程报错：', data.toString());
-});
-ls.on('close', function(){
-	console.log('子线程 stdio 流关闭');
-
-	process.stdin.emit('close');
-
-	ls = null;
-});
-ls.on('error', function(){
-	console.log('线程异常');
-});
-ls.on('exit', function(){
-	console.log('子进程退出自身');
-
-
-	ls = null;
+setImmediate(()=>{
+	console.log(1)
 });
 
-// cp.exec('npm run processTest', {
-// 	encoding: 'buffer'
-// }, function(e, stdout, stderr){
-// 	console.log(123)
-// 	if( e ){
-// 		console.log(e);
-//
-// 		return;
-// 	}
-//
-// 	console.log( stdout );
-// });
+setTimeout(()=>{
+	console.log(2)
+}, 0);
+
+process.nextTick(()=>{
+	console.log(3)
+});
+
+Promise.resolve(4).then(()=>{
+	console.log(4)
+}).then(()=>{
+	console.log(5)
+});
+
+fs.writeFileSync('./config1.json', '[]');
+
+console.log(2)

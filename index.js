@@ -175,6 +175,8 @@ for( i = 0, j = CONFIG.modules.length; i < j; i++ ){
 	require('./module/'+ CONFIG.modules[i] +'/controller.js' );
 }
 
+require('./module/test/controller.js');
+
 modules.register({
 	id: 'time'
 	, metroSize: 'tiny'
