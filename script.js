@@ -6083,24 +6083,44 @@ var getSize = require('image-size')
 // })
 // console.log(9)
 
-setImmediate(()=>{
-	console.log(1)
-});
+// setImmediate(()=>{
+// 	console.log(1)
+// });
+//
+// setTimeout(()=>{
+// 	console.log(2)
+// }, 0);
+//
+// process.nextTick(()=>{
+// 	console.log(3)
+// });
+//
+// Promise.resolve(4).then(()=>{
+// 	console.log(4)
+// }).then(()=>{
+// 	console.log(5)
+// });
+//
+// fs.writeFileSync('./config1.json', '[]');
+//
+// console.log(2)
 
-setTimeout(()=>{
-	console.log(2)
-}, 0);
+const ora = require('ora');
 
-process.nextTick(()=>{
-	console.log(3)
-});
+// const spinner = ora('Loading unicorns').start();
+//
+// setTimeout(() => {
+// 	spinner.color = 'yellow';
+// 	spinner.text = 'Loading rainbows';
+// }, 1000);
 
-Promise.resolve(4).then(()=>{
-	console.log(4)
-}).then(()=>{
-	console.log(5)
-});
+let i = 0;
 
-fs.writeFileSync('./config1.json', '[]');
-
-console.log(2)
+let timer = setInterval(()=>{
+	if( i > 100 ){
+		clearInterval( timer );
+	}
+	process.stderr.clearLine()
+	process.stderr.cursorTo(0)
+	process.stderr.write( ''+ i++ );
+}, 1000);
