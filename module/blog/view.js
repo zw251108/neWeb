@@ -67,8 +67,15 @@ var getEmmet    = require('../emmet/getEmmet.js')
 						id: 'blog'
 						, icon: 'edit'
 						, title: '博客 blog'
-						, content: articleTpl( rs ).join('')
+						, toolbar: [{
+							type: 'button', id: 'changeSkin',   icon: 'skin',   title: '更改皮肤'
+						}]
+						, content: articleTpl(rs).join('')
 					}
+				}
+				, script: {
+					main: '../script/module/blog/blog'
+					, src: '../script/lib/require.min.js'
 				}
 			})
 			;

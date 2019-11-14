@@ -7,6 +7,7 @@ $(function(){
 		, $hash = $('#hash')
 		, $hashContent = $('#hashContent')
 		, $ico = $('#ico')
+		, $crawler = $('#crawler')
 		, $submit = $('#bookmark')
 		;
 
@@ -59,6 +60,7 @@ $(function(){
 				}).get().join('&') : '') + ($hash.prop('checked') ? $hash.val() : '')
 				, title: $title.val()
 				, ico: $ico.val()
+				, crawler: $crawler.prop('checked')
 				, email: 'zw150026@163.com'
 				, password: 'zw251108'
 			}

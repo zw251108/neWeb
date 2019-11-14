@@ -643,6 +643,7 @@ var CONFIG  = require('../../config.js')
 				, title     = data.title || ''
 				, ico       = data.ico || ''
 				, tempId    = data.tempId
+				, crawler   = data.crawler
 				, isGuest = UserHandler.isGuest( user )
 				, source = ReaderHandler.getSource( url )
 				;
@@ -669,7 +670,12 @@ var CONFIG  = require('../../config.js')
 								result = data;
 							}
 							else{   // 没有相关数据 抓取 整理数据
-								result = ReaderHandler.crawlerArticle( url );
+								if( crawler === 'true' ){
+									result = ReaderHandler.crawlerArticle( url );
+								}
+								else{
+									result = Promise.resolve({});
+								}
 							}
 
 							result = result.then(function(data){

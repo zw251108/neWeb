@@ -41,5 +41,6 @@ define(['/script/config.js'], function(config){
 
 		tag( $.parseJSON(tagsData).data || [] );
 		tag.setAdd( $form );
+		$form.find('.formGroup .input-tag').css('overflow', 'hidden');
 	});
 });

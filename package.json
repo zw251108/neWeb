@@ -22,6 +22,7 @@
     "cookie": "~0.2.4",
     "cookie-parser": "~1.4.3",
     "cors": "~2.8.4",
+    "cyan-maple": "git+https://github.com/tgoufe/CyanMapleFrame.git",
     "express": "~4.16.1",
     "express-react-views": "^0.9.0",
     "express-session": "~1.15.6",
