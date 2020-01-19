@@ -15,7 +15,7 @@
   "license": "BSD-2-Clause",
   "dependencies": {
     "body-parser": "~1.18.2",
-    "bower": "~1.8.2",
+    "bower": "~1.8.8",
     "cheerio": "^0.19.0",
     "codemirror": "~5.22.2",
     "compression": "~1.7.1",
@@ -46,7 +46,7 @@
     "superagent": "~5.0.2",
     "utility": "~1.12.0",
     "vue": "~2.4.4",
-    "ws": "~1.1.4"
+    "ws": "~1.1.5"
   },
   "devDependencies": {
     "babel-core": "~6.26.0",
@@ -106,7 +106,7 @@
     "vueify": "~9.4.1",
     "webpack": "~3.6.0",
     "webpack-dev-middleware": "~1.12.0",
-    "webpack-dev-server": "~2.9.1"
+    "webpack-dev-server": "~3.1.11"
   },
   "repository": {
     "type": "git",
