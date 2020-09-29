@@ -1,8 +1,12 @@
 {
-  "name": "website",
-  "version": "0.1.1",
+  "name": "destiny",
+  "version": "1.0.0",
   "description": "新的个人网站，基于 Node.js",
   "main": "index.js",
+  "directories": {
+    "doc": "doc",
+    "test": "test"
+  },
   "scripts": {
     "start": "node index.js",
     "processTest": "node test.js",
@@ -119,8 +123,37 @@
     "前端",
     "程序员"
   ],
+  "author": "ZwB",
+  "license": "ISC",
   "bugs": {
     "url": "https://github.com/zw251108/neWeb/issues"
   },
-  "homepage": "https://github.com/zw251108/neWeb#readme"
+  "homepage": "https://github.com/zw251108/neWeb#readme",
+  "dependencies": {
+    "axios": "~0.19.2",
+    "body-parse": "~0.1.0",
+    "cookie-parse": "~0.4.0",
+    "express": "~4.17.1",
+    "react": "~16.13.1",
+    "react-dom": "~16.13.1",
+    "react-scripts": "~3.4.1",
+    "ws": "~7.3.0"
+  },
+  "devDependencies": {
+    "@babel/core": "~7.10.3",
+    "@babel/plugin-syntax-dynamic-import": "~7.8.3",
+    "@babel/plugin-transform-runtime": "~7.10.3",
+    "@babel/preset-env": "~7.10.3",
+    "@babel/runtime": "~7.10.3",
+    "babel-loader": "~8.1.0",
+    "css-loader": "~3.6.0",
+    "file-loader": "~6.0.0",
+    "json-loader": "~0.5.7",
+    "node-sass": "~4.14.1",
+    "react-loader": "~2.4.7",
+    "sass-loader": "~8.0.2",
+    "style-loader": "~1.2.1",
+    "url-loader": "~4.1.0",
+    "webpack": "~4.43.0"
+  }
 }

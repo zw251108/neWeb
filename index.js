@@ -8,19 +8,11 @@ let log4js        = require('log4js')
 	;
 
 log4js.configure({
-	appenders: [{
-		type: "console"
-	}, {
-		type: 'file'
-		, filename: __dirname + '/log/access.log'
-		, maxLogSize: 1024 * 1024 * 1000
-		, backups: 4
-		, category: 'normal'
-	}]
-	, replaceConsole: true
+	appenders: {cheese: {type: 'file', filename: __dirname + '/log/access.log'}},
+	categories: {default: {appenders: ['cheese'], level: 'info'}}
 });
 logger = log4js.getLogger('normal');
-logger.setLevel('INFO');
+logger.level = 'INFO';
 
 //---------- APP ----------
 let fs = require('fs')
@@ -148,6 +140,8 @@ web.use('/test.html',    express.static(__dirname + '/test.html') );  //
 web.use('/static', express.static(__dirname + '/static'));  // 静态页面目录，实验性页面
 
 web.use('/dist', express.static(__dirname +'/dist'));   // 新版本打包文件
+
+web.use('/cyanMapleDoc', express.static(__dirname +'/cmui'));
 
 let sessionReadonly = function(req, res, next){
 
