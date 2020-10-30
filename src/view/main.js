@@ -2,7 +2,7 @@ import React from 'react';
 
 import Test from '../components/test/index.js';
 
-import ModalContext from '../context/modal.js';
+import {Context as ModalContext} from '../components/modal/index.js';
 
 class Main extends React.Component{
 	constructor(props){
@@ -47,6 +47,7 @@ class Main extends React.Component{
 				return <div>{this.a}</div>;
 			}}
 			<ModalContext.Provider value={this.modalRef.current}>
+				{/* module */}
 				<div>{this.a}</div>
 			</ModalContext.Provider>
 			<div id="modalRoot" ref={this.modalRef}/>

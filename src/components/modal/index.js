@@ -1,7 +1,9 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 
-import ModalContext from '../../context/modal.js'
+const Context = React.createContext(null)
+	, {Provider, Consumer} = Context
+	;
 
 class Modal extends React.Component{
 	constructor(props){
@@ -11,7 +13,7 @@ class Modal extends React.Component{
 		this.el = document.createElement('div');
 	}
 
-	static contentType = ModalContext;
+	static contentType = Context;
 
 	componentDidMount(){
 		this.root.appendChild( this.el );
@@ -27,3 +29,10 @@ class Modal extends React.Component{
 }
 
 export default Modal;
+
+export {
+	Modal
+	, Context
+	, Provider
+	, Consumer
+};
