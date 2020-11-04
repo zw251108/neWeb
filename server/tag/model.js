@@ -1,15 +1,10 @@
-import db, {DataTypes} from '../db.js';
+import db, {DataTypes, commonAttr}  from '../db.js';
+import {userHasMany}    from '../user/model.js';
 
 let Tag = db.define('tag', {
-		id: {
-			type: DataTypes.INTEGER
-			, autoIncrement: true
-			, primaryKey: true
-		}
-		, userId: {
-			type: DataTypes.STRING
-			, field: 'user_id'
-		}
+		id: commonAttr.id
+		, creatorId: commonAttr.creatorId
+
 		, name: DataTypes.STRING
 		, num: {
 			type: DataTypes.INTEGER
@@ -35,4 +30,12 @@ let Tag = db.define('tag', {
 	})
 	;
 
+userHasMany(Tag, 'tag');
+
 export default Tag;
+
+export function tagBelongsTo(Target){
+	// Target.hasMany(Tag, {
+	// 	foreignKey
+	// })
+}

@@ -1,20 +1,11 @@
-import db, {DataTypes} from '../db.js';
+import db, {DataTypes, commonAttr, commonOpts} from '../db.js';
+import {userHasMany} from '../user/model.js';
 
 let Blog = db.define('blog', {
-		id: {
-			type: DataTypes.INTEGER
-			, autoIncrement: true
-			, primaryKey: true
-		}
-		, userId: {
-			type: DataTypes.STRING
-		}
+		...commonAttr
+	
 		, title: DataTypes.STRING
 		, content: DataTypes.TEXT
-		, datetime: {
-			type: DataTypes.DATE
-			, defaultValue: DataTypes.NOW
-		}
 		, status: {
 			type: DataTypes.INTEGER
 		}
@@ -44,16 +35,14 @@ let Blog = db.define('blog', {
 		// , lv: DataTypes.INTEGER
 		// , documentId: DataTypes.INTEGER
 		// , sectionId: DataTypes.INTEGER
-
-		, lastUpdate: {
-			type: DataTypes.DATE
-			, defaultValue: DataTypes.NOW
-			, field: 'last_update'
-		}
+		, secret: DataTypes.INTEGER
+		, question: DataTypes.STRING
+		, answer: DataTypes.STRING
 	}, {
-		createdAt: 'datetime'
-		, updatedAt: 'lastUpdate'
+		...commonOpts
 	})
 	;
+
+userHasMany(Blog, 'blog');
 
 export default Blog;

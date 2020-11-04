@@ -1,11 +1,9 @@
-import db, {DataTypes}  from '../db.js';
+import db, {DataTypes, commonAttr, commonOpts}  from '../db.js';
 
 let User = db.define('user', {
-		id: {
-			type: DataTypes.INTEGER
-			, autoIncrement: true
-			, primaryKey: true
-		}
+		id: commonAttr.id
+		, createDate: commonAttr.createDate
+
 		, email: DataTypes.STRING
 		, phone: DataTypes.STRING
 		, username: DataTypes.STRING
@@ -33,7 +31,13 @@ let User = db.define('user', {
 			type: DataTypes.TEXT
 			, field: 'usable_mod'
 		}
-		, lastOnlineDate: DataTypes.DATE
+		, lastOnlineDate: {
+			type: DataTypes.DATE
+			, field: 'last_online_date'
+		}
+	}, {
+		createdAt: commonOpts.createdAt
+		, updatedAt: false
 	})
 	, UserInfo = db.define('user_info', {
 		id: {
@@ -84,13 +88,21 @@ let User = db.define('user', {
 		, address: {
 			type: DataTypes.VIRTUAL
 			, get(){
-
+				return '';
 			}
 		}
+	}, {
+		createdAt: false
+		, updatedAt: false
 	})
 	;
 
-
+User.hasOne(UserInfo, {
+	foreignKey: 'user_id'
+	, as: 'userInfo'
+	, constraints: false
+});
+UserInfo.belongsTo( User );
 
 export default User;
 
@@ -98,3 +110,15 @@ export {
 	User
 	, UserInfo
 };
+
+export function userHasMany(Target, as){
+	Target.belongsTo(User, {
+		foreignKey: 'creator_id'
+		, constraints: false
+	});
+	User.hasMany(Target, {
+		foreignKey: 'creator_id'
+		, as
+		, constraints: false
+	});
+}
