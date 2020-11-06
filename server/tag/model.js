@@ -1,9 +1,10 @@
-import db, {DataTypes, commonAttr}  from '../db.js';
-import {userHasMany}    from '../user/model.js';
+import db, {DataTypes, commonAttr, commonOpts} from '../db.js';
+import {userHasMany}                           from '../user/model.js';
 
 let Tag = db.define('tag', {
 		id: commonAttr.id
 		, creatorId: commonAttr.creatorId
+		, createDate: commonAttr.createDate
 
 		, name: DataTypes.STRING
 		, num: {
@@ -27,6 +28,9 @@ let Tag = db.define('tag', {
 			}
 		}
 		, description: DataTypes.STRING
+	}, {
+		createdAt: commonOpts.createdAt
+		, updatedAt: false
 	})
 	;
 

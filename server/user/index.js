@@ -1,5 +1,5 @@
 import web  from '../web.js';
-import User from './model.js';
+import user from './handler.js';
 
 web.post('/register', (req, res)=>{
 

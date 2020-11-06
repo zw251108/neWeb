@@ -1,20 +1,12 @@
 import web  from '../web.js';
-import Blog from './model.js';
+import blog  from './handler.js';
 
 web.get('/blog', (req, res)=>{
 	let {page=1, size=10} = req.query
 		;
 
-	Blog.findAll({
-		attributes: ['id', 'title', 'updateDate', 'tags', 'tagList']
-		, where: {
-			creatorId: 1
-		}
-		, order: [
-			['id', 'DESC']
-		]
-		, offset: (page -1)* size
-		, limit: size
+	blog.list(page, size, {
+		creatorId: 1
 	}).then((data)=>{
 		console.log(data);
 		
@@ -29,10 +21,8 @@ web.get('/blog/:id', (req, res)=>{
 	let {id} = req.params
 		;
 
-	Blog.findOne({
-		where: {
-			id
-		}
+	blog.get({
+		id
 	}).then((data)=>{
 		if( data ){
 			res.send({
@@ -54,15 +44,20 @@ web.post('/blog', (req, res)=>{
 	let {a} = req.body
 		;
 
-	Blog.create({
+	blog.create({
 		...a
 	}).then((rs)=>{
 		res.send({
 			...rs
 		});
+		res.end();
 	});
 });
 
 web.put('/blog/:id', (req, res)=>{
+	let {id} = req.params
+		, data = req.body
+		;
 
+	blog.update('');
 });
