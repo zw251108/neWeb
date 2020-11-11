@@ -32,14 +32,32 @@ let Tag = db.define('tag', {
 		createdAt: commonOpts.createdAt
 		, updatedAt: false
 	})
+	, ContentTag = db.define('content_tag', {
+		id: commonAttr.id
+		, tagId: {
+			type: DataTypes.STRING
+			, field: 'tag_id'
+		}
+		, contentId: {
+			type: DataTypes.STRING
+			, field: 'content_id'
+		}
+	})
 	;
 
 userHasMany(Tag, 'tag');
 
 export default Tag;
 
-export function tagBelongsTo(Target){
-	// Target.hasMany(Tag, {
-	// 	foreignKey
-	// })
+export {
+	Tag
+	, ContentTag
+}
+
+export function tagsBelongsTo(Target, through, as){
+	Tag.belongsToMany(Target, {
+		through
+		, as
+		, constraints: false
+	});
 }
