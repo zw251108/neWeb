@@ -1,5 +1,4 @@
 import db, {DataTypes, commonAttr, commonOpts} from '../db.js';
-import {userHasMany}                           from '../user/model.js';
 
 let Tag = db.define('tag', {
 		id: commonAttr.id
@@ -34,6 +33,8 @@ let Tag = db.define('tag', {
 	})
 	, ContentTag = db.define('content_tag', {
 		id: commonAttr.id
+		, createDate: commonAttr.createDate
+
 		, tagId: {
 			type: DataTypes.STRING
 			, field: 'tag_id'
@@ -42,22 +43,19 @@ let Tag = db.define('tag', {
 			type: DataTypes.STRING
 			, field: 'content_id'
 		}
+		, contentType: {
+			type: DataTypes.INTEGER
+			, field: 'content_type'
+		}
+	}, {
+		createdAt: commonOpts.createdAt
+		, updatedAt: false
 	})
 	;
-
-userHasMany(Tag, 'tag');
 
 export default Tag;
 
 export {
 	Tag
 	, ContentTag
-}
-
-export function tagsBelongsTo(Target, through, as){
-	Tag.belongsToMany(Target, {
-		through
-		, as
-		, constraints: false
-	});
-}
+};

@@ -45,3 +45,17 @@ export const commonOpts = {
 	createdAt: 'create_datetime'
 	, updatedAt: 'update_datetime'
 };
+
+export const TAG_CONTENT_TYPE = {
+	favorite: 0
+	, blog: 1
+	, document: 2
+	, editor: 3
+	, todo: 4
+	, reader: 5
+	, bookmark: 6
+	, image: 7
+	, book: 8
+	, movie: 9
+	, game: 10
+};

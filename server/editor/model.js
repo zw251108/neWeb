@@ -1,7 +1,4 @@
 import db, {DataTypes, commonAttr, commonOpts} from '../db.js';
-import {userHasMany}                           from '../user/model.js';
-import {tagsBelongsTo}                         from '../tag/model.js';
-import Image                                   from '../image/model.js';
 
 let Editor = db.define('editor', {
 		...commonAttr
@@ -49,16 +46,6 @@ let Editor = db.define('editor', {
 		, updatedAt: false
 	})
 	;
-
-userHasMany(Editor, 'editor');
-
-tagsBelongsTo(Editor, EditorTag, 'tags');
-
-Editor.hasOne(Image, {
-	foreignKey: 'img_id'
-	, as: 'preview'
-	, constraints: false
-});
 
 export default Editor;
 

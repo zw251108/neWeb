@@ -1,9 +1,58 @@
-import Blog                                      from './blog/model.js';
-import User, {UserInfo}                          from './user/model.js';
-import {City, Village, District, Town, Province} from './basedata/model.js';
-import {Document, Section, Content}              from './document/model.js';
-import {Todo, Task} from './todo/model.js'
+// import Blog                                      from './blog/model.js';
+// import User, {UserInfo}                          from './user/model.js';
+// import {City, Village, District, Town, Province} from './basedata/model.js';
+// import {Document, Section, Content}              from './document/model.js';
+// import {Todo, Task} from './todo/model.js'
 import db                                        from './db.js';
+import Tag, {ContentTag}    from './tag/model.js';
+import Bookmark, {UserBookmark} from './bookmark/model.js';
+
+// Bookmark.findAll({
+// 	where: {
+// 		id: 14100
+// 		, creatorId: 1
+// 	}
+// 	, include: [{
+// 		model: User
+// 		, as: 'creator'
+// 		// , include: [{
+// 		// 	model: Tag
+// 		// 	, as: 'tags'
+// 		// }]
+// 	}, {
+// 		model: User
+// 		, as: 'users'
+// 	}, {
+// 		model: UserBookmark
+// 		, as: 'usermark'
+// 		, include: [{
+// 			model: Tag
+// 			, as: 'tags'
+// 		}]
+// 	}]
+// }).then((data)=>{
+// 	console.log(data, data[0].users);
+// })
+
+// UserBookmark.findAll({
+// 	where: {
+// 		bookmarkId: 14100
+// 	}
+// 	, include: [{
+// 		model: Tag
+// 		, as: 'tags'
+// 	}]
+// }).then(console.log)
+Tag.findAll({
+	attributes: ['id', 'name']
+	, where: {
+		id: 1
+	}
+	, include: [{
+		model: UserBookmark
+		, attributes: ['id', 'tag_id', 'bookmark_id']
+	}]
+}).then(console.log)
 
 // Blog.create({
 // 	title: 'test'
@@ -183,11 +232,11 @@ import db                                        from './db.js';
 // }).then(({blog})=>{
 // 	console.log(JSON.stringify(blog))
 // });
-Blog.findAll({
-	attributes: ['id', 'title', 'updateDate']
-	, where: {
-		creatorId: 1
-	}
-}).then((list)=>{
-	console.log(list)
-});
+// Blog.findAll({
+// 	attributes: ['id', 'title', 'updateDate']
+// 	, where: {
+// 		creatorId: 1
+// 	}
+// }).then((list)=>{
+// 	console.log(list)
+// });

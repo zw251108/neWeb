@@ -1,5 +1,4 @@
 import db, {DataTypes, commonAttr, commonOpts} from '../db.js';
-import {userHasMany} from '../user/model.js';
 
 let Blog = db.define('blog', {
 		...commonAttr
@@ -9,19 +8,19 @@ let Blog = db.define('blog', {
 		, status: {
 			type: DataTypes.INTEGER
 		}
-		, tags: {
-			type: DataTypes.TEXT
-		}
-		, tagList: {
-			type: DataTypes.VIRTUAL
-			, get(){
-				if( this.tags ){
-					return this.tags.split(',');
-				}
-				
-				return [];
-			}
-		}
+		// , tags: {
+		// 	type: DataTypes.TEXT
+		// }
+		// , tagList: {
+		// 	type: DataTypes.VIRTUAL
+		// 	, get(){
+		// 		if( this.tags ){
+		// 			return this.tags.split(',');
+		// 		}
+		//
+		// 		return [];
+		// 	}
+		// }
 		, readNum: {
 			type: DataTypes.INTEGER
 			, defaultValue: 1
@@ -42,7 +41,5 @@ let Blog = db.define('blog', {
 		...commonOpts
 	})
 	;
-
-userHasMany(Blog, 'blog');
 
 export default Blog;

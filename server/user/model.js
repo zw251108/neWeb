@@ -97,28 +97,9 @@ let User = db.define('user', {
 	})
 	;
 
-User.hasOne(UserInfo, {
-	foreignKey: 'user_id'
-	, as: 'userInfo'
-	, constraints: false
-});
-UserInfo.belongsTo( User );
-
 export default User;
 
 export {
 	User
 	, UserInfo
 };
-
-export function userHasMany(Target, as){
-	Target.belongsTo(User, {
-		foreignKey: 'creator_id'
-		, constraints: false
-	});
-	User.hasMany(Target, {
-		foreignKey: 'creator_id'
-		, as
-		, constraints: false
-	});
-}

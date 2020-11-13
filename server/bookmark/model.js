@@ -1,7 +1,6 @@
 import db, {DataTypes, commonAttr, commonOpts} from '../db.js';
-import {userHasMany}                           from '../user/model.js';
 
-let Bookmark = db.define('reader_bookmark', {
+let Bookmark = db.define('bookmark', {
 		id: commonAttr.id
 		, creatorId: commonAttr.creatorId
 		, createDate: commonAttr.createDate
@@ -26,6 +25,32 @@ let Bookmark = db.define('reader_bookmark', {
 		createdAt: commonOpts.createdAt
 		, updatedAt: false
 	})
+	, UserBookmark = db.define('user_bookmark', {
+		id: commonAttr.id
+		, bookmarkId: {
+			type: DataTypes.STRING
+			, field: 'bookmark_id'
+		}
+		, userId: {
+			type: DataTypes.STRING
+			, field: 'user_id'
+		}
+		, title: DataTypes.STRING
+		, score: DataTypes.INTEGER
+		, status: DataTypes.INTEGER
+		, markDate: {
+			type: DataTypes.DATE
+			, field: 'mark_datetime'
+		}
+		, readDate: {
+			type: DataTypes.DATE
+			, field: 'read_datetime'
+		}
+	}, {
+		createdAt: 'mark_datetime'
+		, updatedAt: false
+	})
+
 	, Reader = db.define('reader', {
 		id: commonAttr.id
 		, creatorId: commonAttr.creatorId
@@ -51,12 +76,11 @@ let Bookmark = db.define('reader_bookmark', {
 	})
 	;
 
-userHasMany(Bookmark, 'bookmark');
-userHasMany(Reader, 'reader');
-
 export default Bookmark;
 
 export {
 	Bookmark
+	, UserBookmark
+
 	, Reader
 };

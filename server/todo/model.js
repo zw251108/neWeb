@@ -1,5 +1,4 @@
 import db, {DataTypes, commonAttr, commonOpts} from '../db.js';
-import {userHasMany}                           from '../user/model.js';
 
 let Todo = db.define('todo', {
 		...commonAttr
@@ -29,20 +28,6 @@ let Todo = db.define('todo', {
 		...commonOpts
 	})
 	;
-
-userHasMany(Todo, 'todo');
-userHasMany(Task, 'task');
-
-Todo.hasMany(Task, {
-	foreignKey: 'todo_id'
-	, as: 'task'
-	, constraints: false
-});
-Task.belongsTo(Todo, {
-	foreignKey: 'todo_id'
-	, as: 'todo'
-	, constraints: false
-});
 
 export default Todo;
 

@@ -1,5 +1,4 @@
 import db, {DataTypes, commonAttr, commonOpts} from '../db.js';
-import {userHasMany}                           from '../user/model.js';
 
 let Image = db.define('image', {
 		id: commonAttr.id
@@ -41,22 +40,6 @@ let Image = db.define('image', {
 		, updatedAt: false
 	})
 	;
-
-userHasMany(Image, 'image');
-userHasMany(Album, 'album');
-
-Album.hasMany(Image, {
-	foreignKey: 'image_id'
-	, as: 'album'
-	, through: 'album_image'
-	, constraints: false
-});
-Image.belongsToMany(Album, {
-	foreignKey: 'album_id'
-	, as: 'image'
-	, through: 'album_image'
-	, constraints: false
-});
 
 export default Image;
 

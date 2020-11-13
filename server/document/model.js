@@ -1,5 +1,4 @@
 import db, {DataTypes, commonAttr, commonOpts}  from '../db.js';
-import {userHasMany}    from '../user/model.js';
 
 let Document = db.define('document', {
 		...commonAttr
@@ -49,32 +48,6 @@ let Document = db.define('document', {
 		...commonOpts
 	})
 	;
-
-userHasMany(Document, 'document');
-userHasMany(Section, 'section');
-userHasMany(Content, 'content');
-
-Section.belongsTo(Document, {
-	foreignKey: 'document_id'
-	, as: 'document'
-	, constraints: false
-});
-Document.hasMany(Section, {
-	foreignKey: 'document_id'
-	, as: 'section'
-	, constraints: false
-});
-
-Content.belongsTo(Section, {
-	foreignKey: 'section_id'
-	, as: 'section'
-	, constraints: false
-});
-Section.hasMany(Content, {
-	foreignKey: 'section_id'
-	, as: 'content'
-	, constraints: false
-});
 
 export default Document;
 
