@@ -28,7 +28,7 @@ let Editor = db.define('editor', {
 			, field: 'include_file'
 		}
 		, description: DataTypes.TEXT
-		, tags: DataTypes.TEXT
+		// , tags: DataTypes.TEXT
 		, editable: DataTypes.INTEGER
 	}, {
 		...commonOpts

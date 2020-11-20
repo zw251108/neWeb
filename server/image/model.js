@@ -20,7 +20,7 @@ let Image = db.define('image', {
 
 		, name: DataTypes.STRING
 		, desc: DataTypes.STRING
-		, tags: DataTypes.TEXT
+		// , tags: DataTypes.TEXT
 		, status: DataTypes.INTEGER
 	}, {
 		...commonOpts

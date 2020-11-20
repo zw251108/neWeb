@@ -10,7 +10,7 @@ let Todo = db.define('todo', {
 			type: DataTypes.DATE
 			, field: 'end_datetime'
 		}
-		, tags: DataTypes.TEXT
+		// , tags: DataTypes.TEXT
 		, desc: DataTypes.TEXT
 		, status: DataTypes.INTEGER
 	}, {
