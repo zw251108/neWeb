@@ -53,7 +53,7 @@ web.use( session({
 web.use('/', express.static('./build'));
 
 web.use((req, res, next)=>{
-
+	next();
 });
 
 // ---------- Server Send Event ----------
@@ -135,3 +135,8 @@ export default web;
 // 	sse
 // 	, socket
 // };
+
+web.get('/wish', (req, res)=>{
+	res.send('果园，大家都很想念你，erp 也很想念你，seller 也很想念你，英雄联盟也很想念你，艾泽拉斯也很想念你，为了部落，啊，你是联盟，对不起，打扰了');
+	res.end();
+});
