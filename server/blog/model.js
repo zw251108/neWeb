@@ -1,4 +1,6 @@
-import db, {DataTypes, commonAttr, commonOpts} from '../db.js';
+import db, {DataTypes, commonAttr, commonOpts, TAG_CONTENT_TYPE} from '../db.js';
+import {userBeCreatorOf}   from '../user/model.js';
+import {tagsBelongsTo} from '../tag/model.js';
 
 let Blog = db.define('blog', {
 		...commonAttr
@@ -41,5 +43,9 @@ let Blog = db.define('blog', {
 		...commonOpts
 	})
 	;
+
+userBeCreatorOf(Blog, 'blog');
+
+tagsBelongsTo(Blog, TAG_CONTENT_TYPE.blog);
 
 export default Blog;

@@ -1,4 +1,6 @@
-import db, {DataTypes, commonAttr, commonOpts} from '../db.js';
+import db, {DataTypes, commonAttr, commonOpts, TAG_CONTENT_TYPE} from '../db.js';
+import {userBeCreatorOf}                                             from '../user/model.js';
+import {tagsBelongsTo}                         from '../tag/model.js';
 
 let Todo = db.define('todo', {
 		...commonAttr
@@ -28,6 +30,22 @@ let Todo = db.define('todo', {
 		...commonOpts
 	})
 	;
+
+userBeCreatorOf(Todo, 'todo');
+userBeCreatorOf(Task, 'task');
+
+Todo.hasMany(Task, {
+	foreignKey: 'todo_id'
+	, as: 'task'
+	, constraints: false
+});
+Task.belongsTo(Todo, {
+	foreignKey: 'todo_id'
+	, as: 'todo'
+	, constraints: false
+});
+
+tagsBelongsTo(Todo, TAG_CONTENT_TYPE.todo);
 
 export default Todo;
 

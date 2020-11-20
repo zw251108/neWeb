@@ -1,4 +1,7 @@
-import db, {DataTypes, commonAttr, commonOpts} from '../db.js';
+import db, {DataTypes, commonAttr, commonOpts, TAG_CONTENT_TYPE}    from '../db.js';
+import {userBeCreatorOf}                           from '../user/model.js';
+import {tagsBelongsTo}                         from '../tag/model.js';
+import Image                                   from '../image/model.js';
 
 let Editor = db.define('editor', {
 		...commonAttr
@@ -30,26 +33,38 @@ let Editor = db.define('editor', {
 	}, {
 		...commonOpts
 	})
-	, EditorTag = db.define('editor_tag', {
-		id: commonAttr.id
-
-		, editorId: {
-			type: DataTypes.STRING
-			, field: 'editor_id'
-		}
-		, tagId: {
-			type: DataTypes.STRING
-			, field: 'tag_id'
-		}
-	}, {
-		createdAt: false
-		, updatedAt: false
-	})
+	// , EditorTag = db.define('editor_tag', {
+	// 	id: commonAttr.id
+	//
+	// 	, editorId: {
+	// 		type: DataTypes.STRING
+	// 		, field: 'editor_id'
+	// 	}
+	// 	, tagId: {
+	// 		type: DataTypes.STRING
+	// 		, field: 'tag_id'
+	// 	}
+	// }, {
+	// 	createdAt: false
+	// 	, updatedAt: false
+	// })
 	;
+
+userBeCreatorOf(Editor, 'editor');
+
+// tagsBelongsTo(Editor, EditorTag, 'tags');
+
+Editor.hasOne(Image, {
+	foreignKey: 'img_id'
+	, as: 'preview'
+	, constraints: false
+});
+
+tagsBelongsTo(Editor, TAG_CONTENT_TYPE.editor);
 
 export default Editor;
 
 export {
 	Editor
-	, EditorTag
+	// , EditorTag
 };

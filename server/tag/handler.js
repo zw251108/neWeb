@@ -1,5 +1,5 @@
-import db   from '../db.js';
-import Tag  from './model.js';
+import db, {Op}           from '../db.js';
+import {Tag, ContentTag}  from './model.js';
 
 export default {
 	list(){
@@ -14,6 +14,16 @@ export default {
 		}, {
 			where: {
 				name: 'test'
+			}
+		});
+	}
+	, contentTag(ids, type){
+		return ContentTag.findAll({
+			where: {
+				contentId: {
+					[Op.in]: ids
+				}
+				, type
 			}
 		});
 	}

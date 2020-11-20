@@ -1,13 +1,22 @@
 import web  from '../web.js';
-import blog  from './handler.js';
+import blog from './handler.js';
+import tag  from '../tag/handler.js';
 
 web.get('/blog', (req, res)=>{
 	let {page=1, size=10} = req.query
 		;
 
-	blog.list(page, size, {
+	// todo creatorId 从 session 中取
+	blog.list({
 		creatorId: 1
-	}).then((data)=>{
+	}, page, size).then((data)=>{
+		let idList = data.map((b)=>{
+				return b.id;
+			})
+			;
+
+
+
 		console.log(data);
 		
 		res.send( JSON.stringify({
@@ -41,11 +50,11 @@ web.get('/blog/:id', (req, res)=>{
 });
 
 web.post('/blog', (req, res)=>{
-	let {a} = req.body
+	let data = req.body
 		;
 
 	blog.create({
-		...a
+		...data
 	}).then((rs)=>{
 		res.send({
 			...rs
@@ -59,5 +68,14 @@ web.put('/blog/:id', (req, res)=>{
 		, data = req.body
 		;
 
-	blog.update('');
+	blog.update({
+		...data
+	}, {
+		id
+	}).then((rs)=>{
+		res.send({
+			...rs
+		});
+		res.end();
+	});
 });

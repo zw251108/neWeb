@@ -1,4 +1,6 @@
-import db, {DataTypes, commonAttr, commonOpts} from '../db.js';
+import db, {DataTypes, commonAttr, commonOpts, TAG_CONTENT_TYPE} from '../db.js';
+import User, {userBeCreatorOf} from '../user/model.js';
+import {tagsBelongsTo}         from '../tag/model.js';
 
 let Bookmark = db.define('bookmark', {
 		id: commonAttr.id
@@ -75,6 +77,25 @@ let Bookmark = db.define('bookmark', {
 		, updatedAt: false
 	})
 	;
+
+userBeCreatorOf(Bookmark, 'bookmark');
+userBeCreatorOf(Reader, 'reader');
+
+User.belongsToMany(Bookmark, {
+	through: UserBookmark
+	, constraints: false
+});
+Bookmark.belongsToMany(User, {
+	through: UserBookmark
+	, constraints: false
+});
+
+Bookmark.hasMany(UserBookmark, {
+	as: 'usermark'
+	, constraints: false
+});
+
+tagsBelongsTo(UserBookmark, TAG_CONTENT_TYPE.bookmark);
 
 export default Bookmark;
 

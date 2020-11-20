@@ -40,11 +40,8 @@ let User = db.define('user', {
 		, updatedAt: false
 	})
 	, UserInfo = db.define('user_info', {
-		id: {
-			type: DataTypes.INTEGER
-			, autoIncrement: true
-			, primaryKey: true
-		}
+		id: commonAttr.id
+
 		, userId: {
 			type: DataTypes.STRING
 			, field: 'user_id'
@@ -97,9 +94,41 @@ let User = db.define('user', {
 	})
 	;
 
+User.hasOne(UserInfo, {
+	foreignKey: 'user_id'
+	, as: 'userInfo'
+	, constraints: false
+});
+UserInfo.belongsTo( User );
+
 export default User;
 
 export {
 	User
 	, UserInfo
 };
+
+export function userBeCreatorOf(Target, as){
+	Target.belongsTo(User, {
+		foreignKey: 'creator_id'
+		, as: 'creator'
+		, constraints: false
+	});
+	User.hasMany(Target, {
+		foreignKey: 'creator_id'
+		, as
+		, constraints: false
+	});
+}
+
+// export function userHasMany(Target, as){
+// 	Target.belongsTo(User, {
+// 		foreignKey: 'creator_id'
+// 		, constraints: false
+// 	});
+// 	User.hasMany(Target, {
+// 		foreignKey: 'creator_id'
+// 		, as
+// 		, constraints: false
+// 	});
+// }

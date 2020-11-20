@@ -3,7 +3,7 @@ import Sequelize  from 'sequelize';
 import CONFIG       from '../config.js'
 
 const {DB}  = CONFIG
-	, {DataTypes} = Sequelize
+	, {DataTypes, Op} = Sequelize
 	, db = new Sequelize({
 		...DB
 	
@@ -18,6 +18,7 @@ export default db;
 
 export {
 	DataTypes
+	, Op
 };
 
 export const commonAttr = {
@@ -58,4 +59,5 @@ export const TAG_CONTENT_TYPE = {
 	, book: 8
 	, movie: 9
 	, game: 10
+	, album: 11
 };

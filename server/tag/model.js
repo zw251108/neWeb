@@ -1,4 +1,5 @@
 import db, {DataTypes, commonAttr, commonOpts} from '../db.js';
+import {userBeCreatorOf}                           from '../user/model.js';
 
 let Tag = db.define('tag', {
 		id: commonAttr.id
@@ -53,9 +54,34 @@ let Tag = db.define('tag', {
 	})
 	;
 
+userBeCreatorOf(Tag, 'tag');
+
 export default Tag;
 
 export {
 	Tag
 	, ContentTag
 };
+
+export function tagsBelongsTo(Target, contentType){
+	Target.belongsToMany(Tag, {
+		through: {
+			model: ContentTag
+			, unique: false
+			, scope: {
+				contentType
+			}
+		}
+		, foreignKey: 'content_id'
+		, constraints: false
+	});
+
+	Tag.belongsToMany(Target, {
+		through: {
+			model: ContentTag
+			, unique: false
+		}
+		, foreignKey: 'tag_id'
+		, constraints: false
+	});
+}

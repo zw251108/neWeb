@@ -1,5 +1,5 @@
 import web  from '../web.js';
-import handler  from './handler.js';
+import image  from './handler.js';
 
 web.get('image', (req, res)=>{
 

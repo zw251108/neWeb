@@ -1,4 +1,6 @@
-import db, {DataTypes, commonAttr, commonOpts} from '../db.js';
+import db, {DataTypes, commonAttr, commonOpts, TAG_CONTENT_TYPE} from '../db.js';
+import {userBeCreatorOf}                                             from '../user/model.js';
+import {tagsBelongsTo}                                           from '../tag/model.js';
 
 let Image = db.define('image', {
 		id: commonAttr.id
@@ -40,6 +42,25 @@ let Image = db.define('image', {
 		, updatedAt: false
 	})
 	;
+
+userBeCreatorOf(Image, 'image');
+userBeCreatorOf(Album, 'album');
+
+Album.hasMany(Image, {
+	foreignKey: 'image_id'
+	, as: 'album'
+	, through: 'album_image'
+	, constraints: false
+});
+Image.belongsToMany(Album, {
+	foreignKey: 'album_id'
+	, as: 'image'
+	, through: 'album_image'
+	, constraints: false
+});
+
+tagsBelongsTo(Album, TAG_CONTENT_TYPE.album);
+tagsBelongsTo(Image, TAG_CONTENT_TYPE.image);
 
 export default Image;
 

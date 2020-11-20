@@ -1,4 +1,6 @@
-import db, {DataTypes, commonAttr, commonOpts}  from '../db.js';
+import db, {DataTypes, commonAttr, commonOpts, TAG_CONTENT_TYPE} from '../db.js';
+import {userBeCreatorOf}   from '../user/model.js';
+import {tagsBelongsTo} from '../tag/model.js';
 
 let Document = db.define('document', {
 		...commonAttr
@@ -48,6 +50,34 @@ let Document = db.define('document', {
 		...commonOpts
 	})
 	;
+
+userBeCreatorOf(Document, 'document');
+userBeCreatorOf(Section, 'section');
+userBeCreatorOf(Content, 'content');
+
+Section.belongsTo(Document, {
+	foreignKey: 'document_id'
+	, as: 'document'
+	, constraints: false
+});
+Document.hasMany(Section, {
+	foreignKey: 'document_id'
+	, as: 'section'
+	, constraints: false
+});
+
+Content.belongsTo(Section, {
+	foreignKey: 'section_id'
+	, as: 'section'
+	, constraints: false
+});
+Section.hasMany(Content, {
+	foreignKey: 'section_id'
+	, as: 'content'
+	, constraints: false
+});
+
+tagsBelongsTo(Document, TAG_CONTENT_TYPE.document);
 
 export default Document;
 

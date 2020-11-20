@@ -52,6 +52,10 @@ web.use( session({
 // ---------- 静态目录 ----------
 web.use('/', express.static('./build'));
 
+web.use((req, res, next)=>{
+
+});
+
 // ---------- Server Send Event ----------
 // let sse = {
 // 		list: []

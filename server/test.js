@@ -1,38 +1,50 @@
-// import Blog                                      from './blog/model.js';
-// import User, {UserInfo}                          from './user/model.js';
+import Blog              from './blog/model.js';
+import User, {UserInfo}                          from './user/model.js';
 // import {City, Village, District, Town, Province} from './basedata/model.js';
 // import {Document, Section, Content}              from './document/model.js';
 // import {Todo, Task} from './todo/model.js'
-import db                                        from './db.js';
-import Tag, {ContentTag}    from './tag/model.js';
+import db                from './db.js';
+import Tag, {ContentTag} from './tag/model.js';
 import Bookmark, {UserBookmark} from './bookmark/model.js';
 
-// Bookmark.findAll({
-// 	where: {
-// 		id: 14100
-// 		, creatorId: 1
-// 	}
-// 	, include: [{
-// 		model: User
-// 		, as: 'creator'
-// 		// , include: [{
-// 		// 	model: Tag
-// 		// 	, as: 'tags'
-// 		// }]
-// 	}, {
-// 		model: User
-// 		, as: 'users'
-// 	}, {
-// 		model: UserBookmark
-// 		, as: 'usermark'
-// 		, include: [{
-// 			model: Tag
-// 			, as: 'tags'
-// 		}]
+// Blog.findAll({
+// 	include: [{
+// 		model: Tag
 // 	}]
 // }).then((data)=>{
-// 	console.log(data, data[0].users);
+// 	console.log(data)
+// 	console.log(data[0].tags)
 // })
+
+Bookmark.findAll({
+	where: {
+		id: 14100
+		, creatorId: 1
+	}
+	, include: [{
+		model: User
+		, as: 'creator'
+		// , include: [{
+		// 	model: Tag
+		// 	, as: 'tags'
+		// }]
+	}, {
+		model: User
+		, as: 'users'
+	}, {
+		model: UserBookmark
+		, as: 'usermark'
+		, where: {
+			userId: 1
+		}
+		, include: [{
+			model: Tag
+			, as: 'tags'
+		}]
+	}]
+}).then((data)=>{
+	console.log(data, data[0].usermark, data[0].usermark.length, data[0].usermark[0].tags);
+});
 
 // UserBookmark.findAll({
 // 	where: {
@@ -43,16 +55,16 @@ import Bookmark, {UserBookmark} from './bookmark/model.js';
 // 		, as: 'tags'
 // 	}]
 // }).then(console.log)
-Tag.findAll({
-	attributes: ['id', 'name']
-	, where: {
-		id: 1
-	}
-	, include: [{
-		model: UserBookmark
-		, attributes: ['id', 'tag_id', 'bookmark_id']
-	}]
-}).then(console.log)
+// Tag.findAll({
+// 	attributes: ['id', 'name']
+// 	, where: {
+// 		id: 1
+// 	}
+// 	, include: [{
+// 		model: UserBookmark
+// 		, attributes: ['id', 'tag_id', 'bookmark_id']
+// 	}]
+// }).then(console.log)
 
 // Blog.create({
 // 	title: 'test'

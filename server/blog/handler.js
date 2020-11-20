@@ -3,7 +3,7 @@ import Blog from './model.js';
 export default {
 	list(where, page=1, size=20){
 		return Blog.findAll({
-			attributes: ['id', 'title', 'updateDate', 'tags', 'tagList']
+			attributes: ['id', 'title', 'updateDate']
 			, where
 			, order: [
 				['id', 'DESC']
@@ -20,8 +20,10 @@ export default {
 	, create(data){
 		return Blog.create( data );
 	}
-	, update(data){
-
+	, update(data, where){
+		return Blog.update(data, {
+			where
+		});
 	}
 	, del(){
 		
