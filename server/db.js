@@ -2,8 +2,10 @@ import Sequelize  from 'sequelize';
 
 import CONFIG       from '../config.js'
 
-const {DB}  = CONFIG
-	, {DataTypes, Op} = Sequelize
+const
+	{ DB }  = CONFIG
+	,
+	{ DataTypes, Op } = Sequelize
 	, db = new Sequelize({
 		...DB
 	
