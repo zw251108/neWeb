@@ -17,7 +17,7 @@ export default {
 			}]
 		});
 	}
-	, sectionList(where, page=1, size=10){
+	, sectionList(where, page=1, size=100){
 		return Section.findAll({
 			where
 			, offset: (page-1) * size
@@ -25,7 +25,7 @@ export default {
 		});
 	}
 	, updateSection(){}
-	, contentList(where, page=1, size=10){
+	, contentList(where, page=1, size=100){
 		return Content.findAll({
 			where
 			, offset: (page -1) * size
