@@ -3,6 +3,8 @@ import bodyParser   from 'body-parser';
 import cookie       from 'cookie';
 import cookieParser from 'cookie-parser';
 import session      from 'express-session'
+
+import cors from 'cors';
 // import log4js       from 'log4js';
 import Socket       from 'ws';
 
@@ -48,6 +50,11 @@ web.use( session({
 // web.use( log4js.connectLogger(logger, {
 // 	format: ':method :url :remote-addr'
 // }) );
+
+web.use( cors({
+	credentials: true
+	, origin: true
+}) );
 
 // ---------- 静态目录 ----------
 web.use('/', express.static('./build'));
