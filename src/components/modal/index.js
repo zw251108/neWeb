@@ -1,26 +1,27 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 
-const Context = React.createContext(null)
-	, {Provider, Consumer} = Context
+const Context = React.createContext( null )
+	,
+	{ Provider
+	, Consumer } = Context
 	;
 
 class Modal extends React.Component{
 	constructor(props){
-		super(props);
+		super( props );
 
-		this.root = this.context;
 		this.el = document.createElement('div');
 	}
 
 	static contentType = Context;
 
 	componentDidMount(){
-		this.root.appendChild( this.el );
+		this.context.appendChild( this.el );
 	}
 
 	componentWillUnmount(){
-		this.root.removeChild( this.el );
+		this.context.removeChild( this.el );
 	}
 
 	render(){

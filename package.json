@@ -11,19 +11,10 @@
   "author": "ZwB",
   "license": "ISC",
   "dependencies": {
-    "axios": "~0.20.0",
-    "body-parser": "~1.19.0",
-    "cookie": "~0.4.1",
-    "cookie-parser": "~1.4.5",
-    "cors": "~2.8.5",
-    "express": "~4.17.1",
-    "express-session": "~1.17.1",
-    "mysql2": "~2.2.5",
-    "react": "~17.0.0",
-    "react-dom": "~17.0.0",
-    "react-scripts": "~3.4.4",
-    "sequelize": "~6.3.5",
-    "ws": "~7.3.1"
+    "axios": "~1.2.1",
+    "cyan-maple": "github:tgoufe/CyanMapleFrame",
+    "react": "~18.2.0",
+    "react-dom": "~18.2.0"
   },
   "type": "module",
   "repository": {
@@ -38,7 +29,6 @@
   "bugs": {
     "url": "https://github.com/zw251108/neWeb/issues"
   },
-  "homepage": "https://github.com/zw251108/neWeb#readme",
   "eslintConfig": {
     "extends": "react-app"
   },
@@ -53,5 +43,12 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/core": "~7.20.5",
+    "@babel/plugin-syntax-flow": "~7.18.6",
+    "@babel/plugin-transform-react-jsx": "~7.19.0",
+    "react-scripts": "~5.0.1",
+    "typescript": "~4.9.4"
   }
 }

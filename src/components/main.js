@@ -1,8 +1,8 @@
 import React from 'react';
 
-import Test from '../components/test/index.js';
-
-import {Context as ModalContext} from '../components/modal/index.js';
+import {prefix}                  from '../config.js';
+// import AppContext                from '../context.js';
+import {Context as ModalContext} from './modal/index.js';
 
 class Main extends React.Component{
 	constructor(props){
@@ -10,12 +10,14 @@ class Main extends React.Component{
 
 		this.modalRef = React.createRef();
 
-		this.a = 1;
+		this.list = props.list;
 	}
 
 	static getDerivedStateFromError(){
 		
 	}
+
+	// static contextType = AppContext;
 
 	componentDidMount(){
 
@@ -25,33 +27,25 @@ class Main extends React.Component{
 
 	}
 
-	componentWillReceiveProps(nextProps, nextContext){
-
-	}
-
-	componentWillUpdate(nextProps, nextState, nextContext){
-
-	}
+	// componentWillReceiveProps(nextProps, nextContext){
+	//
+	// }
+	//
+	// componentWillUpdate(nextProps, nextState, nextContext){
+	//
+	// }
 
 	shouldComponentUpdate(nextProps, nextState){
 		return true;
 	}
 
 	render(){
-		return (<div className="main">
-			<div>2123</div>
-			<Test msg={this.a}>
-				<div>123131231</div>
-			</Test>
-			{router=>{
-				return <div>{this.a}</div>;
-			}}
+		return (<main className={prefix('main')}>
 			<ModalContext.Provider value={this.modalRef.current}>
-				{/* module */}
-				<div>{this.a}</div>
+				{this.props.children}
 			</ModalContext.Provider>
 			<div id="modalRoot" ref={this.modalRef}/>
-		</div>);
+		</main>);
 	}
 }
 

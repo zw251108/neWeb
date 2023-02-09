@@ -1,52 +1,262 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+body{
+	margin: 0;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+	'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+	sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+code{
+	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+	monospace;
 }
 
-.App {
-  text-align: center;
+.App{
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+@font-face{
+	font-family: 'font';
+	src: url('./font/font.eot');
+	src: url('./font/font.eot#iefix') format('embedded-opentype'),
+	url('./font/font.woff2') format('woff2'),
+	url('./font/font.woff') format('woff'),
+	url('./font/font.ttf') format('truetype'),
+	url('./font/font.svg#font') format('svg');
+	font-weight: normal;
+	font-style: normal;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/*i*/.icon{
+}
+a.icon:hover:before{
+	text-decoration: none;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.icon:before{
+	display: inline-block;
+	width: 1em;
+	margin-left: .2em;
+
+	font-family: "font";
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+
+	line-height: 1em;
+
+	speak: none;
+
+	text-align: center;
+	text-decoration: inherit;
+	text-transform: none;
+
+/* 解决 图标加粗*/
+-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
-.App-link {
-  color: #61dafb;
+.icon-radio:before { content: '\e800'; } /* '' */
+.icon-radio-checked:before { content: '\e801'; } /* '' */
+.icon-cancel-circled:before { content: '\e802'; } /* '' */
+.icon-checkbox:before { content: '\e803'; } /* '' */
+.icon-checkbox-checked:before { content: '\e804'; } /* '' */
+.icon-checkbox-half:before { content: '\e805'; } /* '' */
+
+.icon-heart:before { content: '\e806'; } /* '' */
+.icon-heart-full:before { content: '\e807'; } /* '' */
+
+.icon-star:before { content: '\e808'; } /* '' */
+.icon-star-half:before { content: '\e809'; } /* '' */
+.icon-star-full:before { content: '\e80a'; } /* '' */
+
+.icon-up:before { content: '\e80b'; } /* '' */
+.icon-down:before { content: '\e80c'; } /* '' */
+.icon-left:before { content: '\e80d'; } /* '' */
+.icon-right:before { content: '\e80e'; } /* '' */
+
+.icon-sun:before { content: '\e80f'; } /* '' */
+.icon-cloud:before { content: '\e810'; } /* '' */
+.icon-rain:before { content: '\e811'; } /* '' */
+.icon-snow:before { content: '\e812'; } /* '' */
+.icon-thunder:before { content: '\e813'; } /* '' */
+
+.icon-firefox:before { content: '\e814'; } /* '' */
+.icon-chrome:before { content: '\e815'; } /* '' */
+.icon-opera:before { content: '\e816'; } /* '' */
+.icon-ie:before { content: '\e817'; } /* '' */
+.icon-safari:before { content: '\f267'; } /* '' */
+
+.icon-apple:before { content: '\f179'; } /* '' */
+.icon-windows:before { content: '\f17a'; } /* '' */
+.icon-android:before { content: '\f17b'; } /* '' */
+
+.icon-renren:before { content: '\e818'; } /* '' */
+.icon-qq:before { content: '\e819'; } /* '' */
+.icon-wechat:before { content: '\e81a'; } /* '' */
+.icon-weibo:before { content: '\e81b'; } /* '' */
+.icon-github:before { content: '\e81c'; } /* '' */
+
+.icon-html5:before { content: '\e81d'; } /* '' */
+.icon-css3:before { content: '\e81e'; } /* '' */
+
+.icon-male:before { content: '\e81f'; } /* '' */
+.icon-female:before { content: '\e820'; } /* '' */
+
+.icon-plus:before { content: '\e821'; } /* '' */
+.icon-minus:before { content: '\e822'; } /* '' */
+
+.icon-ok:before { content: '\e823'; } /* '' */
+.icon-cancel:before { content: '\e824'; } /* '' */
+
+.icon-yen:before { content: '\e825'; } /* '' */
+.icon-window:before { content: '\e826'; } /* '' */
+.icon-play:before { content: '\e827'; } /* '' */
+.icon-skin:before { content: '\e828'; } /* '' */
+.icon-layout:before { content: '\e829'; } /* '' */
+.icon-row4:before { content: '\e82a'; } /* '' */
+.icon-col4:before { content: '\e82b'; } /* '' */
+.icon-cor4:before { content: '\e82c'; } /* '' */
+.icon-lib:before { content: '\e82d'; } /* '' */
+.icon-auto:before { content: '\e82e'; } /* '' */
+.icon-save:before { content: '\e82f'; } /* '' */
+.icon-file-code:before { content: '\e830'; } /* '' */
+.icon-code:before { content: '\e831'; } /* '' */
+.icon-search:before { content: '\e832'; } /* '' */
+.icon-filter:before { content: '\e833'; } /* '' */
+.icon-edit:before { content: '\e834'; } /* '' */
+.icon-folder:before { content: '\e835'; } /* '' */
+.icon-tags:before { content: '\e836'; } /* '' */
+.icon-settle:before { content: '\e837'; } /* '' */
+.icon-warming:before { content: '\e838'; } /* '' */
+.icon-home:before { content: '\e839'; } /* '' */
+.icon-user:before { content: '\e83a'; } /* '' */
+.icon-group:before { content: '\e83b'; } /* '' */
+.icon-copyright:before { content: '\e83c'; } /* '' */
+.icon-talk:before { content: '\e83d'; } /* '' */
+.icon-calendar:before { content: '\e83e'; } /* '' */
+.icon-document:before { content: '\e83f'; } /* '' */
+.icon-editor:before { content: '\e840'; } /* '' */
+.icon-bookmark:before { content: '\e841'; } /* '' */
+.icon-bookmark-full:before { content: '\e842'; } /* '' */
+.icon-rss:before { content: '\e843'; } /* '' */
+.icon-mail:before { content: '\e844'; } /* '' */
+.icon-picture:before { content: '\e845'; } /* '' */
+.icon-video:before { content: '\e846'; } /* '' */
+.icon-tasks:before { content: '\e847'; } /* '' */
+
+
+.header{
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 40px;
+	z-index: 1;
+	background: #000;
+	color: #fff;
+	font-size: 16px;
+	line-height: 40px;
+}
+.footer{
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 1;
+	height: 40px;
+	background: #000;
+	color: #fff;
+	font-size: 16px;
+	line-height: 40px;
+}
+.aside{
+	position: fixed;
+}
+.main{
+	margin: 50px auto;
+	background: #fff;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.newsList{
+	display: grid;
+	grid-template-columns: repeat(auto-fill, 200px);
+	grid-auto-rows: 200px;
+	grid-auto-flow: row dense;
+	/*grid-row-gap: 10px;*/
+	/*grid-column-gap: 10px;*/
+	/*padding: 0 5px;*/
+}
+/*.newsList{*/
+/*	display: grid;*/
+/*	grid-template-columns: calc( 50% - 5px ) calc( 50% - 5px );*/
+/*	!*grid-template-rows: repeat(auto-fill, 200px);*!*/
+/*	grid-auto-rows: 200px;*/
+/*	grid-auto-flow: row dense;*/
+/*	grid-row-gap: 10px;*/
+/*	grid-column-gap: 10px;*/
+/*	padding: 0 5px;*/
+/*}*/
+.news{
+	grid-column: span 1;
+	grid-row: span 1;
+	position: relative;
+	border: 5px solid #c0c0c0;
+	border-radius: 25px 10px 10px;
+	margin: 5px;
+}
+.news-blog:nth-of-type(2n){
+	grid-row: span 1;
+}
+.news-blog:nth-of-type(2n+1){
+	grid-row: span 2;
+}
+.news::before{
+	position: absolute;
+	top: -5px;
+	left: -5px;
+	width: 40px;
+	height: 40px;
+	border: 5px solid #c0c0c0;
+	border-radius: 25px;
+	background: #fff;
+	color: #c0c0c0;
+	font-family: "font";
+	font-size: 24px;
+	text-align: center;
+	line-height: 40px;
+	font-weight: bolder;
+	content: '';
+}
+.news-blog::before{
+	content: '\e83f';
+}
+.news-blog_title{
+	border-bottom: 1px solid #c0c0c0;
+	margin: 0 5px 10px 50px;
+	height: 50px;
+	line-height: 45px;
+	text-align: left;
+}
+.news-blog_desc{
+	font-size: 16px;
+	line-height: 20px;
+	text-indent: 2em;
+	-webkit-line-clamp: 2;
+}
+
+.news-img{
+	grid-column: span 2;
+	grid-row: span 3;
+	padding: 5px;
+}
+.news-img::before{
+	content: '\e845';
+}
+.news-img img{
+	display: block;
+	max-width: 100%;
+	max-height: 100%;
+	margin: auto;
+	border-radius: 5px;
 }
