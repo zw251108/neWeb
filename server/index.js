@@ -8,6 +8,9 @@ import './blog/index.js';
 import './document/index.js';
 import './todo/index.js';
 
+import './news/index.js';
+import './image/index.js';
+
 // 外部数据
 import './book/index.js';
 import './game/index.js';

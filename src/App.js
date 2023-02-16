@@ -1,7 +1,8 @@
 import React from 'react';
 // import maple from 'cyan-maple';
 
-import {prefix}   from './config.js';
+import {prefix}      from './config.js';
+import RouterContext from './context/router.js';
 // import AppContext from './context.js';
 import Main   from './components/main.js';
 import Header from './components/header.js';
@@ -16,6 +17,9 @@ class App extends React.Component{
 
 		this.state = {
 			current: 'index'
+			, deep: false
+			, search: false
+			, filter: false
 			, view: null
 		};
 
@@ -27,14 +31,19 @@ class App extends React.Component{
 		window.router = this.router;
 	}
 	render(){
-		return (<div className={prefix('App')}>
-		    <Header></Header>
-		    <Main>
-			    {this.state.view}
-		    </Main>
-		    <Aside></Aside>
-		    <Footer></Footer>
-		</div>);
+		return (<RouterContext.Provider value={this.router}>
+			<div className={prefix('App')}>
+			    <Header index={this.state.current === 'index'}
+			            deep={this.state.deep}
+			            search={this.state.search}
+			            filter={this.state.filter}></Header>
+			    <Main>
+				    {this.state.view}
+			    </Main>
+			    <Aside></Aside>
+			    <Footer></Footer>
+			</div>
+		</RouterContext.Provider>);
 	}
 }
 

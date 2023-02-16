@@ -1,0 +1,47 @@
+body{
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.App{
+}
+
+a{
+    color: #000;
+    text-decoration: none;
+    
+}
+
+.hidden{
+    display: none !important;
+}
+
+@import "./element/code.scss";
+@import "./element/icon.scss";
+
+@import "./component/header.scss";
+@import "./component/footer.scss";
+@import "./component/main.scss";
+@import "./component/aside.scss";
+
+@import "./layout/flex-container.scss";
+@import "./layout/grid-container.scss";
+@import "./layout/img-container.scss";
+
+@import "./view/index.scss";
+@import "./view/blog.scss";
+@import "./view/album.scss";
+@import "./view/img.scss";
+
+.Test .icon{
+    display: inline-block;
+    margin: 10px;
+    padding: 10px;
+    background: #000;
+    color: #fff;
+    font-size: 20px;
+}

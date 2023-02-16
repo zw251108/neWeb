@@ -1,0 +1,10 @@
+.main{
+    margin: 50px auto 10px;
+    background: #fff;
+}
+
+@media screen and (min-width: 1000px) {
+    .main{
+        width: 1000px;
+    }
+}

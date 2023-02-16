@@ -3,12 +3,14 @@ import blog from './handler.js';
 import tag  from '../tag/handler.js';
 
 web.get('/blog', (req, res)=>{
-	let {page=1, size=10} = req.query
+	let { page = 1
+		, size = 20 } = req.query
 		;
 
 	// todo creatorId 从 session 中取
 	blog.list({
 		creatorId: 1
+		, status: 1
 	}, page, size).then((data)=>{
 		let idList = data.map((b)=>{
 				return b.id;
@@ -27,7 +29,7 @@ web.get('/blog', (req, res)=>{
 });
 
 web.get('/blog/:id', (req, res)=>{
-	let {id} = req.params
+	let { id } = req.params
 		;
 
 	blog.get({

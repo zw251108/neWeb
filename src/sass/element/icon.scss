@@ -1,59 +1,129 @@
-body{
-	margin: 0;
-	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-	'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-	sans-serif;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-}
+/**
+ *----- 页面补全 -----
+	radio	            radio
+	radio-checked	    radio:checked
+	cancel-circled
+	checkbox	        checkbox
+	checkbox-checked	checkbox:checked
+	checkbox-half
 
-code{
-	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-	monospace;
-}
+ *----- 方向箭头 -----
+	up	    上箭头
+	down	下箭头
+	left	左箭头
+	right	右箭头
 
-.App{
-}
+ *-----	天气 -----
+	sun	    太阳
+	cloud	云
+	rain	下雨
+	snow	下雪
+	thunder	闪电
 
-@font-face{
-	font-family: 'font';
-	src: url('./font/font.eot');
-	src: url('./font/font.eot#iefix') format('embedded-opentype'),
-	url('./font/font.woff2') format('woff2'),
-	url('./font/font.woff') format('woff'),
-	url('./font/font.ttf') format('truetype'),
-	url('./font/font.svg#font') format('svg');
-	font-weight: normal;
-	font-style: normal;
+ *----- 浏览器 -----
+	firefox	火狐
+	chrome	谷歌
+	opera	Opera
+	ie	    IE
+	safari
+
+ *----- 操作系统 -----
+    apple
+    widows
+    android
+
+ *----- 第三方 -----
+	renren	人人
+	qq	    QQ
+	wechat	微信
+	weibo	微博
+	github
+
+ *----- 应用图标 -----
+	talk	    聊天
+	calendar	日历
+	document	文档
+	editor	    编辑器
+	bookmark	书签
+	rss	        RSS
+	mail	    邮箱
+	picture	    图片
+	user	    用户
+	group	    群组
+	home	    主页
+	tags	    标签
+	edit	    编辑
+	filter	    过滤
+	folder	    文件夹
+	search	    搜索
+	play	    播放
+	warming	    警告
+	ok	        确定
+	cancel	    取消
+	plus	    加号
+	minus	    减号
+	heart	    心-空
+	heart-full	心-满
+	star	    星-空
+	star-half	星-半
+	star-full	星-满
+
+	male	    性别-男
+	female	    性别-女
+	yen	        人民币
+
+	code	    代码
+	css3	    CSS3
+	html5	    HTML5
+	copyright	版权
+	layout      布局
+	skin        皮肤
+ * */
+
+@font-face {
+    font-family: 'font';
+    src: url('../font/font.eot');
+    src: url('../font/font.eot#iefix') format('embedded-opentype'),
+    url('../font/font.woff2') format('woff2'),
+    url('../font/font.woff') format('woff'),
+    url('../font/font.ttf') format('truetype'),
+    url('../font/font.svg#font') format('svg');
+    font-weight: normal;
+    font-style: normal;
 }
 
 /*i*/.icon{
+    //a&{
+    //	margin-right: 10px;
+    //}
+
 }
 a.icon:hover:before{
-	text-decoration: none;
+    text-decoration: none;
 }
 
 .icon:before{
-	display: inline-block;
-	width: 1em;
-	margin-left: .2em;
+    display: inline-block;
+    width: 1em;
+    *margin-left: .2em;
+    //	margin-right: .2em;
 
-	font-family: "font";
-	font-style: normal;
-	font-weight: normal;
-	font-variant: normal;
+    font-family: "font";
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
 
-	line-height: 1em;
+    line-height: 1em;
 
-	speak: none;
+    speak: none;
 
-	text-align: center;
-	text-decoration: inherit;
-	text-transform: none;
+    text-align: center;
+    text-decoration: inherit;
+    text-transform: none;
 
-/* 解决 图标加粗*/
--webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+    // 解决 图标加粗
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .icon-radio:before { content: '\e800'; } /* '' */
@@ -144,119 +214,3 @@ a.icon:hover:before{
 .icon-picture:before { content: '\e845'; } /* '' */
 .icon-video:before { content: '\e846'; } /* '' */
 .icon-tasks:before { content: '\e847'; } /* '' */
-
-
-.header{
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	height: 40px;
-	z-index: 1;
-	background: #000;
-	color: #fff;
-	font-size: 16px;
-	line-height: 40px;
-}
-.footer{
-	position: fixed;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	z-index: 1;
-	height: 40px;
-	background: #000;
-	color: #fff;
-	font-size: 16px;
-	line-height: 40px;
-}
-.aside{
-	position: fixed;
-}
-.main{
-	margin: 50px auto;
-	background: #fff;
-}
-
-.newsList{
-	display: grid;
-	grid-template-columns: repeat(auto-fill, 200px);
-	grid-auto-rows: 200px;
-	grid-auto-flow: row dense;
-	/*grid-row-gap: 10px;*/
-	/*grid-column-gap: 10px;*/
-	/*padding: 0 5px;*/
-}
-/*.newsList{*/
-/*	display: grid;*/
-/*	grid-template-columns: calc( 50% - 5px ) calc( 50% - 5px );*/
-/*	!*grid-template-rows: repeat(auto-fill, 200px);*!*/
-/*	grid-auto-rows: 200px;*/
-/*	grid-auto-flow: row dense;*/
-/*	grid-row-gap: 10px;*/
-/*	grid-column-gap: 10px;*/
-/*	padding: 0 5px;*/
-/*}*/
-.news{
-	grid-column: span 1;
-	grid-row: span 1;
-	position: relative;
-	border: 5px solid #c0c0c0;
-	border-radius: 25px 10px 10px;
-	margin: 5px;
-}
-.news-blog:nth-of-type(2n){
-	grid-row: span 1;
-}
-.news-blog:nth-of-type(2n+1){
-	grid-row: span 2;
-}
-.news::before{
-	position: absolute;
-	top: -5px;
-	left: -5px;
-	width: 40px;
-	height: 40px;
-	border: 5px solid #c0c0c0;
-	border-radius: 25px;
-	background: #fff;
-	color: #c0c0c0;
-	font-family: "font";
-	font-size: 24px;
-	text-align: center;
-	line-height: 40px;
-	font-weight: bolder;
-	content: '';
-}
-.news-blog::before{
-	content: '\e83f';
-}
-.news-blog_title{
-	border-bottom: 1px solid #c0c0c0;
-	margin: 0 5px 10px 50px;
-	height: 50px;
-	line-height: 45px;
-	text-align: left;
-}
-.news-blog_desc{
-	font-size: 16px;
-	line-height: 20px;
-	text-indent: 2em;
-	-webkit-line-clamp: 2;
-}
-
-.news-img{
-	grid-column: span 2;
-	grid-row: span 3;
-	padding: 5px;
-}
-.news-img::before{
-	content: '\e845';
-}
-.news-img img{
-	display: block;
-	max-width: 100%;
-	max-height: 100%;
-	margin: auto;
-	border-radius: 5px;
-}

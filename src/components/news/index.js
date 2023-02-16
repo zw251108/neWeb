@@ -1,4 +1,3 @@
-import {prefix}   from '../../config.js';
 import NewsBlog   from './blog.js';
 import NewsDoc    from './doc.js';
 import NewsImg    from './img.js';
@@ -7,7 +6,7 @@ import NewsWeibo  from './weibo.js';
 import NewsWeixin from './weixin.js';
 
 function NewsList({list}){
-	return (<div className={prefix('newsList')}>
+	return (<>
 		{list.map((item)=>{
 			switch( item.type ){
 				case 'blog':
@@ -26,7 +25,7 @@ function NewsList({list}){
 					return null;
 			}
 		})}
-	</div>);
+	</>);
 }
 
 export default NewsList;

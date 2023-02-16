@@ -1,0 +1,46 @@
+.header{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    z-index: 10;
+    background: #000;
+    color: #fff;
+    font-size: 16px;
+    line-height: 40px;
+
+    .logo{
+        float: left;
+        width: 30px;
+        height: 30px;
+        margin: 5px;
+    }
+
+    .avatar{
+        float: right;
+        width: 30px;
+        height: 30px;
+        margin: 5px;
+        border-radius: 15px;
+    }
+
+    .icon{
+        float: left;
+        width: 30px;
+        height: 30px;
+        margin: 5px;
+        font-size: 20px;
+        line-height: 30px;
+    }
+    .icon-left{
+        width: 15px;
+    }
+    .icon-search, .icon-filter{
+        float: right;
+    }
+}
+
+//.header_content{
+//    margin: auto;
+//}
