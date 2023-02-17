@@ -1,4 +1,6 @@
-export default {
+import CONFIG from './config.json';
+
+export default Object.assign({
 	PORT: '9001'
 	, SESSION_SECRET: 'secret'
 	, COOKIE_KEY: 'express.sid'
@@ -9,4 +11,4 @@ export default {
 		, username: 'root'
 		, password: 'zw251108'
 	}
-};
+}, CONFIG);

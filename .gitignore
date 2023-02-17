@@ -82,3 +82,5 @@ work/
 
 dist/
 !/module/test/
+
+config.json
