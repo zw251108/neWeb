@@ -1,0 +1,126 @@
+@import "src/sass/lib/color";
+
+//----- Base -----
+//$font-color:    $c141;  // 文字颜色
+$font-color:    $c157;  // 文字颜色
+$border-color:  $c2;    // 边框颜色
+
+//$a-link:    $c141;  // 默认链接颜色
+$a-link:    $font-color;  // 默认链接颜色
+$a-hover:   $c35;   // 移上链接颜色、特殊链接颜色
+
+$selection_bg_c: $c23;  // 文本选择背景颜色
+$selection_c:   $c141;  // 文本选择文字颜色
+
+//----- .article -----
+$article_bd_c: $c2;
+//$article_bg_c: $c235;   //$c230;
+$article_bg_c: $c236;
+
+
+//----- .btn -----
+$btn_bd_c:  $c2;
+$btn_bg_gradient_s:   $c225;
+$btn_bg_gradient_e:   $c224;
+$btn-hover_bg_c:    $c224;
+$btn-submit_bd_c:   $c220;
+$btn-submit_bg_gradient_s:   $c221;
+$btn-submit_bg_gradient_e:   $c220;
+$btn-submit-hover_bg_c: $c220;
+$btn_c: $c141;
+
+//----- .code -----
+$code_bd_c: $c1;
+$code_bg_c: $c222;
+//$code_c:    $c222;  //$c223;
+$code-hover_bd_c:   $c228;
+$code-hover_bg_c:   $c228;
+$code-hover_c:   $c141;
+
+//----- .input -----
+$input_placeholder_c:   $c224;
+$input_placeholder_focus_c:   transparent;
+
+$input-tag_pointOut_bd_c:       $c141;
+$input-tag_pointOut_bg_c:       $c224;
+$input-tag_pointOut_li_bd_c:    $c141;
+
+//----- .formGroup -----
+$formGroup_formGroup_bd_c:  $c2;
+
+//----- .loading -----
+$loading_bg_c:  $c224;
+
+//----- .logo -----
+$logo_hover_bg_c:   $c35;
+
+//----- meter -----
+$meter_bd_c:    $c220;
+$meter_bg_c:    $c221;
+$meter_bar_bg_c:    $c220;
+$meter_value_bg_c:  $c222;
+$meter_value_bg_gradient_s: $c221;
+$meter_value_bg_gradient_e: $c220;
+
+//----- .scrollbar -----
+$scrollbar_bg_c:    $c224;
+
+//----- .tag -----
+$tag_bd_c:  $c2;
+$tag_bg_c:  $c141;
+$tag_bg_gradient_s: $c225;
+$tag_bg_gradient_e: $c224;
+$tag_c: $c224;  //$c141;
+$tag_checked_bd_c:  $c226;
+$tag_checked_bg_c:  $c226;
+$tag_checked_bg_gradient_s: $c224;
+$tag_checked_bg_gradient_e: $c225;
+$tag_checked_c: $c141;
+//$tagInput_bd_c: $c2;
+//$tagPointOut_bd_c: $c141;
+//$tagPointOut_bg_c: $c224;
+//$tagPointOut_li_bd_c: $c141;
+
+//----- .toolbar -----
+$toolbar_bd_c:  $c141;
+$toolbar_c:  $c141;
+$toolbar_hover_bd_c:  $c35;
+$toolbar_hover_bg_c: $c141; //$c35;
+$toolbar_hover_bg_gradient_s:  $c227;
+$toolbar_hover_bg_gradient_e:  $c35;
+$toolbar_hover_c:   $c35;
+
+//----- .track -----
+$track_bd_c:          $c2;
+$track_bg_c:          $c2;
+$track_on_bd_c:       $c35;
+$track_on_bg_c:       $c35;
+
+//----- .metro -----
+$metro_c:    $c224; //$c141;
+$metro-hover_bd_c:  $c229;
+$metro-hover_bg_c:  $c229;
+$metro-hover_bg_gradient_s:  $c227;
+$metro-hover_bg_gradient_e:  $c229;
+$metro-hover_c:  $c141;
+
+
+//----- .module -----
+$module-bg_c: $c228;
+$module_bg_gradient_s:  $c225;
+$module_bg_gradient_e:  $c228;
+$module-metro_c:    $c141;
+$module-metro-hover_bg_c:  $c229;
+$module-metro-hover_bg_gradient_s:  $c227;
+$module-metro-hover_bg_gradient_e:  $c229;
+$module-metro-hover_c:  $c141;
+$module-popup_bd_c: $c224;
+
+$footer_bg_c:   $c234;  //$c228;
+
+$footer_msg_ok: $c64;
+$footer_msg_warming: $c96;
+
+$module-main_bg_c: $c224;
+$module-main_toolbar_bg_c: $c224;
+$module-main_toolbar-fixed_bg_c: $c234; //$c224;

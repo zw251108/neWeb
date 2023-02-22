@@ -1,0 +1,50 @@
+import React from 'react';
+// import maple from 'cyan-maple';
+
+import RouterContext from './context/router.js';
+// import AppContext from './context.js';
+
+import Main   from './components/main.js';
+import Header from './components/header.js';
+import Footer from './components/footer.js';
+import Aside  from './components/aside.js';
+
+import initRouter from './router.js';
+
+class App extends React.Component{
+	constructor(props){
+		super( props );
+
+		this.state = {
+			current: 'index'
+			, deep: false
+			, search: false
+			, filter: false
+			, view: null
+		};
+
+		// 初始化路由
+		this.router = initRouter( this );
+		this.router.init();
+
+		window.app = this;
+		window.router = this.router;
+	}
+	render(){
+		return (<RouterContext.Provider value={this.router}>
+			<div className="App">
+			    <Header index={this.state.current === 'index'}
+			            deep={this.state.deep}
+			            search={this.state.search}
+			            filter={this.state.filter}></Header>
+			    <Main>
+				    {this.state.view}
+			    </Main>
+			    <Aside></Aside>
+			    <Footer></Footer>
+			</div>
+		</RouterContext.Provider>);
+	}
+}
+
+export default App;

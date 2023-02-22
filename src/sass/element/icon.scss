@@ -1,0 +1,216 @@
+/**
+ *----- 页面补全 -----
+	radio	            radio
+	radio-checked	    radio:checked
+	cancel-circled
+	checkbox	        checkbox
+	checkbox-checked	checkbox:checked
+	checkbox-half
+
+ *----- 方向箭头 -----
+	up	    上箭头
+	down	下箭头
+	left	左箭头
+	right	右箭头
+
+ *-----	天气 -----
+	sun	    太阳
+	cloud	云
+	rain	下雨
+	snow	下雪
+	thunder	闪电
+
+ *----- 浏览器 -----
+	firefox	火狐
+	chrome	谷歌
+	opera	Opera
+	ie	    IE
+	safari
+
+ *----- 操作系统 -----
+    apple
+    widows
+    android
+
+ *----- 第三方 -----
+	renren	人人
+	qq	    QQ
+	wechat	微信
+	weibo	微博
+	github
+
+ *----- 应用图标 -----
+	talk	    聊天
+	calendar	日历
+	document	文档
+	editor	    编辑器
+	bookmark	书签
+	rss	        RSS
+	mail	    邮箱
+	picture	    图片
+	user	    用户
+	group	    群组
+	home	    主页
+	tags	    标签
+	edit	    编辑
+	filter	    过滤
+	folder	    文件夹
+	search	    搜索
+	play	    播放
+	warming	    警告
+	ok	        确定
+	cancel	    取消
+	plus	    加号
+	minus	    减号
+	heart	    心-空
+	heart-full	心-满
+	star	    星-空
+	star-half	星-半
+	star-full	星-满
+
+	male	    性别-男
+	female	    性别-女
+	yen	        人民币
+
+	code	    代码
+	css3	    CSS3
+	html5	    HTML5
+	copyright	版权
+	layout      布局
+	skin        皮肤
+ * */
+
+@font-face{
+    font-family: 'font';
+    src: url('../font/font.eot');
+    src: url('../font/font.eot#iefix') format('embedded-opentype'),
+    url('../font/font.woff2') format('woff2'),
+    url('../font/font.woff') format('woff'),
+    url('../font/font.ttf') format('truetype'),
+    url('../font/font.svg#font') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/*i*/.icon{
+    //a&{
+    //	margin-right: 10px;
+    //}
+
+}
+a.icon:hover:before{
+    text-decoration: none;
+}
+
+.icon:before{
+    display: inline-block;
+    width: 1em;
+    *margin-left: .2em;
+    //	margin-right: .2em;
+
+    font-family: 'font';
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+
+    line-height: 1em;
+
+    speak: none;
+
+    text-align: center;
+    text-decoration: inherit;
+    text-transform: none;
+
+    // 解决 图标加粗
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-radio:before { content: '\e800'; } /* '' */
+.icon-radio-checked:before { content: '\e801'; } /* '' */
+.icon-cancel-circled:before { content: '\e802'; } /* '' */
+.icon-checkbox:before { content: '\e803'; } /* '' */
+.icon-checkbox-checked:before { content: '\e804'; } /* '' */
+.icon-checkbox-half:before { content: '\e805'; } /* '' */
+
+.icon-heart:before { content: '\e806'; } /* '' */
+.icon-heart-full:before { content: '\e807'; } /* '' */
+
+.icon-star:before { content: '\e808'; } /* '' */
+.icon-star-half:before { content: '\e809'; } /* '' */
+.icon-star-full:before { content: '\e80a'; } /* '' */
+
+.icon-up:before { content: '\e80b'; } /* '' */
+.icon-down:before { content: '\e80c'; } /* '' */
+.icon-left:before { content: '\e80d'; } /* '' */
+.icon-right:before { content: '\e80e'; } /* '' */
+
+.icon-sun:before { content: '\e80f'; } /* '' */
+.icon-cloud:before { content: '\e810'; } /* '' */
+.icon-rain:before { content: '\e811'; } /* '' */
+.icon-snow:before { content: '\e812'; } /* '' */
+.icon-thunder:before { content: '\e813'; } /* '' */
+
+.icon-firefox:before { content: '\e814'; } /* '' */
+.icon-chrome:before { content: '\e815'; } /* '' */
+.icon-opera:before { content: '\e816'; } /* '' */
+.icon-ie:before { content: '\e817'; } /* '' */
+.icon-safari:before { content: '\f267'; } /* '' */
+
+.icon-apple:before { content: '\f179'; } /* '' */
+.icon-windows:before { content: '\f17a'; } /* '' */
+.icon-android:before { content: '\f17b'; } /* '' */
+
+.icon-renren:before { content: '\e818'; } /* '' */
+.icon-qq:before { content: '\e819'; } /* '' */
+.icon-wechat:before { content: '\e81a'; } /* '' */
+.icon-weibo:before { content: '\e81b'; } /* '' */
+.icon-github:before { content: '\e81c'; } /* '' */
+
+.icon-html5:before { content: '\e81d'; } /* '' */
+.icon-css3:before { content: '\e81e'; } /* '' */
+
+.icon-male:before { content: '\e81f'; } /* '' */
+.icon-female:before { content: '\e820'; } /* '' */
+
+.icon-plus:before { content: '\e821'; } /* '' */
+.icon-minus:before { content: '\e822'; } /* '' */
+
+.icon-ok:before { content: '\e823'; } /* '' */
+.icon-cancel:before { content: '\e824'; } /* '' */
+
+.icon-yen:before { content: '\e825'; } /* '' */
+.icon-window:before { content: '\e826'; } /* '' */
+.icon-play:before { content: '\e827'; } /* '' */
+.icon-skin:before { content: '\e828'; } /* '' */
+.icon-layout:before { content: '\e829'; } /* '' */
+.icon-row4:before { content: '\e82a'; } /* '' */
+.icon-col4:before { content: '\e82b'; } /* '' */
+.icon-cor4:before { content: '\e82c'; } /* '' */
+.icon-lib:before { content: '\e82d'; } /* '' */
+.icon-auto:before { content: '\e82e'; } /* '' */
+.icon-save:before { content: '\e82f'; } /* '' */
+.icon-file-code:before { content: '\e830'; } /* '' */
+.icon-code:before { content: '\e831'; } /* '' */
+.icon-search:before { content: '\e832'; } /* '' */
+.icon-filter:before { content: '\e833'; } /* '' */
+.icon-edit:before { content: '\e834'; } /* '' */
+.icon-folder:before { content: '\e835'; } /* '' */
+.icon-tags:before { content: '\e836'; } /* '' */
+.icon-settle:before { content: '\e837'; } /* '' */
+.icon-warming:before { content: '\e838'; } /* '' */
+.icon-home:before { content: '\e839'; } /* '' */
+.icon-user:before { content: '\e83a'; } /* '' */
+.icon-group:before { content: '\e83b'; } /* '' */
+.icon-copyright:before { content: '\e83c'; } /* '' */
+.icon-talk:before { content: '\e83d'; } /* '' */
+.icon-calendar:before { content: '\e83e'; } /* '' */
+.icon-document:before { content: '\e83f'; } /* '' */
+.icon-editor:before { content: '\e840'; } /* '' */
+.icon-bookmark:before { content: '\e841'; } /* '' */
+.icon-bookmark-full:before { content: '\e842'; } /* '' */
+.icon-rss:before { content: '\e843'; } /* '' */
+.icon-mail:before { content: '\e844'; } /* '' */
+.icon-picture:before { content: '\e845'; } /* '' */
+.icon-video:before { content: '\e846'; } /* '' */
+.icon-tasks:before { content: '\e847'; } /* '' */
