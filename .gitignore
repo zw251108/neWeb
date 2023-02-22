@@ -84,3 +84,5 @@ dist/
 !/module/test/
 
 config.json
+
+upload/

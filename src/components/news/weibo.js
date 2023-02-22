@@ -1,7 +1,5 @@
-import {prefix} from '../../config.js';
-
 function NewsWeibo({item}){
-	return (<div className={`${prefix('news')} ${prefix('news-weibo')}`}>
+	return (<div className="module news weibo">
 		{item.title}
 	</div>);
 }

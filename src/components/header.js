@@ -1,10 +1,9 @@
 import React from 'react';
 
-import {prefix}      from '../config.js';
 import RouterContext from '../context/router.js';
 
 // function Header(){
-// 	return (<header className={prefix('header')}>
+// 	return (<header className="header">
 // 		<div></div>
 // 	</header>);
 // }
@@ -24,16 +23,16 @@ class Header extends React.Component{
 
 	render(){
 		console.log(this.context)
-		return (<header className={`${prefix('header')} ${prefix('grid-container')}`}>
-			<div className={`${prefix('header_content')} ${prefix('grid-full')}`}>
-				<img className={prefix('logo')}
+		return (<header className="header grid-container">
+			<div className="header_content grid-full">
+				<img className="logo"
 				     src="/image/logo.png"
 				     width="30"
 				     height="30"
 				     alt=""/>
 				{!this.props.index && <i className="icon icon-left" onClick={()=>{this.goIndex();}}></i>}
 				{this.props.deep && <i className="icon icon-left"></i>}
-				<img className={prefix('avatar')}
+				<img className="avatar"
 				     src="/image/avatar-96.jpg"
 				     width="30"
 				     height="30"

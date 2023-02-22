@@ -7,8 +7,7 @@ import {html}                   from '@codemirror/lang-html';
 import {css}                    from '@codemirror/lang-css';
 import {oneDark}                from '@codemirror/theme-one-dark';
 
-import {prefix} from '../config.js';
-import api      from '../api/index.js';
+import api from '../api/index.js';
 
 class Blog extends React.Component{
 	constructor(props){
@@ -90,9 +89,9 @@ class Blog extends React.Component{
 	}
 
 	render(){
-		return (<article className={prefix('Blog')}>
-			<h3 className={prefix('blog_title')}>{this.state.title}</h3>
-			<div className={prefix('blog_content')}
+		return (<article className="module blog">
+			<h3 className="blog_title">{this.state.title}</h3>
+			<div className="blog_content"
 			     ref={(el)=>{this.el = el;}}
 			     dangerouslySetInnerHTML={{__html: this.state.content}}></div>
 		</article>);

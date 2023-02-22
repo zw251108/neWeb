@@ -1,8 +1,6 @@
 import {useEffect, useState} from 'react';
-import maple                 from 'cyan-maple';
 
-import {prefix} from '../config.js';
-import api      from '../api/index.js';
+import api from '../api/index.js';
 
 function Img({id}){
 	const
@@ -15,15 +13,13 @@ function Img({id}){
 		});
 	}, []);
 
-	return (<section className={prefix('Img')}>
-		<article className={prefix('img')}>
-			<div className="img-container">
-				<img src={img.src}
-				     alt=""/>
-			</div>
-			<p className={prefix('blog_title')}>{img.desc}</p>
-		</article>
-	</section>);
+	return (<article className="module img">
+		<div className="img-container">
+			<img src={img.src}
+			     alt=""/>
+		</div>
+		<p className="img_desc">{img.desc}</p>
+	</article>);
 }
 
 export default Img;

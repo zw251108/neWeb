@@ -1,7 +1,6 @@
 import {useEffect, useState} from 'react';
 import maple                 from 'cyan-maple';
 
-import {prefix} from '../config.js';
 import api from '../api/index.js';
 
 import NewsList from '../components/news/index.js';
@@ -50,7 +49,7 @@ function Index(){
 		});
 	}, [page]);
 
-	return (<div className={`${prefix('Index')} ${prefix('grid-container')}`}>
+	return (<div className="index grid-container">
 		<NewsList list={list}></NewsList>
 		<Loadmore next={next} max={max}></Loadmore>
 	</div>);

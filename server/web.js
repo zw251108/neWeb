@@ -59,6 +59,8 @@ web.use( cors({
 // ---------- 静态目录 ----------
 web.use('/', express.static('./build'));
 
+web.use('/upload', express.static('./upload'));
+
 web.use((req, res, next)=>{
 	next();
 });
@@ -80,8 +82,9 @@ web.use((req, res, next)=>{
 // });
 
 let server = web.listen(CONFIG.PORT, ()=>{
-	console.log('web server is listening');
-});
+		console.log('web server is listening');
+	})
+	;
 
 // // ---------- Web Socket ----------
 // let socketServer = new Socket.Server({

@@ -1,6 +1,5 @@
 import React from 'react';
 
-import {prefix}                  from '../config.js';
 // import AppContext                from '../context.js';
 import {Context as ModalContext} from './modal/index.js';
 
@@ -40,7 +39,7 @@ class Main extends React.Component{
 	}
 
 	render(){
-		return (<main className={prefix('main')}>
+		return (<main className="main">
 			<ModalContext.Provider value={this.modalRef.current}>
 				{this.props.children}
 			</ModalContext.Provider>

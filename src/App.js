@@ -1,9 +1,9 @@
 import React from 'react';
 // import maple from 'cyan-maple';
 
-import {prefix}      from './config.js';
 import RouterContext from './context/router.js';
 // import AppContext from './context.js';
+
 import Main   from './components/main.js';
 import Header from './components/header.js';
 import Footer from './components/footer.js';
@@ -32,7 +32,7 @@ class App extends React.Component{
 	}
 	render(){
 		return (<RouterContext.Provider value={this.router}>
-			<div className={prefix('App')}>
+			<div className="App">
 			    <Header index={this.state.current === 'index'}
 			            deep={this.state.deep}
 			            search={this.state.search}

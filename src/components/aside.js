@@ -1,7 +1,5 @@
-import {prefix} from '../config.js';
-
 function Aside(){
-	return (<aside className={prefix('aside')}>aside</aside>);
+	return (<aside className="aside">aside</aside>);
 }
 
 export default Aside;

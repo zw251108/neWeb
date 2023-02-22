@@ -80,7 +80,7 @@
 	skin        皮肤
  * */
 
-@font-face {
+@font-face{
     font-family: 'font';
     src: url('../font/font.eot');
     src: url('../font/font.eot#iefix') format('embedded-opentype'),
@@ -108,7 +108,7 @@ a.icon:hover:before{
     *margin-left: .2em;
     //	margin-right: .2em;
 
-    font-family: "font";
+    font-family: 'font';
     font-style: normal;
     font-weight: normal;
     font-variant: normal;

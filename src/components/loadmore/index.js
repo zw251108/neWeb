@@ -1,8 +1,6 @@
 import React from 'react';
 import maple from 'cyan-maple';
 
-import {prefix} from '../../config.js';
-
 class Loadmore extends React.Component{
 	constructor(props){
 		super( props );
@@ -27,7 +25,7 @@ class Loadmore extends React.Component{
 	}
 
 	render(){
-		return (<div className={`${prefix('loadmore')} ${this.props.max ? 'hidden' : ''}`}
+		return (<div className={`loadmore grid-full ${this.props.max ? 'hidden' : ''}`}
 		             ref={this.ref}>fetch</div>);
 	}
 }
