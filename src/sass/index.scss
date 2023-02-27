@@ -6,7 +6,12 @@ body{
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
-
+html, body, #root{
+    height: 100%;
+}
+#root{
+    overflow: auto;
+}
 .App{
 }
 

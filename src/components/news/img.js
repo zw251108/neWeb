@@ -3,14 +3,12 @@ function NewsImg({item}){
 		,
 		{ width
 		, height } = img
-		, type = width > height ? 'hor' : 'vor'
-		, span = Math.floor( type === 'hor' ? height/width *8 : height/width *4 )
+		, type = width > height ? 'h' : 'v'
 		;
 	
-	return (<div className={`module news img img-${type}`}
-	             style={{'gridRow': `span ${span}`}}>
+	return (<div className={`module news img img-${type}`}>
 		<a href={`#/${img.more ? `album` : `img`}?id=${item.targetId}`}>
-			<div className="img-container">
+			<div className={`img-container img-container-${type} flex-container center justify`}>
 				<img src={img.src}
 				     alt={img.desc}/>
 				{img.desc && <div className="news_desc">{img.desc}</div>}

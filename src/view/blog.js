@@ -90,7 +90,7 @@ class Blog extends React.Component{
 
 	render(){
 		return (<article className="module blog">
-			<h3 className="blog_title">{this.state.title}</h3>
+			<h3 className="module_title">{this.state.title}</h3>
 			<div className="blog_content"
 			     ref={(el)=>{this.el = el;}}
 			     dangerouslySetInnerHTML={{__html: this.state.content}}></div>
