@@ -1,7 +1,5 @@
 import maple from 'cyan-maple';
 
-import './config.js';
-
 import Index from './view/index.js';
 import Blog  from './view/blog.js';
 import Album from './view/album.js';
