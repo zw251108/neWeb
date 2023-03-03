@@ -83,6 +83,6 @@ work/
 dist/
 !/module/test/
 
-config.json
+server_config.js
 
 upload/

@@ -1,4 +1,4 @@
-import CONFIG from './config.json';
+import CONFIG from './server_config.js';
 
 // const CONFIG = {}
 // 	;
