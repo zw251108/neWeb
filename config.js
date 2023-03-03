@@ -1,4 +1,4 @@
-import CONFIG from './config.json' assert {type: 'json'};
+import CONFIG from './config.json';
 
 // const CONFIG = {}
 // 	;
