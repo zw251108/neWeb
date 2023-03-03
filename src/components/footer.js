@@ -18,7 +18,11 @@ function Footer(){
 			</div>)
 			})}
 		</div>
-		<div className="copy"><a href="http://beian.miit.gov.cn/" target="_blank">辽ICP备2023001481号</a></div>
+		<div className="copy">
+			<a href="http://beian.miit.gov.cn/"
+			   target="_blank"
+			   rel="noreferrer">辽ICP备2023001481号</a>
+		</div>
 	</footer>);
 }
 

@@ -1,7 +1,7 @@
 import {ServiceModel, Model} from 'cyan-maple';
 
 const api = new ServiceModel({
-		baseUrl: '//localhost:9001'
+		baseUrl: '//zw150026.com'
 		, resource: {
 			news: '/news'
 			, blog: '/blog'

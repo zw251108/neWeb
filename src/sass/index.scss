@@ -30,6 +30,29 @@ a{
     display: none !important;
 }
 
+table{
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+caption,
+th,
+td{
+    //	/* float: none 阻止 span-想类破坏表格单元的显示 */
+    float: none !important;
+    font-weight: normal;
+    text-align: left;
+}
+th,
+td{
+    height: auto;
+    min-width: 100px;
+    border: 1px solid #c0c0c0;
+    padding: 10px 5px;
+    color: #000;
+    line-height: 2;
+    text-indent: 0;
+}
+
 @import "./element/code.scss";
 @import "./element/icon.scss";
 

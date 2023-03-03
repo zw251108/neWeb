@@ -1,7 +1,7 @@
-// import CONFIG from './config.json' assert {type: 'json'};
+import CONFIG from './config.json' assert {type: 'json'};
 
-const CONFIG = {}
-	;
+// const CONFIG = {}
+// 	;
 
 export default Object.assign({
 	PORT: '9001'

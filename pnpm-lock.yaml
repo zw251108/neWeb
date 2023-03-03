@@ -20,6 +20,7 @@ specifiers:
   express-session: ~1.17.3
   http-proxy: ~1.18.1
   mysql2: ~3.1.2
+  postcss-flexbugs-fixes: ~5.0.2
   react: ~18.2.0
   react-dom: ~18.2.0
   react-scripts: ~5.0.1
@@ -54,6 +55,7 @@ devDependencies:
   '@babel/plugin-syntax-flow': 7.18.6_@babel+core@7.20.5
   '@babel/plugin-transform-react-jsx': 7.19.0_@babel+core@7.20.5
   http-proxy: 1.18.1
+  postcss-flexbugs-fixes: 5.0.2
   react-scripts: 5.0.1_yrclxctaow7kmjavicfnrnahie
   sass: 1.58.0
   typescript: 4.9.4
@@ -7429,6 +7431,12 @@ packages:
       postcss-value-parser: 4.2.0
     dev: true
 
+  /postcss-flexbugs-fixes/5.0.2:
+    resolution: {integrity: sha512-18f9voByak7bTktR2QgDveglpn9DTbBWPUzSOe9g0N4WR/2eSt6Vrcbf0hmspvMI6YWGywz6B9f7jzpFNJJgnQ==}
+    peerDependencies:
+      postcss: ^8.1.4
+    dev: true
+
   /postcss-flexbugs-fixes/5.0.2_postcss@8.4.20:
     resolution: {integrity: sha512-18f9voByak7bTktR2QgDveglpn9DTbBWPUzSOe9g0N4WR/2eSt6Vrcbf0hmspvMI6YWGywz6B9f7jzpFNJJgnQ==}
     peerDependencies:
@@ -10139,7 +10147,7 @@ packages:
     dev: true
 
   github.com/tgoufe/CyanMapleFrame/bc34aab02b77bd25b51f7194a56f5edd773296fb:
-    resolution: {tarball: https://codeload.github.com/tgoufe/CyanMapleFrame/tar.gz/bc34aab02b77bd25b51f7194a56f5edd773296fb}
+    resolution: {commit: bc34aab02b77bd25b51f7194a56f5edd773296fb, repo: git+ssh://git@github.com/tgoufe/CyanMapleFrame.git, type: git}
     name: cyan-maple
     version: 0.22.0
     dependencies:
