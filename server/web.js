@@ -61,6 +61,8 @@ web.use('/', express.static('./build'));
 
 web.use('/upload', express.static('./upload'));
 
+web.use('/image/valhalla', express.static('./upload/valhalla'));
+
 web.use((req, res, next)=>{
 	next();
 });

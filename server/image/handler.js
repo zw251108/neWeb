@@ -23,7 +23,7 @@ export default {
 	}
 	, get(where){
 		return Image.findOne({
-			attributes: ['id', 'src', 'width', 'height', 'albumId', 'desc']
+			attributes: ['id', 'src', 'width', 'height', 'albumId', 'desc', 'createDate']
 			, where
 		});
 	}

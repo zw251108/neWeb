@@ -1,5 +1,4 @@
 import React from 'react';
-// import maple from 'cyan-maple';
 
 import RouterContext from './context/router.js';
 // import AppContext from './context.js';

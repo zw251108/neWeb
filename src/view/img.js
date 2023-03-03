@@ -1,6 +1,8 @@
 import {useEffect, useState} from 'react';
+import maple                 from 'cyan-maple';
 
-import api from '../api/index.js';
+import {imgPath} from '../config.js';
+import api       from '../api/index.js';
 
 function Img({id}){
 	const
@@ -14,11 +16,13 @@ function Img({id}){
 	}, []);
 
 	return (<article className="module img">
+		<div className="module_title">&nbsp;</div>
 		<div className="img-container">
-			<img src={img.src}
+			<img src={imgPath( img.src )}
 			     alt=""/>
 		</div>
 		<p className="img_desc">{img.desc}</p>
+		<div className="img_datetime">{maple.util.dateFormat(new Date( img.createDate ), 'YYYY-MM-DD hh:mm:ss')}</div>
 	</article>);
 }
 

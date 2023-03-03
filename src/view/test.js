@@ -76,6 +76,8 @@ function Test(){
 		<i className="icon icon-picture"></i>
 		<i className="icon icon-video"></i>
 		<i className="icon icon-tasks"></i>
+		<i className="icon icon-valhalla"></i>
+		<i className="icon icon-images"></i>
 	</div>);
 }
 

@@ -3,16 +3,20 @@
         content: '\e845';
     }
 
+    &_datetime{
+        border-top: 1px solid #c0c0c0;
+        margin: 10px 0;
+        padding: 10px 5px 0;
+        color: #999;
+        font-size: 14px;
+        text-align: right;
+    }
+
     img{
-        max-width: 100%;
         border-radius: 5px;
     }
 
     .img-container{
-        overflow: hidden;
-        position: relative;
-        width: 100%;
-        height: 100%;
         border-radius: 5px;
         font-size: 0;
     }

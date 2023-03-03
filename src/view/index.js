@@ -27,9 +27,6 @@ function Index(){
 		if( page === 0 ){
 			return ;
 		}
-		else if( max ){
-			return ;
-		}
 
 		api.news({
 			page
@@ -39,13 +36,15 @@ function Index(){
 				setMax(true);
 			}
 
-			setList( list.concat(data.map((item)=>{
-				item.content = JSON.parse( item.content || '{}' );
+			setList((list)=>{
+				return list.concat( data.map((item)=>{
+					item.content = JSON.parse( item.content || '{}' );
 
-				item.createDate = maple.util.dateFormat(new Date( item.createDate ), 'YYYY-MM-DD hh:mm:ss');
+					item.createDate = maple.util.dateFormat(new Date( item.createDate ), 'YYYY-MM-DD hh:mm:ss');
 
-				return item;
-			})) );
+					return item;
+				}) );
+			});
 		});
 	}, [page]);
 

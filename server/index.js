@@ -10,6 +10,7 @@ import './todo/index.js';
 
 import './news/index.js';
 import './image/index.js';
+import './valhalla/index.js';
 
 // 外部数据
 import './book/index.js';
