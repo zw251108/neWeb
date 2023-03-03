@@ -1,4 +1,4 @@
-import {ServiceModel} from 'cyan-maple';
+import {ServiceModel, Model} from 'cyan-maple';
 
 const api = new ServiceModel({
 		baseUrl: '//localhost:9001'
@@ -7,6 +7,24 @@ const api = new ServiceModel({
 			, blog: '/blog'
 		}
 	})
+	, ls = Model.factory('ls')
 	;
+
+// api.sourceFrom( ls );
+//
+// api.syncTo(ls, (topic, {data}, res)=>{
+// 	let { data: resData } = res
+// 		;
+//
+// 	// 未返回数据不缓存
+// 	if( !resData ){
+// 		return false;
+// 	}
+//
+// 	return {
+// 		topic
+// 		, value: resData
+// 	};
+// });
 
 export default api;

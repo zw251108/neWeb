@@ -1,6 +1,7 @@
 import {useState, useEffect} from 'react';
 
-import api from '../api/index.js';
+import {imgPath} from '../config.js';
+import api       from '../api/index.js';
 
 function Album({id}){
 	const
@@ -16,23 +17,22 @@ function Album({id}){
 	}, []);
 
 	return (<section className="module album">
-		<h3 className="module_title"
-		    style={{gridRow: 'span 1'}}>相册 {album.name}</h3>
+		<h3 className="module_title">相册 {album.name}</h3>
 		<div className="grid-container">
 			{album.image.map((img)=>{
 				let { width, height } = img
-					, type = width > height ? 'hor' : 'vor'
-					, span = Math.floor( type === 'hor' ? height/width *8 : height/width *4 )
+					, type = width > height ? 'h' : 'v'
 					;
 
-				return (<div className="grid-half"
-				             style={{gridRow: `span ${span}`}}
+				return (<div className={`module news img img-${type}`}
 				             key={img.id}>
-				<a href={`#/img?id=${img.id}`}>
-					<img src={img.src}
-					     alt=""/>
-				</a>
-			</div>);
+					<a href={`#/img?id=${img.id}`}>
+						<div className={`img-container img-container-${type} flex-container center justify`}>
+							<img src={imgPath( img.src )}
+							     alt=""/>
+						</div>
+					</a>
+				</div>);
 			})}
 		</div>
 	</section>);

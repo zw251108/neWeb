@@ -1,12 +1,30 @@
 .footer{
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 1;
-    height: 40px;
+    overflow: hidden;
+    //position: fixed;
+    //bottom: 0;
+    //left: 0;
+    //right: 0;
+    //z-index: 10;
+    height: 80px;
     background: #000;
     color: #fff;
     font-size: 16px;
     line-height: 40px;
+
+    a{
+        color: #fff;
+    }
+    
+    .icon{
+        margin: 0 10px;
+        font-size: 24px;
+    }
+    .menu{
+        position: sticky;
+        top: 0;
+    }
+    .copy{
+        font-size: 12px;
+        text-align: center;
+    }
 }

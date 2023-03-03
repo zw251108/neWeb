@@ -1,4 +1,5 @@
 import React from 'react';
+import maple from 'cyan-maple';
 
 import {basicSetup, EditorView} from 'codemirror';
 import {EditorState}            from '@codemirror/state';
@@ -94,6 +95,7 @@ class Blog extends React.Component{
 			<div className="blog_content"
 			     ref={(el)=>{this.el = el;}}
 			     dangerouslySetInnerHTML={{__html: this.state.content}}></div>
+			<div className="blog_datetime">{maple.util.dateFormat(new Date( this.state.createDate ), 'YYYY-MM-DD hh:mm:ss')}</div>
 		</article>);
 	}
 }

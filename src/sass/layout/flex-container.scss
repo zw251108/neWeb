@@ -1,11 +1,33 @@
 .flex-container{
     display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
 
-    &.center{
-        align-items: center;
+    /* 水平方向 */
+    &.left{
+        justify-content: flex-start;
     }
-    &.justify{
+    &.center{
         justify-content: center;
     }
+    &.right{
+        justify-content: flex-end;
+    }
+    &.round{
+        justify-content: space-around;
+    }
 
+    /* 垂直方向 */
+    &-v{
+        flex-direction: column;
+    }
+    &.top{
+        align-items: flex-start;
+    }
+    &.justify{
+        align-items: center;
+    }
+    &.bottom{
+        align-items: flex-end;
+    }
 }

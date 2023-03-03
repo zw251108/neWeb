@@ -1,9 +1,10 @@
 import maple from 'cyan-maple';
 
-import Index from './view/index.js';
-import Blog  from './view/blog.js';
-import Album from './view/album.js';
-import Img   from './view/img.js';
+import Index    from './view/index.js';
+import Blog     from './view/blog.js';
+import Album    from './view/album.js';
+import Img      from './view/img.js';
+import Valhalla from './view/valhalla.js';
 
 import Test from './view/test.js';
 
@@ -48,6 +49,14 @@ export default function initRouter(app){
 				app.setState({
 					current: 'img'
 					, view: (<Img id={params.id}></Img>)
+				});
+			}
+		}, {
+			path: '/valhalla'
+			, callback(){
+				app.setState({
+					current: 'valhalla'
+					, view: (<Valhalla />)
 				});
 			}
 		}, {

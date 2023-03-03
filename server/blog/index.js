@@ -66,7 +66,7 @@ web.post('/blog', (req, res)=>{
 });
 
 web.put('/blog/:id', (req, res)=>{
-	let {id} = req.params
+	let { id } = req.params
 		, data = req.body
 		;
 

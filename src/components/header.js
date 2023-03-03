@@ -18,27 +18,40 @@ class Header extends React.Component{
 	static contextType = RouterContext;
 
 	goIndex(){
+		if( this.props.index ){
+			return ;
+		}
+		
 		this.context.go('/index');
+	}
+	goBack(){
+		this.context.go(-1);
 	}
 
 	render(){
-		console.log(this.context)
-		return (<header className="header grid-container">
-			<div className="header_content grid-full">
-				<img className="logo"
-				     src="/image/logo.png"
-				     width="30"
-				     height="30"
-				     alt=""/>
-				{!this.props.index && <i className="icon icon-left" onClick={()=>{this.goIndex();}}></i>}
-				{this.props.deep && <i className="icon icon-left"></i>}
-				<img className="avatar"
-				     src="/image/avatar-96.jpg"
-				     width="30"
-				     height="30"
-				     alt=""/>
-				{this.props.filter && <i className="icon icon-filter"></i>}
-				{this.props.search && <i className="icon icon-search"></i>}
+		return (<header className="header">
+			<div className="header_content flex-container">
+				<div>
+					<img className="logo"
+					     src="/image/logo.png"
+					     width="30"
+					     height="30"
+					     onClick={()=>{this.goIndex();}}
+					     alt=""/>
+					{!this.props.index && <i className="icon icon-left"
+					                         onClick={()=>{this.goBack();}}></i>}
+					{this.props.deep && <i className="icon icon-left"
+					                       onClick={()=>{this.goBack();}}></i>}
+				</div>
+				<div>
+				    <img className="avatar"
+				         src="/image/avatar-96.jpg"
+				         width="30"
+				         height="30"
+				         alt=""/>
+					{this.props.filter && <i className="icon icon-filter"></i>}
+					{this.props.search && <i className="icon icon-search"></i>}
+				</div>
 			</div>
 		</header>);
 	}
