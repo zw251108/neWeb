@@ -5,9 +5,23 @@ maple.useAxios();
 
 window.maple = maple;
 
+let baseUrl
+	, imgRoot
+	;
+
+if( process.env.NODE_ENV === 'production' ){
+	baseUrl = '//zw150026.com';
+	imgRoot = '//zw150026.com';
+}
+else{
+	baseUrl = '//localhost:9001';
+	imgRoot = '//localhost:9001';
+}
+
 const CONFIG = {
 		prefix: ''
-		, imgRoot: '//zw150026.com'
+		, baseUrl
+		, imgRoot
 	}
 	;
 
@@ -24,4 +38,5 @@ export default CONFIG;
 export {
 	prefix
 	, imgPath
+	, baseUrl
 };

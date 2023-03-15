@@ -1,0 +1,25 @@
+@keyframes slider-left-out{
+    from{
+        transform: translateX(0);
+    }
+    to{
+        transform: translateX(100%);
+    }
+}
+
+@keyframes slider-left-in{
+    from{
+        transform: translateX(100%);
+    }
+    to{
+        transform: translateX(0);
+    }
+}
+
+.slider-left-out{
+    animation-name: slider-left-out;
+}
+
+.slider-left-in{
+    animation-name: slider-left-in;
+}

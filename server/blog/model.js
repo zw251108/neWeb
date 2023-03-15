@@ -23,6 +23,7 @@ let Blog = db.define('blog', {
 		// 		return [];
 		// 	}
 		// }
+		, short: DataTypes.STRING
 		, readNum: {
 			type: DataTypes.INTEGER
 			, defaultValue: 1
@@ -30,7 +31,7 @@ let Blog = db.define('blog', {
 		}
 		, replyNum: {
 			type: DataTypes.INTEGER
-			, defaultValue: 1
+			, defaultValue: 0
 			, field: 'reply_num'
 		}
 		// , lv: DataTypes.INTEGER

@@ -6,6 +6,7 @@ import Album    from './view/album.js';
 import Img      from './view/img.js';
 import Valhalla from './view/valhalla.js';
 
+import Edit from './view/edit.js'
 import Test from './view/test.js';
 
 export default function initRouter(app){
@@ -58,6 +59,14 @@ export default function initRouter(app){
 					current: 'valhalla'
 					, view: (<Valhalla />)
 				});
+			}
+		}, {
+			path: '/edit'
+			, callback(params){
+				app.setState({
+					current: 'edit'
+					, view: (<Edit id={params.id}></Edit>)
+				})
 			}
 		}, {
 			path: '/test'

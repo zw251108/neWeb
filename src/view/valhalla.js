@@ -7,9 +7,15 @@ function Valhalla(){
 	const
 		[ list, setList ] = useState([])
 		,
-		[ current, setCurrent ] = useState(0)
+		[ current, setCurrent] = useState({
+			path: []
+		})
 		,
-		[ currentPic, setCurrentPic ] = useState(0)
+		[ currentIndex, setCurrentIndex ] = useState(0)
+		,
+		[ currentPic, setCurrentPic ] = useState('')
+		,
+		[ currentPicIndex, setCurrentPicIndex] = useState(0)
 		;
 
 	useEffect(()=>{
@@ -30,51 +36,62 @@ function Valhalla(){
 				return b.weight - a.weight;
 			});
 
-			console.log(data)
-
 			setList( data );
+			setCurrent( data[0] );
+			setCurrentPic( data[0].path[0] );
 		});
 	}, []);
 
 	function next(){
-		if( current === list.length -1 ){
+		if( currentIndex === list.length -1 ){
 			return ;
 		}
 
-		setCurrent( current +1 );
-		setCurrentPic(0);
+		let temp = list[currentIndex +1]
+			;
+
+		setCurrent( temp );
+		setCurrentIndex( currentIndex +1 );
+		setCurrentPic( temp.path[0] );
+		setCurrentPicIndex(0);
 	}
 	function prev(){
-		if( current === 0 ){
+		if( currentIndex === 0 ){
 			return ;
 		}
 
-		setCurrent( current -1 );
-		setCurrentPic(0);
+		let temp = list[currentIndex -1]
+			;
+
+		setCurrent( temp );
+		setCurrentIndex( currentIndex -1 );
+		setCurrentPic( temp.path[0] );
+		setCurrentPicIndex(0);
 	}
 
 	function set(index){
-		setCurrentPic( index );
+		setCurrentPic( current.path[index] );
+		setCurrentPicIndex( index );
 	}
 
 	return (<section className="module valhalla">
-		<div className="module_title">{list.length ? list[current].name : ''}</div>
+		<div className="module_title">{list.length ? current.name : ''}</div>
 		{list.length && (<div className="slider">
 			<div className="main_view img-container flex-container center justify">
-				{list[current].path[currentPic] ?
-					<img src={imgPath(list[current].path[currentPic])}
-					     title={list[current].name}
+				{currentPic ?
+					<img src={imgPath( currentPic )}
+					     title={current.name}
 					     alt="照片待补"/>
 					:
 					<div className="flex-container center justify">照片待补</div>}
-				{current !== 0 ?
+				{currentIndex !== 0 ?
 					<div className="prev flex-container left justify"
 					     onClick={prev}>
 						<i className="icon icon-left"></i>
 					</div>
 					:
 					null}
-				{current !== list.length -1 ?
+				{currentIndex !== list.length -1 ?
 					<div className="next flex-container right justify"
 					     onClick={next}>
 						<i className="icon icon-right"></i>
@@ -82,15 +99,15 @@ function Valhalla(){
 					:
 					null}
 			</div>
-			{list[current].path.length ?
+			{current.path.length ?
 				<div className="preview flex-container left scroll-container">
-					{list[current].path.map((item, index)=>{
-						return (<div className={`img-container ${index === currentPic ? 'current' : ''}`}
+					{current.path.map((item, index)=>{
+						return (<div className={`img-container ${index === currentPicIndex ? 'current' : ''}`}
 						             onClick={()=>{
-							             set(index);
+							             set( index );
 						             }}
 						             key={item}>
-							<img src={imgPath(item)}
+							<img src={imgPath( item )}
 							     alt=""/>
 						</div>);
 					})}
@@ -100,19 +117,19 @@ function Valhalla(){
 			<div className="description">
 			     <div className="flex-container left">
 					<div>姓&emsp;&emsp;名：</div>
-					<div>{list[current].name}</div>
+					<div>{current.name}</div>
 				</div>
 				<div className="flex-container left">
 					<div>入职时间：</div>
-					<div>{list[current].start}</div>
+					<div>{current.start}</div>
 				</div>
 				<div className="flex-container left">
 					<div>离职时间：</div>
-					<div>{list[current].end}</div>
+					<div>{current.end}</div>
 				</div>
 				<div className="flex-container left">
 					<div>职业生涯：</div>
-					<div>{list[current].description}</div>
+					<div>{current.description}</div>
 				</div>
 			</div>
 		</div>)}

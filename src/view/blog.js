@@ -1,14 +1,19 @@
 import React from 'react';
 import maple from 'cyan-maple';
 
-import {basicSetup, EditorView} from 'codemirror';
-import {EditorState}            from '@codemirror/state';
-import {javascript}             from '@codemirror/lang-javascript';
-import {html}                   from '@codemirror/lang-html';
-import {css}                    from '@codemirror/lang-css';
-import {oneDark}                from '@codemirror/theme-one-dark';
+import {basicSetup}     from 'codemirror';
+import {EditorState}    from '@codemirror/state';
+import {EditorView}     from '@codemirror/view';
+import {javascript}     from '@codemirror/lang-javascript';
+import {html}           from '@codemirror/lang-html';
+import {css}            from '@codemirror/lang-css';
+import {StreamLanguage} from '@codemirror/language';
+import {shell}          from '@codemirror/legacy-modes/mode/shell';
+import {sql}            from '@codemirror/legacy-modes/mode/sql';
+import {oneDark}        from '@codemirror/theme-one-dark';
 
-import api from '../api/index.js';
+import {imgPath} from '../config.js';
+import api       from '../api/index.js';
 
 class Blog extends React.Component{
 	constructor(props){
@@ -23,77 +28,98 @@ class Blog extends React.Component{
 	}
 
 	componentDidMount(){
-		api.get(`/blog/${this.state.id}`).then((res)=>{
-			this.setState( res.data );
-		});
+		this.fetch( this.props.id );
+	}
+
+	shouldComponentUpdate(nextProps, nextState, nextContext){
+		if( nextProps.id !== this.props.id ){
+			this.fetch( nextProps.id );
+
+			return false;
+		}
+
+		return true;
 	}
 
 	componentDidUpdate(){
 		let temp = this.el.querySelectorAll('textarea[data-code-type]')
+			, imgs = this.el.querySelectorAll('img')
 			;
 
 		temp.forEach((el)=>{
 			let codeType = el.dataset.codeType
-				, state
 				, view
+				, config = {
+					doc: el.value
+					, extensions: [
+						basicSetup
+						, EditorState.readOnly.of(true)
+						, oneDark
+					]
+				}
 				;
 
 			switch( codeType ){
 				case 'js':
-					state = EditorState.create({
-						doc: el.value
-						, extensions: [
-							basicSetup
-							, javascript()
-							, EditorState.readOnly.of(true)
-							, oneDark
-						]
-					});
+					config.extensions.push( javascript() );
 
 					break;
 				case 'css':
-					state = EditorState.create({
-						doc: el.value
-						, extensions: [
-							basicSetup
-							, css()
-							, EditorState.readOnly.of(true)
-							, oneDark
-						]
-					});
+					config.extensions.push( css() );
 
 					break;
 				case 'html':
-					state = EditorState.create({
-						doc: el.value
-						, extensions: [
-							basicSetup
-							, html()
-							, EditorState.readOnly.of(true)
-							, oneDark
-						]
-					});
+					config.extensions.push( html() );
+
+					break;
+				case 'shell':
+					config.extensions.push( StreamLanguage.define(shell) );
+					
+					break;
+				case 'sql':
+					config.extensions.push( StreamLanguage.define(sql({})) );
 
 					break;
 				default:
+					config = null;
+
 					break;
 			}
 
-			if( state ){
+			if( config ){
 				view = new EditorView({
-					state
+					state: EditorState.create( config )
 				});
 				el.parentNode.insertBefore(view.dom, el);
 				el.style.display = 'none';
 			}
 		});
+
+		imgs.forEach((el)=>{
+			let url = maple.url.parseUrl( el.src )
+				;
+
+			el.src = imgPath( url.path );
+		});
+	}
+
+	fetch(id){
+		api.get(`/blog/${id}`, {
+			data: {
+				status: 1
+			}
+		}).then((res)=>{
+			this.setState( res.data );
+		});
 	}
 
 	render(){
 		return (<article className="module blog">
-			<h3 className="module_title">{this.state.title}</h3>
+			<h2 className="module_title">{this.state.title}</h2>
 			<div className="blog_content"
-			     ref={(el)=>{this.el = el;}}
+			     ref={(el)=>{
+					 this.el = el;
+				 }}
 			     dangerouslySetInnerHTML={{__html: this.state.content}}></div>
 			<div className="blog_datetime">{maple.util.dateFormat(new Date( this.state.createDate ), 'YYYY-MM-DD hh:mm:ss')}</div>
 		</article>);

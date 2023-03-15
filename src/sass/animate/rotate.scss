@@ -1,0 +1,9 @@
+@keyframes rotate-360{
+    100%{
+        transform: rotate(360deg);
+    }
+}
+
+.animate-rotate-360{
+    animation-name: rotate-360;
+}

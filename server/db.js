@@ -14,6 +14,50 @@ const
 			freezeTableName: true
 		}
 	})
+	, where = {
+		eq(params){
+			return Object.entries( params ).reduce((rs, [key, val])=>{
+				if( val !== undefined && val !== '' && val !== null ){
+					rs[key] = val;
+				}
+
+				return rs;
+			}, {});
+		}
+		, like(params){
+			return Object.entries( params ).reduce((rs, [key, val])=>{
+				if( val !== undefined && val !== '' ){
+					rs[key] = {
+						[Op.like]: `%${val}%`
+					};
+				}
+
+				return rs;
+			}, {});
+		}
+		, in(params){
+			return Object.entries( params ).reduce((rs, [key, val])=>{
+				if( Array.isArray(val) && val.length ){
+					rs[key] = {
+						[Op.in]: val
+					};
+				}
+
+				return rs;
+			}, {});
+		}
+		, notIn(params){
+			return Object.entries( params ).reduce((rs, [key, val])=>{
+				if( Array.isArray(val) && val.length ){
+					rs[key] = {
+						[Op.notIn]: val
+					};
+				}
+
+				return rs;
+			}, {});
+		}
+	}
 	;
 
 export default db;
@@ -21,6 +65,7 @@ export default db;
 export {
 	DataTypes
 	, Op
+	, where
 };
 
 export const commonAttr = {

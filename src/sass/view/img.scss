@@ -3,6 +3,15 @@
         content: '\e845';
     }
 
+    &-v{
+        .img-container{
+            max-width: 600px;
+        }
+    }
+    &-h{
+
+    }
+
     &_datetime{
         border-top: 1px solid #c0c0c0;
         margin: 10px 0;
@@ -18,6 +27,7 @@
 
     .img-container{
         border-radius: 5px;
+        margin: auto;
         font-size: 0;
     }
 }

@@ -1,0 +1,47 @@
+@import "../config/color.config.scss";
+
+$default-font-size:   16px;
+$default-line-height:   2;//150%;
+
+$h1-size:   $default-font-size *2;
+$h2-size:   $default-font-size *1.75;
+$h3-size:   $default-font-size *1.5;
+$h4-size:   $default-font-size *1.25;
+
+body{
+    margin:0;
+    padding:0;
+
+    color: $font-color;
+    font-family: consolas, "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+    font-size: $default-font-size;
+    line-height: $default-line-height;
+
+    // 优化显示文本
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+
+    -wekibt-text-size-adjust: 100%;
+}
+
+address,
+caption,
+cite,
+code,
+dfn,
+strong,
+th,
+var,
+em,
+i,
+b{
+    font-style:normal;
+    font-weight:400;
+}
+
+ul{
+    margin:0;
+    padding:0;
+    list-style:none;
+}

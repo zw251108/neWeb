@@ -1,0 +1,39 @@
+@import "../animate/bounce.scss";
+@import "../animate/rotate.scss";
+
+.loadmore{
+    position: relative;
+
+    .loading-chasing{
+        position: relative;
+        height: 50px;
+        width: 50px;
+        margin: 0 auto;
+
+        text-align: center;
+
+        animation: rotate-360 2s infinite linear;
+
+
+        &::before,
+        &::after{
+            display: inline-block;
+            position: absolute;
+            top: 0;
+            height: 30px;
+            width: 30px;
+            border-radius: 100%;
+            background-color: #c0c0c0;
+
+            content: "";
+
+            animation: bounce 2s infinite ease-in-out;
+        }
+        &::after{
+            top: auto;
+            bottom: 0;
+
+            animation-delay: -1s;
+        }
+    }
+}

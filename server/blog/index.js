@@ -4,36 +4,52 @@ import tag  from '../tag/handler.js';
 
 web.get('/blog', (req, res)=>{
 	let { page = 1
-		, size = 20 } = req.query
+		, size = 20
+		, title
+		, tags
+		, id
+		, status } = req.query
+		, exec
 		;
 
 	// todo creatorId 从 session 中取
-	blog.list({
-		creatorId: 1
-		, status: 1
-	}, page, size).then((data)=>{
-		let idList = data.map((b)=>{
-				return b.id;
-			})
-			;
 
+	if( id ){
+		exec = blog.get({
+			id
+			, creatorId: 1
+			, status
+		});
+	}
+	else{
+		blog.list({
+			title
+			, tags
+			, creatorId: 1
+			, status
+		}, page, size);
+	}
 
-
-		console.log(data);
-		
+	exec.then((data)=>{
 		res.send( JSON.stringify({
 			code: 0
 			, data
 		}) );
+		res.end();
 	});
 });
 
 web.get('/blog/:id', (req, res)=>{
 	let { id } = req.params
+		,
+		{ status } = req.query
 		;
-
+	     console.log(status)
+	// todo creatorId 从 session 中取
 	blog.get({
 		id
+		, creatorId: 1
+		, status
 	}).then((data)=>{
 		if( data ){
 			res.send({
@@ -46,20 +62,41 @@ web.get('/blog/:id', (req, res)=>{
 				code: -1
 				, msg: ''
 			});
-			res.end();
 		}
+
+		res.end();
 	});
 });
 
 web.post('/blog', (req, res)=>{
 	let data = req.body
+		,
+		{ id } = data
+		, exec
 		;
 
-	blog.create({
-		...data
-	}).then((rs)=>{
+	// todo creatorId 从 session 中取
+
+	if( id ){
+		exec = blog.update({
+			...data
+		}, {
+			id
+		});
+	}
+	else{
+		exec = blog.create({
+			...data
+			, creatorId: 1
+		});
+	}
+
+	exec.then(({dataValues})=>{
 		res.send({
-			...rs
+			code: 0
+			, data: {
+				id: dataValues.id
+			}
 		});
 		res.end();
 	});

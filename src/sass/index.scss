@@ -21,9 +21,8 @@ body{
 }
 
 a{
-    color: #000;
+    color: #333;
     text-decoration: none;
-    
 }
 
 .hidden{
@@ -53,14 +52,15 @@ td{
     text-indent: 0;
 }
 
-@import "./element/code.scss";
-@import "./element/icon.scss";
+@import "./animate.scss";
 
-@import "./component/header.scss";
-@import "./component/footer.scss";
-@import "./component/main.scss";
-@import "./component/aside.scss";
-@import "./component/module.scss";
+@import "./element.scss";
+
+@import "./header.scss";
+@import "./footer.scss";
+@import "./main.scss";
+@import "./aside.scss";
+@import "./module.scss";
 
 @import "./layout/flex-container.scss";
 @import "./layout/grid-container.scss";

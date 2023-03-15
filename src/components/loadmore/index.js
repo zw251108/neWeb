@@ -25,8 +25,10 @@ class Loadmore extends React.Component{
 	}
 
 	render(){
-		return (<div className={`loadmore grid-full ${this.props.max ? 'hidden' : ''}`}
-		             ref={this.ref}>fetch</div>);
+		return (<div className={`loading grid-full ${this.props.max ? 'hidden' : ''}`}
+		             ref={this.ref}>
+			<div className="loading-chasing"></div>
+		</div>);
 	}
 }
 

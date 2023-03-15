@@ -17,4 +17,41 @@
         font-size: 14px;
         text-align: right;
     }
+
+    blockquote{
+        display: block;
+        border: 1px dashed #c0c0c0;
+        border-radius: 10px;
+        padding: 10px;
+        background: #fafafa;
+        color: #999;
+        line-height: 2em;
+    }
+
+    .link{
+        display: inline-block;
+        position: relative;
+        margin-left: 24px;
+        //text-decoration: underline #999;
+        border-bottom: 1px solid #666;
+
+        &::before{
+            position: absolute;
+            left: -20px;
+            font-family: 'font';
+            font-size: 18px;
+            text-align: center;
+            line-height: 24px;
+            font-weight: bolder;
+            content: "\f0c1"
+        }
+    }
+
+    .img{
+        max-width: 100%;
+        vertical-align: top;
+    }
+    .bold{
+        font-weight: bold;
+    }
 }

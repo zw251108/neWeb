@@ -7,18 +7,22 @@ import api       from '../api/index.js';
 function Img({id}){
 	const
 		[ img, setImg ] = useState({})
+		,
+		[ h, setH ] = useState( false )
 		;
 
 	useEffect(()=>{
 		api.get(`/image/${id}`).then((res)=>{
 			setImg( res.data );
-		});
-	}, []);
 
-	return (<article className="module img">
+			setH( res.data.width / res.data.height > 1.3 );
+		});
+	}, [id]);
+
+	return (<article className={`module img ${h ? '' : 'img-v'}`}>
 		<div className="module_title">&nbsp;</div>
 		<div className="img-container">
-			<img src={imgPath( img.src )}
+			<img src={img.src ? imgPath( img.src ) : ''}
 			     alt=""/>
 		</div>
 		<p className="img_desc">{img.desc}</p>

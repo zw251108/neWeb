@@ -1,10 +1,21 @@
-import Blog from './model.js';
+import {where} from '../db.js';
+import Blog    from './model.js';
 
 export default {
-	list(where, page=1, size=20){
+	list({title, tags, creatorId, status}, page=1, size=20){
 		return Blog.findAll({
 			attributes: ['id', 'title', 'updateDate']
-			, where
+			, where: {
+				...where.eq({
+					creatorId
+					, status
+				})
+				, ...where.like({
+					title
+					, content: title
+					, tags
+				})
+			}
 			, order: [
 				['id', 'DESC']
 			]
@@ -12,9 +23,15 @@ export default {
 			, limit: size
 		});
 	}
-	, get(where){
+	, get({id, creatorId, status}){
 		return Blog.findOne({
-			where
+			where: {
+				...where.eq({
+					id
+					, creatorId
+					, status
+				})
+			}
 		});
 	}
 	, create(data){

@@ -14,10 +14,10 @@ function Album({id}){
 		api.get(`/album/${id}`).then((res)=>{
 			setAlbum( res.data );
 		});
-	}, []);
+	}, [id]);
 
 	return (<section className="module album">
-		<h3 className="module_title">相册 {album.name}</h3>
+		<h2 className="module_title">相册 {album.name}</h2>
 		<div className="grid-container">
 			{album.image.map((img)=>{
 				let { width, height } = img

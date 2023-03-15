@@ -1,8 +1,10 @@
-//@import "src/sass/component/news/index";
-@import 'src/sass/component/loadmore/index.scss';
-
 .index{
     margin: -5px 0;
+
+    .loadmore{
+        grid-column: span 8;
+        grid-row: span 1;
+    }
 }
 
 .news{
