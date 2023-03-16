@@ -7,16 +7,27 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "server": "node server/index.js",
-    "proxy": "node proxy.js"
+    "admin": "vite",
+    "manage": "vite build"
   },
   "author": "ZwB",
   "license": "ISC",
   "dependencies": {
+    "@codemirror/autocomplete": "~6.4.2",
+    "@codemirror/commands": "~6.2.2",
+    "@codemirror/highlight": "~0.19.8",
+    "@codemirror/history": "~0.19.2",
     "@codemirror/lang-css": "~6.0.2",
     "@codemirror/lang-html": "~6.4.2",
     "@codemirror/lang-javascript": "~6.1.4",
+    "@codemirror/language": "~6.6.0",
+    "@codemirror/legacy-modes": "~6.3.1",
     "@codemirror/state": "~6.2.0",
     "@codemirror/theme-one-dark": "~6.1.0",
+    "@codemirror/view": "~6.9.2",
+    "@element-plus/icons-vue": "~1.1.4",
+    "@emmetio/codemirror6-plugin": "~0.2.0",
+    "@lezer/common": "~1.0.2",
     "axios": "~1.2.1",
     "body-parser": "~1.20.1",
     "codemirror": "~6.0.1",
@@ -24,12 +35,14 @@
     "cookie-parser": "~1.4.6",
     "cors": "~2.8.5",
     "cyan-maple": "github:tgoufe/CyanMapleFrame",
+    "element-plus": "~2.1.11",
     "express": "~4.18.2",
     "express-session": "~1.17.3",
     "mysql2": "~3.1.2",
     "react": "~18.2.0",
     "react-dom": "~18.2.0",
     "sequelize": "~6.28.0",
+    "vue": "~3.2.33",
     "ws": "~8.12.0"
   },
   "type": "module",
@@ -62,12 +75,16 @@
   },
   "devDependencies": {
     "@babel/core": "~7.20.5",
+    "@babel/parser": "~7.16.6",
     "@babel/plugin-syntax-flow": "~7.18.6",
     "@babel/plugin-transform-react-jsx": "~7.19.0",
-    "http-proxy": "~1.18.1",
+    "@vitejs/plugin-vue": "~2.3.2",
+    "@vue/compiler-sfc": "~3.2.33",
+    "postcss": "~8.4.21",
     "postcss-flexbugs-fixes": "~5.0.2",
     "react-scripts": "~5.0.1",
     "sass": "~1.58.0",
-    "typescript": "~4.9.4"
+    "typescript": "~4.9.4",
+    "vite": "~2.9.8"
   }
 }

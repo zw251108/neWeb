@@ -1,0 +1,41 @@
+
+/** 左侧菜单 **/
+$aside-bg-color: #001529;
+$aside-color: rgba(255, 255, 255, 0.7);
+$aside-open-width: 260px;
+$aside-min-width: 65px;
+
+$aside-menu-bg-color-active:#2d8cf0;
+$aside-menu-color-active:#fff;
+
+$aside-menu-bg-color-hover:$aside-bg-color;
+$aside-menu-color-hover:#fff;
+
+$aside-menu-min-color:#fff;
+$aside-menu-min-bg-color:$aside-bg-color;
+
+
+/** 顶部 header **/
+$header-height: 64px;
+$header-border-color:#f0f0f0;
+$header-icon-color: #515a6e;
+$header-icon-color-hover: #57a3f3;
+
+$tag-nav-bg-color:#F0F0F0;
+$tag-nav-border-color:#F0F0F0;
+$tag-nav-height:40px;
+$tag-nav-close-btn-width:32px;
+$tag-nav-prev-btn-width:28px;
+$tag-nav-next-btn-width:28px;
+$tag-nav-btn-hover-color:#57a3f3;
+$tag-nav-item-color:#515a6e;
+$tag-nav-item-icon-bg-color:#e8eaec;
+$tag-nav-item-icon-active-bg-color:#2D8cF0;
+
+
+/** 右侧悬浮配置项 **/
+$right-panel-width:300px;
+
+/** 底部 footer **/
+$footer-height: 64px;
+$footer-border-color:#f0f0f0;

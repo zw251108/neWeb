@@ -143,6 +143,45 @@ let server = web.listen(CONFIG.PORT, ()=>{
 
 export default web;
 
+function createController(web, methodList={}, methodType={}){
+	Object.entries( methodList ).forEach(([path, method])=>{
+		let type = methodType[path] || 'get'
+			;
+
+		web[type](`/${path}`, (req, res)=>{
+			let query
+				;
+
+			if( type === 'post' ){
+				query = req.body;
+			}
+			else{
+				query = req.query;
+			}
+
+			method( query ).then((data)=>{
+				res.send( JSON.stringify({
+					code: 0
+					, data
+				}) );
+				res.end();
+			}, (e)=>{
+				console.log(`${path}`, e);
+
+				res.send({
+					code: -1
+					, msg: ''
+				});
+				res.end();
+			});
+		});
+	});
+}
+
+export {
+	createController
+};
+
 // export {
 // 	sse
 // 	, socket

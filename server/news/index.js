@@ -3,8 +3,8 @@ import news from './handler.js';
 import tag  from '../tag/handler.js';
 
 web.get('/news', (req, res)=>{
-	let { page=1
-		, size=20 } = req.query
+	let { page = 1
+		, size = 20 } = req.query
 		;
 
 	// todo creatorId 从 session 中取

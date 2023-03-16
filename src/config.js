@@ -12,6 +12,7 @@ let baseUrl
 if( process.env.NODE_ENV === 'production' ){
 	baseUrl = '//zw150026.com';
 	imgRoot = '//zw150026.com';
+	maple.setDebug( false );
 }
 else{
 	baseUrl = '//localhost:9001';

@@ -58,6 +58,14 @@ const
 			}, {});
 		}
 	}
+	, parse = (val, def)=>{
+		try{
+			return JSON.parse( val );
+		}
+		catch(e){
+			return def;
+		}
+	}
 	;
 
 export default db;
@@ -66,6 +74,7 @@ export {
 	DataTypes
 	, Op
 	, where
+	, parse
 };
 
 export const commonAttr = {

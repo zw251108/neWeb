@@ -1,16 +1,10 @@
-import News from './model.js';
+import {where, parse} from '../db.js';
+import News           from './model.js';
 
 export default {
 	list(where, page=1, size=20){
-		try{
-			page = JSON.parse( page );
-		}
-		catch(e){}
-
-		try{
-			size = JSON.parse( size );
-		}
-		catch(e){}
+		page = parse(page, 1);
+		size = parse(size, 20);
 
 		return News.findAll({
 			attributes: ['id', 'type', 'targetId', 'content', 'createDate']

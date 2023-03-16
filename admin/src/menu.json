@@ -1,0 +1,25 @@
+[
+  {
+    "icon": "setting",
+    "name": "be",
+    "path": "be",
+    "title": "中台系统功能配置",
+    "showAlways": true,
+    "children": [
+      {
+        "icon": "document-add",
+        "name": "be/new",
+        "component": "beNew",
+        "title": "新建页面"
+      }
+    ]
+  },
+  {
+	"icon": "document",
+	"name": "manage",
+	"path": "manage",
+	"title": "后台页面管理配置",
+	"showAlways": true,
+	"children": []
+  }
+]

@@ -22,7 +22,7 @@ web.get('/blog', (req, res)=>{
 		});
 	}
 	else{
-		blog.list({
+		exec = blog.list({
 			title
 			, tags
 			, creatorId: 1
@@ -31,6 +31,28 @@ web.get('/blog', (req, res)=>{
 	}
 
 	exec.then((data)=>{
+		res.send( JSON.stringify({
+			code: 0
+			, data
+		}) );
+		res.end();
+	});
+});
+
+web.get('/blog/count', (req, res)=>{
+	let { title
+		, tags
+		, status } = req.query
+		;
+
+	// todo creatorId 从 session 中取
+
+	blog.count({
+		title
+		, tags
+		, creatorId: 1
+		, status
+	}).then((data)=>{
 		res.send( JSON.stringify({
 			code: 0
 			, data
