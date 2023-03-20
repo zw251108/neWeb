@@ -150,4 +150,7 @@ defineExpose({
 .el-form--inline .form_item{
 	display: inline-block;
 }
+.form_item .el-form-item__label{
+	width: 6em;
+}
 </style>

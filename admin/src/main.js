@@ -35,7 +35,7 @@ let app = mgcc.initApp( App )
 			}
 		}]
 		, fallback(url){
-			let currentActive = url.relative.slice(1)
+			let currentActive = url.path.slice(1)
 				;
 
 			if( vm.active === currentActive ){  // 当前为路由页面
@@ -43,7 +43,7 @@ let app = mgcc.initApp( App )
 			}
 
 			midway.pageGet({
-				path: url.relative
+				path: url.path
 			}).then(({data={}})=>{
 				let { config } = data
 					;
@@ -147,6 +147,8 @@ midway.pageList({
 			currentParent = t;
 		}
 	});
+
+	console.log(menuList)
 
 	// 生成菜单
 	vm.menuList = menuList;

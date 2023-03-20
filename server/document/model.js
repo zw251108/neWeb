@@ -76,6 +76,16 @@ Section.hasMany(Content, {
 	, as: 'content'
 	, constraints: false
 });
+Content.belongsTo(Document, {
+	foreignKey: 'document_id'
+	, as: 'document'
+	, constraints: false
+});
+Document.hasMany(Content, {
+	foreignKey: 'document_id'
+	, as: 'content'
+	, constraints: false
+});
 
 tagsBelongsTo(Document, TAG_CONTENT_TYPE.document);
 

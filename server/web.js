@@ -143,23 +143,25 @@ let server = web.listen(CONFIG.PORT, ()=>{
 
 export default web;
 
-function createController(web, methodList={}, methodType={}){
+function createController(web, dir='', methodList={}, methodType={}){
 	Object.entries( methodList ).forEach(([path, method])=>{
 		let type = methodType[path] || 'get'
 			;
 
-		web[type](`/${path}`, (req, res)=>{
-			let query
+		web[type](`/${dir ? `${dir}/` : ''}${path}`, (req, res)=>{
+			let data
 				;
 
 			if( type === 'post' ){
-				query = req.body;
+				data = req.body;
 			}
 			else{
-				query = req.query;
+				data = req.query;
 			}
 
-			method( query ).then((data)=>{
+			// todo 增加 creatorId
+
+			method( data ).then((data)=>{
 				res.send( JSON.stringify({
 					code: 0
 					, data

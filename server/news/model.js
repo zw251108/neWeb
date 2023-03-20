@@ -18,6 +18,7 @@ let News = db.define('news', {
 		, content: {
 			type: DataTypes.JSON
 		}
+		, status: DataTypes.INTEGER
 		// , tags: {
 		// 	type: DataTypes.TEXT
 		// }

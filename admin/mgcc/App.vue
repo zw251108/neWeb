@@ -170,6 +170,7 @@ body {
 		box-sizing: border-box;
 
 		.main-container {
+			overflow: auto;
 			width: 100%;
 			padding: 20px;
 			

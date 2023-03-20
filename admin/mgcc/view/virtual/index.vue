@@ -1,5 +1,6 @@
 <template>
-<div class="searchBar" style="margin-bottom: 20px;" v-if="searchItems.length">
+4<div class="searchBar"
+      v-if="searchItems.length">
 	<form-items :inline="true"
 	            label-position="right"
 	            size="large"
@@ -7,14 +8,15 @@
 	            :form="searchForm"
 	            :form-items="searchItems">
 		<template #btns>
-			<el-form-item>
+			<el-form-item class="form_item-block">
 				<el-button @click="reset">重置</el-button>
 				<el-button @click="search" type="primary">搜索</el-button>
 			</el-form-item>
 		</template>
 	</form-items>
 </div>
-<toolbars :toolbars="toolbars"
+<toolbars v-if="toolbars && toolbars.length"
+          :toolbars="toolbars"
           @click-btn="clickBtn"></toolbars>
 <el-table border
           stripe
@@ -653,8 +655,18 @@ export default {
 </script>
 
 <style>
-.toolbars{
+.searchBar{
+	border-radius: 10px;
 	margin-bottom: 20px;
+	padding: 10px 10px 0;
+	outline: 1px dashed #c0c0c0;
+	outline-offset: 5px;
+	background: #f9f9f9;
+}
+.toolbars{
+	border-bottom: 1px solid #dcdfe6;
+	margin-bottom: 10px;
+	padding: 5px;
 }
 .cell .el-checkbox__inner{
 	height: 20px;
@@ -673,5 +685,11 @@ export default {
 }
 .el-select-dropdown .el-scrollbar {
 	background-color: transparent;
+}
+.form_item-block{
+	width: 100%;
+}
+.form_item-block .el-form-item__content{
+	justify-content: center;
 }
 </style>

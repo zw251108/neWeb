@@ -1,6 +1,11 @@
-import web  from '../web.js';
-import news from './handler.js';
-import tag  from '../tag/handler.js';
+import web, {createController} from '../web.js';
+import news                    from './handler.js';
+import tag                     from '../tag/handler.js';
+
+createController(web, 'news', news, {
+	create: 'post'
+	, update: 'post'
+});
 
 web.get('/news', (req, res)=>{
 	let { page = 1
@@ -10,16 +15,9 @@ web.get('/news', (req, res)=>{
 	// todo creatorId 从 session 中取
 	news.list({
 		creatorId: 1
-	}, page, size).then((data)=>{
-		let idList = data.map((b)=>{
-				return b.id;
-			})
-			;
-
-
-
-		console.log(data);
-		
+		, page
+		, size
+	}).then((data)=>{
 		res.send( JSON.stringify({
 			code: 0
 			, data

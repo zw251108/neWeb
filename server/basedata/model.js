@@ -11,7 +11,7 @@ let Planet = db.define('basedata_add_planet', {
 		createdAt: false
 		, updatedAt: false
 	})
-	, Continent = db.define('basedata_add_country', {
+	, Continent = db.define('basedata_add_continent', {
 		id: {
 			type: DataTypes.INTEGER
 			, autoIncrement: true
@@ -99,7 +99,7 @@ let Planet = db.define('basedata_add_planet', {
 		createdAt: false
 		, updatedAt: false
 	})
-	, Town = db.define('base_add_town', {
+	, Town = db.define('basedata_add_town', {
 		id: {
 			type: DataTypes.INTEGER
 			, autoIncrement: true
@@ -115,7 +115,7 @@ let Planet = db.define('basedata_add_planet', {
 		createdAt: false
 		, updatedAt: false
 	})
-	, Village = db.define('base_add_village', {
+	, Village = db.define('basedata_add_village', {
 		id: {
 			type: DataTypes.INTEGER
 			, autoIncrement: true
@@ -136,18 +136,18 @@ let Planet = db.define('basedata_add_planet', {
 
 Continent.belongsTo(Planet, {
 	foreignKey: 'planet_id'
-	, as: 'continent'
+	, as: 'planet'
 	, constraints: false
 });
 Planet.hasMany(Continent, {
 	foreignKey: 'planet_id'
-	, as: 'planet'
+	, as: 'continent'
 	, constraints: false
 });
 
 Country.belongsTo(Continent, {
 	foreignKey: 'continent_id'
-	, as: 'country'
+	, as: 'continent'
 	, constraints: false
 });
 Continent.hasMany(Country, {

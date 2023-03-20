@@ -1,13 +1,15 @@
 import {where, parse} from '../db.js';
 import Blog           from './model.js';
-
+import Page           from '../mg/page/model.js';
 export default {
-	list({title, tags, creatorId, status}, page=1, size=20){
+	list({title, tags, creatorId, status, page=1, size=20},
+	     attrs=['id', 'title', 'status', 'createDate', 'updateDate']){
+
 		page = parse(page, 1);
 		size = parse(size, 20);
 
 		return Blog.findAll({
-			attributes: ['id', 'title', 'updateDate']
+			attributes: attrs
 			, where: {
 				...where.eq({
 					creatorId
@@ -52,15 +54,46 @@ export default {
 			}
 		});
 	}
-	, create(data){
-		return Blog.create( data );
+	, create({title, short, content}){
+		return Blog.create({
+			title
+			, short
+			, content
+		});
 	}
-	, update(data, where){
-		return Blog.update(data, {
-			where
+	, update({id, title, short, content}){
+		return Blog.update({
+			title
+			, short
+			, content
+		}, {
+			where: {
+				...where.eq({
+					id
+				})
+			}
 		});
 	}
 	, del(){
 		
+	}
+	, changeStatus({status, id}){
+		if( !id ){
+			return Promise.reject( new Error('缺少 id') );
+		}
+
+		status = parse(status, 1);
+
+		status = +!status;
+
+		return Blog.update({
+			status
+		}, {
+			where: {
+				...where.eq({
+					id
+				})
+			}
+		});
 	}
 };

@@ -14,6 +14,7 @@ import api, {CODE_TYPE} from './api';
 import formItems from './components/formItems/index.vue';
 import toolbars  from './components/toolbars/index.vue';
 import icons     from './components/icons/index.vue';
+import menuItem  from './components/menuItem/index.vue';
 
 import topHeader from './view/topHeader/index.vue';
 import sideMenu  from './view/sideMenu/index.vue';
@@ -59,6 +60,7 @@ export default {
 				app.component('icons', icons);
 				app.component('formItems', formItems);
 				app.component('toolbars', toolbars);
+				app.component('menuItem', menuItem);
 
 				app.component('topHeader', topHeader);
 				app.component('sideMenu', sideMenu);

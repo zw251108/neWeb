@@ -1,5 +1,10 @@
-import web  from '../web.js';
-import valhalla from './handler.js';
+import web, {createController} from '../web.js';
+import valhalla                from './handler.js';
+
+createController(web, 'valhalla', valhalla, {
+	create: 'post'
+	, update: 'post'
+});
 
 web.get('/valhalla', (req, res)=>{
 	let { page = 1
@@ -7,7 +12,10 @@ web.get('/valhalla', (req, res)=>{
 		;
 
 	// todo creatorId 从 session 中取
-	valhalla.list({}, page, size).then((data)=>{
+	valhalla.list({
+		page
+		, size
+	}).then((data)=>{
 		res.send( JSON.stringify({
 			code: 0
 			, data
@@ -34,10 +42,9 @@ web.put('/valhalla/:id', (req, res)=>{
 		, data = req.body
 		;
 
-	blog.update({
+	valhalla.update({
 		...data
-	}, {
-		id
+		, id
 	}).then((rs)=>{
 		res.send({
 			...rs

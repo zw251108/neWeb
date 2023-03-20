@@ -12,5 +12,4 @@ let Valhalla = db.define('valhalla', {
 	})
 	;
 
-
 export default Valhalla;

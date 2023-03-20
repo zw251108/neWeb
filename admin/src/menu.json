@@ -15,11 +15,26 @@
     ]
   },
   {
-	"icon": "document",
+	"icon": "set-up",
 	"name": "manage",
 	"path": "manage",
 	"title": "后台页面管理配置",
 	"showAlways": true,
-	"children": []
+	"children": [{
+	  "icon": "pie-chart",
+	  "name": "manage/data",
+	  "title": "基础数据",
+	  "children": []
+	}, {
+	  "icon": "document-copy",
+	  "name": "manage/doc",
+	  "title": "文档管理",
+	  "children": []
+	}, {
+	  "icon": "picture",
+	  "name": "manage/pic",
+	  "title": "图片管理",
+	  "children": []
+	}]
   }
 ]

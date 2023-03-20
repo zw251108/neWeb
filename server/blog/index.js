@@ -1,14 +1,20 @@
-import web  from '../web.js';
-import blog from './handler.js';
-import tag  from '../tag/handler.js';
+import web, {createController} from '../web.js';
+import blog                    from './handler.js';
+import tag                     from '../tag/handler.js';
+
+createController(web, 'blog', blog, {
+	create: 'post'
+	, update: 'post'
+	, changeStatus: 'post'
+});
 
 web.get('/blog', (req, res)=>{
 	let { page = 1
 		, size = 20
 		, title
 		, tags
-		, id
-		, status } = req.query
+		, id } = req.query
+		, status = 1
 		, exec
 		;
 
@@ -27,7 +33,9 @@ web.get('/blog', (req, res)=>{
 			, tags
 			, creatorId: 1
 			, status
-		}, page, size);
+			, page
+			, size
+		});
 	}
 
 	exec.then((data)=>{
@@ -39,39 +47,15 @@ web.get('/blog', (req, res)=>{
 	});
 });
 
-web.get('/blog/count', (req, res)=>{
-	let { title
-		, tags
-		, status } = req.query
-		;
-
-	// todo creatorId 从 session 中取
-
-	blog.count({
-		title
-		, tags
-		, creatorId: 1
-		, status
-	}).then((data)=>{
-		res.send( JSON.stringify({
-			code: 0
-			, data
-		}) );
-		res.end();
-	});
-});
-
 web.get('/blog/:id', (req, res)=>{
 	let { id } = req.params
-		,
-		{ status } = req.query
 		;
-	     console.log(status)
+
 	// todo creatorId 从 session 中取
 	blog.get({
 		id
 		, creatorId: 1
-		, status
+		, status: 1
 	}).then((data)=>{
 		if( data ){
 			res.send({
@@ -102,8 +86,6 @@ web.post('/blog', (req, res)=>{
 	if( id ){
 		exec = blog.update({
 			...data
-		}, {
-			id
 		});
 	}
 	else{
@@ -130,9 +112,8 @@ web.put('/blog/:id', (req, res)=>{
 		;
 
 	blog.update({
-		...data
-	}, {
 		id
+		, ...data
 	}).then((rs)=>{
 		res.send({
 			...rs

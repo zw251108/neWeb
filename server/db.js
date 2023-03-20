@@ -66,6 +66,9 @@ const
 			return def;
 		}
 	}
+	, literal = (str)=>{
+		return db.literal( str );
+	}
 	;
 
 export default db;
@@ -75,6 +78,7 @@ export {
 	, Op
 	, where
 	, parse
+	, literal
 };
 
 export const commonAttr = {

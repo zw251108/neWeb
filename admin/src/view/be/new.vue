@@ -113,7 +113,7 @@
 					</div>
 				</template>
 				<template #btns>
-					<el-form-item>
+					<el-form-item class="form_item-block">
 						<el-button @click="reset">重置</el-button>
 						<el-button @click="search" type="primary">搜索</el-button>
 					</el-form-item>
@@ -226,6 +226,7 @@
 		               background
 		               layout="total, sizes, prev, pager, next, jumper">
 		</el-pagination>
+
 		<el-dialog :title="btnDialog.config.popupTitle"
 		           :close-on-click-modal="false"
 		           :close-on-press-escape="false"
@@ -601,93 +602,99 @@
 			</template>
 		</el-dialog>
 
-<!--		<el-dialog title="自定义代码"-->
-<!--		           :close-on-click-modal="false"-->
-<!--		           :close-on-press-escape="false"-->
-<!--		           :show-close="false"-->
-<!--		           :model-value="codeEditPopup.show">-->
-<!--			<el-form label-width="80px"-->
-<!--			         label-position="left"-->
-<!--			         size="large">-->
-<!--				<el-form-item label="说明"-->
-<!--				              v-if="isEnum(codeEditPopup.currEdit)">-->
-<!--					<div>请输入字面量数组或-->
-<!--						<el-tag>JSON</el-tag></div>-->
-<!--				</el-form-item>-->
-<!--				&lt;!&ndash; 判断中加入 codeEditPopup.show 来促使 code-editor 在未显示时不要响应代码改变 &ndash;&gt;-->
-<!--				<el-form-item label="代码" v-if="codeEditPopup.show && isEnum(codeEditPopup.currEdit)">-->
-<!--					<code-editor v-model="codeEditPopup.currEdit.enumCode"></code-editor>-->
-<!--				</el-form-item>-->
+<!--
+		<el-dialog title="自定义代码"
+		           :close-on-click-modal="false"
+		           :close-on-press-escape="false"
+		           :show-close="false"
+		           :model-value="codeEditPopup.show">
+			<el-form label-width="80px"
+			         label-position="left"
+			         size="large">
+				<el-form-item label="说明"
+				              v-if="isEnum(codeEditPopup.currEdit)">
+					<div>请输入字面量数组或
+						<el-tag>JSON</el-tag></div>
+				</el-form-item>
+				&lt;!&ndash; 判断中加入 codeEditPopup.show 来促使 code-editor 在未显示时不要响应代码改变 &ndash;&gt;
+				<el-form-item label="代码" v-if="codeEditPopup.show && isEnum(codeEditPopup.currEdit)">
+					<code-editor v-model="codeEditPopup.currEdit.enumCode"></code-editor>
+				</el-form-item>
+-->
 
-<!--				&lt;!&ndash; 编辑数据表格行内操作按钮 &ndash;&gt;-->
-<!--				<el-form-item label="可用参数"-->
-<!--				              v-if="isFormatter(codeEditPopup.currEdit) || (isDisplay() && editBtnPopup.needRowData)">-->
-<!--					<div>当前字段值-->
-<!--						<el-tag>v</el-tag>-->
-<!--						<span v-if="!codeEditPopup.currEdit.prop">（当前未选择字段）</span>-->
-<!--					</div>-->
-<!--					<div>行数据-->
-<!--						<el-tag>r</el-tag>-->
-<!--					</div>-->
-<!--					<div style="margin-left: 20px;">行内可用字段</div>-->
-<!--					<el-tag style="margin-left: 20px;"-->
-<!--					        v-for="col in originalCols">r.{{col.prop}}</el-tag>-->
-<!--					<div>行号-->
-<!--						<el-tag>i</el-tag>-->
-<!--					</div>-->
-<!--					<div>整个表数据-->
-<!--						<el-tag>data</el-tag>-->
-<!--					</div>-->
-<!--				</el-form-item>-->
-<!--				<el-form-item label="代码" v-if="codeEditPopup.show && isFormatter(codeEditPopup.currEdit)">-->
-<!--					<code-editor v-model="codeEditPopup.currEdit.formatterCode"></code-editor>-->
-<!--				</el-form-item>-->
+<!--
+				&lt;!&ndash; 编辑数据表格行内操作按钮 &ndash;&gt;
+				<el-form-item label="可用参数"
+				              v-if="isFormatter(codeEditPopup.currEdit) || (isDisplay() && editBtnPopup.needRowData)">
+					<div>当前字段值
+						<el-tag>v</el-tag>
+						<span v-if="!codeEditPopup.currEdit.prop">（当前未选择字段）</span>
+					</div>
+					<div>行数据
+						<el-tag>r</el-tag>
+					</div>
+					<div style="margin-left: 20px;">行内可用字段</div>
+					<el-tag style="margin-left: 20px;"
+					        v-for="col in originalCols">r.{{col.prop}}</el-tag>
+					<div>行号
+						<el-tag>i</el-tag>
+					</div>
+					<div>整个表数据
+						<el-tag>data</el-tag>
+					</div>
+				</el-form-item>
+				<el-form-item label="代码" v-if="codeEditPopup.show && isFormatter(codeEditPopup.currEdit)">
+					<code-editor v-model="codeEditPopup.currEdit.formatterCode"></code-editor>
+				</el-form-item>
+-->
 
-<!--				&lt;!&ndash; 编辑数据表格外按钮 &ndash;&gt;-->
-<!--				<el-form-item label="可用参数" v-if="isDisplay() && !editBtnPopup.needRowData">-->
-<!--					<div>当前搜索条件-->
-<!--						<el-tag>search</el-tag>-->
-<!--					</div>-->
-<!--					<div style="margin-left: 20px;">搜索条件可用字段</div>-->
-<!--					<el-tag style="margin-left: 20px;"-->
-<!--					        v-for="item in searchItems">search.{{item[0].alias || item[0].prop}}</el-tag>-->
-<!--					<div>路径参数-->
-<!--						<el-tag>params</el-tag>-->
-<!--					</div>-->
-<!--					<div style="margin-left: 20px;">路径参数可用字段</div>-->
-<!--					<el-tag style="margin-left: 20px;">params.{{fetch.page}}</el-tag>-->
-<!--					<el-tag style="margin-left: 20px;">params.{{fetch.size}}</el-tag>-->
-<!--					<el-tag style="margin-left: 20px;"-->
-<!--					        v-for="item in extQuery">params.{{item.name}}</el-tag>-->
-<!--					<div>路由参数-->
-<!--						<el-tag>hash</el-tag>-->
-<!--					</div>-->
-<!--				</el-form-item>-->
-<!--				<el-form-item label="说明"-->
-<!--				              v-if="isDisplay()">-->
-<!--					<div>返回值必须为 <el-tag>boolean</el-tag> 类型</div>-->
-<!--				</el-form-item>-->
-<!--				<el-form-item label="代码" v-if="codeEditPopup.show && isDisplay()">-->
-<!--					<code-editor v-model="codeEditPopup.currEdit.displayCode"></code-editor>-->
-<!--				</el-form-item>-->
-<!--				<el-form-item label="描述"-->
-<!--				              v-if="codeEditPopup.canSave">-->
-<!--					<el-input v-model="codeEditPopup.desc"-->
-<!--					          type="textarea"-->
-<!--					          resize="none"-->
-<!--					          placeholder="保存为预设时，描述必填"-->
-<!--					          :row="4"></el-input>-->
-<!--				</el-form-item>-->
-<!--			</el-form>-->
-<!--			<template #footer>-->
-<!--				<span class="dialog-footer">-->
-<!--					<el-button size="large" @click="cancelEditCode">取消</el-button>-->
-<!--					<el-button size="large" v-if="codeEditPopup.canSave"-->
-<!--					           @click="saveEditCodeGlobal">保存为预设</el-button>-->
-<!--					<el-button size="large" @click="saveEditCode" type="primary">保存</el-button>-->
-<!--				</span>-->
-<!--			</template>-->
-<!--		</el-dialog>-->
+<!--
+				&lt;!&ndash; 编辑数据表格外按钮 &ndash;&gt;
+				<el-form-item label="可用参数" v-if="isDisplay() && !editBtnPopup.needRowData">
+					<div>当前搜索条件
+						<el-tag>search</el-tag>
+					</div>
+					<div style="margin-left: 20px;">搜索条件可用字段</div>
+					<el-tag style="margin-left: 20px;"
+					        v-for="item in searchItems">search.{{item[0].alias || item[0].prop}}</el-tag>
+					<div>路径参数
+						<el-tag>params</el-tag>
+					</div>
+					<div style="margin-left: 20px;">路径参数可用字段</div>
+					<el-tag style="margin-left: 20px;">params.{{fetch.page}}</el-tag>
+					<el-tag style="margin-left: 20px;">params.{{fetch.size}}</el-tag>
+					<el-tag style="margin-left: 20px;"
+					        v-for="item in extQuery">params.{{item.name}}</el-tag>
+					<div>路由参数
+						<el-tag>hash</el-tag>
+					</div>
+				</el-form-item>
+				<el-form-item label="说明"
+				              v-if="isDisplay()">
+					<div>返回值必须为 <el-tag>boolean</el-tag> 类型</div>
+				</el-form-item>
+				<el-form-item label="代码" v-if="codeEditPopup.show && isDisplay()">
+					<code-editor v-model="codeEditPopup.currEdit.displayCode"></code-editor>
+				</el-form-item>
+				<el-form-item label="描述"
+				              v-if="codeEditPopup.canSave">
+					<el-input v-model="codeEditPopup.desc"
+					          type="textarea"
+					          resize="none"
+					          placeholder="保存为预设时，描述必填"
+					          :row="4"></el-input>
+				</el-form-item>
+			</el-form>
+			<template #footer>
+				<span class="dialog-footer">
+					<el-button size="large" @click="cancelEditCode">取消</el-button>
+					<el-button size="large" v-if="codeEditPopup.canSave"
+					           @click="saveEditCodeGlobal">保存为预设</el-button>
+					<el-button size="large" @click="saveEditCode" type="primary">保存</el-button>
+				</span>
+			</template>
+		</el-dialog>
+-->
 
 		<select-table v-bind="codeSelectPopup"
 		              @select="selectCode"

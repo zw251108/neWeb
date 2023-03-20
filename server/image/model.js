@@ -10,10 +10,10 @@ let Image = db.define('image', {
 		, width: DataTypes.INTEGER
 		, height: DataTypes.INTEGER
 		, desc: DataTypes.STRING
-		, albumId: {
-			type: DataTypes.INTEGER
-			, field: 'album_id'
-		}
+		// , albumId: {
+		// 	type: DataTypes.INTEGER
+		// 	, field: 'album_id'
+		// }
 	}, {
 		createdAt: commonOpts.createdAt
 		, updatedAt: false
@@ -23,6 +23,7 @@ let Image = db.define('image', {
 
 		, name: DataTypes.STRING
 		, desc: DataTypes.STRING
+		, num: DataTypes.INTEGER
 		// , tags: DataTypes.TEXT
 		, status: DataTypes.INTEGER
 	}, {
@@ -33,12 +34,20 @@ let Image = db.define('image', {
 		, createDate: commonAttr.createDate
 
 		, albumId: {
-			type: DataTypes.STRING
+			type: DataTypes.INTEGER
 			, field: 'album_id'
+			, references: {
+				model: Album
+				, key: 'id'
+			}
 		}
 		, imageId: {
-			type: DataTypes.STRING
+			type: DataTypes.INTEGER
 			, field: 'image_id'
+			, references: {
+				model: Image
+				, key: 'id'
+			}
 		}
 	}, {
 		createdAt: commonOpts.createdAt
@@ -49,18 +58,28 @@ let Image = db.define('image', {
 userBeCreatorOf(Image, 'image');
 userBeCreatorOf(Album, 'album');
 
-Album.hasMany(Image, {
-	foreignKey: 'album_id'
-	, as: 'image'
-	// , through: 'album_image'
+// Album.hasMany(Image, {
+// 	foreignKey: 'album_id'
+// 	, as: 'image'
+// 	// , through: 'album_image'
+// 	, constraints: false
+// });
+// Image.belongsTo(Album, {
+// 	foreignKey: 'album_id'
+// 	, as: 'album'
+// 	// , through: 'album_image'
+// 	, constraints: false
+// });
+Album.belongsToMany(Image, {
+	as: 'image'
+	, through: AlbumImage
 	, constraints: false
 });
-Image.belongsTo(Album, {
-	foreignKey: 'album_id'
-	, as: 'album'
-	// , through: 'album_image'
+Image.belongsToMany(Album, {
+	as: 'album'
+	, through: AlbumImage
 	, constraints: false
-});
+})
 
 tagsBelongsTo(Album, TAG_CONTENT_TYPE.album);
 tagsBelongsTo(Image, TAG_CONTENT_TYPE.image);

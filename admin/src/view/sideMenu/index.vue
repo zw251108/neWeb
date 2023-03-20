@@ -13,29 +13,8 @@
 		         :unique-opened="true"
 		         :collapse="collapse"
 		         @select="selectMenu">
-			<template v-for="(menu, index) in menuList">
-				<!-- 父节点 -->
-				<template v-if="isParent(menu)">
-					<el-sub-menu :key="menu.name" :index="menu.name">
-						<template #title>
-							<icons :name="menu.icon"></icons>
-							<span v-text="menu.title"></span>
-						</template>
-						<el-menu-item v-for="(subMenu, subIndex) in menu.children"
-						              :key="subMenu.name"
-						              :index="subMenu.name">
-							<icons :name="subMenu.icon"></icons>
-							<span v-text="subMenu.title"></span>
-						</el-menu-item>
-					</el-sub-menu>
-				</template>
-				<template v-else>
-					<el-menu-item :key="menu.name" :index="menu.name">
-						<icons :name="menu.icon"></icons>
-						<span v-text="menu.title"></span>
-					</el-menu-item>
-				</template>
-			</template>
+			<menu-item v-for="(menu, index) in menuList"
+			           :menu="menu"></menu-item>
 		</el-menu>
 		<div class="collapse"
 		     @click="collapseChange">
@@ -68,7 +47,7 @@ function isParent(menu){
 		, children = [] } = menu
 		;
 
-	if( children.length > 1 ){
+	if( children.length > 0 ){
 		return true;
 	}
 
@@ -188,6 +167,12 @@ function collapseChange(){
 		width: $aside-open-width;
 		// 子菜单
 		& > .el-menu-item {
+			overflow: hidden;
+			display: -webkit-box;
+			-webkit-line-clamp: 1;
+			-webkit-box-orient: vertical;
+			text-overflow: ellipsis;
+
 			color: $aside-color;
 			// 子菜单被选中
 			&.is-active {

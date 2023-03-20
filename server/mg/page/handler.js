@@ -1,6 +1,5 @@
 import {where, parse}  from '../../db.js';
 import Page, {PageLog} from './model.js';
-
 export default {
 	list({project, path, menu, desc, state, page, size}){
 		page = parse(page, 1);
@@ -112,12 +111,7 @@ export default {
 			return Promise.reject( new Error('缺少 id') );
 		}
 
-		try{
-			state = JSON.parse( state );
-		}
-		catch(e){
-			state = 1;
-		}
+		state = parse(state, 1);
 
 		state = +!state;
 

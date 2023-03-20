@@ -28,13 +28,6 @@ function Valhalla(){
 					item.path = [];
 				}
 			});
-			data.sort((a, b)=>{
-				if( !a.weight && !b.weight ){
-					return -1;
-				}
-
-				return b.weight - a.weight;
-			});
 
 			setList( data );
 			setCurrent( data[0] );

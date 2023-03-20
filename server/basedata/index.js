@@ -1,21 +1,35 @@
-import web  from '../web.js';
-import data from './handler.js';
+import web, {createController}                                                                 from '../web.js';
+import {planet, continent, country, province, city, district, town, village}                    from './handler.js';
 
-web.get('/data', (req, res)=>{
-
+createController(web, 'data/planet', planet, {
+	create: 'post'
+	, update: 'post'
 });
-
-web.get('/data/planet', (req, res)=>{
-	let {id} = req.query
-		;
-
-	data.getPlanet({
-		id
-	}).then((data)=>{
-		res.send( JSON.stringify({
-			code: 0
-			, data
-		}) );
-		res.end();
-	})
+createController(web, 'data/continent', continent, {
+	create: 'post'
+	, update: 'post'
+});
+createController(web, 'data/country', country, {
+	create: 'post'
+	, update: 'post'
+});
+createController(web, 'data/province', province, {
+	create: 'post'
+	, update: 'post'
+});
+createController(web, 'data/city', city, {
+	create: 'post'
+	, update: 'post'
+});
+createController(web, 'data/district', district, {
+	create: 'post'
+	, update: 'post'
+});
+createController(web, 'data/town', town, {
+	create: 'post'
+	, update: 'post'
+});
+createController(web, 'data/village', village, {
+	create: 'post'
+	, update: 'post'
 });

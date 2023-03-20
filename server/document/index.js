@@ -1,5 +1,22 @@
-import web  from '../web.js';
-import document from './handler.js';
+import web, {createController}      from '../web.js';
+import {document, section, content} from './handler.js';
+
+createController(web, 'document', document, {
+	create: 'post'
+	, update: 'post'
+});
+createController(web, 'document/section', section, {
+	create: 'post'
+	, update: 'post'
+});
+createController(web, 'document/content', content, {
+	create: 'post'
+	, update: 'post'
+});
+createController(web, 'document/section/content', content, {
+	create: 'post'
+	, update: 'post'
+});
 
 web.get('/document', (req, res)=>{
 	document.list({
@@ -13,30 +30,94 @@ web.get('/document', (req, res)=>{
 	});
 });
 
+web.post('/document', (req, res)=>{
+	let { title } = req.body
+		;
+
+	document.create({
+		title
+	}).then((data)=>{
+		res.send( JSON.stringify({
+			code: 0
+			, data
+		}) );
+	})
+});
+
 web.get('/document/:id', (req, res)=>{
-	let {id} = req.params
+	let { id } = req.params
 		;
 
 	document.document({
+		id
+		, creatorId: 1
+	}).then((data)=>{
+		res.send( JSON.stringify({
+			code: 0
+			, data
+		}) );
+	});
+});
+
+web.put('/document/:id', (req, res)=>{
+	let { id } = req.params
+		,
+		{ title } = req.body
+		;
+
+	document.update({
+		id
+		, title
+	}).then((data)=>{
+		res.send( JSON.stringify({
+			code: 0
+			, data
+		}) );
+	});
+});
+
+web.post('/document/:documentId', (req, res)=>{
+	let { documentId } = req.params
+		,
+		{ title } = req.body
+		;
+
+	section.create({
+		title
+		, documentId
+	}).then((data)=>{
+		res.send( JSON.stringify({
+			code: 0
+			, data
+		}) );
+		res.end();
+	})
+});
+
+web.get('/document/:documentId/:id', (req, res)=>{
+	let { id } = req.params
+		;
+
+	section.get({
 		id
 	}).then((data)=>{
 		res.send( JSON.stringify({
 			code: 0
 			, data
 		}) );
+		res.end();
 	});
 });
 
-web.post('/document/:id', (req, res)=>{
-
-});
-
-web.get('/document/:id/:sectionId', (req, res)=>{
-	let {sectionId} = req.params
+web.put('/document/:documentId/:id', (req, res)=>{
+	let { id } = req.params
+		,
+		{ title } = req.body
 		;
 
-	document.contentList({
-		sectionId
+	document.update({
+		id
+		, title
 	}).then((data)=>{
 		res.send( JSON.stringify({
 			code: 0
@@ -45,12 +126,134 @@ web.get('/document/:id/:sectionId', (req, res)=>{
 	});
 });
 
-web.get('/document/:id/:sectionId/:contentId', (req, res)=>{
-	let {contentId} = req.params
+web.get('/document/:documentId/section', (req, res)=>{
+	let { documentId } = req.params
 		;
 
-	document.get({
-		id: contentId
+	section.list({
+		documentId
+	}).then((data)=>{
+		res.send( JSON.stringify({
+			code: 0
+			, data
+		}) );
+	});
+});
+
+web.get('/document/:documentId/section/:id', (req, res)=>{
+	let { id } = req.params
+		;
+
+	section.get({
+		id
+	}).then((data)=>{
+		res.send( JSON.stringify({
+			code: 0
+			, data
+		}) );
+		res.end();
+	});
+});
+
+web.get('/document/:documentId/section/:sectionId/content', (req, res)=>{
+	let { documentId
+		, sectionId } = req.params
+		;
+
+	content.list({
+		documentId
+		, sectionId
+	}).then((data)=>{
+		res.send( JSON.stringify({
+			code: 0
+			, data
+		}) );
+		res.end();
+	});
+});
+
+web.post('/document/:documentId/:sectionId', (req, res)=>{
+	let { documentId
+		, sectionId } = req.params
+		,
+		{ title
+		, content } = req.body
+		;
+
+	content.create({
+		title
+		, content
+		, documentId
+		, sectionId
+	}).then((data)=>{
+		res.send( JSON.stringify({
+			code: 0
+			, data
+		}) );
+	});
+});
+
+web.get('/document/:documentId/:sectionId/:id', (req, res)=>{
+	let { id } = req.params
+	;
+
+	content.get({
+		id
+	}).then((data)=>{
+		res.send( JSON.stringify({
+			code: 0
+			, data
+		}) );
+		res.end();
+	});
+});
+
+web.put('/document/:documentId/:sectionId/:id', (req, res)=>{
+	let { id
+		, documentId
+		, sectionId } = req.params
+		,
+		{ title
+		, content } = req.body
+		;
+
+	content.update({
+		id
+		, title
+		, content
+		, documentId
+		, sectionId
+	}).then((data)=>{
+		res.send( JSON.stringify({
+			code: 0
+			, data
+		}) );
+	});
+});
+
+web.get('/document/:documentId/:sectionId/content', (req, res)=>{
+	let { documentId
+		, sectionId } = req.params
+		;
+
+	content.list({
+		documentId
+		, sectionId
+	}).then((data)=>{
+		res.send( JSON.stringify({
+			code: 0
+			, data
+		}) );
+		res.end();
+	});
+});
+
+web.get('/document/:documentId/:sectionId/content/:id', (req, res)=>{
+	let { id } = req.params
+		;
+
+	content.get({
+		id
 	}).then((data)=>{
 		res.send( JSON.stringify({
 			code: 0

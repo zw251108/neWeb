@@ -104,11 +104,7 @@ class Blog extends React.Component{
 	}
 
 	fetch(id){
-		api.get(`/blog/${id}`, {
-			data: {
-				status: 1
-			}
-		}).then((res)=>{
+		api.get(`/blog/${id}`).then((res)=>{
 			this.setState( res.data );
 		});
 	}
