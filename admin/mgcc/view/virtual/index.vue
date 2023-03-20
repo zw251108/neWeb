@@ -1,5 +1,5 @@
 <template>
-4<div class="searchBar"
+<div class="searchBar"
       v-if="searchItems.length">
 	<form-items :inline="true"
 	            label-position="right"
