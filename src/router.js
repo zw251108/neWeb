@@ -8,22 +8,22 @@ import Valhalla from './view/valhalla.js';
 import Document from './view/document.js';
 
 const paths = [{
-		path: 'index'
+		name: 'index'
 		, Target: Index
 	}, {
-		path: 'blog'
+		name: 'blog'
 		, Target: Blog
 	}, {
-		path: 'album'
+		name: 'album'
 		, Target: Album
 	}, {
-		path: 'img'
+		name: 'img'
 		, Target: Img
 	}, {
-		path: 'valhalla'
+		name: 'valhalla'
 		, Target: Valhalla
 	}, {
-		path: 'document'
+		name: 'document'
 		, Target: Document
 	}]
 	;
