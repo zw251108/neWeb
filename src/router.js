@@ -7,14 +7,25 @@ import Img      from './view/img.js';
 import Valhalla from './view/valhalla.js';
 import Document from './view/document.js';
 
-const paths = [
-		Index
-		, Blog
-		, Album
-		, Img
-		, Valhalla
-		, Document
-	]
+const paths = [{
+		path: 'index'
+		, Target: Index
+	}, {
+		path: 'blog'
+		, Target: Blog
+	}, {
+		path: 'album'
+		, Target: Album
+	}, {
+		path: 'img'
+		, Target: Img
+	}, {
+		path: 'valhalla'
+		, Target: Valhalla
+	}, {
+		path: 'document'
+		, Target: Document
+	}]
 	;
 
 export default function initRouter(app){
@@ -29,10 +40,7 @@ export default function initRouter(app){
 				});
 			}
 		},
-		...paths.map((Target)=>{
-			let name = Target.name.toLowerCase()
-				;
-
+		...paths.map(({name, Target})=>{
 			return {
 				path: `/${name}`
 				, callback(params){
