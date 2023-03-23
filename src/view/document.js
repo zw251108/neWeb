@@ -1,15 +1,6 @@
-import React, {useState, useEffect, useRef} from 'react';
+import {useState, useEffect, useRef} from 'react';
 
-import {basicSetup}     from 'codemirror';
-import {EditorState}    from '@codemirror/state';
-import {EditorView}     from '@codemirror/view';
-import {javascript}     from '@codemirror/lang-javascript';
-import {html}           from '@codemirror/lang-html';
-import {css}            from '@codemirror/lang-css';
-import {StreamLanguage} from '@codemirror/language';
-import {shell}          from '@codemirror/legacy-modes/mode/shell';
-import {sql}            from '@codemirror/legacy-modes/mode/sql';
-import {oneDark}        from '@codemirror/theme-one-dark';
+import {createCodeEditor} from '../components/codeEditor/index.js';
 
 import api from '../api/index.js';
 
@@ -30,60 +21,15 @@ function Content({open, content: {title, content}}){
 			return ;
 		}
 
-		let temp = el.current.querySelectorAll('textarea[data-code-type]')
+		let list = el.current.querySelectorAll('textarea[data-code-type]')
 			;
 
-		temp.forEach((el)=>{
-			let codeType = el.dataset.codeType
-				, view
-				, config = {
-					doc: el.value
-					, extensions: [
-						basicSetup
-						, EditorState.readOnly.of(true)
-						, oneDark
-					]
-				}
-				;
-
-			switch( codeType ){
-				case 'js':
-					config.extensions.push( javascript() );
-
-					break;
-				case 'css':
-					config.extensions.push( css() );
-
-					break;
-				case 'html':
-					config.extensions.push( html() );
-
-					break;
-				case 'shell':
-					config.extensions.push( StreamLanguage.define(shell) );
-
-					break;
-				case 'sql':
-					config.extensions.push( StreamLanguage.define(sql({})) );
-
-					break;
-				default:
-					config = null;
-
-					break;
-			}
-
-			if( config ){
-				view = new EditorView({
-					state: EditorState.create( config )
-				});
-				el.parentNode.insertBefore(view.dom, el);
-				el.style.display = 'none';
-			}
-		});
+		if( list.length ){
+			createCodeEditor(list, true);
+		}
 
 		setCodeInit( true );
-	}, [fold]);
+	}, [fold, codeInit]);
 
 	return (<section className="doc_content">
 		<div className="flex-container content_title"
@@ -126,7 +72,7 @@ function Section({docId, open, section: {id, title}}){
 			setFetched(true);
 			setContent( data.content );
 		});
-	}, [fold]);
+	}, [fold, docId, id, fetched]);
 
 	return (<section className="module_content doc_section">
 		<div className="flex-container section_title"
