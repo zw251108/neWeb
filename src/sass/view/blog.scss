@@ -1,13 +1,14 @@
 .blog{
     &::before{
-        content: '\e83f';
+        content: '\f14b';
     }
 
     &_content{
-        padding: 0 5px 10px;
+        border-radius: 5px;
+        padding: 10px;
+        background: #fff;
         font-size: 16px;
         line-height: 20px;
-        //text-align: ju;
     }
     &_datetime{
         border-top: 1px solid #c0c0c0;
@@ -32,7 +33,6 @@
         display: inline-block;
         position: relative;
         margin-left: 24px;
-        //text-decoration: underline #999;
         border-bottom: 1px solid #666;
 
         &::before{

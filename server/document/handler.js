@@ -42,6 +42,10 @@ const document = {
 						, creatorId
 					})
 				}
+				, include: [{
+					model: Section
+					, as: 'section'
+				}]
 			});
 		}
 		, create({title}){
@@ -58,7 +62,18 @@ const document = {
 						id
 					})
 				}
-			})
+			});
+		}
+		, sort({id, sectionOrder}){
+			return Document.update({
+				sectionOrder
+			}, {
+				where: {
+					...where.eq({
+						id
+					})
+				}
+			});
 		}
 		, document({id, creatorId}){
 			return Document.findOne({
@@ -122,6 +137,10 @@ const document = {
 						, creatorId
 					})
 				}
+				, include: [{
+					model: Content
+					, as: 'content'
+				}]
 			});
 		}
 		, create({title, documentId}){
@@ -140,7 +159,18 @@ const document = {
 						id
 					})
 				}
-			})
+			});
+		}
+		, sort({id, contentOrder}){
+			return Section.update({
+				contentOrder
+			}, {
+				where: {
+					...where.eq({
+						id
+					})
+				}
+			});
 		}
 	}
 	, content = {

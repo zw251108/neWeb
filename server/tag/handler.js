@@ -16,6 +16,9 @@ export default {
 					, description: name
 				})
 			}
+			, order: [
+				['id', 'DESC']
+			]
 			, offset: (page -1)* size
 			, limit: size
 		});

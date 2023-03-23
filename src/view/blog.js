@@ -112,12 +112,14 @@ class Blog extends React.Component{
 	render(){
 		return (<article className="module blog">
 			<h2 className="module_title">{this.state.title}</h2>
-			<div className="blog_content"
-			     ref={(el)=>{
-					 this.el = el;
-				 }}
-			     dangerouslySetInnerHTML={{__html: this.state.content}}></div>
-			<div className="blog_datetime">{maple.util.dateFormat(new Date( this.state.createDate ), 'YYYY-MM-DD hh:mm:ss')}</div>
+			<div className="module_content">
+				<div className="blog_content"
+				     ref={(el)=>{
+					     this.el = el;
+				     }}
+				     dangerouslySetInnerHTML={{__html: this.state.content}}></div>
+				<div className="blog_datetime">{maple.util.dateFormat(new Date( this.state.createDate ), 'YYYY-MM-DD hh:mm:ss')}</div>
+			</div>
 		</article>);
 	}
 }

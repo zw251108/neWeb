@@ -15,6 +15,9 @@
 	<el-form-item label="默&ensp;认&ensp;值">
 		<el-input size="large" v-model="param.value"></el-input>
 	</el-form-item>
+	<el-form-item label="描&emsp;&emsp;述">
+		<el-input size="large" v-model="param.desc"></el-input>
+	</el-form-item>
 </div>
 </template>
 

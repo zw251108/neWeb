@@ -86,7 +86,7 @@ const album = {
 		}
 		, get({id}){
 			return Image.findOne({
-				attributes: ['id', 'src', 'width', 'height', 'albumId', 'desc', 'createDate']
+				attributes: ['id', 'src', 'width', 'height', 'desc', 'createDate']
 				, where: {
 					...where.eq({
 						id

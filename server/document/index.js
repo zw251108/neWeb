@@ -4,10 +4,12 @@ import {document, section, content} from './handler.js';
 createController(web, 'document', document, {
 	create: 'post'
 	, update: 'post'
+	, sort: 'post'
 });
 createController(web, 'document/section', section, {
 	create: 'post'
 	, update: 'post'
+	, sort: 'post'
 });
 createController(web, 'document/content', content, {
 	create: 'post'
@@ -76,6 +78,20 @@ web.put('/document/:id', (req, res)=>{
 	});
 });
 
+web.get('/document/:documentId/section', (req, res)=>{
+	let { documentId } = req.params
+		;
+
+	section.list({
+		documentId
+	}).then((data)=>{
+		res.send( JSON.stringify({
+			code: 0
+			, data
+		}) );
+	});
+});
+
 web.post('/document/:documentId', (req, res)=>{
 	let { documentId } = req.params
 		,
@@ -126,36 +142,7 @@ web.put('/document/:documentId/:id', (req, res)=>{
 	});
 });
 
-web.get('/document/:documentId/section', (req, res)=>{
-	let { documentId } = req.params
-		;
-
-	section.list({
-		documentId
-	}).then((data)=>{
-		res.send( JSON.stringify({
-			code: 0
-			, data
-		}) );
-	});
-});
-
-web.get('/document/:documentId/section/:id', (req, res)=>{
-	let { id } = req.params
-		;
-
-	section.get({
-		id
-	}).then((data)=>{
-		res.send( JSON.stringify({
-			code: 0
-			, data
-		}) );
-		res.end();
-	});
-});
-
-web.get('/document/:documentId/section/:sectionId/content', (req, res)=>{
+web.get('/document/:documentId/:sectionId/content', (req, res)=>{
 	let { documentId
 		, sectionId } = req.params
 		;
@@ -195,7 +182,7 @@ web.post('/document/:documentId/:sectionId', (req, res)=>{
 
 web.get('/document/:documentId/:sectionId/:id', (req, res)=>{
 	let { id } = req.params
-	;
+		;
 
 	content.get({
 		id
@@ -228,37 +215,5 @@ web.put('/document/:documentId/:sectionId/:id', (req, res)=>{
 			code: 0
 			, data
 		}) );
-	});
-});
-
-web.get('/document/:documentId/:sectionId/content', (req, res)=>{
-	let { documentId
-		, sectionId } = req.params
-		;
-
-	content.list({
-		documentId
-		, sectionId
-	}).then((data)=>{
-		res.send( JSON.stringify({
-			code: 0
-			, data
-		}) );
-		res.end();
-	});
-});
-
-web.get('/document/:documentId/:sectionId/content/:id', (req, res)=>{
-	let { id } = req.params
-		;
-
-	content.get({
-		id
-	}).then((data)=>{
-		res.send( JSON.stringify({
-			code: 0
-			, data
-		}) );
-		res.end();
 	});
 });

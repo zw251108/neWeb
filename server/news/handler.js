@@ -2,7 +2,7 @@ import {where, parse} from '../db.js';
 import News           from './model.js';
 
 export default {
-	list({creatorId, page, size}){
+	list({type, creatorId, page, size}){
 		page = parse(page, 1);
 		size = parse(size, 20);
 
@@ -10,7 +10,8 @@ export default {
 			attributes: ['id', 'type', 'targetId', 'content', 'createDate']
 			, where: {
 				...where.eq({
-					creatorId
+					type
+					, creatorId
 				})
 			}
 			, order: [

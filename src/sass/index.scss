@@ -9,15 +9,14 @@ body{
     -moz-osx-font-smoothing: grayscale;
 }
 
-body{
+html, body, #root, .App{
     overflow: auto;
-
-    //$thumb: #c0c0c0;
-    //$track-piece: transparent;
-
-    @include scrollBar();
+    height: 100%;
 }
+
 .App{
+    @include scrollBar();
+
 }
 
 a{
@@ -56,22 +55,15 @@ td{
 
 @import "./element.scss";
 
+@import "./layout.scss";
+
 @import "./header.scss";
 @import "./footer.scss";
 @import "./main.scss";
 @import "./aside.scss";
 @import "./module.scss";
 
-@import "./layout/flex-container.scss";
-@import "./layout/grid-container.scss";
-@import "./layout/img-container.scss";
-@import "./layout/scroll-container.scss";
-
-@import "./view/index.scss";
-@import "./view/blog.scss";
-@import "./view/album.scss";
-@import "./view/img.scss";
-@import "./view/valhalla.scss";
+@import "./view.scss";
 
 .Test .icon{
     display: inline-block;

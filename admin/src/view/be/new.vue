@@ -1399,6 +1399,7 @@ export default {
 			list.push({
 				name: ''
 				, value: ''
+				, desc: ''
 			});
 		}
 

@@ -33,4 +33,11 @@
         text-align: left;
         box-sizing: border-box;
     }
+
+    &_content{
+        border-radius: 10px;
+        margin: 10px 5px 5px;
+        padding: 10px;
+        background: #f1f1f1;
+    }
 }

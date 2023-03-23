@@ -191,6 +191,25 @@ export default {
 	, initVm(app, selector='#app'){
 		return app.mount( selector );
 	}
+	, registerRouterComponent(router, path, component, vm, app, isExclude){
+		let name = component.name
+			;
+
+		if( app ){
+			app.component(name, component)
+		}
+
+		router.register({
+			path
+			, callback(){
+				vm.currentRouter = name;
+			}
+		});
+
+		if( isExclude ){
+			vm.excludeComLive.push( name );
+		}
+	}
 };
 
 export const components = {

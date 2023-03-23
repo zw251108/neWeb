@@ -509,7 +509,7 @@ export default {
 					}
 				}, ()=>{});
 			}
-			else if( btn.type === 2 ){
+			else if( btn.type === 2 ){ console.log(btn)
 				let config = btn
 					, row = rows[0]
 					, formItems = btn.params.map((param)=>{
@@ -536,6 +536,17 @@ export default {
 						return rs;
 					}, {})
 					;
+
+				btn.extQuery.forEach(({name, value, desc})=>{
+					formItems.push([{
+						prop: name
+						, label: desc
+					}, {
+						prop: name
+						, type: 'text'
+					}]);
+					form[name] = value;
+				});
 
 				this.btnDialog = {
 					show: true

@@ -108,14 +108,14 @@ export default {
 			this.$cookie.removeData('backToken', 'user');
 			this.$url.changePage(`${this.$auth.LOGIN_PATH}?redirect=${encodeURIComponent(location.href)}`);
 		}
-		// 修改密码
-		, changePwd(form){
-			this.$auth.changePwd.post( form ).then(()=>{
-				this.$alert('密码修改成功！', {
-					type: 'info'
-				});
-			});
-		}
+		// // 修改密码
+		// , changePwd(form){
+		// 	this.$auth.changePwd.post( form ).then(()=>{
+		// 		this.$alert('密码修改成功！', {
+		// 			type: 'info'
+		// 		});
+		// 	});
+		// }
 		// 版本回退
 		, rollback(){
 			this.oldVersion = true;
@@ -170,11 +170,25 @@ body {
 		box-sizing: border-box;
 
 		.main-container {
-			overflow: auto;
+			overflow-x: hidden;
+			overflow-y: auto;
 			width: 100%;
 			padding: 20px;
-			
+
 			box-sizing: border-box;
+
+			&::-webkit-scrollbar{
+				height: 5px;
+				width: 5px;
+			}
+			&::-webkit-scrollbar-thumb{
+				height: 50px;
+				border-radius: 20px;
+				background: #c0c0c0;
+			}
+			&::-webkit-scrollbar-track-piece{
+				background: transparent;
+			}
 		}
 	}
 

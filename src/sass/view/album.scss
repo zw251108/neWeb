@@ -4,6 +4,7 @@
     }
 
     .img{
+        border-color: #f1f1f1;
         padding: 0;
         
         &::before{
@@ -11,8 +12,11 @@
         }
     }
 
-    //img{
-    //    max-width: 100%;
-    //    max-height: 100%;
-    //}
+    .module_content{
+        .grid-container{
+            border-radius: 10px;
+            padding: 5px;
+            background: #fff;
+        }
+    }
 }

@@ -2,30 +2,30 @@
 <el-form label-width="80px"
          label-position="left"
          size="large">
-	<el-form-item label="编辑代码">
+	<el-form-item label="查看代码">
 
 	</el-form-item>
 	<el-form-item label="代码">
-		<code-editor v-model="data.code"></code-editor>
+		<code-editor v-model="data.code"
+		             :readonly="true"></code-editor>
 	</el-form-item>
 	<el-form-item label="描述">
 		<el-input v-model="data.description"
+		          :readonly="true"
 		          type="textarea"
 		          resize="none"
 		          placeholder="描述必填"
 		          :row="4"></el-input>
 	</el-form-item>
-	<el-form-item>
-		<el-button type="primary" @click="submit">保存</el-button>
-	</el-form-item>
 </el-form>
 </template>
 
 <script setup>
-import {CODE_TYPE}                                        from '../../../mgcc';
-import {ref, inject}                                      from 'vue';
-import codeEditor                                         from '../../components/codeEditor/index.vue';
-import {isEnum, isFormatter, handleEnum, handleFormatter} from '../../../mgcc/mixins/colTypeJudge';
+import {ref, inject} from 'vue';
+
+import {CODE_TYPE}   from 'mgcc';
+import codeEditor    from '../../components/codeEditor/index.vue';
+import {isEnum}      from 'mgcc/mixins/colTypeJudge';
 
 const type = ref({})
 	, data = ref({})
@@ -50,28 +50,6 @@ if( id.value ){
 
 		data.value = resData;
 	});
-}
-
-function submit(){
-	let rs
-		;
-
-	if( isEnum(type.value) ){
-		rs = handleEnum($alert, {
-			...type.value
-			, ...data.value
-		});
-	}
-	else if( isFormatter(type.value) ){
-		rs = handleFormatter($alert, {
-			...type.value
-			, ...data.value
-		});
-	}
-
-	if( !rs ){
-
-	}
 }
 </script>
 <script>

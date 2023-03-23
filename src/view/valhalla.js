@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useState, useEffect} from 'react';
 
 import {imgPath} from '../config.js';
 import api       from '../api/index.js';
@@ -69,63 +69,67 @@ function Valhalla(){
 
 	return (<section className="module valhalla">
 		<div className="module_title">{list.length ? current.name : ''}</div>
-		{list.length && (<div className="slider">
-			<div className="main_view img-container flex-container center justify">
-				{currentPic ?
-					<img src={imgPath( currentPic )}
-					     title={current.name}
-					     alt="照片待补"/>
-					:
-					<div className="flex-container center justify">照片待补</div>}
-				{currentIndex !== 0 ?
-					<div className="prev flex-container left justify"
-					     onClick={prev}>
-						<i className="icon icon-left"></i>
+		<div className="module_content">
+			<div className="valhalla_preview">
+				{list.length && (<div className="slider">
+					<div className="main-preview img-container flex-container center justify">
+						{currentPic ?
+							<img src={imgPath( currentPic )}
+							     title={current.name}
+							     alt="照片待补"/>
+							:
+							<div className="flex-container center justify">照片待补</div>}
+						{currentIndex !== 0 ?
+							<div className="prev flex-container left justify"
+							     onClick={prev}>
+								<i className="icon icon-left"></i>
+							</div>
+							:
+							null}
+						{currentIndex !== list.length -1 ?
+							<div className="next flex-container right justify"
+							     onClick={next}>
+								<i className="icon icon-right"></i>
+							</div>
+							:
+							null}
 					</div>
-					:
-					null}
-				{currentIndex !== list.length -1 ?
-					<div className="next flex-container right justify"
-					     onClick={next}>
-						<i className="icon icon-right"></i>
+					{current.path.length ?
+						<div className="preview-list flex-container left scroll-container">
+							{current.path.map((item, index)=>{
+								return (<div className={`img-container ${index === currentPicIndex ? 'current' : ''}`}
+								             onClick={()=>{
+									             set( index );
+								             }}
+								             key={item}>
+									<img src={imgPath( item )}
+									     alt=""/>
+								</div>);
+							})}
+						</div>
+						:
+						null}
+					<div className="description">
+					     <div className="flex-container left">
+							<div>姓&emsp;&emsp;名：</div>
+							<div>{current.name}</div>
+						</div>
+						<div className="flex-container left">
+							<div>入职时间：</div>
+							<div>{current.start}</div>
+						</div>
+						<div className="flex-container left">
+							<div>离职时间：</div>
+							<div>{current.end}</div>
+						</div>
+						<div className="flex-container left">
+							<div>职业生涯：</div>
+							<div>{current.description}</div>
+						</div>
 					</div>
-					:
-					null}
+				</div>)}
 			</div>
-			{current.path.length ?
-				<div className="preview flex-container left scroll-container">
-					{current.path.map((item, index)=>{
-						return (<div className={`img-container ${index === currentPicIndex ? 'current' : ''}`}
-						             onClick={()=>{
-							             set( index );
-						             }}
-						             key={item}>
-							<img src={imgPath( item )}
-							     alt=""/>
-						</div>);
-					})}
-				</div>
-				:
-				null}
-			<div className="description">
-			     <div className="flex-container left">
-					<div>姓&emsp;&emsp;名：</div>
-					<div>{current.name}</div>
-				</div>
-				<div className="flex-container left">
-					<div>入职时间：</div>
-					<div>{current.start}</div>
-				</div>
-				<div className="flex-container left">
-					<div>离职时间：</div>
-					<div>{current.end}</div>
-				</div>
-				<div className="flex-container left">
-					<div>职业生涯：</div>
-					<div>{current.description}</div>
-				</div>
-			</div>
-		</div>)}
+		</div>
 	</section>)
 }
 

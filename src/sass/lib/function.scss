@@ -12,3 +12,20 @@
         background: $track-piece;
     }
 }
+
+@mixin textLimit($line){
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: $line;
+}
+
+@mixin textFixed($line, $lineHeight){
+    overflow: hidden;
+    display: -webkit-box;
+    height: $lineHeight * $line +em;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: $line;
+}

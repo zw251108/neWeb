@@ -9,15 +9,13 @@ import componentTree from './components/componentTree/index.vue';
 import topHeader from './view/topHeader/index.vue';
 import sideMenu  from './view/sideMenu/index.vue';
 
-import beNew          from './view/be/new.vue';
-import beCode         from './view/be/code.vue';
-// import feNew          from './view/fe/new.vue';
-// import feNewComponent from './view/fe/newComponent.vue';
-//
-// import feDoc from './view/fe/doc.vue';
-//
-// import midwayNew from './view/midway/new.vue';
-// import designNew from './view/design/new.vue';
+import beNew  from './view/be/new.vue';
+import beCode from './view/be/code.vue';
+
+import blogEdit from './view/blog/edit.vue';
+
+import documentEdit  from './view/document/edit.vue';
+import documentSort from './view/document/sort.vue';
 
 import menuList from './menu.json';
 
@@ -27,18 +25,12 @@ let app = mgcc.initApp( App )
 		mode: 'hash'
 		, routers: [{
 			path: '/'
-		}, {
-			path: '/be/code'
-			, callback(){
-				// vm.active = 'beCode';
-				vm.currentRouter = 'beCode';
-			}
 		}]
 		, fallback(url){
 			let currentActive = url.path.slice(1)
 				;
 
-			if( vm.active === currentActive ){  // 当前为路由页面
+			if( vm.active === currentActive && vm.currentRouter === 'virtual' ){  // 当前为路由页面
 				return ;
 			}
 
@@ -74,19 +66,16 @@ app.component('topHeader', topHeader);
 app.component('sideMenu', sideMenu);
 
 app.component('beNew', beNew);
-app.component('beCode', beCode);
-// app.component('feNew', feNew);
-// app.component('feNewComponent', feNewComponent);
-//
-// app.component('feDoc', feDoc);
-//
-// app.component('midwayNew', midwayNew);
-// app.component('designNew', designNew);
 
 vm = mgcc.initVm(app, '#app');
 
+mgcc.registerRouterComponent(router, '/be/code', beCode, vm, app, true);
+mgcc.registerRouterComponent(router, '/manage/blog/edit', blogEdit, vm, app, true);
+mgcc.registerRouterComponent(router, '/manage/doc/edit', documentEdit, vm, app, true);
+mgcc.registerRouterComponent(router, '/manage/doc/sort', documentSort, vm, app, true);
+
 vm.headerHeight = '0';
-vm.excludeComLive.push('beNew', 'beCode', 'feNew');
+vm.excludeComLive.push('beNew', 'beCode', 'blogEdit', 'documentEdit', 'documentSort');
 
 // 注册路由
 menuList.forEach(({children})=>{
@@ -147,8 +136,6 @@ midway.pageList({
 			currentParent = t;
 		}
 	});
-
-	console.log(menuList)
 
 	// 生成菜单
 	vm.menuList = menuList;

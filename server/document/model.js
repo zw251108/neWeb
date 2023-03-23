@@ -25,7 +25,7 @@ let Document = db.define('document', {
 			type: DataTypes.TEXT
 			, field: 'content_order'
 		}
-		, order: DataTypes.INTEGER
+		// , order: DataTypes.INTEGER
 	}, {
 		...commonOpts
 	})
@@ -43,7 +43,7 @@ let Document = db.define('document', {
 			, field: 'section_id'
 		}
 		// , sectionTitle
-		, order: DataTypes.INTEGER
+		// , order: DataTypes.INTEGER
 		// , type
 		// , typeName
 	}, {
