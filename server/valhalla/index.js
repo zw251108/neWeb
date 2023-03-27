@@ -7,15 +7,19 @@ createController(web, 'valhalla', valhalla, {
 });
 
 web.get('/valhalla', (req, res)=>{
-	let { page = 1
-		, size = 40 } = req.query
-		;
-
 	// todo creatorId 从 session 中取
-	valhalla.list({
-		page
-		, size
-	}).then((data)=>{
+	valhalla.all({}, [
+		'id'
+		, 'name'
+		// , 'path'
+		, 'start'
+		, 'end'
+		, 'description'
+		, 'weight'
+	], [
+		['weight', 'DESC']
+		, ['id', 'ASC']
+	], ['src']).then((data)=>{
 		res.send( JSON.stringify({
 			code: 0
 			, data

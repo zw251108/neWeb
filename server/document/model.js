@@ -1,6 +1,7 @@
-import db, {DataTypes, commonAttr, commonOpts, TAG_CONTENT_TYPE} from '../db.js';
-import {userBeCreatorOf}   from '../user/model.js';
-import {tagsBelongsTo} from '../tag/model.js';
+import db, {DataTypes, commonAttr, commonOpts} from '../db.js';
+import {userBeCreatorOf}                       from '../user/model.js';
+import {tagsBelongsTo, TAG_CONTENT_TYPE}       from '../tag/model.js';
+import {imagesBelongsTo, IMAGE_CONTENT_TYPE}   from '../image/model.js';
 
 let Document = db.define('document', {
 		...commonAttr
@@ -10,6 +11,7 @@ let Document = db.define('document', {
 			type: DataTypes.TEXT
 			, field: 'section_order'
 		}
+		, status: DataTypes.INTEGER
 	}, {
 		...commonOpts
 	})
@@ -25,7 +27,7 @@ let Document = db.define('document', {
 			type: DataTypes.TEXT
 			, field: 'content_order'
 		}
-		// , order: DataTypes.INTEGER
+		, status: DataTypes.INTEGER
 	}, {
 		...commonOpts
 	})
@@ -42,10 +44,7 @@ let Document = db.define('document', {
 			type: DataTypes.STRING
 			, field: 'section_id'
 		}
-		// , sectionTitle
-		// , order: DataTypes.INTEGER
-		// , type
-		// , typeName
+		, status: DataTypes.INTEGER
 	}, {
 		...commonOpts
 	})
@@ -88,6 +87,8 @@ Document.hasMany(Content, {
 });
 
 tagsBelongsTo(Document, TAG_CONTENT_TYPE.document);
+
+imagesBelongsTo(Document, IMAGE_CONTENT_TYPE.document);
 
 export default Document;
 

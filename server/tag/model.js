@@ -1,5 +1,5 @@
 import db, {DataTypes, commonAttr, commonOpts} from '../db.js';
-import {userBeCreatorOf}                           from '../user/model.js';
+import {userBeCreatorOf}                       from '../user/model.js';
 
 let Tag = db.define('tag', {
 		id: commonAttr.id
@@ -52,6 +52,20 @@ let Tag = db.define('tag', {
 		createdAt: commonOpts.createdAt
 		, updatedAt: false
 	})
+	, TAG_CONTENT_TYPE = {
+		favorite: 0
+		, blog: 1
+		, document: 2
+		, editor: 3
+		, todo: 4
+		, reader: 5
+		, bookmark: 6
+		, image: 7
+		, book: 8
+		, movie: 9
+		, game: 10
+		, album: 11
+	}
 	;
 
 userBeCreatorOf(Tag, 'tag');
@@ -61,6 +75,7 @@ export default Tag;
 export {
 	Tag
 	, ContentTag
+	, TAG_CONTENT_TYPE
 };
 
 export function tagsBelongsTo(Target, contentType){
@@ -68,9 +83,6 @@ export function tagsBelongsTo(Target, contentType){
 		through: {
 			model: ContentTag
 			, unique: false
-			, scope: {
-				contentType
-			}
 		}
 		, foreignKey: 'content_id'
 		, constraints: false
@@ -80,6 +92,9 @@ export function tagsBelongsTo(Target, contentType){
 		through: {
 			model: ContentTag
 			, unique: false
+			, scope: {
+				contentType
+			}
 		}
 		, foreignKey: 'tag_id'
 		, constraints: false

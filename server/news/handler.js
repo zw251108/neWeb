@@ -2,23 +2,24 @@ import {where, parse} from '../db.js';
 import News           from './model.js';
 
 export default {
-	list({type, creatorId, page, size}){
+	list({type, creatorId, page, size}
+	     , attributes
+	     , order=[['createDate', 'DESC']]){
+
 		page = parse(page, 1);
 		size = parse(size, 20);
 
 		return News.findAll({
-			attributes: ['id', 'type', 'targetId', 'content', 'createDate']
-			, where: {
+			where: {
 				...where.eq({
 					type
 					, creatorId
 				})
 			}
-			, order: [
-				['createDate', 'DESC']
-			]
 			, offset: (page -1)* size
 			, limit: size
+			, attributes
+			, order
 		});
 	}
 	, count({creatorId}){

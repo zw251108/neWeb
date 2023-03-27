@@ -1,22 +1,20 @@
 import {where, parse} from '../db.js';
 import Valhalla       from './model.js';
+import Image          from '../image/model.js';
 
 export default {
-	list({page, size}){
+	list({page, size}, attributes, order){
 		page = parse(page, 1);
 		size = parse(size, 50);
 
 		return Valhalla.findAll({
-			attributes: ['id', 'name', 'path', 'start', 'end', 'description', 'weight']
-			, where: {
+			where: {
 				
 			}
-			, order: [
-				['weight', 'DESC']
-				, ['id', 'ASC']
-			]
 			, offset: (page -1)* size
 			, limit: size
+			, attributes
+			, order
 		});
 	}
 	, count(){
@@ -54,5 +52,16 @@ export default {
 	}
 	, del(){
 		
+	}
+
+	, all({page, size}, attributes, order, imageAttr){
+		return Valhalla.findAll({
+			include: [{
+				model: Image
+				, attributes: imageAttr
+			}]
+			, attributes
+			, order
+		});
 	}
 };

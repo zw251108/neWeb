@@ -2,7 +2,10 @@ import {where, parse} from '../db.js';
 import {Image, Album} from './model.js';
 
 const album = {
-		list({creatorId, page, size}){
+		list({creatorId, page, size}
+		     , attributes
+		     , order=[['id', 'DESC']]){
+
 			page = parse(page, 1);
 			size = parse(size, 20)
 
@@ -12,11 +15,9 @@ const album = {
 						creatorId
 					})
 				}
-				, order: [
-					['id', 'DESC']
-				]
 				, offset: (page -1)* size
 				, limit: size
+				, order
 			})
 		}
 		, count({creatorId}){
@@ -28,7 +29,7 @@ const album = {
 				}
 			});
 		}
-		, get({id}){
+		, get({id}, attributes, imageAttr){
 			return Album.findOne({
 				where: {
 					...where.eq({
@@ -38,28 +39,26 @@ const album = {
 				, include: [{
 					model: Image
 					, as: 'image'
+					, attributes: imageAttr
 				}]
-			})
+				, attributes
+			});
+		}
+		, create({name, desc}){
+			return Album.create({
+				name
+				, desc
+			});
 		}
 	}
 	, image = {
-		list({albumId, creatorId, page, size}){
+		list({albumId, creatorId, page, size}
+		     , attributes
+		     , order=[['id', 'DESC']]
+		     , albumAttr=['id', 'name']){
+
 			page = parse(page, 1);
 			size = parse(size, 20)
-
-			const include = [{
-					model: Album
-					, as: 'album'
-				}]
-				;
-
-			if( albumId ){
-				include[0].where = {
-					...where.eq({
-						id: albumId
-					})
-				}
-			}
 
 			return Image.findAll({
 				where: {
@@ -67,12 +66,20 @@ const album = {
 						creatorId
 					})
 				}
-				, include
-				, order: [
-					['id', 'DESC']
-				]
+				, include: [{
+					model: Album
+					, as: 'album'
+					, attributes: albumAttr
+					, where: albumId ? {
+						...where.eq({
+							id: albumId
+						})
+					}: undefined
+				}]
 				, offset: (page -1)* size
 				, limit: size
+				, attributes
+				, order
 			})
 		}
 		, count({creatorId}){
@@ -84,18 +91,19 @@ const album = {
 				}
 			});
 		}
-		, get({id}){
+		, get({id}, attributes){
 			return Image.findOne({
-				attributes: ['id', 'src', 'width', 'height', 'desc', 'createDate']
-				, where: {
+				where: {
 					...where.eq({
 						id
 					})
 				}
+				, attributes
 			});
 		}
 	}
 	;
+
 export default {
 	album
 	, image

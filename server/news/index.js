@@ -17,7 +17,13 @@ web.get('/news', (req, res)=>{
 		creatorId: 1
 		, page
 		, size
-	}).then((data)=>{
+	}, [
+		'id'
+		, 'type'
+		, 'targetId'
+		, 'content'
+		, 'createDate'
+	]).then((data)=>{
 		res.send( JSON.stringify({
 			code: 0
 			, data

@@ -1,28 +1,14 @@
-import db, {DataTypes, commonAttr, commonOpts, TAG_CONTENT_TYPE} from '../db.js';
-import {userBeCreatorOf}   from '../user/model.js';
-import {tagsBelongsTo} from '../tag/model.js';
+import db, {DataTypes, commonAttr, commonOpts} from '../db.js';
+import {userBeCreatorOf}                       from '../user/model.js';
+import {tagsBelongsTo, TAG_CONTENT_TYPE}       from '../tag/model.js';
+import {imagesBelongsTo, IMAGE_CONTENT_TYPE}   from '../image/model.js';
 
 let Blog = db.define('blog', {
 		...commonAttr
 	
 		, title: DataTypes.STRING
 		, content: DataTypes.TEXT
-		, status: {
-			type: DataTypes.INTEGER
-		}
-		// , tags: {
-		// 	type: DataTypes.TEXT
-		// }
-		// , tagList: {
-		// 	type: DataTypes.VIRTUAL
-		// 	, get(){
-		// 		if( this.tags ){
-		// 			return this.tags.split(',');
-		// 		}
-		//
-		// 		return [];
-		// 	}
-		// }
+		, status: DataTypes.INTEGER
 		, short: DataTypes.STRING
 		, readNum: {
 			type: DataTypes.INTEGER
@@ -34,9 +20,6 @@ let Blog = db.define('blog', {
 			, defaultValue: 0
 			, field: 'reply_num'
 		}
-		// , lv: DataTypes.INTEGER
-		// , documentId: DataTypes.INTEGER
-		// , sectionId: DataTypes.INTEGER
 		, secret: DataTypes.INTEGER
 		, question: DataTypes.STRING
 		, answer: DataTypes.STRING
@@ -48,5 +31,7 @@ let Blog = db.define('blog', {
 userBeCreatorOf(Blog, 'blog');
 
 tagsBelongsTo(Blog, TAG_CONTENT_TYPE.blog);
+
+imagesBelongsTo(Blog, IMAGE_CONTENT_TYPE.blog);
 
 export default Blog;

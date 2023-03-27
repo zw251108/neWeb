@@ -1,22 +1,16 @@
 import {where, parse}  from '../../db.js';
 import Page, {PageLog} from './model.js';
+
 export default {
-	list({project, path, menu, desc, state, page, size}){
+	list({project, path, menu, desc, state, page, size}
+	     , attributes
+	     , order=[['id', 'DESC']]){
+
 		page = parse(page, 1);
 		size = parse(size, 20);
 
 		return Page.findAll({
-			attributes: [
-				'id'
-				, 'path'
-				, 'project'
-				, 'menu'
-				, 'description'
-				, 'state'
-				, 'createTime'
-				, 'updateTime'
-			]
-			, where: {
+			where: {
 				...where.eq({
 					project
 					, state
@@ -27,11 +21,10 @@ export default {
 					, description: desc
 				})
 			}
-			, order: [
-				['id', 'DESC']
-			]
 			, offset: (page -1) * size
 			, limit: size
+			, attributes
+			, order
 		});
 	}
 	, count({project, path, menu, desc, state}){
@@ -49,7 +42,7 @@ export default {
 			}
 		});
 	}
-	, get({id, project, path, state}){
+	, get({id, project, path, state}, attributes){
 		return Page.findOne({
 			where: {
 				...where.eq({
@@ -59,6 +52,7 @@ export default {
 					, state
 				})
 			}
+			, attributes
 		});
 	}
 	, create({path, menu, project, description, config}){

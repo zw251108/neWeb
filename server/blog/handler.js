@@ -1,16 +1,16 @@
 import {where, parse} from '../db.js';
 import Blog           from './model.js';
-import Page           from '../mg/page/model.js';
+
 export default {
-	list({title, tags, creatorId, status, page=1, size=20},
-	     attrs=['id', 'title', 'status', 'createDate', 'updateDate']){
+	list({title, tags, creatorId, status, page=1, size=20}
+	     , attributes
+	     , order=[['id', 'DESC']]){
 
 		page = parse(page, 1);
 		size = parse(size, 20);
 
 		return Blog.findAll({
-			attributes: attrs
-			, where: {
+			where: {
 				...where.eq({
 					creatorId
 					, status
@@ -21,11 +21,10 @@ export default {
 					, tags
 				})
 			}
-			, order: [
-				['id', 'DESC']
-			]
 			, offset: (page -1)* size
 			, limit: size
+			, attributes
+			, order
 		});
 	}
 	, count({title, tags, creatorId, status}){
@@ -43,7 +42,7 @@ export default {
 			}
 		});
 	}
-	, get({id, creatorId, status}){
+	, get({id, creatorId, status}, attributes){
 		return Blog.findOne({
 			where: {
 				...where.eq({
@@ -52,6 +51,7 @@ export default {
 					, status
 				})
 			}
+			, attributes
 		});
 	}
 	, create({title, short, content}){

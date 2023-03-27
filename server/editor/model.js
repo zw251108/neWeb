@@ -1,6 +1,6 @@
-import db, {DataTypes, commonAttr, commonOpts, TAG_CONTENT_TYPE}    from '../db.js';
-import {userBeCreatorOf}                           from '../user/model.js';
-import {tagsBelongsTo}                         from '../tag/model.js';
+import db, {DataTypes, commonAttr, commonOpts} from '../db.js';
+import {userBeCreatorOf}                       from '../user/model.js';
+import {tagsBelongsTo, TAG_CONTENT_TYPE}       from '../tag/model.js';
 import Image                                   from '../image/model.js';
 
 let Editor = db.define('editor', {

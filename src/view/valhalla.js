@@ -8,7 +8,7 @@ function Valhalla(){
 		[ list, setList ] = useState([])
 		,
 		[ current, setCurrent] = useState({
-			path: []
+			images: []
 		})
 		,
 		[ currentIndex, setCurrentIndex ] = useState(0)
@@ -20,18 +20,9 @@ function Valhalla(){
 
 	useEffect(()=>{
 		api.get('/valhalla').then(({data})=>{
-			data.forEach((item)=>{
-				if( item.path ){
-					item.path = item.path.split(',');
-				}
-				else{
-					item.path = [];
-				}
-			});
-
 			setList( data );
 			setCurrent( data[0] );
-			setCurrentPic( data[0].path[0] );
+			setCurrentPic( data[0].images[0] ? data[0].images[0].src : '' );
 		});
 	}, []);
 
@@ -45,7 +36,7 @@ function Valhalla(){
 
 		setCurrent( temp );
 		setCurrentIndex( currentIndex +1 );
-		setCurrentPic( temp.path[0] );
+		setCurrentPic( temp.images[0] ? temp.images[0].src : '' );
 		setCurrentPicIndex(0);
 	}
 	function prev(){
@@ -58,12 +49,12 @@ function Valhalla(){
 
 		setCurrent( temp );
 		setCurrentIndex( currentIndex -1 );
-		setCurrentPic( temp.path[0] );
+		setCurrentPic( temp.images[0] ? temp.images[0].src : '' );
 		setCurrentPicIndex(0);
 	}
 
 	function set(index){
-		setCurrentPic( current.path[index] );
+		setCurrentPic( current.images[index].src );
 		setCurrentPicIndex( index );
 	}
 
@@ -94,15 +85,15 @@ function Valhalla(){
 							:
 							null}
 					</div>
-					{current.path.length ?
+					{current.images.length ?
 						<div className="preview-list flex-container left scroll-container">
-							{current.path.map((item, index)=>{
+							{current.images.map((item, index)=>{
 								return (<div className={`img-container ${index === currentPicIndex ? 'current' : ''}`}
 								             onClick={()=>{
 									             set( index );
 								             }}
-								             key={item}>
-									<img src={imgPath( item )}
+								             key={item.src}>
+									<img src={imgPath( item.src )}
 									     alt=""/>
 								</div>);
 							})}

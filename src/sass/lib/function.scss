@@ -24,7 +24,7 @@
 @mixin textFixed($line, $lineHeight){
     overflow: hidden;
     display: -webkit-box;
-    height: $lineHeight * $line +em;
+    height: $lineHeight * $line (+em);
     -webkit-box-orient: vertical;
     text-overflow: ellipsis;
     -webkit-line-clamp: $line;

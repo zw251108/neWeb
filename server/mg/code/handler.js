@@ -2,29 +2,24 @@ import {where, parse}  from '../../db.js';
 import Code, {CodeLog} from './model.js';
 
 export default {
-	list({desc, type, page, size}){
+	list({desc, type, page, size}
+	     , attributes
+	     , order=[['id', 'DESC']]){
+
 		page = parse(page, 1);
 		size = parse(size, 20);
 
 		return Code.findAll({
-			attributes: ['id'
-				, 'code'
-				, 'description'
-				, 'type'
-				, 'createTime'
-				, 'updateTime'
-			]
-			, where: {
+			where: {
 				...where.like({
 					type
 					, description: desc
 				})
 			}
-			, order: [
-				['id', 'DESC']
-			]
 			, offset: (page -1) * size
 			, limit: size
+			, attributes
+			, order
 		});
 	}
 	, count({desc, type}){
@@ -37,13 +32,14 @@ export default {
 			}
 		});
 	}
-	, get({id}){
+	, get({id}, attributes){
 		return Code.findOne({
 			where: {
 				...where.eq({
 					id
 				})
 			}
+			, attributes
 		});
 	}
 	, create({code, description}){
@@ -79,13 +75,16 @@ export default {
 		});
 	}
 
-	, getByIds({ids}){
+	, getByIds({ids}
+	           , attributes=['id', 'code']){
+		
 		return Code.findAll({
 			where: {
 				...where.in({
 					id: ids
 				})
 			}
+			, attributes
 		});
 	}
 };

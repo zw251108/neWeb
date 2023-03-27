@@ -2,7 +2,7 @@ import {where, parse}                                                        fro
 import {Planet, Continent, Country, Province, City, District, Town, Village} from './model.js';
 
 const planet = {
-		list({name, page, size}){
+		list({name, page, size}, attributes, order){
 			page = parse(page, 1);
 			size = parse(size, 20);
 
@@ -14,6 +14,8 @@ const planet = {
 				}
 				, offset: (page -1)* size
 				, limit: size
+				, attributes
+				, order
 			});
 		}
 		, count({id, name}){
@@ -46,7 +48,11 @@ const planet = {
 		}
 	}
 	, continent = {
-		list({planetId, name, page, size}){
+		list({planetId, name, page, size}
+		     , attributes
+		     , order
+		     , planetAttr=['id', 'name']){
+
 			page = parse(page, 1);
 			size = parse(size, 20);
 
@@ -62,9 +68,12 @@ const planet = {
 				, include: [{
 					model: Planet
 					, as: 'planet'
+					, attributes: planetAttr
 				}]
 				, offset: (page -1)* size
 				, limit: size
+				, attributes
+				, order
 			});
 		}
 		, count({planetId, name}){
@@ -99,7 +108,11 @@ const planet = {
 		}
 	}
 	, country = {
-		list({continentId, name, code, page, size}){
+		list({continentId, name, code, page, size}
+		     , attributes
+		     , order
+		     , continentAttr=['id', 'name']){
+
 			page = parse(page, 1);
 			size = parse(size, 20);
 
@@ -116,9 +129,12 @@ const planet = {
 				, include: [{
 					model: Continent
 					, as: 'continent'
+					, attributes: continentAttr
 				}]
 				, offset: (page -1)* size
 				, limit: size
+				, attributes
+				, order
 			});
 		}
 		, count({continentId, name, code}){
@@ -156,7 +172,11 @@ const planet = {
 		}
 	}
 	, province = {
-		list({countryCode, name, shortname, code, telAreaCode, page, size}){
+		list({countryCode, name, shortname, code, telAreaCode, page, size}
+		     , attributes
+		     , order
+		     , countryAttr=['id', 'name']){
+
 			page = parse(page, 1);
 			size = parse(size, 20);
 
@@ -175,9 +195,12 @@ const planet = {
 				, include: [{
 					model: Country
 					, as: 'country'
+					, attributes: countryAttr
 				}]
 				, offset: (page -1)* size
 				, limit: size
+				, attributes
+				, order
 			});
 		}
 		, count({id, name, shortname, code, telAreaCode}){
@@ -221,7 +244,11 @@ const planet = {
 		}
 	}
 	, city = {
-		list({provinceCode, name, code, telAreaCode, page, size}){
+		list({provinceCode, name, code, telAreaCode, page, size}
+		     , attributes
+		     , order
+		     , provinceAttr=['id', 'name']){
+
 			page = parse(page, 1);
 			size = parse(size, 20);
 
@@ -239,10 +266,13 @@ const planet = {
 				, include: [{
 					model: Province
 					, as: 'province'
+					, attributes: provinceAttr
 				}]
 				, offset: (page -1)* size
 				, limit: size
-			})
+				, attributes
+				, order
+			});
 		}
 		, count({provinceCode, name, code, telAreaCode}){
 			return City.count({
@@ -282,7 +312,11 @@ const planet = {
 		}
 	}
 	, district = {
-		list({cityCode, name, code, page, size}){
+		list({cityCode, name, code, page, size}
+		     , attributes
+		     , order
+		     , cityAttr=['id', 'name']){
+
 			page = parse(page, 1);
 			size = parse(size, 20);
 
@@ -299,10 +333,13 @@ const planet = {
 				, include: [{
 					model: City
 					, as: 'city'
+					, attributes: cityAttr
 				}]
 				, offset: (page -1)* size
 				, limit: size
-			})
+				, attributes
+				, order
+			});
 		}
 		, count({cityCode, name, code}){
 			return District.count({
@@ -339,7 +376,11 @@ const planet = {
 		}
 	}
 	, town = {
-		list({districtCode, name, code, page, size}){
+		list({districtCode, name, code, page, size}
+		     , attributes
+		     , order
+		     , districtAttr=['id', 'name']){
+
 			page = parse(page, 1);
 			size = parse(size, 20);
 
@@ -356,10 +397,13 @@ const planet = {
 				, include: [{
 					model: District
 					, as: 'district'
+					, attributes: districtAttr
 				}]
 				, offset: (page -1)* size
 				, limit: size
-			})
+				, attributes
+				, order
+			});
 		}
 		, count({districtCode, name, code}){
 			return Town.count({
@@ -396,7 +440,11 @@ const planet = {
 		}
 	}
 	, village = {
-		list({townCode, name, code, type, page, size}){
+		list({townCode, name, code, type, page, size}
+		     , attributes
+		     , order
+		     , townAttr=['id', 'name']){
+
 			page = parse(page, 1);
 			size = parse(size, 20);
 
@@ -414,10 +462,13 @@ const planet = {
 				, include: {
 					model: Town
 					, as: 'town'
+					, attributes: townAttr
 				}
 				, offset: (page -1)* size
 				, limit: size
-			})
+				, attributes
+				, order
+			});
 		}
 		, count({townCode, name, code, type}){
 			return Village.count({

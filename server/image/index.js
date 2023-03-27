@@ -1,7 +1,9 @@
 import web, {createController} from '../web.js';
 import {album, image}          from './handler.js';
 
-createController(web, 'album', album, {});
+createController(web, 'album', album, {
+	create: 'post'
+});
 createController(web, 'image', image, {});
 createController(web, 'img', image, {});
 createController(web, 'album/image', image, {});
@@ -30,7 +32,16 @@ web.get('/album/:id', (req, res)=>{
 
 	album.get({
 		id
-	}).then((data)=>{
+	}, [
+		'id'
+		, 'name'
+	], [
+		'id'
+		, 'src'
+		, 'width'
+		, 'height'
+		, 'desc'
+	]).then((data)=>{
 		res.send( JSON.stringify({
 			code: 0
 			, data
@@ -44,7 +55,14 @@ web.get('/image/:id', (req, res)=>{
 
 	image.get({
 		id
-	}).then((data)=>{
+	}, [
+		'id'
+		, 'src'
+		, 'width'
+		, 'height'
+		, 'desc'
+		, 'createDate'
+	]).then((data)=>{
 		res.send( JSON.stringify({
 			code: 0
 			, data

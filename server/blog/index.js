@@ -35,7 +35,14 @@ web.get('/blog', (req, res)=>{
 			, status
 			, page
 			, size
-		});
+		}, [
+			'id'
+			, 'title'
+			, 'short'
+			, 'status'
+			, 'createDate'
+			, 'updateDate'
+		]);
 	}
 
 	exec.then((data)=>{

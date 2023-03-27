@@ -50,6 +50,22 @@ web.get('/document/:id', (req, res)=>{
 	let { id } = req.params
 		;
 
+	document.get({
+		id
+		, creatorId: 1
+	}).then((data)=>{
+		res.send( JSON.stringify({
+			code: 0
+			, data
+		}) );
+		res.end();
+	});
+});
+
+web.get('/document/:id/all', (req, res)=>{
+	let { id } = req.params
+		;
+
 	document.document({
 		id
 		, creatorId: 1
@@ -58,6 +74,7 @@ web.get('/document/:id', (req, res)=>{
 			code: 0
 			, data
 		}) );
+		res.end();
 	});
 });
 

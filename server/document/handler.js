@@ -2,7 +2,10 @@ import {where, parse}               from '../db.js';
 import {Document, Section, Content} from './model.js';
 
 const document = {
-		list({title, creatorId, page, size}){
+		list({title, creatorId, page, size}
+		     , attributes
+		     , order=[['id', 'DESC']]){
+
 			page = parse(page, 1);
 			size = parse(size, 20);
 
@@ -15,11 +18,10 @@ const document = {
 						title
 					})
 				}
-				, order: [
-					['id', 'DESC']
-				]
 				, offset: (page-1) * size
 				, limit: size
+				, attributes
+				, order
 			});
 		}
 		, count({title, creatorId}){
@@ -34,7 +36,7 @@ const document = {
 				}
 			});
 		}
-		, get({id, creatorId}){
+		, get({id, creatorId}, attributes, sectionAttr){
 			return Document.findOne({
 				where: {
 					...where.eq({
@@ -45,7 +47,9 @@ const document = {
 				, include: [{
 					model: Section
 					, as: 'section'
+					, attributes: sectionAttr
 				}]
+				, attributes
 			});
 		}
 		, create({title}){
@@ -75,7 +79,11 @@ const document = {
 				}
 			});
 		}
-		, document({id, creatorId}){
+		, document({id, creatorId}
+		           , attributes=['id', 'title', 'sectionOrder']
+		           , sectionAttr=['id', 'title', 'contentOrder']
+		           , contentAttr=['id', 'title', 'content']){
+
 			return Document.findOne({
 				where: {
 					...where.eq({
@@ -86,12 +94,23 @@ const document = {
 				, include: [{
 					model: Section
 					, as: 'section'
+					, attributes: sectionAttr
+					, include: [{
+						model: Content
+						, as: 'content'
+						, attributes: contentAttr
+					}]
 				}]
+				, attributes
 			});
 		}
 	}
 	, section = {
-		list({documentId, title, creatorId, page, size}){
+		list({documentId, title, creatorId, page, size}
+		     , attributes
+		     , order=[['id', 'DESC']]
+		     , documentAttr=['id', 'title']){
+
 			page = parse(page, 1);
 			size = parse(size, 20);
 
@@ -108,12 +127,12 @@ const document = {
 				, include: [{
 					model: Document
 					, as: 'document'
+					, attributes: documentAttr
 				}]
-				, order: [
-					['id', 'DESC']
-				]
 				, offset: (page-1) * size
 				, limit: size
+				, attributes
+				, order
 			});
 		}
 		, count({documentId, title, creatorId}){
@@ -129,7 +148,7 @@ const document = {
 				}
 			});
 		}
-		, get({id, creatorId}){
+		, get({id, creatorId}, attributes, contentAttr){
 			return Section.findOne({
 				where: {
 					...where.eq({
@@ -140,7 +159,9 @@ const document = {
 				, include: [{
 					model: Content
 					, as: 'content'
+					, attributes: contentAttr
 				}]
+				, attributes
 			});
 		}
 		, create({title, documentId}){
@@ -174,7 +195,12 @@ const document = {
 		}
 	}
 	, content = {
-		list({documentId, sectionId, title, creatorId, page, size}){
+		list({documentId, sectionId, title, creatorId, page, size}
+		     , attributes
+		     , order=[['id', 'DESC']]
+		     , documentAttr=['id', 'title']
+		     , sectionAttr=['id', 'title']){
+
 			page = parse(page, 1);
 			size = parse(size, 20);
 
@@ -192,15 +218,16 @@ const document = {
 				, include: [{
 					model: Document
 					, as: 'document'
+					, attributes: documentAttr
 				}, {
 					model: Section
 					, as: 'section'
+					, attributes: sectionAttr
 				}]
-				, order: [
-					['id', 'DESC']
-				]
 				, offset: (page -1) * size
 				, limit: size
+				, attributes
+				, order
 			});
 		}
 		, count({documentId, sectionId, title, creatorId}){
@@ -217,7 +244,7 @@ const document = {
 				}
 			});
 		}
-		, get({id, creatorId}){
+		, get({id, creatorId}, attributes){
 			return Content.findOne({
 				where: {
 					...where.eq({
@@ -225,6 +252,7 @@ const document = {
 						, creatorId
 					})
 				}
+				, attributes
 			});
 		}
 		, create({title, content, documentId, sectionId}){

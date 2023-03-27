@@ -1,15 +1,13 @@
-import db, {DataTypes, commonAttr, commonOpts, TAG_CONTENT_TYPE} from '../db.js';
-import {userBeCreatorOf}   from '../user/model.js';
-import {tagsBelongsTo} from '../tag/model.js';
+import db, {DataTypes, commonAttr, commonOpts} from '../db.js';
+import {userBeCreatorOf}                       from '../user/model.js';
+import {tagsBelongsTo, TAG_CONTENT_TYPE}       from '../tag/model.js';
+import {imagesBelongsTo, IMAGE_CONTENT_TYPE}   from '../image/model.js';
 
 let News = db.define('news', {
 		id: commonAttr.id
 		, creatorId: commonAttr.creatorId
 		, createDate: commonAttr.createDate
 	
-		// , title: DataTypes.STRING
-		// , desc: DataTypes.STRING
-		// , src: DataTypes.STRING
 		, type: DataTypes.STRING
 		, targetId: {
 			type: DataTypes.INTEGER
@@ -19,19 +17,6 @@ let News = db.define('news', {
 			type: DataTypes.JSON
 		}
 		, status: DataTypes.INTEGER
-		// , tags: {
-		// 	type: DataTypes.TEXT
-		// }
-		// , tagList: {
-		// 	type: DataTypes.VIRTUAL
-		// 	, get(){
-		// 		if( this.tags ){
-		// 			return this.tags.split(',');
-		// 		}
-		//
-		// 		return [];
-		// 	}
-		// }
 	}, {
 		...commonOpts
 	})

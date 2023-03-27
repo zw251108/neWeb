@@ -1,6 +1,6 @@
-import db, {DataTypes, commonAttr, commonOpts, TAG_CONTENT_TYPE} from '../db.js';
-import {userBeCreatorOf}                                         from '../user/model.js';
-import {tagsBelongsTo}                                           from '../tag/model.js';
+import db, {DataTypes, commonAttr, commonOpts} from '../db.js';
+import {userBeCreatorOf}                       from '../user/model.js';
+import {tagsBelongsTo, TAG_CONTENT_TYPE}       from '../tag/model.js';
 
 let Image = db.define('image', {
 		id: commonAttr.id
@@ -10,10 +10,7 @@ let Image = db.define('image', {
 		, width: DataTypes.INTEGER
 		, height: DataTypes.INTEGER
 		, desc: DataTypes.STRING
-		// , albumId: {
-		// 	type: DataTypes.INTEGER
-		// 	, field: 'album_id'
-		// }
+		, status: DataTypes.INTEGER
 	}, {
 		createdAt: commonOpts.createdAt
 		, updatedAt: false
@@ -24,7 +21,6 @@ let Image = db.define('image', {
 		, name: DataTypes.STRING
 		, desc: DataTypes.STRING
 		, num: DataTypes.INTEGER
-		// , tags: DataTypes.TEXT
 		, status: DataTypes.INTEGER
 	}, {
 		...commonOpts
@@ -53,23 +49,29 @@ let Image = db.define('image', {
 		createdAt: commonOpts.createdAt
 		, updatedAt: false
 	})
+	, ContentImage = db.define('content_image', {
+		id: commonAttr.id
+		, createDate: commonAttr.createDate
+
+		, imageId: {
+			type: DataTypes.INTEGER
+			, field: 'image_id'
+		}
+		, contentId: {
+			type: DataTypes.INTEGER
+			, field: 'content_id'
+		}
+	}, {
+		createdAt: commonOpts.createdAt
+		, updatedAt: false
+	})
+	, IMAGE_CONTENT_TYPE = {
+		blog: 1
+		, document: 2
+		, valhalla: 9
+	}
 	;
 
-userBeCreatorOf(Image, 'image');
-userBeCreatorOf(Album, 'album');
-
-// Album.hasMany(Image, {
-// 	foreignKey: 'album_id'
-// 	, as: 'image'
-// 	// , through: 'album_image'
-// 	, constraints: false
-// });
-// Image.belongsTo(Album, {
-// 	foreignKey: 'album_id'
-// 	, as: 'album'
-// 	// , through: 'album_image'
-// 	, constraints: false
-// });
 Album.belongsToMany(Image, {
 	as: 'image'
 	, through: AlbumImage
@@ -79,7 +81,10 @@ Image.belongsToMany(Album, {
 	as: 'album'
 	, through: AlbumImage
 	, constraints: false
-})
+});
+
+userBeCreatorOf(Image, 'image');
+userBeCreatorOf(Album, 'album');
 
 tagsBelongsTo(Album, TAG_CONTENT_TYPE.album);
 tagsBelongsTo(Image, TAG_CONTENT_TYPE.image);
@@ -90,4 +95,28 @@ export {
 	Image
 	, Album
 	, AlbumImage
+	, IMAGE_CONTENT_TYPE
 };
+
+export function imagesBelongsTo(Target, contentType){
+	Target.belongsToMany(Image, {
+		through: {
+			model: ContentImage
+			, unique: false
+		}
+		, foreignKey: 'content_id'
+		, constraints: false
+	});
+
+	Image.belongsToMany(Target, {
+		through: {
+			model: ContentImage
+			, unique: false
+			, scope: {
+				contentType
+			}
+		}
+		, foreignKey: 'image_id'
+		, constraints: false
+	});
+}
