@@ -59,6 +59,9 @@ export default {
 			include: [{
 				model: Image
 				, attributes: imageAttr
+				, through: {
+					attributes: []
+				}
 			}]
 			, attributes
 			, order

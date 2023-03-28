@@ -18,7 +18,8 @@ let News = db.define('news', {
 		}
 		, status: DataTypes.INTEGER
 	}, {
-		...commonOpts
+		createdAt: commonOpts.createdAt
+		, updatedAt: false
 	})
 	;
 

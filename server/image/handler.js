@@ -75,6 +75,9 @@ const album = {
 							id: albumId
 						})
 					}: undefined
+					, through: {
+						attributes: []
+					}
 				}]
 				, offset: (page -1)* size
 				, limit: size

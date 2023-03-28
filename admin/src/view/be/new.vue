@@ -2363,6 +2363,7 @@ export default {
 
 				if( searchItem ){
 					searchItem[0].label = searchItem[0].label || col.label;
+					searchItem[0].inject = true;
 
 					if( this.isEnum(col) ){
 						searchItem[0].enumType = searchItem[0].enumType || 2;

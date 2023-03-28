@@ -11,6 +11,16 @@ let Document = db.define('document', {
 			type: DataTypes.TEXT
 			, field: 'section_order'
 		}
+		// , sectionList: {
+		// 	type: DataTypes.VIRTUAL
+		// 	, get(){
+		// 		if( this.sectionOrder ){
+		// 			return this.sectionOrder.split(',');
+		// 		}
+		//
+		// 		return [];
+		// 	}
+		// }
 		, status: DataTypes.INTEGER
 	}, {
 		...commonOpts
@@ -27,6 +37,16 @@ let Document = db.define('document', {
 			type: DataTypes.TEXT
 			, field: 'content_order'
 		}
+		// , contentList: {
+		// 	type: DataTypes.VIRTUAL
+		// 	, get(){
+		// 		if( this.contentOrder ){
+		// 			return this.contentOrder.split(',');
+		// 		}
+		//
+		// 		return [];
+		// 	}
+		// }
 		, status: DataTypes.INTEGER
 	}, {
 		...commonOpts

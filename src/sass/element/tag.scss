@@ -1,0 +1,42 @@
+@import "../config/color.config.scss";
+@import "./icon.scss";
+
+.tag{
+    display: inline-block;
+    min-width: 4em;
+    height: 28px;
+    border: 1px solid $tag_bd_c;
+
+    border-radius: 8px;
+    //border-radius: 20px;
+    margin: 5px;
+    padding: 0 1em 0 .5em;
+
+    //background: -webkit-linear-gradient(top, @tag_bg_gradient_s, @tag_bg_gradient_e);
+
+    background: $tag_bg_c;
+    color: $tag_c;
+
+    font-size: 12px;
+    line-height: 28px;
+
+    text-align: center;
+
+    cursor: pointer;
+
+    &-checked{
+        //background: @tag_checked_bg_c -webkit-linear-gradient(top, @tag_checked_bg_gradient_s, @tag_checked_bg_gradient_e);
+        border-color: $tag_checked_bd_c;
+        background: $tag_checked_bg_c;
+        color: $tag_checked_c;
+    }
+    &::before{
+        @extend .icon, :before;
+        @extend .icon-tags, :before;
+
+        float: left;
+        font-size: 16px;
+        line-height: 2.5* 12px;
+        margin-right: 5px;
+    }
+}

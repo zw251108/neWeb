@@ -9,7 +9,9 @@ import api                from '../api/index.js';
 
 function Blog({id}){
 	const
-		[ blog, setBlog ] = useState({})
+		[ blog, setBlog ] = useState({
+			tags: []
+		})
 		, el = useRef(null)
 		;
 
@@ -41,7 +43,15 @@ function Blog({id}){
 			<div className="blog_content"
 			     ref={el}
 			     dangerouslySetInnerHTML={{__html: blog.content}}></div>
-			<div className="blog_datetime">{maple.util.dateFormat(new Date( blog.createDate ), 'YYYY-MM-DD hh:mm:ss')}</div>
+			<div className="flex-container blog_info">
+				<div className="blog_tags">
+					{blog.tags.map(({id, name})=>{
+						return <span key={id}
+						             className="tag">{name}</span>;
+					})}
+				</div>
+				<div className="blog_datetime">{maple.util.dateFormat(new Date( blog.createDate ), 'YYYY-MM-DD hh:mm:ss')}</div>
+			</div>
 		</div>
 	</article>);
 }

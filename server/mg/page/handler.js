@@ -15,10 +15,16 @@ export default {
 					project
 					, state
 				})
+				, ...where.or([
+					where.like({
+						menu
+					})
+					, where.like({
+						description: desc
+					})
+				])
 				, ...where.like({
 					path
-					, menu
-					, description: desc
 				})
 			}
 			, offset: (page -1) * size

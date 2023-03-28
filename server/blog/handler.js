@@ -1,5 +1,6 @@
 import {where, parse} from '../db.js';
 import Blog           from './model.js';
+import Tag            from '../tag/model.js';
 
 export default {
 	list({title, tags, creatorId, status, page=1, size=20}
@@ -15,11 +16,14 @@ export default {
 					creatorId
 					, status
 				})
-				, ...where.like({
-					title
-					, content: title
-					, tags
-				})
+				, ...where.or([
+					where.like({
+						title
+					})
+					, where.like({
+						content: title
+					})
+				])
 			}
 			, offset: (page -1)* size
 			, limit: size
@@ -34,11 +38,14 @@ export default {
 					creatorId
 					, status
 				})
-				, ...where.like({
-					title
-					, content: title
-					, tags
-				})
+				, ...where.or([
+					where.like({
+						title
+					})
+					, where.like({
+						content: title
+					})
+				])
 			}
 		});
 	}
@@ -51,6 +58,13 @@ export default {
 					, status
 				})
 			}
+			, include: [{
+				model: Tag
+				, attributes: ['id', 'name']
+				, through: {
+					attributes: []
+				}
+			}]
 			, attributes
 		});
 	}

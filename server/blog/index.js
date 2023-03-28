@@ -63,7 +63,12 @@ web.get('/blog/:id', (req, res)=>{
 		id
 		, creatorId: 1
 		, status: 1
-	}).then((data)=>{
+	}, [
+		'id'
+		, 'title'
+		, 'content'
+		, 'createDate'
+	]).then((data)=>{
 		if( data ){
 			res.send({
 				code: 0

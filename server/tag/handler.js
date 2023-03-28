@@ -11,10 +11,14 @@ export default {
 				...where.eq({
 					creatorId
 				})
-				, ...where.like({
-					name
-					, description: name
-				})
+				, ...where.or([
+					where.like({
+						name
+					})
+					, where.like({
+						description: name
+					})
+				])
 			}
 			, order: [
 				['id', 'DESC']

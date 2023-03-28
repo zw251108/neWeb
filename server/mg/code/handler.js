@@ -11,9 +11,11 @@ export default {
 
 		return Code.findAll({
 			where: {
-				...where.like({
+				...where.eq({
 					type
-					, description: desc
+				})
+				, ...where.like({
+					description: desc
 				})
 			}
 			, offset: (page -1) * size

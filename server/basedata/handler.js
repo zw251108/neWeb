@@ -185,10 +185,16 @@ const planet = {
 					...where.eq({
 						countryCode
 					})
+					, ...where.or([
+						where.like({
+							name
+						})
+						, where.like([
+							shortname
+						])
+					])
 					, ...where.like({
-						name
-						, shortname
-						, code
+						code
 						, telAreaCode
 					})
 				}
@@ -203,16 +209,22 @@ const planet = {
 				, order
 			});
 		}
-		, count({id, name, shortname, code, telAreaCode}){
+		, count({countryCode, name, shortname, code, telAreaCode}){
 			return Province.count({
 				where: {
 					...where.eq({
-						id
+						countryCode
 					})
+					, ...where.or([
+						where.like({
+							name
+						})
+						, where.like([
+							shortname
+						])
+					])
 					, ...where.like({
-						name
-						, shortname
-						, code
+						code
 						, telAreaCode
 					})
 				}
