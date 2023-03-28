@@ -1,6 +1,6 @@
 import web, {createController} from '../web.js';
 import blog                    from './handler.js';
-import tag                     from '../tag/handler.js';
+// import tag                     from '../tag/handler.js';
 
 createController(web, 'blog', blog, {
 	create: 'post'
@@ -67,6 +67,7 @@ web.get('/blog/:id', (req, res)=>{
 		'id'
 		, 'title'
 		, 'content'
+		, 'tags'
 		, 'createDate'
 	]).then((data)=>{
 		if( data ){

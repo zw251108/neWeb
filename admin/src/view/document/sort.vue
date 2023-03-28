@@ -65,10 +65,10 @@ function fetch(){
 			let t
 
 			if( documentId ){
-				t = data[0].document.sectionOrder.split(',');
+				t = data[0].document.sectionOrder;
 			}
 			else{
-				t = data[0].section.contentOrder.split(',');
+				t = data[0].section.contentOrder;
 			}
 
 			t = t.map((order)=>{

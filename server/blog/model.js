@@ -1,7 +1,7 @@
 import db, {DataTypes, commonAttr, commonOpts} from '../db.js';
 import {userBeCreatorOf}                       from '../user/model.js';
-import {tagsBelongsTo, TAG_CONTENT_TYPE}       from '../tag/model.js';
-import {imagesBelongsTo, IMAGE_CONTENT_TYPE}   from '../image/model.js';
+// import {tagsBelongsTo, TAG_CONTENT_TYPE}       from '../tag/model.js';
+// import {imagesBelongsTo, IMAGE_CONTENT_TYPE}   from '../image/model.js';
 
 let Blog = db.define('blog', {
 		...commonAttr
@@ -10,6 +10,19 @@ let Blog = db.define('blog', {
 		, content: DataTypes.TEXT
 		, status: DataTypes.INTEGER
 		, short: DataTypes.STRING
+		, tags: {
+			type: DataTypes.STRING
+			, get(){
+				let tags = this.getDataValue('tags')
+					;
+
+				if( tags ){
+					return tags.split(',')
+				}
+
+				return [];
+			}
+		}
 		, readNum: {
 			type: DataTypes.INTEGER
 			, defaultValue: 1
@@ -30,8 +43,8 @@ let Blog = db.define('blog', {
 
 userBeCreatorOf(Blog, 'blog');
 
-tagsBelongsTo(Blog, TAG_CONTENT_TYPE.blog);
+// tagsBelongsTo(Blog, TAG_CONTENT_TYPE.blog);
 
-imagesBelongsTo(Blog, IMAGE_CONTENT_TYPE.blog);
+// imagesBelongsTo(Blog, IMAGE_CONTENT_TYPE.blog);
 
 export default Blog;

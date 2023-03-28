@@ -11,7 +11,7 @@ web.get('/valhalla', (req, res)=>{
 	valhalla.all({}, [
 		'id'
 		, 'name'
-		// , 'path'
+		, 'path'
 		, 'start'
 		, 'end'
 		, 'description'

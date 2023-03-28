@@ -61,6 +61,7 @@ web.get('/image/:id', (req, res)=>{
 		, 'width'
 		, 'height'
 		, 'desc'
+		, 'tags'
 		, 'createDate'
 	]).then((data)=>{
 		res.send( JSON.stringify({

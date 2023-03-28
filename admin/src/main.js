@@ -146,8 +146,13 @@ from ${from.url}
 to ${to.url}`);
 
 		if( !init ){
-			// 路由跳转，清空 url 上的参数
-			maple.url.clearParams();
+			let fromUrl = maple.url.parseUrl( from.url )
+				;
+
+			if( !router.has(fromUrl.hash) ){
+				// 路由跳转，清空 url 上的参数
+				maple.url.clearParams();
+			}
 		}
 		else{
 			// 初始化 router.init() 触发第一次路由改变，不清除 url 上的参数

@@ -1,7 +1,7 @@
 import db, {DataTypes, commonAttr, commonOpts} from '../db.js';
 import {userBeCreatorOf}                       from '../user/model.js';
-import {tagsBelongsTo, TAG_CONTENT_TYPE}       from '../tag/model.js';
-import {imagesBelongsTo, IMAGE_CONTENT_TYPE}   from '../image/model.js';
+// import {tagsBelongsTo, TAG_CONTENT_TYPE}       from '../tag/model.js';
+// import {imagesBelongsTo, IMAGE_CONTENT_TYPE}   from '../image/model.js';
 
 let News = db.define('news', {
 		id: commonAttr.id
@@ -15,6 +15,17 @@ let News = db.define('news', {
 		}
 		, content: {
 			type: DataTypes.JSON
+			, get(){
+				let content = this.getDataValue('content')
+					;
+
+				try{
+					return JSON.parse( content );
+				}
+				catch(e){
+					return {};
+				}
+			}
 		}
 		, status: DataTypes.INTEGER
 	}, {

@@ -56,14 +56,15 @@ export default {
 
 	, all({page, size}, attributes, order, imageAttr){
 		return Valhalla.findAll({
-			include: [{
-				model: Image
-				, attributes: imageAttr
-				, through: {
-					attributes: []
-				}
-			}]
-			, attributes
+			// include: [{
+			// 	model: Image
+			// 	, attributes: imageAttr
+			// 	, through: {
+			// 		attributes: []
+			// 	}
+			// }]
+			// ,
+			attributes
 			, order
 		});
 	}

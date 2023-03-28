@@ -6,7 +6,9 @@ import api       from '../api/index.js';
 
 function Img({id}){
 	const
-		[ img, setImg ] = useState({})
+		[ img, setImg ] = useState({
+			tags: []
+		})
 		,
 		[ h, setH ] = useState( false )
 		;
@@ -29,7 +31,15 @@ function Img({id}){
 				</div>
 			</div>
 			<p className="img_desc">{img.desc}</p>
-			<div className="img_datetime">{maple.util.dateFormat(new Date( img.createDate ), 'YYYY-MM-DD hh:mm:ss')}</div>
+			<div className="flex-container img_info">
+				<div className="img_tags">
+					{img.tags.map((name)=>{
+						return (<span key={name}
+						              className="tag">{name}</span>);
+					})}
+				</div>
+				<div className="img_datetime">{maple.util.dateFormat(new Date( img.createDate ), 'YYYY-MM-DD hh:mm:ss')}</div>
+			</div>
 		</div>
 	</article>);
 }

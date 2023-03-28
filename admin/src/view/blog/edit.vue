@@ -6,6 +6,13 @@
 		<el-input v-model="data.title"
 		          placeholder="博客标题"></el-input>
 	</el-form-item>
+	<el-form-item label="标签">
+		<el-input  v-model="data.tags"
+		           type="textarea"
+		           resize="none"
+		           placeholder="博客标签"
+		           :rows="4"></el-input>
+	</el-form-item>
 	<el-form-item label="文章">
 		<code-editor v-model="data.content"
 		             lang="html"></code-editor>
@@ -24,6 +31,7 @@ import codeEditor    from '../../components/codeEditor/index.vue';
 const data = ref({
 		title: ''
 		, content: ''
+		, tags: ''
 	})
 	, $hashParams = inject('$hashParams')
 	, id = ref( $hashParams().id )
@@ -37,6 +45,8 @@ if( id.value ){
 			id: id.value
 		}
 	}).then(({data: resData})=>{
+		resData.tags = resData.tags.join();
+
 		data.value = resData
 	});
 }

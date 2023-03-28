@@ -45,9 +45,9 @@ function Blog({id}){
 			     dangerouslySetInnerHTML={{__html: blog.content}}></div>
 			<div className="flex-container blog_info">
 				<div className="blog_tags">
-					{blog.tags.map(({id, name})=>{
-						return <span key={id}
-						             className="tag">{name}</span>;
+					{blog.tags.map((name)=>{
+						return (<span key={name}
+						              className="tag">{name}</span>);
 					})}
 				</div>
 				<div className="blog_datetime">{maple.util.dateFormat(new Date( blog.createDate ), 'YYYY-MM-DD hh:mm:ss')}</div>

@@ -1,6 +1,6 @@
 import db, {DataTypes, commonAttr, commonOpts} from '../db.js';
 import {userBeCreatorOf}                       from '../user/model.js';
-import {tagsBelongsTo, TAG_CONTENT_TYPE}       from '../tag/model.js';
+// import {tagsBelongsTo, TAG_CONTENT_TYPE}       from '../tag/model.js';
 
 let Image = db.define('image', {
 		id: commonAttr.id
@@ -10,6 +10,19 @@ let Image = db.define('image', {
 		, width: DataTypes.INTEGER
 		, height: DataTypes.INTEGER
 		, desc: DataTypes.STRING
+		, tags: {
+			type: DataTypes.STRING
+			, get(){
+				let tags = this.getDataValue('tags')
+					;
+
+				if( tags ){
+					return tags.split(',')
+				}
+
+				return [];
+			}
+		}
 		, status: DataTypes.INTEGER
 	}, {
 		createdAt: commonOpts.createdAt
@@ -21,6 +34,19 @@ let Image = db.define('image', {
 		, name: DataTypes.STRING
 		, desc: DataTypes.STRING
 		, num: DataTypes.INTEGER
+		, tags: {
+			type: DataTypes.STRING
+			, get(){
+				let tags = this.getDataValue('tags')
+					;
+
+				if( tags ){
+					return tags.split(',')
+				}
+
+				return [];
+			}
+		}
 		, status: DataTypes.INTEGER
 	}, {
 		...commonOpts
@@ -86,8 +112,8 @@ Image.belongsToMany(Album, {
 userBeCreatorOf(Image, 'image');
 userBeCreatorOf(Album, 'album');
 
-tagsBelongsTo(Album, TAG_CONTENT_TYPE.album);
-tagsBelongsTo(Image, TAG_CONTENT_TYPE.image);
+// tagsBelongsTo(Album, TAG_CONTENT_TYPE.album);
+// tagsBelongsTo(Image, TAG_CONTENT_TYPE.image);
 
 export default Image;
 

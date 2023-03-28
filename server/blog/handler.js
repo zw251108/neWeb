@@ -1,6 +1,6 @@
 import {where, parse} from '../db.js';
 import Blog           from './model.js';
-import Tag            from '../tag/model.js';
+// import Tag            from '../tag/model.js';
 
 export default {
 	list({title, tags, creatorId, status, page=1, size=20}
@@ -58,28 +58,30 @@ export default {
 					, status
 				})
 			}
-			, include: [{
-				model: Tag
-				, attributes: ['id', 'name']
-				, through: {
-					attributes: []
-				}
-			}]
+			// , include: [{
+			// 	model: Tag
+			// 	, attributes: ['id', 'name']
+			// 	, through: {
+			// 		attributes: []
+			// 	}
+			// }]
 			, attributes
 		});
 	}
-	, create({title, short, content}){
+	, create({title, short, content, tags}){
 		return Blog.create({
 			title
 			, short
 			, content
+			, tags
 		});
 	}
-	, update({id, title, short, content}){
+	, update({id, title, short, content, tags}){
 		return Blog.update({
 			title
 			, short
 			, content
+			, tags
 		}, {
 			where: {
 				...where.eq({

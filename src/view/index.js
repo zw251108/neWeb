@@ -38,8 +38,6 @@ function Index(){
 
 			setList((list)=>{
 				return list.concat( data.map((item)=>{
-					item.content = JSON.parse( item.content || '{}' );
-
 					item.createDate = maple.util.dateFormat(new Date( item.createDate ), 'YYYY-MM-DD hh:mm:ss');
 
 					return item;

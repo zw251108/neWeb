@@ -15,7 +15,7 @@
 		          type="textarea"
 		          resize="none"
 		          placeholder="描述必填"
-		          :row="4"></el-input>
+		          :rows="4"></el-input>
 	</el-form-item>
 </el-form>
 </template>

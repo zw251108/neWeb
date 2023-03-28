@@ -109,7 +109,7 @@ const document = {
 		list({documentId, title, creatorId, page, size}
 		     , attributes
 		     , order=[['id', 'DESC']]
-		     , documentAttr=['id', 'title']){
+		     , documentAttr=['id', 'title', 'sectionOrder']){
 
 			page = parse(page, 1);
 			size = parse(size, 20);
@@ -199,7 +199,7 @@ const document = {
 		     , attributes
 		     , order=[['id', 'DESC']]
 		     , documentAttr=['id', 'title']
-		     , sectionAttr=['id', 'title']){
+		     , sectionAttr=['id', 'title', 'contentOrder']){
 
 			page = parse(page, 1);
 			size = parse(size, 20);

@@ -1,7 +1,7 @@
 import db, {DataTypes, commonAttr, commonOpts} from '../db.js';
 import {userBeCreatorOf}                       from '../user/model.js';
-import {tagsBelongsTo, TAG_CONTENT_TYPE}       from '../tag/model.js';
-import {imagesBelongsTo, IMAGE_CONTENT_TYPE}   from '../image/model.js';
+// import {tagsBelongsTo, TAG_CONTENT_TYPE}       from '../tag/model.js';
+// import {imagesBelongsTo, IMAGE_CONTENT_TYPE}   from '../image/model.js';
 
 let Document = db.define('document', {
 		...commonAttr
@@ -10,17 +10,18 @@ let Document = db.define('document', {
 		, sectionOrder: {
 			type: DataTypes.TEXT
 			, field: 'section_order'
+			, get(){
+				let sectionOrder = this.getDataValue('sectionOrder')
+					;
+
+				if( sectionOrder ){
+					return sectionOrder.split(',')
+				}
+
+				return [];
+			}
+
 		}
-		// , sectionList: {
-		// 	type: DataTypes.VIRTUAL
-		// 	, get(){
-		// 		if( this.sectionOrder ){
-		// 			return this.sectionOrder.split(',');
-		// 		}
-		//
-		// 		return [];
-		// 	}
-		// }
 		, status: DataTypes.INTEGER
 	}, {
 		...commonOpts
@@ -36,17 +37,17 @@ let Document = db.define('document', {
 		, contentOrder: {
 			type: DataTypes.TEXT
 			, field: 'content_order'
+			, get(){
+				let contentOrder = this.getDataValue('contentOrder')
+					;
+
+				if( contentOrder ){
+					return contentOrder.split(',')
+				}
+
+				return [];
+			}
 		}
-		// , contentList: {
-		// 	type: DataTypes.VIRTUAL
-		// 	, get(){
-		// 		if( this.contentOrder ){
-		// 			return this.contentOrder.split(',');
-		// 		}
-		//
-		// 		return [];
-		// 	}
-		// }
 		, status: DataTypes.INTEGER
 	}, {
 		...commonOpts
@@ -106,9 +107,9 @@ Document.hasMany(Content, {
 	, constraints: false
 });
 
-tagsBelongsTo(Document, TAG_CONTENT_TYPE.document);
+// tagsBelongsTo(Document, TAG_CONTENT_TYPE.document);
 
-imagesBelongsTo(Document, IMAGE_CONTENT_TYPE.document);
+// imagesBelongsTo(Document, IMAGE_CONTENT_TYPE.document);
 
 export default Document;
 
