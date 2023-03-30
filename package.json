@@ -1,6 +1,6 @@
 {
   "name": "website",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "description": "新的个人网站，基于 Node.js",
   "main": "index.js",
   "scripts": {
