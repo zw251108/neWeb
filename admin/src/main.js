@@ -17,6 +17,8 @@ import blogEdit from './view/blog/edit.vue';
 import documentEdit  from './view/document/edit.vue';
 import documentSort from './view/document/sort.vue';
 
+import picUpload from './view/pic/upload.vue';
+
 import menuList from './menu.json';
 
 let app = mgcc.initApp( App )
@@ -73,6 +75,7 @@ mgcc.registerRouterComponent(router, '/be/code', beCode, vm, app, true);
 mgcc.registerRouterComponent(router, '/manage/blog/edit', blogEdit, vm, app, true);
 mgcc.registerRouterComponent(router, '/manage/doc/edit', documentEdit, vm, app, true);
 mgcc.registerRouterComponent(router, '/manage/doc/sort', documentSort, vm, app, true);
+mgcc.registerRouterComponent(router, '/manage/pic/upload', picUpload, vm, app, true);
 
 vm.headerHeight = '0';
 vm.excludeComLive.push('beNew', 'beCode', 'blogEdit', 'documentEdit', 'documentSort');

@@ -36,11 +36,12 @@ const document = {
 				}
 			});
 		}
-		, get({id, creatorId}, attributes, sectionAttr){
+		, get({id, creatorId, status}, attributes, sectionAttr, sectionWhere={}){
 			return Document.findOne({
 				where: {
 					...where.eq({
 						id
+						, status
 						, creatorId
 					})
 				}
@@ -48,6 +49,9 @@ const document = {
 					model: Section
 					, as: 'section'
 					, attributes: sectionAttr
+					, where: {
+						...where.eq( sectionWhere )
+					}
 				}]
 				, attributes
 			});
@@ -55,6 +59,7 @@ const document = {
 		, create({title}){
 			return Document.create({
 				title
+				, creatorId: 1
 			});
 		}
 		, update({id, title}){
@@ -71,6 +76,25 @@ const document = {
 		, sort({id, sectionOrder}){
 			return Document.update({
 				sectionOrder
+			}, {
+				where: {
+					...where.eq({
+						id
+					})
+				}
+			});
+		}
+		, changeStatus({status, id}){
+			if( !id ){
+				return Promise.reject( new Error('缺少 id') );
+			}
+
+			status = parse(status, 1);
+
+			status = +!status;
+
+			return Document.update({
+				status
 			}, {
 				where: {
 					...where.eq({
@@ -148,11 +172,12 @@ const document = {
 				}
 			});
 		}
-		, get({id, creatorId}, attributes, contentAttr){
+		, get({id, status, creatorId}, attributes, contentAttr, contentWhere={}){
 			return Section.findOne({
 				where: {
 					...where.eq({
 						id
+						, status
 						, creatorId
 					})
 				}
@@ -160,6 +185,9 @@ const document = {
 					model: Content
 					, as: 'content'
 					, attributes: contentAttr
+					, where: {
+						...where.eq( contentWhere )
+					}
 				}]
 				, attributes
 			});
@@ -168,6 +196,7 @@ const document = {
 			return Section.create({
 				title
 				, documentId
+				, creatorId: 1
 			});
 		}
 		, update({id, title, documentId}){
@@ -185,6 +214,25 @@ const document = {
 		, sort({id, contentOrder}){
 			return Section.update({
 				contentOrder
+			}, {
+				where: {
+					...where.eq({
+						id
+					})
+				}
+			});
+		}
+		, changeStatus({status, id}){
+			if( !id ){
+				return Promise.reject( new Error('缺少 id') );
+			}
+
+			status = parse(status, 1);
+
+			status = +!status;
+
+			return Section.update({
+				status
 			}, {
 				where: {
 					...where.eq({
@@ -244,11 +292,12 @@ const document = {
 				}
 			});
 		}
-		, get({id, creatorId}, attributes){
+		, get({id, status, creatorId}, attributes){
 			return Content.findOne({
 				where: {
 					...where.eq({
 						id
+						, status
 						, creatorId
 					})
 				}
@@ -261,6 +310,7 @@ const document = {
 				, content
 				, documentId
 				, sectionId
+				, creatorId: 1
 			});
 		}
 		, update({id, title, content, documentId, sectionId}){
@@ -269,6 +319,25 @@ const document = {
 				, content
 				, documentId
 				, sectionId
+			}, {
+				where: {
+					...where.eq({
+						id
+					})
+				}
+			});
+		}
+		, changeStatus({status, id}){
+			if( !id ){
+				return Promise.reject( new Error('缺少 id') );
+			}
+
+			status = parse(status, 1);
+
+			status = +!status;
+
+			return Content.update({
+				status
 			}, {
 				where: {
 					...where.eq({

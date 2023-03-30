@@ -22,6 +22,7 @@ web.post('/bookmark', (req, res)=>{
 			code: 0
 			, data
 		}) );
+		res.end();
 	});
 });
 

@@ -1,5 +1,10 @@
-import {where, parse} from '../db.js';
-import {Image, Album} from './model.js';
+import multer from 'multer';
+
+import CONFIG from '../../config.js';
+
+import {where, parse}             from '../db.js';
+import {Image, Album, AlbumImage} from './model.js';
+import News                       from '../news/model.js';
 
 const album = {
 		list({creatorId, page, size}
@@ -44,10 +49,25 @@ const album = {
 				, attributes
 			});
 		}
-		, create({name, desc}){
+		, create({name, desc, tags}){
 			return Album.create({
 				name
 				, desc
+				, tags
+				, creatorId: 1
+			});
+		}
+		, update({id, name, desc, tags}){
+			return Album.update({
+				name
+				, desc
+				, tags
+			}, {
+				where: {
+					...where.eq({
+						id
+					})
+				}
 			});
 		}
 	}
@@ -104,15 +124,203 @@ const album = {
 				, attributes
 			});
 		}
+		// , create({src, width, height, desc, tags}){
+		// 	return Image.create({
+		// 		src
+		// 		, width
+		// 		, height
+		// 		, tags
+		// 		, desc
+		// 	});
+		// }
+		, update({id, name, desc, tags}){
+			return Image.update({
+				name
+				, desc
+				, tags
+			}, {
+				where: {
+					...where.eq({
+						id
+					})
+				}
+			});
+		}
+	}
+	, uploadMiddleware  = multer({
+		storage: multer.diskStorage({
+			destination(req, file, callback){
+				callback(null, CONFIG.UPLOAD_DIR);
+			}
+			, filename(req, file, callback){
+				let name = file.originalname.split('.')
+					;
+
+				// todo 生成文件名
+				callback(null, `${Date.now()}.${name[name.length-1].toLowerCase()}`);
+			}
+		})
+	})
+	, upload = function(req){
+		let { width
+			, height
+			, desc
+			, tags
+			, albumId } = req.body || {}
+			, file = req.file
+			, execute
+			;
+
+		if( file ){
+			let src = '/'+ file.path.replace(/\\/g, '/')
+				;
+
+			execute = Image.create({
+				src
+				, width
+				, height
+				, desc
+				, tags
+				, creatorId: 1
+			}).then((data)=>{
+				let { id: targetId } = data
+
+				return News.create({
+					type: 'img'
+					, targetId
+					, content: {
+						src
+						, width
+						, height
+						, desc
+					}
+					, creatorId: 1
+				}).then(()=>{
+					return data;
+				});
+			});
+
+			if( albumId ){
+				execute = execute.then((data)=>{
+					let { id: imageId } = data
+						;
+
+					return Promise.all([
+						AlbumImage.create({
+							albumId
+							, imageId
+						})
+						, Album.increment({
+							num: 1
+						}, {
+							where: {
+								...where.eq({
+									id: albumId
+								})
+							}
+						})
+					]).then(()=>{
+						return data;
+					})
+				});
+			}
+		}
+		else{
+			execute = Promise.reject( new Error('没有文件上传') );
+		}
+
+		return execute;
+	}
+	, uploads = function(req){
+		let { info } = req.body || {}
+			, files = req.files
+			, albumId
+            ;
+
+		info = JSON.parse( info || '[]' );
+		albumId = info[0].albumId;
+
+		return Promise.all( files.map((file, index)=>{
+			let src = '/'+ file.path.replace(/\\/g, '/')
+				,
+				{ width
+				, height
+				, desc
+				, tags
+				, albumId } = info[index] || {}
+				, execute = Image.create({
+					src
+					, width
+					, height
+					, desc
+					, tags
+					, creatorId: 1
+				})
+				;
+
+			if( albumId ){
+				execute = execute.then((data)=>{
+					let { id: imageId } = data
+						;
+
+					return AlbumImage.create({
+						albumId
+						, imageId
+					}).then(()=>{
+						return data;
+					});
+				});
+			}
+
+			return execute;
+		}) ).then((data)=>{
+			let { src
+				, width
+				, height
+				, desc } = data[0]
+				;
+
+			return Promise.all([
+				News.create({
+					type: 'img'
+					, targetId: albumId
+					, content: {
+						src
+						, width
+						, height
+						, desc
+						, more: data.length -1
+					}
+					, creatorId: 1
+				})
+				, Album.increment({
+					num: data.length
+				}, {
+					where: {
+						...where.eq({
+							id: albumId
+						})
+					}
+				})
+			]).then(()=>{
+				return data;
+			});
+		});
 	}
 	;
 
 export default {
 	album
 	, image
+	, uploadMiddleware
+	, upload
+	, uploads
 };
 
 export {
 	album
 	, image
+	, uploadMiddleware
+	, upload
+	, uploads
 };

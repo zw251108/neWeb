@@ -7,6 +7,7 @@ import tableColumnEnum      from '../../components/tableColumns/enum.vue';
 import tableColumnFormatter from '../../components/tableColumns/formatter.vue';
 import tableColumnOperate   from '../../components/tableColumns/operate.vue';
 import tableColumnNumber    from '../../components/tableColumns/number.vue';
+import tableColumnImage     from '../../components/tableColumns/img.vue';
 
 const COL_TYPE = [{
 		type: 'text'
@@ -86,6 +87,10 @@ function isNumber(col){
 // 列是否为时间
 function isDate(col){
 	return col.type === 'date';
+}
+// 列是否为图片
+function isImage(col){
+	return col.type === 'image';
 }
 
 // 列是否为选择类型
@@ -190,6 +195,7 @@ INDEX.set(isFormatter, 'table-column-formatter');
 INDEX.set(isEnum, 'table-column-enum');
 INDEX.set(isEdit, 'table-column-edit');
 INDEX.set(isNumber, 'table-column-number');
+INDEX.set(isImage, 'table-column-image');
 
 function decideColType(col){
 	for( let [key, val] of INDEX ){
@@ -210,6 +216,7 @@ export default {
 		, tableColumnFormatter
 		, tableColumnOperate
 		, tableColumnNumber
+		, tableColumnImage
 	}
 	, methods: {
 		// 列是否可以排序
@@ -237,6 +244,9 @@ export default {
 		, isEdit
 		// 列是否为时间
 		, isDate
+
+		// 列是否为图片
+		, isImage
 
 		// 处理转化函数
 		, handleFormatter(col){
@@ -285,6 +295,9 @@ export {
 	// 列是否为时间
 	, isDate
 
+	// 列是否为图片
+	, isImage
+
 	// 处理转化函数
 	, handleFormatter
 	// 处理枚举
@@ -302,4 +315,5 @@ export {
 	, tableColumnFormatter
 	, tableColumnOperate
 	, tableColumnNumber
+	, tableColumnImage
 };

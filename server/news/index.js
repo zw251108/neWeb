@@ -1,10 +1,11 @@
 import web, {createController} from '../web.js';
 import news                    from './handler.js';
-import tag                     from '../tag/handler.js';
+// import tag                     from '../tag/handler.js';
 
 createController(web, 'news', news, {
 	create: 'post'
 	, update: 'post'
+	, changeStatus: 'post'
 });
 
 web.get('/news', (req, res)=>{
@@ -14,7 +15,8 @@ web.get('/news', (req, res)=>{
 
 	// todo creatorId 从 session 中取
 	news.list({
-		creatorId: 1
+		status: 1
+		, creatorId: 1
 		, page
 		, size
 	}, [
@@ -28,6 +30,7 @@ web.get('/news', (req, res)=>{
 			code: 0
 			, data
 		}) );
+		res.end();
 	});
 });
 

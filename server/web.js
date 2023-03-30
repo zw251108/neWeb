@@ -175,7 +175,7 @@ function createController(web, dir='', methodList={}, methodType={}){
 
 				res.send({
 					code: -1
-					, msg: ''
+					, msg: e instanceof Error ? e.message : ''
 				});
 				res.end();
 			});

@@ -5,19 +5,23 @@ createController(web, 'document', document, {
 	create: 'post'
 	, update: 'post'
 	, sort: 'post'
+	, changeStatus: 'post'
 });
 createController(web, 'document/section', section, {
 	create: 'post'
 	, update: 'post'
 	, sort: 'post'
+	, changeStatus: 'post'
 });
 createController(web, 'document/content', content, {
 	create: 'post'
 	, update: 'post'
+	, changeStatus: 'post'
 });
 createController(web, 'document/section/content', content, {
 	create: 'post'
 	, update: 'post'
+	, changeStatus: 'post'
 });
 
 web.get('/document', (req, res)=>{
@@ -43,6 +47,7 @@ web.post('/document', (req, res)=>{
 			code: 0
 			, data
 		}) );
+		res.end();
 	})
 });
 
@@ -52,6 +57,17 @@ web.get('/document/:id', (req, res)=>{
 
 	document.get({
 		id
+		, status: 1
+		, creatorId: 1
+	}, [
+		'title'
+		, 'sectionOrder'
+	], [
+		'id'
+		, 'title'
+		, 'contentOrder'
+	], {
+		status: 1
 		, creatorId: 1
 	}).then((data)=>{
 		res.send( JSON.stringify({
@@ -92,6 +108,7 @@ web.put('/document/:id', (req, res)=>{
 			code: 0
 			, data
 		}) );
+		res.end();
 	});
 });
 
@@ -106,6 +123,7 @@ web.get('/document/:documentId/section', (req, res)=>{
 			code: 0
 			, data
 		}) );
+		res.end();
 	});
 });
 
@@ -133,6 +151,19 @@ web.get('/document/:documentId/:id', (req, res)=>{
 
 	section.get({
 		id
+		, status: 1
+		, creatorId: 1
+	}, [
+		'id'
+		, 'title'
+		, 'contentOrder'
+	], [
+		'id'
+		, 'title'
+		, 'content'
+	], {
+		status: 1
+		, creatorId: 1
 	}).then((data)=>{
 		res.send( JSON.stringify({
 			code: 0
@@ -156,6 +187,7 @@ web.put('/document/:documentId/:id', (req, res)=>{
 			code: 0
 			, data
 		}) );
+		res.end();
 	});
 });
 
@@ -194,6 +226,7 @@ web.post('/document/:documentId/:sectionId', (req, res)=>{
 			code: 0
 			, data
 		}) );
+		res.end();
 	});
 });
 
@@ -203,7 +236,13 @@ web.get('/document/:documentId/:sectionId/:id', (req, res)=>{
 
 	content.get({
 		id
-	}).then((data)=>{
+		, status: 1
+		, creatorId: 1
+	}, [
+		'id'
+		, 'title'
+		, 'content'
+	]).then((data)=>{
 		res.send( JSON.stringify({
 			code: 0
 			, data
@@ -232,5 +271,6 @@ web.put('/document/:documentId/:sectionId/:id', (req, res)=>{
 			code: 0
 			, data
 		}) );
+		res.end();
 	});
 });

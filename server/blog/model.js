@@ -1,6 +1,6 @@
-import db, {DataTypes, commonAttr, commonOpts} from '../db.js';
-import {userBeCreatorOf}                       from '../user/model.js';
-// import {tagsBelongsTo, TAG_CONTENT_TYPE}       from '../tag/model.js';
+import db, {DataTypes, commonAttr, commonOpts}     from '../db.js';
+import {userBeCreatorOf}                           from '../user/model.js';
+import {tagsAttr, tagsBelongsTo, TAG_CONTENT_TYPE} from '../tag/model.js';
 // import {imagesBelongsTo, IMAGE_CONTENT_TYPE}   from '../image/model.js';
 
 let Blog = db.define('blog', {
@@ -10,19 +10,7 @@ let Blog = db.define('blog', {
 		, content: DataTypes.TEXT
 		, status: DataTypes.INTEGER
 		, short: DataTypes.STRING
-		, tags: {
-			type: DataTypes.STRING
-			, get(){
-				let tags = this.getDataValue('tags')
-					;
-
-				if( tags ){
-					return tags.split(',')
-				}
-
-				return [];
-			}
-		}
+		, tags: tagsAttr
 		, readNum: {
 			type: DataTypes.INTEGER
 			, defaultValue: 1

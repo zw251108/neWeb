@@ -1,8 +1,11 @@
 import {useState, useEffect, useRef} from 'react';
 
+import maple from 'cyan-maple';
+
 import {createCodeEditor} from '../components/codeEditor/index.js';
 
-import api from '../api/index.js';
+import api       from '../api/index.js';
+import {imgPath} from '../config.js';
 
 function Content({open, content: {title, content}}){
 	const
@@ -28,6 +31,13 @@ function Content({open, content: {title, content}}){
 			createCodeEditor(list, true);
 		}
 
+		el.current.querySelectorAll('img').forEach((el)=>{
+			let url = maple.url.parseUrl( el.src )
+				;
+
+			el.src = imgPath( url.path );
+		});
+
 		setCodeInit( true );
 	}, [fold, codeInit]);
 
@@ -50,7 +60,7 @@ function Content({open, content: {title, content}}){
 	</section>);
 }
 
-function Section({docId, open, section: {id, title}}){
+function Section({docId, open, section: {id, title, contentOrder}}){
 	const
 		[ fold, setFold ] = useState( open )
 		,
@@ -70,7 +80,18 @@ function Section({docId, open, section: {id, title}}){
 
 		api.get(`/document/${docId}/${id}`).then(({data})=>{
 			setFetched(true);
-			setContent( data.content );
+			setContent( contentOrder.reduce((rs, order)=>{
+				let content = data.content.find(({id})=>{
+						return id === +order;
+					})
+					;
+
+				if( content ){
+					rs.push( content );
+				}
+
+				return rs;
+			}, []) );
 		});
 	}, [fold, docId, id, fetched]);
 
@@ -108,6 +129,18 @@ function Document({id}){
 
 	useEffect(()=>{
 		api.get(`/document/${id}`).then(({data})=>{
+			data.section = data.sectionOrder.reduce((rs, order)=>{
+				let section = data.section.find(({id})=>{
+						return id === +order;
+					})
+					;
+
+				if( section ){
+					rs.push( section );
+				}
+
+				return rs;
+			}, []);
 			setDoc( data );
 		});
 	}, [id]);

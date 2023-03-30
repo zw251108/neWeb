@@ -60,6 +60,7 @@ web.put('/tag/:id', (req, res)=>{
 			code: 0
 			, data
 		}) );
+		res.end();
 	});
 });
 

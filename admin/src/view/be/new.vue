@@ -212,6 +212,12 @@
 						</template>
 						<template v-else-if="isNumber(col)"
 						          v-slot="scope">{{col.toFixed ? (scope.row[col.prop] || 0).toFixed(col.toFixed) : scope.row[col.prop]}}</template>
+						<template v-else-if="isImage(col)"
+						          v-slot="scope">
+							<el-image style="width: 100px; height: 100px"
+							          :src="path(scope.row[col.prop])"
+							          fit="contain" />
+						</template>
 					</el-table-column>
 				</el-table-column>
 			</el-table-column>
@@ -942,7 +948,7 @@
 </template>
 
 <script>
-import {view, COL_TYPE, CODE_TYPE} from '../../../mgcc';
+import {view, COL_TYPE, CODE_TYPE, imgPath} from '../../../mgcc';
 import btnBar                      from '../../components/btnBar/index.vue';
 import paramList                   from '../../components/paramList/index.vue';
 import codeEditor                  from '../../components/codeEditor/index.vue';
@@ -1355,6 +1361,10 @@ export default {
 					};
 				});
 			});
+		}
+
+		, path(src){
+			return imgPath( src );
 		}
 
 		, showPrevStep(){

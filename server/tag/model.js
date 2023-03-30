@@ -66,6 +66,43 @@ let Tag = db.define('tag', {
 		, game: 10
 		, album: 11
 	}
+	, tagsAttr = {
+		type: DataTypes.STRING
+		, set(value){
+			if( Array.isArray(value) ){
+				this.setDataValue('tags', value.join());
+
+				return ;
+			}
+			else if( typeof value === 'string' ){
+				if( /^\[.*]$/.test(value) ){
+					try{
+						let temp = JSON.parse( value )
+							;
+
+						this.setDataValue('tags', temp.join());
+
+						return ;
+					}
+					catch(e){
+
+					}
+				}
+			}
+
+			this.setDataValue('tags', value);
+		}
+		, get(){
+			let tags = this.getDataValue('tags')
+				;
+
+			if( tags ){
+				return tags.split(',')
+			}
+
+			return [];
+		}
+	}
 	;
 
 userBeCreatorOf(Tag, 'tag');
@@ -76,6 +113,7 @@ export {
 	Tag
 	, ContentTag
 	, TAG_CONTENT_TYPE
+	, tagsAttr
 };
 
 export function tagsBelongsTo(Target, contentType){

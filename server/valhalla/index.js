@@ -24,6 +24,7 @@ web.get('/valhalla', (req, res)=>{
 			code: 0
 			, data
 		}) );
+		res.end();
 	});
 });
 

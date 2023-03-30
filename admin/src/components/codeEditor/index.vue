@@ -118,5 +118,6 @@ watch(()=>{
 .cm-editor{
 	flex: 1;
 	min-height: 500px;
+	font-size: 16px;
 }
 </style>

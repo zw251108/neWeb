@@ -15,8 +15,6 @@ function NewsList({list}){
 					return <NewsDoc item={item} key={item.id}></NewsDoc>;
 				case 'img':
 					return <NewsImg item={item} key={item.id}></NewsImg>;
-				case 'album':
-					return <NewsImg item={item} key={item.id}></NewsImg>;
 				case 'tips':
 					return <NewsTips item={item} key={item.id}></NewsTips>;
 				case 'weibo':

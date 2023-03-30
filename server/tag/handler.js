@@ -43,6 +43,7 @@ export default {
 		return Tag.create({
 			name
 			, description
+			, creatorId: 1
 		});
 	}
 	, update({id, name, description}){

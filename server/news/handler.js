@@ -2,7 +2,7 @@ import {where, parse} from '../db.js';
 import News           from './model.js';
 
 export default {
-	list({type, creatorId, page, size}
+	list({type, status, creatorId, page, size}
 	     , attributes
 	     , order=[['createDate', 'DESC']]){
 
@@ -13,6 +13,7 @@ export default {
 			where: {
 				...where.eq({
 					type
+					, status
 					, creatorId
 				})
 			}
@@ -43,6 +44,25 @@ export default {
 			type
 			, targetId
 			, content
+		}, {
+			where: {
+				...where.eq({
+					id
+				})
+			}
+		});
+	}
+	, changeStatus({status, id}){
+		if( !id ){
+			return Promise.reject( new Error('缺少 id') );
+		}
+
+		status = parse(status, 1);
+
+		status = +!status;
+
+		return News.update({
+			status
 		}, {
 			where: {
 				...where.eq({

@@ -1,6 +1,6 @@
-import db, {DataTypes, commonAttr, commonOpts} from '../db.js';
-import {userBeCreatorOf}                       from '../user/model.js';
-// import {tagsBelongsTo, TAG_CONTENT_TYPE}       from '../tag/model.js';
+import db, {DataTypes, commonAttr, commonOpts}     from '../db.js';
+import {userBeCreatorOf}                           from '../user/model.js';
+import {tagsAttr, tagsBelongsTo, TAG_CONTENT_TYPE} from '../tag/model.js';
 
 let Image = db.define('image', {
 		id: commonAttr.id
@@ -10,19 +10,7 @@ let Image = db.define('image', {
 		, width: DataTypes.INTEGER
 		, height: DataTypes.INTEGER
 		, desc: DataTypes.STRING
-		, tags: {
-			type: DataTypes.STRING
-			, get(){
-				let tags = this.getDataValue('tags')
-					;
-
-				if( tags ){
-					return tags.split(',')
-				}
-
-				return [];
-			}
-		}
+		, tags: tagsAttr
 		, status: DataTypes.INTEGER
 	}, {
 		createdAt: commonOpts.createdAt
@@ -34,19 +22,7 @@ let Image = db.define('image', {
 		, name: DataTypes.STRING
 		, desc: DataTypes.STRING
 		, num: DataTypes.INTEGER
-		, tags: {
-			type: DataTypes.STRING
-			, get(){
-				let tags = this.getDataValue('tags')
-					;
-
-				if( tags ){
-					return tags.split(',')
-				}
-
-				return [];
-			}
-		}
+		, tags: tagsAttr
 		, status: DataTypes.INTEGER
 	}, {
 		...commonOpts

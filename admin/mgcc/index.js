@@ -6,7 +6,7 @@ import maple, {ServiceModel} from 'cyan-maple';
 
 import './customize';
 
-import './config.js';
+import {baseUrl, imgPath} from './config.js';
 import domain from './runtime/domain.js';
 
 import api, {CODE_TYPE} from './api';
@@ -235,4 +235,6 @@ export {
 	, api
 	, COL_TYPE
 	, CODE_TYPE
+	, imgPath
+	, baseUrl
 };

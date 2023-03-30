@@ -1,5 +1,6 @@
 import {where, parse} from '../db.js';
 import Blog           from './model.js';
+import News           from '../news/model.js';
 // import Tag            from '../tag/model.js';
 
 export default {
@@ -24,6 +25,9 @@ export default {
 						content: title
 					})
 				])
+				, ...where.like({
+					tags
+				})
 			}
 			, offset: (page -1)* size
 			, limit: size
@@ -46,6 +50,9 @@ export default {
 						content: title
 					})
 				])
+				, ...where.like({
+					tags
+				})
 			}
 		});
 	}
@@ -74,6 +81,19 @@ export default {
 			, short
 			, content
 			, tags
+			, creatorId: 1
+		}).then((data)=>{
+			return News.create({
+				targetId: data.id
+				, type: 'blog'
+				, content: {
+					title
+					, content: short
+				}
+				, creatorId: 1
+			}).then(()=>{
+				return data;
+			});
 		});
 	}
 	, update({id, title, short, content, tags}){
@@ -88,6 +108,20 @@ export default {
 					id
 				})
 			}
+		}).then(()=>{
+			return News.update({
+				content: {
+					title
+					, content: short
+				}
+			}, {
+				where: {
+					...where.eq({
+						targetId: id
+						, type: 'blog'
+					})
+				}
+			});
 		});
 	}
 	, del(){
@@ -110,6 +144,17 @@ export default {
 					id
 				})
 			}
+		}).then(()=>{
+			return News.update({
+				status
+			}, {
+				where: {
+					...where.eq({
+						targetId: id
+						, type: 'blog'
+					})
+				}
+			});
 		});
 	}
 };
