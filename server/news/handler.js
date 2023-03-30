@@ -23,11 +23,13 @@ export default {
 			, order
 		});
 	}
-	, count({creatorId}){
+	, count({type, status, creatorId}){
 		return News.count({
 			where: {
 				...where.eq({
-					creatorId
+					type
+					, status
+					, creatorId
 				})
 			}
 		});
