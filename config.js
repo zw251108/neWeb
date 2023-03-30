@@ -7,6 +7,7 @@ export default Object.assign({
 	PORT: '9001'
 	, SESSION_SECRET: 'secret'
 	, COOKIE_KEY: 'express.sid'
+	, UPLOAD_DIR: './upload/'
 	, DB: {
 		host: 'localhost'
 		, port: 3306
