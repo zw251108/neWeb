@@ -1,5 +1,4 @@
 import {useState, useEffect} from 'react';
-import maple                 from 'cyan-maple';
 
 import {imgPath} from '../config.js';
 import api       from '../api/index.js';
@@ -38,7 +37,7 @@ function Img({id}){
 						              className="tag">{name}</span>);
 					})}
 				</div>
-				<div className="img_datetime">{maple.util.dateFormat(new Date( img.createDate ), 'YYYY-MM-DD hh:mm:ss')}</div>
+				<div className="img_datetime">{img.createDate}</div>
 			</div>
 		</div>
 	</article>);

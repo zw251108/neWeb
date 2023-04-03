@@ -29,6 +29,15 @@
         .news_desc{
             @include textFixed(3, 1.5em);
         }
+
+        .blog_tags{
+            margin-top: 0;
+
+            @include textLimit(1);
+        }
+        .blog_datetime{
+            margin-top: 5px;
+        }
     }
 
 
@@ -107,4 +116,10 @@
     color: #999;
     font-size: 14px;
     text-align: right;
+}
+
+@media screen and (min-width: 1200px) {
+    .news.blog{
+        grid-column: span 16;
+    }
 }

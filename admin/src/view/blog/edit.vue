@@ -53,12 +53,18 @@ if( id.value ){
 
 function submit(){
 	let exec
+		, temp = document.createElement('div')
+		, short
 		;
+
+	temp.innerHTML = data.value.content;
+	short = temp.textContent.slice(0, 200);
 
 	if( !id.value ){
 		exec = $midway.post('/blog/create', {
 			data: {
 				...data.value
+				, short
 			}
 		});
 	}
@@ -67,6 +73,7 @@ function submit(){
 			data: {
 				id: id.value
 				, ...data.value
+				, short
 			}
 		});
 	}

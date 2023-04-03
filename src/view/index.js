@@ -1,5 +1,4 @@
 import {useState, useEffect} from 'react';
-import maple                 from 'cyan-maple';
 
 import api from '../api/index.js';
 
@@ -37,11 +36,7 @@ function Index(){
 			}
 
 			setList((list)=>{
-				return list.concat( data.map((item)=>{
-					item.createDate = maple.util.dateFormat(new Date( item.createDate ), 'YYYY-MM-DD hh:mm:ss');
-
-					return item;
-				}) );
+				return list.concat( data );
 			});
 		});
 	}, [page]);

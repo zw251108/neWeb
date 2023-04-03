@@ -5,6 +5,20 @@
     grid-auto-flow: row dense;
     /*grid-row-gap: 10px;*/
     /*grid-column-gap: 10px;*/
+
+    &.percent{
+        grid-template-columns: repeat(auto-fill, 12.5%);
+
+        .grid-full{
+            grid-column: span 8;
+        }
+        .grid-half{
+            grid-column: span 4;
+        }
+        .grid-quarter{
+            grid-column: span 2;
+        }
+    }
 }
 
 .grid-full{

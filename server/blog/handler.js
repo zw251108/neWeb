@@ -89,6 +89,7 @@ export default {
 				, content: {
 					title
 					, content: short
+					, tags: tags ? tags.split(',') :[]
 				}
 				, creatorId: 1
 			}).then(()=>{
@@ -113,6 +114,7 @@ export default {
 				content: {
 					title
 					, content: short
+					, tags: tags ? tags.split(',') : []
 				}
 			}, {
 				where: {

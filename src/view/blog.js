@@ -50,7 +50,7 @@ function Blog({id}){
 						              className="tag">{name}</span>);
 					})}
 				</div>
-				<div className="blog_datetime">{maple.util.dateFormat(new Date( blog.createDate ), 'YYYY-MM-DD hh:mm:ss')}</div>
+				<div className="blog_datetime">{blog.createDate}</div>
 			</div>
 		</div>
 	</article>);

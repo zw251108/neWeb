@@ -19,7 +19,7 @@ function Album({id}){
 	return (<section className="module album">
 		<h2 className="module_title">相册 {album.name}</h2>
 		<div className="module_content">
-			<div className="grid-container">
+			<div className="grid-container percent">
 				{album.image.map((img)=>{
 					let { width, height } = img
 						, type = width > height ? 'h' : 'v'

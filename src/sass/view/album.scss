@@ -10,6 +10,13 @@
         &::before{
             content: none;
         }
+
+        &-v{
+            grid-column: span 2;
+        }
+        &-h{
+            grid-column: span 4;
+        }
     }
 
     .module_content{
