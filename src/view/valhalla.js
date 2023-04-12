@@ -101,7 +101,7 @@ function Valhalla(){
 						:
 						null}
 					<div className="description">
-					     <div className="flex-container left">
+						<div className="flex-container left">
 							<div>姓&emsp;&emsp;名：</div>
 							<div>{current.name}</div>
 						</div>
@@ -121,7 +121,7 @@ function Valhalla(){
 				</div>)}
 			</div>
 		</div>
-	</section>)
+	</section>);
 }
 
 export default Valhalla;

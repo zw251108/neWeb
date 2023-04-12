@@ -1,0 +1,20 @@
+@import "./icon.scss";
+
+.link{
+    display: inline-block;
+    position: relative;
+    margin-left: 24px;
+    border-bottom: 1px solid #666;
+
+    &::before{
+        @extend .icon, :before;
+        @extend .icon-link, :before;
+
+        position: absolute;
+        left: -20px;
+        font-size: 18px;
+        text-align: center;
+        line-height: 24px;
+        font-weight: bolder;
+    }
+}

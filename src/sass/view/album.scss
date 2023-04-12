@@ -1,6 +1,8 @@
+@import "../element/icon.scss";
+
 .album{
     &::before{
-        content: '\e90e';
+        @extend .icon-images, :before;
     }
 
     .img{

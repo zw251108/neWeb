@@ -1,11 +1,7 @@
-import React, {useState, useEffect, useRef} from 'react';
-import maple from 'cyan-maple';
+import {useState, useEffect, useRef} from 'react';
 
-import {imgPath}          from '../config.js';
-
-import {createCodeEditor} from '../components/codeEditor/index.js';
-
-import api                from '../api/index.js';
+import handleArticle from '../components/handleArticle/index.js';
+import api           from '../api/index.js';
 
 function Blog({id}){
 	const
@@ -22,19 +18,7 @@ function Blog({id}){
 	}, [id]);
 
 	useEffect(()=>{
-		let list = el.current.querySelectorAll('textarea[data-code-type]')
-			;
-
-		if( list.length ){
-			createCodeEditor(list, true);
-		}
-
-		el.current.querySelectorAll('img').forEach((el)=>{
-			let url = maple.url.parseUrl( el.src )
-				;
-
-			el.src = imgPath( url.path );
-		});
+		handleArticle( el );
 	}, [blog]);
 
 	return (<article className="module blog">

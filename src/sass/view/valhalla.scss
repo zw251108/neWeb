@@ -1,8 +1,9 @@
 @import "../lib/function.scss";
+@import "../element/icon.scss";
 
 .valhalla{
     &::before{
-        content: '\e700';
+        @extend .icon-valhalla, :before;
     }
 
     .valhalla_preview{

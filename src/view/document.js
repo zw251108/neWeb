@@ -1,11 +1,7 @@
 import {useState, useEffect, useRef} from 'react';
 
-import maple from 'cyan-maple';
-
-import {createCodeEditor} from '../components/codeEditor/index.js';
-
-import api       from '../api/index.js';
-import {imgPath} from '../config.js';
+import handleArticle from '../components/handleArticle/index.js';
+import api           from '../api/index.js';
 
 function Content({open, content: {title, content}}){
 	const
@@ -24,19 +20,7 @@ function Content({open, content: {title, content}}){
 			return ;
 		}
 
-		let list = el.current.querySelectorAll('textarea[data-code-type]')
-			;
-
-		if( list.length ){
-			createCodeEditor(list, true);
-		}
-
-		el.current.querySelectorAll('img').forEach((el)=>{
-			let url = maple.url.parseUrl( el.src )
-				;
-
-			el.src = imgPath( url.path );
-		});
+		handleArticle( el );
 
 		setCodeInit( true );
 	}, [fold, codeInit]);

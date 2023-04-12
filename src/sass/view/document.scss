@@ -1,6 +1,8 @@
+@import "../element/icon.scss";
+
 .document{
     &::before{
-        content: '\e83f';
+        @extend .icon-document, :before;
     }
 
     color: #333;
@@ -37,10 +39,10 @@
     }
 
     .doc_content{
+        border-radius: 5px;
         margin: 10px 0;
         padding: 10px;
         background: #fff;
-        border-radius: 5px;
 
         .content_title{
             height: 40px;

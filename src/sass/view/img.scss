@@ -1,6 +1,8 @@
+@import "../element/icon.scss";
+
 .img{
     &::before{
-        content: '\e845';
+        @extend .icon-picture, :before;
     }
 
     &-v{

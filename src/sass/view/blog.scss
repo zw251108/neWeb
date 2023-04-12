@@ -1,6 +1,8 @@
+@import "../element/icon.scss";
+
 .blog{
     &::before{
-        content: '\f14b';
+        @extend .icon-blog, :before;
     }
 
     &_content{
@@ -34,24 +36,6 @@
         background: #fafafa;
         color: #999;
         line-height: 2em;
-    }
-
-    .link{
-        display: inline-block;
-        position: relative;
-        margin-left: 24px;
-        border-bottom: 1px solid #666;
-
-        &::before{
-            position: absolute;
-            left: -20px;
-            font-family: 'font';
-            font-size: 18px;
-            text-align: center;
-            line-height: 24px;
-            font-weight: bolder;
-            content: "\f0c1"
-        }
     }
 
     .img{

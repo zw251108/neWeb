@@ -1,0 +1,65 @@
+@import "../element/icon.scss";
+
+.resume{
+    &::before{
+        @extend .icon-resume, :before;
+    }
+
+    &_section{
+        border-radius: 10px;
+        margin: 10px;
+        padding: 10px;
+        background: #f1f1f1;
+
+        & > div{
+            border-radius: 5px;
+            margin: 10px 0;
+            padding: 10px;
+            background: #fff;
+            line-height: 2;
+            //text-indent: 2em;
+        }
+    }
+
+    .flex-container{
+        & > div{
+            margin-left: 40px;
+
+            word-break: break-all;
+
+            &:first-of-type{
+                flex-shrink: 0;
+            }
+        }
+
+        &.round{
+            & > div{
+                flex-shrink: 0;
+                width: 50%;
+                min-width: 278px;
+                margin-left: 0;
+            }
+        }
+    }
+
+    h3{
+        height: 50px;
+        border-bottom: 1px solid #c0c0c0;
+        margin: 0;
+        padding: 0 10px;
+        font-size: 20px;
+        line-height: 50px;
+    }
+
+    h4{
+        height: 40px;
+        border-bottom: 1px solid #c0c0c0;
+        margin: 0;
+        padding: 0 10px;
+        line-height: 40px;
+    }
+
+    .link{
+        line-height: 20px;
+    }
+}

@@ -6,6 +6,7 @@ import Album    from './view/album.js';
 import Img      from './view/img.js';
 import Valhalla from './view/valhalla.js';
 import Document from './view/document.js';
+import Resume   from './view/resume.js';
 
 const paths = [{
 		name: 'index'
@@ -25,6 +26,9 @@ const paths = [{
 	}, {
 		name: 'document'
 		, Target: Document
+	}, {
+		name: 'resume'
+		, Target: Resume
 	}]
 	;
 

@@ -3,6 +3,10 @@
     align-items: flex-start;
     justify-content: space-between;
 
+    &.wrap{
+        flex-wrap: wrap;
+    }
+
     /* 水平方向 */
     &.left{
         justify-content: flex-start;
