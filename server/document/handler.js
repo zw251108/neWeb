@@ -160,7 +160,7 @@ const document = {
 			});
 		}
 		, count({documentId, title, creatorId}){
-			return Document.count({
+			return Section.count({
 				where: {
 					...where.eq({
 						documentId
