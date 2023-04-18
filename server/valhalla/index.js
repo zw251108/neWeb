@@ -4,6 +4,7 @@ import valhalla                from './handler.js';
 createController(web, 'valhalla', valhalla, {
 	create: 'post'
 	, update: 'post'
+	, weight: 'post'
 });
 
 web.get('/valhalla', (req, res)=>{

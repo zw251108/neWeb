@@ -73,4 +73,15 @@ export default {
 			}
 		});
 	}
+	, weight({id, weight=0}){
+		return News.update({
+			weight
+		}, {
+			where: {
+				...where.eq({
+					id
+				})
+			}
+		});
+	}
 };

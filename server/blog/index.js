@@ -6,6 +6,8 @@ createController(web, 'blog', blog, {
 	create: 'post'
 	, update: 'post'
 	, changeStatus: 'post'
+	, setPwd: 'post'
+	, rmPwd: 'post'
 });
 
 web.get('/blog', (req, res)=>{
@@ -62,19 +64,63 @@ web.get('/blog/:id', (req, res)=>{
 	blog.get({
 		id
 		, creatorId: 1
-		, status: 1
 	}, [
 		'id'
+		, 'status'
 		, 'title'
 		, 'content'
 		, 'tags'
 		, 'createDate'
 	]).then((data)=>{
 		if( data ){
-			res.send({
-				code: 0
-				, data
-			});
+			let status = data.getDataValue('status')
+				, id = data.getDataValue('id')
+				, title = data.getDataValue('title')
+				, content = data.getDataValue('content')
+				, tags = data.getDataValue('tags')
+				, createDate = data.getDataValue('createDate')
+				, date = new Date( createDate )
+				, y = date.getFullYear()
+				, m = date.getMonth() + 1
+				, d = date.getDate()
+				, h = date.getHours()
+				, mm = date.getMinutes()
+				, s = date.getSeconds()
+				;
+
+			createDate = `${y}-${m > 9 ? m : '0'+ m}-${d > 9 ? d : '0'+ d} ${h > 9 ? h : '0'+ h}:${mm > 9 ? mm : '0'+ mm}:${s > 9 ? s : '0'+ s}`;
+
+			try{
+				tags = JSON.parse( tags );
+			}
+			catch(e){
+				tags = [];
+			}
+
+			if( status === 0 ){
+				res.send({
+					code: -1
+					, msg: ''
+				});
+			}
+			else if( status === 3 ){
+				res.send({
+					code: 0
+					, data: {
+						id
+						, status
+						, title
+						, tags
+						, createDate
+					}
+				})
+			}
+			else{
+				res.send({
+					code: 0
+					, data
+				});
+			}
 		}
 		else{
 			res.send({

@@ -81,8 +81,11 @@ function Test(){
 		<i className="icon icon-link"></i>
 		<i className="icon icon-share"></i>
 		<i className="icon icon-lock"></i>
+		<i className="icon icon-unlock"></i>
+		<i className="icon icon-key"></i>
 		<i className="icon icon-blog"></i>
 		<i className="icon icon-resume"></i>
+		<i className="icon icon-pin"></i>
 	</div>);
 }
 

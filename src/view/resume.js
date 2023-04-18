@@ -5,7 +5,7 @@ function Resume(){
 	const radarBasicRef = useRef(null)
 		, radarSkillRef = useRef(null)
 		, coList = [{
-			start: '2015.04'
+			start: '2016.04'
 			, end: '2023.02'
 			, name: '大连大商天狗电子商务有限公司'
 			, work: '制定前端编码规范，优化团队开发流程，为团队成员提供技术上的支持帮助，优化项目代码，更新升级前端技术栈，开发前端通用 UI 框架'
@@ -86,6 +86,7 @@ function Resume(){
 			value: 8
 			, title: '视野'
 		}]
+		, tags = ['Web前端', 'JavaScript', '游戏宅', '拖延症', '社恐', '吐槽']
 		;
 
 	function renderRadar(options){
@@ -104,6 +105,7 @@ function Resume(){
 			, startY = r + padding
 			, angle = d3.scaleLinear().domain([0, l]).range([0, 2* Math.PI])
 			, val = d3.scaleLinear().domain([0, 10]).range([0, r])
+			, a2 = d3.scaleLinear().domain([0, l]).range([0, 360])
 
 			, x = (d, i)=>{
 				return startX + Math.sin( angle(i) ) * d.value;
@@ -151,7 +153,7 @@ function Resume(){
 				;
 
 			// 6 为字号大小的一半
-			return ( ay > 0 ? ay + 6 : ay) *1.1 + startY;
+			return ( ay > 0 ? ay +6 : ay) *1.1 + startY;
 		}).attr('dx', (d)=>{
 			let title = d.title
 				, l = title.length
@@ -179,7 +181,7 @@ function Resume(){
 		}).attr('y', (d, i)=>{
 			return valPointY(d, i) - 3;
 		}).attr('width', 6).attr('height', 6).attr('transform', (d, i)=>{
-			return `rotate(45, ${valPointX(d, i)} ${valPointY(d, i)})`;
+			return `rotate(${a2(i) -45}, ${valPointX(d, i)} ${valPointY(d, i)})`;
 		});
 
 		// todo 添加交互效果
@@ -194,11 +196,16 @@ function Resume(){
 			el: radarSkillRef.current
 			, data: skill
 		});
+
+		return ()=>{
+			radarBasicRef.current && radarBasicRef.current.removeChild( radarBasicRef.current.firstChild );
+			radarSkillRef.current && radarSkillRef.current.removeChild( radarSkillRef.current.firstChild );
+		};
 	}, []);
 
 	return (<div className="module resume">
 		<h2 className="module_title">周文博的个人简历</h2>
-		<section className="resume_section resume_info">
+		<section className="module_content resume_section resume_info">
 			<h3>基础信息</h3>
 			<div>
 				<div className="flex-container left">
@@ -265,14 +272,25 @@ function Resume(){
 				</div>
 			</div>
 		</section>
-		<section className="resume_section resume_radar">
+		<section className="module_content resume_section resume_radar">
 			<h3>个人能力</h3>
 			<div className="flex-container round wrap">
-				<div ref={radarSkillRef}></div>
-				<div ref={radarBasicRef}></div>
+				<div className="text-center"
+				     ref={radarSkillRef}></div>
+				<div className="text-center"
+				     ref={radarBasicRef}></div>
 			</div>
 		</section>
-		<section className="resume_section resume_history">
+		<section className="module_content resume_section resume_tags">
+			<h3>个人标签</h3>
+			<div className="flex-container left">
+				{tags.map((tag, index)=>{
+					return (<span className="tag"
+					              key={index}>{tag}</span>)
+				})}
+			</div>
+		</section>
+		<section className="module_content resume_section resume_history">
 			<h3>工作经历</h3>
 			{coList.map((co, index)=>{
 				return (<div className=""
@@ -299,7 +317,7 @@ function Resume(){
 				</div>);
 			})}
 		</section>
-		<section className="resume_section resume_edu">
+		<section className="module_content resume_section resume_edu">
 			<h3>教育经历</h3>
 			{eduList.map((edu, index)=>{
 				return (<div className=""

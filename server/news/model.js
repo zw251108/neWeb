@@ -27,6 +27,8 @@ let News = db.define('news', {
 				}
 			}
 		}
+		, weight: DataTypes.INTEGER
+		, password: DataTypes.INTEGER
 		, status: DataTypes.INTEGER
 	}, {
 		createdAt: commonOpts.createdAt

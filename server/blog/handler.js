@@ -159,4 +159,50 @@ export default {
 			});
 		});
 	}
+	, setPwd({id, question, answer}){
+		return Blog.update({
+			status: 3
+			, question
+			, answer
+		}, {
+			where: {
+				...where.eq({
+					id
+				})
+			}
+		}).then(()=>{
+			return News.update({
+				password: 1
+			}, {
+				where: {
+					...where.eq({
+						targetId: id
+						, type: 'blog'
+					})
+				}
+			});
+		});
+	}
+	, rmPwd({id}){
+		return Blog.update({
+			status: 1
+		}, {
+			where: {
+				...where.eq({
+					id
+				})
+			}
+		}).then(()=>{
+			return News.update({
+				password: 0
+			}, {
+				where: {
+					...where.eq({
+						targetId: id
+						, type: 'blog'
+					})
+				}
+			});
+		});
+	}
 };

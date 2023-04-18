@@ -84,8 +84,10 @@
     }
 
     &.document{
+        grid-row: span 9;
+
         .doc_subTitle{
-            margin: 0;
+            margin: 10px 0 0;
             border-bottom: 1px solid #c0c0c0;
             font-size: 18px;
             line-height: 1.8em;
@@ -116,6 +118,16 @@
     color: #999;
     font-size: 14px;
     text-align: right;
+}
+.news_icons{
+    position: absolute;
+    top: 0;
+    right: 10px;
+    font-size: 30px;
+}
+.news_pin{
+    display: inline-block;
+    transform: rotate(45deg);
 }
 
 @media screen and (min-width: 1200px) {

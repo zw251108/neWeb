@@ -32,12 +32,17 @@ class Header extends React.Component{
 		return (<header className="header">
 			<div className="header_content flex-container">
 				<div>
-					<img className="logo"
-					     src="/image/logo.png"
-					     width="30"
-					     height="30"
-					     onClick={()=>{this.goIndex();}}
-					     alt=""/>
+					<a href="/#/index" onClick={(e)=>{
+						if( this.props.index ){
+							e.preventDefault();
+						}
+					}}>
+						<img className="logo"
+						     src="/image/logo.png"
+						     width="30"
+						     height="30"
+						     alt=""/>
+					</a>
 					{!this.props.index && <i className="icon icon-left"
 					                         onClick={()=>{this.goBack();}}></i>}
 					{this.props.deep && <i className="icon icon-left"

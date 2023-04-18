@@ -53,6 +53,17 @@ export default {
 	, del(){
 		
 	}
+	, weight({id, weight=0}){
+		return Valhalla.update({
+			weight
+		}, {
+			where: {
+				...where.eq({
+					id
+				})
+			}
+		});
+	}
 
 	, all({page, size}, attributes, order, imageAttr){
 		return Valhalla.findAll({

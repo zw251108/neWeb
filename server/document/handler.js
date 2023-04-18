@@ -1,5 +1,6 @@
 import {where, parse}               from '../db.js';
 import {Document, Section, Content} from './model.js';
+import News                         from '../news/model.js';
 
 const document = {
 		list({title, creatorId, page, size}
@@ -60,6 +61,18 @@ const document = {
 			return Document.create({
 				title
 				, creatorId: 1
+			}).then((data)=>{
+				return News.create({
+					targetId: data.id
+					, type: 'doc'
+					, content: {
+						title
+						, content: []
+					}
+					, creatorId: 1
+				}).then(()=>{
+					return data;
+				});
 			});
 		}
 		, update({id, title}){
@@ -101,6 +114,17 @@ const document = {
 						id
 					})
 				}
+			}).then(()=>{
+				return News.update({
+					status
+				}, {
+					where: {
+						...where.eq({
+							targetId: id
+							, type: 'doc'
+						})
+					}
+				});
 			});
 		}
 		, document({id, creatorId}
