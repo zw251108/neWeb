@@ -1,5 +1,5 @@
-import web, {createController} from '../web.js';
-import blog                    from './handler.js';
+import web, {createController, formatDate} from '../web.js';
+import blog                                from './handler.js';
 // import tag                     from '../tag/handler.js';
 
 createController(web, 'blog', blog, {
@@ -14,40 +14,27 @@ web.get('/blog', (req, res)=>{
 	let { page = 1
 		, size = 20
 		, title
-		, tags
-		, id } = req.query
+		, tags } = req.query
 		, status = 1
-		, exec
 		;
 
 	// todo creatorId 从 session 中取
 
-	if( id ){
-		exec = blog.get({
-			id
-			, creatorId: 1
-			, status
-		});
-	}
-	else{
-		exec = blog.list({
+	blog.list({
 			title
 			, tags
 			, creatorId: 1
 			, status
 			, page
 			, size
-		}, [
-			'id'
-			, 'title'
-			, 'short'
-			, 'status'
-			, 'createDate'
-			, 'updateDate'
-		]);
-	}
-
-	exec.then((data)=>{
+	}, [
+		'id'
+		, 'title'
+		, 'short'
+		, 'status'
+		, 'createDate'
+		, 'updateDate'
+	]).then((data)=>{
 		res.send( JSON.stringify({
 			code: 0
 			, data
@@ -58,12 +45,15 @@ web.get('/blog', (req, res)=>{
 
 web.get('/blog/:id', (req, res)=>{
 	let { id } = req.params
+		,
+		{ answer } = req.query
 		;
 
 	// todo creatorId 从 session 中取
 	blog.get({
 		id
 		, creatorId: 1
+		, answer
 	}, [
 		'id'
 		, 'status'
@@ -76,26 +66,11 @@ web.get('/blog/:id', (req, res)=>{
 			let status = data.getDataValue('status')
 				, id = data.getDataValue('id')
 				, title = data.getDataValue('title')
-				, content = data.getDataValue('content')
 				, tags = data.getDataValue('tags')
-				, createDate = data.getDataValue('createDate')
-				, date = new Date( createDate )
-				, y = date.getFullYear()
-				, m = date.getMonth() + 1
-				, d = date.getDate()
-				, h = date.getHours()
-				, mm = date.getMinutes()
-				, s = date.getSeconds()
+				, createDate = formatDate( data.getDataValue('createDate') )
 				;
 
-			createDate = `${y}-${m > 9 ? m : '0'+ m}-${d > 9 ? d : '0'+ d} ${h > 9 ? h : '0'+ h}:${mm > 9 ? mm : '0'+ mm}:${s > 9 ? s : '0'+ s}`;
-
-			try{
-				tags = JSON.parse( tags );
-			}
-			catch(e){
-				tags = [];
-			}
+			tags = tags.split(',');
 
 			if( status === 0 ){
 				res.send({
@@ -103,17 +78,25 @@ web.get('/blog/:id', (req, res)=>{
 					, msg: ''
 				});
 			}
-			else if( status === 3 ){
-				res.send({
-					code: 0
-					, data: {
-						id
-						, status
-						, title
-						, tags
-						, createDate
-					}
-				})
+			else if( status === 3 ){    // 密码访问
+				if( answer ){
+					res.send({
+						code: 0
+						, data
+					});
+				}
+				else{
+					res.send({
+						code: 0
+						, data: {
+							id
+							, status
+							, title
+							, tags
+							, createDate
+						}
+					})
+				}
 			}
 			else{
 				res.send({
@@ -131,6 +114,10 @@ web.get('/blog/:id', (req, res)=>{
 
 		res.end();
 	});
+});
+
+web.get('/blog/:id/answer', ()=>{
+
 });
 
 web.post('/blog', (req, res)=>{

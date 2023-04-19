@@ -1,5 +1,5 @@
-import web, {createController} from '../web.js';
-import news                    from './handler.js';
+import web, {createController, formatDate} from '../web.js';
+import news                                from './handler.js';
 // import tag                     from '../tag/handler.js';
 
 createController(web, 'news', news, {
@@ -41,17 +41,8 @@ web.get('/news', (req, res)=>{
 					, content = item.getDataValue('content')
 					, weight = item.getDataValue('weight')
 					, password = item.getDataValue('password')
-					, createDate = item.getDataValue('createDate')
-					, date = new Date( createDate )
-					, y = date.getFullYear()
-					, m = date.getMonth() + 1
-					, d = date.getDate()
-					, h = date.getHours()
-					, mm = date.getMinutes()
-					, s = date.getSeconds()
+					, createDate = formatDate( item.getDataValue('createDate') )
 					;
-
-				createDate = `${y}-${m > 9 ? m : '0'+ m}-${d > 9 ? d : '0'+ d} ${h > 9 ? h : '0'+ h}:${mm > 9 ? mm : '0'+ mm}:${s > 9 ? s : '0'+ s}`;
 
 				try{
 					content = JSON.parse( content );

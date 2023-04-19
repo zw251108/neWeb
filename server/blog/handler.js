@@ -56,13 +56,14 @@ export default {
 			}
 		});
 	}
-	, get({id, creatorId, status}, attributes){
+	, get({id, creatorId, status, answer}, attributes){
 		return Blog.findOne({
 			where: {
 				...where.eq({
 					id
 					, creatorId
 					, status
+					, answer
 				})
 			}
 			// , include: [{

@@ -11,6 +11,18 @@
         background: #fff;
         font-size: 16px;
         line-height: 20px;
+
+        .flex-container{
+            margin: 20px -10px;
+
+            &-v{
+                margin: 20px 0;
+
+                label, input{
+                    margin-bottom: 10px;
+                }
+            }
+        }
     }
     &_info{
         border-top: 1px solid #c0c0c0;
@@ -44,5 +56,10 @@
     }
     .bold{
         font-weight: bold;
+    }
+
+    .block{
+        display: block;
+        width: 100%;
     }
 }

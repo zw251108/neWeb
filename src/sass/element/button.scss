@@ -1,0 +1,14 @@
+.btn{
+    width: 100px;
+    height: 40px;
+    border: 1px solid #c0c0c0;
+    border-radius: 5px;
+    margin: 0 10px;
+    background: #fff;
+    color: #999;
+
+    &.primary{
+        border-color: #999;
+        color: #666;
+    }
+}
