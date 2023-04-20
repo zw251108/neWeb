@@ -6,11 +6,16 @@ import NewsWeibo  from './weibo.js';
 import NewsWeixin from './weixin.js';
 
 function NewsList({list}){
+	let blogIndex = 0
+		;
+
 	return (<>
 		{list.map((item)=>{
 			switch( item.type ){
 				case 'blog':
-					return <NewsBlog item={item} key={item.id}></NewsBlog>;
+					blogIndex++;
+
+					return <NewsBlog item={item} v={blogIndex %3 === 0} key={item.id}></NewsBlog>;
 				case 'doc':
 					return <NewsDoc item={item} key={item.id}></NewsDoc>;
 				case 'img':
