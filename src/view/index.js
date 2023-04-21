@@ -3,9 +3,10 @@ import {useState, useEffect} from 'react';
 import api from '../api/index.js';
 
 import NewsList from '../components/news/index.js';
-import Loadmore from '../components/loadmore/index.js';
+import LoadMore from '../components/loadMore/index.js';
 
 function Index(){
+	
 	const
 		[ list, setList ] = useState([])
 		,
@@ -43,7 +44,7 @@ function Index(){
 
 	return (<div className="index grid-container">
 		<NewsList list={list}></NewsList>
-		<Loadmore next={next} max={max}></Loadmore>
+		<LoadMore next={next} max={max}></LoadMore>
 	</div>);
 }
 

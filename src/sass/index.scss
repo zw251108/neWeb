@@ -1,4 +1,4 @@
-@import "./lib/function.scss";
+@import "./element/scrollbar.scss";
 
 body{
     margin: 0;
@@ -16,7 +16,6 @@ html, body, #root, .App{
 
 .App{
     @include scrollBar();
-
 }
 
 a{

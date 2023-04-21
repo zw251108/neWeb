@@ -1,17 +1,41 @@
-.text-center{
-    text-align: center;
+@mixin textLimit($line){
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: $line;
 }
 
+@mixin textFixed($line, $lineHeight){
+    overflow: hidden;
+    display: -webkit-box;
+    height: $lineHeight * $line;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: $line;
+}
+
+@mixin textAlign($align: left){
+    text-align: $align;
+}
+
+@mixin fontWeight($weight: bold){
+    font-weight: $weight;
+}
+
+.text-center{
+    @include textAlign( center );
+}
 .text-right{
-    text-align: right;
+    @include textAlign( right );
 }
 
 .bold{
-    font-weight: bold;
+    @include fontWeight();
 }
 .bolder{
-    font-weight: bolder;
+    @include fontWeight( bolder );
 }
 .light{
-    font-weight: lighter;
+    @include fontWeight( lighter );
 }

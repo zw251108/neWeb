@@ -1,7 +1,7 @@
 import React from 'react';
 import maple from 'cyan-maple';
 
-class Loadmore extends React.Component{
+class LoadMore extends React.Component{
 	constructor(props){
 		super( props );
 
@@ -32,4 +32,4 @@ class Loadmore extends React.Component{
 	}
 }
 
-export default Loadmore;
+export default LoadMore;

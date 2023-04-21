@@ -5,7 +5,7 @@ function NewsBlog({item, v}){
 		, password } = item
 		;
 
-	return (<article className={`module news blog ${v ? 'blog-v' : ''}`}>
+	return (<article className="module news blog">
 		<a href={`#/blog?id=${item.targetId}`}>
 			<h3 className="module_title">{blog.title}</h3>
 			{weight || password ? <div className="news_icons">
@@ -13,7 +13,7 @@ function NewsBlog({item, v}){
 				{password ? <i className="icon icon-lock news_lock"></i> : null}
 			</div> : null}
 			<div className="news_desc">{password ? '当前内容需要密码访问' : blog.content}</div>
-			<div className={`flex-container ${v ? 'flex-container-v' : ''} blog_info`}>
+			<div className="flex-container blog_info">
 				<div className="blog_tags">
 					{blog.tags.map((name)=>{
 						return (<span key={name}

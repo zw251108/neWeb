@@ -1,37 +1,54 @@
+@mixin justifyContent($justify: space-between){
+    justify-content: $justify;
+}
+
+@mixin alignItems($align: flex-start){
+    align-items: $align;
+}
+
+@mixin flexDirection($direction: row){
+    flex-direction: $direction;
+}
+
+@mixin flexWrap($wrap: wrap){
+    flex-wrap: $wrap;
+}
+
 .flex-container{
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
+
+    @include alignItems();
+    @include justifyContent();
 
     &.wrap{
-        flex-wrap: wrap;
+        @include flexWrap();
     }
 
     /* 水平方向 */
     &.left{
-        justify-content: flex-start;
+        @include justifyContent( flex-start );
     }
     &.center{
-        justify-content: center;
+        @include justifyContent( center );
     }
     &.right{
-        justify-content: flex-end;
+        @include justifyContent( flex-end );
     }
     &.round{
-        justify-content: space-around;
+        @include justifyContent( space-around );
     }
 
     /* 垂直方向 */
     &-v{
-        flex-direction: column;
+        @include flexDirection( column );
     }
     &.top{
-        align-items: flex-start;
+        @include alignItems( flex-start );
     }
     &.justify{
-        align-items: center;
+        @include alignItems( center );
     }
     &.bottom{
-        align-items: flex-end;
+        @include alignItems( flex-end );
     }
 }

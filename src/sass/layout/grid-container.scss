@@ -1,52 +1,52 @@
+@mixin gridColumn($column){
+    grid-column: span $column;
+}
+
+@mixin gridRow($row){
+    grid-row: span $row;
+}
+
+@mixin grid($column, $row){
+    @include gridColumn( $column );
+    @include gridRow( $row );
+}
+
 .grid-container{
     display: grid;
     grid-template-columns: repeat(auto-fill, 50px);
     grid-auto-rows: 50px;
     grid-auto-flow: row dense;
-    /*grid-row-gap: 10px;*/
-    /*grid-column-gap: 10px;*/
 
     &.percent{
         grid-template-columns: repeat(auto-fill, 12.5%);
 
         .grid-full{
-            grid-column: span 8;
+            @include gridColumn( 8 );
         }
         .grid-half{
-            grid-column: span 4;
+            @include gridColumn( 4 );
         }
         .grid-quarter{
-            grid-column: span 2;
+            @include gridColumn( 2 );
         }
     }
 }
 
 .grid-full{
-    grid-column: span 20;
+    @include gridColumn( 20 );
 }
 .grid-half{
-    grid-column: span 10;
+    @include gridColumn( 10 );
 }
-
-/*.grid-container{*/
-/*	display: grid;*/
-/*	grid-template-columns: calc( 50% - 5px ) calc( 50% - 5px );*/
-/*	!*grid-template-rows: repeat(auto-fill, 200px);*!*/
-/*	grid-auto-rows: 200px;*/
-/*	grid-auto-flow: row dense;*/
-/*	grid-row-gap: 10px;*/
-/*	grid-column-gap: 10px;*/
-/*	padding: 0 5px;*/
-/*}*/
 
 @media screen and (max-width: 450px){
     .grid-container{
         grid-template-columns: repeat(auto-fill, 12.5%);
     }
     .grid-full{
-        grid-column: span 8;
+        @include gridColumn( 8 );
     }
     .grid-half{
-        grid-column: span 4;
+        @include gridColumn( 4 );
     }
 }

@@ -1,31 +1,52 @@
-@import "../lib/function.scss";
+@import "../element/text.scss";
+@import "../layout/flex-container.scss";
+@import "../layout/grid-container.scss";
 
 .index{
     margin: -5px 0;
 
-    .loadmore{
-        grid-column: span 8;
-        grid-row: span 1;
+    .loadMore{
+        @include grid(8, 1);
     }
 }
 
 .news{
-    grid-column: span 8;
-    grid-row: span 4;
+    @include grid(8, 4);
+
+    &_desc{
+        margin: 10px 5px 12px;
+        color: #666;
+        font-size: 16px;
+        line-height: 24px;
+    }
+    &_more{
+
+    }
+    &_datetime{
+        border-top: 1px solid #c0c0c0;
+        margin: 10px 0;
+        padding: 10px 5px 0;
+        color: #999;
+        font-size: 14px;
+        text-align: right;
+    }
+    &_icons{
+        position: absolute;
+        top: 0;
+        right: 10px;
+        font-size: 30px;
+    }
+    &_pin{
+        display: inline-block;
+        transform: rotate(45deg);
+    }
 
     &.blog{
-        grid-column: span 8;
+        @include gridColumn( 8 );
 
         .module_title{
-            overflow: hidden;
-            display: -webkit-box;
-            //border-bottom: 1px solid #c0c0c0;
-            text-align: left;
-            -webkit-line-clamp: 1;
-            -webkit-box-orient: vertical;
-            text-overflow: ellipsis;
+            @include textFixed(1, 40px);
         }
-
         .news_desc{
             @include textFixed(3, 1.5em);
         }
@@ -33,7 +54,7 @@
         .blog_tags{
             margin-top: 0;
 
-            @include textLimit(1);
+            @include textFixed(1, 40px);
         }
         .blog_datetime{
             margin-top: 5px;
@@ -72,73 +93,49 @@
         }
 
         &-h{
-            grid-column: span 8;
-            grid-row: span 4;
+            @include grid(8, 4);
         }
 
         &-v{
-            grid-column: span 4;
-            grid-row: span 8;
+            @include grid(4, 8);
         }
     }
 
     &.document{
-        grid-row: span 9;
+        @include gridRow( 9 );
 
         .doc_subTitle{
-            margin: 10px 0 0;
             border-bottom: 1px solid #c0c0c0;
+            margin: 10px 0 0;
             font-size: 18px;
             line-height: 1.8em;
         }
 
         .doc_content{
+            overflow: hidden;
             margin: 10px 0 0;
             padding: 0;
-            overflow: hidden;
 
             @include textFixed(3, 1.5em);
         }
     }
 }
-.news_desc{
-    margin: 10px 5px;
-    color: #666;
-    font-size: 16px;
-    line-height: 24px;
-}
-.news_more{
 
-}
-.news_datetime{
-    border-top: 1px solid #c0c0c0;
-    margin: 10px 0;
-    padding: 10px 5px 0;
-    color: #999;
-    font-size: 14px;
-    text-align: right;
-}
-.news_icons{
-    position: absolute;
-    top: 0;
-    right: 10px;
-    font-size: 30px;
-}
-.news_pin{
-    display: inline-block;
-    transform: rotate(45deg);
-}
-
-@media screen and (min-width: 1200px) {
+@media screen and (min-width: 1200px){
     .news.blog{
-        grid-column: span 16;
+        @include gridColumn( 16 );
 
-        &-v{
-            grid-column: span 8;
-            grid-row: span 6;
+        &:nth-of-type(5n+10),
+        &:nth-of-type(5n+12){
+            @include grid(8, 6);
 
             .news_desc{
+                margin-bottom: 5px;
+
                 @include textFixed(6, 1.5em);
+            }
+            .blog_info{
+                @include flexDirection(column);
             }
             .blog_tags{
                 margin-top: 0;

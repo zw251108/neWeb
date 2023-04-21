@@ -188,20 +188,24 @@ function Resume(){
 	}
 
 	useEffect(()=>{
+		let radarBasicEl = radarBasicRef.current
+			, radarSkillEl = radarSkillRef.current
+			;
+
 		renderRadar({
-			el: radarBasicRef.current
+			el: radarBasicEl
 			, data: basic
 		});
 		renderRadar({
-			el: radarSkillRef.current
+			el: radarSkillEl
 			, data: skill
 		});
 
 		return ()=>{
-			radarBasicRef.current && radarBasicRef.current.removeChild( radarBasicRef.current.firstChild );
-			radarSkillRef.current && radarSkillRef.current.removeChild( radarSkillRef.current.firstChild );
+			radarBasicEl.removeChild( radarBasicEl.firstChild );
+			radarSkillEl.removeChild( radarSkillEl.firstChild );
 		};
-	}, []);
+	});
 
 	return (<div className="module resume">
 		<h2 className="module_title">周文博的个人简历</h2>
@@ -237,7 +241,8 @@ function Resume(){
 					<div>
 						<a href="//zw150026.com"
 						   className="link"
-						   target="_blank">http://zw150026.com</a>
+						   target="_blank"
+						   rel="noreferrer">http://zw150026.com</a>
 					</div>
 				</div>
 				<div className="flex-container left">
@@ -245,7 +250,8 @@ function Resume(){
 					<div>
 						<a href="https://github.com/zw251108"
 						   className="link"
-						   target="_blank">https://github.com/zw251108</a>
+						   target="_blank"
+						   rel="noreferrer">https://github.com/zw251108</a>
 					</div>
 				</div>
 				<div className="flex-container left">
@@ -253,7 +259,8 @@ function Resume(){
 					<div>
 						<a href="https://www.douban.com/doulist/3589578"
 						   className="link"
-						   target="_blank">https://www.douban.com/doulist/3589578</a>
+						   target="_blank"
+						   rel="noreferrer">https://www.douban.com/doulist/3589578</a>
 					</div>
 				</div>
 				<div className="flex-container left">

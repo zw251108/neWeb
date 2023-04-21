@@ -1,4 +1,5 @@
 @import "../element/icon.scss";
+@import "../layout/grid-container.scss";
 
 .album{
     &::before{
@@ -14,10 +15,10 @@
         }
 
         &-v{
-            grid-column: span 2;
+            @include gridColumn( 2 );
         }
         &-h{
-            grid-column: span 4;
+            @include gridColumn( 4 );
         }
     }
 

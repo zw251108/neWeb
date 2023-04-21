@@ -1,4 +1,6 @@
-import {ServiceModel, Model} from 'cyan-maple';
+import {ServiceModel
+	// , Model
+} from 'cyan-maple';
 
 import {baseUrl} from '../config.js';
 
@@ -10,7 +12,7 @@ const api = new ServiceModel({
 			, blog: '/blog'
 		}
 	})
-	, ls = Model.factory('ls')
+	// , ls = Model.factory('ls')
 	;
 
 // api.sourceFrom( ls );

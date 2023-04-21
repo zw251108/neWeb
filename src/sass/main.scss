@@ -1,3 +1,5 @@
+@import "./layout/grid-container.scss";
+
 .main{
     margin: 10px auto;
     background: #fff;
@@ -15,9 +17,9 @@
     }
 
     .grid-half{
-        grid-column: span 12;
+        @include gridColumn( 12 );
     }
     .grid-full{
-        grid-column: span 24;
+        @include gridColumn( 24 );
     }
 }

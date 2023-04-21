@@ -77,7 +77,7 @@ function Section({docId, open, section: {id, title, contentOrder}}){
 				return rs;
 			}, []) );
 		});
-	}, [fold, docId, id, fetched]);
+	}, [fold, docId, id, fetched, contentOrder]);
 
 	return (<section className="module_content doc_section">
 		<div className="flex-container section_title"
