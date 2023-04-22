@@ -1,20 +1,26 @@
-import db, {DataTypes, commonAttr, commonOpts} from '../db.js';
-import {userBeCreatorOf}                       from '../user/model.js';
-import {tagsBelongsTo, TAG_CONTENT_TYPE}       from '../tag/model.js';
-import Image                                   from '../image/model.js';
+import db, {DataTypes, commonAttr, commonOpts}     from '../db.js';
+import {userBeCreatorOf}                           from '../user/model.js';
+import {tagsBelongsTo, TAG_CONTENT_TYPE, tagsAttr} from '../tag/model.js';
+import Image                                       from '../image/model.js';
 
 let Editor = db.define('editor', {
 		...commonAttr
 
 		, name: DataTypes.STRING
-		, imgId: {
-			type: DataTypes.STRING
-			, field: 'img_id'
-		}
+		, description: DataTypes.TEXT
+		, tags: tagsAttr
+
+		, preview: DataTypes.STRING
+		, status: DataTypes.INTEGER
 
 		, html: DataTypes.TEXT
 		, css: DataTypes.TEXT
 		, js: DataTypes.TEXT
+
+		, imgId: {
+			type: DataTypes.STRING
+			, field: 'img_id'
+		}
 		, cssLib: {
 			type: DataTypes.TEXT
 			, field: 'css_lib'
@@ -27,8 +33,7 @@ let Editor = db.define('editor', {
 			type: DataTypes.TEXT
 			, field: 'include_file'
 		}
-		, description: DataTypes.TEXT
-		// , tags: DataTypes.TEXT
+
 		, editable: DataTypes.INTEGER
 	}, {
 		...commonOpts

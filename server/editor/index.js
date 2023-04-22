@@ -1,6 +1,38 @@
-import web  from '../web.js';
-import editor  from './handler.js';
+import web, {createController} from '../web.js';
+import editor                  from './handler.js';
+
+createController(web, 'editor', editor, {
+	create: 'post'
+	, update: 'post'
+	, changeStatus: 'post'
+});
 
 web.get('/editor', (req, res)=>{
 
+});
+
+web.get('/editor/:id', (req, res)=>{
+	let id = req.params
+		;
+
+	editor.get({
+		id
+		, status: 1
+		, creatorId: 1
+	}).then((data)=>{
+		if( data ){
+			res.send( JSON.stringify({
+				data
+				, code: 0
+			}) );
+		}
+		else{
+			res.send( JSON.stringify({
+				code: -1
+				, msg: ''
+			}) );
+		}
+
+		res.end();
+	});
 });
