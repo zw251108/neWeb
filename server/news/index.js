@@ -1,5 +1,6 @@
-import web, {createController, formatDate} from '../web.js';
-import news                                from './handler.js';
+import web, {createController} from '../web.js';
+import {formatDate}            from '../lib.js';
+import news                    from './handler.js';
 // import tag                     from '../tag/handler.js';
 
 createController(web, 'news', news, {
