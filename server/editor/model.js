@@ -1,7 +1,7 @@
 import db, {DataTypes, commonAttr, commonOpts}     from '../db.js';
 import {userBeCreatorOf}                           from '../user/model.js';
 import {tagsBelongsTo, TAG_CONTENT_TYPE, tagsAttr} from '../tag/model.js';
-import Image                                       from '../image/model.js';
+// import Image                                       from '../image/model.js';
 
 let Editor = db.define('editor', {
 		...commonAttr
@@ -59,13 +59,13 @@ userBeCreatorOf(Editor, 'editor');
 
 // tagsBelongsTo(Editor, EditorTag, 'tags');
 
-Editor.hasOne(Image, {
-	foreignKey: 'img_id'
-	, as: 'preview'
-	, constraints: false
-});
+// Editor.hasOne(Image, {
+// 	foreignKey: 'img_id'
+// 	, as: 'preview'
+// 	, constraints: false
+// });
 
-tagsBelongsTo(Editor, TAG_CONTENT_TYPE.editor);
+// tagsBelongsTo(Editor, TAG_CONTENT_TYPE.editor);
 
 export default Editor;
 

@@ -10,7 +10,7 @@ function NewsImg({item}){
 	
 	return (<div className={`module news img img-${type}`}>
 		<a href={`#/${img.more ? `album` : `img`}?id=${item.targetId}`}>
-			<div className={`img-container img-container-${type} flex-container center justify`}>
+			<div className={`img-container img-container-${type} news_preview`}>
 				<img src={imgPath( img.src )}
 				     alt={img.desc}/>
 				{img.desc && <div className="news_desc">{img.desc}</div>}

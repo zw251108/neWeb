@@ -20,33 +20,33 @@
     &.percent{
         grid-template-columns: repeat(auto-fill, 12.5%);
 
-        .grid-full{
-            @include gridColumn( 8 );
-        }
-        .grid-half{
-            @include gridColumn( 4 );
-        }
-        .grid-quarter{
-            @include gridColumn( 2 );
-        }
+        //.grid-full{
+        //    @include gridColumn( 8 );
+        //}
+        //.grid-half{
+        //    @include gridColumn( 4 );
+        //}
+        //.grid-quarter{
+        //    @include gridColumn( 2 );
+        //}
     }
 }
 
-.grid-full{
-    @include gridColumn( 20 );
-}
-.grid-half{
-    @include gridColumn( 10 );
-}
+//.grid-full{
+//    @include gridColumn( 20 );
+//}
+//.grid-half{
+//    @include gridColumn( 10 );
+//}
 
 @media screen and (max-width: 450px){
     .grid-container{
         grid-template-columns: repeat(auto-fill, 12.5%);
     }
-    .grid-full{
-        @include gridColumn( 8 );
-    }
-    .grid-half{
-        @include gridColumn( 4 );
-    }
+    //.grid-full{
+    //    @include gridColumn( 8 );
+    //}
+    //.grid-half{
+    //    @include gridColumn( 4 );
+    //}
 }

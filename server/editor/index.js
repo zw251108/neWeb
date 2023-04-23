@@ -12,14 +12,22 @@ web.get('/editor', (req, res)=>{
 });
 
 web.get('/editor/:id', (req, res)=>{
-	let id = req.params
+	let { id } = req.params
 		;
 
 	editor.get({
 		id
 		, status: 1
 		, creatorId: 1
-	}).then((data)=>{
+	}, [
+		'id'
+		, 'name'
+		, 'html'
+		, 'css'
+		, 'js'
+		, 'tags'
+		, 'createDate'
+	]).then((data)=>{
 		if( data ){
 			res.send( JSON.stringify({
 				data

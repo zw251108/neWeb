@@ -3,20 +3,26 @@ import maple from 'cyan-maple';
 import {createCodeEditor} from '../codeEditor/index.js';
 import {imgPath}          from '../../config.js';
 
-function handleArticle(el){
-	let list = el.current.querySelectorAll('textarea[data-code-type]')
+function handleImg(el){
+	let url = maple.url.parseUrl( el.src )
+		;
+
+	el.src = imgPath( url.path );
+}
+
+function handleArticle(ref){
+	let list = ref.current.querySelectorAll('textarea[data-code-type]')
 		;
 
 	if( list.length ){
 		createCodeEditor(list, true);
 	}
 
-	el.current.querySelectorAll('img').forEach((el)=>{
-		let url = maple.url.parseUrl( el.src )
-			;
-
-		el.src = imgPath( url.path );
-	});
+	ref.current.querySelectorAll('img').forEach( handleImg );
 }
 
 export default handleArticle;
+
+export {
+	handleImg
+};

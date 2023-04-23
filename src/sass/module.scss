@@ -1,3 +1,5 @@
+@import "./layout/flex-container.scss";
+
 .module{
     position: relative;
     border: 5px solid #c0c0c0;
@@ -50,5 +52,22 @@
         margin: 10px 5px 5px;
         padding: 10px;
         background: #f1f1f1;
+    }
+
+    &_info{
+        @extend .flex-container;
+
+        border-top: 1px solid #c0c0c0;
+        color: #999;
+        font-size: 14px;
+    }
+    &_tags{
+        margin: 5px -5px -5px;
+    }
+    &_datetime{
+        flex-shrink: 0;
+        height: 30px;
+        margin: 10px 0 0;
+        line-height: 30px;
     }
 }

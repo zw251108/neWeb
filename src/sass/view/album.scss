@@ -8,6 +8,7 @@
 
     .img{
         border-color: #f1f1f1;
+        border-radius: 5px;
         padding: 0;
         
         &::before{
@@ -24,9 +25,22 @@
 
     .module_content{
         .grid-container{
-            border-radius: 10px;
+            border-radius: 5px;
             padding: 5px;
             background: #fff;
+        }
+    }
+}
+
+@media screen and (max-width: 450px){
+    .album{
+        .img{
+            &-v{
+                @include gridColumn( 4 );
+            }
+            &-h{
+                @include gridColumn( 8 );
+            }
         }
     }
 }

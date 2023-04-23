@@ -22,17 +22,22 @@
 	"showAlways": true,
 	"children": [{
 	  "icon": "pie-chart",
-	  "name": "/manage/data",
+	  "name": "manage/data",
 	  "title": "基础数据",
 	  "children": []
 	}, {
+	  "icon": "bell",
+	  "name": "manage/news",
+	  "title": "新闻管理",
+	  "children": []
+	}, {
 	  "icon": "document-copy",
-	  "name": "/manage/doc",
+	  "name": "manage/doc",
 	  "title": "文档管理",
 	  "children": []
 	}, {
 	  "icon": "picture",
-	  "name": "/manage/pic",
+	  "name": "manage/pic",
 	  "title": "图片管理",
 	  "children": []
 	}]

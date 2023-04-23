@@ -93,6 +93,7 @@ menuList.forEach(({children})=>{
 // 发送请求，获取菜单
 midway.pageList({
 	project: 'middleground'
+	, size: 100
 }).then(({data=[]})=>{
 	data.forEach(({path, menu})=>{
 		let pathList = path.slice(1).split('/')

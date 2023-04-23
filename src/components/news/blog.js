@@ -13,14 +13,15 @@ function NewsBlog({item, v}){
 				{password ? <i className="icon icon-lock news_lock"></i> : null}
 			</div> : null}
 			<div className="news_desc">{password ? '当前内容需要密码访问' : blog.content}</div>
-			<div className="flex-container blog_info">
-				<div className="blog_tags">
+			<div className="news_more">阅读更多<i className="icon icon-right"></i></div>
+			<div className="module_info">
+				<div className="module_tags">
 					{blog.tags.map((name)=>{
 						return (<span key={name}
 						              className="tag">{name}</span>);
 					})}
 				</div>
-				<div className="blog_datetime">{item.createDate}</div>
+				<div className="module_datetime">{item.createDate}</div>
 			</div>
 		</a>
 	</article>);
