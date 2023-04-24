@@ -1,7 +1,9 @@
 import {useState, useEffect, useRef} from 'react';
+import maple                         from 'cyan-maple';
 
-import handleArticle, {handleImg} from '../components/handleArticle/index.js';
-import api                        from '../api/index.js';
+import handleArticle from '../components/handleArticle/index.js';
+import api           from '../api/index.js';
+import {imgPath}     from '../config.js';
 
 function Editor({id}){
 	const
@@ -30,9 +32,33 @@ function Editor({id}){
 			;
 
 		temp.innerHTML = editor.html;
-		temp.querySelectorAll('img').forEach( handleImg );
 
-		frame.src = URL.createObjectURL( new Blob([`<!DOCTYPE html>
+		Promise.all( Array.from(temp.querySelectorAll('img')).map((el)=>{
+			return new Promise((resolve, reject)=>{
+				let url = maple.url.parseUrl( el.src )
+					, img = document.createElement('img')
+					;
+
+				img.onload = (e)=>{
+					let canvas = document.createElement('canvas')
+						, ctx = canvas.getContext('2d')
+						;
+
+					canvas.width = img.width;
+					canvas.height = img.height;
+					ctx.drawImage(img, 0, 0);
+					el.src = canvas.toDataURL('image/jpeg', 1.0);
+
+				    resolve();
+				};
+				img.onerror = ()=>{
+					resolve();
+				}
+				img.crossOrigin = 'anonymous';
+				img.src = imgPath( url.path );
+			});
+		}) ).then(()=>{
+			frame.src = URL.createObjectURL( new Blob([`<!DOCTYPE html>
 <html lang="cmn">
 <head>
 <meta charset="UTF-8"/>
@@ -46,10 +72,17 @@ ${temp.innerHTML || ''}
 <script>${editor.js || ''}</script>
 </body>
 </html>`], {
-			type: 'text/html'
-		}) );
+				type: 'text/html'
+			}) );
 
-		resultEl.append( frame );
+			resultEl.append( frame );
+		})
+		temp.querySelectorAll('img').forEach(function handleImg(el){
+			let url = maple.url.parseUrl( el.src )
+
+
+			el.src = imgPath( url.path );
+		} );
 
 		handleArticle( htmlRef );
 		handleArticle( cssRef );
