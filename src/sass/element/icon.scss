@@ -275,7 +275,7 @@ a.icon:hover::before{
     content: "\e830";
 }
 .icon-code:before {
-    content: "\e831";
+    content: "\e900";
 }
 .icon-search:before {
     content: "\e832";
@@ -320,7 +320,7 @@ a.icon:hover::before{
     content: "\e83e";
 }
 .icon-document:before {
-    content: "\e83f";
+    content: "\e922";
 }
 .icon-editor:before {
     content: "\e840";
@@ -371,10 +371,10 @@ a.icon:hover::before{
     content: "\f023";
 }
 .icon-blog:before{
-    content: "\f14b";
+    content: "\e904";
 }
 .icon-resume:before{
-    content: "\f2bc";
+    content: "\e923";
 }
 .icon-unlock:before{
     content: "\f13e";
@@ -384,4 +384,25 @@ a.icon:hover::before{
 }
 .icon-pin:before{
     content: "\f08d";
+}
+.icon-tag:before{
+    content: "\f02b";
+}
+.icon-qrcode:before{
+    content: "\f029";
+}
+.icon-barcode:before{
+    content: "\e937";
+}
+.icon-file:before{
+    content: "\f14b";
+}
+.icon-doc:before{
+    content: "\e83f";
+}
+.icon-card:before{
+    content: "\f2bc";
+}
+.icon-transformer:before{
+    content: "\e901";
 }

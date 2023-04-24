@@ -32,7 +32,7 @@
     }
     &::before{
         @extend .icon, :before;
-        @extend .icon-tags, :before;
+        @extend .icon-tag, :before;
 
         float: left;
         font-size: 16px;
