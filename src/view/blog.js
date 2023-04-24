@@ -60,6 +60,13 @@ function Blog({id}){
 	return (<article className="module blog">
 		<h2 className="module_title">{blog.title}</h2>
 		<div className="module_content">
+			{showPwd ?
+				null
+				:
+				(<details className="blog_short">
+	                <summary>简介</summary>
+			        <p>{blog.short}</p>
+			    </details>)}
 			<div className="blog_content"
 			     ref={ref}>
 				{showPwd ?

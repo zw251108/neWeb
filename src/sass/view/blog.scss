@@ -5,7 +5,16 @@
         @extend .icon-blog, :before;
     }
 
+    &_short{
+        min-height: 1.5em;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        padding: 10px;
+        background: #fff;
+    }
+
     &_content{
+        min-height: 500px;
         border-radius: 5px;
         margin-bottom: 10px;
         padding: 10px;

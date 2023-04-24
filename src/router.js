@@ -7,6 +7,7 @@ import Img      from './view/img.js';
 import Valhalla from './view/valhalla.js';
 import Document from './view/document.js';
 import Resume   from './view/resume.js';
+import Editor   from './view/editor.js';
 
 const paths = [{
 		name: 'index'
@@ -21,11 +22,14 @@ const paths = [{
 		name: 'img'
 		, Target: Img
 	}, {
-		name: 'valhalla'
-		, Target: Valhalla
-	}, {
 		name: 'document'
 		, Target: Document
+	}, {
+		name: 'editor'
+		, Target: Editor
+	}, {
+		name: 'valhalla'
+		, Target: Valhalla
 	}, {
 		name: 'resume'
 		, Target: Resume

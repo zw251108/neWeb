@@ -59,6 +59,7 @@ web.get('/blog/:id', (req, res)=>{
 		'id'
 		, 'status'
 		, 'title'
+		, 'short'
 		, 'content'
 		, 'tags'
 		, 'createDate'

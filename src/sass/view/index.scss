@@ -32,14 +32,11 @@ $descLineHeight: 1.5em;
         font-size: 14px;
         text-align: right;
     }
-    &_icons{
+    &_pin{
         position: absolute;
         top: 0;
         right: 10px;
         font-size: 30px;
-    }
-    &_pin{
-        display: inline-block;
         transform: rotate(45deg);
     }
     &_preview{
@@ -49,18 +46,41 @@ $descLineHeight: 1.5em;
     }
 
     &.blog{
+        @include gridRow( 5 );
+
         .module_title{
             @include textFixed(1, 40px);
         }
         .news_desc{
+            margin-bottom: 26px;
+            padding-top: 36px;
+
             @include textFixed(2, $descLineHeight);
         }
+        .news_lock{
+            height: 74px;
+            padding-top: 36px;
+            color: #666;
+            //line-height: 98px;
+
+            i{
+                display: inline-block;
+                margin: 0 12px;
+                color: #999;
+                font-size: 0;
+                vertical-align: middle;
+
+                &::before{
+                    font-size: 74px;
+                }
+            }
+        }
         .news_more{
-            padding: 7px 5px 9px;
+            padding: 0 5px 9px;
             color: #666;
             font-size: 16px;
             line-height: 24px;
-            
+
             @extend .text-right;
         }
 
@@ -108,9 +128,14 @@ $descLineHeight: 1.5em;
         &-h{
             @include grid(8, 4);
         }
-
         &-v{
             @include grid(4, 8);
+        }
+        &-vh{
+            img{
+                max-width: 100%;
+                max-height: none;
+            }
         }
     }
 
@@ -165,36 +190,59 @@ $descLineHeight: 1.5em;
 }
 
 @media screen and (min-width: 1200px){
-    .index .loading{
-        @include grid(12, 1);
+    .index{
+        .loading{
+            @include grid(12, 1);
+        }
     }
 
-    .news.blog{
-        @include gridColumn( 16 );
+    .news{
+        &.blog{
+            @include gridColumn(16);
 
-        &:nth-of-type(4n+5){
-            @include grid(8, 8);
+            &:nth-of-type(3n+5){
+                @include grid(8, 8);
 
-            .news_desc{
-                padding-top: 24px;
+                .news_desc{
+                    margin-bottom: 17px;
 
-                @include textFixed(8, $descLineHeight);
-            }
-            .news_more{
-                padding: 4px 5px 9px;
-            }
-            .module_info{
-                @include flexDirection( column );
-            }
-            .module_tags{
-                margin-top: 0;
+                    @include textFixed(7, $descLineHeight);
+                }
+                .news_lock{
+                    height: 185px;
+                    text-align: center;
+                    
+                    i{
+                        display: block;
+                        margin-bottom: 36px;
+                    }
+                }
+                .news_more{
+                    padding: 4px 5px 9px;
+                }
 
-                @include textLimit( 1 );
+                .module_info{
+                    @include flexDirection(column);
+                }
+                .module_tags{
+                    margin-top: 0;
+
+                    @include textLimit(1);
+                }
+                .module_datetime{
+                    width: 100%;
+                    margin: 5px 0 0;
+                    text-align: right;
+                }
             }
-            .module_datetime{
-                width: 100%;
-                margin: 5px 0 0;
-                text-align: right;
+        }
+
+        &.img{
+            &-v{
+                @include grid(8, 12);
+            }
+            &-h{
+                @include grid(16, 6);
             }
         }
     }

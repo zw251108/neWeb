@@ -21,7 +21,7 @@
         h3{
             height: 30px;
             border-bottom: 1px solid #c0c0c0;
-            margin: 10px 10px 5px;
+            margin: 10px;
             padding-left: 5px;
             line-height: 30px;
             box-sizing: border-box;
@@ -30,7 +30,7 @@
 
         & > div{
             position: absolute;
-            top: 45px;
+            top: 50px;
             bottom: 0;
             left: 0;
             right: 0;
@@ -43,7 +43,7 @@
     }
 
     &_result{
-        @include grid(6, 15);
+        @include grid(5, 18);
     }
 
     iframe{
@@ -56,7 +56,7 @@
     &_html,
     &_css,
     &_js{
-        @include grid(2, 5);
+        @include grid(3, 6);
     }
 }
 

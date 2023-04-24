@@ -16,10 +16,22 @@
         width: 1200px;
     }
 
-    .grid-half{
-        @include gridColumn( 12 );
-    }
-    .grid-full{
-        @include gridColumn( 24 );
-    }
+    //.grid-half{
+    //    @include gridColumn( 12 );
+    //}
+    //.grid-full{
+    //    @include gridColumn( 24 );
+    //}
 }
+
+//@media screen and (min-width: 1400px) {
+//    .main{
+//        width: 1400px;
+//    }
+//}
+
+//@media screen and (min-width: 1600px) {
+//    .main{
+//        width: 1600px;
+//    }
+//}

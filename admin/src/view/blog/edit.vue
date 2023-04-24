@@ -13,6 +13,13 @@
 		           placeholder="博客标签"
 		           :rows="4"></el-input>
 	</el-form-item>
+	<el-form-item label="简介">
+		<el-input v-model="data.short"
+		          type="textarea"
+		          resize="none"
+		          placeholder="博客简介"
+		          :rows="3"></el-input>
+	</el-form-item>
 	<el-form-item label="文章">
 		<code-editor v-model="data.content"
 		             lang="html"></code-editor>
@@ -32,6 +39,7 @@ const data = ref({
 		title: ''
 		, content: ''
 		, tags: ''
+		, short: ''
 	})
 	, $hashParams = inject('$hashParams')
 	, id = ref( $hashParams().id )
@@ -54,11 +62,13 @@ if( id.value ){
 function submit(){
 	let exec
 		, temp = document.createElement('div')
-		, short
+		, short = data.value.short
 		;
 
-	temp.innerHTML = data.value.content;
-	short = temp.textContent.slice(0, 200);
+	if( !short ){
+		temp.innerHTML = data.value.content;
+		short = temp.textContent.slice(0, 200);
+	}
 
 	if( !id.value ){
 		exec = $midway.post('/blog/create', {
