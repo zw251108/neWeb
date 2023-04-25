@@ -99,7 +99,7 @@ ${temp.innerHTML || ''}
 	return (<div className="module editor">
 		<div className="module_title">{editor.name}</div>
 		<div className="module_content">
-			<div className="grid-container percent">
+			<div className="container grid percent">
 				<div className="editor_part editor_result">
 					<h3>运行展示</h3>
 					<div ref={resultRef}></div>

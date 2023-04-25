@@ -58,7 +58,7 @@
             outline-offset: 2px;
         }
         
-        .img-container{
+        .container.img{
             flex-shrink: 0;
             margin: 5px;
             width: 25%;
@@ -67,7 +67,7 @@
         }
     }
     .description{
-        .flex-container{
+        .container.flex{
             max-width: 500px;
             margin: 5px auto;
             font-size: 16px;

@@ -26,7 +26,7 @@ function Content({open, content: {title, content}}){
 	}, [fold, codeInit]);
 
 	return (<section className="doc_content">
-		<div className="flex-container content_title"
+		<div className="container flex content_title"
 		     onClick={()=>{
 				setFold((val)=>{
 					return !val;
@@ -80,7 +80,7 @@ function Section({docId, open, section: {id, title, contentOrder}}){
 	}, [fold, docId, id, fetched, contentOrder]);
 
 	return (<section className="module_content doc_section">
-		<div className="flex-container section_title"
+		<div className="container flex section_title"
 		     onClick={()=>{
 				 setFold((val)=>{
 					 return !val;

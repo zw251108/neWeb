@@ -30,6 +30,26 @@
     @include textAlign( right );
 }
 
+
+.text{
+    &.center{
+        @include textAlign( center );
+    }
+    &.right{
+        @include textAlign( right );
+    }
+
+    &.bold{
+        @include fontWeight();
+    }
+    &.bolder{
+        @include fontWeight( bolder );
+    }
+    &.light{
+        @include fontWeight( lighter );
+    }
+}
+
 .bold{
     @include fontWeight();
 }

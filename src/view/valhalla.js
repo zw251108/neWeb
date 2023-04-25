@@ -63,22 +63,22 @@ function Valhalla(){
 		<div className="module_content">
 			<div className="valhalla_preview">
 				{list.length && (<div className="slider">
-					<div className="main-preview img-container flex-container center justify">
+					<div className="main-preview container img flex center justify">
 						{currentPic ?
 							<img src={imgPath( currentPic )}
 							     title={current.name}
 							     alt="照片待补"/>
 							:
-							<div className="flex-container center justify">照片待补</div>}
+							<div className="container flex center justify">照片待补</div>}
 						{currentIndex !== 0 ?
-							<div className="prev flex-container left justify"
+							<div className="prev container flex left justify"
 							     onClick={prev}>
 								<i className="icon icon-left"></i>
 							</div>
 							:
 							null}
 						{currentIndex !== list.length -1 ?
-							<div className="next flex-container right justify"
+							<div className="next container flex right justify"
 							     onClick={next}>
 								<i className="icon icon-right"></i>
 							</div>
@@ -86,9 +86,9 @@ function Valhalla(){
 							null}
 					</div>
 					{current.path.length ?
-						<div className="preview-list flex-container left scroll-container">
+						<div className="preview-list container flex left scroll">
 							{current.path.map((item, index)=>{
-								return (<div className={`img-container ${index === currentPicIndex ? 'current' : ''}`}
+								return (<div className={`container img ${index === currentPicIndex ? 'current' : ''}`}
 								             onClick={()=>{
 									             set( index );
 								             }}
@@ -101,19 +101,19 @@ function Valhalla(){
 						:
 						null}
 					<div className="description">
-						<div className="flex-container left">
+						<div className="container flex left">
 							<div>姓&emsp;&emsp;名：</div>
 							<div>{current.name}</div>
 						</div>
-						<div className="flex-container left">
+						<div className="container flex left">
 							<div>入职时间：</div>
 							<div>{current.start}</div>
 						</div>
-						<div className="flex-container left">
+						<div className="container flex left">
 							<div>离职时间：</div>
 							<div>{current.end}</div>
 						</div>
-						<div className="flex-container left">
+						<div className="container flex left">
 							<div>职业生涯：</div>
 							<div>{current.description}</div>
 						</div>

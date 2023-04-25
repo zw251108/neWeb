@@ -212,31 +212,31 @@ function Resume(){
 		<section className="module_content resume_section resume_info">
 			<h3>基础信息</h3>
 			<div>
-				<div className="flex-container left">
+				<div className="container flex left">
 					<div>姓&emsp;&emsp;名：</div>
 					<div>周文博</div>
 				</div>
-				<div className="flex-container left">
+				<div className="container flex left">
 					<div>性&emsp;&emsp;别：</div>
 					<div>男 <i className="icon icon-male"></i></div>
 				</div>
-				<div className="flex-container left">
+				<div className="container flex left">
 					<div>婚姻状况：</div>
 					<div>未婚</div>
 				</div>
-				<div className="flex-container left">
+				<div className="container flex left">
 					<div>籍&emsp;&emsp;贯：</div>
 					<div>黑龙江省哈尔滨市</div>
 				</div>
-				<div className="flex-container left">
+				<div className="container flex left">
 					<div>出生年月：</div>
 					<div>1986.11.07</div>
 				</div>
-				<div className="flex-container left">
+				<div className="container flex left">
 					<div>期望城市：</div>
 					<div>大连</div>
 				</div>
-				<div className="flex-container left">
+				<div className="container flex left">
 					<div>个人网站：</div>
 					<div>
 						<a href="//zw150026.com"
@@ -245,7 +245,7 @@ function Resume(){
 						   rel="noreferrer">http://zw150026.com</a>
 					</div>
 				</div>
-				<div className="flex-container left">
+				<div className="container flex left">
 					<div>Github&emsp;：</div>
 					<div>
 						<a href="https://github.com/zw251108"
@@ -254,7 +254,7 @@ function Resume(){
 						   rel="noreferrer">https://github.com/zw251108</a>
 					</div>
 				</div>
-				<div className="flex-container left">
+				<div className="container flex left">
 					<div>读书列表：</div>
 					<div>
 						<a href="https://www.douban.com/doulist/3589578"
@@ -263,7 +263,7 @@ function Resume(){
 						   rel="noreferrer">https://www.douban.com/doulist/3589578</a>
 					</div>
 				</div>
-				<div className="flex-container left">
+				<div className="container flex left">
 					<div>个人技能：</div>
 					<div>
 						<div>熟练使用 Vue 及相关技术栈进行前端开发</div>
@@ -281,16 +281,16 @@ function Resume(){
 		</section>
 		<section className="module_content resume_section resume_radar">
 			<h3>个人能力</h3>
-			<div className="flex-container round wrap">
-				<div className="text-center"
+			<div className="container flex round wrap">
+				<div className="text center"
 				     ref={radarSkillRef}></div>
-				<div className="text-center"
+				<div className="text center"
 				     ref={radarBasicRef}></div>
 			</div>
 		</section>
 		<section className="module_content resume_section resume_tags">
 			<h3>个人标签</h3>
-			<div className="flex-container left">
+			<div className="container flex left">
 				{tags.map((tag, index)=>{
 					return (<span className="tag"
 					              key={index}>{tag}</span>)
@@ -304,19 +304,19 @@ function Resume(){
 			                 key={index}>
 					<h4>{co.name}</h4>
 					<div>
-						<div className="flex-container left">
+						<div className="container flex left">
 							<div>入职时间：</div>
 							<div>{co.start}</div>
 						</div>
-						<div className="flex-container left">
+						<div className="container flex left">
 							<div>离职时间：</div>
 							<div>{co.end}</div>
 						</div>
-						<div className="flex-container left">
+						<div className="container flex left">
 							<div>工作职责：</div>
 							<div>{co.work}</div>
 						</div>
-						<div className="flex-container left">
+						<div className="container flex left">
 							<div>吐&emsp;&emsp;槽：</div>
 							<div>{co.summary}</div>
 						</div>
@@ -331,19 +331,19 @@ function Resume(){
 				             key={index}>
 					<h4>{edu.name}</h4>
 					<div>
-				        <div className="flex-container left">
+				        <div className="container flex left">
 							<div>入学时间：</div>
 							<div>{edu.start}</div>
 						</div>
-						<div className="flex-container left">
+						<div className="container flex left">
 							<div>毕业时间：</div>
 							<div>{edu.end}</div>
 						</div>
-						<div className="flex-container left">
+						<div className="container flex left">
 							<div>专&emsp;&emsp;业：</div>
 							<div>{edu.majors}</div>
 						</div>
-						<div className="flex-container left">
+						<div className="container flex left">
 							<div>学&emsp;&emsp;位：</div>
 							<div>{edu.degree}</div>
 						</div>

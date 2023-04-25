@@ -40,9 +40,9 @@ $descLineHeight: 1.5em;
         transform: rotate(45deg);
     }
     &_preview{
-        @extend .flex-container;
-        @extend .flex-container, .center;
-        @extend .flex-container, .justify;
+        @extend .container, .flex;
+        @extend .container, .flex, .center;
+        @extend .container, .flex, .justify;
     }
 
     &.blog{
@@ -170,7 +170,7 @@ $descLineHeight: 1.5em;
         .module_title{
             @include textLimit( 1 );
         }
-        .img-container{
+        .container.img{
             max-height: 254px;
         }
         .module_info{

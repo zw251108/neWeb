@@ -24,7 +24,7 @@ function Img({id}){
 		<div className="module_title">&nbsp;</div>
 		<div className="module_content">
 			<div className="img_preview">
-				<div className="img-container">
+				<div className="container img">
 					<img src={img.src ? imgPath( img.src ) : ''}
 					     alt=""/>
 				</div>

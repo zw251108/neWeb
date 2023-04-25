@@ -14,41 +14,43 @@
     flex-wrap: $wrap;
 }
 
-.flex-container{
-    display: flex;
+.container{
+    &.flex{
+        display: flex;
 
-    @include alignItems();
-    @include justifyContent();
+        @include alignItems();
+        @include justifyContent();
 
-    &.wrap{
-        @include flexWrap();
-    }
+        &.wrap{
+            @include flexWrap();
+        }
 
-    /* 水平方向 */
-    &.left{
-        @include justifyContent( flex-start );
-    }
-    &.center{
-        @include justifyContent( center );
-    }
-    &.right{
-        @include justifyContent( flex-end );
-    }
-    &.round{
-        @include justifyContent( space-around );
-    }
+        /* 水平方向 */
+        &.left{
+            @include justifyContent( flex-start );
+        }
+        &.center{
+            @include justifyContent( center );
+        }
+        &.right{
+            @include justifyContent( flex-end );
+        }
+        &.round{
+            @include justifyContent( space-around );
+        }
 
-    /* 垂直方向 */
-    &-v{
-        @include flexDirection( column );
-    }
-    &.top{
-        @include alignItems( flex-start );
-    }
-    &.justify{
-        @include alignItems( center );
-    }
-    &.bottom{
-        @include alignItems( flex-end );
+        /* 垂直方向 */
+        &-v{
+            @include flexDirection( column );
+        }
+        &.top{
+            @include alignItems( flex-start );
+        }
+        &.justify{
+            @include alignItems( center );
+        }
+        &.bottom{
+            @include alignItems( flex-end );
+        }
     }
 }

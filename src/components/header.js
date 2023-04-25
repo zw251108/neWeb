@@ -30,7 +30,7 @@ class Header extends React.Component{
 
 	render(){
 		return (<header className="header">
-			<div className="header_content flex-container">
+			<div className="header_content container flex">
 				<div>
 					<a href="/#/index" onClick={(e)=>{
 						if( this.props.index ){

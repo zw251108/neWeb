@@ -42,7 +42,7 @@ function Index(){
 		});
 	}, [page]);
 
-	return (<div className="index grid-container">
+	return (<div className="index container grid">
 		<NewsList list={list}></NewsList>
 		<LoadMore next={next} max={max}></LoadMore>
 	</div>);

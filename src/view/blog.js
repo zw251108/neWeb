@@ -73,7 +73,7 @@ function Blog({id}){
 					(<form onSubmit={submit}>
 						<p>当前内容需要输入密码访问</p>
 						{blog.question ? (<p>{blog.question}</p>) : null}
-						<div className="flex-container flex-container-v">
+						<div className="container flex flex-v">
 							<label className="block"
 							       htmlFor="answer">请输入密码</label>
 							<input type="password"
@@ -86,7 +86,7 @@ function Blog({id}){
 								       setAnswer( e.target.value );
 							       }}/>
 						</div>
-						<div className="flex-container left">
+						<div className="container flex left">
 							<button className="btn"
 							        onClick={()=>{
 

@@ -1,6 +1,15 @@
-.scroll-container{
-    overflow-x: scroll;
-    overflow-y: hidden;
-    font-size: 0;
-    white-space: nowrap;
+//.scroll-container{
+//    overflow-x: scroll;
+//    overflow-y: hidden;
+//    font-size: 0;
+//    white-space: nowrap;
+//}
+
+.container{
+    &.scroll-x{
+        overflow-x: scroll;
+        overflow-y: hidden;
+        font-size: 0;
+        white-space: nowrap;
+    }
 }
