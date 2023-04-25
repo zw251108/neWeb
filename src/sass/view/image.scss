@@ -1,6 +1,6 @@
 @import "../element/icon.scss";
 
-.img{
+.image{
     &::before{
         @extend .icon-picture, :before;
     }

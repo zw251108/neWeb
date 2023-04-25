@@ -3,7 +3,7 @@ import maple from 'cyan-maple';
 import Index    from './view/index.js';
 import Blog     from './view/blog.js';
 import Album    from './view/album.js';
-import Img      from './view/img.js';
+import Image    from './view/image.js';
 import Valhalla from './view/valhalla.js';
 import Document from './view/document.js';
 import Resume   from './view/resume.js';
@@ -20,7 +20,7 @@ const paths = [{
 		, Target: Album
 	}, {
 		name: 'img'
-		, Target: Img
+		, Target: Image
 	}, {
 		name: 'document'
 		, Target: Document

@@ -3,7 +3,7 @@ import {useState, useEffect} from 'react';
 import {imgPath} from '../config.js';
 import api       from '../api/index.js';
 
-function Img({id}){
+function Image({id}){
 	const
 		[ img, setImg ] = useState({
 			tags: []
@@ -20,7 +20,7 @@ function Img({id}){
 		});
 	}, [id]);
 
-	return (<article className={`module img ${h ? '' : 'img-v'}`}>
+	return (<article className={`module image ${h ? '' : 'image-v'}`}>
 		<div className="module_title">&nbsp;</div>
 		<div className="module_content">
 			<div className="img_preview">
@@ -43,4 +43,4 @@ function Img({id}){
 	</article>);
 }
 
-export default Img;
+export default Image;

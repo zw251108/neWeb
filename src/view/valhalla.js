@@ -86,7 +86,7 @@ function Valhalla(){
 							null}
 					</div>
 					{current.path.length ?
-						<div className="preview-list container flex left scroll">
+						<div className="preview-list container flex left scroll-x">
 							{current.path.map((item, index)=>{
 								return (<div className={`container img ${index === currentPicIndex ? 'current' : ''}`}
 								             onClick={()=>{

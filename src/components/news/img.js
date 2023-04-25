@@ -9,9 +9,9 @@ function NewsImg({item}){
 		, r = height / width > 1.5
 		;
 	
-	return (<div className={`module news img img-${type} ${type === 'v' && r ? 'img-vh' : ''}`}>
+	return (<div className={`module news image image-${type} ${type === 'v' && r ? 'image-vh' : ''}`}>
 		<a href={`#/${img.more ? `album` : `img`}?id=${item.targetId}`}>
-			<div className={`container img img-${type} news_preview`}>
+			<div className={`news_preview container img img-${type}`}>
 				<img src={imgPath( img.src )}
 				     alt={img.desc}/>
 				{img.desc && <div className="news_desc">{img.desc}</div>}

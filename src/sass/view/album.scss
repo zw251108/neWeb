@@ -6,7 +6,7 @@
         @extend .icon-images, :before;
     }
 
-    .img{
+    .image{
         border-color: #f1f1f1;
         border-radius: 5px;
         padding: 0;
@@ -34,7 +34,7 @@
 
 @media screen and (max-width: 450px){
     .album{
-        .img{
+        .image{
             &-v{
                 @include gridColumn( 4 );
             }

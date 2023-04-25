@@ -30,13 +30,14 @@ class Header extends React.Component{
 
 	render(){
 		return (<header className="header">
-			<div className="header_content container flex">
+			<div className="header_content">
 				<div>
-					<a href="/#/index" onClick={(e)=>{
-						if( this.props.index ){
-							e.preventDefault();
-						}
-					}}>
+					<a href="/#/index"
+					   onClick={(e)=>{
+						   if( this.props.index ){
+							   e.preventDefault();
+						   }
+					   }}>
 						<img className="logo"
 						     src="/image/logo.png"
 						     width="30"

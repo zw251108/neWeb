@@ -25,7 +25,7 @@ function Album({id}){
 						, type = width > height ? 'h' : 'v'
 						;
 
-					return (<div className={`module news img img-${type}`}
+					return (<div className={`module news image image-${type}`}
 					             key={img.id}>
 						<a href={`#/img?id=${img.id}`}>
 							<div className={`container img img-${type} flex center justify`}>

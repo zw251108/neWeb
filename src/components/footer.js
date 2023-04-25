@@ -9,7 +9,7 @@ function Footer(){
 	// 	;
 
 	return (<footer className="footer">
-		{/*<div className="menu flex-container center">*/}
+		{/*<div className="menu container flex center">*/}
 		{/*	{menu.map((item)=>{*/}
 		{/*		return (<div key={item.icon}>*/}
 		{/*		<a href={item.link}>*/}

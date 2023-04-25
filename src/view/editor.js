@@ -29,42 +29,80 @@ function Editor({id}){
 			, resultEl = resultRef.current
 			, frame = document.createElement('iframe')
 			, temp = document.createElement('div')
+			, css = editor.css || ''
 			;
 
 		temp.innerHTML = editor.html;
 
-		Promise.all( Array.from(temp.querySelectorAll('img')).map((el)=>{
-			return new Promise((resolve, reject)=>{
-				let url = maple.url.parseUrl( el.src )
-					, img = document.createElement('img')
+		Promise.all((()=>{
+			let rs =  Array.from( temp.querySelectorAll('img') ).map((el)=>{
+					return new Promise((resolve, reject)=>{
+						let url = maple.url.parseUrl( el.src )
+							, img = document.createElement('img')
+							;
+
+						img.onload = (e)=>{
+							let canvas = document.createElement('canvas')
+								, ctx = canvas.getContext('2d')
+								;
+
+							canvas.width = img.width;
+							canvas.height = img.height;
+							ctx.drawImage(img, 0, 0);
+							el.src = canvas.toDataURL('image/jpeg', 1.0);
+
+							resolve();
+						};
+						img.onerror = ()=>{
+							resolve();
+						}
+						img.crossOrigin = 'anonymous';
+						img.src = imgPath( url.path );
+					});
+				})
+				, matchRs = css.match(/url\(('|").*?\1\)/g) || []
+				;
+
+			return rs.concat( matchRs.map((s)=>{
+				let rs = /url\(("|')(.*?)\1\)/.exec( s )
+					, str
+					, src
 					;
 
-				img.onload = (e)=>{
-					let canvas = document.createElement('canvas')
-						, ctx = canvas.getContext('2d')
+				rs && ([str, , src] = rs);
+
+				return new Promise((resolve, reject)=>{
+					let url = maple.url.parseUrl( src )
+						, img = document.createElement('img')
 						;
 
-					canvas.width = img.width;
-					canvas.height = img.height;
-					ctx.drawImage(img, 0, 0);
-					el.src = canvas.toDataURL('image/jpeg', 1.0);
+					img.onload = (e)=>{
+						let canvas = document.createElement('canvas')
+							, ctx = canvas.getContext('2d')
+							;
 
-				    resolve();
-				};
-				img.onerror = ()=>{
-					resolve();
-				}
-				img.crossOrigin = 'anonymous';
-				img.src = imgPath( url.path );
-			});
-		}) ).then(()=>{
+						canvas.width = img.width;
+						canvas.height = img.height;
+						ctx.drawImage(img, 0, 0);
+						css = css.replace(str, `url("${canvas.toDataURL('image/jpeg', 1.0)}")`);
+
+						resolve();
+					};
+					img.onerror = ()=>{
+						resolve();
+					}
+					img.crossOrigin = 'anonymous';
+					img.src = imgPath( url.path );
+				});
+			}) );
+		})()).then(()=>{
 			frame.src = URL.createObjectURL( new Blob([`<!DOCTYPE html>
 <html lang="cmn">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
 <title>前端代码运行结果</title>
-<style>${editor.css || ''}</style>
+<style>${css || ''}</style>
 </head>
 <body>
 ${temp.innerHTML || ''}

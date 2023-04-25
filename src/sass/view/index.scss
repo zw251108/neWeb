@@ -15,6 +15,10 @@ $descLineHeight: 1.5em;
 .news{
     @include grid(8, 4);
 
+    .module_title{
+        @include textLimit( 1 );
+    }
+
     &_desc{
         margin: 0 5px;
         color: #666;
@@ -23,14 +27,6 @@ $descLineHeight: 1.5em;
     }
     &_more{
 
-    }
-    &_datetime{
-        border-top: 1px solid #c0c0c0;
-        margin: 10px 0;
-        padding: 10px 0 0;
-        color: #999;
-        font-size: 14px;
-        text-align: right;
     }
     &_pin{
         position: absolute;
@@ -61,7 +57,6 @@ $descLineHeight: 1.5em;
             height: 74px;
             padding-top: 36px;
             color: #666;
-            //line-height: 98px;
 
             i{
                 display: inline-block;
@@ -94,7 +89,7 @@ $descLineHeight: 1.5em;
         }
     }
 
-    &.img{
+    &.image{
         .news_desc{
             overflow: hidden;
             position: absolute;
@@ -131,12 +126,6 @@ $descLineHeight: 1.5em;
         &-v{
             @include grid(4, 8);
         }
-        &-vh{
-            img{
-                max-width: 100%;
-                max-height: none;
-            }
-        }
     }
 
     &.document{
@@ -167,12 +156,10 @@ $descLineHeight: 1.5em;
     &.editor{
         @include grid(8, 8);
 
-        .module_title{
-            @include textLimit( 1 );
-        }
-        .container.img{
+        .news_preview{
             max-height: 254px;
         }
+
         .module_info{
             @include flexDirection(column);
         }
@@ -237,12 +224,18 @@ $descLineHeight: 1.5em;
             }
         }
 
-        &.img{
+        &.image{
             &-v{
                 @include grid(8, 12);
             }
             &-h{
                 @include grid(16, 6);
+            }
+            &-vh{
+                img{
+                    max-width: 100%;
+                    max-height: none;
+                }
             }
         }
     }

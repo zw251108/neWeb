@@ -12,6 +12,8 @@
 
     &_content{
         margin: auto;
+
+        @extend .container, .flex;
     }
 
     .logo{
@@ -45,7 +47,7 @@
     }
 }
 
-@media screen and (min-width: 1000px) {
+@media screen and (min-width: 1000px){
     .header_content{
         width: 1000px;
     }

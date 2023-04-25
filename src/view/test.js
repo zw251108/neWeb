@@ -86,6 +86,13 @@ function Test(){
 		<i className="icon icon-blog"></i>
 		<i className="icon icon-resume"></i>
 		<i className="icon icon-pin"></i>
+		<i className="icon icon-tag"></i>
+		<i className="icon icon-qrcode"></i>
+		<i className="icon icon-barcode"></i>
+		<i className="icon icon-file"></i>
+		<i className="icon icon-doc"></i>
+		<i className="icon icon-card"></i>
+		<i className="icon icon-transformer"></i>
 	</div>);
 }
 
