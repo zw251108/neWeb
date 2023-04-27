@@ -15,6 +15,15 @@ let News = db.define('news', {
 		}
 		, content: {
 			type: DataTypes.STRING
+			, set(value){
+				if( typeof value !== 'string' ){
+					this.setDataValue('content', JSON.stringify( value ));
+
+					return ;
+				}
+
+				this.setDataValue('content', value);
+			}
 			, get(){
 				let content = this.getDataValue('content')
 					;
