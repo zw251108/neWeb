@@ -2,7 +2,7 @@ import {where, parse} from '../db.js';
 import News           from './model.js';
 
 export default {
-	list({type, status, creatorId, page, size}
+	list({search, type, status, creatorId, page, size}
 	     , attributes
 	     , order=[['createDate', 'DESC']]){
 
@@ -11,7 +11,10 @@ export default {
 
 		return News.findAll({
 			where: {
-				...where.eq({
+				...where.like({
+					content: search
+				})
+				, ...where.eq({
 					type
 					, status
 					, creatorId

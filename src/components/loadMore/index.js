@@ -1,35 +1,29 @@
-import React from 'react';
-import maple from 'cyan-maple';
+import {useEffect, useRef} from 'react';
+import maple               from 'cyan-maple';
 
-class LoadMore extends React.Component{
-	constructor(props){
-		super( props );
+function LoadMore({next}){
+	const ref = useRef(null)
+		;
 
-		this.ref = React.createRef();
-	}
+	useEffect(()=>{
+		const el = ref.current
+			;
 
-	componentDidMount(){
-		maple.listener.on(this.ref.current, 'intersectionObserver', ()=>{
-			this.props.next();
+		maple.listener.on(el, 'intersectionObserver', (e, entry)=>{
+			if( entry.isIntersecting ){
+				next();
+			}
 		});
-	}
 
-	componentDidUpdate(){
-		if( this.props.max ){
-			maple.listener.off(this.ref.current, 'intersectionObserver');
-		}
-	}
+		return ()=>{
+			maple.listener.off(el, 'intersectionObserver');
+		};
+	});
 
-	componentWillUnmount(){
-		maple.listener.off(this.ref.current, 'intersectionObserver');
-	}
-
-	render(){
-		return (<div className={`loading ${this.props.max ? 'hidden' : ''}`}
-		             ref={this.ref}>
-			<div className="loading-chasing"></div>
-		</div>);
-	}
+	return (<div className="loading"
+	             ref={ref}>
+		<div className="loading-chasing"></div>
+	</div>);
 }
 
 export default LoadMore;

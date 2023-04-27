@@ -99,7 +99,7 @@
     &::before{
         display: inline-block;
         width: 1em;
-        *margin-left: .2em;
+        //*margin-left: .2em;
         //	margin-right: .2em;
 
         font-family: 'font', serif;
@@ -114,6 +114,8 @@
         text-align: center;
         text-decoration: inherit;
         text-transform: none;
+
+        vertical-align: top;
 
         // 解决 图标加粗
         -webkit-font-smoothing: antialiased;

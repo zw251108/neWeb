@@ -1,4 +1,6 @@
-import {useState, useEffect, useRef} from 'react';
+import {useState, useEffect, useRef, useContext} from 'react';
+
+import RouterContext from '../context/router.js';
 
 import handleArticle from '../components/handleArticle/index.js';
 import api           from '../api/index.js';
@@ -14,6 +16,7 @@ function Blog({id}){
 		[ showPwd, setShowPwd ] = useState(false)
 		,
 		[ answer, setAnswer ] = useState('')
+		, router = useContext( RouterContext )
 		;
 
 	function fetchBlog(id, data){
@@ -55,6 +58,12 @@ function Blog({id}){
 
 	useEffect(()=>{
 		handleArticle( ref );
+
+		document.title = `${blog.title} - 十方文的个人小站`;
+
+		return ()=>{
+			document.title = '十方文的个人小站';
+		}
 	}, [blog]);
 
 	return (<article className="module blog">
@@ -89,7 +98,7 @@ function Blog({id}){
 						<div className="container flex left">
 							<button className="btn"
 							        onClick={()=>{
-
+										router.go(-1);
 									}}>取消</button>
 							<button type="submit"
 							        className="btn primary">确定</button>

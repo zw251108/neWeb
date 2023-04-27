@@ -11,7 +11,8 @@ createController(web, 'news', news, {
 });
 
 web.get('/news', (req, res)=>{
-	let { page = 1
+	let { search
+		, page = 1
 		, size = 20 } = req.query
 		;
 
@@ -19,6 +20,7 @@ web.get('/news', (req, res)=>{
 	news.list({
 		status: 1
 		, creatorId: 1
+		, search
 		, page
 		, size
 	}, [

@@ -32,10 +32,7 @@ class App extends React.Component{
 	render(){
 		return (<RouterContext.Provider value={this.router}>
 			<div className="App">
-			    <Header index={this.state.current === 'index'}
-			            deep={this.state.deep}
-			            search={this.state.search}
-			            filter={this.state.filter}></Header>
+			    <Header index={this.state.current === 'index'}></Header>
 			    <Main>
 				    {this.state.view}
 			    </Main>

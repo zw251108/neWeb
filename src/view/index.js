@@ -5,14 +5,15 @@ import api from '../api/index.js';
 import NewsList from '../components/news/index.js';
 import LoadMore from '../components/loadMore/index.js';
 
-function Index(){
-	
+function Index({search}){
 	const
 		[ list, setList ] = useState([])
 		,
 		[ page, setPage ] = useState(0)
 		,
 		[ max, setMax ] = useState(false)
+		,
+		[ fetching, setFetching ] = useState(false)
 		;
 
 	function next(){
@@ -20,22 +21,37 @@ function Index(){
 			return ;
 		}
 
+		if( fetching ){
+			return ;
+		}
+
 		setPage( page +1 );
 	}
+
+	useEffect(()=>{
+		setList([]);
+        setMax(false);
+		setPage(0);
+	}, [search]);
 
 	useEffect(()=>{
 		if( page === 0 ){
 			return ;
 		}
 
+		setFetching(true);
+
 		api.news({
-			page
+			search
+			, page
 			, size: 20
 		}).then(({data})=>{
 			if( !data.length ){
 				setMax(true);
 			}
 
+			setFetching(false);
+			
 			setList((list)=>{
 				return list.concat( data );
 			});
@@ -44,7 +60,10 @@ function Index(){
 
 	return (<div className="index container grid">
 		<NewsList list={list}></NewsList>
-		<LoadMore next={next} max={max}></LoadMore>
+		{!max ?
+			(<LoadMore next={next}></LoadMore>)
+			:
+			null}
 	</div>);
 }
 

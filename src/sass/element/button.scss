@@ -1,14 +1,30 @@
+@import "../config/rect.config.scss";
+@import "../element/icon.scss";
+
 .btn{
     width: 100px;
-    height: 40px;
+    height: $formItemHeight;
     border: 1px solid #c0c0c0;
     border-radius: 5px;
-    margin: 0 10px;
+    //margin: 0 10px;
     background: #fff;
     color: #999;
+
+    &.icon{
+        position: relative;
+        text-indent: 1em;
+
+        &::before{
+            position: absolute;
+            top: 0;
+            left: 6px;
+            line-height: 40px;
+        }
+    }
 
     &.primary{
         border-color: #999;
         color: #666;
     }
+
 }

@@ -14,7 +14,7 @@ let News = db.define('news', {
 			, field: 'target_id'
 		}
 		, content: {
-			type: DataTypes.JSON
+			type: DataTypes.STRING
 			, get(){
 				let content = this.getDataValue('content')
 					;
