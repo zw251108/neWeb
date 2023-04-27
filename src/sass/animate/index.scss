@@ -1,0 +1,11 @@
+.animate{
+    animation: 1s both;
+}
+
+@import "./fade.scss";
+
+@import "./slider.scss";
+
+@import "./rotate.scss";
+
+@import "./bounce.scss";

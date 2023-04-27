@@ -58,21 +58,20 @@ td{
     font-size: 16px;
 }
 
-@import "./animate.scss";
+@import "./animate/index.scss";
 
-@import "./element.scss";
+@import "./element/index.scss";
 
-@import "./svg.scss";
+@import "./layout/index.scss";
 
-@import "./layout.scss";
+@import "./svg/index.scss";
 
 @import "./header.scss";
 @import "./footer.scss";
 @import "./main.scss";
 @import "./aside.scss";
-@import "./module.scss";
 
-@import "./view.scss";
+@import "./view/index.scss";
 
 .Test .icon{
     display: inline-block;
