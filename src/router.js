@@ -41,10 +41,10 @@ export default function initRouter(app){
 		mode: 'hash'
 		, routers: [{
 			path: '/'
-			, callback(){
+			, callback(params){
 				app.setState({
 					current: 'index'
-					, view: (<Index></Index>)
+					, view: (<Index {...params}></Index>)
 				});
 			}
 		},
@@ -54,7 +54,7 @@ export default function initRouter(app){
 				, callback(params){
 					app.setState({
 						current: name
-						, view: <Target id={params.id}></Target>
+						, view: <Target {...params}></Target>
 					});
 				}
 			}
