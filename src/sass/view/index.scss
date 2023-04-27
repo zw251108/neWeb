@@ -185,6 +185,7 @@ $descLineHeight: 1.5em;
             color: #fff;
             font-size: 14px;
             line-height: 20px;
+            text-indent: 0;
 
             @include textFixed(2, 20px)
         }
