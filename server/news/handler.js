@@ -9,8 +9,7 @@ export default {
 		page = parse(page, 1);
 		size = parse(size, 20);
 
-		return News.findAll({
-			where: {
+		let whereSearch = search ? {
 				...where.or([
 					where.like({
 						'content.title': `%${search}%`
@@ -28,6 +27,12 @@ export default {
 						'content.contents': `%${search}%`
 					})
 				])
+			} : {}
+			;
+
+		return News.findAll({
+			where: {
+				...whereSearch
 				, ...where.eq({
 					type
 					, status
