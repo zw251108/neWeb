@@ -11,9 +11,23 @@ export default {
 
 		return News.findAll({
 			where: {
-				...where.like({
-					content: search
-				})
+				...where.or([
+					where.like({
+						'content.title': `%${search}%`
+					})
+					, where.like({
+						'content.content': `%${search}%`
+					})
+					, where.like({
+						'content.desc': `%${search}%`
+					})
+					, where.like({
+						'content.tags': `%${search}%`
+					})
+					, where.like({
+						'content.contents': `%${search}%`
+					})
+				])
 				, ...where.eq({
 					type
 					, status

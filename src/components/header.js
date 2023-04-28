@@ -1,4 +1,5 @@
-import {useState, useEffect, useContext} from 'react';
+import {useState, useEffect, useRef, useContext} from 'react';
+import maple                             from 'cyan-maple';
 
 import RouterContext from '../context/router.js';
 
@@ -8,21 +9,16 @@ function Header({index}){
 		[ showSearch, setShowSearch ] = useState(false)
 		,
 		[ keyword, setKeyWord ] = useState('')
+		, searchBarRef = useRef(null)
 		;
-
-	// function goIndex(){
-	// 	if( index ){
-	// 		return ;
-	// 	}
-	//
-	// 	router.go('/index');
-	// }
 
 	function goBack(){
 		router.go(-1);
 	}
 
-	function toggleSearchBar(){
+	function toggleSearchBar(e){
+		e.stopPropagation();
+
 		setShowSearch((r)=>{
 			return !r;
 		});
@@ -41,6 +37,24 @@ function Header({index}){
 			setShowSearch( index );
 		}
 	}, [index])
+
+	useEffect(()=>{
+		let el = searchBarRef.current
+			;
+
+		if( el ){
+			maple.listener.on(el, 'click', (e)=>{
+				e.stopPropagation();
+			});
+			maple.listener.on(document, 'click', (e)=>{
+				setShowSearch(false);
+			});
+		}
+
+		return ()=>{
+			maple.listener.off(document, 'click');
+		};
+	}, [showSearch]);
 
 	return (<header className="header">
 		<div className="header_content">
@@ -61,8 +75,8 @@ function Header({index}){
 				             onClick={goBack}></i>}
 			</div>
 			<div className="container flex right">
-				{index && <i className={`icon icon-search ${showSearch ? 'active' : ''}`}
-				             onClick={toggleSearchBar}></i>}
+				{index && (<i className={`icon icon-search ${showSearch ? 'active' : ''} ${keyword ? 'current' : ''}`}
+				              onClick={toggleSearchBar}></i>)}
 				<img className="avatar"
 				     src="/image/avatar-96.jpg"
 				     width="30"
@@ -71,7 +85,8 @@ function Header({index}){
 			</div>
 		</div>
 		{showSearch ?
-			(<div className="header_searchBar">
+			(<div className="header_searchBar"
+			      ref={searchBarRef}>
 				<form action="" onSubmit={search}>
 					<div className="container flex">
 						<input className="input"

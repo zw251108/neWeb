@@ -16,9 +16,6 @@ class App extends React.Component{
 
 		this.state = {
 			current: 'index'
-			, deep: false
-			, search: false
-			, filter: false
 			, view: null
 		};
 

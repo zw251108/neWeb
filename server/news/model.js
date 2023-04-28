@@ -14,16 +14,7 @@ let News = db.define('news', {
 			, field: 'target_id'
 		}
 		, content: {
-			type: DataTypes.STRING
-			, set(value){
-				if( typeof value !== 'string' ){
-					this.setDataValue('content', JSON.stringify( value ));
-
-					return ;
-				}
-
-				this.setDataValue('content', value);
-			}
+			type: DataTypes.JSON
 			, get(){
 				let content = this.getDataValue('content')
 					;

@@ -1,3 +1,5 @@
+@import "../layout/flex-container.scss";
+
 .header{
     position: sticky;
     top: 0;
@@ -76,9 +78,15 @@
             font-size: 20px;
             line-height: 30px;
             text-align: center;
+        }
+        .icon-search{
+            border-radius: 5px;
 
+            &.current{
+                outline: 1px dashed #c0c0c0;
+            }
             &.active{
-                border-radius: 5px;
+                outline: 0;
                 background: #fff;
                 color: #c0c0c0;
             }
