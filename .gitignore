@@ -88,3 +88,5 @@ server_config.js
 upload/
 
 sql/
+
+crt/

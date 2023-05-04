@@ -1,8 +1,11 @@
-import express  from 'express';
+import fs           from 'fs';
+import http         from 'http';
+import https        from 'https';
+import express      from 'express';
 import bodyParser   from 'body-parser';
 import cookie       from 'cookie';
 import cookieParser from 'cookie-parser';
-import session      from 'express-session'
+import session      from 'express-session';
 
 import cors from 'cors';
 // import log4js       from 'log4js';
@@ -12,6 +15,11 @@ import CONFIG   from '../config.js';
 
 let web = express()
 	, store = new session.MemoryStore()
+	, server = http.createServer( web )
+	, sServer = https.createServer({
+		key: fs.readFileSync('../crt/9901957_zw150026.com.key')
+		, cert: fs.readFileSync('../crt/9901957_zw150026.com.pem')
+	}, web)
 	;
 
 // log4js.configure({
@@ -84,10 +92,16 @@ web.use((req, res, next)=>{
 // 	});
 // });
 
-let server = web.listen(CONFIG.PORT, ()=>{
-		console.log('web server is listening');
-	})
-	;
+// let server = web.listen(CONFIG.PORT, ()=>{
+// 		console.log('web server is listening');
+// 	})
+// 	;
+server.listen(CONFIG.PORT, ()=>{
+	console.log('http web server is listening');
+});
+sServer.listen(CONFIG.SSL_PORT, ()=>{
+	console.log('https web server is listening');
+});
 
 // // ---------- Web Socket ----------
 // let socketServer = new Socket.Server({

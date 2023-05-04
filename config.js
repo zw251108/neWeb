@@ -5,6 +5,7 @@ import CONFIG from './server_config.js';
 
 export default Object.assign({
 	PORT: '9001'
+	, SSL_PORT: '9002'
 	, SESSION_SECRET: 'secret'
 	, COOKIE_KEY: 'express.sid'
 	, UPLOAD_DIR: './upload/'

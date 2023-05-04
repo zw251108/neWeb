@@ -104,7 +104,6 @@ $descLineHeight: 1.5em;
         color: #666;
         font-size: 16px;
         line-height: $descLineHeight;
-        text-indent: 2em;
     }
     &_more{
 
@@ -131,6 +130,7 @@ $descLineHeight: 1.5em;
         .news_desc{
             margin-bottom: 26px;
             padding-top: 36px;
+            text-indent: 2em;
 
             @include textFixed(2, $descLineHeight);
         }
