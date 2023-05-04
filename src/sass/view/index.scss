@@ -1,5 +1,6 @@
 @import "../element/icon.scss";
 @import "../element/text.scss";
+@import "../element/scrollbar.scss";
 @import "../layout/flex-container.scss";
 @import "../layout/grid-container.scss";
 
@@ -89,6 +90,45 @@ $descLineHeight: 1.5em;
         height: 30px;
         margin: 10px 0 0;
         line-height: 30px;
+    }
+}
+
+.modal{
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    background: rgba(0, 0, 0, .5);
+}
+
+.alert{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 400px;
+    height: 200px;
+    margin: auto;
+    background: #fff;
+
+    &::before{
+        @extend .icon-warming, ::before;
+    }
+
+    &_content{
+        height: 55px;
+        border-radius: 5px;
+        padding: 10px;
+        background: #fff;
+
+        @include scrollBar();
+    }
+    &_op{
+        margin-top: 10px;
+        text-align: center;
     }
 }
 

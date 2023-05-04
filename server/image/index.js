@@ -122,3 +122,109 @@ web.get('/image/:id', (req, res)=>{
 		res.end();
 	});
 });
+
+web.get('/image/:id/next', (req, res)=>{
+	let { id } = req.params
+		,
+		{ albumId
+		, num = 1 } = req.query
+		;
+
+	image.getNext({
+		id
+		, albumId
+		, creatorId: 1
+		, size: num
+	}, [
+		'id'
+		, 'src'
+		, 'width'
+		, 'height'
+		, 'desc'
+		, 'tags'
+		, 'createDate'
+	]).then((data)=>{
+		res.send( JSON.stringify({
+			code: 0
+			, data
+		}) );
+		res.end();
+	});
+});
+
+web.get('/image/:id/prev', (req, res)=>{
+	let { id } = req.params
+		,
+		{ albumId
+		, num = 1 } = req.query
+		;
+
+	image.getPrev({
+		id
+		, albumId
+		, creatorId: 1
+		, size: num
+	}, [
+		'id'
+		, 'src'
+		, 'width'
+		, 'height'
+		, 'desc'
+		, 'tags'
+		, 'createDate'
+	]).then((data)=>{
+		res.send( JSON.stringify({
+			code: 0
+			, data: data.reverse()
+		}) );
+		res.end();
+	});
+});
+
+web.get('/image/:id/sibling', (req, res)=>{
+	let { id } = req.params
+		,
+		{ albumId
+		, num = 1 } = req.query
+		;
+
+	Promise.all([
+		image.getPrev({
+			id
+			, albumId
+			, creatorId: 1
+			, size: num
+		}, [
+			'id'
+			, 'src'
+			, 'width'
+			, 'height'
+			, 'desc'
+			, 'tags'
+			, 'createDate'
+		])
+		, image.getNext({
+			id
+			, albumId
+			, creatorId: 1
+			, size: num
+		}, [
+			'id'
+			, 'src'
+			, 'width'
+			, 'height'
+			, 'desc'
+			, 'tags'
+			, 'createDate'
+		])
+	]).then(([prev, next])=>{
+		res.send( JSON.stringify({
+			code: 0
+			, data: {
+				prev
+				, next
+			}
+		}) );
+		res.end();
+	})
+});

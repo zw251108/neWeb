@@ -48,6 +48,28 @@ const
 				return rs;
 			}, {});
 		}
+		, lt(params){
+			return Object.entries( params ).reduce((rs, [key, val])=>{
+				if( val !== undefined && val !== '' && val !== null ){
+					rs[key] = {
+						[Op.lt]: val
+					};
+				}
+
+				return rs;
+			}, {});
+		}
+		, gt(params){
+			return Object.entries( params ).reduce((rs, [key, val])=>{
+				if( val !== undefined && val !== '' && val !== null ){
+					rs[key] = {
+						[Op.gt]: val
+					};
+				}
+
+				return rs;
+			}, {});
+		}
 		, like(params){
 			return Object.entries( params ).reduce((rs, [key, val])=>{
 				if( val !== undefined && val !== '' ){

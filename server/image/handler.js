@@ -105,6 +105,68 @@ const album = {
 				, order
 			})
 		}
+		, getNext({id, albumId, creatorId, size}
+		             , attributes
+		             , order=[['id', 'ASC']]
+		             , albumAttr=[['id', 'name']]){
+
+			size = parse(size, 1);
+
+			return Image.findAll({
+				where: {
+					...where.gt({
+						id
+					})
+				}
+				, include: [{
+					model: Album
+					, as: 'album'
+					, attributes: albumAttr
+					, where: albumId ? {
+						...where.eq({
+							id: albumId
+						})
+					}: undefined
+					, through: {
+						attributes: []
+					}
+				}]
+				, limit: size
+				, attributes
+				, order
+			})
+		}
+		, getPrev({id, albumId, creatorId, size}
+		             , attributes
+		             , order=[['id', 'DESC']]
+		             , albumAttr=[['id', 'name']]){
+
+			size = parse(size, 1);
+
+			return Image.findAll({
+				where: {
+					...where.lt({
+						id
+					})
+				}
+				, include: [{
+					model: Album
+					, as: 'album'
+					, attributes: albumAttr
+					, where: albumId ? {
+						...where.eq({
+							id: albumId
+						})
+					}: undefined
+					, through: {
+						attributes: []
+					}
+				}]
+				, limit: size
+				, attributes
+				, order
+			})
+		}
 		, count({creatorId}){
 			return Image.count({
 				where: {

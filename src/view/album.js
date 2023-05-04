@@ -12,6 +12,9 @@ function Album({id}){
 
 	useEffect(()=>{
 		api.get(`/album/${id}`).then(({data})=>{
+			data.image = data.image.sort((a, b)=>{
+				return a.id - b.id;
+			});
 			setAlbum( data );
 		});
 	}, [id]);
@@ -27,7 +30,7 @@ function Album({id}){
 
 					return (<div className={`module news image image-${type}`}
 					             key={img.id}>
-						<a href={`#/img?id=${img.id}`}>
+						<a href={`#/img?id=${img.id}&albumId=${id}`}>
 							<div className={`container img img-${type} flex center justify`}>
 								<img src={imgPath( img.src )}
 								     alt=""/>
