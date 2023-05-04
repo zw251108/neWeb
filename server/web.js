@@ -17,8 +17,8 @@ let web = express()
 	, store = new session.MemoryStore()
 	, server = http.createServer( web )
 	, sServer = https.createServer({
-		key: fs.readFileSync('../crt/9901957_zw150026.com.key')
-		, cert: fs.readFileSync('../crt/9901957_zw150026.com.pem')
+		key: fs.readFileSync('./crt/9901957_zw150026.com.key')
+		, cert: fs.readFileSync('./crt/9901957_zw150026.com.pem')
 	}, web)
 	;
 
