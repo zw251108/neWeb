@@ -156,6 +156,8 @@ $descLineHeight: 1.5em;
         transform: rotate(45deg);
     }
     &_preview{
+        border-radius: 5px;
+        
         @extend .container, .flex;
         @extend .container, .flex, .center;
         @extend .container, .flex, .justify;
