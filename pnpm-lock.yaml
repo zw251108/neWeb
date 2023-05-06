@@ -7,8 +7,6 @@ specifiers:
   '@babel/plugin-transform-react-jsx': ~7.19.0
   '@codemirror/autocomplete': ~6.4.2
   '@codemirror/commands': ~6.2.2
-  '@codemirror/highlight': ~0.19.8
-  '@codemirror/history': ~0.19.2
   '@codemirror/lang-css': ~6.0.2
   '@codemirror/lang-html': ~6.4.2
   '@codemirror/lang-javascript': ~6.1.4
@@ -18,7 +16,7 @@ specifiers:
   '@codemirror/theme-one-dark': ~6.1.0
   '@codemirror/view': ~6.9.2
   '@element-plus/icons-vue': ~1.1.4
-  '@emmetio/codemirror6-plugin': ~0.2.0
+  '@emmetio/codemirror6-plugin': ~0.3.0
   '@lezer/common': ~1.0.2
   '@vitejs/plugin-vue': ~2.3.2
   '@vue/compiler-sfc': ~3.2.33
@@ -50,8 +48,6 @@ specifiers:
 dependencies:
   '@codemirror/autocomplete': 6.4.2_lc2v3dpzp2l5pdzwtgfaudkm3e
   '@codemirror/commands': 6.2.2
-  '@codemirror/highlight': 0.19.8
-  '@codemirror/history': 0.19.2
   '@codemirror/lang-css': 6.0.2_i3aqn63zftbgivbr4riltn5mqe
   '@codemirror/lang-html': 6.4.2
   '@codemirror/lang-javascript': 6.1.4
@@ -61,7 +57,7 @@ dependencies:
   '@codemirror/theme-one-dark': 6.1.1
   '@codemirror/view': 6.9.2
   '@element-plus/icons-vue': 1.1.4_vue@3.2.47
-  '@emmetio/codemirror6-plugin': 0.2.0_d6rnkyu3lxkyyf2xckjqo57hp4
+  '@emmetio/codemirror6-plugin': 0.3.0_am4kmxnogv7rbmceymno6hojya
   '@lezer/common': 1.0.2
   axios: 1.2.6
   body-parser: 1.20.2
@@ -69,7 +65,7 @@ dependencies:
   cookie: 0.5.0
   cookie-parser: 1.4.6
   cors: 2.8.5
-  cyan-maple: github.com/tgoufe/CyanMapleFrame/bc34aab02b77bd25b51f7194a56f5edd773296fb
+  cyan-maple: github.com/tgoufe/CyanMapleFrame/6b5a1e10d2383b22c88f069b1d73bc5414af54af
   d3: 7.8.4
   element-plus: 2.1.11_vue@3.2.47
   express: 4.18.2
@@ -1519,26 +1515,6 @@ packages:
       '@lezer/common': 1.0.2
     dev: false
 
-  /@codemirror/highlight/0.19.8:
-    resolution: {integrity: sha512-v/lzuHjrYR8MN2mEJcUD6fHSTXXli9C1XGYpr+ElV6fLBIUhMTNKR3qThp611xuWfXfwDxeL7ppcbkM/MzPV3A==}
-    deprecated: As of 0.20.0, this package has been split between @lezer/highlight and @codemirror/language
-    dependencies:
-      '@codemirror/language': 0.19.10
-      '@codemirror/rangeset': 0.19.9
-      '@codemirror/state': 0.19.9
-      '@codemirror/view': 0.19.48
-      '@lezer/common': 0.15.12
-      style-mod: 4.0.2
-    dev: false
-
-  /@codemirror/history/0.19.2:
-    resolution: {integrity: sha512-unhP4t3N2smzmHoo/Yio6ueWi+il8gm9VKrvi6wlcdGH5fOfVDNkmjHQ495SiR+EdOG35+3iNebSPYww0vN7ow==}
-    deprecated: As of 0.20.0, this package has been merged into @codemirror/commands
-    dependencies:
-      '@codemirror/state': 0.19.9
-      '@codemirror/view': 0.19.48
-    dev: false
-
   /@codemirror/lang-css/6.0.2_i3aqn63zftbgivbr4riltn5mqe:
     resolution: {integrity: sha512-4V4zmUOl2Glx0GWw0HiO1oGD4zvMlIQ3zx5hXOE6ipCjhohig2bhWRAasrZylH9pRNTcl1VMa59Lsl8lZWlTzw==}
     dependencies:
@@ -1577,16 +1553,6 @@ packages:
       '@lezer/javascript': 1.4.1
     dev: false
 
-  /@codemirror/language/0.19.10:
-    resolution: {integrity: sha512-yA0DZ3RYn2CqAAGW62VrU8c4YxscMQn45y/I9sjBlqB1e2OTQLg4CCkMBuMSLXk4xaqjlsgazeOQWaJQOKfV8Q==}
-    dependencies:
-      '@codemirror/state': 0.19.9
-      '@codemirror/text': 0.19.6
-      '@codemirror/view': 0.19.48
-      '@lezer/common': 0.15.12
-      '@lezer/lr': 0.15.8
-    dev: false
-
   /@codemirror/language/6.6.0:
     resolution: {integrity: sha512-cwUd6lzt3MfNYOobdjf14ZkLbJcnv4WtndYaoBkbor/vF+rCNguMPK0IRtvZJG4dsWiaWPcK8x1VijhvSxnstg==}
     dependencies:
@@ -1612,13 +1578,6 @@ packages:
       crelt: 1.0.5
     dev: false
 
-  /@codemirror/rangeset/0.19.9:
-    resolution: {integrity: sha512-V8YUuOvK+ew87Xem+71nKcqu1SXd5QROMRLMS/ljT5/3MCxtgrRie1Cvild0G/Z2f1fpWxzX78V0U4jjXBorBQ==}
-    deprecated: As of 0.20.0, this package has been merged into @codemirror/state
-    dependencies:
-      '@codemirror/state': 0.19.9
-    dev: false
-
   /@codemirror/search/6.2.3:
     resolution: {integrity: sha512-V9n9233lopQhB1dyjsBK2Wc1i+8hcCqxl1wQ46c5HWWLePoe4FluV3TGHoZ04rBRlGjNyz9DTmpJErig8UE4jw==}
     dependencies:
@@ -1627,19 +1586,8 @@ packages:
       crelt: 1.0.5
     dev: false
 
-  /@codemirror/state/0.19.9:
-    resolution: {integrity: sha512-psOzDolKTZkx4CgUqhBQ8T8gBc0xN5z4gzed109aF6x7D7umpDRoimacI/O6d9UGuyl4eYuDCZmDFr2Rq7aGOw==}
-    dependencies:
-      '@codemirror/text': 0.19.6
-    dev: false
-
   /@codemirror/state/6.2.0:
     resolution: {integrity: sha512-69QXtcrsc3RYtOtd+GsvczJ319udtBf1PTrr2KbLWM/e2CXUPnh0Nz9AUo8WfhSQ7GeL8dPVNUmhQVgpmuaNGA==}
-    dev: false
-
-  /@codemirror/text/0.19.6:
-    resolution: {integrity: sha512-T9jnREMIygx+TPC1bOuepz18maGq/92q2a+n4qTqObKwvNMg+8cMTslb8yxeEDEq7S3kpgGWxgO1UWbQRij0dA==}
-    deprecated: As of 0.20.0, this package has been merged into @codemirror/state
     dev: false
 
   /@codemirror/theme-one-dark/6.1.1:
@@ -1649,16 +1597,6 @@ packages:
       '@codemirror/state': 6.2.0
       '@codemirror/view': 6.9.2
       '@lezer/highlight': 1.1.3
-    dev: false
-
-  /@codemirror/view/0.19.48:
-    resolution: {integrity: sha512-0eg7D2Nz4S8/caetCTz61rK0tkHI17V/d15Jy0kLOT8dTLGGNJUponDnW28h2B6bERmPlVHKh8MJIr5OCp1nGw==}
-    dependencies:
-      '@codemirror/rangeset': 0.19.9
-      '@codemirror/state': 0.19.9
-      '@codemirror/text': 0.19.6
-      style-mod: 4.0.2
-      w3c-keyname: 2.2.6
     dev: false
 
   /@codemirror/view/6.9.2:
@@ -1841,14 +1779,14 @@ packages:
       vue: 3.2.47
     dev: false
 
-  /@emmetio/abbreviation/2.2.3:
-    resolution: {integrity: sha512-87pltuCPt99aL+y9xS6GPZ+Wmmyhll2WXH73gG/xpGcQ84DRnptBsI2r0BeIQ0EB/SQTOe2ANPqFqj3Rj5FOGA==}
+  /@emmetio/abbreviation/2.3.2:
+    resolution: {integrity: sha512-8vqkn4rtjm5Zv34RPgsq3/ij88ri+IcfC2MxPELytrQvfpaLyppscE0YSwDVuIUR6KL5GCBUfr5Mo7SHSbswpA==}
     dependencies:
-      '@emmetio/scanner': 1.0.0
+      '@emmetio/scanner': 1.0.3
     dev: false
 
-  /@emmetio/codemirror6-plugin/0.2.0_d6rnkyu3lxkyyf2xckjqo57hp4:
-    resolution: {integrity: sha512-F+Aw0I9imEudLstDLQtXDAmx04M631ye+W1bhf+o07Wy4O9btnA54CPOkXLEjWEWve+8hh9JWvH/y4A8mFiF0w==}
+  /@emmetio/codemirror6-plugin/0.3.0_am4kmxnogv7rbmceymno6hojya:
+    resolution: {integrity: sha512-w9KlUG/RHFVF1+98el7tr4GUyM3J4kBVHqIp4eCChY9MmF0HbfMiP6id6eoZEpHd7ATINVnzEYlXx5zTBkUGzw==}
     peerDependencies:
       '@codemirror/autocomplete': ^6.1.0
       '@codemirror/commands': ^6.0.1
@@ -1863,8 +1801,6 @@ packages:
     dependencies:
       '@codemirror/autocomplete': 6.4.2_lc2v3dpzp2l5pdzwtgfaudkm3e
       '@codemirror/commands': 6.2.2
-      '@codemirror/highlight': 0.19.8
-      '@codemirror/history': 0.19.2
       '@codemirror/lang-css': 6.0.2_i3aqn63zftbgivbr4riltn5mqe
       '@codemirror/lang-html': 6.4.2
       '@codemirror/language': 6.6.0
@@ -1872,23 +1808,23 @@ packages:
       '@codemirror/view': 6.9.2
       '@emmetio/math-expression': 1.0.4
       '@lezer/common': 1.0.2
-      emmet: 2.3.6
+      emmet: 2.4.3
     dev: false
 
-  /@emmetio/css-abbreviation/2.1.4:
-    resolution: {integrity: sha512-qk9L60Y+uRtM5CPbB0y+QNl/1XKE09mSO+AhhSauIfr2YOx/ta3NJw2d8RtCFxgzHeRqFRr8jgyzThbu+MZ4Uw==}
+  /@emmetio/css-abbreviation/2.1.7:
+    resolution: {integrity: sha512-nrOt3/QROjYYK1cMjoO5fCfHIf0hFpcZeQQt7Ew6ixZ0ElEEs77ijnY57HC6ti91W/mn+c1T7ET8sClBMRHHBg==}
     dependencies:
-      '@emmetio/scanner': 1.0.0
+      '@emmetio/scanner': 1.0.3
     dev: false
 
   /@emmetio/math-expression/1.0.4:
     resolution: {integrity: sha512-1m7y8/VeXCAfgFoPGTerbqCIadApcIINujd3TaM/LRLPPKiod8aT1PPmh542spnsUSsSnZJjbuF7xiO4WFA42g==}
     dependencies:
-      '@emmetio/scanner': 1.0.0
+      '@emmetio/scanner': 1.0.3
     dev: false
 
-  /@emmetio/scanner/1.0.0:
-    resolution: {integrity: sha512-8HqW8EVqjnCmWXVpqAOZf+EGESdkR27odcMMMGefgKXtar00SoYNSryGv//TELI4T3QFsECo78p+0lmalk/CFA==}
+  /@emmetio/scanner/1.0.3:
+    resolution: {integrity: sha512-/EFyTijquAwKMGSBd50RnjxsfDXmZAFp71PGu7sM6LEnEJXMV+FKL7Rvr6YLu4czQmPVRsfyhcbQz+WZnM4AZw==}
     dev: false
 
   /@esbuild/linux-loong64/0.14.54:
@@ -2264,10 +2200,6 @@ packages:
     resolution: {integrity: sha512-Hcv+nVC0kZnQ3tD9GVu5xSMR4VVYOteQIr/hwFPVEvPdlXqgGEuRjiheChHgdM+JyqdgNcmzZOX/tnl0JOiI7A==}
     dev: true
 
-  /@lezer/common/0.15.12:
-    resolution: {integrity: sha512-edfwCxNLnzq5pBA/yaIhwJ3U3Kz8VAUOTRg0hhxaizaI1N+qxV7EXDv/kLCkLeq2RzSFvxexlaj5Mzfn2kY0Ig==}
-    dev: false
-
   /@lezer/common/1.0.2:
     resolution: {integrity: sha512-SVgiGtMnMnW3ActR8SXgsDhw7a0w0ChHSYAyAUxxrOiJ1OqYWEKk/xJd84tTSPo1mo6DXLObAJALNnd0Hrv7Ng==}
     dev: false
@@ -2298,12 +2230,6 @@ packages:
     dependencies:
       '@lezer/highlight': 1.1.3
       '@lezer/lr': 1.3.3
-    dev: false
-
-  /@lezer/lr/0.15.8:
-    resolution: {integrity: sha512-bM6oE6VQZ6hIFxDNKk8bKPa14hqFrV07J/vHGOeiAbJReIaQXmkVb6xQu4MR+JBTLa5arGRyAAjJe1qaQt3Uvg==}
-    dependencies:
-      '@lezer/common': 0.15.12
     dev: false
 
   /@lezer/lr/1.3.3:
@@ -5074,11 +5000,11 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /emmet/2.3.6:
-    resolution: {integrity: sha512-pLS4PBPDdxuUAmw7Me7+TcHbykTsBKN/S9XJbUOMFQrNv9MoshzyMFK/R57JBm94/6HSL4vHnDeEmxlC82NQ4A==}
+  /emmet/2.4.3:
+    resolution: {integrity: sha512-Bq6zozVDVrLbBmKdosI9Q2DvrFh/ehwnNjgDRsvGVjPOEAhMKie9HwQnPuUi3NOZ2itVGyRwsLAdufnG9DVFwg==}
     dependencies:
-      '@emmetio/abbreviation': 2.2.3
-      '@emmetio/css-abbreviation': 2.1.4
+      '@emmetio/abbreviation': 2.3.2
+      '@emmetio/css-abbreviation': 2.1.7
     dev: false
 
   /emoji-regex/8.0.0:
@@ -11361,8 +11287,8 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  github.com/tgoufe/CyanMapleFrame/bc34aab02b77bd25b51f7194a56f5edd773296fb:
-    resolution: {commit: bc34aab02b77bd25b51f7194a56f5edd773296fb, repo: git+ssh://git@github.com/tgoufe/CyanMapleFrame.git, type: git}
+  github.com/tgoufe/CyanMapleFrame/6b5a1e10d2383b22c88f069b1d73bc5414af54af:
+    resolution: {tarball: https://codeload.github.com/tgoufe/CyanMapleFrame/tar.gz/6b5a1e10d2383b22c88f069b1d73bc5414af54af}
     name: cyan-maple
     version: 0.22.0
     dependencies:

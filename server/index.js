@@ -14,6 +14,7 @@ import './valhalla/index.js';
 import './mg/page/index.js';
 import './mg/code/index.js';
 import './editor/index.js';
+import './wx/index.js';
 
 // 外部数据
 import './book/index.js';

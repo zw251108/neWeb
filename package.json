@@ -15,8 +15,6 @@
   "dependencies": {
     "@codemirror/autocomplete": "~6.4.2",
     "@codemirror/commands": "~6.2.2",
-    "@codemirror/highlight": "~0.19.8",
-    "@codemirror/history": "~0.19.2",
     "@codemirror/lang-css": "~6.0.2",
     "@codemirror/lang-html": "~6.4.2",
     "@codemirror/lang-javascript": "~6.1.4",
@@ -26,7 +24,7 @@
     "@codemirror/theme-one-dark": "~6.1.0",
     "@codemirror/view": "~6.9.2",
     "@element-plus/icons-vue": "~1.1.4",
-    "@emmetio/codemirror6-plugin": "~0.2.0",
+    "@emmetio/codemirror6-plugin": "~0.3.0",
     "@lezer/common": "~1.0.2",
     "axios": "~1.2.1",
     "body-parser": "~1.20.1",

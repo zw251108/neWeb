@@ -1,9 +1,11 @@
 import {useState, useEffect, useRef, useContext} from 'react';
 
+import {imgPath}     from '../config.js';
 import RouterContext from '../context/router.js';
 
 import handleArticle from '../components/handleArticle/index.js';
 import api           from '../api/index.js';
+import wechat        from '../wx.js';
 // import Modal         from '../components/modal/index.js';
 
 function Blog({id}){
@@ -58,6 +60,49 @@ function Blog({id}){
 
 	useEffect(()=>{
 		handleArticle( ref );
+
+		blog.title && wechat.then((wx)=>{
+			wx && wx.ready(()=>{
+
+				// 分享给朋友
+				wx.onMenuShareAppMessage({
+					title: blog.title
+					, desc: blog.short
+					, link: window.location.href
+					, imgUrl: imgPath('/image/avatar-96.jpg')
+					, success(){
+						// 设置成功
+					}
+				});
+				wx.updateAppMessageShareData({
+					title: blog.title
+					, desc: blog.short
+					, link: window.location.href
+					, imgUrl: imgPath('/image/avatar-96.jpg')
+					, success(){
+						// 设置成功
+					}
+				});
+
+				// 分享到朋友圈
+				wx.onMenuShareTimeline({
+					title: blog.title
+					, link: window.location.href
+					, imgUrl: imgPath('/image/avatar-96.jpg')
+					, success(){
+						// 设置成功
+					}
+				});
+				wx.updateTimelineShareData({
+					title: blog.title
+					, link: window.location.href
+					, imgUrl: imgPath('/image/avatar-96.jpg')
+					, success(){
+						// 设置成功
+					}
+				});
+			});
+		});
 
 		document.title = `${blog.title} - 十方文的个人小站`;
 
