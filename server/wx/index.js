@@ -1,8 +1,15 @@
-import https from 'https';
+import https       from 'https';
 import * as crypto from 'crypto';
 
 import web       from '../web.js';
 import sysConfig from '../sys/handler.js';
+
+const WX_APP_ID = 1
+	, WX_SECRET = 2
+	, WX_ACCESS_TOKEN = 3
+	, WX_JS_API_TICKET = 4
+	, TICKET_EXPIRE = 2*60*60*1000
+	;
 
 web.get('/wx/sign', (req, res)=>{
 	let { url } = req.query
@@ -10,10 +17,10 @@ web.get('/wx/sign', (req, res)=>{
 
 	Promise.all([
 		sysConfig.get({
-			id: 1
+			id: WX_APP_ID
 		})
 		, sysConfig.get({
-			id: 4
+			id: WX_JS_API_TICKET
 		})
 	]).then(([appIdConfig, ticketConfig])=>{
 		let appId = appIdConfig.getDataValue('config')
@@ -22,9 +29,9 @@ web.get('/wx/sign', (req, res)=>{
 			, exec
 			;
 
-		if( !ticket || (Date.now() - new Date(updateDate) > 2*60*60*1000) ){
+		if( !ticket || (Date.now() - new Date(updateDate) > TICKET_EXPIRE) ){
 			exec = sysConfig.get({
-				id: 2
+				id: WX_SECRET
 			}).then((secret)=>{
 				secret = secret.getDataValue('config');
 
@@ -63,7 +70,7 @@ web.get('/wx/sign', (req, res)=>{
 				});
 			}).then((access_token)=>{
 				sysConfig.update({
-					id: 3
+					id: WX_ACCESS_TOKEN
 					, config: access_token
 				});
 
@@ -102,7 +109,7 @@ web.get('/wx/sign', (req, res)=>{
 				});
 			}).then((ticket)=>{
 				sysConfig.update({
-					id: 4
+					id: WX_JS_API_TICKET
 					, config: ticket
 				});
 
@@ -144,5 +151,5 @@ web.get('/wx/sign', (req, res)=>{
 			}) );
 			res.end();
 		});
-	})
+	});
 });
