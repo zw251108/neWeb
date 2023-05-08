@@ -34,18 +34,18 @@ const album = {
 				}
 			});
 		}
-		, get({id}, attributes, imageAttr){
+		, get({id, includeImage=true}, attributes, imageAttr){
 			return Album.findOne({
 				where: {
 					...where.eq({
 						id
 					})
 				}
-				, include: [{
+				, include: includeImage ? [{
 					model: Image
 					, as: 'image'
 					, attributes: imageAttr
-				}]
+				}] : undefined
 				, attributes
 			});
 		}

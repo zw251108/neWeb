@@ -82,6 +82,7 @@ web.get('/album/:id', (req, res)=>{
 
 	album.get({
 		id
+		, includeImage: false
 	}, [
 		'id'
 		, 'name'
@@ -98,6 +99,35 @@ web.get('/album/:id', (req, res)=>{
 		}) );
 		res.end();
 	});
+});
+
+web.get('/album/:id/imgs', (req, res)=>{
+	let { id } = req.params
+		,
+		{ page = 1
+		, size = 20 } = req.query
+		;
+
+	image.list({
+		albumId: id
+		, page
+		, size
+		, creatorId: 1
+	}, [
+		'id'
+		, 'src'
+		, 'width'
+		, 'height'
+		, 'desc'
+	], [
+		['id', 'ASC']
+	]).then((data)=>{
+		res.send( JSON.stringify({
+			code: 0
+			, data
+		}) );
+		res.end();
+	})
 });
 
 web.get('/image/:id', (req, res)=>{

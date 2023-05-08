@@ -6,6 +6,10 @@
         @extend .icon-images, :before;
     }
 
+    .loading{
+        @include grid(8, 1);
+    }
+
     .image{
         border-color: #f1f1f1;
         border-radius: 5px;
@@ -13,6 +17,10 @@
         
         &::before{
             content: none;
+        }
+
+        .img{
+            border-radius: 3px;
         }
 
         &-v{
