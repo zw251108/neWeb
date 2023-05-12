@@ -1,11 +1,19 @@
-import api from './api/index.js';
+import maple from 'cyan-maple';
 
-let wechat
+import api from '../api/index.js';
+
+let env = /MicroMessenger/i.test( navigator.userAgent )
+	, wechat = {
+		env
+	}
 	;
 
-if( /MicroMessenger/i.test(navigator.userAgent) ){
-	// 微信
-	wechat = new Promise((resolve, reject)=>{
+if( env ){  // 微信
+	const WX_APP_ID = 'wx61d59950777ab142'
+		;
+
+	// 微信 sdk 初始化
+	wechat.sign = new Promise((resolve, reject)=>{
 		let script = document.createElement('script')
 			;
 
@@ -37,6 +45,7 @@ if( /MicroMessenger/i.test(navigator.userAgent) ){
 
 		wx.config({
 			debug: false
+			, appId: WX_APP_ID
 			, ...data
 			, jsApiList: [
 				'onMenuShareAppMessage'
@@ -48,9 +57,13 @@ if( /MicroMessenger/i.test(navigator.userAgent) ){
 
 		return wx;
 	});
+
+	wechat.login = ()=>{
+		maple.url.replacePage(`https://open.weixin.qq.com/connect/oauth2/authorize?appid=${WX_APP_ID}&redirect_uri=${encodeURIComponent(`${window.location.origin}/#/wx`)}&response_type=code&scope=snsapi_base#wechat_redirect`)
+	};
 }
 else{
-	wechat = Promise.resolve();
+	wechat.sign = Promise.resolve();
 }
 
 export default wechat;

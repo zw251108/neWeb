@@ -3,7 +3,7 @@ import db, {DataTypes, commonAttr, commonOpts} from '../db.js';
 let SysConfig = db.define('sys_config', {
 		id: commonAttr.id
 		, createDate: commonAttr.createDate
-		, updateData: commonAttr.updateDate
+		, updateDate: commonAttr.updateDate
 
 		, name: DataTypes.STRING
 		, config: DataTypes.STRING

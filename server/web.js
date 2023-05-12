@@ -9,9 +9,12 @@ import session      from 'express-session';
 
 import cors from 'cors';
 // import log4js       from 'log4js';
-import Socket       from 'ws';
 
-import CONFIG   from '../config.js';
+import queryString from 'querystring';
+
+import Socket from 'ws';
+
+import CONFIG from '../config.js';
 
 let web = express()
 	, store = new session.MemoryStore()
@@ -177,11 +180,10 @@ function createController(web, dir='', methodList={}, methodType={}){
 			// todo 增加 creatorId
 
 			method( data ).then((data)=>{
-				res.send( JSON.stringify({
+				res.send({
 					code: 0
 					, data
-				}) );
-				res.end();
+				}) ;
 			}, (e)=>{
 				console.log(`${path}`, e);
 
@@ -189,14 +191,111 @@ function createController(web, dir='', methodList={}, methodType={}){
 					code: -1
 					, msg: e instanceof Error ? e.message : ''
 				});
-				res.end();
 			});
 		});
 	});
 }
 
+function httpsGet(url, data){
+	return new Promise((resolve, reject)=>{
+		https.get(`${url}?${queryString.stringify( data )}`, (res)=>{
+			let { statusCode } = res
+				;
+
+			if( statusCode !== 200 ){
+				reject();
+				res.resume();
+
+				return ;
+			}
+
+			res.setEncoding('utf8');
+
+			let rawData = ''
+				;
+
+			res.on('data', (chunk)=>{
+				rawData += chunk;
+			});
+			res.on('end', ()=>{
+				try{
+					const rs = JSON.parse( rawData )
+						;
+
+					resolve( rs );
+				}
+				catch(e){
+					reject( e );
+				}
+			});
+		}).on('error', reject);
+	});
+}
+
+function httpsPost(url, data, options={}){
+	return new Promise((resolve, reject)=>{
+		let params = queryString.stringify( data )
+			, req = https.request(url, {
+				method: 'POST'
+				, headers: {
+					'Content-Type': 'application/x-www-form-urlencoded'
+					, 'Content-Length': params.length
+				}
+				, ...options
+			}, (res)=>{
+				let { statusCode } = res
+					;
+
+				if( statusCode !== 200 ){
+					reject();
+					res.resume();
+
+					return ;
+				}
+
+				res.setEncoding('utf8');
+
+				let rawData = ''
+					;
+
+				res.on('data', (chunk)=>{
+					rawData += chunk;
+				});
+				res.on('end', ()=>{
+					try{
+						const rs = JSON.parse( rawData )
+							;
+
+						resolve( rs );
+					}
+					catch(e){
+						reject( e );
+					}
+				});
+			}).on('error', reject)
+			;
+
+		req.write( params );
+		req.end();
+	});
+}
+
+function resSend(res, promise){
+	promise.then((data)=>{
+		res.send({
+			code: 0
+			, data
+		});
+	}).catch((e)=>{
+		res.send( e );
+	});
+}
+
 export {
 	createController
+	, resSend
+	, httpsGet
+	, httpsPost
 };
 
 // export {

@@ -8,6 +8,8 @@ import Valhalla from './view/valhalla.js';
 import Document from './view/document.js';
 import Resume   from './view/resume.js';
 import Editor   from './view/editor.js';
+// import Wechat   from './view/wechat.js';
+// import Weibo    from './view/weibo.js';
 
 const paths = [{
 		name: 'index'
@@ -33,6 +35,12 @@ const paths = [{
 	}, {
 		name: 'resume'
 		, Target: Resume
+	// }, {
+	// 	name: 'wx'
+	// 	, Target: Wechat
+	// }, {
+	// 	name: 'wb'
+	// 	, Target: Weibo
 	}]
 	;
 
@@ -60,7 +68,6 @@ export default function initRouter(app){
 			}
 		})
 		]
-		, fallback(url){
-		}
+		, fallback(url){}
 	});
 }

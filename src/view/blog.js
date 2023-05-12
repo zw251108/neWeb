@@ -3,9 +3,9 @@ import {useState, useEffect, useRef, useContext} from 'react';
 import {imgPath}     from '../config.js';
 import RouterContext from '../context/router.js';
 
-import handleArticle from '../components/handleArticle/index.js';
 import api           from '../api/index.js';
-import wechat        from '../wx.js';
+import wechat        from '../lib/wx.js';
+import handleArticle from '../components/handleArticle/index.js';
 // import Modal         from '../components/modal/index.js';
 
 function Blog({id}){
@@ -61,7 +61,7 @@ function Blog({id}){
 	useEffect(()=>{
 		handleArticle( ref );
 
-		blog.title && wechat.then((wx)=>{
+		blog.title && wechat.sign.then((wx)=>{
 			wx && wx.ready(()=>{
 
 				// 分享给朋友
