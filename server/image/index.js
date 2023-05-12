@@ -28,33 +28,29 @@ createController(web, 'album/img', image, {
 
 web.post('/image/upload', uploadMiddleware.single('image'), (req, res)=>{
 	upload( req ).then(function(data){
-		res.send( JSON.stringify({
+		res.send({
 			code: 0
 			, data
-		}) );
-		res.end();
+		});
 	}, (e)=>{
-		res.send( JSON.stringify({
+		res.send({
 			code: -1
 			, msg: e.message
-		}) );
-		res.end();
+		});
 	});
 });
 
 web.post('/image/uploads', uploadMiddleware.array('images'), (req, res)=>{
 	uploads( req ).then(function(data){
-		res.send( JSON.stringify({
+		res.send({
 			code: 0
 			, data
-		}) );
-		res.end();
+		});
 	}, (e)=>{
-		res.send( JSON.stringify({
+		res.send({
 			code: -1
 			, msg: e.message
-		}) );
-		res.end();
+		});
 	});
 });
 
@@ -68,11 +64,10 @@ web.get('/album', (req, res)=>{
 		, page
 		, size
 	}).then((data)=>{
-		res.send( JSON.stringify({
+		res.send({
 			code: 0
 			, data
-		}) );
-		res.end();
+		});
 	});
 });
 
@@ -93,11 +88,10 @@ web.get('/album/:id', (req, res)=>{
 		, 'height'
 		, 'desc'
 	]).then((data)=>{
-		res.send( JSON.stringify({
+		res.send({
 			code: 0
 			, data
-		}) );
-		res.end();
+		});
 	});
 });
 
@@ -122,11 +116,10 @@ web.get('/album/:id/imgs', (req, res)=>{
 	], [
 		['id', 'ASC']
 	]).then((data)=>{
-		res.send( JSON.stringify({
+		res.send({
 			code: 0
 			, data
-		}) );
-		res.end();
+		});
 	})
 });
 
@@ -145,11 +138,10 @@ web.get('/image/:id', (req, res)=>{
 		, 'tags'
 		, 'createDate'
 	]).then((data)=>{
-		res.send( JSON.stringify({
+		res.send({
 			code: 0
 			, data
-		}) );
-		res.end();
+		});
 	});
 });
 
@@ -174,11 +166,10 @@ web.get('/image/:id/next', (req, res)=>{
 		, 'tags'
 		, 'createDate'
 	]).then((data)=>{
-		res.send( JSON.stringify({
+		res.send({
 			code: 0
 			, data
-		}) );
-		res.end();
+		});
 	});
 });
 
@@ -203,11 +194,10 @@ web.get('/image/:id/prev', (req, res)=>{
 		, 'tags'
 		, 'createDate'
 	]).then((data)=>{
-		res.send( JSON.stringify({
+		res.send({
 			code: 0
 			, data: data.reverse()
-		}) );
-		res.end();
+		});
 	});
 });
 
@@ -248,13 +238,12 @@ web.get('/image/:id/sibling', (req, res)=>{
 			, 'createDate'
 		])
 	]).then(([prev, next])=>{
-		res.send( JSON.stringify({
+		res.send({
 			code: 0
 			, data: {
 				prev
 				, next
 			}
-		}) );
-		res.end();
+		});
 	})
 });

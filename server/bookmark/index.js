@@ -5,11 +5,10 @@ web.get('/bookmark', (req, res)=>{
 	bookmark.list({
 
 	}).then((data)=>{
-		res.send( JSON.stringify({
+		res.send({
 			code: 0
 			, data
-		}) );
-		res.end();
+		});
 	});
 });
 
@@ -18,11 +17,10 @@ web.post('/bookmark', (req, res)=>{
 		;
 
 	bookmark.create( data ).then((data)=>{
-		res.send( JSON.stringify({
+		res.send({
 			code: 0
 			, data
-		}) );
-		res.end();
+		});
 	});
 });
 
@@ -36,9 +34,8 @@ web.post('/bookmark/read', (req, res)=>{
 });
 
 web.get('/reader', (req, res)=>{
-	res.send( JSON.stringify({
+	res.send({
 		code: 0
 		, data: []
-	}) );
-	res.end();
+	});
 });

@@ -35,7 +35,7 @@ web.get('/news', (req, res)=>{
 		['weight', 'DESC']
 		, ['createDate', 'DESC']
 	]).then((data)=>{
-		res.send( JSON.stringify({
+		res.send({
 			code: 0
 			, data: data.map((item)=>{
 				let id = item.getDataValue('id')
@@ -73,8 +73,7 @@ web.get('/news', (req, res)=>{
 					, createDate
 				};
 			})
-		}) );
-		res.end();
+		});
 	});
 });
 
@@ -88,6 +87,5 @@ web.post('/news', (req, res)=>{
 		res.send({
 			...rs
 		});
-		res.end();
 	});
 });

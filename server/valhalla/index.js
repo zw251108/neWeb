@@ -21,11 +21,10 @@ web.get('/valhalla', (req, res)=>{
 		['weight', 'DESC']
 		, ['id', 'ASC']
 	], ['src']).then((data)=>{
-		res.send( JSON.stringify({
+		res.send({
 			code: 0
 			, data
-		}) );
-		res.end();
+		});
 	});
 });
 
@@ -39,7 +38,6 @@ web.post('/valhalla', (req, res)=>{
 		res.send({
 			...rs
 		});
-		res.end();
 	});
 });
 
@@ -55,6 +53,5 @@ web.put('/valhalla/:id', (req, res)=>{
 		res.send({
 			...rs
 		});
-		res.end();
 	});
 });

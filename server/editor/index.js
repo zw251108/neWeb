@@ -29,18 +29,16 @@ web.get('/editor/:id', (req, res)=>{
 		, 'createDate'
 	]).then((data)=>{
 		if( data ){
-			res.send( JSON.stringify({
+			res.send({
 				data
 				, code: 0
-			}) );
+			});
 		}
 		else{
-			res.send( JSON.stringify({
+			res.send({
 				code: -1
 				, msg: ''
-			}) );
+			});
 		}
-
-		res.end();
 	});
 });

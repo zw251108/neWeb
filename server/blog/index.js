@@ -36,11 +36,10 @@ web.get('/blog', (req, res)=>{
 		, 'createDate'
 		, 'updateDate'
 	]).then((data)=>{
-		res.send( JSON.stringify({
+		res.send({
 			code: 0
 			, data
-		}) );
-		res.end();
+		});
 	});
 });
 
@@ -113,8 +112,6 @@ web.get('/blog/:id', (req, res)=>{
 				, msg: ''
 			});
 		}
-
-		res.end();
 	});
 });
 
@@ -150,7 +147,6 @@ web.post('/blog', (req, res)=>{
 				id: dataValues.id
 			}
 		});
-		res.end();
 	});
 });
 
@@ -166,6 +162,5 @@ web.put('/blog/:id', (req, res)=>{
 		res.send({
 			...rs
 		});
-		res.end();
 	});
 });

@@ -18,11 +18,10 @@ web.get('/tag', (req, res)=>{
 		, page
 		, size
 	}).then((data)=>{
-		res.send( JSON.stringify({
+		res.send({
 			code: 0
 			, data
-		}) );
-		res.end();
+		});
 	});
 });
 
@@ -36,11 +35,10 @@ web.post('/tag', (req, res)=>{
 		, description
 		, creatorId: 1
 	}).then((data)=>{
-		res.send( JSON.stringify({
+		res.send({
 			code: 0
 			, data
-		}) );
-		res.end();
+		});
 	});
 });
 
@@ -56,20 +54,18 @@ web.put('/tag/:id', (req, res)=>{
 		, name
 		, description
 	}).then((data)=>{
-		res.send( JSON.stringify({
+		res.send({
 			code: 0
 			, data
-		}) );
-		res.end();
+		});
 	});
 });
 
 web.put('/tag/:id/increase', (req, res)=>{
 	tag.increase('test').then((data)=>{
-		res.send( JSON.stringify({
+		res.send({
 			code: 0
 			, data
-		}) );
-		res.end();
+		});
 	});
 });

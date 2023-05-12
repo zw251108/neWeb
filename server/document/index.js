@@ -28,11 +28,10 @@ web.get('/document', (req, res)=>{
 	document.list({
 		creatorId: 1
 	}).then((data)=>{
-		res.send( JSON.stringify({
+		res.send({
 			code: 0
 			, data
-		}) );
-		res.end();
+		});
 	});
 });
 
@@ -43,11 +42,10 @@ web.post('/document', (req, res)=>{
 	document.create({
 		title
 	}).then((data)=>{
-		res.send( JSON.stringify({
+		res.send({
 			code: 0
 			, data
-		}) );
-		res.end();
+		});
 	})
 });
 
@@ -70,11 +68,10 @@ web.get('/document/:id', (req, res)=>{
 		status: 1
 		, creatorId: 1
 	}).then((data)=>{
-		res.send( JSON.stringify({
+		res.send({
 			code: 0
 			, data
-		}) );
-		res.end();
+		});
 	});
 });
 
@@ -86,11 +83,10 @@ web.get('/document/:id/all', (req, res)=>{
 		id
 		, creatorId: 1
 	}).then((data)=>{
-		res.send( JSON.stringify({
+		res.send({
 			code: 0
 			, data
-		}) );
-		res.end();
+		});
 	});
 });
 
@@ -104,11 +100,10 @@ web.put('/document/:id', (req, res)=>{
 		id
 		, title
 	}).then((data)=>{
-		res.send( JSON.stringify({
+		res.send({
 			code: 0
 			, data
-		}) );
-		res.end();
+		});
 	});
 });
 
@@ -119,11 +114,10 @@ web.get('/document/:documentId/section', (req, res)=>{
 	section.list({
 		documentId
 	}).then((data)=>{
-		res.send( JSON.stringify({
+		res.send({
 			code: 0
 			, data
-		}) );
-		res.end();
+		});
 	});
 });
 
@@ -137,11 +131,10 @@ web.post('/document/:documentId', (req, res)=>{
 		title
 		, documentId
 	}).then((data)=>{
-		res.send( JSON.stringify({
+		res.send({
 			code: 0
 			, data
-		}) );
-		res.end();
+		});
 	})
 });
 
@@ -165,11 +158,10 @@ web.get('/document/:documentId/:id', (req, res)=>{
 		status: 1
 		, creatorId: 1
 	}).then((data)=>{
-		res.send( JSON.stringify({
+		res.send({
 			code: 0
 			, data
-		}) );
-		res.end();
+		});
 	});
 });
 
@@ -183,11 +175,10 @@ web.put('/document/:documentId/:id', (req, res)=>{
 		id
 		, title
 	}).then((data)=>{
-		res.send( JSON.stringify({
+		res.send({
 			code: 0
 			, data
-		}) );
-		res.end();
+		});
 	});
 });
 
@@ -200,11 +191,10 @@ web.get('/document/:documentId/:sectionId/content', (req, res)=>{
 		documentId
 		, sectionId
 	}).then((data)=>{
-		res.send( JSON.stringify({
+		res.send({
 			code: 0
 			, data
-		}) );
-		res.end();
+		});
 	});
 });
 
@@ -222,11 +212,10 @@ web.post('/document/:documentId/:sectionId', (req, res)=>{
 		, documentId
 		, sectionId
 	}).then((data)=>{
-		res.send( JSON.stringify({
+		res.send({
 			code: 0
 			, data
-		}) );
-		res.end();
+		});
 	});
 });
 
@@ -243,11 +232,10 @@ web.get('/document/:documentId/:sectionId/:id', (req, res)=>{
 		, 'title'
 		, 'content'
 	]).then((data)=>{
-		res.send( JSON.stringify({
+		res.send({
 			code: 0
 			, data
-		}) );
-		res.end();
+		});
 	});
 });
 
@@ -267,10 +255,9 @@ web.put('/document/:documentId/:sectionId/:id', (req, res)=>{
 		, documentId
 		, sectionId
 	}).then((data)=>{
-		res.send( JSON.stringify({
+		res.send({
 			code: 0
 			, data
-		}) );
-		res.end();
+		});
 	});
 });
