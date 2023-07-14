@@ -1,7 +1,6 @@
-import {useState, useEffect, useContext} from 'react';
+import {useState, useEffect} from 'react';
 
 import {imgPath}     from '../config.js';
-import RouterContext from '../context/router.js';
 import api           from '../api/index.js';
 import Alert         from '../components/alert/index.js';
 
@@ -20,7 +19,6 @@ function Image({id, albumId}){
 		[ showAlert, setShowAlert ] = useState(false)
 		,
 		[ alertContent, setAlertContent ] = useState('')
-		, router = useContext( RouterContext )
 		;
 
 	function prev(){

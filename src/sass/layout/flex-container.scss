@@ -52,5 +52,8 @@
         &.bottom{
             @include alignItems( flex-end );
         }
+        &.stretch{
+            @include alignItems( stretch );
+        }
     }
 }

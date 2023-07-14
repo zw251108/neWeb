@@ -19,7 +19,7 @@ $descLineHeight: 1.5em;
     border: 5px solid #c0c0c0;
     border-radius: 10px;
     margin: 5px;
-    padding: 5px;
+    padding: 10px;
     color: #333;
 
     &::before{
@@ -43,7 +43,7 @@ $descLineHeight: 1.5em;
 
     &_title{
         position: relative;
-        margin: -5px 0 0 50px;
+        margin: -10px 0 0 45px;
         padding-bottom: 5px;
         height: auto;
         line-height: 40px;
@@ -60,8 +60,8 @@ $descLineHeight: 1.5em;
         }
     }
     &_content{
-        border-radius: 10px;
-        margin: 10px 5px 5px;
+        border-radius: 5px;
+        margin: 10px 0 0;
         padding: 10px;
         background: #f1f1f1;
     }
@@ -88,7 +88,7 @@ $descLineHeight: 1.5em;
     &_datetime{
         flex-shrink: 0;
         height: 30px;
-        margin: 10px 0 0;
+        margin-top: 10px;
         line-height: 30px;
     }
 }
@@ -140,7 +140,6 @@ $descLineHeight: 1.5em;
     }
 
     &_desc{
-        margin: 0 5px;
         color: #666;
         font-size: 16px;
         line-height: $descLineHeight;
@@ -150,8 +149,8 @@ $descLineHeight: 1.5em;
     }
     &_pin{
         position: absolute;
-        top: 0;
-        right: 10px;
+        top: 6px;
+        right: 11px;
         font-size: 30px;
         transform: rotate(45deg);
     }
@@ -169,16 +168,18 @@ $descLineHeight: 1.5em;
         .module_title{
             @include textFixed(1, 40px);
         }
+        .news_info{
+            height: 125px;
+            margin: 10px 0 0;
+
+            @extend .container, .flex, .flex-v, .stretch;
+        }
         .news_desc{
-            margin-bottom: 26px;
-            padding-top: 36px;
             text-indent: 2em;
 
             @include textFixed(2, $descLineHeight);
         }
         .news_lock{
-            height: 74px;
-            padding-top: 36px;
             color: #666;
 
             i{
@@ -194,22 +195,20 @@ $descLineHeight: 1.5em;
             }
         }
         .news_more{
-            padding: 0 5px 10px;
+            height: 40px;
             color: #666;
             font-size: 16px;
-            line-height: 24px;
+            line-height: 40px;
 
             @extend .text-right;
         }
 
         .module_tags{
-            margin-top: 0;
+            margin-top: 5px;
 
             @include textFixed(1, 40px);
         }
         .module_datetime{
-            margin-top: 5px;
-            padding-right: 5px;
         }
     }
 
@@ -217,12 +216,12 @@ $descLineHeight: 1.5em;
         .news_desc{
             overflow: hidden;
             position: absolute;
-            bottom: 5px;
-            left: 5px;
-            right: 5px;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
             border-radius: 0 0 5px 5px;
             margin: 0;
-            padding: 5px;
+            padding: 10px;
             background: rgba(0, 0, 0, .5);
             color: #fff;
             font-size: 14px;
@@ -233,8 +232,8 @@ $descLineHeight: 1.5em;
         }
         .news_more{
             position: absolute;
-            top: 15px;
-            right: 15px;
+            top: 20px;
+            right: 20px;
             width: 50px;
             height: 40px;
             border-radius: 5px;
@@ -316,13 +315,15 @@ $descLineHeight: 1.5em;
             &:nth-of-type(3n+5){
                 @include grid(8, 8);
 
-                .news_desc{
-                    margin-bottom: 17px;
+                .news_info{
+                    height: 235px;
+                }
 
+                .news_desc{
                     @include textFixed(7, $descLineHeight);
                 }
                 .news_lock{
-                    height: 185px;
+                    //height: 185px;
                     text-align: center;
                     
                     i{
@@ -331,20 +332,18 @@ $descLineHeight: 1.5em;
                     }
                 }
                 .news_more{
-                    padding: 4px 5px 10px;
                 }
 
                 .module_info{
                     @include flexDirection(column);
                 }
                 .module_tags{
-                    margin-top: 0;
+                    margin-top: 5px;
 
                     @include textLimit(1);
                 }
                 .module_datetime{
                     width: 100%;
-                    margin: 5px 0 0 -5px;
                     text-align: right;
                 }
             }

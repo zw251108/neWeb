@@ -10,10 +10,15 @@ function NewsBlog({item, v}){
 			<h3 className="module_title">{blog.title}</h3>
 			{weight ? <i className="icon icon-pin news_pin"></i> : null}
 			{password ?
-				(<div className="news_lock"><i className="icon icon-lock"></i>当前内容需要密码访问</div>)
+				(<div className="news_info">
+					<div className="news_lock"><i className="icon icon-lock"></i>当前内容需要密码访问</div>
+					<div className="news_more">阅读更多<i className="icon icon-right"></i></div>
+				</div>)
 				:
-				(<div className="news_desc">{blog.content}</div>)}
-			<div className="news_more">阅读更多<i className="icon icon-right"></i></div>
+				(<div className="news_info">
+					<div className="news_desc">{blog.content}</div>
+					<div className="news_more">阅读更多<i className="icon icon-right"></i></div>
+				</div>)}
 			<div className="module_info">
 				<div className="module_tags">
 					{blog.tags.map((name)=>{

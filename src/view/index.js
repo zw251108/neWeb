@@ -1,8 +1,6 @@
 import {useState, useEffect} from 'react';
-import maple from 'cyan-maple';
 
-import api   from '../api/index.js';
-
+import api      from '../api/index.js';
 import NewsList from '../components/news/index.js';
 import LoadMore from '../components/loadMore/index.js';
 
