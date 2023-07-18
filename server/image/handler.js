@@ -167,13 +167,26 @@ const album = {
 				, order
 			})
 		}
-		, count({creatorId}){
+		, count({albumId, creatorId}){
 			return Image.count({
 				where: {
 					...where.eq({
 						creatorId
 					})
 				}
+				, include: [{
+					model: Album
+					, as: 'album'
+					, attributes: []
+					, where: albumId ? {
+						...where.eq({
+							id: albumId
+						})
+					}: undefined
+					, through: {
+						attributes: []
+					}
+				}]
 			});
 		}
 		, get({id}, attributes){
