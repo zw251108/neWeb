@@ -9,6 +9,7 @@ let Blog = db.define('blog', {
 		, title: DataTypes.STRING
 		, content: DataTypes.TEXT
 		, status: DataTypes.INTEGER
+		, cover: DataTypes.STRING
 		, short: DataTypes.STRING
 		, tags: tagsAttr
 		, readNum: {

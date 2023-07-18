@@ -99,15 +99,15 @@ function Image({id, albumId}){
 				</div>
 			</div>
 			<p className="img_desc">{img.desc}</p>
-			<div className="module_info">
-				<div className="module_tags">
-					{img.tags.map((name)=>{
-						return (<span key={name}
-						              className="tag">{name}</span>);
-					})}
-				</div>
-				<div className="module_datetime">{img.createDate}</div>
+		</div>
+		<div className="module_info">
+			<div className="module_tags">
+				{img.tags.map((name)=>{
+					return (<span key={name}
+					              className="tag">{name}</span>);
+				})}
 			</div>
+			<div className="module_datetime">{img.createDate}</div>
 		</div>
 		{showAlert ? (<Alert title="提示" content={alertContent} cb={alertConfirm}></Alert>) : null}
 	</article>);

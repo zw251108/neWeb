@@ -6,6 +6,10 @@
 		<el-input v-model="data.title"
 		          placeholder="博客标题"></el-input>
 	</el-form-item>
+	<el-form-item label="封面">
+		<el-input v-model="data.cover"
+		          placeholder="博客封面"></el-input>
+	</el-form-item>
 	<el-form-item label="标签">
 		<el-input  v-model="data.tags"
 		           type="textarea"
@@ -40,6 +44,7 @@ const data = ref({
 		, content: ''
 		, tags: ''
 		, short: ''
+		, cover: ''
 	})
 	, $hashParams = inject('$hashParams')
 	, id = ref( $hashParams().id )

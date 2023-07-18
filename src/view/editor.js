@@ -164,15 +164,15 @@ ${temp.innerHTML || ''}
 					</div>
 				</div>
 			</div>
-			<div className="module_info">
-				<div className="module_tags">
-					{editor.tags.map((name)=>{
-						return (<span key={name}
-						              className="tag">{name}</span>);
-					})}
-				</div>
-				<div className="module_datetime">{editor.createDate}</div>
+		</div>
+		<div className="module_info">
+			<div className="module_tags">
+				{editor.tags.map((name)=>{
+					return (<span key={name}
+					              className="tag">{name}</span>);
+				})}
 			</div>
+			<div className="module_datetime">{editor.createDate}</div>
 		</div>
 	</div>);
 }

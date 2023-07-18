@@ -76,9 +76,10 @@ export default {
 			, attributes
 		});
 	}
-	, create({title, short, content, tags}){
+	, create({title, cover, short, content, tags}){
 		return Blog.create({
 			title
+			, cover
 			, short
 			, content
 			, tags
@@ -89,6 +90,7 @@ export default {
 				, type: 'blog'
 				, content: {
 					title
+					, preview: cover
 					, content: short
 					, tags: tags ? tags.split(',') :[]
 				}
@@ -98,9 +100,10 @@ export default {
 			});
 		});
 	}
-	, update({id, title, short, content, tags}){
+	, update({id, title, cover, short, content, tags}){
 		return Blog.update({
 			title
+			, cover
 			, short
 			, content
 			, tags
@@ -114,6 +117,7 @@ export default {
 			return News.update({
 				content: {
 					title
+					, preview: cover
 					, content: short
 					, tags: tags ? tags.split(',') : []
 				}

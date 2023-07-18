@@ -119,6 +119,13 @@ function Blog({id}){
 				:
 				(<details className="blog_short">
 	                <summary>简介</summary>
+					{blog.cover ?
+						(<div className="img container">
+							<img src={imgPath( blog.cover )}
+							     alt={blog.short}/>
+						</div>)
+						:
+						null}
 			        <p>{blog.short}</p>
 			    </details>)}
 			<div className="blog_content"
@@ -153,15 +160,15 @@ function Blog({id}){
 					null}
 				<div dangerouslySetInnerHTML={{__html: blog.content}}></div>
 			</div>
-			<div className="module_info">
-				<div className="module_tags">
-					{blog.tags.map((name)=>{
-						return (<span key={name}
-						              className="tag">{name}</span>);
-					})}
-				</div>
-				<div className="module_datetime">{blog.createDate}</div>
+		</div>
+		<div className="module_info">
+			<div className="module_tags">
+				{blog.tags.map((name)=>{
+					return (<span key={name}
+					              className="tag">{name}</span>);
+				})}
 			</div>
+			<div className="module_datetime">{blog.createDate}</div>
 		</div>
 	</article>);
 }
