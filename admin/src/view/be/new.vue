@@ -215,6 +215,7 @@
 						<template v-else-if="isImage(col)"
 						          v-slot="scope">
 							<el-image style="width: 100px; height: 100px"
+							          v-if="scope.row[col.prop]"
 							          :src="path(scope.row[col.prop])"
 							          fit="contain" />
 						</template>
