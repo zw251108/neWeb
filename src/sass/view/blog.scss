@@ -11,6 +11,17 @@
         margin-bottom: 10px;
         padding: 10px;
         background: #fff;
+
+        .img.container{
+            border-top: 1px solid #c0c0c0;
+            margin-top: 10px;
+            padding-top: 10px;
+            font-size: 0;
+
+            img{
+                max-width: 600px;
+            }
+        }
     }
 
     &_content{

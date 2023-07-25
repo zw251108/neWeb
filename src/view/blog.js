@@ -117,8 +117,11 @@ function Blog({id}){
 			{showPwd ?
 				null
 				:
-				(<details className="blog_short">
-	                <summary>简介</summary>
+				(<div className="blog_short">
+					<details>
+		                <summary>简介</summary>
+						<p>{blog.short}</p>
+					</details>
 					{blog.cover ?
 						(<div className="img container">
 							<img src={imgPath( blog.cover )}
@@ -126,8 +129,7 @@ function Blog({id}){
 						</div>)
 						:
 						null}
-			        <p>{blog.short}</p>
-			    </details>)}
+				</div>)}
 			<div className="blog_content"
 			     ref={ref}>
 				{showPwd ?
