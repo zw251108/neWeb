@@ -8,8 +8,8 @@ function NewsBlog({item, v}){
 		, createDate
 		, updateDate } = item
 		, now = Date.now()
-		, isNew = now - new Date( createDate ) > 3*24*60*60*1000
-		, isUpdate = now - new Date( updateDate ) > 3*24*60*60*1000
+		, isNew = now - new Date( createDate ) < 3*24*60*60*1000
+		, isUpdate = now - new Date( updateDate ) < 3*24*60*60*1000
 		;
 
 	return (<article className="module news blog">
