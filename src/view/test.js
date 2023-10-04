@@ -93,6 +93,13 @@ function Test(){
 		<i className="icon icon-doc"></i>
 		<i className="icon icon-card"></i>
 		<i className="icon icon-transformer"></i>
+		<i className="icon icon-update"></i>
+		<i className="icon icon-new-char"></i>
+		<i className="icon icon-pin-char"></i>
+		<i className="icon icon-upload-file"></i>
+		<i className="icon icon-menu-book"></i>
+		<i className="icon icon-side3"></i>
+		<i className="icon icon-bell"></i>
 	</div>);
 }
 

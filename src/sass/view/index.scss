@@ -155,6 +155,13 @@ $descLineHeight: 1.5em;
         font-size: 30px;
         transform: rotate( 45deg );
     }
+    &_new,
+    &_update{
+        position: absolute;
+        top: 5px;
+        right: 10px;
+        font-size: 30px;
+    }
     &_preview{
         border-radius: 5px;
         

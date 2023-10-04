@@ -4,13 +4,27 @@ function NewsBlog({item, v}){
 	const
 		{ content: blog
 		, weight
-		, password } = item
+		, password
+		, createDate
+		, updateDate } = item
+		, now = Date.now()
+		, isNew = now - new Date( createDate ) > 3*24*60*60*1000
+		, isUpdate = now - new Date( updateDate ) > 3*24*60*60*1000
 		;
 
 	return (<article className="module news blog">
 		<a href={`#/blog?id=${item.targetId}`}>
 			<h3 className="module_title">{blog.title}</h3>
-			{weight ? <i className="icon icon-pin news_pin"></i> : null}
+			{weight ?
+				<i className="icon icon-pin news_pin"></i>
+				:
+				(isNew ?
+					<i className="icon icon-new-char news_new"></i>
+					:
+					(isUpdate ?
+						<i className="icon icon-update news_update"></i>
+						:
+						null))}
 			{password ?
 				(<div className="news_detail">
 					<div className="news_info">
@@ -38,7 +52,7 @@ function NewsBlog({item, v}){
 						              className="tag">{name}</span>);
 					})}
 				</div>
-				<div className="module_datetime">{item.createDate}</div>
+				<div className="module_datetime">{createDate}</div>
 			</div>
 		</a>
 	</article>);

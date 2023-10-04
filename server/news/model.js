@@ -4,10 +4,8 @@ import {userBeCreatorOf}                       from '../user/model.js';
 // import {imagesBelongsTo, IMAGE_CONTENT_TYPE}   from '../image/model.js';
 
 let News = db.define('news', {
-		id: commonAttr.id
-		, creatorId: commonAttr.creatorId
-		, createDate: commonAttr.createDate
-	
+		...commonAttr
+
 		, type: DataTypes.STRING
 		, targetId: {
 			type: DataTypes.INTEGER
@@ -31,8 +29,7 @@ let News = db.define('news', {
 		, password: DataTypes.INTEGER
 		, status: DataTypes.INTEGER
 	}, {
-		createdAt: commonOpts.createdAt
-		, updatedAt: false
+		...commonOpts
 	})
 	;
 

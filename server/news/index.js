@@ -31,8 +31,10 @@ web.get('/news', (req, res)=>{
 		, 'weight'
 		, 'password'
 		, 'createDate'
+		, 'updateDate'
 	], [
 		['weight', 'DESC']
+		, ['updateDate', 'DESC']
 		, ['createDate', 'DESC']
 	]).then((data)=>{
 		res.send({
@@ -45,6 +47,7 @@ web.get('/news', (req, res)=>{
 					, weight = item.getDataValue('weight')
 					, password = item.getDataValue('password')
 					, createDate = formatDate( item.getDataValue('createDate') )
+					, updateDate = formatDate( item.getDataValue('updateDate') )
 					;
 
 				try{
@@ -71,6 +74,7 @@ web.get('/news', (req, res)=>{
 					, weight
 					, password
 					, createDate
+					, updateDate
 				};
 			})
 		});

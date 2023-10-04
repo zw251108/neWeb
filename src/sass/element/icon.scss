@@ -126,9 +126,6 @@ a.icon:hover::before{
     text-decoration: none;
 }
 
-.icon-valhalla::before{
-    content: "\e700";
-}
 .icon-radio::before{
     content: "\e800";
 }
@@ -277,7 +274,7 @@ a.icon:hover::before{
     content: "\e830";
 }
 .icon-code::before{
-    content: "\e900";
+    content: "\e901";
 }
 .icon-search::before{
     content: "\e832";
@@ -373,7 +370,7 @@ a.icon:hover::before{
     content: "\f023";
 }
 .icon-blog::before{
-    content: "\e904";
+    content: "\e907";
 }
 .icon-resume::before{
     content: "\e923";
@@ -405,6 +402,30 @@ a.icon:hover::before{
 .icon-card::before{
     content: "\f2bc";
 }
+.icon-update:before {
+    content: "\e900";
+}
+.icon-valhalla:before {
+    content: "\e700";
+}
 .icon-transformer::before{
-    content: "\e901";
+    content: "\e904";
+}
+.icon-new-char:before {
+    content: "\e902";
+}
+.icon-pin-char:before {
+    content: "\e903";
+}
+.icon-upload-file:before {
+    content: "\e905";
+}
+.icon-menu-book:before {
+    content: "\e906";
+}
+.icon-side3:before {
+    content: "\e908";
+}
+.icon-bell:before {
+    content: "\e909";
 }
