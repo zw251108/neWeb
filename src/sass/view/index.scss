@@ -24,8 +24,8 @@ $descLineHeight: 1.5em;
 
     &::before{
         position: absolute;
-        top: -5px;
-        left: -5px;
+        top: -10px;
+        left: -10px;
         z-index: 1;
         width: 40px;
         height: 40px;
@@ -43,9 +43,8 @@ $descLineHeight: 1.5em;
 
     &_title{
         position: relative;
-        margin: -10px 0 0 45px;
-        padding-bottom: 5px;
-        height: auto;
+        margin: -10px 0 0 30px;
+        padding-left: 10px;
         line-height: 40px;
         text-align: left;
 
@@ -72,24 +71,13 @@ $descLineHeight: 1.5em;
         margin-top: 10px;
         color: #999;
         font-size: 14px;
-
-        &::before{
-            position: absolute;
-            top: -1px;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: #c0c0c0;
-            content: "";
-        }
     }
     &_tags{
-        margin: 5px -5px -5px;
+        margin: -5px;
     }
     &_datetime{
         flex-shrink: 0;
         height: 30px;
-        margin-top: 10px;
         line-height: 30px;
     }
 }
@@ -137,17 +125,11 @@ $descLineHeight: 1.5em;
     @include grid(8, 4);
 
     .module_title{
+        height: 40px;
+
         @include textLimit( 1 );
     }
 
-    &_desc{
-        color: #666;
-        font-size: 16px;
-        line-height: $descLineHeight;
-    }
-    &_more{
-
-    }
     &_pin{
         position: absolute;
         top: 6px;
@@ -162,58 +144,91 @@ $descLineHeight: 1.5em;
         right: 10px;
         font-size: 30px;
     }
+
+    &_content{
+        position: relative;
+        margin-top: 10px;
+
+        @extend .container, .flex, .left;
+    }
     &_preview{
         border-radius: 5px;
-        
+
         @extend .container, .flex;
         @extend .container, .flex, .center;
         @extend .container, .flex, .justify;
+    }
+    &_desc{
+        color: #666;
+        font-size: 16px;
+        line-height: $descLineHeight;
+    }
+
+    &_info{
+        @extend .module_info;
+
+        margin: 0;
+    }
+    &_tags{
+        @extend .module_tags;
+
+        @include textFixed(1, 40px);
+    }
+    &_datetime{
+        @extend .module_datetime;
     }
 
     &.blog{
         @include gridRow( 5 );
 
-        .module_title{
-            @include textFixed(1, 40px);
-        }
-        .news_detail{
-            position: relative;
-            height: 115px;
-            margin-top: 10px;
+        //.module_title{
+        //    @include textFixed(1, 40px);
+        //}
 
-            @extend .container, .flex, .left;
+        .news_content{
+            height: 170px;
         }
         .news_preview{
             width: 100%;
-            height: 115px;
+            height: 130px;
 
             @extend .container, .img, .img-h;
         }
-        .news_info{
+        .news_detail{
             flex: auto;
-            height: 125px;
+            height: 170px;
 
             @extend .container, .flex, .flex-v, .stretch;
         }
-        .news_preview + .news_info{
+        .news_preview + .news_detail{
             position: absolute;
             width: 100%;
-            height: 115px;
             border-radius: 5px;
-            background: rgba(0, 0, 0, .5);
 
             .news_desc,
             .news_more{
+                background: rgba(0, 0, 0, .5);
                 color: #fff;
+            }
+            .news_desc{
+                border-radius: 5px 5px 0 0;
+                padding-left: 10px;
+            }
+            .news_more{
+                border-radius: 0 0 5px 5px;
+            }
+
+            .news_info{
+                margin-top: 10px;
             }
         }
         .news_desc{
-            padding-left: 10px;
-            text-indent: 2em;
+            flex: 1;
 
-            @include textFixed(2, $descLineHeight);
+            @include textFixed(4, $descLineHeight);
         }
         .news_lock{
+            flex: 1;
             color: #666;
 
             i{
@@ -237,43 +252,54 @@ $descLineHeight: 1.5em;
             @extend .text-right;
         }
 
-        .module_tags{
-            margin-top: 5px;
-
+        .news_tags{
             @include textFixed(1, 40px);
         }
-        .module_datetime{
+
+        .news_lock ~ .news_info{
+            @include justifyContent( flex-end );
         }
     }
 
     &.image{
-        .news_desc{
-            overflow: hidden;
+        .news_content{
+            position: relative;
+            width: 100%;
+            height: 100%;
+            margin-top: 0;
+        }
+
+        .news_detail{
             position: absolute;
-            bottom: 10px;
-            left: 10px;
-            right: 10px;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 60px;
             border-radius: 0 0 5px 5px;
-            margin: 0;
-            padding: 10px;
             background: rgba(0, 0, 0, .5);
+            
+            @extend .container, .flex, .right;
+        }
+
+        .news_desc{
+            flex: 1;
+            margin: 10px 0 0;
+            padding: 0 10px;
             color: #fff;
             font-size: 14px;
             line-height: 20px;
-            text-indent: 0;
 
-            @include textFixed(2, 20px)
+            @include textFixed(2, 20px);
         }
         .news_more{
-            position: absolute;
-            top: 20px;
-            right: 20px;
             width: 50px;
-            height: 40px;
+            height: 38px;
+            border: 1px solid #c0c0c0;
             border-radius: 5px;
-            background: rgba(0, 0, 0, .5);
+            margin: 10px 10px 0 0;
             color: #fff;
-            font-size: 16px;
+            font-size: 20px;
             text-align: center;
             line-height: 40px;
         }
@@ -314,23 +340,49 @@ $descLineHeight: 1.5em;
     &.editor{
         @include grid(8, 8);
 
+        .news_content{
+            height: 320px;
+
+            @include flexDirection( column );
+        }
         .news_preview{
-            max-height: 254px;
+            flex: 1;
         }
-
-        .module_info{
-            @include flexDirection(column);
-        }
-        .module_tags{
-            margin-top: 0;
-
-            @include textFixed(1, 40px);
-        }
-        .module_datetime{
+        .news_info{
             width: 100%;
-            margin: 5px -10px 0;
-            padding-right: 5px;
-            text-align: right;
+            margin-top: 10px;
+        }
+    }
+
+    &.words{
+        .news_content{
+            height: 160px;
+            margin: 0;
+
+            @include flexDirection( column );
+        }
+        .news_detail{
+            flex: 1;
+        }
+        .news_desc{
+            //margin-top: -15px;
+            //height: 120px;
+            line-height: 22px;
+            text-indent: 45px;
+
+            //@include textLimit( 5 );
+
+            &::first-line{
+                line-height: 40px;
+            }
+        }
+        .news_info{
+            width: 100%;
+
+            @extend .container, .flex, .right;
+        }
+        .news_datetime{
+            margin-right: 40px;
         }
     }
 }
@@ -346,82 +398,65 @@ $descLineHeight: 1.5em;
         &.blog{
             .news_preview{
                 flex: auto;
-                width: 360px;
-                height: 115px;
+                width: 375px;
+                height: 170px;
 
                 flex-shrink: 0;
+
+                img{
+                    min-width: 100%;
+                    min-height: 100%;
+                    max-width: none;
+                    max-height: none;
+                }
             }
-            .news_preview + .news_info{
+            .news_preview + .news_detail{
                 position: relative;
                 flex: auto;
-                height: 115px;
+                height: 170px;
+                margin-left: 10px;
                 background: transparent;
 
                 .news_desc,
                 .news_more{
+                    background: transparent;
                     color: inherit;
                 }
+                .news_info{
+                    margin-top: 0;
+                }
+            }
+            .news_desc{
+                padding-left: 0;
             }
 
             @include gridColumn(16);
 
             &:nth-of-type(3n+3){
-                @include grid(8, 8);
+                @include grid(8, 10);
 
+                .news_content{
+                    height: 420px;
+
+                    @include flexDirection( column );
+                }
                 .news_detail{
-                    position: relative;
-                    height: 225px;
-                }
-                .news_preview{
-                    width: auto;
-                    height: 225px;
-                    margin: 0 0 10px;
-
-                    img{
-                        max-width: none;
-                        height: 100%;
-                    }
-                }
-                .news_info{
-                    height: 225px;
-                }
-                .news_preview + .news_info{
-                    position: absolute;
                     width: 100%;
-                    height: 225px;
-                    border-radius: 5px;
-                    background: rgba(0, 0, 0, .5);
-
-                    .news_desc,
-                    .news_more{
-                        color: #fff;
-                    }
+                    height: 235px;
+                }
+                .news_preview + .news_detail{
+                    margin: 10px 0 0;
                 }
                 .news_desc{
                     @include textFixed(7, $descLineHeight);
                 }
                 .news_lock{
                     text-align: center;
-                    
+
                     i{
                         display: block;
                         margin-bottom: 36px;
                     }
-                }
-                .news_more{
-                }
-
-                .module_info{
-                    @include flexDirection( column );
-                }
-                .module_tags{
-                    margin-top: 5px;
-
-                    @include textLimit( 1 );
-                }
-                .module_datetime{
-                    width: 100%;
-                    text-align: right;
                 }
             }
         }
@@ -456,3 +491,5 @@ $descLineHeight: 1.5em;
 @import "./valhalla.scss";
 
 @import "./resume.scss";
+
+@import "./words.scss";

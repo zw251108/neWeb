@@ -100,6 +100,8 @@ function Test(){
 		<i className="icon icon-menu-book"></i>
 		<i className="icon icon-side3"></i>
 		<i className="icon icon-bell"></i>
+		<i className="icon icon-quote-left"></i>
+		<i className="icon icon-quote-right"></i>
 	</div>);
 }
 

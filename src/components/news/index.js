@@ -2,6 +2,7 @@ import NewsBlog      from './blog.js';
 import NewsDoc       from './doc.js';
 import NewsImg       from './img.js';
 import NewsCode      from './code.js';
+import NewsWords     from './words.js';
 import NewsTips      from './tips.js';
 import NewsWeibo     from './weibo.js';
 import NewsWeiboUser from './weiboUser.js';
@@ -13,6 +14,7 @@ function NewsList({list}){
 			, doc: NewsDoc
 			, img: NewsImg
 			, code: NewsCode
+			, words: NewsWords
 			, tips: NewsTips
 			, weibo: NewsWeibo
 			, weiboUser: NewsWeiboUser

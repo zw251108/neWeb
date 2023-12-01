@@ -40,9 +40,6 @@
         }
 
         /* 垂直方向 */
-        &-v{
-            @include flexDirection( column );
-        }
         &.top{
             @include alignItems( flex-start );
         }
@@ -54,6 +51,17 @@
         }
         &.stretch{
             @include alignItems( stretch );
+        }
+
+        &-v{
+            @include flexDirection( column );
+
+            &.top{
+                @include justifyContent( flex-start );
+            }
+            &.bottom{
+                @include justifyContent( flex-end );
+            }
         }
     }
 }

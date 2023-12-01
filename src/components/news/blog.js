@@ -1,6 +1,6 @@
 import {imgPath} from '../../config.js';
 
-function NewsBlog({item, v}){
+function NewsBlog({item}){
 	const
 		{ content: blog
 		, weight
@@ -26,34 +26,37 @@ function NewsBlog({item, v}){
 						:
 						null))}
 			{password ?
-				(<div className="news_detail">
-					<div className="news_info">
+				(<div className="news_content">
+					<div className="news_detail">
 						<div className="news_lock"><i className="icon icon-lock"></i>当前内容需要密码访问</div>
 						<div className="news_more">阅读更多<i className="icon icon-right"></i></div>
+						<div className="news_info">
+							<div className="news_datetime">{createDate}</div>
+						</div>
 					</div>
 				</div>)
 				:
-				(<div className="news_detail">
+				(<div className="news_content">
 					{blog.preview ?
 						(<div className="news_preview container img">
 							<img src={imgPath( blog.preview )} alt={blog.content}/>
 						</div>)
 						:
 						null}
-					<div className="news_info">
+					<div className="news_detail">
 						<div className="news_desc">{blog.content}</div>
 						<div className="news_more">阅读更多<i className="icon icon-right"></i></div>
+						<div className="news_info">
+							<div className="news_tags">
+								{blog.tags.map((name)=>{
+									return (<span key={name}
+									              className="tag">{name}</span>);
+								})}
+							</div>
+							<div className="news_datetime">{createDate}</div>
+						</div>
 					</div>
 				</div>)}
-			<div className="module_info">
-				<div className="module_tags">
-					{blog.tags.map((name)=>{
-						return (<span key={name}
-						              className="tag">{name}</span>);
-					})}
-				</div>
-				<div className="module_datetime">{createDate}</div>
-			</div>
 		</a>
 	</article>);
 }
