@@ -43,6 +43,11 @@
 			           placeholder="图片描述"
 			           :rows="4"></el-input>
 		</el-form-item>
+		<el-form-item label="发布">
+			<el-checkbox v-model="data.status"
+			             :true-label="1"
+			             :false-label="0">发布</el-checkbox>
+		</el-form-item>
 		<el-form-item>
 			<el-button type="primary"
 			           @click="submit">保存</el-button>
@@ -60,6 +65,7 @@ import {ref, inject} from 'vue';
 const data = ref({
 		desc: ''
 		, tags: ''
+		, status: 0
 	})
 	, files = ref([])
 	, $hashParams = inject('$hashParams')
@@ -124,7 +130,7 @@ function submit(){
 			let info = []
 				;
 
-			data.forEach(({file, width, height, desc, tags})=>{
+			data.forEach(({file, width, height, desc, tags, status})=>{
 				formData.append('images', file.raw);
 
 				info.push({
@@ -133,6 +139,7 @@ function submit(){
 					, desc
 					, tags
 					, albumId: albumId.value || undefined
+					, status
 				});
 			});
 
@@ -149,7 +156,8 @@ function submit(){
 				, width
 				, height
 				, desc
-				, tags } = data
+				, tags
+				, status } = data
 				;
 
 			formData.append('image', file.raw);
@@ -157,6 +165,7 @@ function submit(){
 			formData.append('height', height);
 			formData.append('desc', desc);
 			formData.append('tags', tags);
+			formData.append('status', status);
 
 			if( albumId.value ){
 				formData.append('albumId', albumId.value);

@@ -212,7 +212,9 @@ $descLineHeight: 1.5em;
             }
             .news_desc{
                 border-radius: 5px 5px 0 0;
+                padding-top: 5px;
                 padding-left: 10px;
+                text-indent: 0;
             }
             .news_more{
                 border-radius: 0 0 5px 5px;
@@ -224,6 +226,7 @@ $descLineHeight: 1.5em;
         }
         .news_desc{
             flex: 1;
+            text-indent: 2em;
 
             @include textFixed(4, $descLineHeight);
         }
@@ -421,6 +424,12 @@ $descLineHeight: 1.5em;
                 .news_more{
                     background: transparent;
                     color: inherit;
+                }
+                .news_desc{
+                    padding-top: 0;
+                }
+                .news_more{
+                    color: #666;
                 }
                 .news_info{
                     margin-top: 0;

@@ -106,9 +106,9 @@ const album = {
 			})
 		}
 		, getNext({id, albumId, creatorId, size}
-		             , attributes
-		             , order=[['id', 'ASC']]
-		             , albumAttr=[['id', 'name']]){
+		          , attributes
+		          , order=[['id', 'ASC']]
+		          , albumAttr=[['id', 'name']]){
 
 			size = parse(size, 1);
 
@@ -137,9 +137,9 @@ const album = {
 			})
 		}
 		, getPrev({id, albumId, creatorId, size}
-		             , attributes
-		             , order=[['id', 'DESC']]
-		             , albumAttr=[['id', 'name']]){
+		          , attributes
+		          , order=[['id', 'DESC']]
+		          , albumAttr=[['id', 'name']]){
 
 			size = parse(size, 1);
 
@@ -232,7 +232,7 @@ const album = {
 					;
 
 				// todo 生成文件名
-				callback(null, `${Date.now()}.${name[name.length-1].toLowerCase()}`);
+				callback(null, `${Date.now()}${Math.random().toString(36).slice(2,9)}.${name[name.length-1].toLowerCase()}`);
 			}
 		})
 	})
@@ -241,7 +241,8 @@ const album = {
 			, height
 			, desc
 			, tags
-			, albumId } = req.body || {}
+			, albumId
+			, status } = req.body || {}
 			, file = req.file
 			, execute
 			;
@@ -269,6 +270,7 @@ const album = {
 						, height
 						, desc
 					}
+					, status
 					, creatorId: 1
 				}).then(()=>{
 					return data;
@@ -310,10 +312,12 @@ const album = {
 		let { info } = req.body || {}
 			, files = req.files
 			, albumId
+			, status
             ;
 
 		info = JSON.parse( info || '[]' );
 		albumId = info[0].albumId;
+		status = info[0].status;
 
 		return Promise.all( files.map((file, index)=>{
 			let src = '/'+ file.path.replace(/\\/g, '/')
@@ -366,9 +370,10 @@ const album = {
 						, desc
 						, more: data.length -1
 					}
+					, status
 					, creatorId: 1
 				})
-				, Album.increment({
+				, albumId ? Album.increment({
 					num: data.length
 				}, {
 					where: {
@@ -376,7 +381,7 @@ const album = {
 							id: albumId
 						})
 					}
-				})
+				}) : null
 			]).then(()=>{
 				return data;
 			});

@@ -17,26 +17,11 @@ web.get('/news', (req, res)=>{
 		;
 
 	// todo creatorId 从 session 中取
-	news.list({
-		status: 1
-		, creatorId: 1
-		, search
+	news.news({
+		search
 		, page
 		, size
-	}, [
-		'id'
-		, 'type'
-		, 'targetId'
-		, 'content'
-		, 'weight'
-		, 'password'
-		, 'createDate'
-		, 'updateDate'
-	], [
-		['weight', 'DESC']
-		, ['updateDate', 'DESC']
-		, ['createDate', 'DESC']
-	]).then((data)=>{
+	}).then((data)=>{
 		res.send({
 			code: 0
 			, data: data.map((item)=>{

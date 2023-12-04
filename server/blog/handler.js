@@ -76,13 +76,14 @@ export default {
 			, attributes
 		});
 	}
-	, create({title, cover, short, content, tags}){
+	, create({title, cover, short, content, tags, status}){
 		return Blog.create({
 			title
 			, cover
 			, short
 			, content
 			, tags
+			, status
 			, creatorId: 1
 		}).then((data)=>{
 			return News.create({
@@ -94,6 +95,7 @@ export default {
 					, content: short
 					, tags: tags ? tags.split(',') :[]
 				}
+				, status
 				, creatorId: 1
 			}).then(()=>{
 				return data;

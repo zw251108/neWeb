@@ -1,4 +1,4 @@
-import {where, parse} from '../db.js';
+import {where, parse, literal} from '../db.js';
 import News           from './model.js';
 
 export default {
@@ -75,6 +75,27 @@ export default {
 				})
 			}
 		});
+	}
+	, news({search, page, size}){
+		return this.list({
+			status: 1
+			, creatorId: 1
+			, search
+			, page
+			, size
+		}, [
+			'id'
+			, 'type'
+			, 'targetId'
+			, 'content'
+			, 'weight'
+			, 'password'
+			, 'createDate'
+			, 'updateDate'
+		], [
+			['weight', 'DESC']
+			, [literal('case when type=\'blog\' then update_datetime else create_datetime end'), 'DESC']
+		]);
 	}
 	, changeStatus({status, id}){
 		if( !id ){

@@ -28,6 +28,11 @@
 		<code-editor v-model="data.content"
 		             lang="html"></code-editor>
 	</el-form-item>
+	<el-form-item label="发布">
+		<el-checkbox v-model="data.status"
+		             :true-label="1"
+		             :false-label="0">发布</el-checkbox>
+	</el-form-item>
 	<el-form-item>
 		<el-button type="primary"
 		           @click="submit">保存</el-button>
@@ -45,6 +50,7 @@ const data = ref({
 		, tags: ''
 		, short: ''
 		, cover: ''
+		, status: 0
 	})
 	, $hashParams = inject('$hashParams')
 	, id = ref( $hashParams().id )
