@@ -77,8 +77,9 @@ $descLineHeight: 1.5em;
     }
     &_datetime{
         flex-shrink: 0;
-        height: 30px;
-        line-height: 30px;
+        height: 12px;
+        margin-top: 18px;
+        line-height: 12px;
     }
 }
 
@@ -151,6 +152,7 @@ $descLineHeight: 1.5em;
 
         @extend .container, .flex, .left;
     }
+
     &_preview{
         border-radius: 5px;
 
@@ -158,12 +160,14 @@ $descLineHeight: 1.5em;
         @extend .container, .flex, .center;
         @extend .container, .flex, .justify;
     }
-    &_desc{
+
+    &_detail{
         color: #666;
-        font-size: 16px;
+        font-size: 14px;
+    }
+    &_desc{
         line-height: $descLineHeight;
     }
-
     &_info{
         @extend .module_info;
 
@@ -176,39 +180,40 @@ $descLineHeight: 1.5em;
     }
     &_datetime{
         @extend .module_datetime;
+        
+        margin-left: 10px;
     }
 
     &.blog{
         @include gridRow( 5 );
 
-        //.module_title{
-        //    @include textFixed(1, 40px);
-        //}
-
         .news_content{
             height: 170px;
         }
+
         .news_preview{
             width: 100%;
             height: 130px;
 
             @extend .container, .img, .img-h;
         }
+
         .news_detail{
             flex: auto;
             height: 170px;
 
             @extend .container, .flex, .flex-v, .stretch;
         }
+
         .news_preview + .news_detail{
             position: absolute;
             width: 100%;
             border-radius: 5px;
+            color: #fff;
 
             .news_desc,
             .news_more{
                 background: rgba(0, 0, 0, .5);
-                color: #fff;
             }
             .news_desc{
                 border-radius: 5px 5px 0 0;
@@ -224,6 +229,7 @@ $descLineHeight: 1.5em;
                 margin-top: 10px;
             }
         }
+
         .news_desc{
             flex: 1;
             text-indent: 2em;
@@ -232,7 +238,6 @@ $descLineHeight: 1.5em;
         }
         .news_lock{
             flex: 1;
-            color: #666;
 
             i{
                 display: inline-block;
@@ -246,10 +251,12 @@ $descLineHeight: 1.5em;
                 }
             }
         }
+        .news_lock ~ .news_info{
+            @include justifyContent( flex-end );
+        }
+
         .news_more{
             height: 40px;
-            color: #666;
-            font-size: 16px;
             line-height: 40px;
 
             @extend .text-right;
@@ -257,10 +264,6 @@ $descLineHeight: 1.5em;
 
         .news_tags{
             @include textFixed(1, 40px);
-        }
-
-        .news_lock ~ .news_info{
-            @include justifyContent( flex-end );
         }
     }
 
@@ -281,7 +284,8 @@ $descLineHeight: 1.5em;
             height: 60px;
             border-radius: 0 0 5px 5px;
             background: rgba(0, 0, 0, .5);
-            
+            color: #fff;
+
             @extend .container, .flex, .right;
         }
 
@@ -289,7 +293,6 @@ $descLineHeight: 1.5em;
             flex: 1;
             margin: 10px 0 0;
             padding: 0 10px;
-            color: #fff;
             font-size: 14px;
             line-height: 20px;
 
@@ -301,7 +304,6 @@ $descLineHeight: 1.5em;
             border: 1px solid #c0c0c0;
             border-radius: 5px;
             margin: 10px 10px 0 0;
-            color: #fff;
             font-size: 20px;
             text-align: center;
             line-height: 40px;
@@ -366,17 +368,13 @@ $descLineHeight: 1.5em;
         }
         .news_detail{
             flex: 1;
+            margin-top: -5px;
         }
         .news_desc{
-            //margin-top: -15px;
-            //height: 120px;
-            line-height: 22px;
-            text-indent: 45px;
-
-            //@include textLimit( 5 );
+            text-indent: 40px;
 
             &::first-line{
-                line-height: 40px;
+                line-height: 35px;
             }
         }
         .news_info{
@@ -401,10 +399,9 @@ $descLineHeight: 1.5em;
         &.blog{
             .news_preview{
                 flex: auto;
+                flex-shrink: 0;
                 width: 375px;
                 height: 170px;
-
-                flex-shrink: 0;
 
                 img{
                     min-width: 100%;
@@ -419,17 +416,15 @@ $descLineHeight: 1.5em;
                 height: 170px;
                 margin-left: 10px;
                 background: transparent;
+                color: #666;
 
                 .news_desc,
                 .news_more{
                     background: transparent;
-                    color: inherit;
                 }
                 .news_desc{
                     padding-top: 0;
-                }
-                .news_more{
-                    color: #666;
+                    padding-left: 0;
                 }
                 .news_info{
                     margin-top: 0;
@@ -455,6 +450,10 @@ $descLineHeight: 1.5em;
                 }
                 .news_preview + .news_detail{
                     margin: 10px 0 0;
+
+                    .news_desc{
+                        text-indent: 2em;
+                    }
                 }
                 .news_desc{
                     @include textFixed(7, $descLineHeight);
