@@ -8,7 +8,6 @@
     height: 40px;
     z-index: 100;
     background: #000;
-    color: #fff;
     font-size: 16px;
     line-height: 40px;
 
@@ -16,7 +15,7 @@
     &_searchBar{
         margin: auto;
 
-        @extend .container, .flex;
+        @include flex-container();
     }
 
     &_searchBar{
@@ -35,11 +34,13 @@
             display: block;
             width: 100%;
 
-            .container{
+            .keywordBar{
                 overflow: hidden;
                 border: 1px solid #c0c0c0;
                 border-radius: 5px;
                 box-sizing: border-box;
+
+                @include flex-container();
 
                 .input{
                     outline: none;
@@ -54,6 +55,12 @@
                 border-left: 1px solid #c0c0c0;
                 border-radius: 0;
             }
+        }
+        .filterList{
+            margin-top: 5px;
+
+            @include flex-container();
+            @include flex-justify( left );
         }
     }
 
@@ -75,6 +82,7 @@
             width: 30px;
             height: 30px;
             margin: 5px;
+            color: #fff;
             font-size: 20px;
             line-height: 30px;
             text-align: center;

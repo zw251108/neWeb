@@ -1,0 +1,34 @@
+@import "../config/rect.config";
+@import "./icon.scss";
+
+.checkbox{
+    .icon-checkbox{
+        display: inline-block;
+        height: $formItemHeight;
+        border: 1px solid #c0c0c0;
+        border-radius: 5px;
+        margin-right: 5px;
+        padding: 0 5px;
+        color: #666;
+        font-size: 14px;
+        line-height: 40px;
+    }
+
+    input[type="checkbox"]{
+        display: none;
+
+        & + .icon-checkbox::before{
+            margin-right: 5px;
+            font-size: 20px;
+            vertical-align: baseline;
+
+            @extend %icon-checkbox;
+        }
+        &:checked + .icon-checkbox{
+            background: #f1f1f1;
+        }
+        &:checked + .icon-checkbox::before{
+            @extend %icon-checkbox-checked;
+        }
+    }
+}

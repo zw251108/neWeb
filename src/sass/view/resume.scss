@@ -2,7 +2,7 @@
 
 .resume{
     &::before{
-        @extend .icon-resume, :before;
+        @extend %icon-resume;
     }
 
     margin-bottom: -5px;

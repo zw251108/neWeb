@@ -1,8 +1,10 @@
 @import "../element/icon.scss";
+@import "../element/tag.scss";
 @import "../element/text.scss";
 @import "../element/scrollbar.scss";
 @import "../layout/flex-container.scss";
 @import "../layout/grid-container.scss";
+@import "../layout/img-container.scss";
 
 $descLineHeight: 1.5em;
 
@@ -65,7 +67,7 @@ $descLineHeight: 1.5em;
         background: #f1f1f1;
     }
     &_info{
-        @extend .container, .flex;
+        @include flex-container();
 
         position: relative;
         margin-top: 10px;
@@ -73,7 +75,7 @@ $descLineHeight: 1.5em;
         font-size: 14px;
     }
     &_tags{
-        margin: -5px;
+        @extend .tagList;
     }
     &_datetime{
         flex-shrink: 0;
@@ -105,7 +107,7 @@ $descLineHeight: 1.5em;
     background: #fff;
 
     &::before{
-        @extend .icon-warming, ::before;
+        @extend %icon-warming;
     }
 
     &_content{
@@ -114,7 +116,7 @@ $descLineHeight: 1.5em;
         padding: 10px;
         background: #fff;
 
-        @include scrollBar();
+        @include scroll-bar();
     }
     &_op{
         margin-top: 10px;
@@ -128,7 +130,7 @@ $descLineHeight: 1.5em;
     .module_title{
         height: 40px;
 
-        @include textLimit( 1 );
+        @include text-limit( 1 );
     }
 
     &_pin{
@@ -150,18 +152,20 @@ $descLineHeight: 1.5em;
         position: relative;
         margin-top: 10px;
 
-        @extend .container, .flex, .left;
+        @include flex-container();
+        @include flex-justify( left );
     }
 
     &_preview{
         border-radius: 5px;
 
-        @extend .container, .flex;
-        @extend .container, .flex, .center;
-        @extend .container, .flex, .justify;
+        @include flex-container();
+        @include flex-justify( center );
+        @include flex-align( center )
     }
 
     &_detail{
+        width: 100%;
         color: #666;
         font-size: 14px;
     }
@@ -176,7 +180,7 @@ $descLineHeight: 1.5em;
     &_tags{
         @extend .module_tags;
 
-        @include textFixed(1, 40px);
+        @include text-fixed(1, 40px);
     }
     &_datetime{
         @extend .module_datetime;
@@ -185,7 +189,7 @@ $descLineHeight: 1.5em;
     }
 
     &.blog{
-        @include gridRow( 5 );
+        @include grid-row( 5 );
 
         .news_content{
             height: 170px;
@@ -194,15 +198,15 @@ $descLineHeight: 1.5em;
         .news_preview{
             width: 100%;
             height: 130px;
-
-            @extend .container, .img, .img-h;
         }
 
         .news_detail{
-            flex: auto;
+            //flex: auto;
             height: 170px;
 
-            @extend .container, .flex, .flex-v, .stretch;
+            @include flex-container();
+            @include flex-container-v();
+            @include flex-align( stretch );
         }
 
         .news_preview + .news_detail{
@@ -234,7 +238,7 @@ $descLineHeight: 1.5em;
             flex: 1;
             text-indent: 2em;
 
-            @include textFixed(4, $descLineHeight);
+            @include text-fixed(4, $descLineHeight);
         }
         .news_lock{
             flex: 1;
@@ -252,18 +256,17 @@ $descLineHeight: 1.5em;
             }
         }
         .news_lock ~ .news_info{
-            @include justifyContent( flex-end );
+            @include flex-justify( right );
         }
 
         .news_more{
             height: 40px;
             line-height: 40px;
-
-            @extend .text-right;
+            text-align: right;
         }
 
         .news_tags{
-            @include textFixed(1, 40px);
+            @include text-fixed(1, 40px);
         }
     }
 
@@ -286,7 +289,8 @@ $descLineHeight: 1.5em;
             background: rgba(0, 0, 0, .5);
             color: #fff;
 
-            @extend .container, .flex, .right;
+            @include flex-container();
+            @include flex-justify( right );
         }
 
         .news_desc{
@@ -296,7 +300,7 @@ $descLineHeight: 1.5em;
             font-size: 14px;
             line-height: 20px;
 
-            @include textFixed(2, 20px);
+            @include text-fixed(2, 20px);
         }
         .news_more{
             width: 50px;
@@ -318,7 +322,7 @@ $descLineHeight: 1.5em;
     }
 
     &.document{
-        @include gridRow( 8 );
+        @include grid-row( 8 );
 
         .news_desc{
             & > div{
@@ -338,7 +342,7 @@ $descLineHeight: 1.5em;
             margin: 10px 0 0;
             padding: 0;
 
-            @include textFixed(2, 1.5em);
+            @include text-fixed(2, 1.5em);
         }
     }
 
@@ -348,7 +352,7 @@ $descLineHeight: 1.5em;
         .news_content{
             height: 320px;
 
-            @include flexDirection( column );
+            @include flex-direction( column );
         }
         .news_preview{
             flex: 1;
@@ -364,7 +368,7 @@ $descLineHeight: 1.5em;
             height: 160px;
             margin: 0;
 
-            @include flexDirection( column );
+            @include flex-direction( column );
         }
         .news_detail{
             flex: 1;
@@ -380,7 +384,8 @@ $descLineHeight: 1.5em;
         .news_info{
             width: 100%;
 
-            @extend .container, .flex, .right;
+            @include flex-container();
+            @include flex-justify( right );
         }
         .news_datetime{
             margin-right: 40px;
@@ -397,22 +402,15 @@ $descLineHeight: 1.5em;
 
     .news{
         &.blog{
+            @include grid-column(16);
+
             .news_preview{
-                flex: auto;
                 flex-shrink: 0;
                 width: 375px;
                 height: 170px;
-
-                img{
-                    min-width: 100%;
-                    min-height: 100%;
-                    max-width: none;
-                    max-height: none;
-                }
             }
             .news_preview + .news_detail{
                 position: relative;
-                flex: auto;
                 height: 170px;
                 margin-left: 10px;
                 background: transparent;
@@ -434,44 +432,155 @@ $descLineHeight: 1.5em;
                 padding-left: 0;
             }
 
-            @include gridColumn(16);
+            //&:nth-of-type(3n+3){
+            //    //@extend %newsBlog;
+            //    @include grid(8, 10);
+            //
+            //    grid-column-start: 17;
+            //    grid-column-end: 25;
+            //
+            //    .news_content{
+            //        height: 420px;
+            //
+            //        @include flex-direction( column );
+            //    }
+            //    .news_detail{
+            //        width: 100%;
+            //        height: 420px;
+            //    }
+            //    .news_preview{
+            //        height: 185px;
+            //
+            //        img{
+            //            min-width: 100%;
+            //            min-height: 100%;
+            //            max-width: none;
+            //            max-height: none;
+            //        }
+            //    }
+            //    .news_preview + .news_detail{
+            //        height: 235px;
+            //        margin: 10px 0 0;
+            //
+            //        .news_desc{
+            //            text-indent: 2em;
+            //        }
+            //    }
+            //    .news_desc{
+            //        @include text-fixed(7, $descLineHeight);
+            //    }
+            //    .news_lock{
+            //        text-align: center;
+            //
+            //        i{
+            //            display: block;
+            //            margin-bottom: 36px;
+            //        }
+            //    }
+            //}
+        }
 
-            &:nth-of-type(3n+3){
-                @include grid(8, 10);
+        &:nth-of-type(2n+2).blog{
+            //@extend %newsBlog;
+            @include grid(8, 10);
 
-                .news_content{
-                    height: 420px;
+            //grid-column-start: 17;
+            //grid-column-end: 25;
 
-                    @include flexDirection( column );
-                }
-                .news_detail{
-                    width: 100%;
-                    height: 235px;
-                }
-                .news_preview + .news_detail{
-                    margin: 10px 0 0;
+            .news_content{
+                height: 420px;
 
-                    .news_desc{
-                        text-indent: 2em;
-                    }
-                }
-                .news_desc{
-                    @include textFixed(7, $descLineHeight);
-                }
-                .news_lock{
-                    text-align: center;
+                @include flex-direction( column );
+            }
+            .news_detail{
+                width: 100%;
+                height: 420px;
+            }
+            .news_preview{
+                height: 185px;
 
-                    i{
-                        display: block;
-                        margin-bottom: 36px;
-                    }
+                img{
+                    min-width: 100%;
+                    min-height: 100%;
+                    max-width: none;
+                    max-height: none;
                 }
             }
+            .news_preview + .news_detail{
+                height: 235px;
+                margin: 10px 0 0;
+
+                .news_desc{
+                    text-indent: 2em;
+                }
+            }
+            .news_desc{
+                @include text-fixed(7, $descLineHeight);
+            }
+            .news_lock{
+                text-align: center;
+
+                i{
+                    display: block;
+                    margin-bottom: 36px;
+                }
+            }
+        }
+        //%newsBlog{
+        //    @include grid(8, 10);
+        //
+        //    grid-column-start: 17;
+        //    grid-column-end: 25;
+        //
+        //    .news_content{
+        //        height: 420px;
+        //
+        //        @include flex-direction( column );
+        //    }
+        //    .news_detail{
+        //        width: 100%;
+        //        height: 235px;
+        //    }
+        //    .news_preview{
+        //        height: 185px;
+        //
+        //        img{
+        //            min-width: 100%;
+        //            min-height: 100%;
+        //            max-width: none;
+        //            max-height: none;
+        //        }
+        //    }
+        //    .news_preview + .news_detail{
+        //        margin: 10px 0 0;
+        //
+        //        .news_desc{
+        //            text-indent: 2em;
+        //        }
+        //    }
+        //    .news_desc{
+        //        @include text-fixed(7, $descLineHeight);
+        //    }
+        //    .news_lock{
+        //        text-align: center;
+        //
+        //        i{
+        //            display: block;
+        //            margin-bottom: 36px;
+        //        }
+        //    }
+        //}
+
+        &:not(.blog) + &.blog{
+            
         }
 
         &.image{
             &-v{
                 @include grid(8, 12);
+
+                //grid-column-start: 17;
+                //grid-column-end: 25;
             }
             &-h{
                 @include grid(16, 6);
@@ -481,6 +590,16 @@ $descLineHeight: 1.5em;
                     max-width: 100%;
                     max-height: none;
                 }
+            }
+        }
+
+        &.words{
+            grid-column-start: 17;
+            grid-column-end: span 8;
+
+            & + &{
+                //grid-column-start: span 8;
+                //grid-column-end: none;
             }
         }
     }

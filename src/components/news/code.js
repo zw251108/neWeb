@@ -9,7 +9,7 @@ function NewsCode({item}){
 		<a href={`#/editor?id=${item.targetId}`}>
 			<h3 className="module_title">{code.title}</h3>
 			<div className="news_content">
-			    <div className="news_preview container img">
+			    <div className="news_preview container img img-h">
 					<img src={imgPath( code.src )}
 					     alt={code.title}/>
 				</div>

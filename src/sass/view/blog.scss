@@ -2,7 +2,7 @@
 
 .blog{
     &::before{
-        @extend .icon-blog, :before;
+        @extend %icon-blog;
     }
 
     &_short{

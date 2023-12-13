@@ -2,7 +2,7 @@
 
 .image{
     &::before{
-        @extend .icon-picture, :before;
+        @extend %icon-image;
     }
 
     &-v{

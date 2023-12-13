@@ -1,0 +1,20 @@
+@import "../config/rect.config";
+@import "./icon.scss";
+
+.radio{
+    border: 1px solid #c0c0c0;
+    border-radius: 5px;
+    height: $formItemHeight;
+    line-height: 3;
+
+    input[type="radio"]{
+        display: none;
+
+        & + .icon-radio::before{
+            @extend %icon-radio;
+        }
+        &:checked + .icon-radio::before{
+            @extend %icon-radio-checked;
+        }
+    }
+}

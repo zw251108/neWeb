@@ -1,4 +1,4 @@
-@mixin scrollBar($thumb: #c0c0c0, $track-piece: transparent){
+@mixin scroll-bar($thumb: #c0c0c0, $track-piece: transparent){
     &::-webkit-scrollbar{
         height: 5px;
         width: 5px;
@@ -14,5 +14,5 @@
 }
 
 .scrollbar{
-    @include scrollBar();
+    @include scroll-bar();
 }

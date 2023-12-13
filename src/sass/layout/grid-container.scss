@@ -1,14 +1,14 @@
-@mixin gridColumn($column){
+@mixin grid-column($column){
     grid-column: span $column;
 }
 
-@mixin gridRow($row){
+@mixin grid-row($row){
     grid-row: span $row;
 }
 
 @mixin grid($column, $row){
-    @include gridColumn( $column );
-    @include gridRow( $row );
+    @include grid-column( $column );
+    @include grid-row( $row );
 }
 
 .container{
@@ -21,25 +21,25 @@
         &.percent{
             grid-template-columns: repeat(auto-fill, 12.5%);
 
-            &.full{
-                @include gridColumn( 8 );
+            .full{
+                @include grid-column( 8 );
             }
-            &.half{
-                @include gridColumn( 4 );
+            .half{
+                @include grid-column( 4 );
             }
-            &.quarter{
-                @include gridColumn( 2 );
+            .quarter{
+                @include grid-column( 2 );
             }
         }
 
-        &.full{
-            @include gridColumn( 20 );
+        .full{
+            @include grid-column( 20 );
         }
-        &.half{
-            @include gridColumn( 10 );
+        .half{
+            @include grid-column( 10 );
         }
-        &.quarter{
-            @include gridColumn( 5 );
+        .quarter{
+            @include grid-column( 5 );
         }
     }
 }
@@ -49,14 +49,14 @@
         &.grid{
             grid-template-columns: repeat(auto-fill, 12.5%);
 
-            &.full{
-                @include gridColumn( 8 );
+            .full{
+                @include grid-column( 8 );
             }
-            &.half{
-                @include gridColumn( 4 );
+            .half{
+                @include grid-column( 4 );
             }
-            &.quarter{
-                @include gridColumn( 2 );
+            .quarter{
+                @include grid-column( 2 );
             }
         }
     }

@@ -91,59 +91,55 @@
     font-style: normal;
 }
 
-/*i*/.icon{
-    //a&{
-    //	margin-right: 10px;
-    //}
+%icon,
+/*i*/.icon::before{
+    display: inline-block;
+    width: 1em;
 
-    &::before{
-        display: inline-block;
-        width: 1em;
-        //*margin-left: .2em;
-        //	margin-right: .2em;
+    font-family: 'font', serif;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
 
-        font-family: 'font', serif;
-        font-style: normal;
-        font-weight: normal;
-        font-variant: normal;
+    speak: none;
 
-        //line-height: 1em;
+    text-align: center;
+    text-decoration: inherit;
+    text-transform: none;
 
-        speak: none;
+    vertical-align: top;
 
-        text-align: center;
-        text-decoration: inherit;
-        text-transform: none;
-
-        vertical-align: top;
-
-        // 解决 图标加粗
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-    }
-}
-a.icon:hover::before{
-    text-decoration: none;
+    // 解决 图标加粗
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
+%icon-radio,
 .icon-radio::before{
     content: "\e800";
 }
+%icon-radio-checked,
 .icon-radio-checked::before{
     content: "\e801";
 }
+
 .icon-cancel-circled::before{
     content: "\e802";
 }
+
+%icon-checkbox,
 .icon-checkbox::before{
     content: "\e803";
 }
+%icon-checkbox-checked,
 .icon-checkbox-checked::before{
     content: "\e804";
 }
+%icon-checkbox-half,
 .icon-checkbox-half::before{
     content: "\e805";
 }
+
 .icon-heart::before{
     content: "\e806";
 }
@@ -273,9 +269,12 @@ a.icon:hover::before{
 .icon-file-code::before{
     content: "\e830";
 }
+
+%icon-code,
 .icon-code::before{
     content: "\e901";
 }
+
 .icon-search::before{
     content: "\e832";
 }
@@ -297,9 +296,12 @@ a.icon:hover::before{
 .icon-settle::before{
     content: "\e837";
 }
+
+%icon-warming,
 .icon-warming::before{
     content: "\e838";
 }
+
 .icon-home::before{
     content: "\e839";
 }
@@ -318,9 +320,12 @@ a.icon:hover::before{
 .icon-calendar::before{
     content: "\e83e";
 }
+
+%icon-document,
 .icon-document::before{
     content: "\e922";
 }
+
 .icon-editor::before{
     content: "\e840";
 }
@@ -336,9 +341,14 @@ a.icon:hover::before{
 .icon-mail::before{
     content: "\e844";
 }
-.icon-picture::before{
+
+%icon-picture,
+.icon-picture::before,
+%icon-image,
+.icon-image::before{
     content: "\e845";
 }
+
 .icon-video::before{
     content: "\e846";
 }
@@ -357,24 +367,34 @@ a.icon:hover::before{
 .icon-steam::before{
     content: "\f1b7";
 }
+
+%icon-images,
 .icon-images::before{
     content: "\e90e";
 }
+
+%icon-link,
 .icon-link::before{
     content: "\f0c1";
 }
+
 .icon-share::before{
     content: "\f1e1";
 }
 .icon-lock::before{
     content: "\f023";
 }
+
+%icon-blog,
 .icon-blog::before{
     content: "\e907";
 }
+
+%icon-resume,
 .icon-resume::before{
     content: "\e923";
 }
+
 .icon-unlock::before{
     content: "\f13e";
 }
@@ -384,9 +404,12 @@ a.icon:hover::before{
 .icon-pin::before{
     content: "\f08d";
 }
+
+%icon-tag,
 .icon-tag::before{
     content: "\f02b";
 }
+
 .icon-qrcode::before{
     content: "\f029";
 }
@@ -402,42 +425,44 @@ a.icon:hover::before{
 .icon-card::before{
     content: "\f2bc";
 }
-.icon-update:before {
+.icon-update::before{
     content: "\e900";
 }
-.icon-valhalla:before {
+
+%icon-valhalla,
+.icon-valhalla::before{
     content: "\e90a";
 }
+
 .icon-transformer::before{
     content: "\e904";
 }
-.icon-new-char:before {
+.icon-new-char::before{
     content: "\e902";
 }
-.icon-pin-char:before {
+.icon-pin-char::before{
     content: "\e903";
 }
-.icon-upload-file:before {
+.icon-upload-file::before{
     content: "\e905";
 }
-.icon-menu-book:before {
+.icon-menu-book::before{
     content: "\e906";
 }
-.icon-side3:before {
+.icon-side3::before{
     content: "\e908";
 }
-.icon-bell:before {
+.icon-bell::before{
     content: "\e909";
 }
-.icon-quote:before{
+
+%icon-quote-left,
+.icon-quote::before,
+.icon-quote-left::before{
     content: "\f10d";
 }
-.icon-quote-left:before {
-    content: "\f10d";
-}
-.icon-quote:after{
-    content: "\f10e";
-}
-.icon-quote-right:before {
+%icon-quote-right,
+.icon-quote:after,
+.icon-quote-right::before{
     content: "\f10e";
 }

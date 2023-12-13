@@ -2,7 +2,7 @@
 
 .document{
     &::before{
-        @extend .icon-document, :before;
+        @extend %icon-document;
     }
 
     color: #333;

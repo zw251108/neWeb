@@ -1,66 +1,111 @@
-@mixin justifyContent($justify: space-between){
-    justify-content: $justify;
+@mixin flex-justify($justify: space-between){
+    @if $justify == left{
+        justify-content: flex-start;
+    }
+    @else if $justify == right{
+        justify-content: flex-end;
+    }
+    @else{
+        justify-content: $justify;
+    }
+}
+@mixin flex-align($align: top){
+    @if $align == top{
+        align-items: flex-start;
+    }
+    @else if $align == bottom{
+        align-items: flex-end;
+    }
+    @else{
+        align-items: $align;
+    }
 }
 
-@mixin alignItems($align: flex-start){
-    align-items: $align;
-}
-
-@mixin flexDirection($direction: row){
+@mixin flex-direction($direction: row){
     flex-direction: $direction;
 }
 
-@mixin flexWrap($wrap: wrap){
+@mixin flex-wrap($wrap: wrap){
     flex-wrap: $wrap;
+}
+
+@mixin flex-container(){
+    display: flex;
+
+    @include flex-justify();
+    @include flex-align();
+}
+@mixin flex-container-v(){
+    @include flex-direction( column );
+    @include flex-justify( flex-start );
+    @include flex-align( center );
 }
 
 .container{
     &.flex{
-        display: flex;
-
-        @include alignItems();
-        @include justifyContent();
+        @include flex-container();
 
         &.wrap{
-            @include flexWrap();
+            @include flex-wrap();
         }
 
         /* 水平方向 */
         &.left{
-            @include justifyContent( flex-start );
+            @include flex-justify( left );
         }
         &.center{
-            @include justifyContent( center );
+            @include flex-justify( center );
         }
         &.right{
-            @include justifyContent( flex-end );
+            @include flex-justify( right );
         }
         &.round{
-            @include justifyContent( space-around );
+            @include flex-justify( space-around );
         }
 
         /* 垂直方向 */
         &.top{
-            @include alignItems( flex-start );
+            @include flex-align( top );
         }
         &.justify{
-            @include alignItems( center );
+            @include flex-align( center );
         }
         &.bottom{
-            @include alignItems( flex-end );
+            @include flex-align( bottom );
         }
         &.stretch{
-            @include alignItems( stretch );
+            @include flex-align( stretch );
         }
 
+        /**
+         * 纵向排列 flex-direction: column
+         * justify-content 负责管上下
+         * align-items 负责管左右
+         */
         &-v{
-            @include flexDirection( column );
+            @include flex-container-v();
 
             &.top{
-                @include justifyContent( flex-start );
+                @include flex-justify( flex-start );
+            }
+            &.center{
+                @include flex-justify( center );
             }
             &.bottom{
-                @include justifyContent( flex-end );
+                @include flex-justify( flex-end );
+            }
+
+            &.left{
+                @include flex-align( flex-start );
+            }
+            &.justify{
+                @include flex-align( center );
+            }
+            &.right{
+                @include flex-align( flex-end );
+            }
+            &.stretch{
+                @include flex-align( stretch );
             }
         }
     }

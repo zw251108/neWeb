@@ -1,10 +1,10 @@
 @import "../config/rect.config.scss";
 
 .input{
+    height: $formItemHeight;
     border: 1px solid #c0c0c0;
     border-radius: 5px;
-    height: $formItemHeight;
-    text-indent: 1em;
     line-height: 3;
+    text-indent: 1em;
     box-sizing: border-box;
 }

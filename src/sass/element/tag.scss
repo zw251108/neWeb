@@ -31,12 +31,16 @@
         color: $tag_checked_c;
     }
     &::before{
-        @extend .icon, :before;
-        @extend .icon-tag, :before;
+        @extend %icon;
+        @extend %icon-tag;
 
         float: left;
         font-size: 16px;
         line-height: 28px;
         margin-right: 5px;
     }
+}
+
+.tagList{
+    margin: -5px;
 }

@@ -2,7 +2,7 @@
 
 .words{
     &::before{
-        @extend .icon-quote, :before;
+        @extend %icon-quote-left;
     }
     &::after{
         position: absolute;
@@ -20,7 +20,7 @@
         text-align: center;
         line-height: 40px;
         font-weight: bolder;
-        
-        @extend .icon-quote, :after;
+
+        @extend %icon-quote-right;
     }
 }
