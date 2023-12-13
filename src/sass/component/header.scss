@@ -57,10 +57,13 @@
             }
         }
         .filterList{
-            margin-top: 5px;
-
             @include flex-container();
             @include flex-justify( left );
+            @include flex-wrap();
+
+            .icon-checkbox{
+                margin: 5px 5px 0 0;
+            }
         }
     }
 
