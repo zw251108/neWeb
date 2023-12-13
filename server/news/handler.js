@@ -2,12 +2,13 @@ import {where, parse, literal} from '../db.js';
 import News           from './model.js';
 
 export default {
-	list({search, type, status, creatorId, page, size}
+	list({search, filter, type, status, creatorId, page, size}
 	     , attributes
 	     , order=[['createDate', 'DESC']]){
 
 		page = parse(page, 1);
 		size = parse(size, 20);
+		filter = filter ? filter.split(',') : [];
 
 		let whereSearch = search ? {
 				...where.or([
@@ -33,6 +34,9 @@ export default {
 		return News.findAll({
 			where: {
 				...whereSearch
+				, ...where.in({
+					type: filter
+				})
 				, ...where.eq({
 					type
 					, status
@@ -76,11 +80,12 @@ export default {
 			}
 		});
 	}
-	, news({search, page, size}){
+	, news({search, filter, page, size}){
 		return this.list({
 			status: 1
 			, creatorId: 1
 			, search
+			, filter
 			, page
 			, size
 		}, [

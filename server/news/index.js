@@ -12,6 +12,7 @@ createController(web, 'news', news, {
 
 web.get('/news', (req, res)=>{
 	let { search
+		, filter = ''
 		, page = 1
 		, size = 20 } = req.query
 		;
@@ -19,6 +20,7 @@ web.get('/news', (req, res)=>{
 	// todo creatorId 从 session 中取
 	news.news({
 		search
+		, filter
 		, page
 		, size
 	}).then((data)=>{

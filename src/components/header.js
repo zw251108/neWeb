@@ -1,16 +1,43 @@
 import {useState, useEffect, useRef, useContext} from 'react';
-import maple                             from 'cyan-maple';
+import maple                                     from 'cyan-maple';
 
 import RouterContext from '../context/router.js';
 
-function Header({index}){
+const NEWS_TYPE = {
+		blog: '博客'
+		, img: '相册'
+		, words: '碎念'
+		, doc: '文档'
+		, code: '代码'
+	}
+	;
+
+function Header({index, search: s='', filter: f=''}){
+	f = f.split(',');
+
 	const router = useContext( RouterContext )
 		,
 		[ showSearch, setShowSearch ] = useState(false)
 		,
-		[ keyword, setKeyWord ] = useState('')
+		[ keyword, setKeyWord ] = useState( s )
 		, searchBarRef = useRef(null)
+		,
+		[ current, setCurrent ] = useState(false)
+		,
+		[ filterAll, setFilterAll ] = useState( !!f.length )
+		,
+		[ filter, setFilter ] = useState( Object.keys( NEWS_TYPE ).reduce((rs, key)=>{
+			if( f.length ){
+				rs[key] = f.includes( key );
+			}
+			else{
+				rs[key] = true;
+			}
+			
+			return rs;
+		}, {}) )
 		;
+
 
 	function goBack(){
 		router.go(-1);
@@ -26,10 +53,45 @@ function Header({index}){
 
 	function search(e){
 		e.preventDefault();
+
+		let params = {}
+			;
+
+		if( keyword ){
+			params['search'] = keyword;
+		}
+
+		if( !filterAll ){
+			params['filter'] = Object.entries( filter ).reduce((rs, [key, value])=>{
+				if( value ){
+					rs.push( key );
+				}
+
+				return rs;
+			}, []).join()
+		}
 		
-		router.go('/index', {
-			search: keyword
-		});
+		setCurrent( !!keyword );
+		
+		router.go('/index', params);
+	}
+
+	function changeFilter(type, checked){
+		if( type === 'all' ){
+			setFilter((value)=>{
+				return Object.keys( value ).reduce((rs, k)=>{
+					rs[k] = checked;
+
+					return rs;
+				}, {});
+			});
+		}
+		else if( type in filter ){
+			setFilter({
+				...filter
+				, [type]: checked
+			});
+		}
 	}
 
 	useEffect(()=>{
@@ -43,11 +105,10 @@ function Header({index}){
 			;
 
 		if( el ){
-			maple.listener.on(el, 'click', (e)=>{
-				e.stopPropagation();
-			});
 			maple.listener.on(document, 'click', (e)=>{
-				setShowSearch(false);
+				if( !el.contains(e.target) ){
+					setShowSearch(false);
+				}
 			});
 		}
 
@@ -55,6 +116,12 @@ function Header({index}){
 			maple.listener.off(document, 'click');
 		};
 	}, [showSearch]);
+
+	useEffect(()=>{
+		setFilterAll( Object.entries( filter ).every(([key, value])=>{
+			return value;
+		}) );
+	}, [filter]);
 
 	return (<header className="header">
 		<div className="header_content">
@@ -72,13 +139,13 @@ function Header({index}){
 					     alt=""/>
 				</a>
 				{!index && <i className="icon icon-left"
-				             onClick={goBack}></i>}
+				              onClick={goBack}></i>}
 			</div>
 			<div className="container flex right">
-				{index && (<i className={`icon icon-search ${showSearch ? 'active' : ''} ${keyword ? 'current' : ''}`}
+				{index && (<i className={`icon icon-search ${showSearch ? 'active' : ''} ${current ? 'current' : ''}`}
 				              onClick={toggleSearchBar}></i>)}
 				<img className="avatar"
-				     src="/image/avatar-96.jpg"
+				     src="/image/avatar-30.jpg"
 				     width="30"
 				     height="30"
 				     alt=""/>
@@ -88,7 +155,7 @@ function Header({index}){
 			(<div className="header_searchBar"
 			      ref={searchBarRef}>
 				<form action="" onSubmit={search}>
-					<div className="container flex">
+					<div className="keywordBar">
 						<input className="input"
 						       type="text"
 						       placeholder="请输入搜索内容"
@@ -98,6 +165,26 @@ function Header({index}){
 						       }}/>
 						<button className="btn icon icon-search"
 						        type="submit">搜索</button>
+					</div>
+					<div className="filterList">
+						<label className="checkbox">
+							<input type="checkbox"
+							       checked={filterAll}
+							       onChange={(e)=>{
+									   changeFilter('all', e.target.checked);
+							       }}/>
+							<span className="icon icon-checkbox">全部</span>
+						</label>
+						{Object.entries( NEWS_TYPE ).map(([key, value])=>{
+							return (<label className="checkbox" key={key}>
+								<input type="checkbox"
+								       checked={filter[key]}
+								       onChange={(e)=>{
+										   changeFilter(key, e.target.checked);
+								       }}/>
+								<span className="icon icon-checkbox">{value}</span>
+							</label>);
+						})}
 					</div>
 				</form>
 			</div>)

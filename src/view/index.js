@@ -4,7 +4,7 @@ import api      from '../api/index.js';
 import NewsList from '../components/news/index.js';
 import LoadMore from '../components/loadMore/index.js';
 
-function Index({search}){
+function Index({search, filter}){
 	const
 		[ list, setList ] = useState([])
 		,
@@ -31,7 +31,7 @@ function Index({search}){
 		setList([]);
         setMax(false);
 		setPage(0);
-	}, [search]);
+	}, [search, filter]);
 
 	useEffect(()=>{
 		if( page === 0 ){
@@ -42,6 +42,7 @@ function Index({search}){
 
 		api.news({
 			search
+			, filter
 			, page
 			, size: 20
 		}).then(({data})=>{
