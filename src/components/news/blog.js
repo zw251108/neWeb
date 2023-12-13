@@ -38,7 +38,7 @@ function NewsBlog({item}){
 				:
 				(<div className="news_content">
 					{blog.preview ?
-						(<div className="news_preview container img img-h">
+						(<div className="news_preview container img">
 							<img src={imgPath( blog.preview )} alt={blog.content}/>
 						</div>)
 						:

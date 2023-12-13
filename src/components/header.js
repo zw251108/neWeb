@@ -13,7 +13,12 @@ const NEWS_TYPE = {
 	;
 
 function Header({index, search: s='', filter: f=''}){
-	f = f.split(',');
+	if( f === '' ){
+		f = [];
+	}
+	else{
+		f = f.split(',');
+	}
 
 	const router = useContext( RouterContext )
 		,
