@@ -353,23 +353,19 @@ const album = {
 
 			return execute;
 		}) ).then((data)=>{
-			let { src
-				, width
-				, height
-				, desc } = data[0]
-				;
-
 			return Promise.all([
 				News.create({
-					type: 'img'
+					type: 'album'
 					, targetId: albumId
-					, content: {
-						src
-						, width
-						, height
-						, desc
-						, more: data.length -1
-					}
+					, content: data.map(({id, src, width, height, desc})=>{
+						return {
+							id
+							, src
+							, width
+							, height
+							, desc
+						};
+					})
 					, status
 					, creatorId: 1
 				})

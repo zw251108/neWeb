@@ -102,6 +102,7 @@ function Test(){
 		<i className="icon icon-bell"></i>
 		<i className="icon icon-quote-left"></i>
 		<i className="icon icon-quote-right"></i>
+		<i className="icon icon-image-resize"></i>
 	</div>);
 }
 

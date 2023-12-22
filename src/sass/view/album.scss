@@ -24,10 +24,10 @@
         }
 
         &-v{
-            @include grid-column( 2 );
+            @include grid-column( 4 );
         }
         &-h{
-            @include grid-column( 4 );
+            @include grid-column( 8 );
         }
     }
 
@@ -48,6 +48,7 @@
             }
             &-h{
                 @include grid-column( 8 );
+                @include grid-row( 4 );
             }
         }
     }

@@ -61,32 +61,32 @@ function Valhalla(){
 	return (<section className="module valhalla">
 		<div className="module_title">{list.length ? current.name : ''}</div>
 		<div className="module_content">
-			<div className="valhalla_preview">
-				{list.length && (<div className="slider">
-					<div className="main-preview container img flex center justify">
-						{currentPic ?
-							<img src={imgPath( currentPic )}
-							     title={current.name}
-							     alt="照片待补"/>
-							:
-							<div className="container flex center justify">照片待补</div>}
-						{currentIndex !== 0 ?
-							<div className="prev container flex left justify"
-							     onClick={prev}>
+			{list.length && (<div className="valhalla_preview">
+				<div className="main-preview container img flex center justify">
+					{currentPic ?
+						<img src={imgPath(currentPic)}
+						     title={current.name}
+						     alt="照片待补"/>
+						:
+						<div className="container flex center justify">照片待补</div>}
+					{currentIndex !== 0 ?
+						<div className="prev container flex center justify"
+						     onClick={prev}>
 								<i className="icon icon-left"></i>
 							</div>
-							:
-							null}
-						{currentIndex !== list.length -1 ?
-							<div className="next container flex right justify"
-							     onClick={next}>
+						:
+						null}
+					{currentIndex !== list.length - 1 ?
+						<div className="next container flex center justify"
+						     onClick={next}>
 								<i className="icon icon-right"></i>
 							</div>
-							:
-							null}
-					</div>
-					{current.path.length ?
-						<div className="preview-list container flex left scroll-x">
+						:
+						null}
+				</div>
+			</div>)}
+			{list.length && current.path.length ?
+				<div className="preview-list container flex left scroll-x">
 							{current.path.map((item, index)=>{
 								return (<div className={`container img ${index === currentPicIndex ? 'current' : ''}`}
 								             onClick={()=>{
@@ -98,28 +98,26 @@ function Valhalla(){
 								</div>);
 							})}
 						</div>
-						:
-						null}
-					<div className="description">
-						<div className="container flex left">
-							<div>姓&emsp;&emsp;名：</div>
-							<div>{current.name}</div>
-						</div>
-						<div className="container flex left">
-							<div>入职时间：</div>
-							<div>{current.start}</div>
-						</div>
-						<div className="container flex left">
-							<div>离职时间：</div>
-							<div>{current.end}</div>
-						</div>
-						<div className="container flex left">
-							<div>职业生涯：</div>
-							<div>{current.description}</div>
-						</div>
-					</div>
-				</div>)}
-			</div>
+				:
+				null}
+			{list.length && (<div className="description">
+				<div className="container flex left">
+					<div>姓&emsp;&emsp;名：</div>
+					<div>{current.name}</div>
+				</div>
+				<div className="container flex left">
+					<div>入职时间：</div>
+					<div>{current.start}</div>
+				</div>
+				<div className="container flex left">
+					<div>离职时间：</div>
+					<div>{current.end}</div>
+				</div>
+				<div className="container flex left">
+					<div>职业生涯：</div>
+					<div>{current.description}</div>
+				</div>
+			</div>)}
 		</div>
 	</section>);
 }

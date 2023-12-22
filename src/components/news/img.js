@@ -13,9 +13,15 @@ function NewsImg({item}){
 
 	if( type === 'v' ){
 		if( r <= 0.5625 ){
+			/**
+			 * 9: 16
+			 * */
 			imageType = 'v';
 		}
 		else if( r <= 0.75 ){
+			/**
+			 * 3: 4
+			 * */
 			imageType = 'vh';
 		}
 		else{
@@ -34,15 +40,15 @@ function NewsImg({item}){
 		}
 	}
 	/**
-	 * vh   9: 16   0.5625
-	 * v    3: 4    0.75
-	 * hv   4: 3    1.3333
-	 * h        1.6245
-	 * h   16: 9   1.7777
+	 * v   9: 16   0.5625
+	 * vh    3: 4    0.75
+	 * hv   4: 3    1.33333
+	 * hv   2430: 1434     1.6245
+	 * h   16: 9   1.77777
 	 * */
 	
 	return (<div className={`module news image image-${imageType}`}>
-		<a href={`#/${img.more ? `album` : `img`}?id=${item.targetId}`}>
+		<a href={`#/img?id=${item.targetId}`}>
 			<div className="news_content">
 				<div className={`news_preview container img img-${type}`}>
 					<img src={imgPath( img.src )}
@@ -50,7 +56,6 @@ function NewsImg({item}){
 				</div>
 				<div className="news_detail">
 					{img.desc && <div className="news_desc">{img.desc}</div>}
-					{img.more && <div className="news_more">+{img.more}</div>}
 				</div>
 			</div>
 		</a>

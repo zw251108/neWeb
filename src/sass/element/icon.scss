@@ -323,7 +323,7 @@
 
 %icon-document,
 .icon-document::before{
-    content: "\e922";
+    content: "\e926";
 }
 
 .icon-editor::before{
@@ -346,11 +346,11 @@
 .icon-picture::before,
 %icon-image,
 .icon-image::before{
-    content: "\e845";
+    content: "\e846";
 }
 
 .icon-video::before{
-    content: "\e846";
+    content: "\e845";
 }
 .icon-tasks::before{
     content: "\e847";
@@ -370,7 +370,7 @@
 
 %icon-images,
 .icon-images::before{
-    content: "\e90e";
+    content: "\e911";
 }
 
 %icon-link,
@@ -392,7 +392,7 @@
 
 %icon-resume,
 .icon-resume::before{
-    content: "\e923";
+    content: "\e927";
 }
 
 .icon-unlock::before{
@@ -465,4 +465,8 @@
 .icon-quote:after,
 .icon-quote-right::before{
     content: "\f10e";
+}
+
+.icon-image-resize::before{
+    content: "\e90c";
 }

@@ -1,5 +1,6 @@
 import NewsBlog      from './blog.js';
 import NewsDoc       from './doc.js';
+import NewsAlbum     from './album.js';
 import NewsImg       from './img.js';
 import NewsCode      from './code.js';
 import NewsWords     from './words.js';
@@ -12,6 +13,7 @@ function NewsList({list}){
 	const itemList = {
 			blog: NewsBlog
 			, doc: NewsDoc
+			, album: NewsAlbum
 			, img: NewsImg
 			, code: NewsCode
 			, words: NewsWords

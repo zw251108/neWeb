@@ -83,14 +83,14 @@ function Image({id, albumId}){
 					<img src={img.src ? imgPath( img.src ) : ''}
 					     alt=""/>
 					{showPrev ?
-						(<div className="prev container flex left justify"
+						(<div className="prev container flex center justify"
 						      onClick={prev}>
 							<i className="icon icon-left"></i>
 						</div>)
 						:
 						null}
 					{showNext ?
-						(<div className="next container flex right justify"
+						(<div className="next container flex center justify"
 						      onClick={next}>
 							<i className="icon icon-right"></i>
 						</div>)

@@ -68,6 +68,28 @@ web.get('/news', (req, res)=>{
 	});
 });
 
+web.get('/news/:id', (req, res)=>{
+	let { id } = req.params
+		;
+
+	news.get({
+		id
+		, creatorId: 1
+		, status: 1
+    }, [
+		'id'
+		, 'type'
+		, 'targetId'
+		, 'content'
+		, 'createDate'
+	]).then((data)=>{
+		res.send({
+			code: 0
+			, data
+		});
+	});
+})
+
 web.post('/news', (req, res)=>{
 	let data = req.body
 		;

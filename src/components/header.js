@@ -5,11 +5,13 @@ import RouterContext from '../context/router.js';
 
 const NEWS_TYPE = {
 		blog: '博客'
-		, img: '相册'
+		, img: '图片'
+		, album: '相册'
 		, words: '碎念'
 		, doc: '文档'
 		, code: '代码'
 	}
+	, IMAGE_SIZE = ['', 'tiny', 'small', '', 'large']
 	;
 
 function Header({index, search: s='', filter: f=''}){
@@ -41,8 +43,17 @@ function Header({index, search: s='', filter: f=''}){
 			
 			return rs;
 		}, {}) )
+		,
+		[ imageSize, setImageSize ] = useState(3)
+		,
+		[ showImageResize, setShowImageResize ] = useState(false)
+		, imageResizeRef = useRef(null)
 		;
 
+	function closeAll(){
+		setShowSearch(false);
+		setShowImageResize(false);
+	}
 
 	function goBack(){
 		router.go(-1);
@@ -50,6 +61,8 @@ function Header({index, search: s='', filter: f=''}){
 
 	function toggleSearchBar(e){
 		e.stopPropagation();
+
+		closeAll();
 
 		setShowSearch((r)=>{
 			return !r;
@@ -102,25 +115,11 @@ function Header({index, search: s='', filter: f=''}){
 	useEffect(()=>{
 		if( !index ){
 			setShowSearch( index );
+			setShowImageResize( index );
+
+			setImageSize(2);
 		}
 	}, [index])
-
-	useEffect(()=>{
-		let el = searchBarRef.current
-			;
-
-		if( el ){
-			maple.listener.on(document, 'click', (e)=>{
-				if( !el.contains(e.target) ){
-					setShowSearch(false);
-				}
-			});
-		}
-
-		return ()=>{
-			maple.listener.off(document, 'click');
-		};
-	}, [showSearch]);
 
 	useEffect(()=>{
 		setFilterAll( Object.entries( filter ).every(([key, value])=>{
@@ -128,7 +127,57 @@ function Header({index, search: s='', filter: f=''}){
 		}) );
 	}, [filter]);
 
-	return (<header className="header">
+	useEffect(()=>{
+		let el = searchBarRef.current
+			, handler = (e)=>{
+				if( !el.contains(e.target) ){
+					setShowSearch(false);
+				}
+			}
+			;
+
+		if( el ){
+			maple.listener.on(document, 'click', handler);
+		}
+
+		return ()=>{
+			maple.listener.off(document, 'click', handler);
+		};
+	}, [showSearch]);
+
+	function toggleImageResize(e){
+		e.stopPropagation();
+
+		closeAll();
+
+		setShowImageResize((v)=>{
+			return !v;
+		});
+	}
+
+	useEffect(()=>{
+		let el = imageResizeRef.current
+			, handler = (e)=>{
+				if( !el.contains(e.target) ){
+					setShowImageResize(false);
+				}
+			}
+			;
+
+		if( el ){
+			maple.listener.on(document, 'click', handler);
+		}
+
+		return ()=>{
+			maple.listener.off(document, 'click', handler);
+		};
+	}, [showImageResize]);
+
+	function imageResize(e){
+		setImageSize( +e.target.value );
+	}
+
+	return (<header className={`header ${IMAGE_SIZE[imageSize] ? `image-${IMAGE_SIZE[imageSize]}` : ''}`}>
 		<div className="header_content">
 			<div className="container flex left">
 				<a href="/#/index"
@@ -147,6 +196,8 @@ function Header({index, search: s='', filter: f=''}){
 				              onClick={goBack}></i>}
 			</div>
 			<div className="container flex right">
+				{index && (<i className={`icon icon-image-resize ${showImageResize ? 'active' : ''}`}
+				              onClick={toggleImageResize}></i>)}
 				{index && (<i className={`icon icon-search ${showSearch ? 'active' : ''} ${current ? 'current' : ''}`}
 				              onClick={toggleSearchBar}></i>)}
 				<img className="avatar"
@@ -192,6 +243,20 @@ function Header({index, search: s='', filter: f=''}){
 						})}
 					</div>
 				</form>
+			</div>)
+			:
+			null}
+		{showImageResize ?
+			(<div className="header_searchBar"
+			      ref={imageResizeRef}>
+				<div>
+					<label htmlFor="imageResize">调整相册图片现实大小</label>
+					<input type="range" min="1" max="4"
+					       id="imageResize"
+					       value={imageSize}
+					       onChange={imageResize}/>
+					<span>{IMAGE_SIZE[imageSize] || 'normal'}</span>
+				</div>
 			</div>)
 			:
 			null}

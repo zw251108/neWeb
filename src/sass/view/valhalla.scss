@@ -7,14 +7,13 @@
     }
 
     .valhalla_preview{
-        border-radius: 10px;
+        position: relative;
+        border-radius: 10px 10px 0 0;
         padding: 10px;
         background: #fff;
     }
 
     .main-preview{
-        overflow: visible;
-        position: relative;
         max-width: 500px;
         min-height: 400px;
         margin: auto;
@@ -24,13 +23,13 @@
         position: absolute;
         top: 0;
         bottom: 0;
-        width: 50%;
+        width: 40%;
     }
     .prev{
-        left: -25px;
+        left: 0;
     }
     .next{
-        right: -25px;
+        right: 0;
     }
     .icon{
         width: 50px;
@@ -40,6 +39,7 @@
         color: rgba(255, 255, 255, .7);
         font-size: 0;
         text-align: center;
+        
         &::before{
             font-size: 40px;
             line-height: 50px;
@@ -48,8 +48,8 @@
 
     .preview-list{
         border-bottom: 1px solid #c0c0c0;
-        margin: 5px -5px 0;
-        padding-bottom: 5px;
+        padding: 10px 10px 0;
+        background: #fff;
 
         @include scroll-bar();
 
@@ -63,13 +63,15 @@
             margin: 5px;
             width: 25%;
             max-width: 100px;
-
         }
     }
     .description{
+        border-radius: 0 0 10px 10px;
+        background: #fff;
+
         .container.flex{
             max-width: 500px;
-            margin: 5px auto;
+            margin: 10px auto;
             font-size: 16px;
             line-height: 20px;
 

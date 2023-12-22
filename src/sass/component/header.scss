@@ -86,24 +86,22 @@
             height: 30px;
             margin: 5px;
             color: #fff;
-            font-size: 20px;
+            font-size: 28px;
             line-height: 30px;
             text-align: center;
-        }
-        .icon-search{
             border-radius: 5px;
 
-            &.current{
-                outline: 1px dashed #c0c0c0;
-            }
             &.active{
                 outline: 0;
                 background: #fff;
-                color: #c0c0c0;
+                color: #000;
+            }
+            &.current{
+                outline: 1px dashed #c0c0c0;
             }
         }
         .icon-left{
-            width: 15px;
+            //width: 15px;
         }
     }
 }

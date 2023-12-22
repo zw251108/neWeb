@@ -60,6 +60,18 @@ export default {
 			}
 		});
 	}
+	, get({id, creatorId, status}, attributes){
+		return News.findOne({
+			where: {
+				...where.eq({
+					id
+					, creatorId
+					, status
+				})
+			}
+			, attributes
+		});
+	}
 	, create({type, targetId, content}){
 		return News.create({
 			type

@@ -4,8 +4,10 @@ import {imgPath} from '../config.js';
 import api       from '../api/index.js';
 import LoadMore  from '../components/loadMore/index.js';
 
-function Album({id}){
+function Album({id, newsId}){
 	const
+		[ albumId, setAlbumId ] = useState( id )
+		,
 		[ album, setAlbum ] = useState({})
 		,
 		[ list, setList ] = useState([])
@@ -29,42 +31,78 @@ function Album({id}){
 		setPage( page +1 );
 	}
 
-	useEffect(()=>{
+	function fetchAlbum(id){
 		api.get(`/album/${id}`).then(({data})=>{
 			setAlbum( data );
 		});
-		setList([]);
-		setMax(false);
+	}
+
+	useEffect(()=>{
+		if( id ){
+			fetchAlbum( id );
+			setList([]);
+			setPage(0);
+			setMax(false);
+		}
 	}, [id]);
+
+	useEffect(()=>{
+		if( albumId ){
+			fetchAlbum( albumId );
+		}
+	}, [albumId]);
 
 	useEffect(()=>{
 		if( page === 0 ){
 			return ;
 		}
 
-		setFetching(true);
+		if( id ){
+			setFetching(true);
 
-		api.get(`/album/${id}/imgs`, {
-			data: {
-				albumId: id
-				, page
-				, size: 20
-			}
-		}).then(({data})=>{
-			if( !data.length ){
-				setMax(true);
-			}
+			api.get(`/album/${albumId}/imgs`, {
+				data: {
+					albumId
+					, page
+					, size: 20
+				}
+			}).then(({data})=>{
+				if( !data.length ){
+					setMax(true);
+				}
 
-			setFetching(false);
+				setFetching(false);
 
-			setList((list)=>{
-				return list.concat( data );
+				setList((list)=>{
+					return list.concat( data );
+				});
 			});
-		});
+		}
 	}, [page]);
 
+	useEffect(()=>{
+		if( newsId ){
+			setFetching(true);
+
+			api.get(`/news/${newsId}`).then(({data})=>{
+				setAlbumId( data.targetId );
+
+				setMax(true);
+
+				setFetching(false);
+
+				setList( data.content );
+			});
+		}
+	}, [newsId]);
+
 	return (<section className="module album">
-		<h2 className="module_title">相册 {album.name}</h2>
+		{newsId ?
+			(<a href={`#/album?id=${albumId}`}>
+				<h2 className="module_title">相册 {album.name}</h2>
+			</a>)
+			:
+			(<h2 className="module_title">相册 {album.name}</h2>)}
 		<div className="module_content">
 			<div className="container grid percent">
 				{list.map((img)=>{
@@ -74,7 +112,7 @@ function Album({id}){
 
 					return (<div className={`module news image image-${type}`}
 					             key={img.id}>
-						<a href={`#/img?id=${img.id}&albumId=${id}`}>
+						<a href={`#/img?id=${img.id}&albumId=${albumId}`}>
 							<div className={`container img img-${type} flex center justify`}>
 								<img src={imgPath( img.src )}
 								     alt=""/>
