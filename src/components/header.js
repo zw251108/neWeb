@@ -11,7 +11,9 @@ const NEWS_TYPE = {
 		, doc: '文档'
 		, code: '代码'
 	}
-	, IMAGE_SIZE = ['', 'tiny', 'small', '', 'large']
+	, IMAGE_SIZE = ['', 'tiny', 'small', ''
+		// , 'large'
+	]
 	;
 
 function Header({index, search: s='', filter: f=''}){
@@ -251,7 +253,7 @@ function Header({index, search: s='', filter: f=''}){
 			      ref={imageResizeRef}>
 				<div>
 					<label htmlFor="imageResize">调整相册图片现实大小</label>
-					<input type="range" min="1" max="4"
+					<input type="range" min="1" max={IMAGE_SIZE.length -1}
 					       id="imageResize"
 					       value={imageSize}
 					       onChange={imageResize}/>

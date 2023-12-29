@@ -8,10 +8,14 @@
 
 $descLineHeight: 1.5em;
 
+@mixin album-preview-calc($col, $row, $rowNum, $colNum: 1){
+    width: ($col * 50px - 40px) / $rowNum;
+    height: ($row * 50px) / $colNum;
+}
 @mixin album-preview($col, $row, $rowNum, $colNum: 1){
     .news_preview{
-        width: ($col * 50px - 40px - ($rowNum - 1) * 10px) / $rowNum;
-        height: ($row * 50px - 40px - ($colNum - 1) * 10px) / $colNum;
+        width: ($col * 50px - 40px) / $rowNum;
+        height: ($row * 50px - 40px) / $colNum;
     }
 }
 
@@ -335,7 +339,7 @@ $descLineHeight: 1.5em;
             @include grid(8, 6);
         }
         &-h{
-            @include grid(8, 5);
+            @include grid(8, 4);
         }
         &-v{
             @include grid(4, 7);
@@ -512,43 +516,31 @@ $descLineHeight: 1.5em;
 
         &.image{
             &-hv{
-                @include grid(12, 9);
+                @include grid(16, 12);
 
                 .image-small + .main &{
                     @include grid(8, 6);
                 }
-                .image-large + .main &{
-                    @include grid(16, 12);
-                }
             }
             &-h{
-                @include grid(12, 7);
-                
+                @include grid(16, 9);
+
                 .image-small + .main &{
-                    @include grid(8, 5);
-                }
-                .image-large + .main &{
-                    @include grid(16, 9);
+                    @include grid(8, 4);
                 }
             }
             &-v{
-                @include grid(6, 11);
+                @include grid(8, 15);
 
                 .image-small + .main &{
                     @include grid(4, 7);
                 }
-                .image-large + .main &{
-                    @include grid(8, 15);
-                }
             }
             &-vh{
-                @include grid(6, 9);
+                @include grid(8, 11);
 
                 .image-small + .main &{
                     @include grid(4, 6);
-                }
-                .image-large + .main &{
-                    @include grid(8, 11);
                 }
             }
 
@@ -574,6 +566,13 @@ $descLineHeight: 1.5em;
             .news_content{
                 @include flex-justify( space-between );
                 @include flex-wrap();
+
+                border-radius: 5px;
+                overflow: hidden;
+            }
+            .news_preview{
+                border-radius: 0;
+                outline: 1px solid #c0c0c0;
             }
             .news_preview:nth-of-type(n+2){
                 display: flex;
@@ -588,157 +587,59 @@ $descLineHeight: 1.5em;
                 }
 
                 &.album-2{
-                    @include grid(12, 9);
+                    @include grid(8, 6);
 
-                    @include album-preview(12, 9, 2);
+                    @include album-preview(8, 6, 2);
 
-                    .image-small + .main &{
-                        @include grid(8, 6);
-
-                        @include album-preview(8, 6, 2);
-                    }
-                    .image-large + .main &{
-                        @include grid(16, 12);
-
-                        @include album-preview(16, 12, 2);
-                    }
+                    .image-small + .main &{}
+                    .image-large + .main &{}
                 }
                 &.album-3{
-                    @include grid(18, 9);
+                    @include grid(16, 8);
 
-                    @include album-preview(18, 9, 3);
-                    
-                    .image-small + .main &{
-                        @include grid(12, 6);
-
-                        @include album-preview(12, 6, 3);
-                    }
-                    .image-large + .main &{
-                        @include grid(24, 12);
-
-                        @include album-preview(24, 12, 3);
-                    }
+                    @include album-preview(16, 8, 3, 1);
                 }
                 &.album-4{
-                    @include grid(12, 18);
+                    @include grid(8, 12);
 
-                    @include album-preview(12, 18, 2, 2);
+                    @include album-preview(8, 12, 2, 2);
+                }
+                &.album-5{
+                    @include grid(8, 10);
+
+                    @include album-preview(8, 6, 2, 1);
 
                     .news_preview{
                         &:nth-of-type(n+3){
-                            margin-top: 10px;
+                            @include album-preview-calc(8, 4, 3, 1);
                         }
                     }
-
-                    .image-small + .main &{
-                        @include grid(8, 12);
-
-                        @include album-preview(8, 12, 2, 2);
-                    }
-                    .image-large + .main &{
-                        @include grid(16, 24);
-
-                        @include album-preview(16, 24, 2, 2);
-                    }
                 }
-                &.album-5{display: none;}
                 &.album-6{
-                    @include grid(18, 18);
+                    @include grid(16, 16);
 
-                    @include album-preview(18, 18, 3, 2);
+                    @include album-preview(16, 16, 3, 2);
+                }
+                &.album-7{
+                    @include grid(16, 14);
+
+                    @include album-preview(16, 8, 3, 1);
 
                     .news_preview{
                         &:nth-of-type(n+4){
-                            margin-top: 10px;
+                            @include album-preview-calc(16, 6, 4, 1);
                         }
-                    }
-
-                    .image-small + .main &{
-                        @include grid(12, 12);
-
-                        @include album-preview(12, 12, 3, 2);
-                    }
-                    .image-large + .main &{
-                        @include grid(24, 24);
-
-                        @include album-preview(24, 24, 3, 2);
                     }
                 }
-                &.album-7{display: none;}
                 &.album-8{
-                    @include grid(12, 35);
+                    @include grid(16, 12);
 
-                    @include album-preview(12, 35, 2, 4);
-
-                    .news_preview{
-                        &:nth-of-type(n+3){
-                            margin-top: 10px;
-                        }
-                    }
-
-                    .image-small + .main &{
-                        @include grid(8, 23);
-
-                        @include album-preview(8, 23, 2, 4);
-                    }
-                    .image-large + .main &{
-                        @include grid(16, 47);
-
-                        @include album-preview(16, 47, 2, 4);
-                    }
-
-                    //@include grid(24, 18);
-                    //
-                    //@include album-preview(24, 18, 4, 2);
-                    //
-                    //.news_preview{
-                    //    &:nth-of-type(4n+1), &:nth-of-type(4n){
-                    //        width: 280px;
-                    //    }
-                    //    &:nth-of-type(4n+2), &:nth-of-type(4n+3){
-                    //        width: 285px;
-                    //    }
-                    //    &:nth-of-type(n+5){
-                    //        margin-top: 10px;
-                    //    }
-                    //}
-                    //
-                    //.image-small + .main &{
-                    //    @include grid(16, 12);
-                    //
-                    //    @include album-preview(16, 12, 4, 2);
-                    //
-                    //    .news_preview{
-                    //        &:nth-of-type(4n+1), &:nth-of-type(4n){
-                    //            width: 180px;
-                    //        }
-                    //        &:nth-of-type(4n+2), &:nth-of-type(4n+3){
-                    //            width: 185px;
-                    //        }
-                    //    }
-                    //}
+                    @include album-preview(16, 12, 4, 2);
                 }
                 &.album-9{
-                    @include grid(18, 27);
+                    @include grid(16, 24);
 
-                    @include album-preview(18, 27, 3, 3);
-
-                    .news_preview{
-                        &:nth-of-type(n+4){
-                            margin-top: 10px;
-                        }
-                    }
-
-                    .image-small + .main &{
-                        @include grid(12, 18);
-
-                        @include album-preview(12, 18, 3, 3);
-                    }
-                    .image-large + .main &{
-                        @include grid(24, 36);
-
-                        @include album-preview(24, 36, 3, 3);
-                    }
+                    @include album-preview(16, 24, 3, 3);
                 }
             }
             &-v{
@@ -750,157 +651,56 @@ $descLineHeight: 1.5em;
                 }
 
                 &.album-2{
-                    @include grid(12, 11);
+                    @include grid(8, 8);
 
-                    @include album-preview(12, 11, 2);
-
-                    .image-small + .main &{
-                        @include grid(8, 7);
-
-                        @include album-preview(8, 7, 2);
-                    }
-                    .image-large + .main &{
-                        @include grid(16, 15);
-
-                        @include album-preview(16, 15, 2);
-                    }
+                    @include album-preview(8, 8, 2, 1);
                 }
                 &.album-3{
-                    @include grid(18, 11);
+                    @include grid(16, 10);
 
-                    @include album-preview(18, 11, 3);
-
-                    .image-small + .main &{
-                        @include grid(12, 8);
-
-                        @include album-preview(12, 8, 3);
-                    }
-                    .image-large + .main &{
-                        @include grid(24, 16);
-
-                        @include album-preview(24, 16, 3);
-                    }
+                    @include album-preview(16, 10, 3, 1);
                 }
                 &.album-4{
-                    @include grid(12, 22);
+                    @include grid(8, 15);
 
-                    @include album-preview(12, 22, 2, 2);
+                    @include album-preview(8, 15, 2, 2);
+                }
+                &.album-5{
+                    @include grid(8, 13);
+
+                    @include album-preview(8, 8, 2, 1);
 
                     .news_preview{
                         &:nth-of-type(n+3){
-                            margin-top: 10px;
+                            @include album-preview-calc(8, 5, 3, 1);
                         }
                     }
-
-                    .image-small + .main &{
-                        @include grid(8, 14);
-
-                        @include album-preview(8, 14, 2, 2);
-                    }
-                    .image-large + .main &{
-                        @include grid(16, 30);
-
-                        @include album-preview(16, 30, 2, 2);
-                    }
                 }
-                &.album-5{display: none;}
                 &.album-6{
-                    @include grid(18, 22);
+                    @include grid(16, 20);
 
-                    @include album-preview(18, 22, 3, 2);
+                    @include album-preview(16, 20, 3, 2);
+                }
+                &.album-7{
+                    @include grid(16, 17);
+
+                    @include album-preview(16, 10, 3, 1);
 
                     .news_preview{
                         &:nth-of-type(n+4){
-                            margin-top: 10px;
+                            @include album-preview-calc(16, 7, 4, 1);
                         }
-                    }
-
-                    .image-small + .main &{
-                        @include grid(12, 15);
-
-                        @include album-preview(12, 15, 3, 2);
-                    }
-                    .image-large + .main &{
-                        @include grid(24, 31);
-
-                        @include album-preview(24, 31, 3, 2);
                     }
                 }
-                &.album-7{display: none;}
                 &.album-8{
-                    @include grid(12, 43);
+                    @include grid(16, 15);
 
-                    @include album-preview(12, 43, 2, 4);
-
-                    .news_preview{
-                        &:nth-of-type(n+3){
-                            margin-top: 10px;
-                        }
-                    }
-
-                    .image-small + .main &{
-                        @include grid(8, 27);
-
-                        @include album-preview(8, 27, 2, 4);
-                    }
-                    .image-large + .main &{
-                        @include grid(16, 59);
-
-                        @include album-preview(16, 59, 2, 4);
-                    }
-
-                    //@include grid(24, 22);
-                    //
-                    //@include album-preview(24, 22, 4, 2);
-                    //
-                    //.news_preview{
-                    //    &:nth-of-type(4n+1), &:nth-of-type(4n){
-                    //        width: 280px;
-                    //    }
-                    //    &:nth-of-type(4n+2), &:nth-of-type(4n+3){
-                    //        width: 285px;
-                    //    }
-                    //    &:nth-of-type(n+5){
-                    //        margin-top: 10px;
-                    //    }
-                    //}
-                    //
-                    //.image-small + .main &{
-                    //    @include grid(16, 14);
-                    //
-                    //    @include album-preview(16, 14, 4, 2);
-                    //
-                    //    .news_preview{
-                    //        &:nth-of-type(4n+1), &:nth-of-type(4n){
-                    //            width: 180px;
-                    //        }
-                    //        &:nth-of-type(4n+2), &:nth-of-type(4n+3){
-                    //            width: 185px;
-                    //        }
-                    //    }
-                    //}
+                    @include album-preview(16, 15, 4, 2);
                 }
                 &.album-9{
-                    @include grid(18, 33);
+                    @include grid(16, 30);
 
-                    @include album-preview(18, 33, 3, 3);
-
-                    .news_preview{
-                        &:nth-of-type(n+4){
-                            margin-top: 10px;
-                        }
-                    }
-
-                    .image-small + .main &{
-                        @include grid(12, 21);
-
-                        @include album-preview(12, 21, 3, 3);
-                    }
-                    .image-large + .main &{
-                        @include grid(24, 45);
-
-                        @include album-preview(24, 45, 3, 3);
-                    }
+                    @include album-preview(16, 30, 3, 3);
                 }
             }
             &-hv{
@@ -911,103 +711,62 @@ $descLineHeight: 1.5em;
                     }
                 }
 
-                &.album-2{}
-                &.album-3{}
-                &.album-4{}
-                &.album-5{}
-                &.album-6{
-                    @include grid(24, 27);
+                &.album-2{
+                    @include grid(8, 11);
+
+                    @include album-preview(8, 11, 1, 2);
+                }
+                &.album-3{
+                    @include grid(8, 16);
+
+                    @include album-preview(8, 16, 1, 3);
+                }
+                &.album-4{
+                    @include grid(16, 12);
+
+                    @include album-preview(16, 12, 2, 2);
+                }
+                &.album-5{
+                    @include grid(16, 9);
+
+                    @include album-preview(16, 6, 2, 1);
 
                     .news_preview{
-                        width: 575px;
-                        height: 430px;
-
                         &:nth-of-type(n+3){
-                            margin-top: 10px;
+                            @include album-preview-calc(16, 3, 3, 1);
                         }
                     }
+                }
+                &.album-6{
+                    @include grid(16, 17);
 
-                    .image-small + .main &{
-                        @include grid(24, 12);
-
-                        .news_preview{
-                            width: 380px;
-                            height: 275px;
-
-                            &:nth-of-type(3){
-                                margin-top: 0;
-                            }
-                            &:nth-of-type(n+4){
-                                margin-top: 10px;
-                            }
-                        }
-                    }
-                    .image-large + .main &{
-                        @include grid(16, 69);
-
-                        @include album-preview(16, 69, 1, 6);
-
-                        .news_preview{
-                            &:nth-of-type(n+2){
-                                margin-top: 10px;
-                            }
-                        }
-                    }
+                    @include album-preview(16, 17, 2, 3);
                 }
                 &.album-7{
-                    @include grid(24, 24);
+                    @include grid(16, 15);
+
+                    @include album-preview(16, 12, 2, 2);
 
                     .news_preview{
-                        width: 575px;
-                        height: 430px;
-
-                        &:nth-of-type(n+3){
-                            margin-top: 10px;
-                        }
                         &:nth-of-type(n+5){
-                            width: 380px;
-                            height: 280px;
-                        }
-                    }
-
-                    .image-small + .main &{
-                        @include grid(24, 10);
-
-                        .news_preview{
-                            width: 380px;
-                            height: 280px;
-
-                            &:nth-of-type(3){
-                                margin-top: 0;
-                            }
-                            &:nth-of-type(n+4){
-                                width: 280px;
-                                height: 170px;
-                                margin-top: 10px;
-                            }
-                        }
-                    }
-                    .image-large + .main &{
-                        @include grid(16, 82);
-
-                        @include album-preview(16, 82, 1, 7);
-
-                        .news_preview{
-                            &:nth-of-type(n+2){
-                                margin-top: 10px;
-                            }
+                            @include album-preview-calc(16, 3, 3, 1);
                         }
                     }
                 }
-                &.album-8{}
-                &.album-9{
-                    @include grid(24, 18);
+                &.album-8{
+                    @include grid(16, 23);
 
-                    @include album-preview(24, 18, 3, 3);
+                    @include album-preview(16, 23, 2, 4);
+                }
+                &.album-9{
+                    @include grid(16, 20);
+
+                    @include album-preview(16, 17, 2, 3);
 
                     .news_preview{
-                        width: 380px;
-                        height: 280px;
+                        &:nth-of-type(n+7){
+                            @include album-preview-calc(16, 3, 3, 1);
+                        }
                     }
                 }
             }
@@ -1019,52 +778,61 @@ $descLineHeight: 1.5em;
                     }
                 }
 
-                &.album-2{display: none;}
-                &.album-3{display: none;}
-                &.album-4{display: none;}
-                &.album-5{display: none;}
-                &.album-6{display: none;}
-                &.album-7{display: none;}
-                &.album-8{display: none;}
-                &.album-9{
-                    @include grid(24, 24);
+                &.album-2{
+                    @include grid(8, 8);
+
+                    @include album-preview(8, 8, 1, 2);
+                }
+                &.album-3{
+                    @include grid(8, 12);
+
+                    @include album-preview(8, 12, 1, 3);
+                }
+                &.album-4{
+                    @include grid(16, 9);
+
+                    @include album-preview(16, 9, 2, 2);
+                }
+                &.album-5{
+                    @include grid(16, 7);
+
+                    @include album-preview(16, 5, 2, 1);
 
                     .news_preview{
-                        width: 575px;
-                        height: 320px;
-
                         &:nth-of-type(n+3){
-                            margin-top: 10px;
+                            @include album-preview-calc(16, 2, 3, 1);
                         }
+                    }
+                }
+                &.album-6{
+                    @include grid(16, 13);
+
+                    @include album-preview(16, 13, 2, 3);
+                }
+                &.album-7{
+                    @include grid(16, 11);
+
+                    @include album-preview(16, 9, 2, 2);
+
+                    .news_preview{
+                        &:nth-of-type(n+5){
+                            @include album-preview-calc(16, 2, 3, 1);
+                        }
+                    }
+                }
+                &.album-8{
+                    @include grid(16, 17);
+
+                    @include album-preview(16, 17, 2, 4);
+                }
+                &.album-9{
+                    @include grid(16, 15);
+
+                    @include album-preview(16, 13, 2, 3);
+
+                    .news_preview{
                         &:nth-of-type(n+7){
-                            width: 380px;
-                            height: 170px;
-                        }
-                    }
-
-                    .image-small + .main &{
-                        @include grid(24, 12);
-
-                        @include album-preview(24, 12, 3, 3);
-
-                        .news_preview{
-                            &:nth-of-type(3){
-                                margin-top: 0;
-                            }
-                            &:nth-of-type(n+4){
-                                margin-top: 10px;
-                            }
-                        }
-                    }
-                    .image-large + .main &{
-                        @include grid(16, 72);
-
-                        @include album-preview(16, 72, 1, 9);
-
-                        .news_preview{
-                            &:nth-of-type(n+2){
-                                margin-top: 10px;
-                            }
+                            @include album-preview-calc(16, 2, 3, 1);
                         }
                     }
                 }
@@ -1090,6 +858,15 @@ $descLineHeight: 1.5em;
                         max-width: 100%;
                         max-height: none;
                     }
+                }
+            }
+            .image-small + .main &{
+                .news_preview{
+                    width: 100%;
+                    height: 100%;
+                }
+                .news_preview:nth-of-type(n+2){
+                    display: none;
                 }
             }
         }

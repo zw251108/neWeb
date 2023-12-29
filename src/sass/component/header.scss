@@ -100,6 +100,9 @@
                 outline: 1px dashed #c0c0c0;
             }
         }
+        .icon-image-resize{
+            display: none;
+        }
         .icon-left{
             //width: 15px;
         }
@@ -110,5 +113,9 @@
     .header_content,
     .header_searchBar{
         width: 1000px;
+
+        .icon-image-resize{
+            display: block;
+        }
     }
 }
