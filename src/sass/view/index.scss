@@ -478,8 +478,8 @@ $descLineHeight: 1.5em;
                 padding-left: 0;
             }
 
-            & + &:nth-of-type(5n+2),
-            & + &:nth-of-type(5n+4){
+            &:nth-of-type(5n+2),
+            &:nth-of-type(5n+4){
                 @include grid(8, 9);
 
                 .news_content{
