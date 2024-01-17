@@ -216,7 +216,13 @@
 						          v-slot="scope">
 							<el-image v-if="scope.row[col.prop]"
 							          :src="path(scope.row[col.prop])"
-							          fit="contain" />
+							          fit="contain"/>
+						</template>
+						<template v-else-if="isTag(col)"
+						          v-slot="scope">
+							<template v-for="tag in scope.row[col.prop]">
+								<el-tag type="info">{{tag}}</el-tag>
+							</template>
 						</template>
 					</el-table-column>
 				</el-table-column>
@@ -948,10 +954,10 @@
 </template>
 
 <script>
-import {view, COL_TYPE, CODE_TYPE, imgPath} from '../../../mgcc';
+import {view, COL_TYPE, CODE_TYPE, imgPath} from 'mgcc';
+import codeEditor                  from 'mgcc/components/codeEditor/index.vue';
 import btnBar                      from '../../components/btnBar/index.vue';
 import paramList                   from '../../components/paramList/index.vue';
-import codeEditor                  from '../../components/codeEditor/index.vue';
 import selectTable                 from '../../components/selectTable/index.vue';
 
 const SUPPORTED_METHODS = [

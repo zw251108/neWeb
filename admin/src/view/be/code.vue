@@ -24,7 +24,7 @@
 import {ref, inject} from 'vue';
 
 import {CODE_TYPE}   from 'mgcc';
-import codeEditor    from '../../components/codeEditor/index.vue';
+import codeEditor    from 'mgcc/components/codeEditor/index.vue';
 import {isEnum}      from 'mgcc/mixins/colTypeJudge';
 
 const type = ref({})

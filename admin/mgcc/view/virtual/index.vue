@@ -691,6 +691,9 @@ export default {
 	height: 12px;
 	width: 4px;
 }
+.cell .el-tag{
+	margin: 5px;
+}
 .el-select__caret:before{
 	font-size: 20px;
 }

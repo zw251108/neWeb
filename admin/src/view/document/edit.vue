@@ -19,7 +19,7 @@
 
 <script setup>
 import {ref, inject} from 'vue';
-import codeEditor    from '../../components/codeEditor/index.vue';
+import codeEditor    from 'mgcc/components/codeEditor/index.vue';
 
 const data = ref({
 		title: ''

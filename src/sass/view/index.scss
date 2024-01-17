@@ -9,13 +9,13 @@
 $descLineHeight: 1.5em;
 
 @mixin album-preview-calc($col, $row, $rowNum, $colNum: 1){
-    width: ($col * 50px - 40px) / $rowNum;
-    height: ($row * 50px) / $colNum;
+    width: calc(($col * 50px - 40px) / $rowNum);
+    height: calc(($row * 50px) / $colNum);
 }
 @mixin album-preview($col, $row, $rowNum, $colNum: 1){
     .news_preview{
-        width: ($col * 50px - 40px) / $rowNum;
-        height: ($row * 50px - 40px) / $colNum;
+        width: calc(($col * 50px - 40px) / $rowNum);
+        height: calc(($row * 50px - 40px) / $colNum);
     }
 }
 

@@ -52,6 +52,10 @@
 			                v-model="dateModels[param.alias || param.prop]"
 			                :type="decideType(col.dateFormat)"
 			                :format="transFormat(col.dateFormat)"></el-date-picker>
+			<code-editor v-else-if="isCode(col)"
+			             v-model="form[param.alias || param.prop]"
+			             lang="html"
+			             height="100"></code-editor>
 			<el-input v-else
 			          v-model="form[param.alias || param.prop]"></el-input>
 		</el-form-item>
@@ -63,7 +67,8 @@
 
 <script setup>
 import {reactive, watch, inject, ref} from 'vue';
-import {isEnum, isDate}               from '../../mixins/colTypeJudge';
+import {isEnum, isDate, isCode}       from '../../mixins/colTypeJudge';
+import codeEditor                     from '../codeEditor/index.vue';
 
 const props = defineProps({
 		form: {

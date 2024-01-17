@@ -18,11 +18,10 @@
 		           :rows="4"></el-input>
 	</el-form-item>
 	<el-form-item label="简介">
-		<el-input v-model="data.short"
-		          type="textarea"
-		          resize="none"
-		          placeholder="博客简介"
-		          :rows="3"></el-input>
+		<code-editor v-model="data.short"
+		             lang="html"
+		             height="100"></code-editor>
+		
 	</el-form-item>
 	<el-form-item label="文章">
 		<code-editor v-model="data.content"
@@ -42,7 +41,7 @@
 
 <script setup>
 import {ref, inject} from 'vue';
-import codeEditor    from '../../components/codeEditor/index.vue';
+import codeEditor    from 'mgcc/components/codeEditor/index.vue';
 
 const data = ref({
 		title: ''

@@ -44,7 +44,7 @@ function NewsBlog({item}){
 						:
 						null}
 					<div className="news_detail">
-						<div className="news_desc">{blog.content}</div>
+						<div className="news_desc" dangerouslySetInnerHTML={{__html: blog.content}}></div>
 						<div className="news_more">阅读更多<i className="icon icon-right"></i></div>
 						<div className="news_info">
 							<div className="news_tags">

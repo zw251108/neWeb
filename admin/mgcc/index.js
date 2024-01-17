@@ -11,10 +11,11 @@ import domain from './runtime/domain.js';
 
 import api, {CODE_TYPE} from './api';
 
-import formItems from './components/formItems/index.vue';
-import toolbars  from './components/toolbars/index.vue';
-import icons     from './components/icons/index.vue';
-import menuItem  from './components/menuItem/index.vue';
+import formItems  from './components/formItems/index.vue';
+import codeEditor from './components/codeEditor/index.vue';
+import toolbars   from './components/toolbars/index.vue';
+import icons      from './components/icons/index.vue';
+import menuItem   from './components/menuItem/index.vue';
 
 import topHeader from './view/topHeader/index.vue';
 import sideMenu  from './view/sideMenu/index.vue';
@@ -59,6 +60,7 @@ export default {
 
 				app.component('icons', icons);
 				app.component('formItems', formItems);
+				app.component('codeEditor', codeEditor);
 				app.component('toolbars', toolbars);
 				app.component('menuItem', menuItem);
 
@@ -214,6 +216,7 @@ export default {
 
 export const components = {
 	formItems
+	, codeEditor
 	, toolbars
 	, icons
 };

@@ -28,6 +28,10 @@ const props = defineProps({
 			type: Boolean
 			, default: false
 		}
+		, height: {
+			type: Number
+			, default: 0
+		}
 		, modelValue: {
 			type: String
 			, default: ''
@@ -57,6 +61,15 @@ onMounted(()=>{
 					}
 				})
 				, oneDark
+				, EditorView.theme( props.height === 0 ? {
+					'&': {
+						minHeight: '500px'
+					}
+				} : {
+					'&': {
+						height: `${props.height}px`
+					}
+				})
 			]
 		}
 		;
@@ -89,7 +102,6 @@ onMounted(()=>{
 	}
 });
 
-
 onBeforeUnmount(()=>{
 	editor.value.parentNode.removeChild( cm.dom );
 });
@@ -103,6 +115,7 @@ watch(()=>{
 				let transaction = cm.state.update({
 						changes: {
 							from: 0
+							, to: cm.state.doc.length
 							, insert: val
 						}
 					})
@@ -116,8 +129,9 @@ watch(()=>{
 </script>
 <style>
 .cm-editor{
+	overflow: hidden;
 	flex: 1;
-	min-height: 500px;
+	border-radius: 4px;
 	font-size: 16px;
 }
 </style>
