@@ -9,6 +9,9 @@
 </template>
 
 <script setup>
+import {getRowValue} from '../../mixins/colTypeJudge/index.js';
+// todo
+
 defineProps({
 	col: {
 		type: Object

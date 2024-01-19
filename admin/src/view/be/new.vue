@@ -136,6 +136,7 @@
 		          stripe
 		          ref="table"
 		          :data="data"
+		          :height="height"
 		          @selection-change="selectChange">
 			<el-table-column width="109">
 				<template #header>
@@ -201,7 +202,7 @@
 						<template v-else-if="isDate(col)"
 						          v-slot="scope">{{transDate(col, scope.row)}}</template>
 						<template v-else-if="isFormatter(col)"
-						          v-slot="scope">{{col.formatterHandler(col.prop ? scope.row[col.prop] : undefined, scope.row, scope.$index, data)}}</template>
+						          v-slot="scope">{{col.formatterHandler(col.prop ? getRowValue(col, scope.row) : undefined, scope.row, scope.$index, data)}}</template>
 						<template v-else-if="isEnum(col)"
 						          v-slot="scope">{{col.enumHandler(scope.row)}}</template>
 						<template v-else-if="isEdit(col)"
@@ -211,17 +212,17 @@
 							          @change="editColEnd($event, col.prop, col, scope.row, scope.$index)"></el-input>
 						</template>
 						<template v-else-if="isNumber(col)"
-						          v-slot="scope">{{col.toFixed ? (scope.row[col.prop] || 0).toFixed(col.toFixed) : scope.row[col.prop]}}</template>
+						          v-slot="scope">{{col.toFixed ? (getRowValue(col, scope.row) || 0).toFixed(col.toFixed) : getRowValue(col, scope.row)}}</template>
 						<template v-else-if="isImage(col)"
 						          v-slot="scope">
-							<el-image v-if="scope.row[col.prop]"
-							          :src="path(scope.row[col.prop])"
+							<el-image v-if="getRowValue(col, scope.row)"
+							          :src="path(getRowValue(col, scope.row))"
 							          fit="contain"/>
 						</template>
 						<template v-else-if="isTag(col)"
 						          v-slot="scope">
-							<template v-for="tag in scope.row[col.prop]">
-								<el-tag type="info">{{tag}}</el-tag>
+							<template v-for="tag in getRowValue(col, scope.row)">
+								<el-tag>{{tag}}</el-tag>
 							</template>
 						</template>
 					</el-table-column>
@@ -955,10 +956,10 @@
 
 <script>
 import {view, COL_TYPE, CODE_TYPE, imgPath} from 'mgcc';
-import codeEditor                  from 'mgcc/components/codeEditor/index.vue';
-import btnBar                      from '../../components/btnBar/index.vue';
-import paramList                   from '../../components/paramList/index.vue';
-import selectTable                 from '../../components/selectTable/index.vue';
+import codeEditor                           from 'mgcc/components/codeEditor/index.vue';
+import btnBar                               from '../../components/btnBar/index.vue';
+import paramList                            from '../../components/paramList/index.vue';
+import selectTable                          from '../../components/selectTable/index.vue';
 
 const SUPPORTED_METHODS = [
 		'GET'
@@ -1480,8 +1481,18 @@ export default {
 		, handleCols(data){
 			if( data.length ){
 				let keys = data.reduce((keys, item)=>{
-						return Object.keys( item ).reduce((keys, key)=>{
+						return Object.entries( item ).reduce((keys, [key, value])=>{
 							keys.add( key );
+
+							if( typeof value === 'object' && !Array.isArray(value) ){
+								Object.keys( value ).reduce((keys, k)=>{
+									keys.add(`${key}.${k}`);
+
+									return keys;
+								}, keys);
+
+								// todo 继续子属性
+							}
 
 							return keys;
 						}, keys);

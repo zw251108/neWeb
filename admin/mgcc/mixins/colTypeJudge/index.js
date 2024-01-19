@@ -158,6 +158,32 @@ function isEdit(col){
 	return col.editable;
 }
 
+function isSubKey(col){
+	return /\./.test( col.prop );
+}
+
+function getRowValue(col, row){
+	if( isSubKey(col) ){
+		let keys = col.prop.split('.')
+			, rs = row
+			;
+
+		for( let i = 0, j = keys.length; i < j; i++ ){
+			try{
+				rs = rs[keys[i]];
+			}
+			catch(e){
+				return undefined;
+			}
+		}
+
+		return rs;
+	}
+	else{
+		return row[col.prop];
+	}
+}
+
 // 处理转化函数
 function handleFormatter($alert, col){
 	if( isFormatter(col) ){
@@ -187,7 +213,7 @@ function handleEnum($alert, col){
 			col.enumCode = JSON.stringify( enumCode );
 			col.enumTarget = enumCode;
 			col.enumHandler = function(row){
-				let t = row[this.prop]
+				let t = getRowValue(col, row)
 					;
 
 				if( t === undefined ){
@@ -222,7 +248,7 @@ function handleEnum($alert, col){
 
 // 转换日期
 function transDate($util, col, row){
-	let value = row[col.prop]
+	let value = getRowValue(col, row)
 		, format = col.dateFormat || ''
 		, start = value ? $util.dateFormat(new Date( value ), format) : ''
 		;
@@ -311,6 +337,10 @@ export default {
 		// 列是否为图片
 		, isImage
 
+		// 是否为对象子属性及获取值方法
+		, isSubKey
+		, getRowValue
+
 		// 处理转化函数
 		, handleFormatter(col){
 			return handleFormatter(this.$alert, col);
@@ -367,6 +397,10 @@ export {
 
 	// 列是否为图片
 	, isImage
+
+	// 是否为对象子属性及获取值方法
+	, isSubKey
+	, getRowValue
 
 	// 处理转化函数
 	, handleFormatter
