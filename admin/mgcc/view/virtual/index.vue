@@ -15,13 +15,14 @@
 		</template>
 	</form-items>
 </div>
-<toolbars v-if="toolbars && toolbars.length"
+<toolbars v-if="toolbars.length"
           :toolbars="toolbars"
           @click-btn="clickBtn"></toolbars>
 <el-table border
           stripe
           ref="table"
           :data="data"
+          :height="height"
           @selection-change="selectChange">
 	<template v-for="col in cols">
 		<component v-if="!col.hidden"
@@ -661,23 +662,33 @@ export default {
 				return !displayHandler || displayHandler(this.searchForm, this.$urlParams(), this.$hashParams());
 			});
 		}
+		, height(){
+			// todo 计算更复杂
+			if( this.searchItems.length && this.toolbars.length ){
+				return 700;
+			}
+			else if( this.searchItems.length ){
+				return 771;
+			}
+			else{
+				return 917;
+			}
+		}
 	}
 };
 </script>
 
 <style>
 .searchBar{
-	border-radius: 10px;
-	margin-bottom: 20px;
-	padding: 10px 10px 0;
-	outline: 1px dashed #c0c0c0;
-	outline-offset: 5px;
+	border: 1px dashed #c0c0c0;
+	margin-bottom: 10px;
+	padding: 10px 0 0 10px;
 	background: #f9f9f9;
 }
 .toolbars{
 	border-bottom: 1px solid #dcdfe6;
 	margin-bottom: 10px;
-	padding: 5px;
+	padding: 10px 0;
 }
 .cell .el-checkbox__inner{
 	height: 20px;

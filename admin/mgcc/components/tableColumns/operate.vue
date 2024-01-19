@@ -1,5 +1,7 @@
 <template>
-<el-table-column v-bind="col" :key="col.key">
+<el-table-column v-bind="col"
+                 :key="col.key"
+                 :fixed="true">
 	<template v-slot="scope">
 		<template v-for="(btn, i) in col.btns">
 			<el-button v-if="!btn.displayHandler || btn.displayHandler(scope.row, scope.$index, data)"

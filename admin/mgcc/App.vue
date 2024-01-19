@@ -173,7 +173,7 @@ body {
 			overflow-x: hidden;
 			overflow-y: auto;
 			width: 100%;
-			padding: 20px;
+			padding: 10px 10px 0;
 
 			box-sizing: border-box;
 

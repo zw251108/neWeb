@@ -12,7 +12,7 @@ defineProps({
                  :key="col.key">
 	<template v-slot="scope">
 		<template v-for="tag in scope.row[col.prop]">
-			<el-tag type="info">{{tag}}</el-tag>
+			<el-tag>{{tag}}</el-tag>
 		</template>
 	</template>
 </el-table-column>

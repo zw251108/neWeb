@@ -66,35 +66,6 @@ function collapseChange(){
 @import "../../style/scss/variable";
 
 .root-container {
-	background-color: #fff;
-	height: 100%;
-
-	.right-container {
-		position: relative;
-		min-height: 100%;
-		width: 100%;
-		flex: 1;
-		transition: margin-left 0.3s;
-
-		box-sizing: border-box;
-
-		.main-container {
-			height: 100%;
-			width: 100%;
-			padding: 20px;
-
-			box-sizing: border-box;
-		}
-	}
-
-	&.aside-max > .right-container {
-		padding-left: $aside-open-width;
-	}
-
-	&.aside-min > .right-container {
-		padding-left: $aside-min-width;
-	}
-
 	&.aside-min .aside-logo img{
 		width: 45px;
 	}
