@@ -1484,7 +1484,7 @@ export default {
 						return Object.entries( item ).reduce((keys, [key, value])=>{
 							keys.add( key );
 
-							if( typeof value === 'object' && !Array.isArray(value) ){
+							if( value && typeof value === 'object' && !Array.isArray(value) ){
 								Object.keys( value ).reduce((keys, k)=>{
 									keys.add(`${key}.${k}`);
 

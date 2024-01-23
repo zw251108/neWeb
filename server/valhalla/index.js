@@ -8,7 +8,6 @@ createController(web, 'valhalla', valhalla, {
 });
 
 web.get('/valhalla', (req, res)=>{
-	// todo creatorId 从 session 中取
 	valhalla.all({}, [
 		'id'
 		, 'name'

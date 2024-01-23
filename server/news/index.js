@@ -7,6 +7,7 @@ createController(web, 'news', news, {
 	create: 'post'
 	, update: 'post'
 	, changeStatus: 'post'
+	, changePublish: 'post'
 	, weight: 'post'
 });
 

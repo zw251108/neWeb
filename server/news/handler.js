@@ -133,6 +133,28 @@ export default {
 			}
 		});
 	}
+	, changePublish({createDate, id}){
+		if( !id ){
+			return Promise.reject( new Error('缺少 id') );
+		}
+
+		try{
+			let d = new Date( createDate )
+		}
+		catch(e){
+			return Promise.reject( new Error('错误的时间格式') );
+		}
+
+		return News.update({
+			createDate
+		}, {
+			where: {
+				...where.eq({
+					id
+				})
+			}
+		})
+	}
 	, weight({id, weight=0}){
 		return News.update({
 			weight

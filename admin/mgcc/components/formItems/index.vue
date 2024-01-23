@@ -91,6 +91,10 @@ const props = defineProps({
 			type: String
 			, default: 'left'
 		}
+		, mode: {
+			type: String
+			, default: 'edit'
+		}
 	})
 	, dateModels = reactive( props.formItems.reduce((rs, [param, col])=>{
 		if( isDate(col) ){
