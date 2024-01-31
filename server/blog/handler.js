@@ -102,13 +102,14 @@ export default {
 			});
 		});
 	}
-	, update({id, title, cover, short, content, tags}){
+	, update({id, title, cover, short, content, tags, status}){
 		return Blog.update({
 			title
 			, cover
 			, short
 			, content
 			, tags
+			, status
 		}, {
 			where: {
 				...where.eq({
@@ -123,6 +124,7 @@ export default {
 					, content: short
 					, tags: tags ? tags.split(',') : []
 				}
+				, status
 			}, {
 				where: {
 					...where.eq({
