@@ -14,6 +14,7 @@ const NEWS_TYPE = {
 	, IMAGE_SIZE = ['', 'tiny', 'small', ''
 		// , 'large'
 	]
+	, DEFAULT_IMAGE_SIZE = 3
 	;
 
 function Header({index, search: s='', filter: f=''}){
@@ -46,7 +47,7 @@ function Header({index, search: s='', filter: f=''}){
 			return rs;
 		}, {}) )
 		,
-		[ imageSize, setImageSize ] = useState(3)
+		[ imageSize, setImageSize ] = useState( DEFAULT_IMAGE_SIZE )
 		,
 		[ showImageResize, setShowImageResize ] = useState(false)
 		, imageResizeRef = useRef(null)
@@ -119,7 +120,7 @@ function Header({index, search: s='', filter: f=''}){
 			setShowSearch( index );
 			setShowImageResize( index );
 
-			setImageSize(2);
+			setImageSize( DEFAULT_IMAGE_SIZE );
 		}
 	}, [index])
 
