@@ -4,7 +4,7 @@ import News           from './model.js';
 export default {
 	list({search, filter, type, status, creatorId, page, size}
 	     , attributes
-	     , order=[['createDate', 'DESC']]){
+	     , order=[['id', 'DESC']]){
 
 		page = parse(page, 1);
 		size = parse(size, 20);
