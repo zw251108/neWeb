@@ -66,9 +66,9 @@
 </template>
 
 <script setup>
-import {reactive, watch, inject, ref} from 'vue';
-import {isEnum, isDate, isCode}       from '../../mixins/colTypeJudge';
-import codeEditor                     from '../codeEditor/index.vue';
+import {reactive, watch, inject, ref, toRef} from 'vue';
+import {isEnum, isDate, isCode}              from '../../mixins/colTypeJudge';
+import codeEditor                            from '../codeEditor/index.vue';
 
 const props = defineProps({
 		form: {
@@ -96,19 +96,24 @@ const props = defineProps({
 			, default: 'edit'
 		}
 	})
-	, dateModels = reactive( props.formItems.reduce((rs, [param, col])=>{
+	, formItems = toRef(props, 'formItems')
+	, dateModels = reactive({})
+	, $util = inject('$util')
+	, formRef = ref(null)
+	;
+
+watch(formItems, (value)=>{
+	value.forEach(([param, col])=>{
 		if( isDate(col) ){
 			let key = param.alias || param.prop
 				;
 
-			rs[key] = new Date( props.form[key] );
+			dateModels[key] = new Date( props.form[key] );
 		}
-
-		return  rs;
-	}, {}) )
-	, $util = inject('$util')
-	, formRef = ref(null)
-	;
+	});
+}, {
+	immediate: true
+});
 
 watch(()=>{
 	return {
