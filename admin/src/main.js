@@ -19,6 +19,8 @@ import documentSort from './view/document/sort.vue';
 
 import picUpload from './view/pic/upload.vue';
 
+import newsEdit from './view/news/edit.vue';
+
 import menuList from './menu.json';
 
 let app = mgcc.initApp( App )
@@ -76,9 +78,10 @@ mgcc.registerRouterComponent(router, '/manage/blog/edit', blogEdit, vm, app, tru
 mgcc.registerRouterComponent(router, '/manage/doc/edit', documentEdit, vm, app, true);
 mgcc.registerRouterComponent(router, '/manage/doc/sort', documentSort, vm, app, true);
 mgcc.registerRouterComponent(router, '/manage/pic/upload', picUpload, vm, app, true);
+mgcc.registerRouterComponent(router, '/manage/news/edit', newsEdit, vm, app, true);
 
 vm.headerHeight = '0';
-vm.excludeComLive.push('beNew', 'beCode', 'blogEdit', 'documentEdit', 'documentSort');
+vm.excludeComLive.push('beNew', 'beCode', 'blogEdit', 'documentEdit', 'documentSort', 'picUpload', 'newsEdit');
 
 // 注册路由
 menuList.forEach(({children})=>{

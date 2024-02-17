@@ -11,6 +11,14 @@ const NEWS_TYPE = {
 		, doc: '文档'
 		, code: '代码'
 	}
+	, NEWS_ICON = {
+		blog: 'blog'
+		, img: 'image'
+		, album: 'images'
+		, words: 'talk'
+		, doc: 'document'
+		, code: 'code'
+	}
 	, IMAGE_SIZE = ['', 'tiny', 'small', ''
 		// , 'large'
 	]
@@ -121,6 +129,7 @@ function Header({index, search: s='', filter: f=''}){
 			setShowImageResize( index );
 
 			setImageSize( DEFAULT_IMAGE_SIZE );
+			changeFilter('all', true);
 		}
 	}, [index])
 
@@ -241,7 +250,10 @@ function Header({index, search: s='', filter: f=''}){
 								       onChange={(e)=>{
 										   changeFilter(key, e.target.checked);
 								       }}/>
-								<span className="icon icon-checkbox">{value}</span>
+								<span className="icon icon-checkbox">
+									{value}
+									{/*<i className={`icon icon-${NEWS_ICON[key]}`}></i>*/}
+								</span>
 							</label>);
 						})}
 					</div>

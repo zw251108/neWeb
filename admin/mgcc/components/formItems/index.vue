@@ -25,7 +25,7 @@
 						<template v-for="(val, k) in col.enumTarget">
 							<el-option v-if="val"
 							           :label="val"
-							           :value="`${k}`"></el-option>
+							           :value="k"></el-option>
 						</template>
 					</el-select>
 				</template>
@@ -43,7 +43,7 @@
 						<template v-for="(val, k) in col.enumTarget">
 							<el-option v-if="val"
 							           :label="val"
-							           :value="`${k}`"></el-option>
+							           :value="k"></el-option>
 						</template>
 					</el-select>
 				</template>

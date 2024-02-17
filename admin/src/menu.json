@@ -31,6 +31,11 @@
 	  "title": "新闻管理",
 	  "children": []
 	}, {
+	  "icon": "folder",
+	  "name": "manage/etc",
+	  "title": "其它内容管理",
+	  "children": []
+	}, {
 	  "icon": "document-copy",
 	  "name": "manage/doc",
 	  "title": "文档管理",
@@ -39,6 +44,11 @@
 	  "icon": "picture",
 	  "name": "manage/pic",
 	  "title": "图片管理",
+	  "children": []
+	}, {
+	  "icon": "notebook",
+	  "name": "manage/blog",
+	  "title": "博客管理",
 	  "children": []
 	}]
   }
