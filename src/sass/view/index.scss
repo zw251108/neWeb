@@ -206,10 +206,6 @@ $descLineHeight: 1.5em;
     &.blog{
         @include grid-row( 5 );
 
-        //.news_content{
-        //    height: 170px;
-        //}
-
         .news_preview{
             width: 100%;
             height: 130px;
@@ -477,39 +473,39 @@ $descLineHeight: 1.5em;
             .news_desc{
                 padding-left: 0;
             }
+        }
 
-            &:nth-of-type(5n+2),
-            &:nth-of-type(5n+4){
-                @include grid(8, 9);
+        &:nth-child(5n+2 of .blog + .blog),
+        &:nth-child(5n+4 of .blog + .blog){
+            @include grid(8, 9);
 
-                .news_content{
-                    @include flex-direction( column );
-                }
-                .news_detail{
-                    width: 100%;
-                    height: 370px;
-                }
-                .news_preview{
-                    height: 185px;
-                }
-                .news_preview + .news_detail{
-                    height: 175px;
-                    margin: 10px 0 0;
+            .news_content{
+                @include flex-direction( column );
+            }
+            .news_detail{
+                width: 100%;
+                height: 370px;
+            }
+            .news_preview{
+                height: 185px;
+            }
+            .news_preview + .news_detail{
+                height: 175px;
+                margin: 10px 0 0;
 
-                    .news_desc{
-                        text-indent: 2em;
-                    }
-                }
                 .news_desc{
-                    @include text-fixed(7, $descLineHeight);
+                    text-indent: 2em;
                 }
-                .news_lock{
-                    text-align: center;
+            }
+            .news_desc{
+                @include text-fixed(7, $descLineHeight);
+            }
+            .news_lock{
+                text-align: center;
 
-                    i{
-                        display: block;
-                        margin-bottom: 36px;
-                    }
+                i{
+                    display: block;
+                    margin-bottom: 36px;
                 }
             }
         }
