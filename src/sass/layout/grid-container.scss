@@ -11,6 +11,11 @@
     @include grid-row( $row );
 }
 
+@mixin grid-offset($start, $end){
+    grid-column-start: $start;
+    grid-column-end: $end;
+}
+
 .container{
     &.grid{
         display: grid;

@@ -11,16 +11,13 @@ const NEWS_TYPE = {
 		, doc: '文档'
 		, code: '代码'
 	}
-	, NEWS_ICON = {
-		blog: 'blog'
-		, img: 'image'
-		, album: 'images'
-		, words: 'talk'
-		, doc: 'document'
-		, code: 'code'
-	}
-	, IMAGE_SIZE = ['', 'tiny', 'small', ''
-		// , 'large'
+	, IMAGE_SIZE = [
+		''
+		, 'tiny'
+		, 'small'
+		, 'normal'
+		, 'large'
+		, 'huge'
 	]
 	, DEFAULT_IMAGE_SIZE = 3
 	;
@@ -54,6 +51,10 @@ function Header({index, search: s='', filter: f=''}){
 			
 			return rs;
 		}, {}) )
+		,
+		[ contentAll, setContentAll ] = useState( !f.length )
+		,
+		[ blogOnly, setBlogOnly ] = useState(false)
 		,
 		[ imageSize, setImageSize ] = useState( DEFAULT_IMAGE_SIZE )
 		,
@@ -101,6 +102,17 @@ function Header({index, search: s='', filter: f=''}){
 		}
 		
 		setCurrent( !!keyword );
+
+		setContentAll( filterAll );
+
+		setBlogOnly( Object.entries(filter).every(([key, value])=>{
+			if( key === 'blog' ){
+				return value;
+			}
+			else{
+				return !value;
+			}
+		}) );
 		
 		router.go('/index', params);
 	}
@@ -134,7 +146,7 @@ function Header({index, search: s='', filter: f=''}){
 	}, [index])
 
 	useEffect(()=>{
-		setFilterAll( Object.entries( filter ).every(([key, value])=>{
+		setFilterAll( Object.entries(filter).every(([key, value])=>{
 			return value;
 		}) );
 	}, [filter]);
@@ -189,7 +201,7 @@ function Header({index, search: s='', filter: f=''}){
 		setImageSize( +e.target.value );
 	}
 
-	return (<header className={`header ${IMAGE_SIZE[imageSize] ? `image-${IMAGE_SIZE[imageSize]}` : ''}`}>
+	return (<header className={`header ${IMAGE_SIZE[imageSize] ? `image-${IMAGE_SIZE[imageSize]}` : ''} ${blogOnly ? 'blog-only' : ''} ${contentAll ? 'content-all' : ''}`}>
 		<div className="header_content">
 			<div className="container flex left">
 				<a href="/#/index"

@@ -18,7 +18,7 @@ function NewsImg({item}){
 			 * */
 			imageType = 'v';
 		}
-		else if( r <= 0.75 ){
+		else if( r <= 0.76 ){
 			/**
 			 * 3: 4
 			 * */
@@ -54,9 +54,9 @@ function NewsImg({item}){
 					<img src={imgPath( img.src )}
 					     alt={img.desc}/>
 				</div>
-				<div className="news_detail">
-					{img.desc && <div className="news_desc">{img.desc}</div>}
-				</div>
+				{img.desc && (<div className="news_detail">
+					<div className="news_desc">{img.desc}</div>
+				</div>)}
 			</div>
 		</a>
 	</div>);
