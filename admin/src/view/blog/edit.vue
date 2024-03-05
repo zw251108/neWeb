@@ -6,6 +6,10 @@
 		<el-input v-model="data.title"
 		          placeholder="博客标题"></el-input>
 	</el-form-item>
+	<el-form-item label="文章">
+		<code-editor v-model="data.content"
+		             lang="html"></code-editor>
+	</el-form-item>
 	<el-form-item label="封面">
 		<el-input v-model="data.cover"
 		          placeholder="博客封面"></el-input>
@@ -22,10 +26,6 @@
 		             lang="html"
 		             height="100"></code-editor>
 		
-	</el-form-item>
-	<el-form-item label="文章">
-		<code-editor v-model="data.content"
-		             lang="html"></code-editor>
 	</el-form-item>
 	<el-form-item label="发布">
 		<el-checkbox v-model="data.status"
