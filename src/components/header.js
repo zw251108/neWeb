@@ -54,7 +54,7 @@ function Header({index, search: s='', filter: f=''}){
 		,
 		[ contentAll, setContentAll ] = useState( !f.length )
 		,
-		[ blogOnly, setBlogOnly ] = useState(false)
+		[ blogOnly, setBlogOnly ] = useState( f.length === 1 && f[0] === 'blog' )
 		,
 		[ imageSize, setImageSize ] = useState( DEFAULT_IMAGE_SIZE )
 		,

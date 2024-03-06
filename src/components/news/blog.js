@@ -30,31 +30,33 @@ function NewsBlog({item}){
 					<div className="news_detail">
 						<div className="news_lock"><i className="icon icon-lock"></i>当前内容需要密码访问</div>
 						<div className="news_more">阅读更多<i className="icon icon-right"></i></div>
-						<div className="news_info">
-							<div className="news_datetime">{createDate}</div>
-						</div>
+					</div>
+					<div className="news_info">
+						<div className="news_datetime">{createDate}</div>
 					</div>
 				</div>)
 				:
 				(<div className="news_content">
 					{blog.preview ?
 						(<div className="news_preview container img img-h">
-							<img src={imgPath( blog.preview )} alt={blog.content}/>
+							<img src={imgPath(blog.preview)}
+							     alt={blog.content}/>
 						</div>)
 						:
 						null}
 					<div className="news_detail">
-						<div className="news_desc" dangerouslySetInnerHTML={{__html: blog.content}}></div>
+						<div className="news_desc"
+						     dangerouslySetInnerHTML={{__html: blog.content}}></div>
 						<div className="news_more">阅读更多<i className="icon icon-right"></i></div>
-						<div className="news_info">
-							<div className="news_tags">
-								{blog.tags.map((name)=>{
-									return (<span key={name}
-									              className="tag">{name}</span>);
-								})}
-							</div>
-							<div className="news_datetime">{createDate}</div>
+					</div>
+					<div className="news_info">
+						<div className="news_tags">
+							{blog.tags.map((name)=>{
+								return (<span key={name}
+								              className="tag">{name}</span>);
+							})}
 						</div>
+						<div className="news_datetime">{createDate}</div>
 					</div>
 				</div>)}
 		</a>
