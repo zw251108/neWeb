@@ -4,13 +4,15 @@
 .tag{
     display: inline-block;
     min-width: 4em;
-    height: 28px;
+    height: 30px;
     border: 1px solid $tag_bd_c;
 
     border-radius: 5px;
     //border-radius: 20px;
     margin: 5px;
     padding: 0 1em 0 .5em;
+
+    box-sizing: border-box;
 
     //background: -webkit-linear-gradient(top, @tag_bg_gradient_s, @tag_bg_gradient_e);
 

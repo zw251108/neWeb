@@ -31,7 +31,7 @@ function NewsBlog({item}){
 						<div className="news_lock"><i className="icon icon-lock"></i>当前内容需要密码访问</div>
 						<div className="news_more">阅读更多<i className="icon icon-right"></i></div>
 					</div>
-					<div className="news_info">
+					<div className="news_info flex container right">
 						<div className="news_datetime">{createDate}</div>
 					</div>
 				</div>)

@@ -58,11 +58,11 @@ $modulePadding: 5px;
 
     &::before{
         position: absolute;
-        top: -10px;
-        left: -10px;
+        top: -($moduleBorder + $modulePadding);
+        left: -($moduleBorder + $modulePadding);
         z-index: 1;
-        width: 40px;
-        height: 40px;
+        width: $gridColWidth - $moduleBorder * 2;
+        height: $gridRowHeight - $moduleBorder * 2;
         border: $moduleBorder solid #c0c0c0;
         border-radius: 10px 25px 25px;
         background: #fff;
@@ -70,14 +70,14 @@ $modulePadding: 5px;
         font-family: 'font', serif;
         font-size: 24px;
         text-align: center;
-        line-height: 40px;
+        line-height: $gridRowHeight - $moduleBorder * 2;
         font-weight: bolder;
         content: '';
     }
 
     &_title{
         position: relative;
-        margin: -$modulePadding 0 (-$modulePadding) 30px;
+        margin: -$modulePadding 0 (-$modulePadding) (grid-content-height( 1 ) + 10px);
         padding-left: 10px;
         line-height: 40px;
         text-align: left;
@@ -95,7 +95,7 @@ $modulePadding: 5px;
     &_content{
         border-radius: 5px;
         margin: 10px 0 0;
-        padding: 10px;
+        padding: 5px;
         background: #f1f1f1;
     }
     &_info{
@@ -121,9 +121,8 @@ $modulePadding: 5px;
     }
     &_datetime{
         flex-shrink: 0;
-        height: 30px;
-        //margin-top: 18px;
-        line-height: 30px;
+        height: grid-content-height( 1 ) + 10px;
+        line-height: grid-content-height( 1 ) + 10px;
     }
 }
 
@@ -170,7 +169,7 @@ $modulePadding: 5px;
     @include grid(8, 4);
 
     .module_title{
-        height: 40px;
+        height: grid-content-height( 1 ) + 20px;
 
         @include text-limit( 1 );
     }
@@ -179,15 +178,15 @@ $modulePadding: 5px;
         position: absolute;
         top: 6px;
         right: 11px;
-        font-size: 30px;
+        font-size: grid-content-height( 1 ) + 10px;
         transform: rotate( 45deg );
     }
     &_new,
     &_update{
         position: absolute;
-        top: 5px;
-        right: 10px;
-        font-size: 30px;
+        top: $modulePadding;
+        right: $modulePadding;
+        font-size: grid-content-height( 1 ) + 10px;
     }
 
     &_content{
@@ -222,7 +221,7 @@ $modulePadding: 5px;
     &_tags{
         @extend .module_tags;
 
-        @include text-fixed(1, 40px);
+        @include text-fixed(1, grid-content-height( 1 ) + 20px);
     }
     &_datetime{
         @extend .module_datetime;
@@ -238,49 +237,35 @@ $modulePadding: 5px;
         }
 
         .news_preview{
-            width: 100%;
-            height: 140px;
+            height: grid-content-height( 4 ) - 30px;
         }
-
         .news_detail{
-            height: 140px;
+            height: grid-content-height( 4 ) - 30px;
 
             @include flex-container();
             @include flex-container-v();
             @include flex-align( stretch );
         }
-
         .news_preview + .news_detail{
             position: absolute;
             width: 100%;
             border-radius: 5px;
+            background: rgba(0, 0, 0, .5);
             color: #fff;
 
-            .news_desc,
-            .news_more{
-                background: rgba(0, 0, 0, .5);
-            }
             .news_desc{
-                border-radius: 5px 5px 0 0;
                 padding-top: 5px;
                 padding-left: 10px;
                 text-indent: 0;
             }
-            .news_more{
-                border-radius: 0 0 5px 5px;
-            }
-
-            .news_info{
-                margin-top: 10px;
-            }
         }
-
         .news_desc{
             flex: 1;
             text-indent: 2em;
 
             @include text-fixed(4, $descLineHeight);
         }
+
         .news_lock{
             flex: 1;
 
@@ -296,18 +281,15 @@ $modulePadding: 5px;
                 }
             }
         }
-        .news_lock ~ .news_info{
-            @include flex-justify( right );
-        }
 
         .news_more{
-            height: 40px;
-            line-height: 40px;
+            height: grid-content-height( 1 ) + 20px;
+            line-height: grid-content-height( 1 ) + 20px;
             text-align: right;
         }
 
         .news_tags{
-            @include text-fixed(1, 40px);
+            @include text-fixed(1, grid-content-height( 1 ) + 20px);
         }
     }
 
@@ -325,7 +307,7 @@ $modulePadding: 5px;
             left: 0;
             right: 0;
             width: 100%;
-            height: 60px;
+            height: grid-content-height( 2 );
             border-radius: 0 0 5px 5px;
             background: rgba(0, 0, 0, .5);
             color: #fff;
@@ -367,14 +349,15 @@ $modulePadding: 5px;
         }
         .news_more{
             display: none;
-            width: 50px;
-            height: 38px;
+            width: grid-content-height( 2 ) - 10px;
+            height: grid-content-height( 2 ) - 10px;
             border: 1px solid #c0c0c0;
             border-radius: 5px;
-            margin: 10px 10px 0 0;
+            margin: 5px 5px 0 0;
             font-size: 20px;
             text-align: center;
-            line-height: 40px;
+            line-height: grid-content-height( 2 ) - 10px;
+            box-sizing: border-box;
         }
 
         &-hv,
@@ -436,7 +419,6 @@ $modulePadding: 5px;
     }
 
     &.words{
-
         .news_content{
             height: grid-content-height( 4 );
             margin: 0;
@@ -447,23 +429,23 @@ $modulePadding: 5px;
             flex: 1;
         }
         .news_desc{
-            text-indent: 40px;
+            text-indent: grid-content-width( 1 ) + 20px;
             line-height: 2;
 
             &::first-line{
-                line-height: 35px;
+                line-height: grid-content-height( 1 ) + 15px;
             }
         }
         .news_info{
             @include flex-container();
             @include flex-justify( right );
 
-            &:before{
-                right: 30px;
+            &::before{
+                right: grid-content-height( 1 ) + 10px;
             }
         }
         .news_datetime{
-            margin-right: 40px;
+            margin-right: grid-content-height( 1 ) + 20px;
         }
     }
 }
@@ -480,32 +462,24 @@ $modulePadding: 5px;
             @include grid(16, 6);
             @include news-left();
 
-            .news_detail{
-                height: 190px;
-            }
             .news_preview{
                 flex-shrink: 0;
-                width: 430px;
-                height: 190px;
+                width: grid-content-width( 9 ) + 10px;
+                height: grid-content-height( 6 ) - 40px - 40px;
+            }
+            .news_detail{
+                height: grid-content-height( 6 ) - 40px - 40px;
             }
             .news_preview + .news_detail{
                 position: relative;
-                width: 330px;
-                height: 190px;
+                width: grid-content-width( 7 ) + 10px;
                 margin-left: 10px;
                 background: transparent;
                 color: #666;
 
-                .news_desc,
-                .news_more{
-                    background: transparent;
-                }
                 .news_desc{
                     padding-top: 0;
                     padding-left: 0;
-                }
-                .news_info{
-                    margin-top: 0;
                 }
             }
             .news_desc{
@@ -566,7 +540,7 @@ $modulePadding: 5px;
                     height: grid-content-height( 9 ) - 40px - 40px;
                 }
                 .news_preview{
-                    height: 190px;
+                    height: grid-content-height( 4 ) + 20px;
 
                     img{
                         max-width: none;
@@ -575,7 +549,7 @@ $modulePadding: 5px;
                     }
                 }
                 .news_preview + .news_detail{
-                    height: 140px;
+                    height: grid-content-height( 3 ) + 20px;
                     margin: 10px 0 0;
 
                     .news_desc{
@@ -590,7 +564,8 @@ $modulePadding: 5px;
 
                     i{
                         display: block;
-                        margin-bottom: 36px;
+                        margin-left: 10px;
+                        margin-bottom: 40px;
                     }
                 }
             }
@@ -803,9 +778,9 @@ $modulePadding: 5px;
                         @include album-preview(16, 24, 2, 2);
                     }
                     &.album-5{
-                        @include grid(24, 27);
+                        @include grid(24, 29);
 
-                        @include album-preview(24, 16, 2);
+                        @include album-preview(24, 17, 2);
 
                         .news_preview{
                             &:nth-of-type(n+3){
