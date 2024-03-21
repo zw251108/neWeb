@@ -118,9 +118,9 @@ function Blog({id}){
 				null
 				:
 				(<div className="blog_short">
-					<details>
+					<details open>
 		                <summary>简介</summary>
-						<p>{blog.short}</p>
+						<p dangerouslySetInnerHTML={{__html: blog.short}}></p>
 					</details>
 					{blog.cover ?
 						(<div className="img container">
