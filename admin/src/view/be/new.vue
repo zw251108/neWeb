@@ -225,6 +225,14 @@
 								<el-tag>{{tag}}</el-tag>
 							</template>
 						</template>
+						<template v-else-if="isLink(col)"
+						          v-slot="scope">
+							<a :href="getRowValue(col, scope.row)"
+							   target="_blank">
+								<icons name="link"></icons>
+								{{getRowValue(col, scope.row)}}
+							</a>
+						</template>
 					</el-table-column>
 				</el-table-column>
 			</el-table-column>
@@ -1478,25 +1486,25 @@ export default {
 			});
 			this.resetSearchForm(true);
 		}
+		, handleValueKey(item, prefix=''){
+			return Object.entries( item ).reduce((keys, [key, value])=>{
+				if( value && typeof value === 'object' && !Array.isArray(value) ){
+					keys.push( ...this.handleValueKey(value, `${prefix ? `${prefix}.` : ''}${key}`) );
+				}
+				else{
+					keys.push(`${prefix ? `${prefix}.` : ''}${key}`);
+				}
+
+				return keys;
+			}, []);
+		}
 		, handleCols(data){
 			if( data.length ){
-				let keys = data.reduce((keys, item)=>{
-						return Object.entries( item ).reduce((keys, [key, value])=>{
-							keys.add( key );
-
-							if( value && typeof value === 'object' && !Array.isArray(value) ){
-								Object.keys( value ).reduce((keys, k)=>{
-									keys.add(`${key}.${k}`);
-
-									return keys;
-								}, keys);
-
-								// todo 继续子属性
-							}
-
-							return keys;
-						}, keys);
-					}, new Set())
+				let keys = new Set( data.reduce((keys, item)=>{
+						keys.push( ...this.handleValueKey(item) );
+					
+						return keys;
+					}, []) )
 					;
 
 				this.originalCols = Array.from( keys ).map((key)=>{

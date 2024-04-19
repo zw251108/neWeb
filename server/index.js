@@ -17,6 +17,7 @@ import './editor/index.js';
 import './wx/index.js';
 import './wb/index.js';
 import './words/index.js';
+import './bookmark/index.js';
 
 // 外部数据
 import './book/index.js';

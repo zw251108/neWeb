@@ -430,7 +430,6 @@ $modulePadding: 5px;
         }
         .news_desc{
             text-indent: grid-content-width( 1 ) + 20px;
-            line-height: 2;
 
             &::first-line{
                 line-height: grid-content-height( 1 ) + 15px;
@@ -446,6 +445,53 @@ $modulePadding: 5px;
         }
         .news_datetime{
             margin-right: grid-content-height( 1 ) + 20px;
+        }
+    }
+    
+    &.share{
+        @include grid(8, 5);
+        
+        .module_title{
+            color: #666;
+            font-size: 14px;
+            font-weight: normal;
+        }
+        .news_content{
+            height: grid-content-height( 4 ) + 20px;
+            margin: 0;
+
+            @include flex-direction( column );
+        }
+        .news_detail{
+            @include flex-container();
+            @include flex-direction( column );
+
+            flex: 1;
+            margin-top: 10px;
+        }
+        .news_desc{
+            flex: 1;
+            color: #333;
+            font-size: 20px;
+            font-weight: bold;
+            text-indent: grid-content-width( 1 ) + 20px;
+
+            .icon-link{
+                margin-right: 5px;
+                text-indent: 0;
+            }
+        }
+        .news_more{
+            @include flex-container();
+            @include flex-justify( flex-end );
+
+            width: 100%;
+            line-height: 20px;
+            
+            .icon-star-full{
+                display: block;
+                font-size: 20px;
+            }
         }
     }
 }
@@ -515,7 +561,13 @@ $modulePadding: 5px;
             }
         }
 
-        &.words{}
+        &.share {
+            @include grid(8, 6);
+
+            .news_content{
+                height: grid-content-height( 5 ) + 20px;
+            }
+        }
     }
 
     .content-all + .main{
@@ -1530,3 +1582,5 @@ $modulePadding: 5px;
 @import "./resume.scss";
 
 @import "./words.scss";
+
+@import "./share.scss";

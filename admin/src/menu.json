@@ -41,6 +41,16 @@
 	  "title": "文档管理",
 	  "children": []
 	}, {
+	  "icon":"notification",
+	  "name": "manage/reader",
+	  "title": "订阅管理",
+	  "children": []
+	}, {
+	  "icon": "collection",
+	  "name": "manage/bookmark",
+	  "title": "已读文章管理",
+	  "children": []
+	}, {
 	  "icon": "picture",
 	  "name": "manage/pic",
 	  "title": "图片管理",

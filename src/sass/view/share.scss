@@ -1,0 +1,7 @@
+@import "../element/icon.scss";
+
+.share{
+    &::before{
+        @extend %icon-share;
+    }
+}

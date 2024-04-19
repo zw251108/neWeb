@@ -10,6 +10,7 @@ import tableColumnNumber    from '../../components/tableColumns/number.vue';
 import tableColumnImage     from '../../components/tableColumns/img.vue';
 import tableColumnCode      from '../../components/tableColumns/code.vue';
 import tableColumnTag       from '../../components/tableColumns/tag.vue';
+import tableColumnLink      from '../../components/tableColumns/link.vue';
 
 const COL_CONFIG = [{
 		type: 'text'
@@ -27,6 +28,10 @@ const COL_CONFIG = [{
 		type: 'date'
 		, title: '日期'
 		, com: tableColumnDate
+	}, {
+		type: 'link'
+		, title: '链接'
+		, com: tableColumnLink
 	}, {
 		type: 'code'
 		, title: '代码段'
@@ -64,6 +69,9 @@ const COL_TYPE = [{
 	}, {
 		type: 'tag'
 		, title: '标签'
+	}, {
+		type: 'link'
+		, title: '链接'
 	}, {
 		type: 'enum'
 		, title: '枚举'
@@ -143,6 +151,10 @@ function isCode(col){
 // 列是否为标签
 function isTag(col){
 	return col.type === 'tag';
+}
+// 列是否为链接
+function isLink(col){
+	return col.type === 'link';
 }
 
 // 列是否为选择类型
@@ -276,6 +288,7 @@ INDEX.set(isNumber, 'table-column-number');
 INDEX.set(isImage, 'table-column-image');
 INDEX.set(isCode, 'table-column-code');
 INDEX.set(isTag, 'table-column-tag');
+INDEX.set(isLink, 'table-column-link');
 
 function decideColType(col){
 	for( let [key, val] of INDEX ){
@@ -299,6 +312,7 @@ export default {
 		, tableColumnImage
 		, tableColumnCode
 		, tableColumnTag
+		, tableColumnLink
 	}
 	, methods: {
 		// 列是否可以排序
@@ -330,6 +344,8 @@ export default {
 		, isCode
 		// 列是否为标签
 		, isTag
+		// 列是否为链接
+		, isLink
 
 		// 列是否为时间
 		, isDate
@@ -391,6 +407,8 @@ export {
 	, isCode
 	// 列是否为标签
 	, isTag
+	// 列是否为链接
+	, isLink
 
 	// 列是否为时间
 	, isDate
@@ -422,4 +440,5 @@ export {
 	, tableColumnImage
 	, tableColumnCode
 	, tableColumnTag
+	, tableColumnLink
 };

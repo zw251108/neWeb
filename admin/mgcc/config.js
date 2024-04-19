@@ -41,6 +41,10 @@ function prefix(title){
 }
 
 function imgPath(path){
+	if( /^https?:\/\//.test(path) ){
+		return path;
+	}
+	
 	return `${CONFIG.imgRoot}${path}`;
 }
 

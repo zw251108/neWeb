@@ -10,6 +10,7 @@ const NEWS_TYPE = {
 		, words: '碎念'
 		, doc: '文档'
 		, code: '代码'
+		, bookmark: '分享'
 	}
 	, IMAGE_SIZE = [
 		''

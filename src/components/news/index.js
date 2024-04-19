@@ -5,6 +5,7 @@ import NewsImg       from './img.js';
 import NewsCode      from './code.js';
 import NewsWords     from './words.js';
 import NewsTips      from './tips.js';
+import NewsShare     from './share.js';
 import NewsWeibo     from './weibo.js';
 import NewsWeiboUser from './weiboUser.js';
 import NewsWeixin    from './weixin.js';
@@ -18,6 +19,7 @@ function NewsList({list}){
 			, code: NewsCode
 			, words: NewsWords
 			, tips: NewsTips
+			, bookmark: NewsShare
 			, weibo: NewsWeibo
 			, weiboUser: NewsWeiboUser
 			, weixin: NewsWeixin

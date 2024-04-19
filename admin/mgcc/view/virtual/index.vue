@@ -564,7 +564,9 @@ export default {
 					;
 
 				rs[name] = rows.map((row)=>{
-					return row[prop];
+					return this.getRowValue({
+						prop
+					}, row);
 				}).join();
 
 				return rs;

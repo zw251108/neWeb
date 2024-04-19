@@ -1,6 +1,6 @@
-import db, {DataTypes, commonAttr, commonOpts} from '../db.js';
-import User, {userBeCreatorOf}                 from '../user/model.js';
-import {tagsBelongsTo, TAG_CONTENT_TYPE}       from '../tag/model.js';
+import db, {DataTypes, commonAttr, commonOpts}     from '../db.js';
+import {userBeCreatorOf}                           from '../user/model.js';
+import {tagsBelongsTo, TAG_CONTENT_TYPE, tagsAttr} from '../tag/model.js';
 
 let Bookmark = db.define('bookmark', {
 		id: commonAttr.id
@@ -22,6 +22,7 @@ let Bookmark = db.define('bookmark', {
 		, totalTags: {
 			type: DataTypes.TEXT
 			, field: 'total_tags'
+			, set: tagsAttr.set
 		}
 	}, {
 		createdAt: commonOpts.createdAt
@@ -39,6 +40,7 @@ let Bookmark = db.define('bookmark', {
 		}
 		, title: DataTypes.STRING
 		, score: DataTypes.INTEGER
+		, tags: tagsAttr
 		, status: DataTypes.INTEGER
 		, markDate: {
 			type: DataTypes.DATE
@@ -67,7 +69,7 @@ let Bookmark = db.define('bookmark', {
 			, field: 'html_url'
 		}
 		, type: DataTypes.STRING
-		, tags: DataTypes.TEXT
+		, tags: tagsAttr
 		, lastPub: {
 			type: DataTypes.DATE
 			, field: 'last_pub'
@@ -76,32 +78,72 @@ let Bookmark = db.define('bookmark', {
 		createdAt: 'last_pub'
 		, updatedAt: false
 	})
+	
+	, Web = db.define('web', {
+		id: commonAttr.id
+		, url: DataTypes.STRING
+		, ico: DataTypes.STRING
+	})
 	;
 
 userBeCreatorOf(Bookmark, 'bookmark');
 userBeCreatorOf(Reader, 'reader');
 
-User.belongsToMany(Bookmark, {
-	through: UserBookmark
-	, constraints: false
-});
-Bookmark.belongsToMany(User, {
-	through: UserBookmark
-	, constraints: false
-});
-
+// User.belongsToMany(Bookmark, {
+// 	through: UserBookmark
+// 	, constraints: false
+// });
+// Bookmark.belongsToMany(User, {
+// 	through: UserBookmark
+// 	, constraints: false
+// });
+//
 Bookmark.hasMany(UserBookmark, {
-	as: 'usermark'
+	foreignKey: 'bookmark_id'
+	, as: 'usermark'
 	, constraints: false
 });
+UserBookmark.belongsTo(Bookmark, {
+	foreignKey: 'bookmark_id'
+	, as: 'bookmark'
+	, constraint: false
+});
 
-tagsBelongsTo(UserBookmark, TAG_CONTENT_TYPE.bookmark);
+Web.hasMany(Reader, {
+	foreignKey: 'html_url'
+	, sourceKey: 'url'
+	, as: 'reader'
+	, constraint: false
+});
+Reader.belongsTo(Web,  {
+	foreignKey: 'html_url'
+	, targetKey: 'url'
+	, as: 'web'
+	, constraint: false
+});
 
-export default Bookmark;
+Web.hasMany(Bookmark, {
+	foreignKey: 'source'
+	, sourceKey: 'url'
+	, as: 'bookmark'
+	, constraint: false
+});
+Bookmark.belongsTo(Web,  {
+	foreignKey: 'source'
+	, targetKey: 'url'
+	, as: 'web'
+	, constraint: false
+});
+
+// tagsBelongsTo(UserBookmark, TAG_CONTENT_TYPE.bookmark);
+
+// export default Bookmark;
 
 export {
 	Bookmark
 	, UserBookmark
 
 	, Reader
+	
+	, Web
 };
