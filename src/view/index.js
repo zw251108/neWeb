@@ -13,6 +13,44 @@ function Index({search, filter}){
 		[ max, setMax ] = useState(false)
 		,
 		[ fetching, setFetching ] = useState(false)
+		, idCard = {
+			content: {
+				nickname: ['十方文', '十甫寸', 'Weber']
+				, avatar: '/image/avatar-96.jpg'
+				, tags: [
+					'Web 前端工程师'
+					, 'Unity'
+					, '独立游戏开发者'
+					, '自娱自乐'
+					, '自说自话'
+					, '不追热点'
+					, '不赶时髦'
+					, '游戏宅'
+					, '手残党'
+					, '又菜又爱玩'
+					, '思而不学'
+					, '颓废'
+					, '懒癌'
+					, '拖延症'
+					, '二流 • 程序员'
+					, '三流 • 段子手'
+					, '吐槽星人'
+					, '收集狂 • 轻'
+					, '强迫症 • 中'
+					, '变形金刚'
+					, '天蝎座'
+					, '铲屎官'
+					, '社恐'
+					, '钢铁直男'
+					, '沉默寡言'
+					, '享受孤独'
+					, '悲观主义者'
+					, '现实主义者'
+				]
+			}
+			, type: 'idCard'
+			, id: 0
+		}
 		;
 
 	function next(){
@@ -53,7 +91,14 @@ function Index({search, filter}){
 			setFetching(false);
 			
 			setList((list)=>{
-				return list.concat( data );
+				let rs = list.concat( data )
+					;
+				
+				if( page === 1 && !search && !filter ){
+					rs.splice(1, 0, idCard);
+				}
+				
+				return rs;
 			});
 		});
 	}, [page]);

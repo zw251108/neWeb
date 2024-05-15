@@ -2,44 +2,69 @@
 @import "./icon.scss";
 
 .tag{
+    position: relative;
     display: inline-block;
     min-width: 4em;
     height: 30px;
+  
     border: 1px solid $tag_bd_c;
-
-    border-radius: 5px;
-    //border-radius: 20px;
-    margin: 5px;
-    padding: 0 1em 0 .5em;
+    border-left: 0;
+    border-radius: 0 5px 5px 0;
+ 
+    margin: 5px 0 0 18px;
+    padding: 0 .8em;
 
     box-sizing: border-box;
 
-    //background: -webkit-linear-gradient(top, @tag_bg_gradient_s, @tag_bg_gradient_e);
-
     background: $tag_bg_c;
-    color: $tag_c;
+    color: #666;
 
     font-size: 12px;
+    font-weight: 600;
     line-height: 28px;
 
     text-align: center;
 
     cursor: pointer;
 
+    &::before{
+        position: absolute;
+        left: -11px;
+        width: 20px;
+        height: 20px;
+        border: 1px solid transparent;
+        border-left-color: $tag_bd_c;
+        border-bottom-color: $tag_bd_c;
+        border-radius: 0 0 0 5px;
+        transform: translateY(3px) rotate(45deg);
+        content: "";
+    }
+    &::after{
+        position: absolute;
+        left: -5px;
+        top: 11px;
+        border: 3px solid #666;
+        border-radius: 3px;
+        content: "";
+    }
+
     &-checked{
-        //background: @tag_checked_bg_c -webkit-linear-gradient(top, @tag_checked_bg_gradient_s, @tag_checked_bg_gradient_e);
         border-color: $tag_checked_bd_c;
         background: $tag_checked_bg_c;
         color: $tag_checked_c;
-    }
-    &::before{
-        @extend %icon;
-        @extend %icon-tag;
-
-        float: left;
-        font-size: 16px;
-        line-height: 28px;
-        margin-right: 5px;
+        
+        &::before{
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-width: 11px;
+            border-left-color: $tag_checked_bd_c;
+            border-bottom-color: $tag_checked_bd_c;
+            transform: translateY(3px) rotate(45deg);
+        }
+        &::after{
+            border-color: $tag_checked_c;
+        }
     }
 }
 

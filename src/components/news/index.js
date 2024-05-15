@@ -9,6 +9,7 @@ import NewsShare     from './share.js';
 import NewsWeibo     from './weibo.js';
 import NewsWeiboUser from './weiboUser.js';
 import NewsWeixin    from './weixin.js';
+import NewsIdCard    from './idCard.js';
 
 function NewsList({list}){
 	const itemList = {
@@ -23,6 +24,7 @@ function NewsList({list}){
 			, weibo: NewsWeibo
 			, weiboUser: NewsWeiboUser
 			, weixin: NewsWeixin
+			, idCard: NewsIdCard
 		}
 
 	return (<>
