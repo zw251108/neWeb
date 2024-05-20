@@ -534,7 +534,7 @@ $modulePadding: 5px;
 @media screen and (min-width: 1200px){
     .index{
         .loading{
-            @include grid(24, 1);
+            @include grid(16, 1);
         }
     }
 
@@ -607,7 +607,7 @@ $modulePadding: 5px;
 
     .content-all + .main{
         .news{
-            &.words{
+            &.words:nth-of-type(n+5){
                 @include news-right();
             }
         }
