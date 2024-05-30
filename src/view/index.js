@@ -31,9 +31,10 @@ function Index({search, filter}){
 					, 'WOWer'
 					, 'PvE 玩家'
 					, 'LOLer'
-					, '大乱斗玩家'
+					, '大乱斗'
 					, '设定党'
 					, '思而不学'
+					, '博而不精'
 					, '颓废'
 					, '懒癌'
 					, '拖延症'
@@ -46,7 +47,6 @@ function Index({search, filter}){
 					, '天蝎座'
 					, '铲屎官'
 					, '社恐'
-					, '现实主义'
 				]
 			}
 			, type: 'idCard'
