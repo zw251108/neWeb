@@ -6,9 +6,9 @@ function NewsImg({item}){
 		{ width
 		, height } = img
 		, r = width / height
-		, type = width > height ? 'h' : 'v'
 		;
 	let imageType
+		, type = width > height ? 'h' : 'v'
 		;
 
 	if( type === 'v' ){
@@ -17,6 +17,13 @@ function NewsImg({item}){
 			 * 9: 16
 			 * */
 			imageType = 'v';
+
+			/**
+			 * 图片过长
+			 * */
+			if( r <= 0.4 ){
+				type = 'h';
+			}
 		}
 		else if( r <= 0.76 ){
 			/**
