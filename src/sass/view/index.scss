@@ -32,7 +32,7 @@ $modulePadding: 5px;
 @mixin news-left($start: 1, $end: 17){
     @include grid-offset($start, $end);
 }
-@mixin news-right($start: 17, $end: -1){
+@mixin news-right($start: 17, $end: 25){
     @include grid-offset($start, $end);
 }
 
@@ -596,7 +596,7 @@ $modulePadding: 5px;
             }
         }
 
-        &.share {
+        &.share{
             @include grid(8, 6);
 
             .news_content{
