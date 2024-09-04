@@ -25,7 +25,7 @@ function Footer(){
 			<a href="https://beian.mps.gov.cn/#/query/webSearch?code=21029602000961"
 			   rel="noreferrer"
 			   target="_blank">
-				<img src="/image/gongan.png" width="36" height="40" alt=""/>
+				<img src="/image/gongan.png" width="18" height="20" alt=""/>
 				辽公网安备21029602000961</a>
 		</div>
 	</footer>);
