@@ -22,6 +22,11 @@ function Footer(){
 			<a href="http://beian.miit.gov.cn/"
 			   target="_blank"
 			   rel="noreferrer">辽ICP备2023001481号</a>
+			<a href="https://beian.mps.gov.cn/#/query/webSearch?code=21029602000961"
+			   rel="noreferrer"
+			   target="_blank">
+				<img src="/image/gongan.png" width="36" height="40" alt=""/>
+				辽公网安备21029602000961</a>
 		</div>
 	</footer>);
 }
