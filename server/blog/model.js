@@ -1,7 +1,7 @@
 import db, {DataTypes, commonAttr, commonOpts}     from '../db.js';
 import {userBeCreatorOf}                           from '../user/model.js';
 import {tagsAttr, tagsBelongsTo, TAG_CONTENT_TYPE} from '../tag/model.js';
-// import {imagesBelongsTo, IMAGE_CONTENT_TYPE}   from '../image/model.js';
+import {Image, imagesBelongsTo, IMAGE_CONTENT_TYPE}   from '../image/model.js';
 
 let Blog = db.define('blog', {
 		...commonAttr
@@ -28,12 +28,37 @@ let Blog = db.define('blog', {
 	}, {
 		...commonOpts
 	})
+	, BlogCover = db.define('blog_cover', {
+		...commonAttr
+
+		, blogId: {
+			type: DataTypes.INTEGER
+			, field: 'blog_id'
+		}
+		, imageId: {
+			type: DataTypes.INTEGER
+			, field: 'image_id'
+		}
+	})
 	;
 
 userBeCreatorOf(Blog, 'blog');
 
+Blog.hasOne(Image, {
+	as: 'cover'
+	, through: BlogCover
+	, constraints: false
+});
+
+Image.hasMany(Blog, {
+	as: 'blog'
+	, through: BlogCover
+	, constraints: false
+});
+
 // tagsBelongsTo(Blog, TAG_CONTENT_TYPE.blog);
 
-// imagesBelongsTo(Blog, IMAGE_CONTENT_TYPE.blog);
+// imagesBelongsTo(Blog, IMAGE_CONTENT_TYPE.blogCover);
+// imagesBelongsTo(Blog, IMAGE_CONTENT_TYPE.blogContent);
 
 export default Blog;

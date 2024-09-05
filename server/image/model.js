@@ -68,8 +68,12 @@ let Image = db.define('image', {
 		, updatedAt: false
 	})
 	, IMAGE_CONTENT_TYPE = {
-		blog: 1
-		, document: 2
+		blogCover: 1
+		, blogContent: 2
+		, documentContent: 3
+		, editorCover: 4
+		, editorContent: 5
+		, album: 6
 		, valhalla: 9
 	}
 	;

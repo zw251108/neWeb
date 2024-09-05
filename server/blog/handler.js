@@ -1,12 +1,14 @@
 import {where, parse} from '../db.js';
 import Blog           from './model.js';
 import News           from '../news/model.js';
+import Image          from '../image/model.js';
 // import Tag            from '../tag/model.js';
 
 export default {
 	list({title, tags, creatorId, status, page=1, size=20}
 	     , attributes
-	     , order=[['id', 'DESC']]){
+	     , order=[['id', 'DESC']]
+	     , imgAttr=['id', 'src']){
 
 		page = parse(page, 1);
 		size = parse(size, 20);
@@ -29,6 +31,11 @@ export default {
 					tags
 				})
 			}
+			, include: [{
+				model: Image
+				, as: 'cover'
+				, attribute: imgAttr
+			}]
 			, offset: (page -1)* size
 			, limit: size
 			, attributes
